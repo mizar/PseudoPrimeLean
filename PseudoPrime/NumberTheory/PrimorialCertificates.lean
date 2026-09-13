@@ -1,0 +1,1105 @@
+/-
+Copyright (c) 2026 Mizar. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Mizar
+-/
+import PseudoPrime.NumberTheory.PrimeIndexing
+import PseudoPrime.NumberTheory.PrimeTable
+
+/-!
+# Cumulative primorial certificates for the finite range `6 ≤ k ≤ 163`
+
+Each `primePrimorialCount_cumulative_k` identifies `PseudoPrime.NumberTheory.primePrimorialCount k`
+as an explicit numeral via the cumulative chain: each step is a single multiplication via
+`PseudoPrime.NumberTheory.primePrimorialCount_succ`
+against the corresponding `primeByIndex_at_(k - 1)` value (`PrimeTable.lean`), rather than
+re-expanding the full `k`-term product every time. This range is exactly what
+`AnalyticNumberTheory/Arithmetic/ElementaryOmegaFiniteCertificates.lean` needs for `1 ≤ m < 163`.
+
+The 100-character line-length convention is waived in this file: the primorials themselves
+cannot be wrapped, since each is a single numeral token.
+-/
+
+set_option linter.style.longLine false
+
+namespace PseudoPrime.NumberTheory
+
+theorem primePrimorialCount_cumulative_7 :
+    primePrimorialCount 7 = 510510 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_six_eq, primeByIndex_at_6]
+
+theorem primePrimorialCount_cumulative_8 :
+    primePrimorialCount 8 = 9699690 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_7,
+    primeByIndex_at_7]
+
+theorem primePrimorialCount_cumulative_9 :
+    primePrimorialCount 9 = 223092870 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_8,
+    primeByIndex_at_8]
+
+theorem primePrimorialCount_cumulative_10 :
+    primePrimorialCount 10 = 6469693230 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_9,
+    primeByIndex_at_9]
+
+theorem primePrimorialCount_cumulative_11 :
+    primePrimorialCount 11 = 200560490130 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_10,
+    primeByIndex_at_10]
+
+theorem primePrimorialCount_cumulative_12 :
+    primePrimorialCount 12 = 7420738134810 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_11,
+    primeByIndex_at_11]
+
+theorem primePrimorialCount_cumulative_13 :
+    primePrimorialCount 13 = 304250263527210 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_12,
+    primeByIndex_at_12]
+
+theorem primePrimorialCount_cumulative_14 :
+    primePrimorialCount 14 = 13082761331670030 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_13,
+    primeByIndex_at_13]
+
+theorem primePrimorialCount_cumulative_15 :
+    primePrimorialCount 15 = 614889782588491410 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_14,
+    primeByIndex_at_14]
+
+theorem primePrimorialCount_cumulative_16 :
+    primePrimorialCount 16 = 32589158477190044730 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_15,
+    primeByIndex_at_15]
+
+theorem primePrimorialCount_cumulative_17 :
+    primePrimorialCount 17 = 1922760350154212639070 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_16,
+    primeByIndex_at_16]
+
+theorem primePrimorialCount_cumulative_18 :
+    primePrimorialCount 18 = 117288381359406970983270 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_17,
+    primeByIndex_at_17]
+
+theorem primePrimorialCount_cumulative_19 :
+    primePrimorialCount 19 = 7858321551080267055879090 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_18,
+    primeByIndex_at_18]
+
+theorem primePrimorialCount_cumulative_20 :
+    primePrimorialCount 20 = 557940830126698960967415390 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_19,
+    primeByIndex_at_19]
+
+theorem primePrimorialCount_cumulative_21 :
+    primePrimorialCount 21 = 40729680599249024150621323470 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_20,
+    primeByIndex_at_20]
+
+theorem primePrimorialCount_cumulative_22 :
+    primePrimorialCount 22 = 3217644767340672907899084554130 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_21,
+    primeByIndex_at_21]
+
+theorem primePrimorialCount_cumulative_23 :
+    primePrimorialCount 23 = 267064515689275851355624017992790 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_22,
+    primeByIndex_at_22]
+
+theorem primePrimorialCount_cumulative_24 :
+    primePrimorialCount 24 = 23768741896345550770650537601358310 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_23,
+    primeByIndex_at_23]
+
+theorem primePrimorialCount_cumulative_25 :
+    primePrimorialCount 25 = 2305567963945518424753102147331756070 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_24,
+    primeByIndex_at_24]
+
+theorem primePrimorialCount_cumulative_26 :
+    primePrimorialCount 26 = 232862364358497360900063316880507363070 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_25,
+    primeByIndex_at_25]
+
+theorem primePrimorialCount_cumulative_27 :
+    primePrimorialCount 27 =
+      23984823528925228172706521638692258396210 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_26,
+    primeByIndex_at_26]
+
+theorem primePrimorialCount_cumulative_28 :
+    primePrimorialCount 28 =
+      2566376117594999414479597815340071648394470 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_27,
+    primeByIndex_at_27]
+
+theorem primePrimorialCount_cumulative_29 :
+    primePrimorialCount 29 =
+      279734996817854936178276161872067809674997230 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_28,
+    primeByIndex_at_28]
+
+theorem primePrimorialCount_cumulative_30 :
+    primePrimorialCount 30 =
+      31610054640417607788145206291543662493274686990 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_29,
+    primeByIndex_at_29]
+
+theorem primePrimorialCount_cumulative_31 :
+    primePrimorialCount 31 =
+      4014476939333036189094441199026045136645885247730 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_30,
+    primeByIndex_at_30]
+
+theorem primePrimorialCount_cumulative_32 :
+    primePrimorialCount 32 =
+      525896479052627740771371797072411912900610967452630 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_31,
+    primeByIndex_at_31]
+
+theorem primePrimorialCount_cumulative_33 :
+    primePrimorialCount 33 =
+      72047817630210000485677936198920432067383702541010310 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_32,
+    primeByIndex_at_32]
+
+theorem primePrimorialCount_cumulative_34 :
+    primePrimorialCount 34 =
+      10014646650599190067509233131649940057366334653200433090 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_33,
+    primeByIndex_at_33]
+
+theorem primePrimorialCount_cumulative_35 :
+    primePrimorialCount 35 =
+      1492182350939279320058875736615841068547583863326864530410 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_34,
+    primeByIndex_at_34]
+
+theorem primePrimorialCount_cumulative_36 :
+    primePrimorialCount 36 =
+      225319534991831177328890236228992001350685163362356544091910 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_35,
+    primeByIndex_at_35]
+
+theorem primePrimorialCount_cumulative_37 :
+    primePrimorialCount 37 =
+      35375166993717494840635767087951744212057570647889977422429870 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_36,
+    primeByIndex_at_36]
+
+theorem primePrimorialCount_cumulative_38 :
+    primePrimorialCount 38 =
+      5766152219975951659023630035336134306565384015606066319856068810 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_37,
+    primeByIndex_at_37]
+
+theorem primePrimorialCount_cumulative_39 :
+    primePrimorialCount 39 =
+      962947420735983927056946215901134429196419130606213075415963491270 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_38,
+    primeByIndex_at_38]
+
+theorem primePrimorialCount_cumulative_40 :
+    primePrimorialCount 40 =
+      166589903787325219380851695350896256250980509594874862046961683989710 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_39,
+    primeByIndex_at_39]
+
+theorem primePrimorialCount_cumulative_41 :
+    primePrimorialCount 41 =
+      29819592777931214269172453467810429868925511217482600306406141434158090 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_40,
+    primeByIndex_at_40]
+
+theorem primePrimorialCount_cumulative_42 :
+    primePrimorialCount 42 =
+      5397346292805549782720214077673687806275517530364350655459511599582614290 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_41,
+    primeByIndex_at_41]
+
+theorem primePrimorialCount_cumulative_43 :
+    primePrimorialCount 43 =
+      1030893141925860008499560888835674370998623848299590975192766715520279329390 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_42,
+    primeByIndex_at_42]
+
+theorem primePrimorialCount_cumulative_44 :
+    primePrimorialCount 44 =
+      198962376391690981640415251545285153602734402721821058212203976095413910572270 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_43,
+    primeByIndex_at_43]
+
+theorem primePrimorialCount_cumulative_45 :
+    primePrimorialCount 45 =
+      39195588149163123383161804554421175259738677336198748467804183290796540382737190 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_44,
+    primeByIndex_at_44]
+
+theorem primePrimorialCount_cumulative_46 :
+    primePrimorialCount 46 =
+      7799922041683461553249199106329813876687996789903550945093032474868511536164700810 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_45,
+    primeByIndex_at_45]
+
+theorem primePrimorialCount_cumulative_47 :
+    primePrimorialCount 47 =
+      1645783550795210387735581011435590727981167322669649249414629852197255934130751870910 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_46,
+    primeByIndex_at_46]
+
+theorem primePrimorialCount_cumulative_48 :
+    primePrimorialCount 48 =
+      367009731827331916465034565550136732339800312955331782619462457039988073311157667212930 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_47,
+    primeByIndex_at_47]
+
+theorem primePrimorialCount_cumulative_49 :
+    primePrimorialCount 49 =
+      83311209124804345037562846379881038241134671040860314654617977748077292641632790457335110 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_48,
+    primeByIndex_at_48]
+
+theorem primePrimorialCount_cumulative_50 :
+    primePrimorialCount 50 =
+      19078266889580195013601891820992757757219839668357012055907516904309700014933909014729740190 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_49,
+    primeByIndex_at_49]
+
+theorem primePrimorialCount_cumulative_51 :
+    primePrimorialCount 51 =
+      4445236185272185438169240794291312557432222642727183809026451438704160103479600800432029464270 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_50,
+    primeByIndex_at_50]
+
+theorem primePrimorialCount_cumulative_52 :
+    primePrimorialCount 52 =
+      1062411448280052319722448549835623701226301211611796930357321893850294264731624591303255041960530 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_51,
+    primeByIndex_at_51]
+
+theorem primePrimorialCount_cumulative_53 :
+    primePrimorialCount 53 =
+      256041159035492609053110100510385311995538591998443060216114576417920917800321526504084465112487730 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_52,
+    primeByIndex_at_52]
+
+theorem primePrimorialCount_cumulative_54 :
+    primePrimorialCount 54 =
+      64266330917908644872330635228106713310880186591609208114244758680898150367880703152525200743234420230 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_53,
+    primeByIndex_at_53]
+
+theorem primePrimorialCount_cumulative_55 :
+    primePrimorialCount 55 =
+      16516447045902521732188973253623425320896207954043566485360902980990824644545340710198976591011245999110 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_54,
+    primeByIndex_at_54]
+
+theorem primePrimorialCount_cumulative_56 :
+    primePrimorialCount 56 =
+      4343825573072363215565699965702960859395702691913457985649917484000586881515424606782330843435957697765930 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_55,
+    primeByIndex_at_55]
+
+theorem primePrimorialCount_cumulative_57 :
+    primePrimorialCount 57 =
+      1168489079156465704987173290774096471177444024124720198139827803196157871127649219224446996884272620699035170 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_56,
+    primeByIndex_at_56]
+
+theorem primePrimorialCount_cumulative_58 :
+    primePrimorialCount 58 =
+      316660540451402206051523961799780143689087330537799173695893334666158783075592938409825136155637880209438531070 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_57,
+    primeByIndex_at_57]
+
+theorem primePrimorialCount_cumulative_59 :
+    primePrimorialCount 59 =
+      87714969705038411076272137418539099801877190558970371113762453702525982911939243939521562715111692818014473106390 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_58,
+    primeByIndex_at_58]
+
+theorem primePrimorialCount_cumulative_60 :
+    primePrimorialCount 60 =
+      24647906487115793512432470614609487044327490547070674282967249490409801198254927547005559122946385681862066942895590 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_59,
+    primeByIndex_at_59]
+
+theorem primePrimorialCount_cumulative_61 :
+    primePrimorialCount 61 =
+      6975357535853769564018389183934484833544679824821000822079731605785973739106144495802573231793827147966964944839451970 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_60,
+    primeByIndex_at_60]
+
+theorem primePrimorialCount_cumulative_62 :
+    primePrimorialCount 62 =
+      2043779758005154482257388030892804056228591188672553240869361360495290305558100337270153956915591354354320728837959427210 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_61,
+    primeByIndex_at_61]
+
+theorem primePrimorialCount_cumulative_63 :
+    primePrimorialCount 63 =
+      627440385707582426053018125484090845262177494922473844946893937672054123806336803541937264773086545786776463753253544153470 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_62,
+    primeByIndex_at_62]
+
+theorem primePrimorialCount_cumulative_64 :
+    primePrimorialCount 64 =
+      195133959955058134502488637025552252876537200920889365778484014616008832503770745901542489344429915739687480227261852231729170 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_63,
+    primeByIndex_at_63]
+
+theorem primePrimorialCount_cumulative_65 :
+    primePrimorialCount 65 =
+      61076929465933196099278943388997855150356143888238371488665496574810764573680243467182799164806563626522181311132959748531230210 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_64,
+    primeByIndex_at_64]
+
+theorem primePrimorialCount_cumulative_66 :
+    primePrimorialCount 66 =
+      19361386640700823163471425054312320082662897612571563761906962414215012369856637179096947335243680669607531475629148240284399976570 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_65,
+    primeByIndex_at_65]
+
+theorem primePrimorialCount_cumulative_67 :
+    primePrimorialCount 67 =
+      6408618978071972467109041692977377947361419109761187605191204559105169094422546906281089567965658301640092918433248067534136392244670 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_66,
+    primeByIndex_at_66]
+
+theorem primePrimorialCount_cumulative_68 :
+    primePrimorialCount 68 =
+      2159704595610254721415747050533376368260798239989520222949435936418441984820398307416727184404426847652711313512004598759003964186453790 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_67,
+    primeByIndex_at_67]
+
+theorem primePrimorialCount_cumulative_69 :
+    primePrimorialCount 69 =
+      749417494676758388331264226535081599786496989276363517363454269937199368732678212673604332988336116135490825788665595769374375572699465130 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_68,
+    primeByIndex_at_68]
+
+theorem primePrimorialCount_cumulative_70 :
+    primePrimorialCount 70 =
+      261546705642188677527611215060743478325487449257450867559845540208082579687704696223087912212929304531286298200244292923511657074872113330370 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_69,
+    primeByIndex_at_69]
+
+theorem primePrimorialCount_cumulative_71 :
+    primePrimorialCount 71 =
+      92325987091692603167246758916442447848897069587880156248625475693453150629759757766750033011164044499544063264686235401999614947429856005620610 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_70,
+    primeByIndex_at_70]
+
+theorem primePrimorialCount_cumulative_72 :
+    primePrimorialCount 72 =
+      33145029365917644537041586451002838777754047982048976093256545773949681076083753038263261851007891975336318712022358509317861766127318306017798990 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_71,
+    primeByIndex_at_71]
+
+theorem primePrimorialCount_cumulative_73 :
+    primePrimorialCount 73 =
+      12164225777291775545094262227518041831435735609411974226225152299039532954922737365042617099319896354948428967312205572919655268168725818308532229330 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_72,
+    primeByIndex_at_72]
+
+theorem primePrimorialCount_cumulative_74 :
+    primePrimorialCount 74 =
+      4537256214929832278320159810864229603125529382310666386381981807541745792186181037160896178046321340395764004807452678699031415026934730229082521540090 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_73,
+    primeByIndex_at_73]
+
+theorem primePrimorialCount_cumulative_75 :
+    primePrimorialCount 75 =
+      1719620105458406433483340568317543019584575635895742560438771105058321655238562613083979651479555788009994557822024565226932906295208262756822275663694110 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_74,
+    primeByIndex_at_74]
+
+theorem primePrimorialCount_cumulative_76 :
+    primePrimorialCount 76 =
+      658614500390569664024119437665618976500892468548069400648049333237337193956369480811164206516669866807827915645835408481915303111064764635862931579194844130 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_75,
+    primeByIndex_at_75]
+
+theorem primePrimorialCount_cumulative_77 :
+    primePrimorialCount 77 =
+      256201040651931599305382461251925781858847170265198996852091190629324168449027728035542876334984578188245059186229973899465052910204193443350680384306794366570 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_76,
+    primeByIndex_at_76]
+
+theorem primePrimorialCount_cumulative_78 :
+    primePrimorialCount 78 =
+      101711813138816844924236837117014535397962326595284001750280202679841694874264008030110521904988877540733288496933299638087626005351064797010220112569797363528290 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_77,
+    primeByIndex_at_77]
+
+theorem primePrimorialCount_cumulative_79 :
+    primePrimorialCount 79 =
+      40786437068665554814618971683922828694582892964708884701862361274616519644579867220074319283900539893834048687270253154873138028145776983601098265140488742774844290 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_78,
+    primeByIndex_at_78]
+
+theorem primePrimorialCount_cumulative_80 :
+    primePrimorialCount 80 =
+      16681652761084211919179159418724436936084403222565933843061705761318156534633165693010396587115320816578125913093533540343113453511622786292849190442459895794911314610 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_79,
+    primeByIndex_at_79]
+
+theorem primePrimorialCount_cumulative_81 :
+    primePrimorialCount 81 =
+      6989612506894284794136067796445539076219364950255126280242854713992307588011296425371356170001319422146234757586190553403764537021369947456703810795390696338067840821590 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_80,
+    primeByIndex_at_80]
+
+theorem primePrimorialCount_cumulative_82 :
+    primePrimorialCount 82 =
+      2942626865402493898331284542303571951088352644057408163982241834590761494552755795081340947570555476723564832943786222982984870085996747879272304344859483158326560985889390 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_81,
+    primeByIndex_at_81]
+
+theorem primePrimorialCount_cumulative_83 :
+    primePrimorialCount 83 =
+      1268272178988474870180783637732839510919079989588742918676346230708618204152237747680057948402909410467856442998771862105666479007064598335966363172634437241238747784918327090 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_82,
+    primeByIndex_at_82]
+
+theorem primePrimorialCount_cumulative_84 :
+    primePrimorialCount 84 =
+      549161853502009618788279315138319508227961635491925683786857917896831682397918944745465091658459774732581839818468216291753585410058971079473435253750711325456377790869635629970 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_83,
+    primeByIndex_at_83]
+
+theorem primePrimorialCount_cumulative_85 :
+    primePrimorialCount 85 =
+      241082053687382222648054619345722264112075157980955375182430625956709108572686416743259175238063841107603427680307546952079823995015888303888838076396562271875349850191770041556830 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_84,
+    primeByIndex_at_84]
+
+theorem primePrimorialCount_cumulative_86 :
+    primePrimorialCount 86 =
+      106799349783510324633088196370154963001649294985563231205816767298822135097700082617263814630462281610668318462376243299771362029792038518622755267843677086440779983634954128409675690 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_85,
+    primeByIndex_at_85]
+
+theorem primePrimorialCount_cumulative_87 :
+    primePrimorialCount 87 =
+      47952908052796135760256600170199578387740533448517890811411728517171138658867337095151452769077564443190074989606933241597341551376625294861617115261811011811910212652094403655944384810 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_86,
+    primeByIndex_at_86]
+
+theorem primePrimorialCount_cumulative_88 :
+    primePrimorialCount 88 =
+      21914478980127834042437266277781207323197423785972676100815159932347210367102373052484213915468446950537864270250368491409985088979117759751759021674647632398042967182007142470766583858170 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_87,
+    primeByIndex_at_87]
+
+theorem primePrimorialCount_cumulative_89 :
+    primePrimorialCount 89 =
+      10102574809838931493563579754057136575994012365333403682475788728812063979234193977195222615030954044197955428585419874540003126019373287245560908992012558535497807870905292679023395158616370 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_88,
+    primeByIndex_at_88]
+
+theorem primePrimorialCount_cumulative_90 :
+    primePrimorialCount 90 =
+      4677492136955425281519937426128454234685227725149365904986290181439985622385431811441388070759331722463653363435049401912021447346969831994694700863301814601935485044229150510387831958439379310 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_89,
+    primeByIndex_at_89]
+
+theorem primePrimorialCount_cumulative_91 :
+    primePrimorialCount 91 =
+      2184388827958183606469810778001988127598001347644753877628597514732473285653996655943128229044607914390526120724168070692914015911034911541522425303161947419103871515655013288351117524591190137770 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_90,
+    primeByIndex_at_90]
+
+theorem primePrimorialCount_cumulative_92 :
+    primePrimorialCount 92 =
+      1046322248591969947499039362662952313119442645521837107384098209556854703828264398196758421712367190993062011826876505861905813621385722628389241720214572813750754455998751365120185294279180075991830 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_91,
+    primeByIndex_at_91]
+
+theorem primePrimorialCount_cumulative_93 :
+    primePrimorialCount 93 =
+      509558935064289364432032169616857776489168568369134671296055828054188240764364761921821351373922822013621199759688858354748131233614846920025560717744496960296617420071391914813530238313960697008021210 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_92,
+    primeByIndex_at_92]
+
+theorem primePrimorialCount_cumulative_94 :
+    primePrimorialCount 94 =
+      250193437116566077936127795281877168256181767069245123606363411574606426215303098103614283524596105608688009082007229452181332435704889837732550312412548007505639153255053430173443347012154702230938414110 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_93,
+    primeByIndex_at_93]
+
+theorem primePrimorialCount_cumulative_95 :
+    primePrimorialCount 95 =
+      124846525121166472890127769845656706959834701767553316679575342375728606681436245953703527478773456698735316531921607496638484885416740029028542605893861455745313937474271661656548230159065196413238268640890 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_94,
+    primeByIndex_at_94]
+
+theorem primePrimorialCount_cumulative_96 :
+    primePrimorialCount 96 =
+      62797802135946735863734268232365323600796854989079318289826397214991489160762431714712874321823048719463864215556568570809157897364620234601356930764612312239892910549558645813243759770009793795858849126367670 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_95,
+    primeByIndex_at_95]
+
+theorem primePrimorialCount_cumulative_97 :
+    primePrimorialCount 97 =
+      31964081287196888554640742530273949712805599189441373009521636182430667982828077742788853029807931798207106885718293402541861369758591699412090677759187666930105491469725350718941073722934985042092154205321144030 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_96,
+    primeByIndex_at_96]
+
+theorem primePrimorialCount_cumulative_98 :
+    primePrimorialCount 98 =
+      16653286350629578936967826858272727800371717177698955337960772451046378019053428503992992428529932466865902687459230862724309773644226275393699243112536774470584961055726907724568299409649127206930012340972316039630 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_97,
+    primeByIndex_at_97]
+
+theorem primePrimorialCount_cumulative_99 :
+    primePrimorialCount 99 =
+      8709668761379269784034173446876636639594408083936553641753483991897255703964943107588335040121154680170867105541177741204814011615930342030904704147856733048115934632145172739949220591246493529224396454328521288726490 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_98,
+    primeByIndex_at_98]
+
+theorem primePrimorialCount_cumulative_100 :
+    primePrimorialCount 100 =
+      4711930799906184953162487834760260422020574773409675520188634839616415335845034221205289256705544681972439104097777157991804380284218315038719444943990492579030720635990538452312528339864352999310398481791730017201031090 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_99,
+    primeByIndex_at_99]
+
+theorem primePrimorialCount_cumulative_101 :
+    primePrimorialCount 101 =
+      2577426147548683169379880845613862450845254401055092509543183257270179188707233718999293223417932941038924189941484105421516996015467418326179536384362799440729804187886824533414953001905801090622787969540076319408964006230 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_100,
+    primeByIndex_at_100]
+
+theorem primePrimorialCount_cumulative_102 :
+    primePrimorialCount 102 =
+      1435626364184616525344593631006921385120806701387686527815553074299489808109929181482606325443788648158680773797406646719784966780615352007682001766090079288486500932652961265112128822061531207476892899033822509910792951470110 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_101,
+    primeByIndex_at_101]
+
+theorem primePrimorialCount_cumulative_103 :
+    primePrimorialCount 103 =
+      808257643035939103769006214256896739823014172881267515160156380830612761965890129174707361224853008913337275647939942103238936297486443180324966994308714639417900025083617192258128526820642069809490702156042073079776431677671930 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_102,
+    primeByIndex_at_102]
+
+theorem primePrimorialCount_cumulative_104 :
+    primePrimorialCount 104 =
+      459898598887449350044564535912174244959295064369441216126128980692618661558591483500408488536941362071688909843677827056742954753269786169604906219761658629828785114272578182394875131760945337721600209526787939582392789624595328170 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_103,
+    primeByIndex_at_103]
+
+theorem primePrimorialCount_cumulative_105 :
+    primePrimorialCount 105 =
+      262602099964733578875446350005851493871757481754950934408019647975485255749955737078733246954593517742934367520740039249400227164117047902844401451483907077632236300249642142147473700235499787839033719639795913501546282875643932385070 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_104,
+    primeByIndex_at_104]
+
+theorem primePrimorialCount_cumulative_106 :
+    primePrimorialCount 106 =
+      151521411679651275011132543953376311964004066972606689153427336881854992567724460294429083492800459737673130059467002646903931073695536639941219637506214383793800345244043516019092325035883377583122456232162242090392205219246548986185390 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_105,
+    primeByIndex_at_105]
+
+theorem primePrimorialCount_cumulative_107 :
+    primePrimorialCount 107 =
+      88943068655955298431534803300631895122870387312920126533061846749648880637254258192829872010273869866014127344907130553732607540259280007645495927216147843286960802658253543903207194796063542641292881808279236107060224463697724254890823930 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_106,
+    primeByIndex_at_106]
+
+theorem primePrimorialCount_cumulative_108 :
+    primePrimorialCount 108 =
+      52743239712981491969900138357274713807862139676561635034105675122541786217891775108348114102092404830546377515529928418363436271373753044533779084839175671069167755976344351534601866514065680786286678912309587011486713106972750483150258590490 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_107,
+    primeByIndex_at_107]
+
+theorem primePrimorialCount_cumulative_109 :
+    primePrimorialCount 109 =
+      31593200588075913689970182876007553570909421666260419385429299398402529944517173289900520347153350493497280131802427122599698326552878073675733671818666226970431485829830266569226518041925342790985720668473442619880541151076677539407004895703510 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_108,
+    primeByIndex_at_108]
+
+theorem primePrimorialCount_cumulative_110 :
+    primePrimorialCount 110 =
+      18987513553433624127672079908480539696116562421422512050643008938439920496654821147230212728639163646591865359213258700682418694258279722279115936763018402409229322983727990208105137343197131017382418121752539014548205231797083201183609942317809510 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_109,
+    primeByIndex_at_109]
+
+theorem primePrimorialCount_cumulative_111 :
+    primePrimorialCount 111 =
+      11525420726934209845496952504447687595542753389803464814740306425633031741469476436368739126283972333481262273042448031314228147414775791423423373615152170262402199051122890056319818367320658527551127799903791181830760575700829503118451234986910372570 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_110,
+    primeByIndex_at_110]
+
+theorem primePrimorialCount_cumulative_112 :
+    primePrimorialCount 112 =
+      7065082905610670635289631885226432496067707827949523931435807838913048457520789055494037084412075040424013773375020643195621854365257560142558528026088280370852548018338331604524048659167563677388841341341023994462256232904608485411610607046976058385410 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_111,
+    primeByIndex_at_111]
+
+theorem primePrimorialCount_cumulative_113 :
+    primePrimorialCount 113 =
+      4359156152761783781973702873184708850073775729844856265695893436609350898290326847239820881082250299941616498172387736851698684143363914607958611792096468988816022127314750599991338022706386788948915107607411804583212095702143435498963744547984228023797970 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_112,
+    primeByIndex_at_112]
+
+theorem primePrimorialCount_cumulative_114 :
+    primePrimorialCount 114 =
+      2698317658559544161041722078501334778195667176773966028465758037261188206041712318441449125389912935663860612368708009111201485484742263142326380699307714304077117696807830621394638236055253422359378451608987907037008287239626786573858557875202237146730943430 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_113,
+    primeByIndex_at_113]
+
+theorem primePrimorialCount_cumulative_115 :
+    primePrimorialCount 115 =
+      1702638442551072365617326631534342245041465988544372563961893321511809758012320472936554398121035062403896046404654753749168137340872368042807946221263167725872661266685741122100016726950864909508767802965271369340352229248204502328104750019252611639587225304330 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_114,
+    primeByIndex_at_114]
+
+theorem primePrimorialCount_cumulative_116 :
+    primePrimorialCount 116 =
+      1091391241675237386360706370813513379071579698656942813499573619089070054885897423152331369195583475000897365745383697153216776035499187915439893527829690512284375871945560059266110721975504406995120161700738947747165778948099085992315144762340924060975411420075530 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_115,
+    primeByIndex_at_115]
+
+theorem primePrimorialCount_cumulative_117 :
+    primePrimorialCount 117 =
+      701764568397177639429934196433089102743025746236414229080225837074272045291632043086949070392760174425577006174281717269518386990825977829627851538394490999398853685660995118108109194230249333697862263973575143401427595863627712293058638082185214171207189543108565790 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_116,
+    primeByIndex_at_116]
+
+theorem primePrimorialCount_cumulative_118 :
+    primePrimorialCount 118 =
+      454041675752973932711167425092208649474737657814960006214906116587054013303685931877256048544115832853348322994760271073378396383064407655769219945341235676611058334622663841415946648666971318902516884790903117780723654523767129853608938839173833568771051634391242066130 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_117,
+    primeByIndex_at_117]
+
+theorem primePrimorialCount_cumulative_119 :
+    primePrimorialCount 119 =
+      296489214266691978060392328585212248107003690553168884058333694131346270687306913515848199699307638853236454915578457010916092838141058199217300624307826896827021092508599488444613161579532271243343525768459735910812546404019935794406637061980513320407496717257481069182890 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_118,
+    primeByIndex_at_118]
+
+theorem primePrimorialCount_cumulative_120 :
+    primePrimorialCount 120 =
+      195386392201750013541798544537654871502515432074538294594441904432557192382935256006943963601843734004282823789366203170193705180334957353284201111418857925009006899963167062885000073480911766749363383481414965965225468080249137688513973823845158278148540336672680024591524510 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_119,
+    primeByIndex_at_119]
+
+theorem primePrimorialCount_cumulative_121 :
+    primePrimorialCount 121 =
+      129150405245356758951128837939389870063162700601269812726926098829920304165120204220589959940818708176830946524771060295498039124201406810520856934647865088430953560875653428566985048570882677821329196481215292503014034401044680012107736697561649621856185162540641496254997701110 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_120,
+    primeByIndex_at_120]
+
+theorem primePrimorialCount_cumulative_122 :
+    primePrimorialCount 122 =
+      86918222730125098774109707933209382552508497504654583965221264512536364703125897440457043040170990603007227011170923578870180330587546783480536717018013204514031746469314757425580937688204042173754549231857891854528445151903069648148506797458990195509212614389851726979613452847030 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_121,
+    primeByIndex_at_121]
+
+theorem primePrimorialCount_cumulative_123 :
+    primePrimorialCount 123 =
+      58843636788294691870072272270782751988048252810651153344454796074987118904016232567189418138195760638235892686562715262895112083807769172416323357421194939455999492359726090777118294814914136551631829829967792785515757367838378151796539101879736362359736939941929619165198307577439310 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_122,
+    primeByIndex_at_122]
+
+theorem primePrimorialCount_cumulative_124 :
+    primePrimorialCount 124 =
+      40190203926405274547259361960944619607836956669674737734262625719216202211443086843390372588387704515915114704922334524557361553240706344760348853118676143648447653281692920000771795358586355264764539773868002472507262282233612277677036206583859935491700329980337929889830444075391048730 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_123,
+    primeByIndex_at_123]
+
+theorem primePrimorialCount_cumulative_125 :
+    primePrimorialCount 125 =
+      27771430913146044712156219115012732149015337058745243774375474371978395728107173008782747458575903820497344261101333156469136833289328084229401057505005215261077328417649807720533310592783171487952296983742789708502518237023426083874832018749447215424764928016413509553872836856095214672430 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_124,
+    primeByIndex_at_124]
+
+theorem primePrimorialCount_cumulative_126 :
+    primePrimorialCount 126 =
+      19467773070115377343221509599623925236459751278180415885837207534756855405403128279156705968461708578168638327032034542684864920135818987044810141311008655898015207220772515212093850725541003213054560185603695585660265284153421684796257245143362498012760214539505870197264858636122745485373430 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_125,
+    primeByIndex_at_125]
+
+theorem primePrimorialCount_cumulative_127 :
+    primePrimorialCount 127 =
+      13802651106711802536344050306133362992649963656229914863058580142142610482430817949922104531639351381921564573865712490763569228376295661814770390189505137031692781919527713285374540164408571278055683171593020170233128086464775974520546386806644011091046992108509661969860784773011026549129761870 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_126,
+    primeByIndex_at_126]
+
+theorem primePrimorialCount_cumulative_128 :
+    primePrimorialCount 128 =
+      9924106145725786023631372170109887991715323868829308786539119122200536936867758105993993158248693643601604928609447280859006275202556580844819910546254193525787110200140425852184294378209762748922036200375381502397619094168173925680272852113977043974462787326018446956329904251794928088824298784530 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_127,
+    primeByIndex_at_127]
+
+theorem primePrimorialCount_cumulative_129 :
+    primePrimorialCount 129 =
+      7214825167942646439180007567669888569977040452638907487813939601839790353102860143057633026046800278898366783099068173184497562072258634274184074967126798693247229115502089594537982012958497518466320317672902352243069081460262443969558363486861310969434446386015410937251840391054912720575265216353310 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_128,
+    primeByIndex_at_128]
+
+theorem primePrimorialCount_cumulative_130 :
+    primePrimorialCount 130 =
+      5288466848101959839918945547102028321793170651784319188567617728148566328824396484861245008092304604432502852011616970944236712998965578922976926950903943442150218941663031672796340815498578681035812792854237424194169636710372371429686280435869340940595449200949296217005599006643251024181669403586976230 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_129,
+    primeByIndex_at_129]
+
+theorem primePrimorialCount_cumulative_131 :
+    primePrimorialCount 131 =
+      3908177000747348321700100759308398929805153111668611880351469501101790517001229002312460060980213102675619607636584941527790930906235562824079949016718014203749011797888980406196495862653449645285465653919281456479491361528965182486538161242107442955100036959501529904367137665909362506870253689250775433970 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_130,
+    primeByIndex_at_130]
+
+theorem primePrimorialCount_cumulative_132 :
+    primePrimorialCount 132 =
+      2903775511555279803023174864166140404845228761969778627101141839318630354131913148718157825308298335287985368473982611555148661663333023178291402119421484553385515765831512441803996425951513086447100980862026122164262081616021130587497853802885830115639327460909636718944783285770656342604598491113326147439710 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_131,
+    primeByIndex_at_131]
+
+theorem primePrimorialCount_cumulative_133 :
+    primePrimorialCount 133 =
+      2180735409178015132070404322988771444038766800239303748952957521328291395953066774687336526806532049801277011723960941277916644909163100406896842991685534899592522340139465843794801315889586327921772836627381617745360823293631869071210888205967258416845134923143137175927532247613762913296053466826107936727222210 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_132,
+    primeByIndex_at_132]
+
+theorem primePrimorialCount_cumulative_134 :
+    primePrimorialCount 134 =
+      1650816704747757454977296072502499983137346467781152937957388843645516586736471548438313750792544761699566697875038432547382900196236467008020910144705949918991539411485575643752664596128416850236782037326927884633238143233279324886906642371917214621551767136819354842177141911443618525365112474387363708102507212970 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_133,
+    primeByIndex_at_133]
+
+theorem primePrimorialCount_cumulative_135 :
+    primePrimorialCount 135 =
+      1256271512313043423237722311174402487167520661981457385785572910014238122506454848361556764353126563653370257082904247168558387049335951393103912620121227888352561492140523064895777757653725223030191130405792120205894227000525566238935954845029000327000894791119529034896804994608593697802850593008783781866007989070170 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_134,
+    primeByIndex_at_134]
+
+theorem primePrimorialCount_cumulative_136 :
+    primePrimorialCount 136 =
+      966072792968730392469808457293115512631823389063740729669105567800949116207463778390037151787554327449441727696753366072621399640939346621296908804873224246143119787456062236904853095635714696510216979282054140438332660563404160437741749275827301251463688094370917827835643040854008553610392106023754728254960143594960730 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_135,
+    primeByIndex_at_135]
+
+theorem primePrimorialCount_cumulative_137 :
+    primePrimorialCount 137 =
+      746774268964828593379161937487578291264399479746271584034218603910133666828369500695498718331779495118418455509590351974136341922446114938262510506167002342268631595703536109127451442926407460402397724985027850558831146615511416018374372190214503867381430896948719480916952070580148611940833097956362404941084190998904644290 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_136,
+    primeByIndex_at_136]
+
+theorem primePrimorialCount_cumulative_138 :
+    primePrimorialCount 138 =
+      587711349675320102989400444802724115225082390560315736634930041277275195793926797047357491327110462658195324486047607003645301092965092456412595768353430843365413065818682917883304285583082671336687009563216918389800112386407484406460630913698814543629186115898642231481641279546576957597435648091657212688633258316137955056230 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_137,
+    primeByIndex_at_137]
+
+theorem primePrimorialCount_cumulative_139 :
+    primePrimorialCount 139 =
+      468405945691230122082552154507771119834390665276571642098039242897988331047759657246743920587707038738581673615379942781905304971093178687760838827377684382162234213457490285552993515609716889055339546621883883956670689571966765071949122838217955191272461334371217858490868099798621835205156211529050798512840706877961950179815310 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_138,
+    primeByIndex_at_138]
+
+theorem primePrimorialCount_cumulative_140 :
+    primePrimorialCount 140 =
+      378940410064205168764784692996786835946022048208746458457313747504472559817637562712615831755454994339512573954842373710561391721614381558398518611348546665169247478687109641012371754128260963245769693217104062120946587863721112943206840376118325749739421219506315247519112292737085064680971375127002095996888131864271217695470585790 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_139,
+    primeByIndex_at_139]
+
+theorem primePrimorialCount_cumulative_141 :
+    primePrimorialCount 141 =
+      307320672562070391868240386020394123952223881097293377808881449226127246012104063359931439553674000409344697477377165079265288686229263443861198593803671345452259705215245918861033492598019641192319221199071394380087682757477822596940747545031962183038670609019621665738000069409775987456267785227998699853476274941923957551026645075690 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_140,
+    primeByIndex_at_140]
+
+theorem primePrimorialCount_cumulative_142 :
+    primePrimorialCount 142 =
+      252310272173459791723825356922743575764775806380877863181091669814650468975937436018503711873566354336071996628926652530076802011394225287410044045512814174616305217981716899384908497422974125418894080604437614786051987543889292352088353734471240952274748570005109387570898056985426085701595851672186932579704021727319569149392875607141490 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_141,
+    primeByIndex_at_141]
+
+theorem primePrimorialCount_cumulative_143 :
+    primePrimorialCount 143 =
+      207651353998757408588708268747417962854410488651462481398038444257457335967196509843228554871945109618587253225606635032253208055377447411538466249457046065709219194398953008193779693379107705219749828337452156968920785748620887605768715123469831303722118073114205025970849100899005668532413385926209845513096409881584005409950336624677446270 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_142,
+    primeByIndex_at_142]
+
+theorem primePrimorialCount_cumulative_144 :
+    primePrimorialCount 144 =
+      171727669756972376902861738254114655280597474114759472116177793400917216844871513640350014879098605654571658417576687171673403061797149009342311588300977096341524273767934137776255806424522072216733108035072933813297489814109474049970727407109550488178191646465447556477892206443477687876305870160975542239330730972069972474028928388608248065290 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_143,
+    primeByIndex_at_143]
+
+theorem primePrimorialCount_cumulative_145 :
+    primePrimorialCount 145 =
+      142362238228530100452472381012661049227615306041135602384311390729360372764398484807850162334772744087639904828171073665317251138229836528744776306701510012867123622953617400216516063525928797867671746561075462131223619055896753987425733020493817354699720874919856024320172639141643003249457566363448724516405175975846007180969981634156237646125410 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_144,
+    primeByIndex_at_144]
+
+theorem primePrimorialCount_cumulative_146 :
+    primePrimorialCount 146 =
+      119441917873736754279624327669622620301969241768512770400437256821933352749330328753786286198874332289529880150835530805201173704974832847616867321322566900795516719658084998781656977298254261410976595364742312728096616387897376595450190004194312760593065814057759204404624844239838479726294898178933479869263942643734800024833814591057083385099218990 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_145,
+    primeByIndex_at_145]
+
+theorem primePrimorialCount_cumulative_147 :
+    primePrimorialCount 147 =
+      101883955946297451400519551502188095117579763228541393151572980069109149895178770426979702127639805442968987768662707776836601170343532419017187825088149566378575761868346503960753401635410884983563035846125192757066413778876462235919012073577748784785885139391268601357144992136582223206529548146630258328482143075105784421183243846171692127489633798470 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_146,
+    primeByIndex_at_146]
+
+theorem primePrimorialCount_cumulative_148 :
+    primePrimorialCount 148 =
+      87314550245976915850245255637375197515765857086859973930898043919226541460168206255921604723387313264624422517743940564748967202984407283097729966100544178386439427921172953894365665201547128430913521720129290192805916608497128136182593347056130708561503564458317191363073258261050965287995822761662131387509196615365657248954039976169140153258616165288790 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_147,
+    primeByIndex_at_147]
+
+theorem primePrimorialCount_cumulative_149 :
+    primePrimorialCount 149 =
+      75003198661294170715360674592505294666042871237612717606641419726615599114284489173836658457389702094312378942742044945119362827363605856180950040880367449233951468584287567395260106408128983322154715157591060275620282366699033068980847685121216278654331561869694467380879928846242779182388411752267770861870399892599099576851520339529291391649151285983070610 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_148,
+    primeByIndex_at_148]
+
+theorem primePrimorialCount_cumulative_150 :
+    primePrimorialCount 150 =
+      64727760444696869327356262173332069296794997878059775294531545224069262035627514157021036248727312907391583027586384787638010120014791853884159885279757108688900117388240170662109471830215312607019519181001085017860303682461265538530471552259609648478688137893546325349699378594307518434401199342207086253794155107313022934822862053013778470993217559803389936430 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_149,
+    primeByIndex_at_149]
+
+theorem primePrimorialCount_cumulative_151 :
+    primePrimorialCount 151 =
+      56766245909999154400091441926012224773289213139058422933304165161508742805245329915707448790133853419782418315193259458758534875252972455856408219390346984320165402949486629670670006795098829156356118321737951560663486329518529877291223551331677661715809496932640127331686355027207693666969851823115614644577474029113521113839650020493083719061051799947572974249110 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_150,
+    primeByIndex_at_150]
+
+theorem primePrimorialCount_cumulative_152 :
+    primePrimorialCount 152 =
+      50011062646709255026480560336816770025267796775510470604240969507289202411421135655738262384107924862828310535685261583166269225097868733609495641282895693186065719998497720739860275986482068486749740241451135324944531456305824821893567948723208019971628166797655952179215678778969978120600439456164856501872754619649012101292731668054406756492786635753811790313465910 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_151,
+    primeByIndex_at_151]
+
+theorem primePrimorialCount_cumulative_153 :
+    primePrimorialCount 153 =
+      44159768317044272188382334777409207932311464552775745543544776074936365729284862784016885685167297653877398203010085977935815725761418091777184651252796897083296030758673487413296623696063666473800020633201352491926021275918043317732020498722592681634947671282330205774247444361830490680490188039793568291153642329150077685441482062892041165983130599370615810846790398530 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_152,
+    primeByIndex_at_152]
+
+theorem primePrimorialCount_cumulative_154 :
+    primePrimorialCount 154 =
+      39169714497218269431095130947561967435960269058312086297124216378468556401875673289422977602743393018989252206069946262429068548750377847406362785661230847712883579282943383335594105218408472162260618301649599660338380871739304422828302182366939708610198584427426892521757483148943645233594796791296895074253280745956118906986594589785240514227036841641736224221103083496110 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_153,
+    primeByIndex_at_153]
+
+theorem primePrimorialCount_cumulative_155 :
+    primePrimorialCount 155 =
+      35526931048976970374003283769438704464415964035889062271491664255270980656501235673506640685688257468223251750905441260023165173716592707597571046594736378875585406409629648685383853433096484251170380799596186891926911450667549111505270079406814315709450116075676191517234037216091886226870480689706283832347725636582199848636841292935213146403922415369054755368540496730971770 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_154,
+    primeByIndex_at_154]
+
+theorem primePrimorialCount_cumulative_156 :
+    primePrimorialCount 156 =
+      32365034185618020010716991513958659767082943236694935729328906136551863378072625698564549664662002553551382345074856987881103473255815956621387223447804841155658305239172609952384690477550897152816216908432126258545416331558137240581301042339607841611309055744941010472200207903859708352679007908322424571268778054926384062108162417863979176373973320401208882140740392521915282470 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_155,
+    primeByIndex_at_155]
+
+theorem primePrimorialCount_cumulative_157 :
+    primePrimorialCount 157 =
+      29743466416582960389848915201328008325949224834522645935253264739491162444448743016980821141824380346713720375123793571862734091922094864135054858348532649022049982514799628546241530548869274483438103338849124031603237608701928124094215657910099606440793022229600788623951991063647071976112008267748308180996007032477346953077401262016996863087681481448710962687340420727640144589930 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_156,
+    primeByIndex_at_156]
+
+theorem primePrimorialCount_cumulative_158 :
+    primePrimorialCount 158 =
+      27631680301005570202169642222033719734806829871271538073850282942987289910892882262775182840754849342097046228490004228260479971395626128781465963405786830941484433756248854919458381879899555995113998001790836225359407738484091227283526346198482534383496717651299132631651399698128129865808055680738178300145290533171455319408905772413790085808456096265852484336539250855977694324044970 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_157,
+    primeByIndex_at_157]
+
+theorem primePrimorialCount_cumulative_159 :
+    primePrimorialCount 159 =
+      25890884442042219279432954762045595391513999589381431175197715117579090646506630680220346321787293833544932316095133961880069733197701682668233607711222260592170914429605177059532503821465883967421816127678013543161765050959593479964664186387978134717336424439267287275857361517146057684262148172851673067236137229581653634286144708751721310402523362201103777823337278052051099581630136890 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_158,
+    primeByIndex_at_158]
+
+theorem primePrimorialCount_cumulative_160 :
+    primePrimorialCount 160 =
+      24363322259961728341946410431084905263414673613607926735861049925641924298362739470087345888801843497365781309445521058129145618939037283390807824856260147217232830478258471613020086095999396813343928976145010744115220912952977464646748999391087424769013575397350517326581777187634440280890681430653424356269205133036336069863262170935369753088774483831238654931760378646980084706313958813490 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_159,
+    primeByIndex_at_159]
+
+theorem primePrimorialCount_cumulative_161 :
+    primePrimorialCount 161 =
+      23072066180183756739823250678237405284453695912086706618860414279582902310549514278172716556695345792005394900044908442048300901135268307371095010138878359414719490462910772617530021532911428782236700740409325174677114204566469659020471302423359791256255855901290939908272942996689814946003475314828792865386937260985410258160509275875795156175069436188183006220377078578690140216879318996375030 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_160,
+    primeByIndex_at_160]
+
+theorem primePrimorialCount_cumulative_162 :
+    primePrimorialCount 162 =
+      21987679069715120173051557896360247236084372204218631407773974808442505901953687107098598878530664539781141339742797745272030758781910696924653544662351076522227674411153966304506110520864591629471575805610086891467289836951845585046509151209461881067211830673930265732584114675845393643541311975031839600713751209719095976026965339909632783834841172687338404928019355885491703626685991003545403590 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_161,
+    primeByIndex_at_161]
+
+theorem primePrimorialCount_cumulative_163 :
+    primePrimorialCount 163 =
+      21262085660414521207340856485780359077293587921479416571317433639763903207189215432564345115539152609968363675531285419678053743742107643926139977688493490996994161155585885416457408873676060105699013804024954024048869272332434680739974349219549638991993840261690566963408838891542495653304448679855788893890197419798365808818075483692614901968291413988656237565394717141270477407005353300428405271530 := by
+  rw [primePrimorialCount_succ,
+    primePrimorialCount_cumulative_162,
+    primeByIndex_at_162]
+
+end PseudoPrime.NumberTheory
