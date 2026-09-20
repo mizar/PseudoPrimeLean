@@ -12,7 +12,7 @@
 
 ### 基本定義
 
-以下を通じて、$\log$ は自然対数を表し、$\mathbb P_{\mathrm{odd}}$ は奇素数の
+以下を通じて、 $\log$ は自然対数を表し、 $\mathbb P_{\mathrm{odd}}$ は奇素数の
 集合を表す。整数 $a$ と奇素数 $p$ に対して、Legendre 記号は次で定義される。
 
 $$
@@ -212,12 +212,12 @@ $$
 Jacobi 記号を用い、次のように表される。
 
 $$
-g_{-1}(n)=D\!\left(\min\left\lbrace k\in\mathbb N\mathrel{}\middle\vert\mathrel{}
+g_{-1}(n)=D\left(\min\left\lbrace k\in\mathbb N\mathrel{}\middle\vert\mathrel{}
 \left(\frac{D(k)}{n}\right)=-1\right\rbrace\right),
 $$
 
 $$
-g_{\ne1}(n)=D\!\left(\min\left\lbrace k\in\mathbb N\mathrel{}\middle\vert\mathrel{}
+g_{\ne1}(n)=D\left(\min\left\lbrace k\in\mathbb N\mathrel{}\middle\vert\mathrel{}
 n\nmid\left\lvert D(k)\right\rvert\ \text{かつ}\ \left(\frac{D(k)}{n}\right)\ne1\right\rbrace\right).
 $$
 
@@ -225,7 +225,7 @@ $$
 除外するものであり、
 [`PrimeTest/Selfridge/FirstStop.lean`](PseudoPrime/PrimeTest/Selfridge/FirstStop.lean)
 の `FirstStopNeOneSet` に対応する。
-Lean では `selfridgeD` は候補絶対値を引数に取るため、$D(k)$ は
+Lean では `selfridgeD` は候補絶対値を引数に取るため、 $D(k)$ は
 `selfridgeD (2 * k + 5)` に対応する。式
 `firstStopNegOne isClassicalCandidate n ...` と
 `firstStopNeOne isClassicalCandidate n ...` は、数列の添字 $k$ ではなく、
@@ -253,7 +253,7 @@ Method A と Method A* の Strong Lucas 判定結果も、例外的な $D=5$ の
 [`PrimeTest/Selfridge/MethodAStarEquivalence.lean`](PseudoPrime/PrimeTest/Selfridge/MethodAStarEquivalence.lean)
 の `strongLucasMethodAStar_eq_methodA` とその逆向きの定理で与えられる。
 
-Method A と A* が用いる共通の古典的 D 選択走査については、$B\ge751$ に対する
+Method A と A* が用いる共通の古典的 D 選択走査については、 $B\ge751$ に対する
 対応する集約境界が、
 [`SelfridgeBoundGrh/LogSqMaximum.lean`](PseudoPrime/SelfridgeBoundGrh/LogSqMaximum.lean)
 の `classicalNeOneMaximum_cast_le_log_sq_of_751_le` として証明されている。
@@ -318,7 +318,7 @@ $$
 R(n)=\left(\log(4n)+\frac{24}{5}\log(\log(4n))+3\right)^2.
 $$
 
-Lean では、$g_{-1}(n)$ の絶対値を、符号付き `selfridgeD` に
+Lean では、 $g_{-1}(n)$ の絶対値を、符号付き `selfridgeD` に
 `firstStopNegOne` を適用した値の `natAbs` で表す。
 
 ### Selfridge 停止に対する対数境界
@@ -406,4 +406,4 @@ Pseudosquares](https://oeis.org/A002189) を参照。OEIS A002189 は古典的�
 非零平方剰余となる最小の正の非平方整数を用いている。
 
 本プロジェクトは、Selfridge/LLS 目撃者定理において、より広い
-$1\pmod 2$（奇数）非平方数の定義域を用いる。OEIS のエントリは参考情報としてのみ扱う。
+$1\pmod 2$ （奇数）非平方数の定義域を用いる。OEIS のエントリは参考情報としてのみ扱う。

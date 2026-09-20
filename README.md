@@ -178,8 +178,8 @@ Here `jacobiSym n p` is the Lean representation of the Jacobi symbol.
 
 The two witness theorems above are separate from the LLS Theorem 1.1 interfaces:
 the `ne_one` theorem is the factor-detecting route, while the `neg_one` theorem is
-the pure Jacobi-$-1$ route used by the classical Selfridge search. The generic LLS
-assembly is exposed by `LLS/Theorem11S1GRH.lean`. The Jacobi-$-1$ bound applies this
+the pure Jacobi $-1$ route used by the classical Selfridge search. The generic LLS
+assembly is exposed by `LLS/Theorem11S1GRH.lean`. The Jacobi $-1$ bound applies this
 general S1 theorem at modulus $4n$; the project's additional $Q\ne1$ route uses
 intermediate weighted estimates with quadratic refinements.
 
@@ -210,12 +210,12 @@ For a positive odd nonsquare $n$, the pure $-1$ and factor-detecting stops use t
 Jacobi symbol and are
 
 $$
-g_{-1}(n)=D\!\left(\min\left\lbrace k\in\mathbb N\mathrel{}\middle\vert\mathrel{}
+g_{-1}(n)=D\left(\min\left\lbrace k\in\mathbb N\mathrel{}\middle\vert\mathrel{}
 \left(\frac{D(k)}{n}\right)=-1\right\rbrace\right),
 $$
 
 $$
-g_{\ne1}(n)=D\!\left(\min\left\lbrace k\in\mathbb N\mathrel{}\middle\vert\mathrel{}
+g_{\ne1}(n)=D\left(\min\left\lbrace k\in\mathbb N\mathrel{}\middle\vert\mathrel{}
 n\nmid\left\lvert D(k)\right\rvert\ \text{and}\ \left(\frac{D(k)}{n}\right)\ne1\right\rbrace\right).
 $$
 
@@ -379,10 +379,10 @@ Baillie–PSW test, see Robert Baillie, Andrew Fiori, and Samuel S. Wagstaff, Jr
 arXiv:2006.14425v2.
 
 The executable `bailliePSW` and `strengthenedBPSW` interfaces in this project are an
-ascending, pure-Jacobi-$-1$ Selfridge variant. They perform the common precheck first,
+ascending, pure Jacobi $-1$ Selfridge variant. They perform the common precheck first,
 then search for a Selfridge discriminant, and only after a successful search evaluate
 the base-2 Miller–Rabin and Lucas tests. The search itself does not perform the
-factor-detecting Jacobi-$0$ early stop described in the historical algorithm.
+factor-detecting Jacobi $0$ early stop described in the historical algorithm.
 
 ### Pseudosquare reference
 
