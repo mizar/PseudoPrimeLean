@@ -23,8 +23,7 @@ theorem continuous_dirichletLogContourKernel_leftVertical_line {N : ℕ} [NeZero
     (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) :
     Continuous
       (fun t : ℝ =>
-        dirichletLogContourKernel x χ
-          (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
+        dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
   have hg : Continuous (fun t : ℝ => ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) := by
     fun_prop
   have hOn :
@@ -45,12 +44,8 @@ theorem continuous_dirichletLogContourKernel_leftVertical_line {N : ℕ} [NeZero
       intro h
       rw [h, Complex.zero_re] at hsre_neg
       linarith
-    have hL :=
-      dirichletLFunction_ne_zero_leftVertical
-        hprimitive hne hinv A hA t
-    have hcont :=
-      (differentiableAt_dirichletLogContourKernel
-          hx hne hs0 hL).continuousAt
+    have hL := dirichletLFunction_ne_zero_leftVertical hprimitive hne hinv A hA t
+    have hcont := (differentiableAt_dirichletLogContourKernel hx hne hs0 hL).continuousAt
     exact hcont.continuousWithinAt
   exact hOn.comp_continuous hg (fun t => Set.mem_range_self t)
 
@@ -67,22 +62,18 @@ theorem integrable_dirichletLogContourKernel_leftVertical {N : ℕ} [NeZero N]
     (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) :
     MeasureTheory.Integrable
       (fun t : ℝ =>
-        dirichletLogContourKernel x χ
-          (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
+        dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
   obtain ⟨D, hDnn, hD⟩ :=
-    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general
-      hprimitive hne hinv
+    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general hprimitive hne hinv
   apply
     MeasureTheory.Integrable.mono'
       (General.integrable_logQuadraticEnvelope.const_mul
         (D * x ^ (-(A : ℝ) - 1 / 2) * (((A : ℝ) + 5) ^ 2 + 1)))
   · exact
-      (continuous_dirichletLogContourKernel_leftVertical_line
-          hprimitive hne hinv hx hA).aestronglyMeasurable
+      (continuous_dirichletLogContourKernel_leftVertical_line hprimitive hne hinv hx
+          hA).aestronglyMeasurable
   · filter_upwards with t
-    exact
-      norm_dirichletLogContourKernel_leftVertical_envelope_le
-        hx hA hDnn (fun t => hD A hA t) t
+    exact norm_dirichletLogContourKernel_leftVertical_envelope_le hx hA hDnn (fun t => hD A hA t) t
 
 /--
 For any character, `x > 0`, `A ≥ 2`, and a nonnegative coefficient `D` in the stated
@@ -97,22 +88,17 @@ theorem norm_integral_dirichletLogContourKernel_leftVertical_of_bound {N : ℕ} 
         ‖logDeriv (DirichletCharacter.LFunction χ)
               (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
           D * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2))) :
-    ‖∫ t : ℝ,
-          dirichletLogContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-      D * x ^ (-(A : ℝ) - 1 / 2) * (((A : ℝ) + 5) ^ 2 + 1) *
-        General.logQuadraticEnvelopeMass := by
+    ‖∫ t : ℝ, dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+      D * x ^ (-(A : ℝ) - 1 / 2) * (((A : ℝ) + 5) ^ 2 + 1) * General.logQuadraticEnvelopeMass := by
   have hg :
     MeasureTheory.Integrable
       (fun t : ℝ =>
-        D * x ^ (-(A : ℝ) - 1 / 2) * (((A : ℝ) + 5) ^ 2 + 1) *
-          General.logQuadraticEnvelope t) :=
+        D * x ^ (-(A : ℝ) - 1 / 2) * (((A : ℝ) + 5) ^ 2 + 1) * General.logQuadraticEnvelope t) :=
     General.integrable_logQuadraticEnvelope.const_mul _
   have hbound :=
     MeasureTheory.norm_integral_le_of_norm_le hg
       (Filter.Eventually.of_forall fun t =>
-        norm_dirichletLogContourKernel_leftVertical_envelope_le
-          hx hA hDnn hLbound t)
+        norm_dirichletLogContourKernel_leftVertical_envelope_le hx hA hDnn hLbound t)
   rwa [MeasureTheory.integral_const_mul] at hbound
 
 /--
@@ -127,14 +113,11 @@ theorem tendsto_dirichletLogContourKernel_leftVertical_integral_atTop {N : ℕ} 
     (hx : 1 < x) :
     Filter.Tendsto
       (fun A : ℕ =>
-        ∫ t : ℝ,
-          dirichletLogContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
+        ∫ t : ℝ, dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
   have hxpos : (0 : ℝ) < x := by linarith
   obtain ⟨D, hDnn, hD⟩ :=
-    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general
-      hprimitive hne hinv
+    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general hprimitive hne hinv
   have hMassnn : (0 : ℝ) ≤ General.logQuadraticEnvelopeMass :=
     General.logQuadraticEnvelopeMass_nonneg
   set r : ℝ := x⁻¹ with hr_def
@@ -152,10 +135,7 @@ theorem tendsto_dirichletLogContourKernel_leftVertical_integral_atTop {N : ℕ} 
     intro A
     have hAnn : (0 : ℝ) ≤ (A : ℝ) := Nat.cast_nonneg A
     nlinarith [sq_nonneg (A : ℝ)]
-  set K : ℝ :=
-    D * x ^ (-(1 : ℝ) / 2) * General.logQuadraticEnvelopeMass *
-      26 with
-    hK_def
+  set K : ℝ := D * x ^ (-(1 : ℝ) / 2) * General.logQuadraticEnvelopeMass * 26 with hK_def
   have hKnn : (0 : ℝ) ≤ K := by
     rw [hK_def]
     positivity
@@ -163,21 +143,18 @@ theorem tendsto_dirichletLogContourKernel_leftVertical_integral_atTop {N : ℕ} 
     ∀ A : ℕ,
       2 ≤ A →
         ‖∫ t : ℝ,
-              dirichletLogContourKernel x χ
-                (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+              dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
           K * (((A : ℝ) + 1) ^ 2 * r ^ A) := by
     intro A hA
     have hI :=
-      norm_integral_dirichletLogContourKernel_leftVertical_of_bound
-        hxpos hA hDnn (fun t => hD A hA t)
+      norm_integral_dirichletLogContourKernel_leftVertical_of_bound hxpos hA hDnn
+        (fun t => hD A hA t)
     have hxApow_nn : (0 : ℝ) ≤ x ^ (-(1 : ℝ) / 2) := (Real.rpow_pos_of_pos hxpos _).le
     have hrApow_nn : (0 : ℝ) ≤ r ^ A := by positivity
     calc
       ‖∫ t : ℝ,
-              dirichletLogContourKernel x χ
-                (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-          D * x ^ (-(A : ℝ) - 1 / 2) * (((A : ℝ) + 5) ^ 2 + 1) *
-            General.logQuadraticEnvelopeMass :=
+              dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+          D * x ^ (-(A : ℝ) - 1 / 2) * (((A : ℝ) + 5) ^ 2 + 1) * General.logQuadraticEnvelopeMass :=
         hI
       _ =
           D * (x ^ (-(1 : ℝ) / 2) * r ^ A) * (((A : ℝ) + 5) ^ 2 + 1) *
@@ -212,43 +189,33 @@ theorem tendsto_intervalIntegral_dirichletLogContourKernel_leftVertical {N : ℕ
     Filter.Tendsto
       (fun T : ℝ =>
         ∫ t in (-T)..T,
-          dirichletLogContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
+          dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop
       (nhds
         (∫ t : ℝ,
-          dirichletLogContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℝ) + (t : ℂ) * Complex.I))) :=
+          dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℝ) + (t : ℂ) * Complex.I))) :=
   MeasureTheory.intervalIntegral_tendsto_integral
-    (integrable_dirichletLogContourKernel_leftVertical
-      hprimitive hne hinv hx hA)
+    (integrable_dirichletLogContourKernel_leftVertical hprimitive hne hinv hx hA)
     Analysis.tendsto_neg_atTop_atBot' Filter.tendsto_id
 
 /--
 The preceding fixed-`A` convergence specialized to the generic GRH height sequence.
 -/
 theorem tendsto_primitiveHorizontalHeightSeq_log_leftVertical_intervalIntegral {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {A : ℕ}
     (hA : 2 ≤ A) :
     Filter.Tendsto
       (fun k : ℕ =>
         ∫ t in
-          (-(primitiveHorizontalHeightSeq_of_grh
-              hN2 hGRH hprimitive hne hinv
-              k))..(primitiveHorizontalHeightSeq_of_grh
-            hN2 hGRH hprimitive hne hinv k),
-          dirichletLogContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
+          (-(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv
+              k))..(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k),
+          dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop
       (nhds
         (∫ t : ℝ,
-          dirichletLogContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
-  (tendsto_intervalIntegral_dirichletLogContourKernel_leftVertical
-        hprimitive hne hinv hx hA).comp
-    (tendsto_primitiveHorizontalHeightSeq_atTop_of_grh
-      hN2 hGRH hprimitive hne hinv)
+          dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
+  (tendsto_intervalIntegral_dirichletLogContourKernel_leftVertical hprimitive hne hinv hx hA).comp
+    (tendsto_primitiveHorizontalHeightSeq_atTop_of_grh hN2 hGRH hprimitive hne hinv)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

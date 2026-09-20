@@ -44,8 +44,7 @@ theorem count_eq_of_all_not_prime_of_lt {a b : ℕ} (hab : a ≤ b)
 theorem count_prime_step {a b k : ℕ} (hc : Nat.count Nat.Prime a = k) (hp : Nat.Prime a)
     (hab : a + 1 ≤ b) (hgap : ∀ m ∈ Finset.Ico (a + 1) b, ¬Nat.Prime m) :
     Nat.count Nat.Prime b = k + 1 := by
-  rw [count_eq_of_all_not_prime_of_lt hab hgap, Nat.count_succ,
-    ite_eq_left hp, hc]
+  rw [count_eq_of_all_not_prime_of_lt hab hgap, Nat.count_succ, ite_eq_left hp, hc]
 
 theorem count_prime_at_0 : Nat.count Nat.Prime 2 = 0 := by decide
 
@@ -1223,787 +1222,630 @@ theorem count_prime_at_162 : Nat.count Nat.Prime 967 = 162 := by
 
 theorem primeByIndex_at_6 : primeByIndex 6 = 17 := by
   have hp : Nat.Prime 17 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_6]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_6]
 
 theorem primeByIndex_at_7 : primeByIndex 7 = 19 := by
   have hp : Nat.Prime 19 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_7]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_7]
 
 theorem primeByIndex_at_8 : primeByIndex 8 = 23 := by
   have hp : Nat.Prime 23 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_8]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_8]
 
 theorem primeByIndex_at_9 : primeByIndex 9 = 29 := by
   have hp : Nat.Prime 29 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_9]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_9]
 
 theorem primeByIndex_at_10 : primeByIndex 10 = 31 := by
   have hp : Nat.Prime 31 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_10]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_10]
 
 theorem primeByIndex_at_11 : primeByIndex 11 = 37 := by
   have hp : Nat.Prime 37 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_11]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_11]
 
 theorem primeByIndex_at_12 : primeByIndex 12 = 41 := by
   have hp : Nat.Prime 41 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_12]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_12]
 
 theorem primeByIndex_at_13 : primeByIndex 13 = 43 := by
   have hp : Nat.Prime 43 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_13]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_13]
 
 theorem primeByIndex_at_14 : primeByIndex 14 = 47 := by
   have hp : Nat.Prime 47 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_14]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_14]
 
 theorem primeByIndex_at_15 : primeByIndex 15 = 53 := by
   have hp : Nat.Prime 53 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_15]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_15]
 
 theorem primeByIndex_at_16 : primeByIndex 16 = 59 := by
   have hp : Nat.Prime 59 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_16]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_16]
 
 theorem primeByIndex_at_17 : primeByIndex 17 = 61 := by
   have hp : Nat.Prime 61 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_17]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_17]
 
 theorem primeByIndex_at_18 : primeByIndex 18 = 67 := by
   have hp : Nat.Prime 67 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_18]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_18]
 
 theorem primeByIndex_at_19 : primeByIndex 19 = 71 := by
   have hp : Nat.Prime 71 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_19]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_19]
 
 theorem primeByIndex_at_20 : primeByIndex 20 = 73 := by
   have hp : Nat.Prime 73 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_20]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_20]
 
 theorem primeByIndex_at_21 : primeByIndex 21 = 79 := by
   have hp : Nat.Prime 79 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_21]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_21]
 
 theorem primeByIndex_at_22 : primeByIndex 22 = 83 := by
   have hp : Nat.Prime 83 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_22]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_22]
 
 theorem primeByIndex_at_23 : primeByIndex 23 = 89 := by
   have hp : Nat.Prime 89 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_23]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_23]
 
 theorem primeByIndex_at_24 : primeByIndex 24 = 97 := by
   have hp : Nat.Prime 97 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_24]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_24]
 
 theorem primeByIndex_at_25 : primeByIndex 25 = 101 := by
   have hp : Nat.Prime 101 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_25]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_25]
 
 theorem primeByIndex_at_26 : primeByIndex 26 = 103 := by
   have hp : Nat.Prime 103 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_26]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_26]
 
 theorem primeByIndex_at_27 : primeByIndex 27 = 107 := by
   have hp : Nat.Prime 107 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_27]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_27]
 
 theorem primeByIndex_at_28 : primeByIndex 28 = 109 := by
   have hp : Nat.Prime 109 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_28]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_28]
 
 theorem primeByIndex_at_29 : primeByIndex 29 = 113 := by
   have hp : Nat.Prime 113 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_29]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_29]
 
 theorem primeByIndex_at_30 : primeByIndex 30 = 127 := by
   have hp : Nat.Prime 127 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_30]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_30]
 
 theorem primeByIndex_at_31 : primeByIndex 31 = 131 := by
   have hp : Nat.Prime 131 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_31]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_31]
 
 theorem primeByIndex_at_32 : primeByIndex 32 = 137 := by
   have hp : Nat.Prime 137 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_32]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_32]
 
 theorem primeByIndex_at_33 : primeByIndex 33 = 139 := by
   have hp : Nat.Prime 139 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_33]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_33]
 
 theorem primeByIndex_at_34 : primeByIndex 34 = 149 := by
   have hp : Nat.Prime 149 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_34]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_34]
 
 theorem primeByIndex_at_35 : primeByIndex 35 = 151 := by
   have hp : Nat.Prime 151 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_35]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_35]
 
 theorem primeByIndex_at_36 : primeByIndex 36 = 157 := by
   have hp : Nat.Prime 157 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_36]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_36]
 
 theorem primeByIndex_at_37 : primeByIndex 37 = 163 := by
   have hp : Nat.Prime 163 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_37]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_37]
 
 theorem primeByIndex_at_38 : primeByIndex 38 = 167 := by
   have hp : Nat.Prime 167 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_38]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_38]
 
 theorem primeByIndex_at_39 : primeByIndex 39 = 173 := by
   have hp : Nat.Prime 173 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_39]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_39]
 
 theorem primeByIndex_at_40 : primeByIndex 40 = 179 := by
   have hp : Nat.Prime 179 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_40]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_40]
 
 theorem primeByIndex_at_41 : primeByIndex 41 = 181 := by
   have hp : Nat.Prime 181 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_41]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_41]
 
 theorem primeByIndex_at_42 : primeByIndex 42 = 191 := by
   have hp : Nat.Prime 191 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_42]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_42]
 
 theorem primeByIndex_at_43 : primeByIndex 43 = 193 := by
   have hp : Nat.Prime 193 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_43]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_43]
 
 theorem primeByIndex_at_44 : primeByIndex 44 = 197 := by
   have hp : Nat.Prime 197 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_44]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_44]
 
 theorem primeByIndex_at_45 : primeByIndex 45 = 199 := by
   have hp : Nat.Prime 199 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_45]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_45]
 
 theorem primeByIndex_at_46 : primeByIndex 46 = 211 := by
   have hp : Nat.Prime 211 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_46]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_46]
 
 theorem primeByIndex_at_47 : primeByIndex 47 = 223 := by
   have hp : Nat.Prime 223 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_47]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_47]
 
 theorem primeByIndex_at_48 : primeByIndex 48 = 227 := by
   have hp : Nat.Prime 227 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_48]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_48]
 
 theorem primeByIndex_at_49 : primeByIndex 49 = 229 := by
   have hp : Nat.Prime 229 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_49]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_49]
 
 theorem primeByIndex_at_50 : primeByIndex 50 = 233 := by
   have hp : Nat.Prime 233 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_50]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_50]
 
 theorem primeByIndex_at_51 : primeByIndex 51 = 239 := by
   have hp : Nat.Prime 239 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_51]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_51]
 
 theorem primeByIndex_at_52 : primeByIndex 52 = 241 := by
   have hp : Nat.Prime 241 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_52]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_52]
 
 theorem primeByIndex_at_53 : primeByIndex 53 = 251 := by
   have hp : Nat.Prime 251 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_53]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_53]
 
 theorem primeByIndex_at_54 : primeByIndex 54 = 257 := by
   have hp : Nat.Prime 257 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_54]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_54]
 
 theorem primeByIndex_at_55 : primeByIndex 55 = 263 := by
   have hp : Nat.Prime 263 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_55]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_55]
 
 theorem primeByIndex_at_56 : primeByIndex 56 = 269 := by
   have hp : Nat.Prime 269 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_56]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_56]
 
 theorem primeByIndex_at_57 : primeByIndex 57 = 271 := by
   have hp : Nat.Prime 271 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_57]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_57]
 
 theorem primeByIndex_at_58 : primeByIndex 58 = 277 := by
   have hp : Nat.Prime 277 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_58]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_58]
 
 theorem primeByIndex_at_59 : primeByIndex 59 = 281 := by
   have hp : Nat.Prime 281 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_59]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_59]
 
 theorem primeByIndex_at_60 : primeByIndex 60 = 283 := by
   have hp : Nat.Prime 283 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_60]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_60]
 
 theorem primeByIndex_at_61 : primeByIndex 61 = 293 := by
   have hp : Nat.Prime 293 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_61]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_61]
 
 theorem primeByIndex_at_62 : primeByIndex 62 = 307 := by
   have hp : Nat.Prime 307 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_62]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_62]
 
 theorem primeByIndex_at_63 : primeByIndex 63 = 311 := by
   have hp : Nat.Prime 311 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_63]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_63]
 
 theorem primeByIndex_at_64 : primeByIndex 64 = 313 := by
   have hp : Nat.Prime 313 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_64]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_64]
 
 theorem primeByIndex_at_65 : primeByIndex 65 = 317 := by
   have hp : Nat.Prime 317 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_65]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_65]
 
 theorem primeByIndex_at_66 : primeByIndex 66 = 331 := by
   have hp : Nat.Prime 331 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_66]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_66]
 
 theorem primeByIndex_at_67 : primeByIndex 67 = 337 := by
   have hp : Nat.Prime 337 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_67]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_67]
 
 theorem primeByIndex_at_68 : primeByIndex 68 = 347 := by
   have hp : Nat.Prime 347 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_68]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_68]
 
 theorem primeByIndex_at_69 : primeByIndex 69 = 349 := by
   have hp : Nat.Prime 349 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_69]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_69]
 
 theorem primeByIndex_at_70 : primeByIndex 70 = 353 := by
   have hp : Nat.Prime 353 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_70]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_70]
 
 theorem primeByIndex_at_71 : primeByIndex 71 = 359 := by
   have hp : Nat.Prime 359 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_71]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_71]
 
 theorem primeByIndex_at_72 : primeByIndex 72 = 367 := by
   have hp : Nat.Prime 367 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_72]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_72]
 
 theorem primeByIndex_at_73 : primeByIndex 73 = 373 := by
   have hp : Nat.Prime 373 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_73]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_73]
 
 theorem primeByIndex_at_74 : primeByIndex 74 = 379 := by
   have hp : Nat.Prime 379 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_74]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_74]
 
 theorem primeByIndex_at_75 : primeByIndex 75 = 383 := by
   have hp : Nat.Prime 383 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_75]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_75]
 
 theorem primeByIndex_at_76 : primeByIndex 76 = 389 := by
   have hp : Nat.Prime 389 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_76]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_76]
 
 theorem primeByIndex_at_77 : primeByIndex 77 = 397 := by
   have hp : Nat.Prime 397 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_77]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_77]
 
 theorem primeByIndex_at_78 : primeByIndex 78 = 401 := by
   have hp : Nat.Prime 401 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_78]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_78]
 
 theorem primeByIndex_at_79 : primeByIndex 79 = 409 := by
   have hp : Nat.Prime 409 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_79]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_79]
 
 theorem primeByIndex_at_80 : primeByIndex 80 = 419 := by
   have hp : Nat.Prime 419 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_80]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_80]
 
 theorem primeByIndex_at_81 : primeByIndex 81 = 421 := by
   have hp : Nat.Prime 421 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_81]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_81]
 
 theorem primeByIndex_at_82 : primeByIndex 82 = 431 := by
   have hp : Nat.Prime 431 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_82]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_82]
 
 theorem primeByIndex_at_83 : primeByIndex 83 = 433 := by
   have hp : Nat.Prime 433 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_83]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_83]
 
 theorem primeByIndex_at_84 : primeByIndex 84 = 439 := by
   have hp : Nat.Prime 439 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_84]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_84]
 
 theorem primeByIndex_at_85 : primeByIndex 85 = 443 := by
   have hp : Nat.Prime 443 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_85]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_85]
 
 theorem primeByIndex_at_86 : primeByIndex 86 = 449 := by
   have hp : Nat.Prime 449 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_86]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_86]
 
 theorem primeByIndex_at_87 : primeByIndex 87 = 457 := by
   have hp : Nat.Prime 457 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_87]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_87]
 
 theorem primeByIndex_at_88 : primeByIndex 88 = 461 := by
   have hp : Nat.Prime 461 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_88]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_88]
 
 theorem primeByIndex_at_89 : primeByIndex 89 = 463 := by
   have hp : Nat.Prime 463 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_89]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_89]
 
 theorem primeByIndex_at_90 : primeByIndex 90 = 467 := by
   have hp : Nat.Prime 467 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_90]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_90]
 
 theorem primeByIndex_at_91 : primeByIndex 91 = 479 := by
   have hp : Nat.Prime 479 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_91]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_91]
 
 theorem primeByIndex_at_92 : primeByIndex 92 = 487 := by
   have hp : Nat.Prime 487 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_92]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_92]
 
 theorem primeByIndex_at_93 : primeByIndex 93 = 491 := by
   have hp : Nat.Prime 491 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_93]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_93]
 
 theorem primeByIndex_at_94 : primeByIndex 94 = 499 := by
   have hp : Nat.Prime 499 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_94]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_94]
 
 theorem primeByIndex_at_95 : primeByIndex 95 = 503 := by
   have hp : Nat.Prime 503 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_95]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_95]
 
 theorem primeByIndex_at_96 : primeByIndex 96 = 509 := by
   have hp : Nat.Prime 509 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_96]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_96]
 
 theorem primeByIndex_at_97 : primeByIndex 97 = 521 := by
   have hp : Nat.Prime 521 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_97]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_97]
 
 theorem primeByIndex_at_98 : primeByIndex 98 = 523 := by
   have hp : Nat.Prime 523 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_98]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_98]
 
 theorem primeByIndex_at_99 : primeByIndex 99 = 541 := by
   have hp : Nat.Prime 541 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_99]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_99]
 
 theorem primeByIndex_at_100 : primeByIndex 100 = 547 := by
   have hp : Nat.Prime 547 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_100]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_100]
 
 theorem primeByIndex_at_101 : primeByIndex 101 = 557 := by
   have hp : Nat.Prime 557 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_101]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_101]
 
 theorem primeByIndex_at_102 : primeByIndex 102 = 563 := by
   have hp : Nat.Prime 563 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_102]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_102]
 
 theorem primeByIndex_at_103 : primeByIndex 103 = 569 := by
   have hp : Nat.Prime 569 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_103]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_103]
 
 theorem primeByIndex_at_104 : primeByIndex 104 = 571 := by
   have hp : Nat.Prime 571 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_104]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_104]
 
 theorem primeByIndex_at_105 : primeByIndex 105 = 577 := by
   have hp : Nat.Prime 577 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_105]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_105]
 
 theorem primeByIndex_at_106 : primeByIndex 106 = 587 := by
   have hp : Nat.Prime 587 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_106]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_106]
 
 theorem primeByIndex_at_107 : primeByIndex 107 = 593 := by
   have hp : Nat.Prime 593 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_107]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_107]
 
 theorem primeByIndex_at_108 : primeByIndex 108 = 599 := by
   have hp : Nat.Prime 599 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_108]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_108]
 
 theorem primeByIndex_at_109 : primeByIndex 109 = 601 := by
   have hp : Nat.Prime 601 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_109]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_109]
 
 theorem primeByIndex_at_110 : primeByIndex 110 = 607 := by
   have hp : Nat.Prime 607 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_110]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_110]
 
 theorem primeByIndex_at_111 : primeByIndex 111 = 613 := by
   have hp : Nat.Prime 613 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_111]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_111]
 
 theorem primeByIndex_at_112 : primeByIndex 112 = 617 := by
   have hp : Nat.Prime 617 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_112]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_112]
 
 theorem primeByIndex_at_113 : primeByIndex 113 = 619 := by
   have hp : Nat.Prime 619 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_113]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_113]
 
 theorem primeByIndex_at_114 : primeByIndex 114 = 631 := by
   have hp : Nat.Prime 631 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_114]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_114]
 
 theorem primeByIndex_at_115 : primeByIndex 115 = 641 := by
   have hp : Nat.Prime 641 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_115]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_115]
 
 theorem primeByIndex_at_116 : primeByIndex 116 = 643 := by
   have hp : Nat.Prime 643 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_116]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_116]
 
 theorem primeByIndex_at_117 : primeByIndex 117 = 647 := by
   have hp : Nat.Prime 647 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_117]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_117]
 
 theorem primeByIndex_at_118 : primeByIndex 118 = 653 := by
   have hp : Nat.Prime 653 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_118]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_118]
 
 theorem primeByIndex_at_119 : primeByIndex 119 = 659 := by
   have hp : Nat.Prime 659 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_119]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_119]
 
 theorem primeByIndex_at_120 : primeByIndex 120 = 661 := by
   have hp : Nat.Prime 661 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_120]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_120]
 
 theorem primeByIndex_at_121 : primeByIndex 121 = 673 := by
   have hp : Nat.Prime 673 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_121]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_121]
 
 theorem primeByIndex_at_122 : primeByIndex 122 = 677 := by
   have hp : Nat.Prime 677 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_122]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_122]
 
 theorem primeByIndex_at_123 : primeByIndex 123 = 683 := by
   have hp : Nat.Prime 683 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_123]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_123]
 
 theorem primeByIndex_at_124 : primeByIndex 124 = 691 := by
   have hp : Nat.Prime 691 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_124]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_124]
 
 theorem primeByIndex_at_125 : primeByIndex 125 = 701 := by
   have hp : Nat.Prime 701 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_125]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_125]
 
 theorem primeByIndex_at_126 : primeByIndex 126 = 709 := by
   have hp : Nat.Prime 709 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_126]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_126]
 
 theorem primeByIndex_at_127 : primeByIndex 127 = 719 := by
   have hp : Nat.Prime 719 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_127]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_127]
 
 theorem primeByIndex_at_128 : primeByIndex 128 = 727 := by
   have hp : Nat.Prime 727 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_128]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_128]
 
 theorem primeByIndex_at_129 : primeByIndex 129 = 733 := by
   have hp : Nat.Prime 733 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_129]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_129]
 
 theorem primeByIndex_at_130 : primeByIndex 130 = 739 := by
   have hp : Nat.Prime 739 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_130]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_130]
 
 theorem primeByIndex_at_131 : primeByIndex 131 = 743 := by
   have hp : Nat.Prime 743 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_131]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_131]
 
 theorem primeByIndex_at_132 : primeByIndex 132 = 751 := by
   have hp : Nat.Prime 751 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_132]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_132]
 
 theorem primeByIndex_at_133 : primeByIndex 133 = 757 := by
   have hp : Nat.Prime 757 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_133]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_133]
 
 theorem primeByIndex_at_134 : primeByIndex 134 = 761 := by
   have hp : Nat.Prime 761 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_134]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_134]
 
 theorem primeByIndex_at_135 : primeByIndex 135 = 769 := by
   have hp : Nat.Prime 769 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_135]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_135]
 
 theorem primeByIndex_at_136 : primeByIndex 136 = 773 := by
   have hp : Nat.Prime 773 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_136]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_136]
 
 theorem primeByIndex_at_137 : primeByIndex 137 = 787 := by
   have hp : Nat.Prime 787 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_137]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_137]
 
 theorem primeByIndex_at_138 : primeByIndex 138 = 797 := by
   have hp : Nat.Prime 797 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_138]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_138]
 
 theorem primeByIndex_at_139 : primeByIndex 139 = 809 := by
   have hp : Nat.Prime 809 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_139]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_139]
 
 theorem primeByIndex_at_140 : primeByIndex 140 = 811 := by
   have hp : Nat.Prime 811 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_140]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_140]
 
 theorem primeByIndex_at_141 : primeByIndex 141 = 821 := by
   have hp : Nat.Prime 821 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_141]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_141]
 
 theorem primeByIndex_at_142 : primeByIndex 142 = 823 := by
   have hp : Nat.Prime 823 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_142]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_142]
 
 theorem primeByIndex_at_143 : primeByIndex 143 = 827 := by
   have hp : Nat.Prime 827 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_143]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_143]
 
 theorem primeByIndex_at_144 : primeByIndex 144 = 829 := by
   have hp : Nat.Prime 829 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_144]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_144]
 
 theorem primeByIndex_at_145 : primeByIndex 145 = 839 := by
   have hp : Nat.Prime 839 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_145]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_145]
 
 theorem primeByIndex_at_146 : primeByIndex 146 = 853 := by
   have hp : Nat.Prime 853 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_146]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_146]
 
 theorem primeByIndex_at_147 : primeByIndex 147 = 857 := by
   have hp : Nat.Prime 857 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_147]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_147]
 
 theorem primeByIndex_at_148 : primeByIndex 148 = 859 := by
   have hp : Nat.Prime 859 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_148]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_148]
 
 theorem primeByIndex_at_149 : primeByIndex 149 = 863 := by
   have hp : Nat.Prime 863 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_149]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_149]
 
 theorem primeByIndex_at_150 : primeByIndex 150 = 877 := by
   have hp : Nat.Prime 877 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_150]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_150]
 
 theorem primeByIndex_at_151 : primeByIndex 151 = 881 := by
   have hp : Nat.Prime 881 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_151]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_151]
 
 theorem primeByIndex_at_152 : primeByIndex 152 = 883 := by
   have hp : Nat.Prime 883 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_152]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_152]
 
 theorem primeByIndex_at_153 : primeByIndex 153 = 887 := by
   have hp : Nat.Prime 887 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_153]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_153]
 
 theorem primeByIndex_at_154 : primeByIndex 154 = 907 := by
   have hp : Nat.Prime 907 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_154]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_154]
 
 theorem primeByIndex_at_155 : primeByIndex 155 = 911 := by
   have hp : Nat.Prime 911 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_155]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_155]
 
 theorem primeByIndex_at_156 : primeByIndex 156 = 919 := by
   have hp : Nat.Prime 919 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_156]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_156]
 
 theorem primeByIndex_at_157 : primeByIndex 157 = 929 := by
   have hp : Nat.Prime 929 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_157]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_157]
 
 theorem primeByIndex_at_158 : primeByIndex 158 = 937 := by
   have hp : Nat.Prime 937 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_158]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_158]
 
 theorem primeByIndex_at_159 : primeByIndex 159 = 941 := by
   have hp : Nat.Prime 941 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_159]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_159]
 
 theorem primeByIndex_at_160 : primeByIndex 160 = 947 := by
   have hp : Nat.Prime 947 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_160]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_160]
 
 theorem primeByIndex_at_161 : primeByIndex 161 = 953 := by
   have hp : Nat.Prime 953 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_161]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_161]
 
 theorem primeByIndex_at_162 : primeByIndex 162 = 967 := by
   have hp : Nat.Prime 967 := by norm_num only
-  rw [primeByIndex, ← Nat.nth_count hp,
-    count_prime_at_162]
+  rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_162]
 
 end PseudoPrime.NumberTheory

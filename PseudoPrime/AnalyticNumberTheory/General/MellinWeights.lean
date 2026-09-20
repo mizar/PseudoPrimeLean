@@ -33,10 +33,8 @@ theorem mellinWeightOne_eq_sub :
         Set.indicator (Set.Ioc (0 : ℝ) 1) (fun t ↦ (t : ℂ) ^ (1 : ℂ)) t := by
   funext t
   by_cases ht : t ∈ Set.Ioc (0 : ℝ) 1
-  · simp only [mellinWeightOne, Set.indicator_of_mem ht,
-      Complex.cpow_one]
-  · simp only [mellinWeightOne, Set.indicator_of_notMem ht,
-      Complex.cpow_one, sub_self]
+  · simp only [mellinWeightOne, Set.indicator_of_mem ht, Complex.cpow_one]
+  · simp only [mellinWeightOne, Set.indicator_of_notMem ht, Complex.cpow_one, sub_self]
 
 /-- The Mellin transform of the reciprocal weight is the rational kernel `1 / (s(s+1))`. -/
 theorem hasMellin_mellinWeightOne {s : ℂ} (hs : 0 < s.re) :
@@ -74,26 +72,24 @@ noncomputable def mellinWeightTwo : ℝ → ℂ :=
 
 /-- The logarithmic weight is minus the real-log-scaled base indicator weight. -/
 theorem mellinWeightTwo_eq_neg_smul_log :
-    mellinWeightTwo = fun t ↦
-      -(Real.log t • mellinWeightZero t) := by
+    mellinWeightTwo = fun t ↦ -(Real.log t • mellinWeightZero t) := by
   funext t
   by_cases ht : t ∈ Set.Ioc (0 : ℝ) 1
-  · simp only [mellinWeightTwo, Set.indicator_of_mem ht,
-      mellinWeightZero, Complex.real_smul, mul_one]
-  · simp only [mellinWeightTwo, Set.indicator_of_notMem ht,
-      mellinWeightZero, smul_zero, neg_zero]
+  · simp only [mellinWeightTwo, Set.indicator_of_mem ht, mellinWeightZero, Complex.real_smul,
+      mul_one]
+  · simp only [mellinWeightTwo, Set.indicator_of_notMem ht, mellinWeightZero, smul_zero, neg_zero]
 
 /-- The base weight is locally integrable on the positive reals. -/
 theorem locallyIntegrableOn_mellinWeightZero :
     MeasureTheory.LocallyIntegrableOn mellinWeightZero (Set.Ioi 0) := by
-  exact (
-      (MeasureTheory.locallyIntegrable_const (1 : ℂ)).indicator measurableSet_Ioc
-    ).locallyIntegrableOn _
+  exact
+    ((MeasureTheory.locallyIntegrable_const (1 : ℂ)).indicator
+          measurableSet_Ioc).locallyIntegrableOn
+      _
 
 /-- The base weight vanishes eventually at infinity, so it is `O` of any negative power. -/
 theorem isBigO_atTop_mellinWeightZero (a : ℝ) :
-    mellinWeightZero =O[Filter.atTop]
-      (fun t : ℝ ↦ t ^ (-a)) := by
+    mellinWeightZero =O[Filter.atTop] (fun t : ℝ ↦ t ^ (-a)) := by
   have hzero : mellinWeightZero =ᶠ[Filter.atTop] 0 := by
     filter_upwards [Filter.eventually_gt_atTop (1 : ℝ)] with t ht
     simp only [mellinWeightZero, Pi.zero_apply]
@@ -104,11 +100,8 @@ theorem isBigO_atTop_mellinWeightZero (a : ℝ) :
 
 /-- The base weight is eventually the constant `1` just to the right of zero. -/
 theorem isBigO_nhdsWithin_mellinWeightZero :
-    mellinWeightZero =O[nhdsWithin 0 (Set.Ioi 0)]
-      (fun t : ℝ ↦ t ^ (-(0 : ℝ))) := by
-  have hone :
-    ∀ᶠ t : ℝ in nhdsWithin 0 (Set.Ioi 0),
-      mellinWeightZero t = 1 := by
+    mellinWeightZero =O[nhdsWithin 0 (Set.Ioi 0)] (fun t : ℝ ↦ t ^ (-(0 : ℝ))) := by
+  have hone : ∀ᶠ t : ℝ in nhdsWithin 0 (Set.Ioi 0), mellinWeightZero t = 1 := by
     filter_upwards [Ioo_mem_nhdsGT (one_pos)] with t ht
     have hmem : t ∈ Set.Ioc (0 : ℝ) 1 := ⟨ht.1, ht.2.le⟩
     exact Set.indicator_of_mem hmem _
@@ -128,30 +121,21 @@ theorem eventually_mellin_mellinWeightZero_eq {s : ℂ} (hs : 0 < s.re) :
 theorem hasMellin_mellinWeightTwo {s : ℂ} (hs : 0 < s.re) :
     HasMellin mellinWeightTwo s (1 / s ^ 2) := by
   obtain ⟨hconv, hderiv⟩ :=
-    mellin_hasDerivAt_of_isBigO_rpow
-      locallyIntegrableOn_mellinWeightZero
-      (isBigO_atTop_mellinWeightZero (s.re + 1))
-      (by linarith) isBigO_nhdsWithin_mellinWeightZero hs
+    mellin_hasDerivAt_of_isBigO_rpow locallyIntegrableOn_mellinWeightZero
+      (isBigO_atTop_mellinWeightZero (s.re + 1)) (by linarith) isBigO_nhdsWithin_mellinWeightZero hs
   have hinv : HasDerivAt (fun z : ℂ ↦ z⁻¹) (-(s ^ 2)⁻¹) s :=
     hasDerivAt_inv
       (by
         intro h
         rw [h] at hs
         simp only [Complex.zero_re, lt_self_iff_false] at hs)
-  have hderiv' :
-    HasDerivAt (mellin mellinWeightZero) (-(s ^ 2)⁻¹) s :=
-    hinv.congr_of_eventuallyEq
-      (eventually_mellin_mellinWeightZero_eq hs)
-  have hval :
-    mellin (fun t : ℝ ↦ Real.log t • mellinWeightZero t)
-        s =
-      -(s ^ 2)⁻¹ :=
+  have hderiv' : HasDerivAt (mellin mellinWeightZero) (-(s ^ 2)⁻¹) s :=
+    hinv.congr_of_eventuallyEq (eventually_mellin_mellinWeightZero_eq hs)
+  have hval : mellin (fun t : ℝ ↦ Real.log t • mellinWeightZero t) s = -(s ^ 2)⁻¹ :=
     hderiv.unique hderiv'
   have hpoint :
-    (fun t : ℝ ↦ (t : ℂ) ^ (s - 1) • mellinWeightTwo t) =
-      fun t : ℝ ↦
-      -((t : ℂ) ^ (s - 1) •
-          (Real.log t • mellinWeightZero t)) := by
+    (fun t : ℝ ↦ (t : ℂ) ^ (s - 1) • mellinWeightTwo t) = fun t : ℝ ↦
+      -((t : ℂ) ^ (s - 1) • (Real.log t • mellinWeightZero t)) := by
     rw [mellinWeightTwo_eq_neg_smul_log]
     funext t
     rw [smul_neg]
@@ -161,9 +145,7 @@ theorem hasMellin_mellinWeightTwo {s : ℂ} (hs : 0 < s.re) :
     exact hconv.neg
   refine ⟨hconv', ?_⟩
   have hmellin_eq :
-    mellin mellinWeightTwo s =
-      -mellin (fun t : ℝ ↦ Real.log t • mellinWeightZero t)
-          s := by
+    mellin mellinWeightTwo s = -mellin (fun t : ℝ ↦ Real.log t • mellinWeightZero t) s := by
     unfold mellin
     rw [hpoint, MeasureTheory.integral_neg]
   rw [hmellin_eq, hval]
@@ -198,8 +180,7 @@ theorem verticalIntegrable_mellinLogKernel {σ : ℝ} (hσ0 : σ ≠ 0) :
   unfold Complex.VerticalIntegrable
   have hc : (0 : ℝ) < min (σ ^ 2) 1 := lt_min (by positivity) one_pos
   apply MeasureTheory.Integrable.mono' (integrable_inv_one_add_sq.const_mul (min (σ ^ 2) 1)⁻¹)
-  · fun_prop (disch :=
-      exact ne_zero_add_mul_I_of_re_ne_zero hσ0 _)
+  · fun_prop (disch := exact ne_zero_add_mul_I_of_re_ne_zero hσ0 _)
   · filter_upwards with y
     have hnorm : ‖((σ : ℂ) + y * Complex.I)⁻¹ ^ 2‖ = (‖(σ : ℂ) + y * Complex.I‖ ^ 2)⁻¹ := by
       rw [norm_pow, norm_inv, inv_pow]
@@ -239,8 +220,7 @@ theorem verticalIntegrable_mellinReciprocalKernel {σ : ℝ} (hσ0 : σ ≠ 0) (
       rw [hs_def]; push_cast; ring
     have hnorm : ‖(s * (s + 1))⁻¹‖ = (‖s‖ * ‖s + 1‖)⁻¹ := by rw [norm_inv, norm_mul]
     have e1 := min_sq_one_mul_le_norm_add_mul_I_sq σ y
-    have e2 :=
-      min_sq_one_mul_le_norm_add_mul_I_sq (σ + 1) y
+    have e2 := min_sq_one_mul_le_norm_add_mul_I_sq (σ + 1) y
     rw [← hs_def] at e1
     rw [← hs1] at e2
     have hsq : min (σ ^ 2) 1 * min ((σ + 1) ^ 2) 1 * (1 + y ^ 2) ^ 2 ≤ (‖s‖ * ‖s + 1‖) ^ 2 := by
@@ -263,49 +243,38 @@ theorem verticalIntegrable_mellinReciprocalKernel {σ : ℝ} (hσ0 : σ ≠ 0) (
 theorem mellinWeightOne_eq_ofReal_max {t : ℝ} (ht : 0 < t) :
     mellinWeightOne t = ((max (1 - t) 0 : ℝ) : ℂ) := by
   by_cases h : t ∈ Set.Ioc (0 : ℝ) 1
-  · rw [mellinWeightOne, Set.indicator_of_mem h,
-      max_eq_left (by linarith only [h.2])]
+  · rw [mellinWeightOne, Set.indicator_of_mem h, max_eq_left (by linarith only [h.2])]
     push_cast
     ring
   · have h1 : 1 < t := by
       by_contra hc
       exact h ⟨ht, not_lt.mp hc⟩
-    rw [mellinWeightOne, Set.indicator_of_notMem h,
-      max_eq_right (by linarith)]
+    rw [mellinWeightOne, Set.indicator_of_notMem h, max_eq_right (by linarith)]
     simp only [Complex.ofReal_zero]
 
 /-- The reciprocal weight is continuous at every positive real. -/
-theorem continuousAt_mellinWeightOne {x : ℝ} (hx : 0 < x) :
-    ContinuousAt mellinWeightOne x := by
-  have heq :
-    Set.EqOn mellinWeightOne
-      (fun t ↦ ((max (1 - t) 0 : ℝ) : ℂ)) (Set.Ioi 0) :=
-    fun t ht ↦ mellinWeightOne_eq_ofReal_max ht
+theorem continuousAt_mellinWeightOne {x : ℝ} (hx : 0 < x) : ContinuousAt mellinWeightOne x := by
+  have heq : Set.EqOn mellinWeightOne (fun t ↦ ((max (1 - t) 0 : ℝ) : ℂ)) (Set.Ioi 0) := fun t ht ↦
+    mellinWeightOne_eq_ofReal_max ht
   refine (ContinuousOn.congr ?_ heq).continuousAt (isOpen_Ioi.mem_nhds hx)
   fun_prop
 
 /-- On the positive reals, the logarithmic weight is minus the log of the clamp at `1`. -/
 theorem mellinWeightTwo_eq_ofReal_neg_log_min {t : ℝ} (ht : 0 < t) :
-    mellinWeightTwo t =
-      ((-Real.log (min t 1) : ℝ) : ℂ) := by
+    mellinWeightTwo t = ((-Real.log (min t 1) : ℝ) : ℂ) := by
   by_cases h : t ∈ Set.Ioc (0 : ℝ) 1
-  · rw [mellinWeightTwo, Set.indicator_of_mem h,
-      min_eq_left h.2]
+  · rw [mellinWeightTwo, Set.indicator_of_mem h, min_eq_left h.2]
     push_cast
     ring
   · have h1 : 1 < t := by
       by_contra hc
       exact h ⟨ht, not_lt.mp hc⟩
-    rw [mellinWeightTwo, Set.indicator_of_notMem h,
-      min_eq_right h1.le, Real.log_one]
+    rw [mellinWeightTwo, Set.indicator_of_notMem h, min_eq_right h1.le, Real.log_one]
     simp only [neg_zero, Complex.ofReal_zero]
 
 /-- The logarithmic weight is continuous at every positive real. -/
-theorem continuousAt_mellinWeightTwo {x : ℝ} (hx : 0 < x) :
-    ContinuousAt mellinWeightTwo x := by
-  have heq :
-    Set.EqOn mellinWeightTwo
-      (fun t ↦ ((-Real.log (min t 1) : ℝ) : ℂ)) (Set.Ioi 0) :=
+theorem continuousAt_mellinWeightTwo {x : ℝ} (hx : 0 < x) : ContinuousAt mellinWeightTwo x := by
+  have heq : Set.EqOn mellinWeightTwo (fun t ↦ ((-Real.log (min t 1) : ℝ) : ℂ)) (Set.Ioi 0) :=
     fun t ht ↦ mellinWeightTwo_eq_ofReal_neg_log_min ht
   refine (ContinuousOn.congr ?_ heq).continuousAt (isOpen_Ioi.mem_nhds hx)
   intro t ht
@@ -317,11 +286,9 @@ theorem continuousAt_mellinWeightTwo {x : ℝ} (hx : 0 < x) :
 
 /-- The Mellin inversion formula recovers the reciprocal weight from its rational kernel. -/
 theorem mellinInv_mellinWeightOne_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
-    mellinInv σ (fun s : ℂ ↦ 1 / (s * (s + 1))) x =
-      mellinWeightOne x := by
+    mellinInv σ (fun s : ℂ ↦ 1 / (s * (s + 1))) x = mellinWeightOne x := by
   have hconv :=
-    (hasMellin_mellinWeightOne (s := (σ : ℂ))
-        (by simpa only [Complex.ofReal_re] using hσ)).1
+    (hasMellin_mellinWeightOne (s := (σ : ℂ)) (by simpa only [Complex.ofReal_re] using hσ)).1
   have hpoint :
     ∀ y : ℝ,
       mellin mellinWeightOne ((σ : ℂ) + y * Complex.I) =
@@ -331,14 +298,10 @@ theorem mellinInv_mellinWeightOne_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
         (show (0 : ℝ) < ((σ : ℂ) + (y : ℂ) * Complex.I).re by
           simpa only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
             Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using hσ)).2
-  have hVI :
-    Complex.VerticalIntegrable (mellin mellinWeightOne)
-      σ := by
+  have hVI : Complex.VerticalIntegrable (mellin mellinWeightOne) σ := by
     have hEq :
-      (fun y : ℝ ↦
-          mellin mellinWeightOne
-            ((σ : ℂ) + y * Complex.I)) =
-        fun y : ℝ ↦ (((σ : ℂ) + y * Complex.I) * ((σ : ℂ) + y * Complex.I + 1))⁻¹ := by
+      (fun y : ℝ ↦ mellin mellinWeightOne ((σ : ℂ) + y * Complex.I)) = fun y : ℝ ↦
+        (((σ : ℂ) + y * Complex.I) * ((σ : ℂ) + y * Complex.I + 1))⁻¹ := by
       funext y; rw [hpoint y, one_div]
     unfold Complex.VerticalIntegrable
     rw [hEq]
@@ -347,16 +310,14 @@ theorem mellinInv_mellinWeightOne_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
         (by
           intro h; rw [h] at hσ; linarith)
   have hmellinInv :=
-    mellinInv_mellin_eq σ mellinWeightOne hx hconv hVI
-      (continuousAt_mellinWeightOne hx)
+    mellinInv_mellin_eq σ mellinWeightOne hx hconv hVI (continuousAt_mellinWeightOne hx)
   have hfun_eq :
     (fun y : ℝ ↦
         (x : ℂ) ^ (-((σ : ℂ) + y * Complex.I)) •
           (1 / (((σ : ℂ) + y * Complex.I) * ((σ : ℂ) + y * Complex.I + 1)))) =
       fun y : ℝ ↦
       (x : ℂ) ^ (-((σ : ℂ) + y * Complex.I)) •
-        mellin mellinWeightOne
-          ((σ : ℂ) + y * Complex.I) := by
+        mellin mellinWeightOne ((σ : ℂ) + y * Complex.I) := by
     funext y; rw [hpoint y]
   rw [← hmellinInv]
   unfold mellinInv
@@ -364,41 +325,31 @@ theorem mellinInv_mellinWeightOne_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
 
 /-- The Mellin inversion formula recovers the logarithmic weight from its rational kernel. -/
 theorem mellinInv_mellinWeightTwo_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
-    mellinInv σ (fun s : ℂ ↦ 1 / s ^ 2) x =
-      mellinWeightTwo x := by
+    mellinInv σ (fun s : ℂ ↦ 1 / s ^ 2) x = mellinWeightTwo x := by
   have hconv :=
-    (hasMellin_mellinWeightTwo (s := (σ : ℂ))
-        (by simpa only [Complex.ofReal_re] using hσ)).1
+    (hasMellin_mellinWeightTwo (s := (σ : ℂ)) (by simpa only [Complex.ofReal_re] using hσ)).1
   have hpoint :
-    ∀ y : ℝ,
-      mellin mellinWeightTwo ((σ : ℂ) + y * Complex.I) =
-        1 / ((σ : ℂ) + y * Complex.I) ^ 2 :=
+    ∀ y : ℝ, mellin mellinWeightTwo ((σ : ℂ) + y * Complex.I) = 1 / ((σ : ℂ) + y * Complex.I) ^ 2 :=
     fun y ↦
     (hasMellin_mellinWeightTwo
         (show (0 : ℝ) < ((σ : ℂ) + (y : ℂ) * Complex.I).re by
           simpa only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
             Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using hσ)).2
-  have hVI :
-    Complex.VerticalIntegrable (mellin mellinWeightTwo)
-      σ := by
+  have hVI : Complex.VerticalIntegrable (mellin mellinWeightTwo) σ := by
     have hEq :
-      (fun y : ℝ ↦
-          mellin mellinWeightTwo
-            ((σ : ℂ) + y * Complex.I)) =
-        fun y : ℝ ↦ (((σ : ℂ) + y * Complex.I)⁻¹) ^ 2 := by
+      (fun y : ℝ ↦ mellin mellinWeightTwo ((σ : ℂ) + y * Complex.I)) = fun y : ℝ ↦
+        (((σ : ℂ) + y * Complex.I)⁻¹) ^ 2 := by
       funext y; rw [hpoint y, one_div, inv_pow]
     unfold Complex.VerticalIntegrable
     rw [hEq]
     exact verticalIntegrable_mellinLogKernel hσ.ne'
   have hmellinInv :=
-    mellinInv_mellin_eq σ mellinWeightTwo hx hconv hVI
-      (continuousAt_mellinWeightTwo hx)
+    mellinInv_mellin_eq σ mellinWeightTwo hx hconv hVI (continuousAt_mellinWeightTwo hx)
   have hfun_eq :
     (fun y : ℝ ↦ (x : ℂ) ^ (-((σ : ℂ) + y * Complex.I)) • (1 / ((σ : ℂ) + y * Complex.I) ^ 2)) =
       fun y : ℝ ↦
       (x : ℂ) ^ (-((σ : ℂ) + y * Complex.I)) •
-        mellin mellinWeightTwo
-          ((σ : ℂ) + y * Complex.I) := by
+        mellin mellinWeightTwo ((σ : ℂ) + y * Complex.I) := by
     funext y; rw [hpoint y]
   rw [← hmellinInv]
   unfold mellinInv

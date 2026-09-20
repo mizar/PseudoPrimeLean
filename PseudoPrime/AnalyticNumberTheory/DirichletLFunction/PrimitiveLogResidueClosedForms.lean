@@ -38,16 +38,12 @@ substitution is deferred to the next theorem.
 theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hodd : χ.Odd) {x : ℝ}
     (hx : 0 < x) :
-    deriv
-        (dirichletLogMellinZeroRegularization x
-          χ)
-        0 =
+    deriv (dirichletLogMellinZeroRegularization x χ) 0 =
       -(deriv (logDeriv (DirichletCharacter.LFunction χ)) 0) -
         logDeriv (DirichletCharacter.LFunction χ) 0 * Complex.log x := by
   have hxne : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   have hL0ne : DirichletCharacter.LFunction χ 0 ≠ 0 :=
-    dirichletLFunction_zero_ne_zero_of_primitive_odd
-      hprimitive hne hodd
+    dirichletLFunction_zero_ne_zero_of_primitive_odd hprimitive hne hodd
   have hLanalytic : AnalyticAt ℂ (DirichletCharacter.LFunction χ) 0 :=
     (DirichletCharacter.differentiable_LFunction hne).analyticAt 0
   have hLdiff : DifferentiableAt ℂ (logDeriv (DirichletCharacter.LFunction χ)) 0 :=
@@ -65,11 +61,10 @@ theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq {N : ℕ} [NeZ
     simpa only [id_eq, Complex.cpow_zero, one_mul, mul_one] using h1
   have hprod := hNegL.mul hxpow
   have hfun :
-    dirichletLogMellinZeroRegularization x χ =
-      fun s : ℂ => -(logDeriv (DirichletCharacter.LFunction χ) s) * (x : ℂ) ^ s := by
+    dirichletLogMellinZeroRegularization x χ = fun s : ℂ =>
+      -(logDeriv (DirichletCharacter.LFunction χ) s) * (x : ℂ) ^ s := by
     funext s
-    rw [dirichletLogMellinZeroRegularization,
-      logDeriv_apply]
+    rw [dirichletLogMellinZeroRegularization, logDeriv_apply]
   rw [hfun]
   have hval := hprod.deriv
   rw [show
@@ -98,21 +93,15 @@ Role: the fully completed-side raw closed form for the odd `s = 0` log-kernel re
 theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hodd : χ.Odd) {x : ℝ}
     (hx : 0 < x) :
-    deriv
-        (dirichletLogMellinZeroRegularization x
-          χ)
-        0 =
+    deriv (dirichletLogMellinZeroRegularization x χ) 0 =
       -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0) + (Real.pi : ℂ) ^ 2 / 8 -
         (logDeriv (DirichletCharacter.completedLFunction χ) 0 -
             logDeriv (DirichletCharacter.gammaFactor χ) 0) *
           Complex.log x := by
-  rw [deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq
-      hprimitive hne hodd hx,
-    deriv_logDeriv_LFunction_zero_of_odd
-      hprimitive hne hodd]
+  rw [deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq hprimitive hne hodd hx,
+    deriv_logDeriv_LFunction_zero_of_odd hprimitive hne hodd]
   have hΓ0ne : DirichletCharacter.gammaFactor χ 0 ≠ 0 :=
-    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat
-      hodd
+    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd
       (by
         intro m hm
         have him := congrArg Complex.re hm
@@ -122,8 +111,7 @@ theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw {N : ℕ} [Ne
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him;
         linarith)
   have hdΓ0 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 0 :=
-    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat
-      hodd
+    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
       (by
         intro m hm
         have him := congrArg Complex.re hm
@@ -132,12 +120,9 @@ theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw {N : ℕ} [Ne
         simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him;
         linarith)
-  have hF0ne :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hprimitive hne
+  have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have hbridge0 :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular
-      hne hF0ne hΓ0ne hdΓ0
+    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF0ne hΓ0ne hdΓ0
   rw [hbridge0]
   ring
 
@@ -161,26 +146,20 @@ Role: gives the odd `s = 0` log-kernel residue's real part, keeping
 derivative bound from `QuadraticFunctionalConsequences` can be substituted later.
 -/
 theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic)
     (hodd : χ.Odd) {x : ℝ} (hx : 0 < x) :
-    (deriv
-          (dirichletLogMellinZeroRegularization
-            x χ)
-          0).re =
+    (deriv (dirichletLogMellinZeroRegularization x χ) 0).re =
       -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re +
           |primitiveBRe χ| * Real.log x +
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
           (Real.pi : ℝ) ^ 2 / 8 -
         (Real.log 2 + Real.eulerMascheroniConstant / 2) * Real.log x := by
-  rw [deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw
-      hprimitive hne hodd hx]
+  rw [deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw hprimitive hne hodd hx]
   have hF0re :=
-    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log
-      hN2 hGRH hprimitive hne hinv hquad
-  have hG0re :=
-    logDeriv_gammaFactor_zero_re_of_odd hodd
+    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
+      hquad
+  have hG0re := logDeriv_gammaFactor_zero_re_of_odd hodd
   have hlogxC : Complex.log (x : ℂ) = ((Real.log x : ℝ) : ℂ) := (Complex.ofReal_log hx.le).symm
   have hAre :
     ((logDeriv (DirichletCharacter.completedLFunction χ) 0 -
@@ -217,21 +196,12 @@ without ever inspecting the witness selected by `Classical.choose`.
 theorem eventuallyEq_dirichletLogEvenZeroRegularization_canonical {N : ℕ} [NeZero N] {x : ℝ}
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (heven : χ.Even) :
     Filter.EventuallyEq (nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ))
-      (fun s =>
-        (s - 0) ^ 3 *
-          dirichletLogContourKernel x χ s)
-      (dirichletLogEvenZeroRegularization x 1
-        (dirichletEvenZeroLocalFactor χ)) := by
-  obtain ⟨hGanalytic, hG0⟩ :=
-    analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor
-      hprimitive hne
-  have heq :=
-    eventuallyEq_dirichletLFunction_evenZeroLocalFactor
-      hprimitive hne heven
+      (fun s => (s - 0) ^ 3 * dirichletLogContourKernel x χ s)
+      (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) := by
+  obtain ⟨hGanalytic, hG0⟩ := analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor hprimitive hne
+  have heq := eventuallyEq_dirichletLFunction_evenZeroLocalFactor hprimitive hne heven
   have hlogeq := logDeriv_congr_nhds heq
-  have hGnear :
-    ∀ᶠ s in nhds (0 : ℂ),
-      dirichletEvenZeroLocalFactor χ s ≠ 0 :=
+  have hGnear : ∀ᶠ s in nhds (0 : ℂ), dirichletEvenZeroLocalFactor χ s ≠ 0 :=
     hGanalytic.continuousAt.eventually_ne hG0
   filter_upwards [hlogeq.filter_mono nhdsWithin_le_nhds, hGnear.filter_mono nhdsWithin_le_nhds,
     eventually_mem_nhdsWithin, hGanalytic.eventually_analyticAt.filter_mono nhdsWithin_le_nhds] with
@@ -239,18 +209,10 @@ theorem eventuallyEq_dirichletLogEvenZeroRegularization_canonical {N : ℕ} [NeZ
   have hs0' : s ≠ 0 := Set.mem_compl_singleton_iff.mp hs0
   have hlogs' :
     deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s =
-      (1 : ℂ) / (s - 0) +
-        logDeriv
-          (dirichletEvenZeroLocalFactor χ)
-          s := by
+      (1 : ℂ) / (s - 0) + logDeriv (dirichletEvenZeroLocalFactor χ) s := by
     have hmul := logDeriv_mul s hs0' hGsne differentiableAt_id hGsanalytic.differentiableAt
     rw [← logDeriv_apply, hlogeqs,
-      show
-        (fun s : ℂ =>
-            s *
-              dirichletEvenZeroLocalFactor χ
-                s) =
-          id * dirichletEvenZeroLocalFactor χ
+      show (fun s : ℂ => s * dirichletEvenZeroLocalFactor χ s) = id * dirichletEvenZeroLocalFactor χ
         from by
         funext s
         rfl,
@@ -258,8 +220,7 @@ theorem eventuallyEq_dirichletLogEvenZeroRegularization_canonical {N : ℕ} [NeZ
     congr 1
     rw [logDeriv_apply]
     simp only [deriv_id', id_eq, one_div, sub_zero]
-  unfold dirichletLogContourKernel
-    dirichletLogEvenZeroRegularization
+  unfold dirichletLogContourKernel dirichletLogEvenZeroRegularization
   rw [hlogs']
   simp only [sub_zero]
   push_cast
@@ -279,78 +240,31 @@ Role: the pointwise (general-`s`) first-derivative formula, feeding both the `s 
 -/
 theorem hasDerivAt_dirichletLogEvenZeroRegularization {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {x : ℝ} (hx : 0 < x) {s : ℂ}
-    (hganalytic :
-      AnalyticAt ℂ
-        (dirichletEvenZeroLocalFactor χ) s)
-    (hgne :
-      dirichletEvenZeroLocalFactor χ s ≠ 0) :
-    HasDerivAt
-      (dirichletLogEvenZeroRegularization x 1
-        (dirichletEvenZeroLocalFactor χ))
-      (-((logDeriv
-                (dirichletEvenZeroLocalFactor χ)
-                s +
-              s *
-                deriv
-                  (logDeriv
-                    (dirichletEvenZeroLocalFactor
-                      χ))
-                  s) *
+    (hganalytic : AnalyticAt ℂ (dirichletEvenZeroLocalFactor χ) s)
+    (hgne : dirichletEvenZeroLocalFactor χ s ≠ 0) :
+    HasDerivAt (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ))
+      (-((logDeriv (dirichletEvenZeroLocalFactor χ) s +
+              s * deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) s) *
             (x : ℂ) ^ s +
-          (1 +
-              s *
-                logDeriv
-                  (dirichletEvenZeroLocalFactor
-                    χ)
-                  s) *
-            ((x : ℂ) ^ s * Complex.log x)))
+          (1 + s * logDeriv (dirichletEvenZeroLocalFactor χ) s) * ((x : ℂ) ^ s * Complex.log x)))
       s := by
-  have hqanalytic :
-    AnalyticAt ℂ
-      (logDeriv
-        (dirichletEvenZeroLocalFactor χ))
-      s := by
+  have hqanalytic : AnalyticAt ℂ (logDeriv (dirichletEvenZeroLocalFactor χ)) s := by
     rw [logDeriv]
     exact hganalytic.deriv.div hganalytic hgne
   have hqHasDerivAt :
-    HasDerivAt
-      (logDeriv
-        (dirichletEvenZeroLocalFactor χ))
-      (deriv
-        (logDeriv
-          (dirichletEvenZeroLocalFactor χ))
-        s)
-      s :=
+    HasDerivAt (logDeriv (dirichletEvenZeroLocalFactor χ))
+      (deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) s) s :=
     hqanalytic.differentiableAt.hasDerivAt
   have hA :
-    HasDerivAt
-      (fun t : ℂ =>
-        1 +
-          t *
-            logDeriv
-              (dirichletEvenZeroLocalFactor χ)
-              t)
-      (logDeriv (dirichletEvenZeroLocalFactor χ)
-          s +
-        s *
-          deriv
-            (logDeriv
-              (dirichletEvenZeroLocalFactor χ))
-            s)
+    HasDerivAt (fun t : ℂ => 1 + t * logDeriv (dirichletEvenZeroLocalFactor χ) t)
+      (logDeriv (dirichletEvenZeroLocalFactor χ) s +
+        s * deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) s)
       s := by
     have hsq := (hasDerivAt_id s).mul hqHasDerivAt
     have hadd := (hasDerivAt_const s (1 : ℂ)).add hsq
     have hfun2 :
-      (fun _ : ℂ => (1 : ℂ)) +
-          id *
-            logDeriv
-              (dirichletEvenZeroLocalFactor χ) =
-        fun t : ℂ =>
-        1 +
-          t *
-            logDeriv
-              (dirichletEvenZeroLocalFactor χ)
-              t := by
+      (fun _ : ℂ => (1 : ℂ)) + id * logDeriv (dirichletEvenZeroLocalFactor χ) = fun t : ℂ =>
+        1 + t * logDeriv (dirichletEvenZeroLocalFactor χ) t := by
       funext t; rfl
     rw [hfun2] at hadd
     simpa only [hasDerivAt_const_add_iff, one_mul, id_eq, zero_add] using hadd
@@ -359,15 +273,8 @@ theorem hasDerivAt_dirichletLogEvenZeroRegularization {N : ℕ} [NeZero N]
     have h1 := (hasDerivAt_id s).const_cpow (c := (x : ℂ)) (Or.inl hxne)
     simpa only [id_eq, mul_one] using h1
   have hfun :
-    dirichletLogEvenZeroRegularization x 1
-        (dirichletEvenZeroLocalFactor χ) =
-      fun t : ℂ =>
-      -((1 +
-            t *
-              logDeriv
-                (dirichletEvenZeroLocalFactor χ)
-                t) *
-          (x : ℂ) ^ t) := by
+    dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ) = fun t : ℂ =>
+      -((1 + t * logDeriv (dirichletEvenZeroLocalFactor χ) t) * (x : ℂ) ^ t) := by
     funext t
     rw [dirichletLogEvenZeroRegularization]
     push_cast
@@ -386,89 +293,37 @@ as the local factor of `L(s)/s`, and hence as a cubic-pole residue, uses evennes
 -/
 theorem iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {x : ℝ} (hx : 0 < x) :
-    iteratedDeriv 2
-        (dirichletLogEvenZeroRegularization x 1
-          (dirichletEvenZeroLocalFactor χ))
-        0 =
-      -(2 *
-            deriv
-              (logDeriv
-                (dirichletEvenZeroLocalFactor
-                  χ))
-              0 +
-          2 *
-            logDeriv
-              (dirichletEvenZeroLocalFactor χ)
-              0 *
-            Complex.log x +
+    iteratedDeriv 2 (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) 0 =
+      -(2 * deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) 0 +
+          2 * logDeriv (dirichletEvenZeroLocalFactor χ) 0 * Complex.log x +
           Complex.log x ^ 2) := by
-  obtain ⟨hganalytic0, hg0ne⟩ :=
-    analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor
-      hprimitive hne
-  have hqanalytic0 :
-    AnalyticAt ℂ
-      (logDeriv
-        (dirichletEvenZeroLocalFactor χ))
-      0 := by
+  obtain ⟨hganalytic0, hg0ne⟩ := analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor hprimitive hne
+  have hqanalytic0 : AnalyticAt ℂ (logDeriv (dirichletEvenZeroLocalFactor χ)) 0 := by
     rw [logDeriv]; exact hganalytic0.deriv.div hganalytic0 hg0ne
   have hqHasDerivAt0 :
-    HasDerivAt
-      (logDeriv
-        (dirichletEvenZeroLocalFactor χ))
-      (deriv
-        (logDeriv
-          (dirichletEvenZeroLocalFactor χ))
-        0)
-      0 :=
+    HasDerivAt (logDeriv (dirichletEvenZeroLocalFactor χ))
+      (deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) 0) 0 :=
     hqanalytic0.differentiableAt.hasDerivAt
   have hqderivHasDerivAt0 :
-    HasDerivAt
-      (deriv
-        (logDeriv
-          (dirichletEvenZeroLocalFactor χ)))
-      (deriv
-        (deriv
-          (logDeriv
-            (dirichletEvenZeroLocalFactor χ)))
-        0)
-      0 :=
+    HasDerivAt (deriv (logDeriv (dirichletEvenZeroLocalFactor χ)))
+      (deriv (deriv (logDeriv (dirichletEvenZeroLocalFactor χ))) 0) 0 :=
     hqanalytic0.deriv.differentiableAt.hasDerivAt
   set H1 : ℂ → ℂ := fun s =>
-    -((logDeriv (dirichletEvenZeroLocalFactor χ)
-              s +
-            s *
-              deriv
-                (logDeriv
-                  (dirichletEvenZeroLocalFactor
-                    χ))
-                s) *
+    -((logDeriv (dirichletEvenZeroLocalFactor χ) s +
+            s * deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) s) *
           (x : ℂ) ^ s +
-        (1 +
-            s *
-              logDeriv
-                (dirichletEvenZeroLocalFactor χ)
-                s) *
-          ((x : ℂ) ^ s * Complex.log x)) with
+        (1 + s * logDeriv (dirichletEvenZeroLocalFactor χ) s) * ((x : ℂ) ^ s * Complex.log x)) with
     hH1_def
-  have hGnear :
-    ∀ᶠ s in nhds (0 : ℂ),
-      dirichletEvenZeroLocalFactor χ s ≠ 0 :=
+  have hGnear : ∀ᶠ s in nhds (0 : ℂ), dirichletEvenZeroLocalFactor χ s ≠ 0 :=
     hganalytic0.continuousAt.eventually_ne hg0ne
   have hev :
     ∀ᶠ s in nhds (0 : ℂ),
-      HasDerivAt
-        (dirichletLogEvenZeroRegularization x 1
-          (dirichletEvenZeroLocalFactor χ))
-        (H1 s) s := by
+      HasDerivAt (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) (H1 s)
+        s := by
     filter_upwards [hganalytic0.eventually_analyticAt, hGnear] with s hganalytic hgne
-    exact
-      hasDerivAt_dirichletLogEvenZeroRegularization
-        hx hganalytic hgne
+    exact hasDerivAt_dirichletLogEvenZeroRegularization hx hganalytic hgne
   have hderiveq :
-    deriv
-        (dirichletLogEvenZeroRegularization x 1
-          (dirichletEvenZeroLocalFactor
-            χ)) =ᶠ[nhds (0 : ℂ)]
+    deriv (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) =ᶠ[nhds (0 : ℂ)]
       H1 :=
     hev.mono (fun s hs => hs.deriv)
   have hxne : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
@@ -481,103 +336,46 @@ theorem iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq {N : ℕ} [
   have hC0 :
     HasDerivAt
       (fun t : ℂ =>
-        logDeriv
-            (dirichletEvenZeroLocalFactor χ) t +
-          t *
-            deriv
-              (logDeriv
-                (dirichletEvenZeroLocalFactor
-                  χ))
-              t)
-      (deriv
-          (logDeriv
-            (dirichletEvenZeroLocalFactor χ))
-          0 +
-        deriv
-          (logDeriv
-            (dirichletEvenZeroLocalFactor χ))
-          0)
+        logDeriv (dirichletEvenZeroLocalFactor χ) t +
+          t * deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) t)
+      (deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) 0 +
+        deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) 0)
       0 := by
     have hsq := (hasDerivAt_id (0 : ℂ)).mul hqderivHasDerivAt0
     have hadd := hqHasDerivAt0.add hsq
     have hfun2 :
-      logDeriv
-            (dirichletEvenZeroLocalFactor χ) +
-          id *
-            deriv
-              (logDeriv
-                (dirichletEvenZeroLocalFactor
-                  χ)) =
+      logDeriv (dirichletEvenZeroLocalFactor χ) +
+          id * deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) =
         fun t : ℂ =>
-        logDeriv
-            (dirichletEvenZeroLocalFactor χ) t +
-          t *
-            deriv
-              (logDeriv
-                (dirichletEvenZeroLocalFactor
-                  χ))
-              t := by
+        logDeriv (dirichletEvenZeroLocalFactor χ) t +
+          t * deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) t := by
       funext t; rfl
     rw [hfun2] at hadd
     simpa only [one_mul, id_eq, zero_mul, add_zero] using hadd
   have hA0 :
-    HasDerivAt
-      (fun t : ℂ =>
-        1 +
-          t *
-            logDeriv
-              (dirichletEvenZeroLocalFactor χ)
-              t)
-      (logDeriv (dirichletEvenZeroLocalFactor χ)
-        0)
-      0 := by
+    HasDerivAt (fun t : ℂ => 1 + t * logDeriv (dirichletEvenZeroLocalFactor χ) t)
+      (logDeriv (dirichletEvenZeroLocalFactor χ) 0) 0 := by
     have hsq := (hasDerivAt_id (0 : ℂ)).mul hqHasDerivAt0
     have hadd := (hasDerivAt_const (0 : ℂ) (1 : ℂ)).add hsq
     have hfun2 :
-      (fun _ : ℂ => (1 : ℂ)) +
-          id *
-            logDeriv
-              (dirichletEvenZeroLocalFactor χ) =
-        fun t : ℂ =>
-        1 +
-          t *
-            logDeriv
-              (dirichletEvenZeroLocalFactor χ)
-              t := by
+      (fun _ : ℂ => (1 : ℂ)) + id * logDeriv (dirichletEvenZeroLocalFactor χ) = fun t : ℂ =>
+        1 + t * logDeriv (dirichletEvenZeroLocalFactor χ) t := by
       funext t; rfl
     rw [hfun2] at hadd
     simpa only [hasDerivAt_const_add_iff, one_mul, id_eq, zero_mul, add_zero, zero_add] using hadd
   have hraw := ((hC0.mul hB0).add (hA0.mul hBdash0)).neg
   have hfunH1 :
     -(((fun t : ℂ =>
-              logDeriv
-                  (dirichletEvenZeroLocalFactor
-                    χ)
-                  t +
-                t *
-                  deriv
-                    (logDeriv
-                      (dirichletEvenZeroLocalFactor
-                        χ))
-                    t) *
+              logDeriv (dirichletEvenZeroLocalFactor χ) t +
+                t * deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) t) *
             fun t : ℂ => (x : ℂ) ^ t) +
-          (fun t : ℂ =>
-              (1 : ℂ) +
-                t *
-                  logDeriv
-                    (dirichletEvenZeroLocalFactor
-                      χ)
-                    t) *
-            fun t : ℂ => (x : ℂ) ^ t * Complex.log x) =
+          (fun t : ℂ => (1 : ℂ) + t * logDeriv (dirichletEvenZeroLocalFactor χ) t) * fun t : ℂ =>
+            (x : ℂ) ^ t * Complex.log x) =
       H1 := by
     rw [hH1_def]; funext s; simp only [Pi.add_apply, Pi.neg_apply, Pi.mul_apply]
   have hH1deriv := hfunH1 ▸ hraw
   have hderiv2 :
-    deriv
-        (deriv
-          (dirichletLogEvenZeroRegularization x
-            1 (dirichletEvenZeroLocalFactor χ)))
-        0 =
+    deriv (deriv (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ))) 0 =
       deriv H1 0 :=
     hderiveq.deriv_eq
   rw [iteratedDeriv_succ, iteratedDeriv_one, hderiv2, hH1deriv.deriv]
@@ -610,15 +408,10 @@ keeps `Re(deriv(logDeriv F) 0)` symbolic for
 the same reason as the odd case.
 -/
 theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_raw {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
     (hx : 0 < x) :
-    (iteratedDeriv 2
-            (dirichletLogEvenZeroRegularization
-              x 1
-              (dirichletEvenZeroLocalFactor χ))
-            0 /
+    (iteratedDeriv 2 (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) 0 /
           2).re =
       -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re +
           |primitiveBRe χ| * Real.log x +
@@ -626,15 +419,12 @@ theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_raw
           (Real.pi : ℝ) ^ 2 / 24 -
         (Real.eulerMascheroniConstant / 2) * Real.log x -
         (1 / 2) * Real.log x ^ 2 := by
-  rw [iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq
-      hprimitive hne hx,
-    deriv_logDeriv_dirichletEvenZeroLocalFactor_zero
-      hprimitive hne,
-    logDeriv_dirichletEvenZeroLocalFactor_zero
-      hprimitive hne]
+  rw [iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq hprimitive hne hx,
+    deriv_logDeriv_dirichletEvenZeroLocalFactor_zero hprimitive hne,
+    logDeriv_dirichletEvenZeroLocalFactor_zero hprimitive hne]
   have hF0re :=
-    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log
-      hN2 hGRH hprimitive hne hinv hquad
+    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
+      hquad
   have hlogxC : Complex.log (x : ℂ) = ((Real.log x : ℝ) : ℂ) := (Complex.ofReal_log hx.le).symm
   have hcomplex :
     (-(2 * (deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0 - (Real.pi : ℂ) ^ 2 / 24) +

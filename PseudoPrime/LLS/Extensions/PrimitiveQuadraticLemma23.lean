@@ -110,8 +110,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch {N : ℕ} [NeZero N]
       (show 2 ≤ χ.conductor
         by
         have hN1 : χ.conductor ≠ 1 :=
-          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-            hprimne
+          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
         omega)
       hGRH hprimitive hprimne hinv hquad heven hx
@@ -174,8 +173,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even {N : ℕ} [NeZero N]
       (show 2 ≤ χ.conductor
         by
         have hN1 : χ.conductor ≠ 1 :=
-          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-            hprimne
+          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
         omega)
       hGRH hprimitive hprimne hinv hquad heven hx
@@ -242,9 +240,9 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_at_square {N : ℕ} [NeZe
     have hpi : 0 ≤ Real.log Real.pi := Real.log_nonneg (by linarith [Real.pi_gt_three])
     have hmul' := le_trans hmul (mul_le_mul_of_nonneg_left (sub_le_self _ hpi) hcoef)
     convert
-        sub_le_sub_right (sub_le_sub_right hmul' (1 / 4 : ℝ))
-          (2 * Real.log y - 8 / 5 - Real.log 2) using
-        1
+      sub_le_sub_right (sub_le_sub_right hmul' (1 / 4 : ℝ))
+        (2 * Real.log y - 8 / 5 - Real.log 2) using
+      1
   rw [hsqrt] at hbase
   rw [hlogsq] at hbase
   have hden : 0 < (1 - 1 / y) ^ 2 := by
@@ -423,8 +421,8 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square_simple {N : ℕ}
     have hmul := mul_le_mul_of_nonneg_left (sub_le_sub_right hlogD (Real.log Real.pi)) hcoef
     linarith
   have hcoeff :=
-    Analysis.reciprocal_square_coefficient_nonneg hy hlog_upper hlog_lower hlog2_lower
-      hlog2_upper hypos
+    Analysis.reciprocal_square_coefficient_nonneg hy hlog_upper hlog_lower hlog2_lower hlog2_upper
+      hypos
   have hcompare :
     ((1 / 2) * (1 - 1 / y ^ 2) * (y - Real.log Real.pi) - 4 / 5 -
           (2 * Real.log y - 8 / 5 - Real.log 2)) /
@@ -666,8 +664,8 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_simple {N 
       norm_num only
     linarith [Real.log_two_lt_d9]
   have hcoeff :=
-    Analysis.reciprocal_square_coefficient_nonneg_explicit hy hlog_upper hlog_lower
-      hlog2_lower hlog2_upper hypos
+    Analysis.reciprocal_square_coefficient_nonneg_explicit hy hlog_upper hlog_lower hlog2_lower
+      hlog2_upper hypos
   have hcompare :
     ((1 / 2) * (1 - 1 / y ^ 2) * (y - Real.log Real.pi) - 4 / 5 -
           (2 * Real.log y - 8 / 5 - Real.log 2)) /
@@ -738,8 +736,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_neg_one_branch {N : ℕ} [NeZero N]
       (show 2 ≤ χ.conductor
         by
         have hN1 : χ.conductor ≠ 1 :=
-          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-            hprimne
+          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
         omega)
       hGRH hprimitive hprimne hinv hquad heven hx
@@ -940,7 +937,6 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square {N : ℕ} [NeZer
       hbase
     _ ≤ _ := (div_le_div_iff_of_pos_right hden).2 hnum
 
-
 /--
 Input/assumptions: a level-`q` character with `q ≥ 3000`, `χ ≠ 1`, GRH, and a quadratic primitive
 inducing character.
@@ -979,7 +975,6 @@ theorem llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_quadratic {q : �
   rw [hsqrt] at hraw
   unfold LLSPart1PrimitiveReciprocalExplicitFormulaRawAt
   exact hraw
-
 
 /--
 Input/assumptions: LLS Lemma 2.4's Riemann reciprocal lower bound, a level-`q` character with

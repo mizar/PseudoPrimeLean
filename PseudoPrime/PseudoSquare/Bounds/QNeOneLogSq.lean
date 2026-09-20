@@ -32,8 +32,7 @@ private lemma exists_primeNeOneWitness_cast_le_log_sq_of_small_admissible {B n :
         (show 5 ∈ NumberTheory.PrimeNeOneWitnessSet 3 from
           ⟨by decide, by decide, by
             norm_num only [NumberTheory.Internal.jacobiSym_three_five_eq_neg_one]⟩)
-    have hle5R : (NumberTheory.primeNeOneWitness 3 hdn : ℝ) ≤ 5 := by
-      exact_mod_cast hle5
+    have hle5R : (NumberTheory.primeNeOneWitness 3 hdn : ℝ) ≤ 5 := by exact_mod_cast hle5
     exact hle5R.trans (le_of_lt (Analysis.five_lt_log_sq_of_ten_le hB))
   · let hdn : (NumberTheory.PrimeNeOneWitnessSet 5).Nonempty :=
       NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -44,8 +43,7 @@ private lemma exists_primeNeOneWitness_cast_le_log_sq_of_small_admissible {B n :
       NumberTheory.primeNeOneWitness_le 5 hdn
         (show 3 ∈ NumberTheory.PrimeNeOneWitnessSet 5 from
           ⟨by decide, by decide, NumberTheory.jacobiSym_five_three_ne_one⟩)
-    have hle3R : (NumberTheory.primeNeOneWitness 5 hdn : ℝ) ≤ 3 := by
-      exact_mod_cast hle3
+    have hle3R : (NumberTheory.primeNeOneWitness 5 hdn : ℝ) ≤ 3 := by exact_mod_cast hle3
     have hBbound : (3 : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
       nlinarith only [Analysis.five_lt_log_sq_of_ten_le hB]
     exact hle3R.trans hBbound
@@ -58,8 +56,7 @@ private lemma exists_primeNeOneWitness_cast_le_log_sq_of_small_admissible {B n :
       NumberTheory.primeNeOneWitness_le 7 hdn
         (show 5 ∈ NumberTheory.PrimeNeOneWitnessSet 7 from
           ⟨by decide, by decide, NumberTheory.jacobiSym_seven_five_ne_one⟩)
-    have hle5R : (NumberTheory.primeNeOneWitness 7 hdn : ℝ) ≤ 5 := by
-      exact_mod_cast hle5
+    have hle5R : (NumberTheory.primeNeOneWitness 7 hdn : ℝ) ≤ 5 := by exact_mod_cast hle5
     exact hle5R.trans (le_of_lt (Analysis.five_lt_log_sq_of_ten_le hB))
 
 /-
@@ -73,8 +70,8 @@ and compare logarithmic radii after casting the natural inequalities to `ℝ`.
 Role: the pointwise input to `QNeOne_le_log_sq_of_grh`.
 -/
 theorem exists_primeNeOneWitness_cast_le_log_sq_of_admissible
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B n : ℕ}
-    (hB : 10 ≤ B) (hn : n ∈ NumberTheory.admissibleFinset B) :
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B n : ℕ} (hB : 10 ≤ B)
+    (hn : n ∈ NumberTheory.admissibleFinset B) :
     ∃ hdn : (NumberTheory.PrimeNeOneWitnessSet n).Nonempty,
       (NumberTheory.primeNeOneWitness n hdn : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
@@ -150,9 +147,8 @@ Proof: apply `QNeOne_cast_le_of_forall` with the nonnegative logarithmic square
 and discharge each admissible member using the fixed-radius consumer.
 Role: the real-valued uniform logarithmic-square bound.
 -/
-theorem QNeOne_le_log_sq_of_grh
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ}
-    (hB : 10 ≤ B) : (QNeOne B : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
+theorem QNeOne_le_log_sq_of_grh (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {B : ℕ} (hB : 10 ≤ B) : (QNeOne B : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
   apply QNeOne_cast_le_of_forall (sq_nonneg _)
   intro n hn
   exact exists_primeNeOneWitness_cast_le_log_sq_of_admissible hGRH hB hn |>.choose_spec
@@ -168,10 +164,8 @@ fixed-radius pointwise theorem for each element.
 Role: the integer odd-prime-cutoff form of the uniform bound.
 -/
 theorem QNeOne_le_greatestOddPrimeLE_of_grh
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ}
-    (hB : 10 ≤ B) :
-    QNeOne B ≤
-      AnalyticNumberTheory.Arithmetic.greatestOddPrimeLE ((Real.log (B : ℝ)) ^ 2) := by
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ} (hB : 10 ≤ B) :
+    QNeOne B ≤ AnalyticNumberTheory.Arithmetic.greatestOddPrimeLE ((Real.log (B : ℝ)) ^ 2) := by
   classical
   unfold QNeOne
   apply

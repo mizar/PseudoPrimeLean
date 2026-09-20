@@ -14,17 +14,14 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- For odd `n`, passing to the uniform modulus `4 * n` adds exactly the prime factor `2`. -/
 theorem distinctPrimeFactorCount_characterModulus {n : ℕ} (hn : Odd n) :
-    distinctPrimeFactorCount
-        (NumberTheory.characterModulus n) =
+    distinctPrimeFactorCount (NumberTheory.characterModulus n) =
       distinctPrimeFactorCount n + 1 := by
   have hfour : ArithmeticFunction.cardDistinctFactors 4 = 1 := by
     rw [show 4 = 2 ^ 2 by norm_num only,
       ArithmeticFunction.cardDistinctFactors_apply_prime_pow Nat.prime_two (by norm_num only)]
   rw [distinctPrimeFactorCount_eq_cardDistinctFactors,
-    distinctPrimeFactorCount_eq_cardDistinctFactors,
-    NumberTheory.characterModulus,
-    ArithmeticFunction.cardDistinctFactors_mul (NumberTheory.four_coprime_of_odd hn),
-    hfour]
+    distinctPrimeFactorCount_eq_cardDistinctFactors, NumberTheory.characterModulus,
+    ArithmeticFunction.cardDistinctFactors_mul (NumberTheory.four_coprime_of_odd hn), hfour]
   omega
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

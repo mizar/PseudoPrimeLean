@@ -202,8 +202,7 @@ theorem centered_logDeriv_canonicalFactor {R : ℝ} {w s : ℂ} (hw : w ∈ Metr
   have h0closed : (0 : ℂ) ∈ Metric.closedBall (0 : ℂ) R := by
     simp only [Metric.mem_closedBall, dist_self, (Metric.pos_of_mem_ball hw).le]
   have h0ne : (0 : ℂ) ≠ w := Ne.symm hw0
-  rw [logDeriv_canonicalFactor hw hs hsw,
-    logDeriv_canonicalFactor hw h0closed h0ne]
+  rw [logDeriv_canonicalFactor hw hs hsw, logDeriv_canonicalFactor hw h0closed h0ne]
   simp only [mul_zero, sub_zero, zero_sub]
   ring
 

@@ -43,12 +43,10 @@ check `smallNegOneWitnessBound` (giving `≤ 31`, absorbed since `31` itself is 
 `Arithmetic.greatestOddPrimeLE (elementaryRadius B)`), and `750 ≤ n ≤ B` is handled by LLS via
 `elementary_sq_le_radius`.
 -/
-theorem elementary_formula
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ}
+theorem elementary_formula (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ}
     (hB : 3 ≤ B) :
     QNeOne B ≤ QNegOne B ∧
-      QNegOne B ≤
-        AnalyticNumberTheory.Arithmetic.greatestOddPrimeLE (elementaryRadius B) := by
+      QNegOne B ≤ AnalyticNumberTheory.Arithmetic.greatestOddPrimeLE (elementaryRadius B) := by
   apply And.intro (QNeOne_le_QNegOne B)
   rw [← elementaryUpperBound_eq_of_le hB]
   classical
@@ -59,20 +57,18 @@ theorem elementary_formula
   · intro n _
     have hadm := NumberTheory.mem_admissibleFinset_iff.mp n.property
     let hw :=
-      NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hadm.odd
-        hadm.not_isSquare
+      NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hadm.odd hadm.not_isSquare
     by_cases hn750 : n.val < 750
     · exact
         (smallNegOneWitnessBound n.val hadm.odd hadm.not_isSquare hn750).trans
           (thirty_one_le_elementaryUpperBound B)
     · have hmem := NumberTheory.primeNegOneWitness_mem n.val hw
-      have hLLS : LLS.llsTheorem11S1Character :=
-        LLS.llsTheorem11S1Character_of_grh hGRH
+      have hLLS : LLS.llsTheorem11S1Character := LLS.llsTheorem11S1Character_of_grh hGRH
       exact
         odd_prime_le_elementaryUpperBound hmem.1 hmem.2.1
           (primeNegOneWitness_cast_le_elementaryRadius hLLS
-            AnalyticNumberTheory.Arithmetic.elementaryOmegaStatement hadm.odd
-            hadm.not_isSquare hadm.le (Nat.le_of_not_gt hn750) hw)
+            AnalyticNumberTheory.Arithmetic.elementaryOmegaStatement hadm.odd hadm.not_isSquare
+            hadm.le (Nat.le_of_not_gt hn750) hw)
 
 /--
 **The Robin-free boxed bound, real-cutoff form.**
@@ -84,16 +80,13 @@ The proof casts the natural-number bound from `elementary_formula` to the reals 
 squared radius. The conclusion omits the odd-prime cutoff wrapper and supplies
 `elementary_formula_explicit`.
 -/
-theorem elementary_formula_real
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ}
-    (hB : 3 ≤ B) : QNeOne B ≤ QNegOne B ∧ (QNegOne B : ℝ) ≤ elementaryRadius B := by
+theorem elementary_formula_real (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {B : ℕ} (hB : 3 ≤ B) : QNeOne B ≤ QNegOne B ∧ (QNegOne B : ℝ) ≤ elementaryRadius B := by
   obtain ⟨hne, hneg⟩ := elementary_formula hGRH hB
   refine ⟨hne, ?_⟩
   have hR : (0 : ℝ) ≤ elementaryRadius B := by
     unfold elementaryRadius; positivity
-  exact
-    (Nat.cast_le.mpr hneg).trans
-      (AnalyticNumberTheory.Arithmetic.greatestOddPrimeLE_cast_le hR)
+  exact (Nat.cast_le.mpr hneg).trans (AnalyticNumberTheory.Arithmetic.greatestOddPrimeLE_cast_le hR)
 
 /--
 **The Robin-free boxed bound, fully explicit form.**
@@ -103,9 +96,8 @@ Assuming GRH and `B ≥ 3`, this gives `QNeOne B ≤ QNegOne B` and
 The proof unfolds `elementaryRadius` in `elementary_formula_real`.
 This public form states the final bound without the radius or odd-prime cutoff wrappers.
 -/
-theorem elementary_formula_explicit
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ}
-    (hB : 3 ≤ B) :
+theorem elementary_formula_explicit (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {B : ℕ} (hB : 3 ≤ B) :
     QNeOne B ≤ QNegOne B ∧
       (QNegOne B : ℝ) ≤
         (Real.log (4 * (B : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (B : ℝ))) + 3) ^ 2 := by

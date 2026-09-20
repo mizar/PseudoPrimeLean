@@ -40,19 +40,18 @@ namespace PseudoPrime.LLS.Extensions
 quadratic lower bound for `y ≥ 8`. The certified zero mass and logarithmic constants
 supply the two coefficient comparisons used by all three core consumers. -/
 theorem qNeOneAnalyticLowerBound_le_riemann_lower {y : ℝ} (hy : 8 ≤ y) :
-    qNeOneAnalyticLowerBound y ≤
-      riemannLogLowerAt (y ^ 2) - (Real.log (y ^ 2)) ^ 2 / 2 := by
-  have hm := mul_le_mul_of_nonneg_right
-    AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_three_twentieths
-    (show 0 ≤ y + 1 by linarith only [hy])
-  have hl := mul_le_mul_of_nonneg_right
-    (Analysis.log_two_mul_pi_lt.le.trans (show (1839 / 1000 : ℝ) ≤ 2 by norm_num only))
-    (Real.log_nonneg (show 1 ≤ y by linarith only [hy]))
-  rw [qNeOneAnalyticLowerBound, riemannLogLowerAt,
-    Real.sqrt_sq (by linarith only [hy]), Real.log_pow]
+    qNeOneAnalyticLowerBound y ≤ riemannLogLowerAt (y ^ 2) - (Real.log (y ^ 2)) ^ 2 / 2 := by
+  have hm :=
+    mul_le_mul_of_nonneg_right AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_three_twentieths
+      (show 0 ≤ y + 1 by linarith only [hy])
+  have hl :=
+    mul_le_mul_of_nonneg_right
+      (Analysis.log_two_mul_pi_lt.le.trans (show (1839 / 1000 : ℝ) ≤ 2 by norm_num only))
+      (Real.log_nonneg (show 1 ≤ y by linarith only [hy]))
+  rw [qNeOneAnalyticLowerBound, riemannLogLowerAt, Real.sqrt_sq (by linarith only [hy]),
+    Real.log_pow]
   norm_num only
   nlinarith only [hm, hl]
-
 
 /-!
 The quadratic residue-ledger bound is transferred through the generic boundary limit.
@@ -63,55 +62,42 @@ The version without a quadraticity hypothesis is
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 theorem re_characterLogWeightedSum_sub_leftVertical_le_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
     (hx : 64 ≤ x) (A : ℕ) (hA : 2 ≤ A) :
     (characterLogWeightedSum x χ).re -
         (2 * Real.pi)⁻¹ *
           (∫ t : ℝ,
               dirichletLogContourKernel x χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I)).re ≤
-      (2 * Real.sqrt x + 2 + Real.log x) *
-            |primitiveBRe χ| +
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re ≤
+      (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
   have hx1 : (1 : ℝ) ≤ x := le_trans (by norm_num only) hx
   have htend :=
-    tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh
-      hN2 hGRH hprimitive hne hinv hx1 A hA
+    tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh hN2 hGRH hprimitive hne hinv hx1 A hA
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   have hev :
     ∀ᶠ k : ℕ in Filter.atTop,
       ((-Complex.I / (2 * (Real.pi : ℂ))) *
             AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral
               (dirichletLogContourKernel x χ)
-              (primitiveHeightSeqLowerCorner_of_grh
-                hN2 hGRH hprimitive hne hinv A k)
-              (primitiveHeightSeqUpperCorner_of_grh
-                hN2 hGRH hprimitive hne hinv k)).re ≤
-        (2 * Real.sqrt x + 2 + Real.log x) *
-              |primitiveBRe χ| +
+              (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
+              (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k)).re ≤
+        (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
             (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
           11 / 4 := by
     filter_upwards with k
     have hid :=
-      dirichletLogFiniteContourIdentity_heightSeq_normalized_of_grh
-        hN2 hGRH hprimitive hne hinv (lt_of_lt_of_le zero_lt_one hx1) A k hA
+      dirichletLogFiniteContourIdentity_heightSeq_normalized_of_grh hN2 hGRH hprimitive hne hinv
+        (lt_of_lt_of_le zero_lt_one hx1) A k hA
     obtain ⟨h0, h1⟩ :=
-      primitiveReciprocalMellinPoints_mem_singularities_heightSeq_of_grh
-        hN2 hGRH hprimitive hne hinv A k hA
+      primitiveReciprocalMellinPoints_mem_singularities_heightSeq_of_grh hN2 hGRH hprimitive hne
+        hinv A k hA
     have hbound :=
       re_sum_llsPrimitiveLogResidueAt_le hN2 hGRH hprimitive hne hinv hquad hx (z :=
-        primitiveHeightSeqLowerCorner_of_grh hN2
-          hGRH hprimitive hne hinv A k)
-        (w :=
-        primitiveHeightSeqUpperCorner_of_grh hN2
-          hGRH hprimitive hne hinv k)
-        h0 h1
+        primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k) (w :=
+        primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k) h0 h1
     rw [hid]
     exact hbound
   have hlimit := le_of_tendsto htendRe hev
@@ -120,18 +106,12 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le_of_grh {N : ℕ} [NeZero 
     ((↑(2 * Real.pi))⁻¹ *
             ∫ t : ℝ,
               dirichletLogContourKernel x χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I) :
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I) :
           ℂ).re =
       (2 * Real.pi)⁻¹ *
         (∫ t : ℝ,
             dirichletLogContourKernel x χ
-              (((primitiveReciprocalLeftRe A :
-                    ℝ) :
-                  ℂ) +
-                (t : ℂ) * Complex.I)).re := by
+              (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re := by
     rw [show ((↑(2 * Real.pi))⁻¹ : ℂ) = (((2 * Real.pi)⁻¹ : ℝ) : ℂ) from by
         push_cast; ring,
       Complex.re_ofReal_mul]
@@ -149,19 +129,16 @@ Role: completes the logarithmic contour-to-raw-bound passage available from the 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 private theorem primitiveQuadraticLogWeightedUpperLegacy {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
     (hx : 64 ≤ x) :
     (characterLogWeightedSum x χ).re ≤
-      (2 * Real.sqrt x + 2 + Real.log x) *
-            |primitiveBRe χ| +
+      (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
   have hx1 : (1 : ℝ) < x := lt_of_lt_of_le (by norm_num only) hx
   have htend :=
-    tendsto_dirichletLogContourKernel_leftVertical_integral_atTop
-      hprimitive hne hinv hx1
+    tendsto_dirichletLogContourKernel_leftVertical_integral_atTop hprimitive hne hinv hx1
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   have htendScaled :
     Filter.Tendsto
@@ -170,15 +147,8 @@ private theorem primitiveQuadraticLogWeightedUpperLegacy {N : ℕ} [NeZero N] (h
           (2 * Real.pi)⁻¹ *
             (∫ t : ℝ,
                 dirichletLogContourKernel x χ
-                  (((primitiveReciprocalLeftRe
-                          A :
-                        ℝ) :
-                      ℂ) +
-                    (t : ℂ) * Complex.I)).re)
-      Filter.atTop
-      (nhds
-        ((characterLogWeightedSum x χ).re -
-          (2 * Real.pi)⁻¹ * 0)) :=
+                  (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re)
+      Filter.atTop (nhds ((characterLogWeightedSum x χ).re - (2 * Real.pi)⁻¹ * 0)) :=
     Filter.Tendsto.const_sub _ (Filter.Tendsto.const_mul _ htendRe)
   simp only [mul_zero, sub_zero] at htendScaled
   have hev :
@@ -187,13 +157,8 @@ private theorem primitiveQuadraticLogWeightedUpperLegacy {N : ℕ} [NeZero N] (h
           (2 * Real.pi)⁻¹ *
             (∫ t : ℝ,
                 dirichletLogContourKernel x χ
-                  (((primitiveReciprocalLeftRe
-                          A :
-                        ℝ) :
-                      ℂ) +
-                    (t : ℂ) * Complex.I)).re ≤
-        (2 * Real.sqrt x + 2 + Real.log x) *
-              |primitiveBRe χ| +
+                  (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re ≤
+        (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
             (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
           11 / 4 := by
     filter_upwards [Filter.eventually_ge_atTop 2] with A hA
@@ -226,13 +191,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch {q : ℕ}
     y ^ 2 - Real.log (2 * Real.pi) * (2 * Real.log y) - 1 -
           2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) -
           (2 * Real.log y) ^ 2 / 2 ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) -
           11 / 4 := by
   have hypos : (0 : ℝ) < y := lt_of_lt_of_le (by norm_num only) hy
@@ -254,8 +216,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch {q : ℕ}
     exact hprimne
   have hN2 : 2 ≤ χ.conductor := by
     have hN1 : χ.conductor ≠ 1 :=
-      AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-        hprimne
+      AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
     have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
     omega
   have hlower :=
@@ -291,13 +252,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch {q : ℕ}
     y ^ 2 - Real.log (2 * Real.pi) * (2 * Real.log y) - 1 -
           2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) -
           (2 * Real.log y) ^ 2 / 2 ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) -
           11 / 4 := by
   have hypos : (0 : ℝ) < y := lt_of_lt_of_le (by norm_num only) hy
@@ -319,8 +277,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch {q : ℕ}
     exact hprimne
   have hN2 : 2 ≤ χ.conductor := by
     have hN1 : χ.conductor ≠ 1 :=
-      AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-        hprimne
+      AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
     have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
     omega
   have hlower :=
@@ -351,13 +308,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_traded {q : �
     (h2 : χ.primitiveCharacter 2 = 0) :
     y ^ 2 - 2 * Real.log (2 * Real.pi) * Real.log y - 1 - (3 / 10 : ℝ) * (y + 1) -
           2 * (Real.log y) ^ 2 ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) -
           11 / 4 := by
   have hbase :=
@@ -414,14 +368,12 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_traded {q : �
       _ =
           ((1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) - 11 / 4) +
             ((2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter|) :=
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|) :=
         by ring
       _ ≤
           ((1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) - 11 / 4) +
             ((2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter|) :=
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|) :=
         add_le_add_left hright _
       _ = _ := by ring
 
@@ -447,13 +399,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_log_four {q : 
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = 0) :
     qNeOneAnalyticLowerBound y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (y + Real.log 4 - Real.log Real.pi) * (2 * Real.log y) -
           11 / 4 := by
   have hbase :=
@@ -472,25 +421,21 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_log_four {q : 
           (show 2 * Real.log (2 * Real.pi) ≤ 4 by
             calc
               2 * Real.log (2 * Real.pi) ≤ 2 * (1839 / 1000 : ℝ) :=
-                mul_le_mul_of_nonneg_left Analysis.log_two_mul_pi_lt.le
-                  (by norm_num only)
+                mul_le_mul_of_nonneg_left Analysis.log_two_mul_pi_lt.le (by norm_num only)
               _ ≤ 4 := by norm_num only)
           hlogy
       exact this
     have hy1 : (0 : ℝ) ≤ y + 1 := add_nonneg (le_trans (by norm_num only) hy) (by norm_num only)
-    have hmass2 :
-      2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass ≤ 2 * (3 / 20 : ℝ) :=
+    have hmass2 : 2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass ≤ 2 * (3 / 20 : ℝ) :=
       mul_le_mul_of_nonneg_left hmass (show (0 : ℝ) ≤ 2 by norm_num only)
     have hmassprod := mul_le_mul_of_nonneg_right hmass2 hy1
     unfold qNeOneAnalyticLowerBound
     have hlog := neg_le_neg hprod
     have hmass' :
-      -(3 / 10 : ℝ) * (y + 1) ≤
-        -2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) := by
+      -(3 / 10 : ℝ) * (y + 1) ≤ -2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) := by
       calc
         -(3 / 10 : ℝ) * (y + 1) = -(2 * (3 / 20 : ℝ) * (y + 1)) := by ring
-        _ ≤ -(2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1)) :=
-          neg_le_neg hmassprod
+        _ ≤ -(2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1)) := neg_le_neg hmassprod
         _ = _ := by ring
     calc
       _ = (y ^ 2 - 1 - 2 * (Real.log y) ^ 2) - (3 / 10 : ℝ) * (y + 1) - 4 * Real.log y := by ring
@@ -530,14 +475,12 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_log_four {q : 
       _ =
           (1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) - 11 / 4 +
             (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| :=
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| :=
         by ring
       _ ≤
           (1 / 2) * (y + Real.log 4 - Real.log Real.pi) * (2 * Real.log y) - 11 / 4 +
             (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| :=
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| :=
         add_le_add_left hright _
       _ = _ := by ring
 
@@ -563,13 +506,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_log_four_even_
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = 0) :
     qNeOneAnalyticLowerBound y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         (2 * y + 2 + 2 * Real.log y) *
-            |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                χ.primitiveCharacter| +
+            |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
           (1 / 2) * (y + Real.log 4 - Real.log Real.pi) * (2 * Real.log y) +
           Analysis.primitiveLogEvenMainError (y ^ 2) := by
   have hypos : (0 : ℝ) < y := lt_of_lt_of_le (by norm_num only) hy
@@ -579,9 +519,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_log_four_even_
     rw [Real.log_pow]
     norm_num only
   have hcore := weightedComparisonCore_even_zero χ hne hquad heven hGRH hx64 hodd h2
-  have hbounds := re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
-    hriemann (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
-    (lt_of_lt_of_le (by norm_num only) hx64) (le_trans (by norm_num only) hx64) hcore
+  have hbounds :=
+    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le hriemann
+      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
+      (lt_of_lt_of_le (by norm_num only) hx64) (le_trans (by norm_num only) hx64) hcore
   have hupper := hbounds.2.2.2
   rw [Real.log_div (by exact_mod_cast NeZero.ne χ.conductor) Real.pi_ne_zero] at hupper
   rw [hsqrt, hlogsq] at hupper
@@ -602,8 +543,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_log_four_even_
   · calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         hupper
@@ -611,15 +551,13 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_log_four_even_
         calc
           _ =
               (2 * y + 2 + 2 * Real.log y) *
-                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                      χ.primitiveCharacter| +
+                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
                 ((1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) +
                   Analysis.primitiveLogEvenMainError (y ^ 2)) :=
             by ring
           _ ≤
               (2 * y + 2 + 2 * Real.log y) *
-                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                      χ.primitiveCharacter| +
+                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
                 ((1 / 2) * (y + Real.log 4 - Real.log Real.pi) * (2 * Real.log y) +
                   Analysis.primitiveLogEvenMainError (y ^ 2)) :=
             add_le_add (le_refl _) (add_le_add hright (le_refl _))
@@ -648,10 +586,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_log_four_even_
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = 0) :
     qNeOneAnalyticLowerBound y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneAnalyticUpperBoundLogFour y := by
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_log_four_even_exact χ hne hquad heven
@@ -672,8 +608,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_log_four_even_
     calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (y + Real.log 4 - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         hbounds.2
@@ -713,13 +648,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_log_four_ev
     y ^ 2 - Real.log (2 * Real.pi) * (2 * Real.log y) - 1 -
           2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) -
           (3 / 2) * (2 * Real.log y) ^ 2 ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         (2 * y + 2 + 2 * Real.log y) *
-            |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                χ.primitiveCharacter| +
+            |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
           (1 / 2) * (y - Real.log 4 - Real.log Real.pi) * (2 * Real.log y) +
           Analysis.primitiveLogEvenMainError (y ^ 2) := by
   have hypos : 0 < y := lt_of_lt_of_le (by norm_num only) hy
@@ -733,9 +665,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_log_four_ev
       hriemann (le_trans (by norm_num only) hx64) hodd h2
   rw [hsqrt, hlogsq] at hlower
   have hcore := weightedComparisonCore_even_neg_one χ hne hquad heven hGRH hx64 hodd h2
-  have hbounds := re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
-    hriemann (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
-    (lt_of_lt_of_le (by norm_num only) hx64) (le_trans (by norm_num only) hx64) hcore
+  have hbounds :=
+    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le hriemann
+      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
+      (lt_of_lt_of_le (by norm_num only) hx64) (le_trans (by norm_num only) hx64) hcore
   have hupper := hbounds.2.2.2
   rw [Real.log_div (by exact_mod_cast NeZero.ne χ.conductor) Real.pi_ne_zero] at hupper
   rw [hsqrt, hlogsq] at hupper
@@ -756,8 +689,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_log_four_ev
   · calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         hupper
@@ -765,15 +697,13 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_log_four_ev
         calc
           _ =
               (2 * y + 2 + 2 * Real.log y) *
-                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                      χ.primitiveCharacter| +
+                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
                 ((1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) +
                   Analysis.primitiveLogEvenMainError (y ^ 2)) :=
             by ring
           _ ≤
               (2 * y + 2 + 2 * Real.log y) *
-                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                      χ.primitiveCharacter| +
+                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
                 ((1 / 2) * (y - Real.log 4 - Real.log Real.pi) * (2 * Real.log y) +
                   Analysis.primitiveLogEvenMainError (y ^ 2)) :=
             add_le_add (le_refl _) (add_le_add hright (le_refl _))
@@ -798,8 +728,7 @@ theorem primitiveQuadraticLogWeightedLower_of_qneOne_neg_one_branch_corrected {q
           p ∈ Finset.Ioc 0 ⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊ →
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = -1) :
-    qNeOneAnalyticLowerBound y -
-        Analysis.logTwoSquareCorrection y ≤
+    qNeOneAnalyticLowerBound y - Analysis.logTwoSquareCorrection y ≤
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
           χ.primitiveCharacter).re := by
   have hypos : 0 < y := lt_of_lt_of_le (by norm_num only) hy
@@ -823,8 +752,7 @@ theorem primitiveQuadraticLogWeightedLower_of_qneOne_neg_one_branch_corrected {q
   have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only) hy)
   have hmass : AnalyticNumberTheory.RiemannXi.riemannZeroMass ≤ (3 / 20 : ℝ) :=
     AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_three_twentieths
-  unfold qNeOneAnalyticLowerBound
-    Analysis.logTwoSquareCorrection
+  unfold qNeOneAnalyticLowerBound Analysis.logTwoSquareCorrection
   have hAprod : 2 * Real.log (2 * Real.pi) * Real.log y ≤ 4 * Real.log y := by
     have hcoef : 2 * Real.log (2 * Real.pi) ≤ (4 : ℝ) := by
       calc
@@ -837,12 +765,10 @@ theorem primitiveQuadraticLogWeightedLower_of_qneOne_neg_one_branch_corrected {q
   have hmassprod := mul_le_mul_of_nonneg_right hmass2 hy1
   have hAneg := neg_le_neg hAprod
   have hmassneg :
-    -(3 / 10 : ℝ) * (y + 1) ≤
-      -2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) := by
+    -(3 / 10 : ℝ) * (y + 1) ≤ -2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) := by
     calc
       -(3 / 10 : ℝ) * (y + 1) = -(2 * (3 / 20 : ℝ) * (y + 1)) := by ring
-      _ ≤ -(2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1)) :=
-        neg_le_neg hmassprod
+      _ ≤ -(2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1)) := neg_le_neg hmassprod
       _ = _ := by ring
   have hcompare :
     y ^ 2 - 3 / 10 * (y + 1) - 4 * Real.log y - 1 - 2 * Real.log y ^ 2 -
@@ -884,13 +810,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_exact_
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = -1) :
     qNeOneAnalyticLowerBoundNegOne y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         (2 * y + 2 + 2 * Real.log y) *
-            |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                χ.primitiveCharacter| +
+            |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
           (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) +
           Analysis.primitiveLogEvenMainError (y ^ 2) := by
   have hypos : 0 < y := lt_of_lt_of_le (by norm_num only) hy
@@ -904,9 +827,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_exact_
       hriemann (le_trans (by norm_num only) hx64) hodd h2
   rw [hsqrt, hlogsq] at hlower
   have hcore := weightedComparisonCore_even_neg_one χ hne hquad heven hGRH hx64 hodd h2
-  have hbounds := re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
-    hriemann (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
-    (lt_of_lt_of_le (by norm_num only) hx64) (le_trans (by norm_num only) hx64) hcore
+  have hbounds :=
+    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le hriemann
+      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
+      (lt_of_lt_of_le (by norm_num only) hx64) (le_trans (by norm_num only) hx64) hcore
   have hupper := hbounds.2.2.2
   rw [Real.log_div (by exact_mod_cast NeZero.ne χ.conductor) Real.pi_ne_zero] at hupper
   rw [hsqrt, hlogsq] at hupper
@@ -936,8 +860,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_exact_
   · calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         hupper
@@ -945,15 +868,13 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_exact_
         calc
           _ =
               (2 * y + 2 + 2 * Real.log y) *
-                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                      χ.primitiveCharacter| +
+                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
                 ((1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) +
                   Analysis.primitiveLogEvenMainError (y ^ 2)) :=
             by ring
           _ ≤
               (2 * y + 2 + 2 * Real.log y) *
-                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                      χ.primitiveCharacter| +
+                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
                 ((1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) +
                   Analysis.primitiveLogEvenMainError (y ^ 2)) :=
             add_le_add (le_refl _) (add_le_add hright (le_refl _))
@@ -981,10 +902,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_analyt
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = -1) :
     qNeOneAnalyticLowerBoundNegOne y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneAnalyticUpperBoundNegOne y := by
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_exact_le χ hne hquad heven
@@ -1005,8 +924,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_analyt
   · calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         hbounds.2
@@ -1215,12 +1133,11 @@ Role: the separation certificate on `[12,13]`.
 -/
 
 theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twelve_thirteen {y : ℝ} (hy : 12 ≤ y)
-    (hy13 : y ≤ 13) :
-    qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
+    (hy13 : y ≤ 13) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   have hloglower : (247 : ℝ) / 100 + 2 / 25 * (y - 12) ≤ Real.log y := by
     have h :=
-      Analysis.log_gt_affine_of_anchor (a := (12 : ℝ)) (b := 13) (y := y) (L :=
-        247 / 100) (by norm_num only) (by norm_num only) hy hy13 Analysis.log_twelve_gt
+      Analysis.log_gt_affine_of_anchor (a := (12 : ℝ)) (b := 13) (y := y) (L := 247 / 100)
+        (by norm_num only) (by norm_num only) hy hy13 Analysis.log_twelve_gt
     norm_num only at h ⊢
     exact h.le
   have hB := qNeOneBUpperBoundZeroStar_le_affine_twelve_thirteen hy hy13
@@ -1235,8 +1152,7 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twelve_thirteen {y 
 /-! The remaining compact intervals use the same cleared separation inequality. -/
 
 theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirteen_sixteen {y : ℝ} (hy : 13 ≤ y)
-    (hy16 : y ≤ 16) :
-    qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
+    (hy16 : y ≤ 16) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   have hlog13 : (256 : ℝ) / 100 < Real.log 13 := by
     have h12 : (248 : ℝ) / 100 < Real.log 12 := by
       rw [show (12 : ℝ) = 3 * 4 by norm_num only,
@@ -1258,8 +1174,8 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirteen_sixteen {y
       _ < Real.log 12 + Real.log (13 / 12) := hsum
   have hloglower : (256 : ℝ) / 100 + 2 / 29 * (y - 13) ≤ Real.log y := by
     have h :=
-      Analysis.log_gt_affine_of_anchor (a := (13 : ℝ)) (b := 16) (y := y) (L :=
-        256 / 100) (by norm_num only) (by norm_num only) hy hy16 hlog13
+      Analysis.log_gt_affine_of_anchor (a := (13 : ℝ)) (b := 16) (y := y) (L := 256 / 100)
+        (by norm_num only) (by norm_num only) hy hy16 hlog13
     norm_num only at h ⊢
     exact h.le
   have hB := qNeOneBUpperBoundZeroStar_le_affine_thirteen_sixteen hy hy16
@@ -1272,8 +1188,7 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirteen_sixteen {y
   linarith [hyl, hL2, sq_nonneg (y - 13), sq_nonneg (y - 16)]
 
 theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_sixteen_twenty_four {y : ℝ}
-    (hy : 16 ≤ y) (hy24 : y ≤ 24) :
-    qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
+    (hy : 16 ≤ y) (hy24 : y ≤ 24) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   have hlog16 : (277 : ℝ) / 100 < Real.log 16 := by
     rw [show (16 : ℝ) = 2 ^ 4 by norm_num only, Real.log_pow]
     have h2 : (693 : ℝ) / 1000 < Real.log 2 := lt_trans (by norm_num only) Real.log_two_gt_d9
@@ -1283,12 +1198,11 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_sixteen_twenty_four
       _ < 4 * Real.log 2 := mul_lt_mul_of_pos_left h2 (by norm_num only)
   have hloglower : (277 : ℝ) / 100 + 1 / 20 * (y - 16) ≤ Real.log y := by
     have h :=
-      Analysis.log_gt_affine_of_anchor (a := (16 : ℝ)) (b := 24) (y := y) (L :=
-        277 / 100) (by norm_num only) (by norm_num only) hy hy24 hlog16
+      Analysis.log_gt_affine_of_anchor (a := (16 : ℝ)) (b := 24) (y := y) (L := 277 / 100)
+        (by norm_num only) (by norm_num only) hy hy24 hlog16
     norm_num only at h ⊢
     exact h.le
-  have hB :=
-    qNeOneBUpperBoundZeroStar_le_affine_sixteen_twenty_four hy hy24
+  have hB := qNeOneBUpperBoundZeroStar_le_affine_sixteen_twenty_four hy hy24
   apply qNeOneUpperBoundZeroStar_lt_of_affine_B (le_trans (by norm_num only) hy) hB
   unfold qNeOneAnalyticLowerBound
   ring_nf at ⊢
@@ -1298,8 +1212,7 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_sixteen_twenty_four
   linarith [hyl, hL2, sq_nonneg (y - 16), sq_nonneg (y - 24)]
 
 theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twenty_four_thirty_two {y : ℝ}
-    (hy : 24 ≤ y) (hy32 : y ≤ 32) :
-    qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
+    (hy : 24 ≤ y) (hy32 : y ≤ 32) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   have hlog24 : (317 : ℝ) / 100 < Real.log 24 := by
     rw [show (24 : ℝ) = 3 * 2 ^ 3 by norm_num only,
       Real.log_mul (by norm_num only) (by norm_num only), Real.log_pow]
@@ -1312,12 +1225,11 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twenty_four_thirty_
         exact add_lt_add h3 (mul_lt_mul_of_pos_left h2 (by norm_num only))
   have hloglower : (317 : ℝ) / 100 + 1 / 28 * (y - 24) ≤ Real.log y := by
     have h :=
-      Analysis.log_gt_affine_of_anchor (a := (24 : ℝ)) (b := 32) (y := y) (L :=
-        317 / 100) (by norm_num only) (by norm_num only) hy hy32 hlog24
+      Analysis.log_gt_affine_of_anchor (a := (24 : ℝ)) (b := 32) (y := y) (L := 317 / 100)
+        (by norm_num only) (by norm_num only) hy hy32 hlog24
     norm_num only at h ⊢
     exact h.le
-  have hB :=
-    qNeOneBUpperBoundZeroStar_le_affine_twenty_four_thirty_two hy hy32
+  have hB := qNeOneBUpperBoundZeroStar_le_affine_twenty_four_thirty_two hy hy32
   apply qNeOneUpperBoundZeroStar_lt_of_affine_B (le_trans (by norm_num only) hy) hB
   unfold qNeOneAnalyticLowerBound
   ring_nf at ⊢
@@ -1327,8 +1239,7 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twenty_four_thirty_
   linarith [hyl, hL2, sq_nonneg (y - 24), sq_nonneg (y - 32)]
 
 theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirty_two_forty_eight {y : ℝ}
-    (hy : 32 ≤ y) (hy48 : y ≤ 48) :
-    qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
+    (hy : 32 ≤ y) (hy48 : y ≤ 48) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   have hlog32 : (346 : ℝ) / 100 < Real.log 32 := by
     rw [show (32 : ℝ) = 2 ^ 5 by norm_num only, Real.log_pow]
     have h2 : (693 : ℝ) / 1000 < Real.log 2 := lt_trans (by norm_num only) Real.log_two_gt_d9
@@ -1338,12 +1249,11 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirty_two_forty_ei
       _ < 5 * Real.log 2 := mul_lt_mul_of_pos_left h2 (by norm_num only)
   have hloglower : (346 : ℝ) / 100 + 1 / 40 * (y - 32) ≤ Real.log y := by
     have h :=
-      Analysis.log_gt_affine_of_anchor (a := (32 : ℝ)) (b := 48) (y := y) (L :=
-        346 / 100) (by norm_num only) (by norm_num only) hy hy48 hlog32
+      Analysis.log_gt_affine_of_anchor (a := (32 : ℝ)) (b := 48) (y := y) (L := 346 / 100)
+        (by norm_num only) (by norm_num only) hy hy48 hlog32
     norm_num only at h ⊢
     exact h.le
-  have hB :=
-    qNeOneBUpperBoundZeroStar_le_affine_thirty_two_forty_eight hy hy48
+  have hB := qNeOneBUpperBoundZeroStar_le_affine_thirty_two_forty_eight hy hy48
   apply qNeOneUpperBoundZeroStar_lt_of_affine_B (le_trans (by norm_num only) hy) hB
   unfold qNeOneAnalyticLowerBound
   ring_nf at ⊢
@@ -1436,13 +1346,11 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirty_two_forty_ei
 /-! The five compact c=0 certificates combine with the c=1 bound on `[12,48]`. -/
 
 theorem qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound_twelve_forty_eight {y : ℝ} (hy : 12 ≤ y)
-    (hy48 : y ≤ 48) :
-    qNeOneCommonUpperBound y < qNeOneAnalyticLowerBound y := by
+    (hy48 : y ≤ 48) : qNeOneCommonUpperBound y < qNeOneAnalyticLowerBound y := by
   have hone :=
     qNeOneAnalyticUpperBoundOne_lt_qNeOneAnalyticLowerBound (y := y)
       (by exact (le_trans (by norm_num only) hy))
-  have hzero :
-    qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
+  have hzero : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
     by_cases hy13 : y ≤ 13
     · exact qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twelve_thirteen hy hy13
     by_cases hy16 : y ≤ 16
@@ -1465,7 +1373,6 @@ theorem qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound_twelve_forty_eight {y
 
 namespace QNeOneZeroStar
 
-
 /-- The affine comparison is below the analytic envelope by the positive gap certificate. -/
 lemma zeroStar_affine_lt_lower {y : ℝ} (hy : 48 ≤ y) :
     (2 * y + 2 + 2 * Real.log y) * (y / 2 - 2 * Real.log y + 3) + (y + 2 / 5) * Real.log y + 2 / 3 -
@@ -1473,9 +1380,7 @@ lemma zeroStar_affine_lt_lower {y : ℝ} (hy : 48 ≤ y) :
         2 * (Real.log y) ^ 2 <
       qNeOneAnalyticLowerBound y := by
   have hypos : 0 < y := lt_of_lt_of_le (by norm_num only) hy
-  have hcert :=
-    Analysis.affine_log_gap_pos hypos.le
-      (Analysis.zeroStar_log_lower hy hypos)
+  have hcert := Analysis.affine_log_gap_pos hypos.le (Analysis.zeroStar_log_lower hy hypos)
   apply sub_pos.mp
   exact
     (div_pos hcert (by norm_num only : (0 : ℝ) < 300)).trans_eq
@@ -1491,17 +1396,14 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound {y : ℝ} (hy : 48 
     qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   exact
     qNeOneUpperBoundZeroStar_lt_of_affine_B (le_trans (by norm_num only) hy)
-      (Analysis.reciprocal_log_quotient_le_affine hy)
-      (QNeOneZeroStar.zeroStar_affine_lt_lower hy)
+      (Analysis.reciprocal_log_quotient_le_affine hy) (QNeOneZeroStar.zeroStar_affine_lt_lower hy)
 
 /-! The two branch separations combine into the max upper envelope without differentiating it. -/
 
 theorem qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound {y : ℝ} (hy : 48 ≤ y) :
     qNeOneCommonUpperBound y < qNeOneAnalyticLowerBound y := by
   have hzero := qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound hy
-  have hone :=
-    qNeOneAnalyticUpperBoundOne_lt_qNeOneAnalyticLowerBound (y := y)
-      (by linarith)
+  have hone := qNeOneAnalyticUpperBoundOne_lt_qNeOneAnalyticLowerBound (y := y) (by linarith)
   unfold qNeOneCommonUpperBound
   exact max_lt hzero hone
 
@@ -1516,8 +1418,7 @@ theorem qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound_of_twelve {y : ℝ} (
 /-! Any sandwich by the common numerical upper envelope is impossible in the bound range. -/
 
 theorem qNeOne_common_sandwich_false {y z : ℝ} (hy : 48 ≤ y)
-    (hlower : qNeOneAnalyticLowerBound y ≤ z)
-    (hupper : z ≤ qNeOneCommonUpperBound y) : False := by
+    (hlower : qNeOneAnalyticLowerBound y ≤ z) (hupper : z ≤ qNeOneCommonUpperBound y) : False := by
   exact
     (not_lt_of_ge (hlower.trans hupper))
       (qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound (by linarith))
@@ -1525,8 +1426,7 @@ theorem qNeOne_common_sandwich_false {y z : ℝ} (hy : 48 ≤ y)
 /-! The same common sandwich contradiction is now available from `y ≥ 12`. -/
 
 theorem qNeOne_common_sandwich_false_of_twelve {y z : ℝ} (hy : 12 ≤ y)
-    (hlower : qNeOneAnalyticLowerBound y ≤ z)
-    (hupper : z ≤ qNeOneCommonUpperBound y) : False := by
+    (hlower : qNeOneAnalyticLowerBound y ≤ z) (hupper : z ≤ qNeOneCommonUpperBound y) : False := by
   exact
     (not_lt_of_ge (hlower.trans hupper))
       (qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound_of_twelve hy)
@@ -1551,10 +1451,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_star {q :
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = 0) :
     qNeOneAnalyticLowerBound y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneUpperBoundZeroStar y := by
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_log_four_even_exact χ hne hquad heven
@@ -1570,8 +1468,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_star {q :
   · calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (y + Real.log 4 - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         hbounds.2
@@ -1599,10 +1496,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_common {q
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = 0) :
     qNeOneAnalyticLowerBound y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneCommonUpperBound y := by
   have h :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_star χ hne hquad heven hGRH hy
@@ -1635,10 +1530,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_star {
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = -1) :
     qNeOneAnalyticLowerBoundNegOne y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneUpperBoundNegOneStar y := by
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_exact_le χ hne hquad heven
@@ -1654,8 +1547,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_star {
   · calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         hbounds.2
@@ -1689,13 +1581,11 @@ theorem qNeOneUpperBoundZeroStar_sub_negOneStar_add_delta_eq {y : ℝ} (hy : 8 �
       linarith
     positivity
   have hB := qNeOneBUpperBoundZeroStar_sub_negOneStar_eq hy
-  rw [qNeOneUpperBoundZeroStar, qNeOneUpperBoundNegOneStar,
-    Analysis.logTwoSquareCorrection, hlog4]
+  rw [qNeOneUpperBoundZeroStar, qNeOneUpperBoundNegOneStar, Analysis.logTwoSquareCorrection, hlog4]
   calc
     _ =
         (2 * y + 2 + 2 * Real.log y) *
-            (qNeOneBUpperBoundZeroStar y -
-              qNeOneBUpperBoundNegOneStar y) +
+            (qNeOneBUpperBoundZeroStar y - qNeOneBUpperBoundNegOneStar y) +
           (Real.log 2) ^ 2 :=
       by ring_nf
     _ = _ := by rw [hB]
@@ -1718,21 +1608,20 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_corrected_s
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = -1) :
     qNeOneAnalyticLowerBound y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-              χ.primitiveCharacter).re +
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re +
           Analysis.logTwoSquareCorrection y ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-              χ.primitiveCharacter).re +
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re +
           Analysis.logTwoSquareCorrection y ≤
         qNeOneUpperBoundZeroStar y := by
   have hx := Analysis.sq_ge_64_of_ge_8 hy
   have hcore := weightedComparisonCore_even_neg_one χ hne hquad heven hGRH hx hodd h2
-  have hc := re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
-    hriemann hriemannReciprocal (lt_of_lt_of_le (by norm_num only) hx)
-    (le_trans (by norm_num only) hx) hcore
-  have hlow : qNeOneAnalyticLowerBound y - Analysis.logTwoSquareCorrection y ≤
+  have hc :=
+    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le hriemann hriemannReciprocal
+      (lt_of_lt_of_le (by norm_num only) hx) (le_trans (by norm_num only) hx) hcore
+  have hlow :
+    qNeOneAnalyticLowerBound y - Analysis.logTwoSquareCorrection y ≤
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-        χ.primitiveCharacter).re := by
+          χ.primitiveCharacter).re := by
     have hl := qNeOneAnalyticLowerBound_le_riemann_lower hy
     have hs := hc.1
     rw [Analysis.logTwoSquareCorrection]
@@ -1796,11 +1685,9 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_corrected_c
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = -1) :
     qNeOneAnalyticLowerBound y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-              χ.primitiveCharacter).re +
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re +
           Analysis.logTwoSquareCorrection y ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-              χ.primitiveCharacter).re +
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re +
           Analysis.logTwoSquareCorrection y ≤
         qNeOneCommonUpperBound y := by
   have h :=
@@ -1836,10 +1723,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_log_four_ev
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = -1) :
     qNeOneAnalyticLowerBoundNegOne y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneAnalyticUpperBoundNegOneLogFour y := by
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_log_four_even_exact χ hne hquad
@@ -1855,8 +1740,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_log_four_ev
   · calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (y - Real.log 4 - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         hbounds.2
@@ -1893,13 +1777,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_exact {q :
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = 1) :
     qNeOneAnalyticLowerBound y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         (2 * y + 2 + 2 * Real.log y) *
-            |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                χ.primitiveCharacter| +
+            |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
           (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) +
           Analysis.primitiveLogEvenMainError (y ^ 2) := by
   have hypos : (0 : ℝ) < y := lt_of_lt_of_le (by norm_num only) hy
@@ -1909,9 +1790,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_exact {q :
     rw [Real.log_pow]
     norm_num only
   have hcore := weightedComparisonCore_even_one χ hne hquad heven hGRH hx64 hodd h2
-  have hbounds := re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
-    hriemann (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
-    (lt_of_lt_of_le (by norm_num only) hx64) (le_trans (by norm_num only) hx64) hcore
+  have hbounds :=
+    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le hriemann
+      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
+      (lt_of_lt_of_le (by norm_num only) hx64) (le_trans (by norm_num only) hx64) hcore
   have hupper := hbounds.2.2.2
   rw [Real.log_div (by exact_mod_cast NeZero.ne χ.conductor) Real.pi_ne_zero] at hupper
   rw [hsqrt, hlogsq] at hupper
@@ -1930,15 +1812,13 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_exact {q :
   · calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         hupper
       _ =
           (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             ((1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) +
               Analysis.primitiveLogEvenMainError (y ^ 2)) :=
         by ring
@@ -1966,10 +1846,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_analytic {
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = 1) :
     qNeOneAnalyticLowerBound y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneAnalyticUpperBoundOne y := by
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_exact χ hne hquad heven hGRH hy
@@ -1985,8 +1863,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_analytic {
   · calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         hbounds.2
@@ -2014,10 +1891,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_common {q 
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = 1) :
     qNeOneAnalyticLowerBound y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneCommonUpperBound y := by
   have h :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_analytic χ hne hquad heven hGRH hy
@@ -2099,13 +1974,10 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_traded {q : ℕ
     (h2 : χ.primitiveCharacter 2 = 1) :
     y ^ 2 - 2 * Real.log (2 * Real.pi) * Real.log y - 1 - (3 / 10 : ℝ) * (y + 1) -
           2 * (Real.log y) ^ 2 ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         (2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter| +
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) -
           11 / 4 := by
   have hbase :=
@@ -2120,8 +1992,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_traded {q : ℕ
         2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) -
         (2 * Real.log y) ^ 2 / 2 := by
     have hmassscaled :
-      2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) ≤
-        (3 / 10 : ℝ) * (y + 1) := by
+      2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) ≤ (3 / 10 : ℝ) * (y + 1) := by
       have h := mul_le_mul_of_nonneg_right hmass (by linarith : (0 : ℝ) ≤ y + 1)
       calc
         2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) =
@@ -2144,14 +2015,12 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_traded {q : ℕ
       _ =
           ((1 / 2) * (Real.log χ.conductor - Real.log Real.pi) * (2 * Real.log y) - 11 / 4) +
             ((2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter|) :=
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|) :=
         by ring
       _ ≤
           ((1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) - 11 / 4) +
             ((2 * y + 2 + 2 * Real.log y) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                  χ.primitiveCharacter|) :=
+              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|) :=
         add_le_add_left hright _
       _ = _ := by ring
 
@@ -2171,10 +2040,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_traded {q 
     (h2 : χ.primitiveCharacter 2 = 1) :
     y ^ 2 - 2 * Real.log (2 * Real.pi) * Real.log y - 1 - (3 / 10 : ℝ) * (y + 1) -
           2 * (Real.log y) ^ 2 ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         (2 * y + 2 + 2 * Real.log y) * ((1 + 5 / (2 * y)) * (y / 2 - 2 * Real.log y + 1)) +
             (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) -
           11 / 4 := by
@@ -2197,8 +2064,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_traded {q 
     calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-                |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                    χ.primitiveCharacter| +
+                |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
               (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) -
             11 / 4 :=
         hbase.2
@@ -2209,8 +2075,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_traded {q 
         calc
           _ =
               (2 * y + 2 + 2 * Real.log y) *
-                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                      χ.primitiveCharacter| +
+                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
                 ((1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) - 11 / 4) :=
             by ring
           _ ≤
@@ -2238,10 +2103,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_traded {q
     (h2 : χ.primitiveCharacter 2 = 0) :
     y ^ 2 - 2 * Real.log (2 * Real.pi) * Real.log y - 1 - (3 / 10 : ℝ) * (y + 1) -
           2 * (Real.log y) ^ 2 ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         (2 * y + 2 + 2 * Real.log y) * ((1 + 5 / (2 * y)) * (y / 2 - 2 * Real.log y + 1)) +
             (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) -
           11 / 4 := by
@@ -2264,8 +2127,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_traded {q
     calc
       _ ≤
           (2 * y + 2 + 2 * Real.log y) *
-                |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                    χ.primitiveCharacter| +
+                |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
               (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) -
             11 / 4 :=
         hbase.2
@@ -2276,8 +2138,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_traded {q
         calc
           _ =
               (2 * y + 2 + 2 * Real.log y) *
-                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                      χ.primitiveCharacter| +
+                  |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
                 ((1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) - 11 / 4) :=
             by ring
           _ ≤
@@ -2310,10 +2171,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_candidate
           p.Prime → Odd p → (χ.primitiveCharacter p = 1))
     (h2 : χ.primitiveCharacter 2 = 0) :
     qNeOneLowerBound y ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ∧
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-            χ.primitiveCharacter).re ≤
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneUpperBound y := by
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_traded χ hne hquad heven hGRH hy
@@ -2375,17 +2234,14 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_false {q 
     unfold qNeOneLowerBound
     linarith [hbounds.1]
   have hupper :
-    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-          χ.primitiveCharacter).re ≤
+    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
       qNeOneUpperBound y := by
     have hprod : (y - Real.log Real.pi) * Real.log y ≤ (y - 1) * Real.log y := by
       have := mul_le_mul_of_nonneg_right (sub_le_sub_left hlogpi y) hlogy
       linarith
     unfold qNeOneUpperBound
     linarith [hbounds.2]
-  exact
-    (not_le_of_gt (qNeOneLowerBound_gt_upperBound hy))
-      (hlower.trans hupper)
+  exact (not_le_of_gt (qNeOneLowerBound_gt_upperBound hy)) (hlower.trans hupper)
 
 /-! The c=1 candidate sandwich contradicts the same two-interval numerical separation. -/
 
@@ -2421,16 +2277,13 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_false {q :
     unfold qNeOneLowerBound
     linarith [hbounds.1]
   have hupper :
-    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
-          χ.primitiveCharacter).re ≤
+    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
       qNeOneUpperBound y := by
     have hprod : (y - Real.log Real.pi) * Real.log y ≤ (y - 1) * Real.log y := by
       have := mul_le_mul_of_nonneg_right (sub_le_sub_left hlogpi y) hlogy
       linarith
     unfold qNeOneUpperBound
     linarith [hbounds.2]
-  exact
-    (not_le_of_gt (qNeOneLowerBound_gt_upperBound hy))
-      (hlower.trans hupper)
+  exact (not_le_of_gt (qNeOneLowerBound_gt_upperBound hy)) (hlower.trans hupper)
 
 end PseudoPrime.LLS.Extensions

@@ -23,8 +23,8 @@ Rewrite the maximum as `QNeOne B` using `classicalNeOneMaximum_eq_QNeOne_of_751_
 `PseudoPrime.PseudoSquare.QNeOne_le_log_sq_of_grh` to obtain the aggregate bound.
 -/
 theorem classicalNeOneMaximum_cast_le_log_sq_of_751_le
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ}
-    (hB : 751 ≤ B) : (classicalNeOneMaximum B : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ} (hB : 751 ≤ B) :
+    (classicalNeOneMaximum B : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
   rw [classicalNeOneMaximum_eq_QNeOne_of_751_le hB]
   exact PseudoSquare.QNeOne_le_log_sq_of_grh hGRH (by omega)
 
@@ -35,8 +35,8 @@ Rewrite the maximum as `QNeOne B` using `wheel30NeOneMaximum_eq_QNeOne_of_751_le
 `PseudoPrime.PseudoSquare.QNeOne_le_log_sq_of_grh` to obtain the aggregate bound.
 -/
 theorem wheel30NeOneMaximum_cast_le_log_sq_of_751_le
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ}
-    (hB : 751 ≤ B) : (wheel30NeOneMaximum B : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ} (hB : 751 ≤ B) :
+    (wheel30NeOneMaximum B : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
   rw [wheel30NeOneMaximum_eq_QNeOne_of_751_le hB]
   exact PseudoSquare.QNeOne_le_log_sq_of_grh hGRH (by omega)
 

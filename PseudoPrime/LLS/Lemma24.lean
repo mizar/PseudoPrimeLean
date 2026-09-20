@@ -49,15 +49,12 @@ theorem llsRiemannReciprocalRemainderBound : LLSRiemannReciprocalRemainderBound 
   have hxpos : 0 < x := by linarith
   have hsqrt : 0 < Real.sqrt x := Real.sqrt_pos.2 hxpos
   have htail :=
-    (AnalyticNumberTheory.RiemannZeta.riemannReciprocalTrivialZeroSeries_le_geometric
-          hx).trans
+    (AnalyticNumberTheory.RiemannZeta.riemannReciprocalTrivialZeroSeries_le_geometric hx).trans
       (Analysis.geometricTail_le_one_div_eighteen_mul hx)
-  have hzeroNumerator :
-    2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass ≤ (3 / 10 : ℝ) := by
+  have hzeroNumerator : 2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass ≤ (3 / 10 : ℝ) := by
     nlinarith [AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_three_twentieths]
   have hzero :
-    2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass / Real.sqrt x ≤
-      3 / (10 * Real.sqrt x) := by
+    2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass / Real.sqrt x ≤ 3 / (10 * Real.sqrt x) := by
     calc
       _ ≤ (3 / 10 : ℝ) / Real.sqrt x := (div_le_div_iff_of_pos_right hsqrt).2 hzeroNumerator
       _ = 3 / (10 * Real.sqrt x) := by ring

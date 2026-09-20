@@ -27,13 +27,11 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs
     (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn
-                hns))).natAbs :
+              (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) ≤
       ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn
-                hns))).natAbs :
+              (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) := by
   let hne := PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
   let hneg := PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns
@@ -53,8 +51,7 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs
   simpa only [PrimeTest.selfridgeD_natAbs] using
     (show
       (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n hne : ℝ) ≤
-        (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n hneg :
-          ℝ)
+        (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n hneg : ℝ)
       by exact_mod_cast hle)
 
 /--
@@ -70,18 +67,15 @@ theorem classicalSelfridgeD_elementary_bound_explicit
     (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn
-                  hns))).natAbs :
+                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn
-                  hns))).natAbs :
+                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn
-                  hns))).natAbs :
+                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 3) ^ 2 := by
   have hleft := classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs_cast hn hns

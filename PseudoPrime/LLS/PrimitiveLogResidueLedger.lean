@@ -37,30 +37,28 @@ bounds the rest by
 Role: supplies the uniform finite residue-sum bound for the logarithmic contour-limit argument.
 -/
 theorem re_sum_llsPrimitiveLogResidueAt_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
     (hx : 64 ≤ x) {z w : ℂ}
     (h0 :
       (0 : ℂ) ∈
-        AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle
-          χ hne z w)
+        AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle χ hne z
+          w)
     (h1 :
       (1 : ℂ) ∈
-        AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle
-          χ hne z w) :
+        AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle χ hne z
+          w) :
     (∑
           s ∈
-            AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle
-              χ hne z w,
+            AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle χ hne
+              z w,
           AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x s).re ≤
       (2 * Real.sqrt x + 2 + Real.log x) *
             |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| +
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
   have hxpos : (0 : ℝ) < x := by linarith
-  rw [AnalyticNumberTheory.DirichletLFunction.dirichletSplitLogSingularitySum x hne h1
-      h0,
+  rw [AnalyticNumberTheory.DirichletLFunction.dirichletSplitLogSingularitySum x hne h1 h0,
     AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_one hne x]
   have hr0_bound :
     (AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x 0).re ≤
@@ -68,19 +66,17 @@ theorem re_sum_llsPrimitiveLogResidueAt_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
     rcases χ.even_or_odd with heven | hodd
-    · rw [AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_zero_of_even hne
-          x heven]
+    · rw [AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_zero_of_even hne x heven]
       exact
         re_iteratedDeriv_two_llsPrimitiveLogEvenZeroRegularization_zero_div_two_le hN2 hGRH
           hprimitive hne hinv hquad hx
-    · rw [AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_zero_of_odd hne
-          x hodd]
+    · rw [AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_zero_of_odd hne x hodd]
       exact
         re_deriv_llsPrimitiveLogMellinZeroRegularization_zero_of_odd_le hN2 hGRH hprimitive hne hinv
           hquad hodd hx
   have herased :=
-    AnalyticNumberTheory.DirichletLFunction.re_sum_erased_primitiveLogResidues_le hN2
-      hGRH hprimitive hne hinv hquad hxpos (z := z) (w := w)
+    AnalyticNumberTheory.DirichletLFunction.re_sum_erased_primitiveLogResidues_le hN2 hGRH
+      hprimitive hne hinv hquad hxpos (z := z) (w := w)
   simp only [Complex.add_re, Complex.zero_re]
   nlinarith [hr0_bound, herased]
 

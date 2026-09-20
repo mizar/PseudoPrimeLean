@@ -25,11 +25,8 @@ namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 denominator is at least `t²`; the remaining majorant bounds `‖ζ'/ζ‖`. -/
 theorem norm_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : ℕ} {σ t : ℝ}
     (hσ : σ ∈ Set.Icc (-(2 * (m : ℝ) + 1)) (-1 / 2)) (ht : t ≠ 0) :
-    ‖riemannZetaLogContourKernel x
-          ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-      farLeftZetaLogDerivBound m t *
-          x ^ (-(1 : ℝ) / 2) /
-        t ^ 2 := by
+    ‖riemannZetaLogContourKernel x ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+      farLeftZetaLogDerivBound m t * x ^ (-(1 : ℝ) / 2) / t ^ 2 := by
   set z : ℂ := (σ : ℂ) + (t : ℂ) * Complex.I with hz_def
   have hzim : z.im = t := by
     simp only [hz_def, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
@@ -37,9 +34,7 @@ theorem norm_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : 
   have hzre : z.re = σ := by
     simp only [hz_def, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-  have hderiv_bound :=
-    norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc
-      hσ ht
+  have hderiv_bound := norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc hσ ht
   have hlogDeriv_eq : ‖deriv riemannZeta z / riemannZeta z‖ = ‖logDeriv riemannZeta z‖ := by
     rw [logDeriv_apply]
   have hxpos : (0 : ℝ) < x := by linarith
@@ -52,16 +47,11 @@ theorem norm_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : 
     rwa [hzim] at h
   have htabs_pos : (0 : ℝ) < |t| := abs_pos.mpr htnz
   have hznorm_pos : (0 : ℝ) < ‖z‖ := lt_of_lt_of_le htabs_pos hznorm_ge
-  have hK_eq :
-    ‖riemannZetaLogContourKernel x z‖ =
-      ‖logDeriv riemannZeta z‖ * x ^ σ / ‖z‖ ^ 2 := by
+  have hK_eq : ‖riemannZetaLogContourKernel x z‖ = ‖logDeriv riemannZeta z‖ * x ^ σ / ‖z‖ ^ 2 := by
     unfold riemannZetaLogContourKernel
     rw [norm_div, norm_mul, norm_neg, hxz, hlogDeriv_eq, norm_pow]
   rw [hK_eq]
-  have h1 :
-    ‖logDeriv riemannZeta z‖ * x ^ σ ≤
-      farLeftZetaLogDerivBound m t *
-        x ^ (-(1 : ℝ) / 2) :=
+  have h1 : ‖logDeriv riemannZeta z‖ * x ^ σ ≤ farLeftZetaLogDerivBound m t * x ^ (-(1 : ℝ) / 2) :=
     mul_le_mul hderiv_bound hxσ_le hxσpos.le (le_trans (norm_nonneg _) hderiv_bound)
   have h2 : (0 : ℝ) ≤ ‖logDeriv riemannZeta z‖ * x ^ σ := by positivity
   have h3 : t ^ 2 ≤ ‖z‖ ^ 2 := by
@@ -70,11 +60,8 @@ theorem norm_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : 
   calc
     ‖logDeriv riemannZeta z‖ * x ^ σ / ‖z‖ ^ 2 ≤ ‖logDeriv riemannZeta z‖ * x ^ σ / t ^ 2 := by
       apply div_le_div_of_nonneg_left h2 htsq_pos h3
-    _ ≤
-        (farLeftZetaLogDerivBound m t *
-            x ^ (-(1 : ℝ) / 2)) /
-          t ^ 2 :=
-      by apply div_le_div_of_nonneg_right h1 htsq_pos.le
+    _ ≤ (farLeftZetaLogDerivBound m t * x ^ (-(1 : ℝ) / 2)) / t ^ 2 := by
+      apply div_le_div_of_nonneg_right h1 htsq_pos.le
 
 /-- The reciprocal-kernel analogue of
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.norm_riemannZetaLogContourKernel_farLeft_le`. Since
@@ -83,11 +70,8 @@ theorem norm_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : 
 `σ - 1 ≤ -3/2`, still bounded (for `x > 1`) by the fixed value `x ^ (-3/2)`. -/
 theorem norm_riemannZetaReciprocalContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : ℕ} {σ t : ℝ}
     (hσ : σ ∈ Set.Icc (-(2 * (m : ℝ) + 1)) (-1 / 2)) (ht : t ≠ 0) :
-    ‖riemannZetaReciprocalContourKernel x
-          ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-      farLeftZetaLogDerivBound m t *
-          x ^ (-(3 : ℝ) / 2) /
-        t ^ 2 := by
+    ‖riemannZetaReciprocalContourKernel x ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+      farLeftZetaLogDerivBound m t * x ^ (-(3 : ℝ) / 2) / t ^ 2 := by
   set z : ℂ := (σ : ℂ) + (t : ℂ) * Complex.I with hz_def
   have hzim : z.im = t := by
     simp only [hz_def, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
@@ -99,9 +83,7 @@ theorem norm_riemannZetaReciprocalContourKernel_farLeft_le {x : ℝ} (hx : 1 < x
     simp only [hz_def, Complex.sub_im, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
       Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add,
       Complex.one_im, sub_zero]
-  have hderiv_bound :=
-    norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc
-      hσ ht
+  have hderiv_bound := norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc hσ ht
   have hlogDeriv_eq : ‖deriv riemannZeta z / riemannZeta z‖ = ‖logDeriv riemannZeta z‖ := by
     rw [logDeriv_apply]
   have hxpos : (0 : ℝ) < x := by linarith only [hx]
@@ -125,9 +107,7 @@ theorem norm_riemannZetaReciprocalContourKernel_farLeft_le {x : ℝ} (hx : 1 < x
     rw [norm_div, norm_mul, norm_neg, hxz, hlogDeriv_eq, norm_mul]
   rw [hK_eq]
   have h1 :
-    ‖logDeriv riemannZeta z‖ * x ^ (σ - 1) ≤
-      farLeftZetaLogDerivBound m t *
-        x ^ (-(3 : ℝ) / 2) :=
+    ‖logDeriv riemannZeta z‖ * x ^ (σ - 1) ≤ farLeftZetaLogDerivBound m t * x ^ (-(3 : ℝ) / 2) :=
     mul_le_mul hderiv_bound hxσ_le hxσpos.le (le_trans (norm_nonneg _) hderiv_bound)
   have h2 : (0 : ℝ) ≤ ‖logDeriv riemannZeta z‖ * x ^ (σ - 1) := by positivity
   have h3 : t ^ 2 ≤ ‖z‖ * ‖z - 1‖ := by
@@ -140,40 +120,27 @@ theorem norm_riemannZetaReciprocalContourKernel_farLeft_le {x : ℝ} (hx : 1 < x
     ‖logDeriv riemannZeta z‖ * x ^ (σ - 1) / (‖z‖ * ‖z - 1‖) ≤
         ‖logDeriv riemannZeta z‖ * x ^ (σ - 1) / t ^ 2 :=
       by apply div_le_div_of_nonneg_left h2 htsq_pos h3
-    _ ≤
-        (farLeftZetaLogDerivBound m t *
-            x ^ (-(3 : ℝ) / 2)) /
-          t ^ 2 :=
-      by apply div_le_div_of_nonneg_right h1 htsq_pos.le
+    _ ≤ (farLeftZetaLogDerivBound m t * x ^ (-(3 : ℝ) / 2)) / t ^ 2 := by
+      apply div_le_div_of_nonneg_right h1 htsq_pos.le
 
 /-- The pointwise kernel bound, integrated over the full far-left segment `[-(2m+1), -1/2]` at a
 fixed height `t ≠ 0`. -/
 theorem norm_intervalIntegral_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : ℕ}
     {t : ℝ} (ht : t ≠ 0) :
     ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-          riemannZetaLogContourKernel x
-            ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-      farLeftZetaLogDerivBound m t *
-            x ^ (-(1 : ℝ) / 2) /
-          t ^ 2 *
+          riemannZetaLogContourKernel x ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+      farLeftZetaLogDerivBound m t * x ^ (-(1 : ℝ) / 2) / t ^ 2 *
         (-1 / 2 - (-(2 * (m : ℝ) + 1))) := by
   have hlamtau : (-(2 * (m : ℝ) + 1)) ≤ -1 / 2 := by
     have hm := Nat.cast_nonneg (α := ℝ) m; linarith only [hm]
   have hbound :=
     intervalIntegral.norm_integral_le_of_norm_le_const (a := -(2 * (m : ℝ) + 1)) (b := -1 / 2) (f :=
-      fun σ : ℝ =>
-      riemannZetaLogContourKernel x
-        ((σ : ℂ) + (t : ℂ) * Complex.I))
-      (C :=
-      farLeftZetaLogDerivBound m t *
-          x ^ (-(1 : ℝ) / 2) /
-        t ^ 2)
+      fun σ : ℝ => riemannZetaLogContourKernel x ((σ : ℂ) + (t : ℂ) * Complex.I)) (C :=
+      farLeftZetaLogDerivBound m t * x ^ (-(1 : ℝ) / 2) / t ^ 2)
       (by
         rw [Set.uIoc_of_le hlamtau]
         rintro σ ⟨hσ1, hσ2⟩
-        exact
-          norm_riemannZetaLogContourKernel_farLeft_le
-            hx ⟨hσ1.le, hσ2⟩ ht)
+        exact norm_riemannZetaLogContourKernel_farLeft_le hx ⟨hσ1.le, hσ2⟩ ht)
   rwa [abs_of_nonneg
       (by linarith only [hlamtau] : (0 : ℝ) ≤ -1 / 2 - (-(2 * (m : ℝ) + 1)))] at hbound
 
@@ -183,29 +150,19 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (
 theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_farLeft_le {x : ℝ} (hx : 1 < x)
     {m : ℕ} {t : ℝ} (ht : t ≠ 0) :
     ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-          riemannZetaReciprocalContourKernel x
-            ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-      farLeftZetaLogDerivBound m t *
-            x ^ (-(3 : ℝ) / 2) /
-          t ^ 2 *
+          riemannZetaReciprocalContourKernel x ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+      farLeftZetaLogDerivBound m t * x ^ (-(3 : ℝ) / 2) / t ^ 2 *
         (-1 / 2 - (-(2 * (m : ℝ) + 1))) := by
   have hlamtau : (-(2 * (m : ℝ) + 1)) ≤ -1 / 2 := by
     have hm := Nat.cast_nonneg (α := ℝ) m; linarith only [hm]
   have hbound :=
     intervalIntegral.norm_integral_le_of_norm_le_const (a := -(2 * (m : ℝ) + 1)) (b := -1 / 2) (f :=
-      fun σ : ℝ =>
-      riemannZetaReciprocalContourKernel x
-        ((σ : ℂ) + (t : ℂ) * Complex.I))
-      (C :=
-      farLeftZetaLogDerivBound m t *
-          x ^ (-(3 : ℝ) / 2) /
-        t ^ 2)
+      fun σ : ℝ => riemannZetaReciprocalContourKernel x ((σ : ℂ) + (t : ℂ) * Complex.I)) (C :=
+      farLeftZetaLogDerivBound m t * x ^ (-(3 : ℝ) / 2) / t ^ 2)
       (by
         rw [Set.uIoc_of_le hlamtau]
         rintro σ ⟨hσ1, hσ2⟩
-        exact
-          norm_riemannZetaReciprocalContourKernel_farLeft_le
-            hx ⟨hσ1.le, hσ2⟩ ht)
+        exact norm_riemannZetaReciprocalContourKernel_farLeft_le hx ⟨hσ1.le, hσ2⟩ ht)
   rwa [abs_of_nonneg
       (by linarith only [hlamtau] : (0 : ℝ) ≤ -1 / 2 - (-(2 * (m : ℝ) + 1)))] at hbound
 
@@ -215,12 +172,9 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_farLeftHeightSeq {x
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-          riemannZetaLogContourKernel x
-            ((σ : ℂ) +
-              (farLeftHeightSeq m : ℂ) * Complex.I))
+          riemannZetaLogContourKernel x ((σ : ℂ) + (farLeftHeightSeq m : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
-  set A : ℝ := qMinusOneHorizontalFarLeftConst with
-    hA_def
+  set A : ℝ := qMinusOneHorizontalFarLeftConst with hA_def
   set D0 : ℝ := Real.pi / 2 * Real.sqrt (1 + 1 / Real.sinh (Real.pi / 2) ^ 2) with hD0_def
   have hD0nn : (0 : ℝ) ≤ D0 := by
     rw [hD0_def]; positivity
@@ -230,20 +184,15 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_farLeftHeightSeq {x
   have hbound :
     ∀ m : ℕ,
       ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-            riemannZetaLogContourKernel x
-              ((σ : ℂ) +
-                (farLeftHeightSeq m : ℂ) *
-                  Complex.I)‖ ≤
-        K * x ^ (-(1 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) /
-          farLeftHeightSeq m := by
+            riemannZetaLogContourKernel x ((σ : ℂ) + (farLeftHeightSeq m : ℂ) * Complex.I)‖ ≤
+        K * x ^ (-(1 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) / farLeftHeightSeq m := by
     intro m
     set T : ℝ := farLeftHeightSeq m with hT_def
     have hT1 : (1 : ℝ) ≤ T := one_le_farLeftHeightSeq m
     have hTpos : (0 : ℝ) < T := farLeftHeightSeq_pos m
     have hTne : T ≠ 0 := hTpos.ne'
     have hbase :=
-      norm_intervalIntegral_riemannZetaLogContourKernel_farLeft_le
-        hx (m := m) (t := T) hTne
+      norm_intervalIntegral_riemannZetaLogContourKernel_farLeft_le hx (m := m) (t := T) hTne
     have hD_le : Real.pi / 2 * Real.sqrt (1 + 1 / Real.sinh (Real.pi * T / 2) ^ 2) ≤ D0 := by
       rw [hD0_def]
       have hsinh_mono : Real.sinh (Real.pi / 2) ≤ Real.sinh (Real.pi * T / 2) :=
@@ -252,12 +201,9 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_farLeftHeightSeq {x
         rw [show (0 : ℝ) = Real.sinh 0 from Real.sinh_zero.symm]
         exact Real.sinh_lt_sinh.mpr (by positivity)
       gcongr
-    have hB_le : farLeftBTerm m ≤ T :=
-      farLeftBTerm_le_farLeftHeightSeq m
+    have hB_le : farLeftBTerm m ≤ T := farLeftBTerm_le_farLeftHeightSeq m
     have hA_le : A ≤ |A| := le_abs_self A
-    have hfarLeft_le :
-      farLeftZetaLogDerivBound m T ≤
-        (|A| + D0) + (1 + 20 * Real.pi) * T := by
+    have hfarLeft_le : farLeftZetaLogDerivBound m T ≤ (|A| + D0) + (1 + 20 * Real.pi) * T := by
       unfold farLeftZetaLogDerivBound
       rw [← hA_def, abs_of_pos hTpos]
       nlinarith only [hA_le, hD_le, hB_le]
@@ -271,19 +217,12 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_farLeftHeightSeq {x
       nlinarith only [haux]
     calc
       ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-              riemannZetaLogContourKernel x
-                ((σ : ℂ) + (T : ℂ) * Complex.I)‖ ≤
-          farLeftZetaLogDerivBound m T *
-                x ^ (-(1 : ℝ) / 2) /
-              T ^ 2 *
+              riemannZetaLogContourKernel x ((σ : ℂ) + (T : ℂ) * Complex.I)‖ ≤
+          farLeftZetaLogDerivBound m T * x ^ (-(1 : ℝ) / 2) / T ^ 2 *
             (-1 / 2 - (-(2 * (m : ℝ) + 1))) :=
         hbase
-      _ =
-          farLeftZetaLogDerivBound m T *
-                x ^ (-(1 : ℝ) / 2) /
-              T ^ 2 *
-            (2 * (m : ℝ) + 1 / 2) :=
-        by ring_nf
+      _ = farLeftZetaLogDerivBound m T * x ^ (-(1 : ℝ) / 2) / T ^ 2 * (2 * (m : ℝ) + 1 / 2) := by
+        ring_nf
       _ ≤
           (((|A| + D0) + (1 + 20 * Real.pi) * T) * x ^ (-(1 : ℝ) / 2) / T ^ 2) *
             (2 * (m : ℝ) + 1 / 2) :=
@@ -296,66 +235,41 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_farLeftHeightSeq {x
       _ = K * x ^ (-(1 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) / T := by ring
   have htend :
     Filter.Tendsto
-      (fun m : ℕ =>
-        K * x ^ (-(1 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) /
-          farLeftHeightSeq m)
+      (fun m : ℕ => K * x ^ (-(1 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) / farLeftHeightSeq m)
       Filter.atTop (nhds 0) := by
     have hL_le : ∀ m : ℕ, 2 * (m : ℝ) + 1 / 2 ≤ 3 * ((m : ℝ) + 1) := fun m => by
       linarith only [Nat.cast_nonneg (α := ℝ) m]
     have hratio_le :
       ∀ m : ℕ,
-        K * x ^ (-(1 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) /
-            farLeftHeightSeq m ≤
-          3 * (K * x ^ (-(1 : ℝ) / 2)) /
-            (farLeftBTerm m + 1) := by
+        K * x ^ (-(1 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) / farLeftHeightSeq m ≤
+          3 * (K * x ^ (-(1 : ℝ) / 2)) / (farLeftBTerm m + 1) := by
       intro m
       have hKxnn : (0 : ℝ) ≤ K * x ^ (-(1 : ℝ) / 2) := by positivity
       have h1 :
         K * x ^ (-(1 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) ≤
           K * x ^ (-(1 : ℝ) / 2) * (3 * ((m : ℝ) + 1)) :=
         mul_le_mul_of_nonneg_left (hL_le m) hKxnn
-      have h3 : (0 : ℝ) < farLeftBTerm m + 1 := by
-        linarith only [farLeftBTerm_pos m]
+      have h3 : (0 : ℝ) < farLeftBTerm m + 1 := by linarith only [farLeftBTerm_pos m]
       calc
-        K * x ^ (-(1 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) /
-              farLeftHeightSeq m ≤
-            K * x ^ (-(1 : ℝ) / 2) * (3 * ((m : ℝ) + 1)) /
-              farLeftHeightSeq m :=
-          div_le_div_of_nonneg_right h1
-            (farLeftHeightSeq_pos m).le
-        _ =
-            3 * (K * x ^ (-(1 : ℝ) / 2)) * ((m : ℝ) + 1) /
-              farLeftHeightSeq m :=
-          by ring
-        _ =
-            3 * (K * x ^ (-(1 : ℝ) / 2)) * ((m : ℝ) + 1) /
-              (((m : ℝ) + 1) * (farLeftBTerm m + 1)) :=
+        K * x ^ (-(1 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) / farLeftHeightSeq m ≤
+            K * x ^ (-(1 : ℝ) / 2) * (3 * ((m : ℝ) + 1)) / farLeftHeightSeq m :=
+          div_le_div_of_nonneg_right h1 (farLeftHeightSeq_pos m).le
+        _ = 3 * (K * x ^ (-(1 : ℝ) / 2)) * ((m : ℝ) + 1) / farLeftHeightSeq m := by ring
+        _ = 3 * (K * x ^ (-(1 : ℝ) / 2)) * ((m : ℝ) + 1) / (((m : ℝ) + 1) * (farLeftBTerm m + 1)) :=
           by simp only [farLeftHeightSeq]
-        _ =
-            3 * (K * x ^ (-(1 : ℝ) / 2)) /
-              (farLeftBTerm m + 1) :=
-          by
+        _ = 3 * (K * x ^ (-(1 : ℝ) / 2)) / (farLeftBTerm m + 1) := by
           have hm1 : ((m : ℝ) + 1) ≠ 0 := by positivity
           field_simp
-    have hden_tend :
-      Filter.Tendsto (fun m : ℕ => farLeftBTerm m + 1)
-        Filter.atTop Filter.atTop :=
-      Filter.tendsto_atTop_add_const_right Filter.atTop 1
-        tendsto_farLeftBTerm_atTop
+    have hden_tend : Filter.Tendsto (fun m : ℕ => farLeftBTerm m + 1) Filter.atTop Filter.atTop :=
+      Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_farLeftBTerm_atTop
     have hrhs_tend :
-      Filter.Tendsto
-        (fun m : ℕ =>
-          3 * (K * x ^ (-(1 : ℝ) / 2)) /
-            (farLeftBTerm m + 1))
-        Filter.atTop (nhds 0) := by
+      Filter.Tendsto (fun m : ℕ => 3 * (K * x ^ (-(1 : ℝ) / 2)) / (farLeftBTerm m + 1)) Filter.atTop
+        (nhds 0) := by
       simpa only [div_eq_mul_inv, neg_mul, one_mul, Pi.inv_apply, mul_zero] using
         (hden_tend.inv_tendsto_atTop).const_mul (3 * (K * x ^ (-(1 : ℝ) / 2)))
     exact
-      squeeze_zero
-        (fun m =>
-          div_nonneg (by positivity)
-            (farLeftHeightSeq_pos m).le)
-        hratio_le hrhs_tend
+      squeeze_zero (fun m => div_nonneg (by positivity) (farLeftHeightSeq_pos m).le) hratio_le
+        hrhs_tend
   exact squeeze_zero_norm hbound htend
 
 /-- The reciprocal-kernel analogue of
@@ -369,12 +283,9 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_farLeftHeigh
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-          riemannZetaReciprocalContourKernel x
-            ((σ : ℂ) +
-              (farLeftHeightSeq m : ℂ) * Complex.I))
+          riemannZetaReciprocalContourKernel x ((σ : ℂ) + (farLeftHeightSeq m : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
-  set A : ℝ := qMinusOneHorizontalFarLeftConst with
-    hA_def
+  set A : ℝ := qMinusOneHorizontalFarLeftConst with hA_def
   set D0 : ℝ := Real.pi / 2 * Real.sqrt (1 + 1 / Real.sinh (Real.pi / 2) ^ 2) with hD0_def
   have hD0nn : (0 : ℝ) ≤ D0 := by
     rw [hD0_def]; positivity
@@ -384,20 +295,15 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_farLeftHeigh
   have hbound :
     ∀ m : ℕ,
       ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-            riemannZetaReciprocalContourKernel x
-              ((σ : ℂ) +
-                (farLeftHeightSeq m : ℂ) *
-                  Complex.I)‖ ≤
-        K * x ^ (-(3 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) /
-          farLeftHeightSeq m := by
+            riemannZetaReciprocalContourKernel x ((σ : ℂ) + (farLeftHeightSeq m : ℂ) * Complex.I)‖ ≤
+        K * x ^ (-(3 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) / farLeftHeightSeq m := by
     intro m
     set T : ℝ := farLeftHeightSeq m with hT_def
     have hT1 : (1 : ℝ) ≤ T := one_le_farLeftHeightSeq m
     have hTpos : (0 : ℝ) < T := farLeftHeightSeq_pos m
     have hTne : T ≠ 0 := hTpos.ne'
     have hbase :=
-      norm_intervalIntegral_riemannZetaReciprocalContourKernel_farLeft_le
-        hx (m := m) (t := T) hTne
+      norm_intervalIntegral_riemannZetaReciprocalContourKernel_farLeft_le hx (m := m) (t := T) hTne
     have hD_le : Real.pi / 2 * Real.sqrt (1 + 1 / Real.sinh (Real.pi * T / 2) ^ 2) ≤ D0 := by
       rw [hD0_def]
       have hsinh_mono : Real.sinh (Real.pi / 2) ≤ Real.sinh (Real.pi * T / 2) :=
@@ -406,12 +312,9 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_farLeftHeigh
         rw [show (0 : ℝ) = Real.sinh 0 from Real.sinh_zero.symm]
         exact Real.sinh_lt_sinh.mpr (by positivity)
       gcongr
-    have hB_le : farLeftBTerm m ≤ T :=
-      farLeftBTerm_le_farLeftHeightSeq m
+    have hB_le : farLeftBTerm m ≤ T := farLeftBTerm_le_farLeftHeightSeq m
     have hA_le : A ≤ |A| := le_abs_self A
-    have hfarLeft_le :
-      farLeftZetaLogDerivBound m T ≤
-        (|A| + D0) + (1 + 20 * Real.pi) * T := by
+    have hfarLeft_le : farLeftZetaLogDerivBound m T ≤ (|A| + D0) + (1 + 20 * Real.pi) * T := by
       unfold farLeftZetaLogDerivBound
       rw [← hA_def, abs_of_pos hTpos]
       nlinarith [hA_le, hD_le, hB_le]
@@ -425,19 +328,12 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_farLeftHeigh
       nlinarith only [haux]
     calc
       ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-              riemannZetaReciprocalContourKernel x
-                ((σ : ℂ) + (T : ℂ) * Complex.I)‖ ≤
-          farLeftZetaLogDerivBound m T *
-                x ^ (-(3 : ℝ) / 2) /
-              T ^ 2 *
+              riemannZetaReciprocalContourKernel x ((σ : ℂ) + (T : ℂ) * Complex.I)‖ ≤
+          farLeftZetaLogDerivBound m T * x ^ (-(3 : ℝ) / 2) / T ^ 2 *
             (-1 / 2 - (-(2 * (m : ℝ) + 1))) :=
         hbase
-      _ =
-          farLeftZetaLogDerivBound m T *
-                x ^ (-(3 : ℝ) / 2) /
-              T ^ 2 *
-            (2 * (m : ℝ) + 1 / 2) :=
-        by ring_nf
+      _ = farLeftZetaLogDerivBound m T * x ^ (-(3 : ℝ) / 2) / T ^ 2 * (2 * (m : ℝ) + 1 / 2) := by
+        ring_nf
       _ ≤
           (((|A| + D0) + (1 + 20 * Real.pi) * T) * x ^ (-(3 : ℝ) / 2) / T ^ 2) *
             (2 * (m : ℝ) + 1 / 2) :=
@@ -450,65 +346,40 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_farLeftHeigh
       _ = K * x ^ (-(3 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) / T := by ring
   have htend :
     Filter.Tendsto
-      (fun m : ℕ =>
-        K * x ^ (-(3 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) /
-          farLeftHeightSeq m)
+      (fun m : ℕ => K * x ^ (-(3 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) / farLeftHeightSeq m)
       Filter.atTop (nhds 0) := by
     have hL_le : ∀ m : ℕ, 2 * (m : ℝ) + 1 / 2 ≤ 3 * ((m : ℝ) + 1) := fun m => by linarith
     have hratio_le :
       ∀ m : ℕ,
-        K * x ^ (-(3 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) /
-            farLeftHeightSeq m ≤
-          3 * (K * x ^ (-(3 : ℝ) / 2)) /
-            (farLeftBTerm m + 1) := by
+        K * x ^ (-(3 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) / farLeftHeightSeq m ≤
+          3 * (K * x ^ (-(3 : ℝ) / 2)) / (farLeftBTerm m + 1) := by
       intro m
       have hKxnn : (0 : ℝ) ≤ K * x ^ (-(3 : ℝ) / 2) := by positivity
       have h1 :
         K * x ^ (-(3 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) ≤
           K * x ^ (-(3 : ℝ) / 2) * (3 * ((m : ℝ) + 1)) :=
         mul_le_mul_of_nonneg_left (hL_le m) hKxnn
-      have h3 : (0 : ℝ) < farLeftBTerm m + 1 := by
-        linarith [farLeftBTerm_pos m]
+      have h3 : (0 : ℝ) < farLeftBTerm m + 1 := by linarith [farLeftBTerm_pos m]
       calc
-        K * x ^ (-(3 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) /
-              farLeftHeightSeq m ≤
-            K * x ^ (-(3 : ℝ) / 2) * (3 * ((m : ℝ) + 1)) /
-              farLeftHeightSeq m :=
-          div_le_div_of_nonneg_right h1
-            (farLeftHeightSeq_pos m).le
-        _ =
-            3 * (K * x ^ (-(3 : ℝ) / 2)) * ((m : ℝ) + 1) /
-              farLeftHeightSeq m :=
-          by ring
-        _ =
-            3 * (K * x ^ (-(3 : ℝ) / 2)) * ((m : ℝ) + 1) /
-              (((m : ℝ) + 1) * (farLeftBTerm m + 1)) :=
+        K * x ^ (-(3 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) / farLeftHeightSeq m ≤
+            K * x ^ (-(3 : ℝ) / 2) * (3 * ((m : ℝ) + 1)) / farLeftHeightSeq m :=
+          div_le_div_of_nonneg_right h1 (farLeftHeightSeq_pos m).le
+        _ = 3 * (K * x ^ (-(3 : ℝ) / 2)) * ((m : ℝ) + 1) / farLeftHeightSeq m := by ring
+        _ = 3 * (K * x ^ (-(3 : ℝ) / 2)) * ((m : ℝ) + 1) / (((m : ℝ) + 1) * (farLeftBTerm m + 1)) :=
           by simp only [farLeftHeightSeq]
-        _ =
-            3 * (K * x ^ (-(3 : ℝ) / 2)) /
-              (farLeftBTerm m + 1) :=
-          by
+        _ = 3 * (K * x ^ (-(3 : ℝ) / 2)) / (farLeftBTerm m + 1) := by
           have hm1 : ((m : ℝ) + 1) ≠ 0 := by positivity
           field_simp
-    have hden_tend :
-      Filter.Tendsto (fun m : ℕ => farLeftBTerm m + 1)
-        Filter.atTop Filter.atTop :=
-      Filter.tendsto_atTop_add_const_right Filter.atTop 1
-        tendsto_farLeftBTerm_atTop
+    have hden_tend : Filter.Tendsto (fun m : ℕ => farLeftBTerm m + 1) Filter.atTop Filter.atTop :=
+      Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_farLeftBTerm_atTop
     have hrhs_tend :
-      Filter.Tendsto
-        (fun m : ℕ =>
-          3 * (K * x ^ (-(3 : ℝ) / 2)) /
-            (farLeftBTerm m + 1))
-        Filter.atTop (nhds 0) := by
+      Filter.Tendsto (fun m : ℕ => 3 * (K * x ^ (-(3 : ℝ) / 2)) / (farLeftBTerm m + 1)) Filter.atTop
+        (nhds 0) := by
       simpa only [div_eq_mul_inv, neg_mul, Pi.inv_apply, mul_zero] using
         (hden_tend.inv_tendsto_atTop).const_mul (3 * (K * x ^ (-(3 : ℝ) / 2)))
     exact
-      squeeze_zero
-        (fun m =>
-          div_nonneg (by positivity)
-            (farLeftHeightSeq_pos m).le)
-        hratio_le hrhs_tend
+      squeeze_zero (fun m => div_nonneg (by positivity) (farLeftHeightSeq_pos m).le) hratio_le
+        hrhs_tend
   exact squeeze_zero_norm hbound htend
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

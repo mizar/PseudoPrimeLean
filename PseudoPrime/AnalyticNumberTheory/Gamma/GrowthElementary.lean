@@ -64,9 +64,7 @@ theorem log_Gamma_le_of_one_le {x : ℝ} (hx : 1 ≤ x) : Real.log (Real.Gamma x
         rcases Nat.eq_zero_or_pos m with hm0 | hmpos
         · simp only [hm0, CharP.cast_eq_zero, Real.log_zero, mul_zero, zero_add, Real.log_one,
             Std.le_refl]
-        · exact
-            mul_log_mono_of_one_le (by exact_mod_cast hmpos)
-              (by linarith)
+        · exact mul_log_mono_of_one_le (by exact_mod_cast hmpos) (by linarith)
   · -- θ > 0: use convexity between m+1 and m+2
     have hC : ((m : ℝ) + 1) * Real.log ((m : ℝ) + 1) ≤ x * Real.log x :=
       mul_log_mono_of_one_le (by linarith) hxlb
@@ -171,8 +169,7 @@ theorem tendsto_Real_Gamma_three_half_add_atTop :
     Filter.Tendsto (fun n : ℕ => (3 / 2 : ℝ) ^ n * Real.Gamma (3 / 2)) Filter.atTop Filter.atTop :=
     (tendsto_pow_atTop_atTop_of_one_lt (by norm_num only : (1 : ℝ) < 3 / 2)).atTop_mul_const
       hGamma32pos
-  exact
-    Filter.tendsto_atTop_mono Gamma_three_half_add_nat_ge h1
+  exact Filter.tendsto_atTop_mono Gamma_three_half_add_nat_ge h1
 
 /-- The maximum of `Γ(1)`, `Γ(2)`, `Γ(2m+3/2)`, and `Γ(2m+5/2)` tends to infinity.
 It dominates the last term, whose recurrence lower bound diverges. -/

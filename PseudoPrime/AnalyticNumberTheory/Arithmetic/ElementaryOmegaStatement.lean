@@ -34,21 +34,18 @@ def ElementaryOmegaStatement : Prop :=
     Odd n →
       750 ≤ n →
       ((NumberTheory.characterModulus n).primeFactors.card : ℝ) ≤
-        elementaryOmegaConstant *
-            Real.log (NumberTheory.characterModulus n) /
+        elementaryOmegaConstant * Real.log (NumberTheory.characterModulus n) /
           Real.log (Real.log (NumberTheory.characterModulus n))
 
 /-- For odd `n ≥ 750`, put `q = 4n`, `x = log q`, `y = loglog q`, and `C = 7/5`.
 An `ElementaryOmegaStatement` proof gives `2 * ω(q) * y² / x ≤ 2 * C * y` by multiplying
 `ω(q) ≤ C * x / y` by the nonnegative factor `2 * y² / x`. -/
-theorem elementary_prime_count_term_le
-    (hElem : ElementaryOmegaStatement) {n : ℕ}
-    (hn : Odd n) (hn750 : 750 ≤ n) :
+theorem elementary_prime_count_term_le (hElem : ElementaryOmegaStatement) {n : ℕ} (hn : Odd n)
+    (hn750 : 750 ≤ n) :
     2 * (NumberTheory.characterModulus n).primeFactors.card *
           (Real.log (Real.log (NumberTheory.characterModulus n))) ^ 2 /
         Real.log (NumberTheory.characterModulus n) ≤
-      2 * elementaryOmegaConstant *
-        Real.log (Real.log (NumberTheory.characterModulus n)) := by
+      2 * elementaryOmegaConstant * Real.log (Real.log (NumberTheory.characterModulus n)) := by
   have hq : 3000 ≤ NumberTheory.characterModulus n := by
     unfold NumberTheory.characterModulus; omega
   have hpos := log_log_pos_of_le hq
@@ -64,9 +61,7 @@ theorem elementary_prime_count_term_le
       2 * (NumberTheory.characterModulus n).primeFactors.card * y ^ 2 / x := by
     ring
   have heqRight :
-    (elementaryOmegaConstant * x / y) *
-        (2 * y ^ 2 / x) =
-      2 * elementaryOmegaConstant * y := by
+    (elementaryOmegaConstant * x / y) * (2 * y ^ 2 / x) = 2 * elementaryOmegaConstant * y := by
     field_simp [hx.ne', hy.ne']
   rw [← heqLeft, ← heqRight]
   exact hmul

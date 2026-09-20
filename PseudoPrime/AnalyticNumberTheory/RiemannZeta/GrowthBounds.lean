@@ -84,8 +84,8 @@ theorem tsum_vonMangoldt_div_rpow_antitone {x y : ℝ} (hx : 1 < x) (hxy : x ≤
     ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ y ≤
       ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ x := by
   have hy : 1 < y := lt_of_lt_of_le hx hxy
-  apply Summable.tsum_le_tsum _
-    (summable_vonMangoldt_div_rpow hy) (summable_vonMangoldt_div_rpow hx)
+  apply
+    Summable.tsum_le_tsum _ (summable_vonMangoldt_div_rpow hy) (summable_vonMangoldt_div_rpow hx)
   intro n
   rcases eq_or_ne n 0 with rfl | hn
   · simp only [ArithmeticFunction.map_zero, CharP.cast_eq_zero, zero_div, Std.le_refl]

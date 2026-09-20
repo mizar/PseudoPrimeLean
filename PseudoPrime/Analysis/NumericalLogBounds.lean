@@ -115,32 +115,28 @@ theorem log_ge_twelve_lower {y : ℝ} (hy : 12 ≤ y) : (247 : ℝ) / 100 < Real
 /-- A rational upper certificate for `log 13`, propagated from the tangent at `12`. -/
 theorem log_thirteen_le : Real.log 13 ≤ (256825 : ℝ) / 100000 := by
   have htangent :=
-    log_le_log_add_sub_div (a := (12 : ℝ)) (y := 13) (by norm_num only)
-      (by norm_num only)
+    log_le_log_add_sub_div (a := (12 : ℝ)) (y := 13) (by norm_num only) (by norm_num only)
   norm_num only at htangent ⊢
   linarith only [htangent, log_twelve_le]
 
 /-- A rational upper certificate for `log 14`, propagated from the tangent at `13`. -/
 theorem log_fourteen_le : Real.log 14 ≤ (264518 : ℝ) / 100000 := by
   have htangent :=
-    log_le_log_add_sub_div (a := (13 : ℝ)) (y := 14) (by norm_num only)
-      (by norm_num only)
+    log_le_log_add_sub_div (a := (13 : ℝ)) (y := 14) (by norm_num only) (by norm_num only)
   norm_num only at htangent ⊢
   linarith only [htangent, log_thirteen_le]
 
 /-- A rational upper certificate for `log 15`, propagated from the tangent at `14`. -/
 theorem log_fifteen_le : Real.log 15 ≤ (271661 : ℝ) / 100000 := by
   have htangent :=
-    log_le_log_add_sub_div (a := (14 : ℝ)) (y := 15) (by norm_num only)
-      (by norm_num only)
+    log_le_log_add_sub_div (a := (14 : ℝ)) (y := 15) (by norm_num only) (by norm_num only)
   norm_num only at htangent ⊢
   linarith only [htangent, log_fourteen_le]
 
 /-- A rational upper certificate for the logarithm of `2π`. -/
 theorem log_two_mul_pi_lt : Real.log (2 * Real.pi) < (1839 / 1000 : ℝ) := by
   have htangent :=
-    log_le_log_add_sub_div (a := (3 : ℝ)) (y := Real.pi) (by norm_num only)
-      Real.pi_pos
+    log_le_log_add_sub_div (a := (3 : ℝ)) (y := Real.pi) (by norm_num only) Real.pi_pos
   have hlogTwo := Real.log_two_lt_d9
   have hlogThree := Real.log_three_lt_d9
   rw [Real.log_mul (by norm_num only) Real.pi_ne_zero]

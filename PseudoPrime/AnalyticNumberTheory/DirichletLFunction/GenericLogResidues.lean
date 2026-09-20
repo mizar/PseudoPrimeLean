@@ -26,29 +26,22 @@ Role: fixed-`A` normalized boundary interface for the generic logarithmic raw bo
 -/
 
 theorem tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (A : ℕ)
     (hA : 2 ≤ A) :
     Filter.Tendsto
       (fun k : ℕ =>
         (-Complex.I / (2 * (Real.pi : ℂ))) *
-          RectangleGeometry.rectangleBoundaryIntegral
-            (dirichletLogContourKernel x χ)
-            (primitiveHeightSeqLowerCorner_of_grh
-              hN2 hGRH hprimitive hne hinv A k)
-            (primitiveHeightSeqUpperCorner_of_grh
-              hN2 hGRH hprimitive hne hinv k))
+          RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ)
+            (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
+            (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k))
       Filter.atTop
       (nhds
         (Arithmetic.characterLogWeightedSum x χ -
           ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
             ∫ t : ℝ,
               dirichletLogContourKernel x χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I))) := by
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I))) := by
   have hxpos : (0 : ℝ) < x := lt_of_lt_of_le zero_lt_one hx
   have hcoeffI : (-Complex.I / (2 * (Real.pi : ℂ))) * Complex.I = ((2 * Real.pi : ℝ)⁻¹ : ℂ) := by
     rw [div_mul_eq_mul_div,
@@ -59,84 +52,60 @@ theorem tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh {N : ℕ} [NeZe
   have heq :
     ∀ k : ℕ,
       (-Complex.I / (2 * (Real.pi : ℂ))) *
-          RectangleGeometry.rectangleBoundaryIntegral
-            (dirichletLogContourKernel x χ)
-            (primitiveHeightSeqLowerCorner_of_grh
-              hN2 hGRH hprimitive hne hinv A k)
-            (primitiveHeightSeqUpperCorner_of_grh
-              hN2 hGRH hprimitive hne hinv k) =
+          RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ)
+            (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
+            (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k) =
         (-Complex.I / (2 * (Real.pi : ℂ))) *
               ((∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
                   dirichletLogContourKernel x χ
                     ((σ : ℂ) -
-                      primitiveHorizontalHeightSeq_of_grh
-                          hN2 hGRH hprimitive hne hinv k *
+                      primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k *
                         Complex.I)) -
                 ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
                   dirichletLogContourKernel x χ
                     ((σ : ℂ) +
-                      primitiveHorizontalHeightSeq_of_grh
-                          hN2 hGRH hprimitive hne hinv k *
+                      primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k *
                         Complex.I)) +
             ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
               (∫ t in
-                (-(primitiveHorizontalHeightSeq_of_grh
-                    hN2 hGRH hprimitive hne hinv
-                    k))..(primitiveHorizontalHeightSeq_of_grh
-                  hN2 hGRH hprimitive hne hinv k),
-                dirichletLogContourKernel x χ
-                  ((2 : ℂ) + (t : ℂ) * Complex.I)) -
+                (-(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv
+                    k))..(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k),
+                dirichletLogContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I)) -
           ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
             (∫ t in
-              (-(primitiveHorizontalHeightSeq_of_grh
-                  hN2 hGRH hprimitive hne hinv
-                  k))..(primitiveHorizontalHeightSeq_of_grh
-                hN2 hGRH hprimitive hne hinv k),
+              (-(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv
+                  k))..(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k),
               dirichletLogContourKernel x χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I)) := by
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
     intro k
     obtain ⟨hzre, hzim, hwre, hwim, _, _⟩ :=
-      primitiveHeightSeqRectangleFacts_of_grh
-        hN2 hGRH hprimitive hne hinv A k hA
+      primitiveHeightSeqRectangleFacts_of_grh hN2 hGRH hprimitive hne hinv A k hA
     unfold RectangleGeometry.rectangleBoundaryIntegral
-    rw [hzre, hzim, hwre, hwim,
-      primitiveReciprocalLeftRe]
+    rw [hzre, hzim, hwre, hwim, primitiveReciprocalLeftRe]
     simp only [smul_eq_mul, Complex.ofReal_neg, neg_mul]
     linear_combination
       (∫ t in
-            (-(primitiveHorizontalHeightSeq_of_grh
-                hN2 hGRH hprimitive hne hinv
-                k))..(primitiveHorizontalHeightSeq_of_grh
-              hN2 hGRH hprimitive hne hinv k),
-            dirichletLogContourKernel x χ
-              ((2 : ℂ) + (t : ℂ) * Complex.I)) *
+            (-(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv
+                k))..(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k),
+            dirichletLogContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I)) *
           hcoeffI -
         (∫ t in
-            (-(primitiveHorizontalHeightSeq_of_grh
-                hN2 hGRH hprimitive hne hinv
-                k))..(primitiveHorizontalHeightSeq_of_grh
-              hN2 hGRH hprimitive hne hinv k),
-            dirichletLogContourKernel x χ
-              (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) *
+            (-(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv
+                k))..(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k),
+            dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) *
           hcoeffI
   apply Filter.Tendsto.congr (fun k => (heq k).symm)
   have hhoriz :=
-    tendsto_primitiveHorizontalHeightSeq_logKernel_horizontal_integral_of_grh
-      A hA hN2 hGRH hprimitive hne hinv hx
+    tendsto_primitiveHorizontalHeightSeq_logKernel_horizontal_integral_of_grh A hA hN2 hGRH
+      hprimitive hne hinv hx
   have hright :=
-    (tendsto_intervalIntegral_dirichletLogContourKernel
-          hxpos χ hne (show (1 : ℝ) < 2 by norm_num only)).comp
-      (tendsto_primitiveHorizontalHeightSeq_atTop_of_grh
-        hN2 hGRH hprimitive hne hinv)
+    (tendsto_intervalIntegral_dirichletLogContourKernel hxpos χ hne
+          (show (1 : ℝ) < 2 by norm_num only)).comp
+      (tendsto_primitiveHorizontalHeightSeq_atTop_of_grh hN2 hGRH hprimitive hne hinv)
   have hleft :=
-    tendsto_primitiveHorizontalHeightSeq_log_leftVertical_intervalIntegral
-      hN2 hGRH hprimitive hne hinv hxpos hA
-  have hweighted :=
-    characterLogWeightedSum_eq_integral χ hxpos
-      (show (1 : ℝ) < 2 by norm_num only)
+    tendsto_primitiveHorizontalHeightSeq_log_leftVertical_intervalIntegral hN2 hGRH hprimitive hne
+      hinv hxpos hA
+  have hweighted := characterLogWeightedSum_eq_integral χ hxpos (show (1 : ℝ) < 2 by norm_num only)
   have htarget :
     Filter.Tendsto
       (fun k : ℕ =>
@@ -144,48 +113,33 @@ theorem tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh {N : ℕ} [NeZe
               ((∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
                   dirichletLogContourKernel x χ
                     ((σ : ℂ) -
-                      primitiveHorizontalHeightSeq_of_grh
-                          hN2 hGRH hprimitive hne hinv k *
+                      primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k *
                         Complex.I)) -
                 ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
                   dirichletLogContourKernel x χ
                     ((σ : ℂ) +
-                      primitiveHorizontalHeightSeq_of_grh
-                          hN2 hGRH hprimitive hne hinv k *
+                      primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k *
                         Complex.I)) +
             ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
               (∫ t in
-                (-(primitiveHorizontalHeightSeq_of_grh
-                    hN2 hGRH hprimitive hne hinv
-                    k))..(primitiveHorizontalHeightSeq_of_grh
-                  hN2 hGRH hprimitive hne hinv k),
-                dirichletLogContourKernel x χ
-                  ((2 : ℂ) + (t : ℂ) * Complex.I)) -
+                (-(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv
+                    k))..(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k),
+                dirichletLogContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I)) -
           ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
             (∫ t in
-              (-(primitiveHorizontalHeightSeq_of_grh
-                  hN2 hGRH hprimitive hne hinv
-                  k))..(primitiveHorizontalHeightSeq_of_grh
-                hN2 hGRH hprimitive hne hinv k),
+              (-(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv
+                  k))..(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k),
               dirichletLogContourKernel x χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I)))
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)))
       Filter.atTop
       (nhds
         ((-Complex.I / (2 * (Real.pi : ℂ))) * ((0 : ℂ) - 0) +
             ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
-              (∫ t : ℝ,
-                dirichletLogContourKernel x χ
-                  ((2 : ℂ) + (t : ℂ) * Complex.I)) -
+              (∫ t : ℝ, dirichletLogContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I)) -
           ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
             (∫ t : ℝ,
               dirichletLogContourKernel x χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I)))) := by
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)))) := by
     apply Filter.Tendsto.sub
     · apply Filter.Tendsto.add
       · exact Filter.Tendsto.const_mul _ (hhoriz.2.sub hhoriz.1)
@@ -204,14 +158,9 @@ the pair-system functional equation API.
 -/
 
 theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_of_grh {N : ℕ}
-    [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
-    (iteratedDeriv 2
-            (dirichletLogEvenZeroRegularization
-              x 1
-              (dirichletEvenZeroLocalFactor χ))
-            0 /
+    (iteratedDeriv 2 (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) 0 /
           2).re =
       -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re +
           |primitiveBRe χ| * Real.log x +
@@ -219,15 +168,12 @@ theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_of_
           (Real.pi : ℝ) ^ 2 / 24 -
         (Real.eulerMascheroniConstant / 2) * Real.log x -
         (1 / 2) * Real.log x ^ 2 := by
-  rw [iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq
-      hprimitive hne hx,
-    deriv_logDeriv_dirichletEvenZeroLocalFactor_zero
-      hprimitive hne,
-    logDeriv_dirichletEvenZeroLocalFactor_zero
-      hprimitive hne]
+  rw [iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq hprimitive hne hx,
+    deriv_logDeriv_dirichletEvenZeroLocalFactor_zero hprimitive hne,
+    logDeriv_dirichletEvenZeroLocalFactor_zero hprimitive hne]
   have hF0re :=
-    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log_of_grh
-      hN2 hGRH hprimitive hne hinv
+    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log_of_grh hN2 hGRH hprimitive hne
+      hinv
   have hlogxC : Complex.log (x : ℂ) = ((Real.log x : ℝ) : ℂ) := (Complex.ofReal_log hx.le).symm
   have hcomplex :
     (-(2 * (deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0 - (Real.pi : ℂ) ^ 2 / 24) +
@@ -276,26 +222,19 @@ theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_of_
 of the logarithmic Mellin regularization's derivative at zero. -/
 
 theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_of_grh {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hodd : χ.Odd) {x : ℝ}
     (hx : 0 < x) :
-    (deriv
-          (dirichletLogMellinZeroRegularization
-            x χ)
-          0).re =
+    (deriv (dirichletLogMellinZeroRegularization x χ) 0).re =
       -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re +
           |primitiveBRe χ| * Real.log x +
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
           (Real.pi : ℝ) ^ 2 / 8 -
         (Real.log 2 + Real.eulerMascheroniConstant / 2) * Real.log x := by
-  rw [deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq
-      hprimitive hne hodd hx,
-    deriv_logDeriv_LFunction_zero_of_odd
-      hprimitive hne hodd]
+  rw [deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq hprimitive hne hodd hx,
+    deriv_logDeriv_LFunction_zero_of_odd hprimitive hne hodd]
   have hΓ0ne : DirichletCharacter.gammaFactor χ 0 ≠ 0 :=
-    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat
-      hodd
+    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd
       (by
         intro m hm
         have him := congrArg Complex.re hm
@@ -310,8 +249,7 @@ theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_of_grh {N : �
           norm_num only [Complex.one_re, one_mul]
         exact (not_lt_of_ge hmneg) (him' ▸ hhalf))
   have hdΓ0 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 0 :=
-    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat
-      hodd
+    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
       (by
         intro m hm
         have him := congrArg Complex.re hm
@@ -325,18 +263,14 @@ theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_of_grh {N : �
           convert him using 1
           norm_num only [Complex.one_re, one_mul]
         exact (not_lt_of_ge hmneg) (him' ▸ hhalf))
-  have hF0ne :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hprimitive hne
+  have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have hbridge0 :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular
-      hne hF0ne hΓ0ne hdΓ0
+    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF0ne hΓ0ne hdΓ0
   rw [hbridge0]
   have hF0re :=
-    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log_of_grh
-      hN2 hGRH hprimitive hne hinv
-  have hG0re :=
-    logDeriv_gammaFactor_zero_re_of_odd hodd
+    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log_of_grh hN2 hGRH hprimitive hne
+      hinv
+  have hG0re := logDeriv_gammaFactor_zero_re_of_odd hodd
   have hlogxC : Complex.log (x : ℂ) = ((Real.log x : ℝ) : ℂ) := (Complex.ofReal_log hx.le).symm
   have hAre :
     ((logDeriv (DirichletCharacter.completedLFunction χ) 0 -
@@ -357,23 +291,12 @@ theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_of_grh {N : �
 /-! Generic erased-ledger estimate using the pair-system finite zero-mass bound. -/
 
 theorem re_sum_erased_primitiveLogResidues_le_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {z w : ℂ} :
-    (∑
-          ρ ∈
-            ((dirichletLFunctionSingularitiesInRectangle
-                      χ hne z w).erase
-                  1).erase
-              0,
+    (∑ ρ ∈ ((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0,
           dirichletLogResidueAt hne x ρ).re ≤
       2 * Real.sqrt x * |primitiveBRe χ| := by
-  set S :=
-    ((dirichletLFunctionSingularitiesInRectangle
-              χ hne z w).erase
-          1).erase
-      0 with
-    hS_def
+  set S := ((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0 with hS_def
   rw [Complex.re_sum]
   have hstep :
     ∀ ρ ∈ S,
@@ -382,23 +305,18 @@ theorem re_sum_erased_primitiveLogResidues_le_of_grh {N : ℕ} [NeZero N] (hN2 :
               (x : ℂ) ^ ρ /
             ρ ^ 2‖ := by
     intro ρ hρ
-    rw [dirichletLogResidueAt_eq_zeroContribution_of_mem_erase
-        x hne (hS_def ▸ hρ)]
+    rw [dirichletLogResidueAt_eq_zeroContribution_of_mem_erase x hne (hS_def ▸ hρ)]
     have hρ0 : ρ ≠ 0 := (Finset.mem_erase.mp hρ).1
-    exact
-      dirichletLFunctionLogZeroContribution_re_le_completedTerm_norm
-        hne hx hρ0
+    exact dirichletLFunctionLogZeroContribution_re_le_completedTerm_norm hne hx hρ0
   calc
-    ∑ ρ ∈ S,
-          (dirichletLogResidueAt hne x ρ).re ≤
+    ∑ ρ ∈ S, (dirichletLogResidueAt hne x ρ).re ≤
         ∑ ρ ∈ S,
           ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
                 (x : ℂ) ^ ρ /
               ρ ^ 2‖ :=
       Finset.sum_le_sum hstep
     _ ≤ 2 * Real.sqrt x * |primitiveBRe χ| :=
-      sum_norm_completedLogZeroTerm_le_abs_BRe_of_grh
-        hN2 hGRH hprimitive hne hinv hx S
+      sum_norm_completedLogZeroTerm_le_abs_BRe_of_grh hN2 hGRH hprimitive hne hinv hx S
 
 /-!
 Input/assumptions: `N ≥ 2`, a primitive nontrivial quadratic character with `χ⁻¹ ≠ 1`,
@@ -411,13 +329,9 @@ No evenness is needed for this algebraic identity; interpreting it as the actual
 -/
 
 theorem re_evenLogResidueAt_square_raw {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {y : ℝ}
-    (hy : 0 < y) :
-    (iteratedDeriv 2
-            (dirichletLogEvenZeroRegularization
-              (y ^ 2) 1
-              (dirichletEvenZeroLocalFactor χ))
+    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
+    (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {y : ℝ} (hy : 0 < y) :
+    (iteratedDeriv 2 (dirichletLogEvenZeroRegularization (y ^ 2) 1 (dirichletEvenZeroLocalFactor χ))
             0 /
           2).re =
       -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re +
@@ -427,8 +341,8 @@ theorem re_evenLogResidueAt_square_raw {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ 
         (Real.eulerMascheroniConstant / 2) * (2 * Real.log y) -
         (1 / 2) * (2 * Real.log y) ^ 2 := by
   have hraw :=
-    re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_raw
-      hN2 hGRH hprimitive hne hinv hquad (sq_pos_of_pos hy)
+    re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_raw hN2 hGRH hprimitive hne
+      hinv hquad (sq_pos_of_pos hy)
   simpa only [Complex.div_ofNat_re, one_div, Real.log_pow, Nat.cast_ofNat] using hraw
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

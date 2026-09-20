@@ -108,8 +108,7 @@ theorem not_dvd_primeNeOneWitness_of_three_lt {n : ℕ} (hns : ¬IsSquare n)
   have hp := primeNeOneWitness_mem n hw
   rcases hp.1.eq_one_or_self_of_dvd n hdiv with hn1 | hnp
   · exact hns ⟨1, by omega⟩
-  · obtain ⟨q, hqprime, hqodd, hqlt, hqvalue⟩ :=
-      NumberTheory.primeHasSmallerNegOneWitness hp.1 hp3
+  · obtain ⟨q, hqprime, hqodd, hqlt, hqvalue⟩ := NumberTheory.primeHasSmallerNegOneWitness hp.1 hp3
     have hqmem : q ∈ PrimeNeOneWitnessSet n := by
       exact
         ⟨hqprime, hqodd, by

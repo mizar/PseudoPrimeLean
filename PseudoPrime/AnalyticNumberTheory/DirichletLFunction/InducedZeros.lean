@@ -41,9 +41,7 @@ theorem eulerFactorProduct_ne_zero_in_rightHalfPlane {M N : ℕ} (χ : Dirichlet
     (hs : 0 < s.re) : ∏ p ∈ N.primeFactors, (1 - χ p * (p : ℂ) ^ (-s)) ≠ 0 := by
   apply Finset.prod_ne_zero_iff.mpr
   intro p hp
-  exact
-    eulerFactor_ne_zero_in_rightHalfPlane χ
-      (Nat.prime_of_mem_primeFactors hp) hs
+  exact eulerFactor_ne_zero_in_rightHalfPlane χ (Nat.prime_of_mem_primeFactors hp) hs
 
 /-- A zero in the right half-plane of a changed-level character is a zero before changing level. -/
 theorem changeLevel_zero_of_rightHalfPlane {M N : ℕ} [NeZero M] [NeZero N] (hMN : M ∣ N)
@@ -51,9 +49,6 @@ theorem changeLevel_zero_of_rightHalfPlane {M N : ℕ} [NeZero M] [NeZero N] (hM
     (hszero : (DirichletCharacter.changeLevel hMN χ).LFunction s = 0) (hs : 0 < s.re) :
     χ.LFunction s = 0 := by
   rw [DirichletCharacter.LFunction_changeLevel hMN χ (Or.inl hχ)] at hszero
-  exact
-    (mul_eq_zero.mp hszero).resolve_right
-      (eulerFactorProduct_ne_zero_in_rightHalfPlane
-        χ hs)
+  exact (mul_eq_zero.mp hszero).resolve_right (eulerFactorProduct_ne_zero_in_rightHalfPlane χ hs)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

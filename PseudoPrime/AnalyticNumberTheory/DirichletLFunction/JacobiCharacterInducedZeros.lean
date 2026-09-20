@@ -25,12 +25,10 @@ change-level identity and nonvanishing of the added Euler factors.
 -/
 theorem induced_zero_of_rightHalfPlane_is_primitive_zero (n : ℕ) (hn : Odd n) (hns : ¬IsSquare n)
     [NeZero (4 * n)] {s : ℂ}
-    (hszero : (NumberTheory.complexQuadraticCharacter n hn).LFunction s = 0)
-    (hs : 0 < s.re) :
+    (hszero : (NumberTheory.complexQuadraticCharacter n hn).LFunction s = 0) (hs : 0 < s.re) :
     (NumberTheory.primitiveQuadraticCharacter n hn).LFunction s = 0 := by
   have hlevel :=
-    DirichletCharacter.changeLevel_primitiveCharacter
-      (NumberTheory.complexQuadraticCharacter n hn)
+    DirichletCharacter.changeLevel_primitiveCharacter (NumberTheory.complexQuadraticCharacter n hn)
   rw [← hlevel] at hszero
   exact
     changeLevel_zero_of_rightHalfPlane _ _

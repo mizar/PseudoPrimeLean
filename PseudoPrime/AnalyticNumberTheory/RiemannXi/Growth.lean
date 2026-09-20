@@ -24,9 +24,8 @@ triangle-inequality loss incurred when reflecting a left half-plane point `s` to
 half-plane point `1 - s` via `PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi_one_sub`. -/
 theorem norm_riemannXi_le_of_forall_one_half_le_re {bound : ℝ → ℝ}
     (hbound_mono : MonotoneOn bound (Set.Ici 0))
-    (h :
-      ∀ s : ℂ, 1 / 2 ≤ s.re → ‖riemannXi s‖ ≤ bound ‖s‖)
-    (s : ℂ) : ‖riemannXi s‖ ≤ bound (‖s‖ + 1) := by
+    (h : ∀ s : ℂ, 1 / 2 ≤ s.re → ‖riemannXi s‖ ≤ bound ‖s‖) (s : ℂ) :
+    ‖riemannXi s‖ ≤ bound (‖s‖ + 1) := by
   by_cases hs : 1 / 2 ≤ s.re
   · exact
       (h s hs).trans
@@ -35,8 +34,7 @@ theorem norm_riemannXi_le_of_forall_one_half_le_re {bound : ℝ → ℝ}
   · rw [not_le] at hs
     have hs' : 1 / 2 ≤ (1 - s).re := by
       simp only [Complex.sub_re, Complex.one_re]; linarith
-    have h1 : ‖riemannXi (1 - s)‖ ≤ bound ‖1 - s‖ :=
-      h (1 - s) hs'
+    have h1 : ‖riemannXi (1 - s)‖ ≤ bound ‖1 - s‖ := h (1 - s) hs'
     rw [riemannXi_one_sub] at h1
     have habs : ‖(1 : ℂ) - s‖ ≤ ‖s‖ + 1 := by
       calc
@@ -51,8 +49,7 @@ used in the right-half-plane growth bound. -/
 theorem riemannXi_eq_gamma_mul_zetaEntire {s : ℂ} (hs1 : s ≠ 1)
     (hΓne : Complex.Gamma (s / 2 + 1) ≠ 0) :
     riemannXi s =
-      (Real.pi : ℂ) ^ (-s / 2) * Complex.Gamma (s / 2 + 1) *
-        RiemannZeta.zetaEntire s := by
+      (Real.pi : ℂ) ^ (-s / 2) * Complex.Gamma (s / 2 + 1) * RiemannZeta.zetaEntire s := by
   have hdenom_ne : 2 * (Real.pi : ℂ) ^ (-s / 2) * Complex.Gamma (s / 2 + 1) ≠ 0 := by
     have hpow_ne : (Real.pi : ℂ) ^ (-s / 2) ≠ 0 :=
       Complex.cpow_ne_zero_iff.mpr (Or.inl (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero))
@@ -63,8 +60,7 @@ theorem riemannXi_eq_gamma_mul_zetaEntire {s : ℂ} (hs1 : s ≠ 1)
     (eq_div_iff hdenom_ne).mp (riemannZeta_eq_mul_completedRiemannZeta₀ s)
   have hxi := riemannXi_eq hs1
   rw [← hnum] at hxi
-  have hz :
-    RiemannZeta.zetaEntire s = (s - 1) * riemannZeta s := by
+  have hz : RiemannZeta.zetaEntire s = (s - 1) * riemannZeta s := by
     simp only [RiemannZeta.zetaEntire, Function.update_of_ne hs1]
   rw [hxi, hz]
   ring

@@ -368,8 +368,7 @@ For `m ≠ 0` and `x > 0`, the reciprocal common-factor weighted sum is at most
 `Σ_{p ∣ m} log p / (p - 1)`, by summing the geometric bound for each prime divisor.
 -/
 theorem commonFactorReciprocalWeightedSum_le {m : ℕ} (hm0 : m ≠ 0) {x : ℝ} (hx : 0 < x) :
-    commonFactorReciprocalWeightedSum x m ≤
-      primeFactorLogSum m := by
+    commonFactorReciprocalWeightedSum x m ≤ primeFactorLogSum m := by
   calc
     _ ≤
         ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
@@ -383,7 +382,6 @@ theorem commonFactorReciprocalWeightedSum_le {m : ℕ} (hm0 : m ≠ 0) {x : ℝ}
       apply Finset.sum_le_sum
       intro p hp
       exact sum_log_div_prime_pow_le (Nat.prime_of_mem_primeFactors hp)
-    _ = primeFactorLogSum m := by
-      rw [primeFactorLogSum]
+    _ = primeFactorLogSum m := by rw [primeFactorLogSum]
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

@@ -29,23 +29,12 @@ from `G_χ` without inspecting a witness selected by `Classical.choose`.
 theorem eventuallyEq_dirichletReciprocalEvenZeroRegularization_canonical {N : ℕ} [NeZero N] {x : ℝ}
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (heven : χ.Even) :
     Filter.EventuallyEq (nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ))
-      (fun s =>
-        (s - 0) ^ 2 *
-          dirichletReciprocalContourKernel x χ
-            s)
-      (dirichletReciprocalEvenZeroRegularization
-        x 1
-        (dirichletEvenZeroLocalFactor χ)) := by
-  obtain ⟨hGanalytic, hG0⟩ :=
-    analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor
-      hprimitive hne
-  have heq :=
-    eventuallyEq_dirichletLFunction_evenZeroLocalFactor
-      hprimitive hne heven
+      (fun s => (s - 0) ^ 2 * dirichletReciprocalContourKernel x χ s)
+      (dirichletReciprocalEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) := by
+  obtain ⟨hGanalytic, hG0⟩ := analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor hprimitive hne
+  have heq := eventuallyEq_dirichletLFunction_evenZeroLocalFactor hprimitive hne heven
   have hlogeq := logDeriv_congr_nhds heq
-  have hGnear :
-    ∀ᶠ s in nhds (0 : ℂ),
-      dirichletEvenZeroLocalFactor χ s ≠ 0 :=
+  have hGnear : ∀ᶠ s in nhds (0 : ℂ), dirichletEvenZeroLocalFactor χ s ≠ 0 :=
     hGanalytic.continuousAt.eventually_ne hG0
   have honeNhds : ∀ᶠ s : ℂ in nhds 0, s ≠ 1 := compl_singleton_mem_nhds (by norm_num only)
   filter_upwards [hlogeq.filter_mono nhdsWithin_le_nhds, honeNhds.filter_mono nhdsWithin_le_nhds,
@@ -55,18 +44,10 @@ theorem eventuallyEq_dirichletReciprocalEvenZeroRegularization_canonical {N : �
   have hs0' : s ≠ 0 := Set.mem_compl_singleton_iff.mp hs0
   have hlogs' :
     deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s =
-      (1 : ℂ) / (s - 0) +
-        logDeriv
-          (dirichletEvenZeroLocalFactor χ)
-          s := by
+      (1 : ℂ) / (s - 0) + logDeriv (dirichletEvenZeroLocalFactor χ) s := by
     have hmul := logDeriv_mul s hs0' hGsne differentiableAt_id hGsanalytic.differentiableAt
     rw [← logDeriv_apply, hlogeqs,
-      show
-        (fun s : ℂ =>
-            s *
-              dirichletEvenZeroLocalFactor χ
-                s) =
-          id * dirichletEvenZeroLocalFactor χ
+      show (fun s : ℂ => s * dirichletEvenZeroLocalFactor χ s) = id * dirichletEvenZeroLocalFactor χ
         from by
         funext s
         rfl,
@@ -74,8 +55,7 @@ theorem eventuallyEq_dirichletReciprocalEvenZeroRegularization_canonical {N : �
     congr 1
     rw [logDeriv_apply]
     simp only [deriv_id', id_eq, one_div, sub_zero]
-  unfold dirichletReciprocalContourKernel
-    dirichletReciprocalEvenZeroRegularization
+  unfold dirichletReciprocalContourKernel dirichletReciprocalEvenZeroRegularization
   rw [hlogs']
   have hs1' : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
   simp only [sub_zero]
@@ -104,48 +84,29 @@ theorem dirichletReciprocalResidueAt_zero_of_primitive_even_eq {N : ℕ} [NeZero
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (heven : χ.Even)
     (x : ℝ) :
     dirichletReciprocalResidueAt hne x 0 =
-      deriv
-        (dirichletReciprocalEvenZeroRegularization
-          x 1 (dirichletEvenZeroLocalFactor χ))
-        0 := by
-  rw [dirichletReciprocalResidueAt_zero_of_even
-      hne x heven]
+      deriv (dirichletReciprocalEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) 0 := by
+  rw [dirichletReciprocalResidueAt_zero_of_even hne x heven]
   set g :=
-    Classical.choose
-      (exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization
-        x hne heven)
+    Classical.choose (exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization x hne heven)
   obtain ⟨-, hganalytic, hgzero, hpunct_chosen⟩ :=
     Classical.choose_spec
-      (exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization
-        x hne heven)
+      (exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization x hne heven)
   have hmult1 :=
-    dirichletLFunctionZeroMultiplicity_zero_of_primitive_even_eq_one
-      hprimitive hne heven
+    dirichletLFunctionZeroMultiplicity_zero_of_primitive_even_eq_one hprimitive hne heven
   have hpunct_canon :=
-    eventuallyEq_dirichletReciprocalEvenZeroRegularization_canonical
-      (x := x) hprimitive hne heven
+    eventuallyEq_dirichletReciprocalEvenZeroRegularization_canonical (x := x) hprimitive hne heven
   rw [← hmult1] at hpunct_canon
   have hpunct :
     Filter.EventuallyEq (nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ))
-      (dirichletReciprocalEvenZeroRegularization
-        x
-        (dirichletLFunctionZeroMultiplicity χ 0)
-        g)
-      (dirichletReciprocalEvenZeroRegularization
-        x
-        (dirichletLFunctionZeroMultiplicity χ 0)
+      (dirichletReciprocalEvenZeroRegularization x (dirichletLFunctionZeroMultiplicity χ 0) g)
+      (dirichletReciprocalEvenZeroRegularization x (dirichletLFunctionZeroMultiplicity χ 0)
         (dirichletEvenZeroLocalFactor χ)) :=
     hpunct_chosen.symm.trans hpunct_canon
   have hpt :
-    dirichletReciprocalEvenZeroRegularization x
-        (dirichletLFunctionZeroMultiplicity χ 0)
-        g 0 =
-      dirichletReciprocalEvenZeroRegularization
-        x
-        (dirichletLFunctionZeroMultiplicity χ 0)
+    dirichletReciprocalEvenZeroRegularization x (dirichletLFunctionZeroMultiplicity χ 0) g 0 =
+      dirichletReciprocalEvenZeroRegularization x (dirichletLFunctionZeroMultiplicity χ 0)
         (dirichletEvenZeroLocalFactor χ) 0 := by
-    unfold
-      dirichletReciprocalEvenZeroRegularization
+    unfold dirichletReciprocalEvenZeroRegularization
     simp only [zero_mul, add_zero, zero_sub, neg_mul, neg_div_neg_eq, div_one]
   have hderiv := (eventuallyEq_nhds_of_eventuallyEq_nhdsNE hpunct hpt).deriv_eq
   rw [hmult1] at hderiv

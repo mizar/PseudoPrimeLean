@@ -24,15 +24,12 @@ lemma log_constant_error_sum_nonneg {y : ℝ} (hy : 48 ≤ y) :
         10 * y ^ 2 * (347 / 500 - Real.log 2) := by
   have hA :=
     sub_nonneg.mpr
-      ((sub_le_sub zeroStar_log_four_upper
-            zeroStar_log_pi_lower).trans_eq
+      ((sub_le_sub zeroStar_log_four_upper zeroStar_log_pi_lower).trans_eq
         (by norm_num only : (139 / 100 : ℝ) - 1 = 39 / 100))
   have hB :=
     sub_nonneg.mpr (Real.log_two_lt_d9.le.trans (by norm_num only : (0.6931471808 : ℝ) ≤ 347 / 500))
   exact
-    add_nonneg
-      (mul_nonneg
-        (mul_nonneg (by norm_num only) (zeroStar_square_sub_one_nonneg hy)) hA)
+    add_nonneg (mul_nonneg (mul_nonneg (by norm_num only) (zeroStar_square_sub_one_nonneg hy)) hA)
       (mul_nonneg (mul_nonneg (by norm_num only) (sq_nonneg y)) hB)
 
 /-- The quadratic part of the numerator gap is nonnegative above `48`. -/
@@ -96,11 +93,8 @@ lemma reciprocal_log_quotient_le_affine {y : ℝ} (hy : 48 ≤ y) :
   have hypos : 0 < y := lt_of_lt_of_le (by norm_num only) hy
   apply (div_le_iff₀ (zeroStar_den_pos hy hypos)).2
   apply (mul_le_mul_iff_left₀ (sq_pos_of_pos hypos)).mp
-  rw [reciprocal_log_numerator_mul_sq hypos.ne',
-    affine_reciprocal_factor_mul_sq hypos.ne']
-  exact
-    div_le_div_of_nonneg_right (reciprocal_log_numerator_polynomial_le hy)
-      (by norm_num only)
+  rw [reciprocal_log_numerator_mul_sq hypos.ne', affine_reciprocal_factor_mul_sq hypos.ne']
+  exact div_le_div_of_nonneg_right (reciprocal_log_numerator_polynomial_le hy) (by norm_num only)
 
 /-- The affine gap is strictly positive whenever the tail logarithmic lower bound holds. -/
 lemma affine_log_gap_pos {y L : ℝ} (hy : 0 ≤ y) (hL : 73 / 20 ≤ L) :

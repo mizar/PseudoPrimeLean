@@ -74,8 +74,7 @@ theorem twenty_seven_lt_QNegOne_of_399_le {B : ℕ} (hB : 399 ≤ B) : 27 < QNeg
     apply NumberTheory.mem_admissibleFinset_iff.mpr
     exact ⟨by norm_num only, hB, by decide, not_isSquare_399⟩
   have hw :=
-    NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide)
-      not_isSquare_399
+    NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide) not_isSquare_399
   have hle := primeNegOneWitness_le_QNegOne hadm
   rw [primeNegOneWitness_399_eq_31 hw] at hle
   omega
@@ -121,8 +120,7 @@ theorem not_isSquare_331 : ¬IsSquare 331 := by
   have hk28 := square_root_lt_twenty_eight_of_lt_750 (n := 331) (by norm_num only) hk
   interval_cases k <;> norm_num only at hk
 
-theorem primeNeOneWitness_331_eq_13
-    (hw : (NumberTheory.PrimeNeOneWitnessSet 331).Nonempty) :
+theorem primeNeOneWitness_331_eq_13 (hw : (NumberTheory.PrimeNeOneWitnessSet 331).Nonempty) :
     NumberTheory.primeNeOneWitness 331 hw = 13 := by
   have hle : NumberTheory.primeNeOneWitness 331 hw ≤ 13 := by
     apply NumberTheory.primeNeOneWitness_le
@@ -148,8 +146,7 @@ theorem QNeOne_750_eq_13 : QNeOne 750 = 13 := by
       exact ⟨by norm_num only, by norm_num only, by decide, not_isSquare_331⟩
     have hw : (NumberTheory.PrimeNeOneWitnessSet 331).Nonempty :=
       NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
-        (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide)
-          not_isSquare_331)
+        (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide) not_isSquare_331)
     rw [← primeNeOneWitness_331_eq_13 hw]
     exact primeNeOneWitness_le_QNeOne hadm
 
@@ -165,8 +162,7 @@ theorem not_isSquare_751 : ¬IsSquare 751 := by
   interval_cases k <;> norm_num only at hk
 
 /-- At the next input, the least odd-prime Jacobi witness different from `1` jumps to `17`. -/
-theorem primeNeOneWitness_751_eq_17
-    (hw : (NumberTheory.PrimeNeOneWitnessSet 751).Nonempty) :
+theorem primeNeOneWitness_751_eq_17 (hw : (NumberTheory.PrimeNeOneWitnessSet 751).Nonempty) :
     NumberTheory.primeNeOneWitness 751 hw = 17 := by
   have hle : NumberTheory.primeNeOneWitness 751 hw ≤ 17 := by
     apply NumberTheory.primeNeOneWitness_le
@@ -201,8 +197,7 @@ theorem QNeOne_751_eq_17 : QNeOne 751 = 17 := by
       exact ⟨by norm_num only, by norm_num only, by decide, not_isSquare_751⟩
     have hw : (NumberTheory.PrimeNeOneWitnessSet 751).Nonempty :=
       NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
-        (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide)
-          not_isSquare_751)
+        (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide) not_isSquare_751)
     rw [← primeNeOneWitness_751_eq_17 hw]
     exact primeNeOneWitness_le_QNeOne hadm
 

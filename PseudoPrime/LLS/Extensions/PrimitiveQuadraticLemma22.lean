@@ -55,8 +55,7 @@ theorem llsPart1PrimitiveWeightedUpperAt_of_grh_quadratic {q : ℕ} [NeZero q]
     rw [hquad.inv]; exact hprimne
   have hN2 : 2 ≤ χ.conductor := by
     have hN1 : χ.conductor ≠ 1 :=
-      AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-        hprimne
+      AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
     have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
     omega
   have hy : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
@@ -76,7 +75,6 @@ theorem llsPart1PrimitiveWeightedUpperAt_of_grh_quadratic {q : ℕ} [NeZero q]
   unfold LLSPart1PrimitiveWeightedUpperAt
   rw [hlogdiv]
   linarith [hraw]
-
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
@@ -107,8 +105,7 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_quadratic {q : ℕ} [NeZe
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hquad : χ.primitiveCharacter.IsQuadratic) (h24 : LLSRiemannReciprocalLowerBound)
     (hsmall : llsTheorem11S1NoSmallPrime χ) :
-    (characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re ≤
+    (characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re ≤
       llsPart1PrimitiveFullLevelUpperBound q := by
   have hweighted := llsPart1PrimitiveWeightedUpperAt_of_grh_quadratic χ hq hne hGRH hquad
   unfold LLSPart1PrimitiveWeightedUpperAt at hweighted
@@ -131,9 +128,7 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_quadratic {q : ℕ} [NeZe
       _ = 8 * 8 := by norm_num only
       _ ≤ llsTheorem11S1RadiusRoot q * llsTheorem11S1RadiusRoot q := hsq
       _ = (llsTheorem11S1RadiusRoot q) ^ 2 := by ring
-  have habsorb :=
-    primitiveLogConductorAbsorption
-      ((llsTheorem11S1RadiusRoot q) ^ 2) χ hx2 hqd
+  have habsorb := primitiveLogConductorAbsorption ((llsTheorem11S1RadiusRoot q) ^ 2) χ hx2 hqd
   have hlogxnn : (0 : ℝ) ≤ Real.log ((llsTheorem11S1RadiusRoot q) ^ 2) :=
     Real.log_nonneg (le_trans (by norm_num only) hx2)
   have hC22nonneg :
@@ -180,7 +175,6 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_quadratic {q : ℕ} [NeZe
   rw [hlogdconddiv] at hweighted
   linarith [hweighted, hexact, habsorb, hmul]
 
-
 /--
 Input/assumptions: LLS Lemma 2.4's Riemann reciprocal lower bound, a level-`q` character with
 `q ≥ 3000`, `χ ≠ 1`, no-small-prime, GRH, and a quadratic primitive inducing character.
@@ -196,8 +190,8 @@ theorem characterLogWeightedSum_re_le_part1Upper_of_grh_quadratic {q : ℕ} [NeZ
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hquad : χ.primitiveCharacter.IsQuadratic) (h24 : LLSRiemannReciprocalLowerBound)
     (hsmall : llsTheorem11S1NoSmallPrime χ) :
-    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re ≤
+    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ).re ≤
       llsTheorem11S1UpperBound q :=
   (characterLogWeightedSum_re_le_fullLevel_of_grh_quadratic χ hq hne hGRH hquad h24 hsmall).trans
     ((llsPart1PrimitiveFullLevelUpperBound_le_fullLevel hq).trans

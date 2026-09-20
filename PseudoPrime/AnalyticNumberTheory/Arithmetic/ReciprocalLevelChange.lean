@@ -44,13 +44,10 @@ before replacing it by a geometric upper bound.
 -/
 theorem primitiveReciprocalQuotientPrimePowerCorrection_eq_commonFactor {q : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 0 ≤ x) :
-    primitiveReciprocalQuotientPrimePowerCorrection x
-        χ =
-      commonFactorReciprocalWeightedSum x
-        (q / χ.conductor) := by
+    primitiveReciprocalQuotientPrimePowerCorrection x χ =
+      commonFactorReciprocalWeightedSum x (q / χ.conductor) := by
   rw [primitiveReciprocalQuotientPrimePowerCorrection,
-    commonFactorReciprocalWeightedSum_eq_sum_prime_powers
-      (q / χ.conductor) hx]
+    commonFactorReciprocalWeightedSum_eq_sum_prime_powers (q / χ.conductor) hx]
 
 /--
 Input/assumptions: a cutoff and a level-`q` character.
@@ -64,8 +61,7 @@ Role: retains the signed reciprocal correction
 noncomputable def primitiveReciprocalLevelChangeCorrection {q : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) : ℝ :=
   ∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter fun n ↦ ¬Nat.Coprime n (q / χ.conductor),
-    (characterReciprocalWeightedTerm x
-        χ.primitiveCharacter n).re
+    (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re
 
 /--
 Input/assumptions: a cutoff `x ≥ 0` and a level-`q` character.
@@ -82,19 +78,15 @@ theorem primitiveReciprocalLevelChangeCorrection_eq_sum_prime_powers {q : ℕ} (
     primitiveReciprocalLevelChangeCorrection x χ =
       ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
         ∑ p ∈ (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter fun p ↦ p.Prime ∧ p ∣ q / χ.conductor,
-          (characterReciprocalWeightedTerm x
-              χ.primitiveCharacter (p ^ k)).re := by
+          (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
   rw [primitiveReciprocalLevelChangeCorrection]
   exact
     sum_not_coprime_eq_sum_prime_powers
-      (fun n ↦
-        (characterReciprocalWeightedTerm x
-            χ.primitiveCharacter n).re)
-      (q / χ.conductor) hx fun n hn ↦ by
+      (fun n ↦ (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re) (q / χ.conductor) hx
+      fun n hn ↦ by
       simp only [characterReciprocalWeightedTerm,
-        reciprocalWeightedMangoldtTerm_eq_zero_of_not_primePow
-            hn,
-        Complex.ofReal_zero, zero_mul, Complex.zero_re]
+        reciprocalWeightedMangoldtTerm_eq_zero_of_not_primePow hn, Complex.ofReal_zero, zero_mul,
+        Complex.zero_re]
 
 /--
 Input/assumptions: a cutoff, a level-`q` character, a prime `p`, and a nonzero exponent `k`.
@@ -107,12 +99,10 @@ and positive exponent, so logarithmic and reciprocal corrections can be compared
 -/
 theorem characterReciprocalWeightedTerm_primitive_re_prime_pow {q : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) {p k : ℕ} (hp : p.Prime) (hk : k ≠ 0) :
-    (characterReciprocalWeightedTerm x
-          χ.primitiveCharacter (p ^ k)).re =
+    (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
       Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) * (χ.primitiveCharacter p ^ k).re := by
-  rw [characterReciprocalWeightedTerm,
-    reciprocalWeightedMangoldtTerm_prime_pow hp hk,
-    Nat.cast_pow, map_pow, Complex.re_ofReal_mul]
+  rw [characterReciprocalWeightedTerm, reciprocalWeightedMangoldtTerm_prime_pow hp hk, Nat.cast_pow,
+    map_pow, Complex.re_ofReal_mul]
 
 /--
 Input/assumptions: a cutoff, a level-`q` character whose primitive inducing character is
@@ -130,14 +120,11 @@ and logarithmic sums can be combined term by term for quadratic primitive charac
 theorem characterReciprocalWeightedTerm_primitive_re_prime_pow_of_isQuadratic {q : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) {p k : ℕ} (hp : p.Prime)
     (hk : k ≠ 0) :
-    (characterReciprocalWeightedTerm x
-          χ.primitiveCharacter (p ^ k)).re =
+    (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
       Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) *
         (if Odd k then (χ.primitiveCharacter p).re else (χ.primitiveCharacter p ^ 2).re) := by
-  rw [characterReciprocalWeightedTerm_primitive_re_prime_pow
-      x χ hp hk,
-    NumberTheory.isQuadratic_pow_apply hχ (p : ZMod χ.conductor) hk,
-    apply_ite Complex.re]
+  rw [characterReciprocalWeightedTerm_primitive_re_prime_pow x χ hp hk,
+    NumberTheory.isQuadratic_pow_apply hχ (p : ZMod χ.conductor) hk, apply_ite Complex.re]
 
 /--
 Input/assumptions: a cutoff `x ≥ 0` and a level-`q` character whose primitive inducing character is
@@ -158,8 +145,7 @@ theorem primitiveReciprocalLevelChangeCorrection_eq_sum_of_isQuadratic {q : ℕ}
           Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) *
             (if Odd k then (χ.primitiveCharacter p).re
             else if Nat.Coprime p χ.conductor then 1 else 0) := by
-  rw [primitiveReciprocalLevelChangeCorrection_eq_sum_prime_powers
-      x χ hx]
+  rw [primitiveReciprocalLevelChangeCorrection_eq_sum_prime_powers x χ hx]
   apply Finset.sum_congr rfl
   intro k hk
   apply Finset.sum_congr rfl
@@ -168,13 +154,11 @@ theorem primitiveReciprocalLevelChangeCorrection_eq_sum_of_isQuadratic {q : ℕ}
     have := (Finset.mem_Icc.mp hk).1
     omega
   have hpprime : p.Prime := (Finset.mem_filter.mp hp).2.1
-  rw [characterReciprocalWeightedTerm_primitive_re_prime_pow_of_isQuadratic
-      x χ hχ hpprime hkpos]
+  rw [characterReciprocalWeightedTerm_primitive_re_prime_pow_of_isQuadratic x χ hχ hpprime hkpos]
   by_cases hodd : Odd k
   · simp only [hodd, ↓reduceIte]
   · simp only [ite_eq_right hodd]
-    rw [primitiveCharacter_sq_apply_re_eq_ite_of_isQuadratic
-        χ hχ p]
+    rw [primitiveCharacter_sq_apply_re_eq_ite_of_isQuadratic χ hχ p]
 
 /--
 Input/assumptions: a level-`q` character with quadratic primitive part, a prime `p`, a cutoff
@@ -194,23 +178,19 @@ theorem quadraticReciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : �
     (hx : 2 ≤ x) {K : ℕ} (hK : 1 ≤ K) (hKle : (p : ℝ) ^ K ≤ x) :
     -(1 / 2 * (1 - 1 / x) * Real.log p) ≤
       ∑ k ∈ Finset.Icc 1 K,
-        (characterReciprocalWeightedTerm x
-            χ.primitiveCharacter (p ^ k)).re := by
+        (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
   have hxpos : (0 : ℝ) < x := by linarith only [hx]
   have hlogp : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hp.one_le)
   have hxfrac : 0 ≤ 1 - 1 / x := by
     rw [sub_nonneg, div_le_one hxpos]; linarith only [hx]
   have heach :
     ∀ k ∈ Finset.Icc 1 K,
-      (characterReciprocalWeightedTerm x
-            χ.primitiveCharacter (p ^ k)).re =
+      (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
         Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) * (χ.primitiveCharacter p ^ k).re := by
     intro k hk
     have hk0 : k ≠ 0 := by
       have := (Finset.mem_Icc.mp hk).1; omega
-    exact
-      characterReciprocalWeightedTerm_primitive_re_prime_pow
-        x χ hp hk0
+    exact characterReciprocalWeightedTerm_primitive_re_prime_pow x χ hp hk0
   rw [Finset.sum_congr rfl heach]
   rcases hχ (p : ZMod χ.conductor) with h0 | h1 | hm1
   · have hzero :
@@ -266,9 +246,7 @@ theorem quadraticReciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : �
       rw [pow_succ]
       ring
     rw [hSeq, hSflip]
-    have hgeom :=
-      sum_neg_one_pow_succ_mul_inv_pow_bounds hp hxpos
-        hK hKle
+    have hgeom := sum_neg_one_pow_succ_mul_inv_pow_bounds hp hxpos hK hKle
     have hp2 : (2 : ℝ) ≤ (p : ℝ) := by exact_mod_cast hp.two_le
     have hnum : 1 / (p : ℝ) - 1 / x ≤ 1 / 2 * (1 - 1 / x) := by
       have h1 : 1 / (p : ℝ) ≤ 1 / 2 := one_div_le_one_div_of_le (by norm_num only) hp2
@@ -298,8 +276,7 @@ theorem re_sum_reciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : ℝ
     (hx : 2 ≤ x) {K : ℕ} (_hK : 1 ≤ K) (hKle : (p : ℝ) ^ K ≤ x) (hKup : x ≤ (p : ℝ) ^ (K + 1)) :
     -(1 / 2 * (1 - 1 / x) * Real.log p) ≤
       ∑ k ∈ Finset.Icc 1 K,
-        (characterReciprocalWeightedTerm x
-            χ.primitiveCharacter (p ^ k)).re := by
+        (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
   have hxpos : (0 : ℝ) < x := by linarith only [hx]
   have hppos : (0 : ℝ) < (p : ℝ) := by exact_mod_cast hp.pos
   have hp1 : (1 : ℝ) < (p : ℝ) := by exact_mod_cast hp.one_lt
@@ -319,21 +296,18 @@ theorem re_sum_reciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : ℝ
   have hpk0 : ∀ k : ℕ, ((p : ℝ) ^ k) ≠ 0 := fun k => by positivity
   have heach :
     ∀ k ∈ Finset.Icc 1 K,
-      (characterReciprocalWeightedTerm x
-            χ.primitiveCharacter (p ^ k)).re =
+      (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
         Real.log p * (r ^ k - c) * (z ^ k).re := by
     intro k hk
     have hk0 : k ≠ 0 := by
       have := (Finset.mem_Icc.mp hk).1; omega
-    rw [characterReciprocalWeightedTerm_primitive_re_prime_pow
-        x χ hp hk0]
+    rw [characterReciprocalWeightedTerm_primitive_re_prime_pow x χ hp hk0]
     have hcoef : Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) = Real.log p * (r ^ k - c) := by
       rw [hrdef, hcdef, one_div_pow]
       field_simp
     rw [hcoef]
   have hfejer :=
-    re_sum_reciprocalWeight_ge_neg_half (r := r) (c :=
-      c) (K := K) (z := z) hz hr0 hr1 hc1 hc2
+    re_sum_reciprocalWeight_ge_neg_half (r := r) (c := c) (K := K) (z := z) hz hr0 hr1 hc1 hc2
   have hlogp0 : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hp.one_le)
   have hstep2 :
     ∀ k ∈ Finset.Icc 1 K, (((r ^ k - c : ℝ) : ℂ) * z ^ k).re = (r ^ k - c) * (z ^ k).re := by
@@ -365,18 +339,14 @@ theorem primitiveReciprocalLevelChangeCorrection_eq_sum_prime_divisors {q : ℕ}
     primitiveReciprocalLevelChangeCorrection x χ =
       ∑ p ∈ (Nat.primesLE ⌊x⌋₊).filter fun p ↦ p ∣ q / χ.conductor,
         ∑ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊),
-          (characterReciprocalWeightedTerm x
-              χ.primitiveCharacter (p ^ k)).re := by
-  rw [primitiveReciprocalLevelChangeCorrection, ←
-    Finset.Icc_add_one_left_eq_Ioc]
+          (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
+  rw [primitiveReciprocalLevelChangeCorrection, ← Finset.Icc_add_one_left_eq_Ioc]
   calc
     ∑ n ∈ (Finset.Icc 1 ⌊x⌋₊).filter fun n ↦ ¬Nat.Coprime n (q / χ.conductor),
-          (characterReciprocalWeightedTerm x
-              χ.primitiveCharacter n).re =
+          (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re =
         ∑ n ∈ Finset.Icc 1 ⌊x⌋₊ with IsPrimePow n,
           if ¬Nat.Coprime n (q / χ.conductor) then
-            (characterReciprocalWeightedTerm x
-                χ.primitiveCharacter n).re
+            (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re
           else 0 :=
       by
       simp_rw [Finset.sum_filter]
@@ -384,30 +354,23 @@ theorem primitiveReciprocalLevelChangeCorrection_eq_sum_prime_divisors {q : ℕ}
       intro n _
       by_cases hpow : IsPrimePow n
       · simp only [hpow, ↓reduceIte]
-      · rw [show
-            (characterReciprocalWeightedTerm x
-                  χ.primitiveCharacter n).re =
-              0
-            from by
+      · rw [show (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re = 0 from by
             simp only [characterReciprocalWeightedTerm,
-              reciprocalWeightedMangoldtTerm_eq_zero_of_not_primePow
-                  hpow,
-              Complex.ofReal_zero, zero_mul, Complex.zero_re]]
+              reciprocalWeightedMangoldtTerm_eq_zero_of_not_primePow hpow, Complex.ofReal_zero,
+              zero_mul, Complex.zero_re]]
         simp only [ite_self]
     _ =
         ∑ p ∈ Nat.primesLE ⌊x⌋₊,
           ∑ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊),
             if ¬Nat.Coprime (p ^ k) (q / χ.conductor) then
-              (characterReciprocalWeightedTerm x
-                  χ.primitiveCharacter (p ^ k)).re
+              (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re
             else 0 :=
       by
       exact
         sum_primePow_eq_sum_primesLE
           (fun n ↦
             if ¬Nat.Coprime n (q / χ.conductor) then
-              (characterReciprocalWeightedTerm x
-                  χ.primitiveCharacter n).re
+              (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re
             else 0)
           ⌊x⌋₊
     _ = _ := by
@@ -462,8 +425,7 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient_of_isQ
     ∀ p ∈ S,
       -(1 / 2 * (1 - 1 / x) * Real.log p) ≤
         ∑ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊),
-          (characterReciprocalWeightedTerm x
-              χ.primitiveCharacter (p ^ k)).re := by
+          (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
     intro p hp
     have hpprime : p.Prime := Nat.prime_of_mem_primesLE (Finset.mem_filter.mp hp).1
     have hple : p ≤ ⌊x⌋₊ := Nat.le_of_mem_primesLE (Finset.mem_filter.mp hp).1
@@ -472,9 +434,7 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient_of_isQ
     have hKnat : p ^ p.log ⌊x⌋₊ ≤ ⌊x⌋₊ := Nat.pow_log_le_self p hxfloor
     have hKnatR : (p : ℝ) ^ (p.log ⌊x⌋₊) ≤ (⌊x⌋₊ : ℝ) := by exact_mod_cast hKnat
     have hKle : (p : ℝ) ^ (p.log ⌊x⌋₊) ≤ x := hKnatR.trans (Nat.floor_le hxpos.le)
-    exact
-      quadraticReciprocalPrimePowerCorrection_neg_le_half_log
-        x χ hχ hpprime hx hK1 hKle
+    exact quadraticReciprocalPrimePowerCorrection_neg_le_half_log x χ hχ hpprime hx hK1 hKle
   have hbudget : ∑ p ∈ S, Real.log p ≤ Real.log ((q / χ.conductor : ℕ) : ℝ) := by
     apply le_trans _ (sum_log_primeFactors_le_log hqd)
     apply Finset.sum_le_sum_of_subset_of_nonneg
@@ -497,8 +457,7 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient_of_isQ
     _ ≤
         ∑ p ∈ S,
           ∑ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊),
-            (characterReciprocalWeightedTerm x
-                χ.primitiveCharacter (p ^ k)).re :=
+            (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re :=
       Finset.sum_le_sum hstep
 
 /--
@@ -522,8 +481,7 @@ theorem primitiveReciprocalConductorAbsorption_of_isQuadratic {q : ℕ} [NeZero 
         primitiveReciprocalLevelChangeCorrection x χ ≤
       1 / 2 * (1 - 1 / x) * Real.log (q : ℝ) := by
   have hbound :=
-    primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient_of_isQuadratic
-      x χ hχ hx hqd
+    primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient_of_isQuadratic x χ hχ hx hqd
   have hdvd : χ.conductor ∣ q := χ.conductor_dvd_level
   have hdpos : (χ.conductor : ℝ) ≠ 0 := by exact_mod_cast χ.conductor_ne_zero
   have hprod : χ.conductor * (q / χ.conductor) = q := Nat.mul_div_cancel' hdvd
@@ -570,8 +528,7 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient {q : �
     ∀ p ∈ S,
       -(1 / 2 * (1 - 1 / x) * Real.log p) ≤
         ∑ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊),
-          (characterReciprocalWeightedTerm x
-              χ.primitiveCharacter (p ^ k)).re := by
+          (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
     intro p hp
     have hpprime : p.Prime := Nat.prime_of_mem_primesLE (Finset.mem_filter.mp hp).1
     have hple : p ≤ ⌊x⌋₊ := Nat.le_of_mem_primesLE (Finset.mem_filter.mp hp).1
@@ -584,15 +541,12 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient {q : �
       have hz0 : χ.primitiveCharacter p = 0 := χ.primitiveCharacter.map_nonunit hnotunit
       have heach :
         ∀ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊),
-          (characterReciprocalWeightedTerm x
-                χ.primitiveCharacter (p ^ k)).re =
-            0 := by
+          (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re = 0 := by
         intro k hk
         have hk0 : k ≠ 0 := by
           have := (Finset.mem_Icc.mp hk).1; omega
-        rw [characterReciprocalWeightedTerm_primitive_re_prime_pow
-            x χ hpprime hk0,
-          hz0, zero_pow hk0]
+        rw [characterReciprocalWeightedTerm_primitive_re_prime_pow x χ hpprime hk0, hz0,
+          zero_pow hk0]
         simp only [Complex.zero_re, mul_zero]
       rw [Finset.sum_congr rfl heach, Finset.sum_const_zero]
       nlinarith [mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hxfrac) hlogp]
@@ -612,9 +566,7 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient {q : �
           have : ⌊x⌋₊ + 1 ≤ p ^ (p.log ⌊x⌋₊ + 1) := hlt
           exact_mod_cast this
         linarith
-      exact
-        re_sum_reciprocalPrimePowerCorrection_neg_le_half_log
-          x χ hpprime hz hx hK1 hKle hKup
+      exact re_sum_reciprocalPrimePowerCorrection_neg_le_half_log x χ hpprime hz hx hK1 hKle hKup
   have hbudget : ∑ p ∈ S, Real.log p ≤ Real.log ((q / χ.conductor : ℕ) : ℝ) := by
     apply le_trans _ (sum_log_primeFactors_le_log hqd)
     apply Finset.sum_le_sum_of_subset_of_nonneg
@@ -637,8 +589,7 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient {q : �
     _ ≤
         ∑ p ∈ S,
           ∑ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊),
-            (characterReciprocalWeightedTerm x
-                χ.primitiveCharacter (p ^ k)).re :=
+            (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re :=
       Finset.sum_le_sum hstep
 
 /--
@@ -658,9 +609,7 @@ theorem primitiveReciprocalConductorAbsorption {q : ℕ} [NeZero q] (x : ℝ)
     1 / 2 * (1 - 1 / x) * Real.log (χ.conductor : ℝ) -
         primitiveReciprocalLevelChangeCorrection x χ ≤
       1 / 2 * (1 - 1 / x) * Real.log (q : ℝ) := by
-  have hbound :=
-    primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient
-      x χ hx hqd
+  have hbound := primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient x χ hx hqd
   have hdvd : χ.conductor ∣ q := χ.conductor_dvd_level
   have hdpos : (χ.conductor : ℝ) ≠ 0 := by exact_mod_cast χ.conductor_ne_zero
   have hprod : χ.conductor * (q / χ.conductor) = q := Nat.mul_div_cancel' hdvd
@@ -688,65 +637,45 @@ majorization.
 theorem characterReciprocalWeightedSum_re_primitive_eq_add_levelChangeCorrection {q : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) :
     (characterReciprocalWeightedSum x χ.primitiveCharacter).re =
-      (characterReciprocalWeightedSum x χ).re +
-        primitiveReciprocalLevelChangeCorrection x χ := by
-  rw [characterReciprocalWeightedSum,
-    characterReciprocalWeightedSum,
+      (characterReciprocalWeightedSum x χ).re + primitiveReciprocalLevelChangeCorrection x χ := by
+  rw [characterReciprocalWeightedSum, characterReciprocalWeightedSum,
     primitiveReciprocalLevelChangeCorrection]
   simp only [Complex.re_sum]
   let S := Finset.Ioc 0 ⌊x⌋₊
   let p : ℕ → Prop := fun n ↦ Nat.Coprime n (q / χ.conductor)
   have hprimitive :
-    ∑ n ∈ S,
-        (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re =
-      (∑ n ∈ S.filter p,
-          (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re) +
+    ∑ n ∈ S, (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re =
+      (∑ n ∈ S.filter p, (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re) +
         ∑ n ∈ S.filter fun n ↦ ¬p n,
           (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re := by
     exact
       (Finset.sum_filter_add_sum_filter_not (s := S) (f := fun n ↦
-          (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re)
-          (p := p)).symm
+          (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re) (p := p)).symm
   have hlevel :
-    ∑ n ∈ S,
-        (characterReciprocalWeightedTerm x χ n).re =
-      ∑ n ∈ S.filter p,
-        (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re := by
+    ∑ n ∈ S, (characterReciprocalWeightedTerm x χ n).re =
+      ∑ n ∈ S.filter p, (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re := by
     have hin :
-      ∑ n ∈ S.filter p,
-          (characterReciprocalWeightedTerm x χ n).re =
-        ∑ n ∈ S.filter p,
-          (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re := by
+      ∑ n ∈ S.filter p, (characterReciprocalWeightedTerm x χ n).re =
+        ∑ n ∈ S.filter p, (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re := by
       apply Finset.sum_congr rfl
       intro n hn
       have hcop : Nat.Coprime n (q / χ.conductor) := Finset.mem_filter.mp hn |>.2
-      rw [characterReciprocalWeightedTerm,
-        characterReciprocalWeightedTerm,
+      rw [characterReciprocalWeightedTerm, characterReciprocalWeightedTerm,
         apply_eq_primitiveCharacter_of_coprime_quotient χ hcop]
     have houtside :
-      ∑ n ∈ S.filter fun n ↦ ¬p n,
-          (characterReciprocalWeightedTerm x χ n).re =
-        0 := by
+      ∑ n ∈ S.filter fun n ↦ ¬p n, (characterReciprocalWeightedTerm x χ n).re = 0 := by
       apply Finset.sum_eq_zero
       intro n hn
       have hquotient : ¬Nat.Coprime n (q / χ.conductor) := Finset.mem_filter.mp hn |>.2
-      rw [characterReciprocalWeightedTerm_eq_zero_of_not_coprime_quotient
-          x χ hquotient]
+      rw [characterReciprocalWeightedTerm_eq_zero_of_not_coprime_quotient x χ hquotient]
       simp only [Complex.zero_re]
     calc
-      ∑ n ∈ S,
-            (characterReciprocalWeightedTerm x χ n).re =
-          (∑ n ∈ S.filter p,
-              (characterReciprocalWeightedTerm x χ n).re) +
-            ∑ n ∈ S.filter fun n ↦ ¬p n,
-              (characterReciprocalWeightedTerm x χ n).re :=
+      ∑ n ∈ S, (characterReciprocalWeightedTerm x χ n).re =
+          (∑ n ∈ S.filter p, (characterReciprocalWeightedTerm x χ n).re) +
+            ∑ n ∈ S.filter fun n ↦ ¬p n, (characterReciprocalWeightedTerm x χ n).re :=
         (Finset.sum_filter_add_sum_filter_not (s := S) (f := fun n ↦
-            (characterReciprocalWeightedTerm x χ n).re)
-            (p := p)).symm
-      _ =
-          ∑ n ∈ S.filter p,
-            (characterReciprocalWeightedTerm x χ n).re :=
-        by rw [houtside, add_zero]
+            (characterReciprocalWeightedTerm x χ n).re) (p := p)).symm
+      _ = ∑ n ∈ S.filter p, (characterReciprocalWeightedTerm x χ n).re := by rw [houtside, add_zero]
       _ = _ := hin
   rw [hprimitive]
   rw [hlevel]
@@ -764,16 +693,12 @@ Role: bounds the signed correction by a nonnegative common-factor sum, to which 
 theorem primitiveReciprocalLevelChangeCorrection_le {q : ℕ} [NeZero q] (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 0 < x) :
     primitiveReciprocalLevelChangeCorrection x χ ≤
-      commonFactorReciprocalWeightedSum x
-        (q / χ.conductor) := by
-  have hexact :=
-    characterReciprocalWeightedSum_re_primitive_eq_add_levelChangeCorrection x χ
-  have hnorm :=
-    norm_characterReciprocalWeightedSum_sub_primitive_le x χ hx
+      commonFactorReciprocalWeightedSum x (q / χ.conductor) := by
+  have hexact := characterReciprocalWeightedSum_re_primitive_eq_add_levelChangeCorrection x χ
+  have hnorm := norm_characterReciprocalWeightedSum_sub_primitive_le x χ hx
   have hre :=
     Complex.re_le_norm
-      (characterReciprocalWeightedSum x χ.primitiveCharacter -
-        characterReciprocalWeightedSum x χ)
+      (characterReciprocalWeightedSum x χ.primitiveCharacter - characterReciprocalWeightedSum x χ)
   rw [Complex.sub_re, norm_sub_rev] at hre
   linarith
 

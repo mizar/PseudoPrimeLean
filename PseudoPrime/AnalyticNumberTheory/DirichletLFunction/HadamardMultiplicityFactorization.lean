@@ -82,18 +82,12 @@ Role: permits genus-one factors indexed by the completed-zero ledger.
 -/
 theorem dirichletCompletedLFunction_zero_ne_zero_of_mem_ledger {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w ρ : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hρ :
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w) :
-    ρ ≠ 0 := by
+    (hρ : ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w) : ρ ≠ 0 := by
   intro hzero
   subst ρ
   exact
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hprimitive hne
-      (mem_dirichletCompletedLFunctionZerosInRectangle_iff.mp
-          hρ).2
+    dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
+      (mem_dirichletCompletedLFunctionZerosInRectangle_iff.mp hρ).2
 
 /--
 Definition: the multiplicity-aware genus-one factor attached to a completed Dirichlet `L` zero.
@@ -103,9 +97,7 @@ Role: records the exact local zero order in the finite completed-Hadamard produc
 -/
 noncomputable def dirichletCompletedMultiplicityHadamardFactor {N : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) (s ρ : ℂ) : ℂ :=
-  dirichletCompletedHadamardFactor s ρ ^
-    dirichletCompletedLFunctionZeroMultiplicity
-      χ ρ
+  dirichletCompletedHadamardFactor s ρ ^ dirichletCompletedLFunctionZeroMultiplicity χ ρ
 
 /--
 Definition: the multiplicity-aware finite completed-`L` Hadamard product on a rectangle ledger.
@@ -115,10 +107,7 @@ Role: is the denominator for the local completed-Hadamard quotient.
 -/
 noncomputable def dirichletCompletedMultiplicityHadamardProduct {N : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) (z w : ℂ) (s : ℂ) : ℂ :=
-  ∏
-    ρ ∈
-      dirichletCompletedLFunctionZerosInRectangle
-        χ hχ z w,
+  ∏ ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hχ z w,
     dirichletCompletedMultiplicityHadamardFactor χ s ρ
 
 /-- The finite multiplicity-aware completed-`L` Hadamard product is entire. -/
@@ -139,12 +128,7 @@ Role: supplies the denominator condition for finite-product logarithmic derivati
 -/
 theorem dirichletCompletedMultiplicityHadamardProduct_ne_zero {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w s : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hs :
-      ∀
-        ρ ∈
-          dirichletCompletedLFunctionZerosInRectangle
-            χ hne z w,
-        s ≠ ρ) :
+    (hs : ∀ ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w, s ≠ ρ) :
     dirichletCompletedMultiplicityHadamardProduct χ hne z w s ≠ 0 := by
   unfold dirichletCompletedMultiplicityHadamardProduct dirichletCompletedMultiplicityHadamardFactor
   apply Finset.prod_ne_zero_iff.mpr
@@ -162,38 +146,19 @@ Role: is the finite-sum interface for the local completed-Hadamard quotient.
 -/
 theorem logDeriv_dirichletCompletedMultiplicityHadamardProduct_eq_sum {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w s : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hs :
-      ∀
-        ρ ∈
-          dirichletCompletedLFunctionZerosInRectangle
-            χ hne z w,
-        s ≠ ρ) :
+    (hs : ∀ ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w, s ≠ ρ) :
     logDeriv (dirichletCompletedMultiplicityHadamardProduct χ hne z w) s =
-      ∑
-        ρ ∈
-          dirichletCompletedLFunctionZerosInRectangle
-            χ hne z w,
-        dirichletCompletedLFunctionZeroMultiplicity
-            χ ρ *
-          (1 / (s - ρ) + 1 / ρ) := by
+      ∑ ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w,
+        dirichletCompletedLFunctionZeroMultiplicity χ ρ * (1 / (s - ρ) + 1 / ρ) := by
   unfold dirichletCompletedMultiplicityHadamardProduct dirichletCompletedMultiplicityHadamardFactor
   have hprod :
     (fun s ↦
-        ∏
-          ρ ∈
-            dirichletCompletedLFunctionZerosInRectangle
-              χ hne z w,
-          dirichletCompletedHadamardFactor s ρ ^
-            dirichletCompletedLFunctionZeroMultiplicity
-              χ ρ) =
-      ∏
-        ρ ∈
-          dirichletCompletedLFunctionZerosInRectangle
-            χ hne z w,
+        ∏ ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w,
+          dirichletCompletedHadamardFactor s ρ ^ dirichletCompletedLFunctionZeroMultiplicity χ ρ) =
+      ∏ ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w,
         (fun s ↦
           dirichletCompletedHadamardFactor s ρ ^
-            dirichletCompletedLFunctionZeroMultiplicity
-              χ ρ) := by
+            dirichletCompletedLFunctionZeroMultiplicity χ ρ) := by
     funext s
     simp only [Finset.prod_apply]
   rw [hprod]
@@ -232,10 +197,7 @@ Role: establishes the off-ledger branch of the removable-quotient construction.
 -/
 theorem analyticAt_dirichletCompletedMultiplicityHadamardQuotient_of_not_mem {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w s : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hs :
-      s ∉
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w) :
+    (hs : s ∉ dirichletCompletedLFunctionZerosInRectangle χ hne z w) :
     AnalyticAt ℂ (dirichletCompletedMultiplicityHadamardQuotient χ hne z w) s := by
   unfold dirichletCompletedMultiplicityHadamardQuotient
   apply ((DirichletCharacter.differentiable_completedLFunction hne).analyticAt s).div
@@ -247,21 +209,13 @@ theorem analyticAt_dirichletCompletedMultiplicityHadamardQuotient_of_not_mem {N 
 /-- The finite completed-Hadamard product with one designated ledger factor removed. -/
 noncomputable def dirichletCompletedMultiplicityHadamardCofactor {N : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) (z w ρ s : ℂ) : ℂ :=
-  ∏
-    σ ∈
-      (dirichletCompletedLFunctionZerosInRectangle
-            χ hχ z w).erase
-        ρ,
+  ∏ σ ∈ (dirichletCompletedLFunctionZerosInRectangle χ hχ z w).erase ρ,
     dirichletCompletedMultiplicityHadamardFactor χ s σ
 
 /-- A designated completed-zero ledger factor splits off from its finite product. -/
 theorem dirichletCompletedMultiplicityHadamardProduct_eq_factor_mul_cofactor {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w ρ : ℂ} (hχ : χ ≠ 1)
-    (hρ :
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hχ z w)
-    (s : ℂ) :
+    (hρ : ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hχ z w) (s : ℂ) :
     dirichletCompletedMultiplicityHadamardProduct χ hχ z w s =
       dirichletCompletedMultiplicityHadamardFactor χ s ρ *
         dirichletCompletedMultiplicityHadamardCofactor χ hχ z w ρ s := by
@@ -286,10 +240,7 @@ theorem dirichletCompletedMultiplicityHadamardCofactor_ne_zero {N : ℕ} [NeZero
   unfold dirichletCompletedMultiplicityHadamardCofactor dirichletCompletedMultiplicityHadamardFactor
   apply Finset.prod_ne_zero_iff.mpr
   intro σ hσ
-  have hσledger :
-    σ ∈
-      dirichletCompletedLFunctionZerosInRectangle
-        χ hne z w :=
+  have hσledger : σ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w :=
     Finset.mem_erase.mp hσ |>.2
   have hne' : ρ ≠ σ := (Finset.mem_erase.mp hσ |>.1).symm
   exact
@@ -300,17 +251,13 @@ theorem dirichletCompletedMultiplicityHadamardCofactor_ne_zero {N : ℕ} [NeZero
 /-- The nonvanishing analytic unit in a completed multiplicity-aware genus-one factor. -/
 noncomputable def dirichletCompletedMultiplicityHadamardUnit {N : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) (s ρ : ℂ) : ℂ :=
-  ((-1 / ρ) * Complex.exp (s / ρ)) ^
-    dirichletCompletedLFunctionZeroMultiplicity
-      χ ρ
+  ((-1 / ρ) * Complex.exp (s / ρ)) ^ dirichletCompletedLFunctionZeroMultiplicity χ ρ
 
 /-- A completed multiplicity-aware factor is its zero power times a nonvanishing analytic unit. -/
 theorem dirichletCompletedMultiplicityHadamardFactor_eq_sub_pow_mul_unit {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {s ρ : ℂ} (hρ : ρ ≠ 0) :
     dirichletCompletedMultiplicityHadamardFactor χ s ρ =
-      (s - ρ) ^
-          dirichletCompletedLFunctionZeroMultiplicity
-            χ ρ *
+      (s - ρ) ^ dirichletCompletedLFunctionZeroMultiplicity χ ρ *
         dirichletCompletedMultiplicityHadamardUnit χ s ρ := by
   unfold dirichletCompletedMultiplicityHadamardFactor dirichletCompletedMultiplicityHadamardUnit
   rw [← mul_pow]
@@ -337,15 +284,9 @@ noncomputable def dirichletCompletedMultiplicityHadamardProductUnit {N : ℕ} [N
 /-- A finite completed-Hadamard product has the exact local zero-power factorization. -/
 theorem dirichletCompletedMultiplicityHadamardProduct_eq_sub_pow_mul_unit {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w ρ : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hρ :
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w)
-    (s : ℂ) :
+    (hρ : ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w) (s : ℂ) :
     dirichletCompletedMultiplicityHadamardProduct χ hne z w s =
-      (s - ρ) ^
-          dirichletCompletedLFunctionZeroMultiplicity
-            χ ρ *
+      (s - ρ) ^ dirichletCompletedLFunctionZeroMultiplicity χ ρ *
         dirichletCompletedMultiplicityHadamardProductUnit χ hne z w ρ s := by
   rw [dirichletCompletedMultiplicityHadamardProduct_eq_factor_mul_cofactor hne hρ]
   rw [dirichletCompletedMultiplicityHadamardFactor_eq_sub_pow_mul_unit
@@ -367,10 +308,7 @@ theorem differentiable_dirichletCompletedMultiplicityHadamardProductUnit {N : �
 /-- At a ledger zero, the finite-product local unit is nonzero. -/
 theorem dirichletCompletedMultiplicityHadamardProductUnit_ne_zero_of_mem_ledger {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w ρ : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hρ :
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w) :
+    (hρ : ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w) :
     dirichletCompletedMultiplicityHadamardProductUnit χ hne z w ρ ρ ≠ 0 := by
   unfold dirichletCompletedMultiplicityHadamardProductUnit
   apply mul_ne_zero
@@ -388,18 +326,13 @@ Role: supplies the ledger-zero branch needed to glue the local completed-Hadamar
 -/
 theorem exists_dirichletCompletedMultiplicityHadamardQuotient_localFactor {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w ρ : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hρ :
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w) :
+    (hρ : ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w) :
     ∃ g : ℂ → ℂ,
       AnalyticAt ℂ g ρ ∧
         g ρ ≠ 0 ∧
         Filter.EventuallyEq (nhdsWithin ρ ({ρ}ᶜ : Set ℂ))
           (dirichletCompletedMultiplicityHadamardQuotient χ hne z w) g := by
-  obtain ⟨h, hanalytic, hnezero, hfactor⟩ :=
-    exists_dirichletCompletedLFunction_localFactor
-      hne ρ
+  obtain ⟨h, hanalytic, hnezero, hfactor⟩ := exists_dirichletCompletedLFunction_localFactor hne ρ
   let u := dirichletCompletedMultiplicityHadamardProductUnit χ hne z w ρ
   have huDifferentiable :=
     differentiable_dirichletCompletedMultiplicityHadamardProductUnit χ hne z w ρ
@@ -423,10 +356,7 @@ theorem exists_dirichletCompletedMultiplicityHadamardQuotient_localFactor {N : �
     have hproduct :
       ∀ᶠ s in nhdsWithin ρ ({ρ}ᶜ : Set ℂ),
         dirichletCompletedMultiplicityHadamardProduct χ hne z w s =
-          (s - ρ) ^
-              dirichletCompletedLFunctionZeroMultiplicity
-                χ ρ *
-            u s := by
+          (s - ρ) ^ dirichletCompletedLFunctionZeroMultiplicity χ ρ * u s := by
       filter_upwards with s
       exact dirichletCompletedMultiplicityHadamardProduct_eq_sub_pow_mul_unit hprimitive hne hρ s
     filter_upwards [hfactor.filter_mono nhdsWithin_le_nhds, hu, hproduct,
@@ -440,20 +370,13 @@ theorem exists_dirichletCompletedMultiplicityHadamardQuotient_localFactor {N : �
 /-- A selected analytic local extension of the completed finite Hadamard quotient. -/
 noncomputable def dirichletCompletedMultiplicityHadamardQuotientLocalExtension {N : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) (z w ρ : ℂ) (hprimitive : χ.IsPrimitive)
-    (hρ :
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hχ z w) :
-    ℂ → ℂ :=
+    (hρ : ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hχ z w) : ℂ → ℂ :=
   (exists_dirichletCompletedMultiplicityHadamardQuotient_localFactor hprimitive hχ hρ).choose
 
 /-- The selected local quotient extension is analytic at its completed-zero ledger entry. -/
 theorem analyticAt_dirichletCompletedMultiplicityHadamardQuotientLocalExtension {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w ρ : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hρ :
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w) :
+    (hρ : ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w) :
     AnalyticAt ℂ
       (dirichletCompletedMultiplicityHadamardQuotientLocalExtension χ hne z w ρ hprimitive hρ) ρ :=
   let hlocal := exists_dirichletCompletedMultiplicityHadamardQuotient_localFactor hprimitive hne hρ
@@ -462,10 +385,7 @@ theorem analyticAt_dirichletCompletedMultiplicityHadamardQuotientLocalExtension 
 /-- The selected local quotient extension is nonzero at its completed-zero ledger entry. -/
 theorem dirichletCompletedMultiplicityHadamardQuotientLocalExtension_ne_zero {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w ρ : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hρ :
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w) :
+    (hρ : ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w) :
     dirichletCompletedMultiplicityHadamardQuotientLocalExtension χ hne z w ρ hprimitive hρ ρ ≠ 0 :=
   let hlocal := exists_dirichletCompletedMultiplicityHadamardQuotient_localFactor hprimitive hne hρ
   hlocal.choose_spec.2.1
@@ -473,10 +393,7 @@ theorem dirichletCompletedMultiplicityHadamardQuotientLocalExtension_ne_zero {N 
 /-- On its punctured neighborhood, the selected local extension equals the pointwise quotient. -/
 theorem dirichletCompletedMultiplicityHadamardQuotient_eventuallyEq_localExtension {N : ℕ}
     [NeZero N] {χ : DirichletCharacter ℂ N} {z w ρ : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hρ :
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w) :
+    (hρ : ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w) :
     dirichletCompletedMultiplicityHadamardQuotient χ hne z w =ᶠ[nhdsWithin ρ {ρ}ᶜ]
       dirichletCompletedMultiplicityHadamardQuotientLocalExtension χ hne z w ρ hprimitive hρ :=
   let hlocal := exists_dirichletCompletedMultiplicityHadamardQuotient_localFactor hprimitive hne hρ
@@ -485,20 +402,14 @@ theorem dirichletCompletedMultiplicityHadamardQuotient_eventuallyEq_localExtensi
 /-- The completed finite quotient with its removable ledger values filled by local extensions. -/
 noncomputable def dirichletCompletedMultiplicityHadamardEntireQuotient {N : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) (z w : ℂ) (hprimitive : χ.IsPrimitive) (s : ℂ) : ℂ :=
-  if hs :
-      s ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hχ z w then
+  if hs : s ∈ dirichletCompletedLFunctionZerosInRectangle χ hχ z w then
     dirichletCompletedMultiplicityHadamardQuotientLocalExtension χ hχ z w s hprimitive hs s
   else dirichletCompletedMultiplicityHadamardQuotient χ hχ z w s
 
 /-- Off the completed-zero ledger, the patched quotient is the pointwise quotient. -/
 theorem dirichletCompletedMultiplicityHadamardEntireQuotient_eq_quotient_of_not_mem {N : ℕ}
     [NeZero N] {χ : DirichletCharacter ℂ N} {z w s : ℂ} (hχ : χ ≠ 1) (hprimitive : χ.IsPrimitive)
-    (hs :
-      s ∉
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hχ z w) :
+    (hs : s ∉ dirichletCompletedLFunctionZerosInRectangle χ hχ z w) :
     dirichletCompletedMultiplicityHadamardEntireQuotient χ hχ z w hprimitive s =
       dirichletCompletedMultiplicityHadamardQuotient χ hχ z w s := by
   simp only [dirichletCompletedMultiplicityHadamardEntireQuotient, dite_eq_right hs]
@@ -506,15 +417,10 @@ theorem dirichletCompletedMultiplicityHadamardEntireQuotient_eq_quotient_of_not_
 /-- Near a completed-zero ledger entry, the patched quotient agrees with its local extension. -/
 theorem dirichletCompletedMultiplicityHadamardEntireQuotient_eventuallyEq_localExtension {N : ℕ}
     [NeZero N] {χ : DirichletCharacter ℂ N} {z w ρ : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hρ :
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w) :
+    (hρ : ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w) :
     dirichletCompletedMultiplicityHadamardEntireQuotient χ hne z w hprimitive =ᶠ[nhds ρ]
       dirichletCompletedMultiplicityHadamardQuotientLocalExtension χ hne z w ρ hprimitive hρ := by
-  let S :=
-    dirichletCompletedLFunctionZerosInRectangle
-      χ hne z w
+  let S := dirichletCompletedLFunctionZerosInRectangle χ hne z w
   have havoid : ∀ᶠ s in nhds ρ, s ∉ S.erase ρ :=
     General.eventually_not_mem_finset_nhds_of_not_mem
       (by simp only [Finset.mem_erase, ne_eq, not_true_eq_false, false_and, not_false_eq_true])
@@ -543,10 +449,7 @@ theorem dirichletCompletedMultiplicityHadamardEntireQuotient_eventuallyEq_localE
 /-- The globally patched completed finite quotient is analytic at every ledger zero. -/
 theorem analyticAt_dirichletCompletedMultiplicityHadamardEntireQuotient_of_mem {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w ρ : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hρ :
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w) :
+    (hρ : ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w) :
     AnalyticAt ℂ (dirichletCompletedMultiplicityHadamardEntireQuotient χ hne z w hprimitive) ρ :=
   (analyticAt_dirichletCompletedMultiplicityHadamardQuotientLocalExtension hprimitive hne hρ).congr
     (dirichletCompletedMultiplicityHadamardEntireQuotient_eventuallyEq_localExtension hprimitive hne
@@ -555,16 +458,11 @@ theorem analyticAt_dirichletCompletedMultiplicityHadamardEntireQuotient_of_mem {
 /-- The globally patched completed finite quotient is analytic away from its zero ledger. -/
 theorem analyticAt_dirichletCompletedMultiplicityHadamardEntireQuotient_of_not_mem {N : ℕ}
     [NeZero N] {χ : DirichletCharacter ℂ N} {z w s : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hs :
-      s ∉
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w) :
+    (hs : s ∉ dirichletCompletedLFunctionZerosInRectangle χ hne z w) :
     AnalyticAt ℂ (dirichletCompletedMultiplicityHadamardEntireQuotient χ hne z w hprimitive) s := by
   apply
     (analyticAt_dirichletCompletedMultiplicityHadamardQuotient_of_not_mem hprimitive hne hs).congr
-  filter_upwards [General.eventually_not_mem_finset_nhds_of_not_mem
-      hs] with
-    t ht
+  filter_upwards [General.eventually_not_mem_finset_nhds_of_not_mem hs] with t ht
   exact
     (dirichletCompletedMultiplicityHadamardEntireQuotient_eq_quotient_of_not_mem hne hprimitive
         ht).symm
@@ -573,10 +471,7 @@ theorem analyticAt_dirichletCompletedMultiplicityHadamardEntireQuotient_of_not_m
 theorem analyticAt_dirichletCompletedMultiplicityHadamardEntireQuotient {N : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) (z w : ℂ) (hprimitive : χ.IsPrimitive) (s : ℂ) :
     AnalyticAt ℂ (dirichletCompletedMultiplicityHadamardEntireQuotient χ hχ z w hprimitive) s := by
-  by_cases hs :
-    s ∈
-      dirichletCompletedLFunctionZerosInRectangle
-        χ hχ z w
+  by_cases hs : s ∈ dirichletCompletedLFunctionZerosInRectangle χ hχ z w
   · exact analyticAt_dirichletCompletedMultiplicityHadamardEntireQuotient_of_mem hprimitive hχ hs
   · exact
       analyticAt_dirichletCompletedMultiplicityHadamardEntireQuotient_of_not_mem hprimitive hχ hs
@@ -587,13 +482,9 @@ theorem dirichletCompletedLFunction_eq_multiplicityHadamardProduct_mul_entireQuo
     DirichletCharacter.completedLFunction χ s =
       dirichletCompletedMultiplicityHadamardProduct χ hχ z w s *
         dirichletCompletedMultiplicityHadamardEntireQuotient χ hχ z w hprimitive s := by
-  by_cases hs :
-    s ∈
-      dirichletCompletedLFunctionZerosInRectangle
-        χ hχ z w
+  by_cases hs : s ∈ dirichletCompletedLFunctionZerosInRectangle χ hχ z w
   · have hzero : DirichletCharacter.completedLFunction χ s = 0 :=
-      (mem_dirichletCompletedLFunctionZerosInRectangle_iff.mp
-          hs).2
+      (mem_dirichletCompletedLFunctionZerosInRectangle_iff.mp hs).2
     rw [hzero]
     rw [dirichletCompletedMultiplicityHadamardProduct_eq_factor_mul_cofactor hχ hs]
     unfold dirichletCompletedMultiplicityHadamardFactor
@@ -604,12 +495,8 @@ theorem dirichletCompletedLFunction_eq_multiplicityHadamardProduct_mul_entireQuo
       field_simp
       ring
     rw [hfactor]
-    have hmult :
-      0 <
-        dirichletCompletedLFunctionZeroMultiplicity
-          χ s :=
-      dirichletCompletedLFunctionZeroMultiplicity_pos
-        hχ hzero
+    have hmult : 0 < dirichletCompletedLFunctionZeroMultiplicity χ s :=
+      dirichletCompletedLFunctionZeroMultiplicity_pos hχ hzero
     rw [zero_pow (Nat.ne_of_gt hmult)]
     ring
   · rw [dirichletCompletedMultiplicityHadamardEntireQuotient_eq_quotient_of_not_mem hχ hprimitive
@@ -626,13 +513,8 @@ theorem logDeriv_dirichletCompletedLFunction_eq_finite_sum_add_logDeriv_entireQu
     [NeZero N] {χ : DirichletCharacter ℂ N} {z w s : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
     (hs : DirichletCharacter.completedLFunction χ s ≠ 0) :
     logDeriv (DirichletCharacter.completedLFunction χ) s =
-      (∑
-          ρ ∈
-            dirichletCompletedLFunctionZerosInRectangle
-              χ hne z w,
-          dirichletCompletedLFunctionZeroMultiplicity
-              χ ρ *
-            (1 / (s - ρ) + 1 / ρ)) +
+      (∑ ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w,
+          dirichletCompletedLFunctionZeroMultiplicity χ ρ * (1 / (s - ρ) + 1 / ρ)) +
         logDeriv (dirichletCompletedMultiplicityHadamardEntireQuotient χ hne z w hprimitive) s := by
   have hfactor :=
     dirichletCompletedLFunction_eq_multiplicityHadamardProduct_mul_entireQuotient χ hne z w s
@@ -645,18 +527,11 @@ theorem logDeriv_dirichletCompletedLFunction_eq_finite_sum_add_logDeriv_entireQu
     exact
       dirichletCompletedLFunction_eq_multiplicityHadamardProduct_mul_entireQuotient χ hne z w t
         hprimitive
-  have hledger :
-    ∀
-      ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hne z w,
-      s ≠ ρ := by
+  have hledger : ∀ ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w, s ≠ ρ := by
     intro ρ hρ hsr
     apply hs
     rw [hsr]
-    exact
-      (mem_dirichletCompletedLFunctionZerosInRectangle_iff.mp
-          hρ).2
+    exact (mem_dirichletCompletedLFunctionZerosInRectangle_iff.mp hρ).2
   have hproduct := dirichletCompletedMultiplicityHadamardProduct_ne_zero hprimitive hne hledger
   have hquotient :
     dirichletCompletedMultiplicityHadamardEntireQuotient χ hne z w hprimitive s ≠ 0 := by
@@ -683,15 +558,9 @@ theorem logDeriv_dirichletCompletedLFunction_eq_finite_sum_add_logDeriv_entireQu
 /-- The patched finite completed-Hadamard quotient is zero-free on its source rectangle. -/
 theorem dirichletCompletedMultiplicityHadamardEntireQuotient_ne_zero_on_rectangle {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {z w s : ℂ} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hs :
-      s ∈
-        dirichletCompletedLFunctionRectangleBox
-          z w) :
+    (hs : s ∈ dirichletCompletedLFunctionRectangleBox z w) :
     dirichletCompletedMultiplicityHadamardEntireQuotient χ hne z w hprimitive s ≠ 0 := by
-  by_cases hmem :
-    s ∈
-      dirichletCompletedLFunctionZerosInRectangle
-        χ hne z w
+  by_cases hmem : s ∈ dirichletCompletedLFunctionZerosInRectangle χ hne z w
   · simp only [dirichletCompletedMultiplicityHadamardEntireQuotient, dite_eq_left hmem]
     exact dirichletCompletedMultiplicityHadamardQuotientLocalExtension_ne_zero hprimitive hne hmem
   · intro hzero
@@ -700,10 +569,7 @@ theorem dirichletCompletedMultiplicityHadamardEntireQuotient_ne_zero_on_rectangl
           hprimitive,
         hzero]
       simp only [mul_zero]
-    exact
-      hmem
-        (mem_dirichletCompletedLFunctionZerosInRectangle_iff.mpr
-          ⟨hs, hcompleted⟩)
+    exact hmem (mem_dirichletCompletedLFunctionZerosInRectangle_iff.mpr ⟨hs, hcompleted⟩)
 
 /-- For a character at a positive level and a complex point, define the natural-valued analytic
 order of its ordinary `L`-function using `analyticOrderNatAt`. The definition is total, including
@@ -731,8 +597,7 @@ theorem dirichletLFunctionZeroMultiplicity_pos {N : ℕ} [NeZero N] {χ : Dirich
     have hmero := hanalytic.meromorphicOrderAt_eq
     rw [htop] at hmero
     exact
-      meromorphicOrderAt_dirichletLFunction_ne_top
-        χ hχ ρ (by simpa only [ENat.map_top] using hmero)
+      meromorphicOrderAt_dirichletLFunction_ne_top χ hχ ρ (by simpa only [ENat.map_top] using hmero)
   have hcast := Nat.cast_analyticOrderNatAt hfinite
   apply Nat.pos_of_ne_zero
   intro hmult
@@ -760,8 +625,7 @@ theorem exists_dirichletLFunction_localFactor {N : ℕ} [NeZero N] {χ : Dirichl
     have hmero := hanalytic.meromorphicOrderAt_eq
     rw [htop] at hmero
     exact
-      meromorphicOrderAt_dirichletLFunction_ne_top
-        χ hχ ρ (by simpa only [ENat.map_top] using hmero)
+      meromorphicOrderAt_dirichletLFunction_ne_top χ hχ ρ (by simpa only [ENat.map_top] using hmero)
   simpa only [dirichletLFunctionZeroMultiplicity] using hanalytic.analyticOrderAt_ne_top.mp hfinite
 
 /--

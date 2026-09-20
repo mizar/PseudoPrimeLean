@@ -39,20 +39,9 @@ noncomputable def dirichletLFunctionSingularitiesInRectangle {N : ℕ} [NeZero N
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) (z w : ℂ) : Finset ℂ := by
   classical
     exact
-    dirichletLFunctionZerosInRectangle χ hχ z
-        w ∪
-      (if
-          (0 : ℂ) ∈
-            dirichletCompletedLFunctionRectangleBox
-              z w then
-        {0}
-      else ∅) ∪
-      (if
-          (1 : ℂ) ∈
-            dirichletCompletedLFunctionRectangleBox
-              z w then
-        {1}
-      else ∅)
+    dirichletLFunctionZerosInRectangle χ hχ z w ∪
+      (if (0 : ℂ) ∈ dirichletCompletedLFunctionRectangleBox z w then {0} else ∅) ∪
+      (if (1 : ℂ) ∈ dirichletCompletedLFunctionRectangleBox z w then {1} else ∅)
 
 /--
 Input/assumptions: a point and the singularity ledger of a rectangle.
@@ -63,20 +52,12 @@ Role: converts finite-grid avoidance back into the analytic regularity condition
 theorem mem_dirichletLFunctionSingularitiesInRectangle_iff {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {hχ : χ ≠ 1} {z w s : ℂ} :
     s ∈ dirichletLFunctionSingularitiesInRectangle χ hχ z w ↔
-      s ∈
-          dirichletCompletedLFunctionRectangleBox
-            z w ∧
+      s ∈ dirichletCompletedLFunctionRectangleBox z w ∧
         (s = 0 ∨ s = 1 ∨ DirichletCharacter.LFunction χ s = 0) := by
   rw [dirichletLFunctionSingularitiesInRectangle, Finset.mem_union, Finset.mem_union]
   rw [DirichletLFunction.mem_dirichletLFunctionZerosInRectangle_iff]
-  by_cases hzero :
-      (0 : ℂ) ∈
-        dirichletCompletedLFunctionRectangleBox
-          z w <;>
-    by_cases hone :
-      (1 : ℂ) ∈
-        dirichletCompletedLFunctionRectangleBox
-          z w <;>
+  by_cases hzero : (0 : ℂ) ∈ dirichletCompletedLFunctionRectangleBox z w <;>
+    by_cases hone : (1 : ℂ) ∈ dirichletCompletedLFunctionRectangleBox z w <;>
     simp only [hzero, ↓reduceIte, Finset.mem_singleton, hone] <;>
     aesop
 
@@ -90,10 +71,7 @@ Role: the analytic bridge from grid-cell avoidance to Cauchy--Goursat regular ce
 -/
 theorem mem_dirichletLFunctionContourRegularSet_of_not_mem_singularities {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {hχ : χ ≠ 1} {z w s : ℂ}
-    (hrect :
-      s ∈
-        dirichletCompletedLFunctionRectangleBox
-          z w)
+    (hrect : s ∈ dirichletCompletedLFunctionRectangleBox z w)
     (hnot : s ∉ dirichletLFunctionSingularitiesInRectangle χ hχ z w) :
     s ∈ dirichletLFunctionContourRegularSet χ := by
   have hmem :
@@ -128,10 +106,7 @@ theorem horizontal_segment_subset_dirichletLFunctionContourRegularSet {N : ℕ} 
     (havoid : ∀ s ∈ dirichletLFunctionSingularitiesInRectangle χ hχ z w, s.im ≠ c) :
     ∀ t ∈ Set.uIcc a b, t + c * Complex.I ∈ dirichletLFunctionContourRegularSet χ := by
   intro t ht
-  have hrect :
-    (t : ℂ) + c * Complex.I ∈
-      dirichletCompletedLFunctionRectangleBox z
-        w := by
+  have hrect : (t : ℂ) + c * Complex.I ∈ dirichletCompletedLFunctionRectangleBox z w := by
     exact
       ⟨by
         simpa only [Set.mem_preimage, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
@@ -145,8 +120,8 @@ theorem horizontal_segment_subset_dirichletLFunctionContourRegularSet {N : ℕ} 
     mem_dirichletLFunctionContourRegularSet_of_not_mem_singularities hrect
       (by
         exact
-          RectangleGeometry.horizontal_segment_subset_compl_of_im_avoid
-            (S := (dirichletLFunctionSingularitiesInRectangle χ hχ z w : Set ℂ))
+          RectangleGeometry.horizontal_segment_subset_compl_of_im_avoid (S :=
+            (dirichletLFunctionSingularitiesInRectangle χ hχ z w : Set ℂ))
             (fun s hs => havoid s (by simpa only [Finset.mem_coe] using hs)) t ht)
 
 /--
@@ -162,10 +137,7 @@ theorem vertical_segment_subset_dirichletLFunctionContourRegularSet {N : ℕ} [N
     (havoid : ∀ s ∈ dirichletLFunctionSingularitiesInRectangle χ hχ z w, s.re ≠ c) :
     ∀ t ∈ Set.uIcc a b, c + t * Complex.I ∈ dirichletLFunctionContourRegularSet χ := by
   intro t ht
-  have hrect :
-    (c : ℂ) + t * Complex.I ∈
-      dirichletCompletedLFunctionRectangleBox z
-        w := by
+  have hrect : (c : ℂ) + t * Complex.I ∈ dirichletCompletedLFunctionRectangleBox z w := by
     exact
       ⟨by
         simpa only [Set.mem_preimage, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
@@ -179,8 +151,8 @@ theorem vertical_segment_subset_dirichletLFunctionContourRegularSet {N : ℕ} [N
     mem_dirichletLFunctionContourRegularSet_of_not_mem_singularities hrect
       (by
         exact
-          RectangleGeometry.vertical_segment_subset_compl_of_re_avoid
-            (S := (dirichletLFunctionSingularitiesInRectangle χ hχ z w : Set ℂ))
+          RectangleGeometry.vertical_segment_subset_compl_of_re_avoid (S :=
+            (dirichletLFunctionSingularitiesInRectangle χ hχ z w : Set ℂ))
             (fun s hs => havoid s (by simpa only [Finset.mem_coe] using hs)) t ht)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

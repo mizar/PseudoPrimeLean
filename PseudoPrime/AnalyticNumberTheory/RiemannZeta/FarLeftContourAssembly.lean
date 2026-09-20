@@ -23,14 +23,10 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_unifiedHeightSeq {x
     {lam tau : ℝ} (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
     Filter.Tendsto
       (fun m : ℕ =>
-        ∫ σ in lam..tau,
-          riemannZetaLogContourKernel x
-            (σ +
-              unifiedContourHeightSeq m * Complex.I))
+        ∫ σ in lam..tau, riemannZetaLogContourKernel x (σ + unifiedContourHeightSeq m * Complex.I))
       Filter.atTop (nhds 0) := by
   exact
-    (tendsto_intervalIntegral_riemannZetaLogContourKernel_goodHeightSeq
-          hx hlam hlamtau htau).comp
+    (tendsto_intervalIntegral_riemannZetaLogContourKernel_goodHeightSeq hx hlam hlamtau htau).comp
       tendsto_farLeftGoodHeightIndex_atTop
 
 /-- The reciprocal kernel's fixed right horizontal segment vanishes on the unified sequence. -/
@@ -39,13 +35,11 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_unifiedHeigh
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ σ in lam..tau,
-          riemannZetaReciprocalContourKernel x
-            (σ +
-              unifiedContourHeightSeq m * Complex.I))
+          riemannZetaReciprocalContourKernel x (σ + unifiedContourHeightSeq m * Complex.I))
       Filter.atTop (nhds 0) := by
   exact
-    (tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_goodHeightSeq
-          hx hlam hlamtau htau).comp
+    (tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_goodHeightSeq hx hlam hlamtau
+          htau).comp
       tendsto_farLeftGoodHeightIndex_atTop
 
 /--
@@ -56,14 +50,9 @@ vertical segment from `-Tₘ` to `Tₘ`, with the orientation factor from the re
 -/
 noncomputable def riemannZetaLogFarLeftContourContribution (x : ℝ) (m : ℕ) : ℂ :=
   -(∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-        riemannZetaLogContourKernel x
-          ((σ : ℂ) +
-            (farLeftHeightSeq m : ℂ) * Complex.I)) -
+        riemannZetaLogContourKernel x ((σ : ℂ) + (farLeftHeightSeq m : ℂ) * Complex.I)) -
     Complex.I •
-      (∫ t in
-        (-(farLeftHeightSeq
-            m))..(farLeftHeightSeq m),
-        riemannZetaLogContourKernel x
-          (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I))
+      (∫ t in (-(farLeftHeightSeq m))..(farLeftHeightSeq m),
+        riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I))
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

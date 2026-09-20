@@ -67,13 +67,7 @@ Role: enables reverse zero reflection and the odd-character analysis at the Mell
 theorem dirichletCharacter_rootNumber_ne_zero_of_isPrimitive {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive) : DirichletCharacter.rootNumber χ ≠ 0 := by
   rw [DirichletCharacter.rootNumber]
-  refine
-    div_ne_zero
-      (div_ne_zero
-        (dirichletCharacter_gaussSum_ne_zero_of_isPrimitive
-          hχ)
-        ?_)
-      ?_
+  refine div_ne_zero (div_ne_zero (dirichletCharacter_gaussSum_ne_zero_of_isPrimitive hχ) ?_) ?_
   · exact pow_ne_zero _ Complex.I_ne_zero
   · exact Complex.cpow_ne_zero_iff.mpr (Or.inl (by exact_mod_cast NeZero.ne N))
 
@@ -87,13 +81,10 @@ theorem dirichletCompletedLFunction_inv_zero_of_one_sub_zero {N : ℕ} [NeZero N
     {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive) (s : ℂ)
     (hzero : DirichletCharacter.completedLFunction χ (1 - s) = 0) :
     DirichletCharacter.completedLFunction χ⁻¹ s = 0 := by
-  have hfunction :=
-    dirichletCompletedLFunction_one_sub_of_isPrimitive
-      hχ s
+  have hfunction := dirichletCompletedLFunction_one_sub_of_isPrimitive hχ s
   have hfactor : (N : ℂ) ^ (s - 1 / 2) * DirichletCharacter.rootNumber χ ≠ 0 :=
     mul_ne_zero (Complex.cpow_ne_zero_iff.mpr (Or.inl (by exact_mod_cast NeZero.ne N)))
-      (dirichletCharacter_rootNumber_ne_zero_of_isPrimitive
-        hχ)
+      (dirichletCharacter_rootNumber_ne_zero_of_isPrimitive hχ)
   have hproduct :
     ((N : ℂ) ^ (s - 1 / 2) * DirichletCharacter.rootNumber χ) *
         DirichletCharacter.completedLFunction χ⁻¹ s =
@@ -157,11 +148,8 @@ regularize.
 -/
 theorem dirichletLFunction_zero_of_even {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1)
     (heven : χ.Even) : DirichletCharacter.LFunction χ 0 = 0 := by
-  rw [dirichletLFunction_eq_completed_div_gammaFactor
-      χ 0
-      (Or.inr
-        (dirichletCharacter_level_ne_one_of_ne_one
-          hχ)),
+  rw [dirichletLFunction_eq_completed_div_gammaFactor χ 0
+      (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hχ)),
     even_gammaFactor_zero heven]
   simp only [div_zero]
 
@@ -186,10 +174,8 @@ Role: supplies the reflected endpoint nonvanishing used to resolve the odd `s = 
 theorem dirichletCompletedLFunction_one_ne_zero_of_ne_one {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) : DirichletCharacter.completedLFunction χ 1 ≠ 0 := by
   intro hcompleted
-  have hL :=
-    dirichletLFunction_one_ne_zero_of_ne_one hχ
-  rw [dirichletLFunction_eq_completed_div_gammaFactor
-      χ 1 (Or.inl (by norm_num only)),
+  have hL := dirichletLFunction_one_ne_zero_of_ne_one hχ
+  rw [dirichletLFunction_eq_completed_div_gammaFactor χ 1 (Or.inl (by norm_num only)),
     hcompleted] at hL
   simp only [zero_div, ne_eq, not_true_eq_false] at hL
 
@@ -205,15 +191,13 @@ theorem dirichletCompletedLFunction_zero_ne_zero_of_primitive {N : ℕ} [NeZero 
     DirichletCharacter.completedLFunction χ 0 ≠ 0 := by
   intro hzero
   have hinvzero :=
-    dirichletCompletedLFunction_inv_zero_of_one_sub_zero
-      hχ (1 : ℂ) (by simpa only [sub_self] using hzero)
+    dirichletCompletedLFunction_inv_zero_of_one_sub_zero hχ (1 : ℂ)
+      (by simpa only [sub_self] using hzero)
   have hinvne : χ⁻¹ ≠ 1 := by
     intro hinv
     apply hne
     rw [← inv_inv χ, hinv, inv_one]
-  exact
-    dirichletCompletedLFunction_one_ne_zero_of_ne_one
-      hinvne (by simpa only using hinvzero)
+  exact dirichletCompletedLFunction_one_ne_zero_of_ne_one hinvne (by simpa only using hinvzero)
 
 /--
 Input/assumptions: a nontrivial primitive odd character.
@@ -224,17 +208,11 @@ Role: removes the odd-character `s = 0` deferred branch from the primitive conto
 theorem dirichletLFunction_zero_ne_zero_of_primitive_odd {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive) (hne : χ ≠ 1) (hodd : χ.Odd) :
     DirichletCharacter.LFunction χ 0 ≠ 0 := by
-  have hcompleted :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hχ hne
+  have hcompleted := dirichletCompletedLFunction_zero_ne_zero_of_primitive hχ hne
   have hcomparison :=
-    dirichletLFunction_eq_completed_div_gammaFactor
-      χ 0
-      (Or.inr
-        (dirichletCharacter_level_ne_one_of_ne_one
-          hne))
-  rw [odd_gammaFactor_zero hodd,
-    div_one] at hcomparison
+    dirichletLFunction_eq_completed_div_gammaFactor χ 0
+      (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))
+  rw [odd_gammaFactor_zero hodd, div_one] at hcomparison
   intro hzero
   apply hcompleted
   rw [← hcomparison]
@@ -279,11 +257,8 @@ theorem lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_r
     LSeries ((fun n : ℕ ↦ χ (n : ZMod N)) * fun n ↦ (ArithmeticFunction.vonMangoldt n : ℂ)) s =
       -deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s
   rw [DirichletCharacter.LSeries_twist_vonMangoldt_eq χ hs, ←
-    dirichletLFunction_eq_LSeries_of_one_lt_re χ
-      hs,
-    ←
-    deriv_dirichletLFunction_eq_deriv_LSeries_of_one_lt_re
-      χ hs]
+    dirichletLFunction_eq_LSeries_of_one_lt_re χ hs, ←
+    deriv_dirichletLFunction_eq_deriv_LSeries_of_one_lt_re χ hs]
 
 /--
 Input/assumptions: a character and a vertical line `Re s = τ > 1`.
@@ -307,9 +282,7 @@ theorem norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum {N : ℕ} [NeZ
     rw [hs_def]
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-  have heq :=
-    lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re
-      χ hs
+  have heq := lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ hs
   have hsumm := DirichletCharacter.LSeriesSummable_twist_vonMangoldt χ hs
   rw [LSeriesSummable, ← summable_norm_iff] at hsumm
   have hterm : ∀ n : ℕ, ‖LSeries.term f s n‖ ≤ ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ τ := by
@@ -376,9 +349,7 @@ theorem analyticAt_logDeriv_completedLFunction_zero {N : ℕ} [NeZero N] {χ : D
     AnalyticAt ℂ (logDeriv (DirichletCharacter.completedLFunction χ)) 0 := by
   rw [logDeriv]
   have hdiff := DirichletCharacter.differentiable_completedLFunction hne
-  have hF0ne :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hprimitive hne
+  have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   exact (hdiff.analyticAt 0).deriv.div (hdiff.analyticAt 0) hF0ne
 
 /-- For a primitive nontrivial character, analyticity gives differentiability of `logDeriv F`
@@ -386,7 +357,6 @@ at zero. This is used when differentiating local factors and finite Hadamard sum
 theorem differentiableAt_logDeriv_completedLFunction_zero {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) :
     DifferentiableAt ℂ (logDeriv (DirichletCharacter.completedLFunction χ)) 0 :=
-  (analyticAt_logDeriv_completedLFunction_zero
-      hprimitive hne).differentiableAt
+  (analyticAt_logDeriv_completedLFunction_zero hprimitive hne).differentiableAt
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

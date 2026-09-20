@@ -19,8 +19,7 @@ def rectangleClosedBox (z w : ℂ) : Set ℂ :=
   Set.uIcc z.re w.re ×ℂ Set.uIcc z.im w.im
 
 /-- A closed axis-aligned rectangle is compact. -/
-theorem isCompact_rectangleClosedBox (z w : ℂ) :
-    IsCompact (rectangleClosedBox z w) := by
+theorem isCompact_rectangleClosedBox (z w : ℂ) : IsCompact (rectangleClosedBox z w) := by
   exact isCompact_uIcc.reProdIm isCompact_uIcc
 
 end PseudoPrime.AnalyticNumberTheory.Rectangle

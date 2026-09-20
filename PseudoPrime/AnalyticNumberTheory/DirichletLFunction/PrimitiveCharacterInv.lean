@@ -47,10 +47,7 @@ theorem DirichletCharacter.conductor_inv_eq {R : Type*} [CommMonoidWithZero R] {
     ext d
     simp only [DirichletCharacter.mem_conductorSet_iff]
     exact
-      ⟨fun h => by
-        simpa only [inv_inv] using
-          DirichletCharacter.factorsThrough_inv
-            h,
+      ⟨fun h => by simpa only [inv_inv] using DirichletCharacter.factorsThrough_inv h,
         DirichletCharacter.factorsThrough_inv⟩
   unfold DirichletCharacter.conductor
   rw [hset]

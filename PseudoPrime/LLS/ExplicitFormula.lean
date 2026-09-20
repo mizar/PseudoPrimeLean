@@ -82,8 +82,8 @@ theorem llsRiemannReciprocalExplicitLowerBound_of_verticalIntegralLowerBound
   intro x hx
   have hx0 : (0 : ℝ) < x := zero_lt_one.trans hx
   have heq :=
-    AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_eq_integral hx0 (τ :=
-      2) (by norm_num only)
+    AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_eq_integral hx0 (τ := 2)
+      (by norm_num only)
   have hre := congrArg Complex.re heq
   rw [Complex.ofReal_re] at hre
   rw [hre]

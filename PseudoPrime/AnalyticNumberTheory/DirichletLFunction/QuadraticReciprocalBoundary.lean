@@ -28,44 +28,28 @@ Role: supplies `IntervalIntegrable` for the horizontal edges at height `±T_k`, 
 facts.
 -/
 theorem continuous_dirichletReciprocalContourKernel_horizontalHeightSeq {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
     (hx : 0 < x) (k : ℕ) :
     Continuous
         (fun σ : ℝ =>
           dirichletReciprocalContourKernel x χ
             ((σ : ℂ) +
-              primitiveHorizontalHeightSeq hN2
-                  hGRH hprimitive hne hinv hquad k *
-                Complex.I)) ∧
+              primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k * Complex.I)) ∧
       Continuous
         (fun σ : ℝ =>
           dirichletReciprocalContourKernel x χ
             ((σ : ℂ) -
-              primitiveHorizontalHeightSeq hN2
-                  hGRH hprimitive hne hinv hquad k *
-                Complex.I)) := by
-  have hTge :=
-    primitiveHorizontalHeightSeq_ge hN2 hGRH
-      hprimitive hne hinv hquad k
-  have hTpos :
-    (0 : ℝ) <
-      primitiveHorizontalHeightSeq hN2 hGRH
-        hprimitive hne hinv hquad k := by
+              primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k * Complex.I)) := by
+  have hTge := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
+  have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k := by
     have hknn : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
     linarith
   have hpt :
     ∀ s : ℂ,
-      s.im =
-            primitiveHorizontalHeightSeq hN2
-              hGRH hprimitive hne hinv hquad k ∨
-          s.im =
-            -(primitiveHorizontalHeightSeq hN2
-                hGRH hprimitive hne hinv hquad k) →
-        ContinuousAt
-          (dirichletReciprocalContourKernel x χ)
-          s := by
+      s.im = primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k ∨
+          s.im = -(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k) →
+        ContinuousAt (dirichletReciprocalContourKernel x χ) s := by
     intro s hsim
     have hsimne : s.im ≠ 0 := by
       rcases hsim with h | h <;> rw [h] <;> [exact hTpos.ne'; exact (neg_lt_zero.mpr hTpos).ne]
@@ -78,30 +62,23 @@ theorem continuous_dirichletReciprocalContourKernel_horizontalHeightSeq {N : ℕ
         (by
           rw [h]; simp only [Complex.one_im])
     have hLne :=
-      dirichletLFunction_ne_zero_of_im_eq_primitiveHorizontalHeightSeq
-        hN2 hGRH hprimitive hne hinv hquad k hsim
-    exact
-      (differentiableAt_dirichletReciprocalContourKernel
-          hx hne hs0 hs1 hLne).continuousAt
+      dirichletLFunction_ne_zero_of_im_eq_primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv
+        hquad k hsim
+    exact (differentiableAt_dirichletReciprocalContourKernel hx hne hs0 hs1 hLne).continuousAt
   constructor
   · have hg :
       Continuous
         (fun σ : ℝ =>
           (σ : ℂ) +
-            (primitiveHorizontalHeightSeq hN2
-                  hGRH hprimitive hne hinv hquad k :
-                ℂ) *
+            (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k : ℂ) *
               Complex.I) := by
       fun_prop
     have hOn :
-      ContinuousOn
-        (dirichletReciprocalContourKernel x χ)
+      ContinuousOn (dirichletReciprocalContourKernel x χ)
         (Set.range
           (fun σ : ℝ =>
             (σ : ℂ) +
-              (primitiveHorizontalHeightSeq hN2
-                    hGRH hprimitive hne hinv hquad k :
-                  ℂ) *
+              (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k : ℂ) *
                 Complex.I)) := by
       rintro s ⟨σ, rfl⟩
       exact
@@ -116,20 +93,15 @@ theorem continuous_dirichletReciprocalContourKernel_horizontalHeightSeq {N : ℕ
       Continuous
         (fun σ : ℝ =>
           (σ : ℂ) -
-            (primitiveHorizontalHeightSeq hN2
-                  hGRH hprimitive hne hinv hquad k :
-                ℂ) *
+            (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k : ℂ) *
               Complex.I) := by
       fun_prop
     have hOn :
-      ContinuousOn
-        (dirichletReciprocalContourKernel x χ)
+      ContinuousOn (dirichletReciprocalContourKernel x χ)
         (Set.range
           (fun σ : ℝ =>
             (σ : ℂ) -
-              (primitiveHorizontalHeightSeq hN2
-                    hGRH hprimitive hne hinv hquad k :
-                  ℂ) *
+              (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k : ℂ) *
                 Complex.I)) := by
       rintro s ⟨σ, rfl⟩
       exact
@@ -156,57 +128,46 @@ limit.
 -/
 theorem tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_horizontal_integral (A : ℕ)
     (hA : 2 ≤ A) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
-    (hx : 1 ≤ x) :
+    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
+    (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ} (hx : 1 ≤ x) :
     Filter.Tendsto
         (fun k : ℕ =>
           ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
             dirichletReciprocalContourKernel x χ
               ((σ : ℂ) +
-                primitiveHorizontalHeightSeq hN2
-                    hGRH hprimitive hne hinv hquad k *
-                  Complex.I))
+                primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k * Complex.I))
         Filter.atTop (nhds 0) ∧
       Filter.Tendsto
         (fun k : ℕ =>
           ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
             dirichletReciprocalContourKernel x χ
               ((σ : ℂ) -
-                primitiveHorizontalHeightSeq hN2
-                    hGRH hprimitive hne hinv hquad k *
-                  Complex.I))
+                primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k * Complex.I))
         Filter.atTop (nhds 0) := by
   have hxpos : (0 : ℝ) < x := by linarith
   have hfarLeft :=
-    tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral
-      A hA hN2 hGRH hprimitive hne hinv hquad hx
+    tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral A hA hN2 hGRH hprimitive
+      hne hinv hquad hx
   have hcentral :=
-    tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_central_integral
-      hN2 hGRH hprimitive hne hinv hquad hx
+    tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_central_integral hN2 hGRH hprimitive hne
+      hinv hquad hx
   have hcont := fun k : ℕ =>
-    continuous_dirichletReciprocalContourKernel_horizontalHeightSeq
-      hN2 hGRH hprimitive hne hinv hquad hxpos k
+    continuous_dirichletReciprocalContourKernel_horizontalHeightSeq hN2 hGRH hprimitive hne hinv
+      hquad hxpos k
   have hsplit :
     ∀ k : ℕ,
       (∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
             dirichletReciprocalContourKernel x χ
               ((σ : ℂ) +
-                primitiveHorizontalHeightSeq hN2
-                    hGRH hprimitive hne hinv hquad k *
-                  Complex.I)) +
+                primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k * Complex.I)) +
           ∫ σ in (-2 : ℝ)..(2 : ℝ),
             dirichletReciprocalContourKernel x χ
               ((σ : ℂ) +
-                primitiveHorizontalHeightSeq hN2
-                    hGRH hprimitive hne hinv hquad k *
-                  Complex.I) =
+                primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k * Complex.I) =
         ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
           dirichletReciprocalContourKernel x χ
             ((σ : ℂ) +
-              primitiveHorizontalHeightSeq hN2
-                  hGRH hprimitive hne hinv hquad k *
-                Complex.I) :=
+              primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k * Complex.I) :=
     fun k =>
     intervalIntegral.integral_add_adjacent_intervals
       ((hcont k).1.intervalIntegrable (-(A : ℝ) - 1 / 2) (-2))
@@ -216,21 +177,15 @@ theorem tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_horizontal_integra
       (∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
             dirichletReciprocalContourKernel x χ
               ((σ : ℂ) -
-                primitiveHorizontalHeightSeq hN2
-                    hGRH hprimitive hne hinv hquad k *
-                  Complex.I)) +
+                primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k * Complex.I)) +
           ∫ σ in (-2 : ℝ)..(2 : ℝ),
             dirichletReciprocalContourKernel x χ
               ((σ : ℂ) -
-                primitiveHorizontalHeightSeq hN2
-                    hGRH hprimitive hne hinv hquad k *
-                  Complex.I) =
+                primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k * Complex.I) =
         ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
           dirichletReciprocalContourKernel x χ
             ((σ : ℂ) -
-              primitiveHorizontalHeightSeq hN2
-                  hGRH hprimitive hne hinv hquad k *
-                Complex.I) :=
+              primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k * Complex.I) :=
     fun k =>
     intervalIntegral.integral_add_adjacent_intervals
       ((hcont k).2.intervalIntegrable (-(A : ℝ) - 1 / 2) (-2))
@@ -253,31 +208,22 @@ and `-i/(2π)` give the displayed normalization. This limit is combined with the
 normalized finite contour identity and its residue bounds.
 -/
 theorem tendsto_normalized_dirichletReciprocalBoundary_heightSeq {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
     (hx : 1 ≤ x) (A : ℕ) (hA : 2 ≤ A) :
     Filter.Tendsto
       (fun k : ℕ =>
         (-Complex.I / (2 * (Real.pi : ℂ))) *
-          RectangleGeometry.rectangleBoundaryIntegral
-            (dirichletReciprocalContourKernel x
-              χ)
-            (primitiveReciprocalLowerCorner hN2
-              hGRH hprimitive hne hinv hquad A k)
-            (primitiveReciprocalUpperCorner hN2
-              hGRH hprimitive hne hinv hquad k))
+          RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ)
+            (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
+            (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k))
       Filter.atTop
       (nhds
         (Arithmetic.characterReciprocalWeightedSum x χ -
           ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
             ∫ t : ℝ,
-              dirichletReciprocalContourKernel x
-                χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I))) := by
+              dirichletReciprocalContourKernel x χ
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I))) := by
   have hxpos : (0 : ℝ) < x := by linarith
   have hpi_ne : (2 * (Real.pi : ℂ)) ≠ 0 := by
     have hpine : (Real.pi : ℝ) ≠ 0 := Real.pi_ne_zero
@@ -291,184 +237,126 @@ theorem tendsto_normalized_dirichletReciprocalBoundary_heightSeq {N : ℕ} [NeZe
   have heq :
     ∀ k : ℕ,
       (-Complex.I / (2 * (Real.pi : ℂ))) *
-          RectangleGeometry.rectangleBoundaryIntegral
-            (dirichletReciprocalContourKernel x
-              χ)
-            (primitiveReciprocalLowerCorner hN2
-              hGRH hprimitive hne hinv hquad A k)
-            (primitiveReciprocalUpperCorner hN2
-              hGRH hprimitive hne hinv hquad k) =
+          RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ)
+            (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
+            (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k) =
         (-Complex.I / (2 * (Real.pi : ℂ))) *
               ((∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
-                  dirichletReciprocalContourKernel
-                    x χ
+                  dirichletReciprocalContourKernel x χ
                     ((σ : ℂ) -
-                      primitiveHorizontalHeightSeq
-                          hN2 hGRH hprimitive hne hinv hquad k *
+                      primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k *
                         Complex.I)) -
                 ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
-                  dirichletReciprocalContourKernel
-                    x χ
+                  dirichletReciprocalContourKernel x χ
                     ((σ : ℂ) +
-                      primitiveHorizontalHeightSeq
-                          hN2 hGRH hprimitive hne hinv hquad k *
+                      primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k *
                         Complex.I)) +
             ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
               (∫ t in
-                (-(primitiveHorizontalHeightSeq
-                    hN2 hGRH hprimitive hne hinv hquad
-                    k))..(primitiveHorizontalHeightSeq
-                  hN2 hGRH hprimitive hne hinv hquad k),
-                dirichletReciprocalContourKernel
-                  x χ ((2 : ℂ) + (t : ℂ) * Complex.I)) -
+                (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad
+                    k))..(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k),
+                dirichletReciprocalContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I)) -
           ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
             (∫ t in
-              (-(primitiveHorizontalHeightSeq
-                  hN2 hGRH hprimitive hne hinv hquad
-                  k))..(primitiveHorizontalHeightSeq
-                hN2 hGRH hprimitive hne hinv hquad k),
-              dirichletReciprocalContourKernel x
-                χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I)) := by
+              (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad
+                  k))..(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k),
+              dirichletReciprocalContourKernel x χ
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
     intro k
     have hzre :
-      (primitiveReciprocalLowerCorner hN2 hGRH
-            hprimitive hne hinv hquad A k).re =
+      (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k).re =
         primitiveReciprocalLeftRe A := by
       rw [primitiveReciprocalLowerCorner]
       simp only [Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, sub_zero]
     have hzim :
-      (primitiveReciprocalLowerCorner hN2 hGRH
-            hprimitive hne hinv hquad A k).im =
-        -(primitiveHorizontalHeightSeq hN2 hGRH
-            hprimitive hne hinv hquad k) := by
+      (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k).im =
+        -(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k) := by
       rw [primitiveReciprocalLowerCorner]
       simp only [Complex.sub_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im,
         mul_one, Complex.I_re, mul_zero, add_zero, zero_sub]
-    have hwre :
-      (primitiveReciprocalUpperCorner hN2 hGRH
-            hprimitive hne hinv hquad k).re =
-        2 := by
+    have hwre : (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k).re = 2 := by
       rw [primitiveReciprocalUpperCorner]
       simp only [Complex.ofReal_ofNat, Complex.add_re, Complex.re_ofNat, Complex.mul_re,
         Complex.ofReal_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one,
         sub_self, add_zero]
     have hwim :
-      (primitiveReciprocalUpperCorner hN2 hGRH
-            hprimitive hne hinv hquad k).im =
-        primitiveHorizontalHeightSeq hN2 hGRH
-          hprimitive hne hinv hquad k := by
+      (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k).im =
+        primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k := by
       rw [primitiveReciprocalUpperCorner]
       simp only [Complex.ofReal_ofNat, Complex.add_im, Complex.im_ofNat, Complex.mul_im,
         Complex.ofReal_re, Complex.I_im, mul_one, Complex.ofReal_im, Complex.I_re, mul_zero,
         add_zero, zero_add]
     unfold RectangleGeometry.rectangleBoundaryIntegral
-    rw [hzre, hzim, hwre, hwim,
-      primitiveReciprocalLeftRe]
+    rw [hzre, hzim, hwre, hwim, primitiveReciprocalLeftRe]
     simp only [smul_eq_mul, Complex.ofReal_neg, neg_mul]
     linear_combination
       (∫ t in
-            (-(primitiveHorizontalHeightSeq hN2
-                hGRH hprimitive hne hinv hquad
-                k))..(primitiveHorizontalHeightSeq
-              hN2 hGRH hprimitive hne hinv hquad k),
-            dirichletReciprocalContourKernel x χ
-              ((2 : ℂ) + (t : ℂ) * Complex.I)) *
+            (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad
+                k))..(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k),
+            dirichletReciprocalContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I)) *
           hcoeffI -
         (∫ t in
-            (-(primitiveHorizontalHeightSeq hN2
-                hGRH hprimitive hne hinv hquad
-                k))..(primitiveHorizontalHeightSeq
-              hN2 hGRH hprimitive hne hinv hquad k),
+            (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad
+                k))..(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k),
             dirichletReciprocalContourKernel x χ
               (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) *
           hcoeffI
   apply Filter.Tendsto.congr (fun k => (heq k).symm)
   have hhoriz :=
-    tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_horizontal_integral
-      A hA hN2 hGRH hprimitive hne hinv hquad hx
+    tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_horizontal_integral A hA hN2 hGRH
+      hprimitive hne hinv hquad hx
   have hright :
     Filter.Tendsto
       (fun k : ℕ =>
         ∫ t in
-          (-(primitiveHorizontalHeightSeq hN2
-              hGRH hprimitive hne hinv hquad
-              k))..(primitiveHorizontalHeightSeq
-            hN2 hGRH hprimitive hne hinv hquad k),
-          dirichletReciprocalContourKernel x χ
-            ((2 : ℂ) + (t : ℂ) * Complex.I))
+          (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad
+              k))..(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k),
+          dirichletReciprocalContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop
-      (nhds
-        (∫ t : ℝ,
-          dirichletReciprocalContourKernel x χ
-            ((2 : ℂ) + (t : ℂ) * Complex.I))) :=
-    (tendsto_intervalIntegral_dirichletReciprocalContourKernel
-          hxpos χ hne (show (1 : ℝ) < 2 from by norm_num only)).comp
-      (tendsto_primitiveHorizontalHeightSeq_atTop
-        hN2 hGRH hprimitive hne hinv hquad)
+      (nhds (∫ t : ℝ, dirichletReciprocalContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I))) :=
+    (tendsto_intervalIntegral_dirichletReciprocalContourKernel hxpos χ hne
+          (show (1 : ℝ) < 2 from by norm_num only)).comp
+      (tendsto_primitiveHorizontalHeightSeq_atTop hN2 hGRH hprimitive hne hinv hquad)
   have hleft :=
-    quadraticTendsto_primitiveHorizontalHeightSeq_leftVertical_intervalIntegral
-      hN2 hGRH hprimitive hne hinv hquad hxpos hA
+    quadraticTendsto_primitiveHorizontalHeightSeq_leftVertical_intervalIntegral hN2 hGRH hprimitive
+      hne hinv hquad hxpos hA
   have hweighted :=
-    characterReciprocalWeightedSum_eq_integral χ
-      hxpos (show (1 : ℝ) < 2 from by norm_num only)
+    characterReciprocalWeightedSum_eq_integral χ hxpos (show (1 : ℝ) < 2 from by norm_num only)
   have htarget :
     Filter.Tendsto
       (fun k : ℕ =>
         (-Complex.I / (2 * (Real.pi : ℂ))) *
               ((∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
-                  dirichletReciprocalContourKernel
-                    x χ
+                  dirichletReciprocalContourKernel x χ
                     ((σ : ℂ) -
-                      primitiveHorizontalHeightSeq
-                          hN2 hGRH hprimitive hne hinv hquad k *
+                      primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k *
                         Complex.I)) -
                 ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
-                  dirichletReciprocalContourKernel
-                    x χ
+                  dirichletReciprocalContourKernel x χ
                     ((σ : ℂ) +
-                      primitiveHorizontalHeightSeq
-                          hN2 hGRH hprimitive hne hinv hquad k *
+                      primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k *
                         Complex.I)) +
             ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
               (∫ t in
-                (-(primitiveHorizontalHeightSeq
-                    hN2 hGRH hprimitive hne hinv hquad
-                    k))..(primitiveHorizontalHeightSeq
-                  hN2 hGRH hprimitive hne hinv hquad k),
-                dirichletReciprocalContourKernel
-                  x χ ((2 : ℂ) + (t : ℂ) * Complex.I)) -
+                (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad
+                    k))..(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k),
+                dirichletReciprocalContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I)) -
           ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
             (∫ t in
-              (-(primitiveHorizontalHeightSeq
-                  hN2 hGRH hprimitive hne hinv hquad
-                  k))..(primitiveHorizontalHeightSeq
-                hN2 hGRH hprimitive hne hinv hquad k),
-              dirichletReciprocalContourKernel x
-                χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I)))
+              (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad
+                  k))..(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k),
+              dirichletReciprocalContourKernel x χ
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)))
       Filter.atTop
       (nhds
         ((-Complex.I / (2 * (Real.pi : ℂ))) * ((0 : ℂ) - (0 : ℂ)) +
             ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
-              (∫ t : ℝ,
-                dirichletReciprocalContourKernel
-                  x χ ((2 : ℂ) + (t : ℂ) * Complex.I)) -
+              (∫ t : ℝ, dirichletReciprocalContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I)) -
           ((2 * Real.pi : ℝ)⁻¹ : ℂ) *
             (∫ t : ℝ,
-              dirichletReciprocalContourKernel x
-                χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I)))) := by
+              dirichletReciprocalContourKernel x χ
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)))) := by
     apply Filter.Tendsto.sub
     · apply Filter.Tendsto.add
       · exact (Filter.Tendsto.const_mul _ (hhoriz.2.sub hhoriz.1))

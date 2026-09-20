@@ -35,18 +35,16 @@ namespace PseudoPrime.PseudoSquare
 /-- The elementary bound gives the simplified upper bound for the LLS correction term, with
 coefficient `2 + 2·(7/5) = 24/5`, for odd `n ≥ 750`. -/
 theorem llsCorrectionTerm_le_elementary
-    (hElem : AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement) {n : ℕ}
-    (hn : Odd n) (hn750 : 750 ≤ n) :
+    (hElem : AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement) {n : ℕ} (hn : Odd n)
+    (hn750 : 750 ≤ n) :
     LLS.llsCorrectionTerm (NumberTheory.characterModulus n) ≤
       (24 / 5 : ℝ) * Real.log (Real.log (NumberTheory.characterModulus n)) + 3 := by
   have hq : 3000 ≤ NumberTheory.characterModulus n := by
     unfold NumberTheory.characterModulus; omega
   have hy := (AnalyticNumberTheory.Arithmetic.log_log_pos_of_le hq).2
-  have hcount :=
-    AnalyticNumberTheory.Arithmetic.elementary_prime_count_term_le hElem hn hn750
+  have hcount := AnalyticNumberTheory.Arithmetic.elementary_prime_count_term_le hElem hn hn750
   have haux := LLS.llsAuxiliaryTerm_nonneg (NumberTheory.characterModulus n)
-  have hCeq :
-    (2 : ℝ) * AnalyticNumberTheory.Arithmetic.elementaryOmegaConstant = 14 / 5 := by
+  have hCeq : (2 : ℝ) * AnalyticNumberTheory.Arithmetic.elementaryOmegaConstant = 14 / 5 := by
     unfold AnalyticNumberTheory.Arithmetic.elementaryOmegaConstant; norm_num only
   unfold LLS.llsCorrectionTerm
   apply max_le
@@ -115,14 +113,12 @@ theorem elementaryUpperBound_eq_of_le {B : ℕ} (hB : 3 ≤ B) :
 /-- Every odd prime below the elementary radius is bounded by the elementary envelope. -/
 theorem odd_prime_le_elementaryUpperBound {B p : ℕ} (hp : p.Prime) (hpodd : Odd p)
     (hpR : (p : ℝ) ≤ elementaryRadius B) : p ≤ elementaryUpperBound B :=
-  (AnalyticNumberTheory.Arithmetic.le_greatestOddPrimeLE hp hpodd hpR).trans
-    (le_max_right _ _)
+  (AnalyticNumberTheory.Arithmetic.le_greatestOddPrimeLE hp hpodd hpR).trans (le_max_right _ _)
 
 /-- For odd `750 ≤ n ≤ B`, the elementary omega estimate bounds the LLS squared radius at `4n`
 by `elementaryRadius B`. -/
-theorem elementary_sq_le_radius
-    (hElem : AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement) {B n : ℕ}
-    (hn : Odd n) (hnB : n ≤ B) (hn750 : 750 ≤ n) :
+theorem elementary_sq_le_radius (hElem : AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement)
+    {B n : ℕ} (hn : Odd n) (hnB : n ≤ B) (hn750 : 750 ≤ n) :
     (Real.log (NumberTheory.characterModulus n : ℝ) +
           LLS.llsCorrectionTerm (NumberTheory.characterModulus n)) ^
         2 ≤
@@ -130,15 +126,12 @@ theorem elementary_sq_le_radius
   have hq : 3000 ≤ NumberTheory.characterModulus n := by
     unfold NumberTheory.characterModulus; omega
   have hB750 : 750 ≤ B := hn750.trans hnB
-  have hqpos : 0 < NumberTheory.characterModulus n :=
-    (by norm_num only : 0 < 3000).trans_le hq
+  have hqpos : 0 < NumberTheory.characterModulus n := (by norm_num only : 0 < 3000).trans_le hq
   have hmod := NumberTheory.characterModulus_le hnB
   have hx := (AnalyticNumberTheory.Arithmetic.log_log_pos_of_le hq).1
   have hy := (AnalyticNumberTheory.Arithmetic.log_log_pos_of_le hq).2
   have hqposReal : (0 : ℝ) < NumberTheory.characterModulus n := by exact_mod_cast hqpos
-  have hmodReal :
-    (NumberTheory.characterModulus n : ℝ) ≤
-      NumberTheory.characterModulus B := by
+  have hmodReal : (NumberTheory.characterModulus n : ℝ) ≤ NumberTheory.characterModulus B := by
     exact_mod_cast hmod
   have hlog := Real.log_le_log hqposReal hmodReal
   have hloglog := Real.log_le_log hx hlog
@@ -173,8 +166,8 @@ theorem elementary_sq_le_radius
 /-- LLS and the elementary bound together bound each large admissible least witness by the
 endpoint radius. -/
 theorem primeNegOneWitness_cast_le_elementaryRadius (hLLS : LLS.llsTheorem11S1Character)
-    (hElem : AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement) {B n : ℕ}
-    (hn : Odd n) (hns : ¬IsSquare n) (hnB : n ≤ B) (hn750 : 750 ≤ n)
+    (hElem : AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement) {B n : ℕ} (hn : Odd n)
+    (hns : ¬IsSquare n) (hnB : n ≤ B) (hn750 : 750 ≤ n)
     (hw : (NumberTheory.PrimeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ elementaryRadius B := by
   have hq : 3000 ≤ NumberTheory.characterModulus n := by

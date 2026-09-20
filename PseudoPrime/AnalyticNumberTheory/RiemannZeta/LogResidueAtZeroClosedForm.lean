@@ -40,8 +40,7 @@ theorem riemannZetaLogResidueAtZero_eq {x : ℝ} (hx : 0 < x) :
     rfl
   unfold riemannZetaLogResidueAtZero
   rw [heq, hprod.deriv]
-  simp only [Complex.cpow_zero, mul_one,
-    RiemannXi.logDeriv_riemannZeta_zero]
+  simp only [Complex.cpow_zero, mul_one, RiemannXi.logDeriv_riemannZeta_zero]
   ring
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

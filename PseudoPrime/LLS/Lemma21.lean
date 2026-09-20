@@ -25,8 +25,7 @@ theorem characterWeightedTerm_re_eq_ite {q n : ℕ} [NeZero q] (x : ℝ) (χ : D
     (hx : 0 < x) (hn : n ∈ Finset.Ioc 0 ⌊x⌋₊) (hsmall : llsTheorem11S1NoSmallPrime χ)
     (hlimit : x ≤ (llsTheorem11S1RadiusRoot q) ^ 2) :
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedTerm x χ n).re =
-      if Nat.Coprime n q then
-        AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm x n
+      if Nat.Coprime n q then AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm x n
       else 0 := by
   by_cases hcop : Nat.Coprime n q
   · rw [ite_eq_left hcop]
@@ -53,8 +52,7 @@ theorem characterWeightedTerm_re_eq_ite {q n : ℕ} [NeZero q] (x : ℝ) (χ : D
       simpa only [Int.cast_natCast] using
         (DirichletCharacter.apply_eq_zero_iff χ (n : ℤ)).mpr
           (by simpa only [Nat.isCoprime_iff_coprime] using hcop)
-    rw [AnalyticNumberTheory.Arithmetic.characterLogWeightedTerm, hχzero, mul_zero,
-      Complex.zero_re]
+    rw [AnalyticNumberTheory.Arithmetic.characterLogWeightedTerm, hχzero, mul_zero, Complex.zero_re]
 
 end LLSLemma21Internal
 
@@ -82,10 +80,9 @@ def LLSPart1CharacterWeightedDecomposition : Prop :=
     3000 ≤ q →
       χ ≠ 1 →
       llsTheorem11S1NoSmallPrime χ →
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-            ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re =
-        AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum
-            ((llsTheorem11S1RadiusRoot q) ^ 2) -
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+            χ).re =
+        AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum ((llsTheorem11S1RadiusRoot q) ^ 2) -
           AnalyticNumberTheory.Arithmetic.commonFactorLogWeightedSum
             ((llsTheorem11S1RadiusRoot q) ^ 2) q
 
@@ -114,8 +111,7 @@ theorem llsPart1CharacterWeightedDecomposition : LLSPart1CharacterWeightedDecomp
   trans
     ∑ n ∈ Finset.Ioc 0 ⌊(llsTheorem11S1RadiusRoot q) ^ 2⌋₊,
       if Nat.Coprime n q then
-        AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm
-          ((llsTheorem11S1RadiusRoot q) ^ 2) n
+        AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm ((llsTheorem11S1RadiusRoot q) ^ 2) n
       else 0
   · apply Finset.sum_congr rfl
     intro n hn
@@ -123,8 +119,7 @@ theorem llsPart1CharacterWeightedDecomposition : LLSPart1CharacterWeightedDecomp
   have hpartition :=
     Finset.sum_filter_add_sum_filter_not (s := Finset.Ioc 0 ⌊(llsTheorem11S1RadiusRoot q) ^ 2⌋₊)
       (f :=
-      AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm
-        ((llsTheorem11S1RadiusRoot q) ^ 2))
+      AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm ((llsTheorem11S1RadiusRoot q) ^ 2))
       (p := fun n ↦ Nat.Coprime n q)
   rw [← Finset.sum_filter]
   linarith only [hpartition]
@@ -137,11 +132,10 @@ theorem llsPart1WeightedRawLower (h21 : LLSRiemannWeightedLowerBound)
     (llsTheorem11S1RadiusRoot q) ^ 2 -
         Real.log (2 * Real.pi) * Real.log ((llsTheorem11S1RadiusRoot q) ^ 2) -
         1 -
-        2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass *
-          (llsTheorem11S1RadiusRoot q + 1) -
+        2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (llsTheorem11S1RadiusRoot q + 1) -
         (1 / 2 : ℝ) * q.primeFactors.card * (Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) ^ 2 ≤
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re := by
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ).re := by
   have hy : 1 < llsTheorem11S1RadiusRoot q := by
     exact
       (show (1 : ℝ) < 8 by norm_num only).trans
@@ -176,11 +170,10 @@ theorem llsPart1WeightedRawLower_of_riemann (h21 : LLSRiemannWeightedLowerBound)
     (llsTheorem11S1RadiusRoot q) ^ 2 -
         Real.log (2 * Real.pi) * Real.log ((llsTheorem11S1RadiusRoot q) ^ 2) -
         1 -
-        2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass *
-          (llsTheorem11S1RadiusRoot q + 1) -
+        2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (llsTheorem11S1RadiusRoot q + 1) -
         (1 / 2 : ℝ) * q.primeFactors.card * (Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) ^ 2 ≤
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re :=
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ).re :=
   llsPart1WeightedRawLower h21 llsPart1CharacterWeightedDecomposition χ hq hχ hsmall
 
 end PseudoPrime.LLS

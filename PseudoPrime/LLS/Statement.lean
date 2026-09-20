@@ -19,9 +19,7 @@ namespace PseudoPrime.LLS
 
 /-- The nonnegative auxiliary term `A(q)` from LLS Theorem 1.1. -/
 noncomputable def llsAuxiliaryTerm (q : ℕ) : ℝ :=
-  max 0
-    (2 * Real.log (Real.log q) - 8 / 5 -
-      AnalyticNumberTheory.Arithmetic.primeFactorLogSum q)
+  max 0 (2 * Real.log (Real.log q) - 8 / 5 - AnalyticNumberTheory.Arithmetic.primeFactorLogSum q)
 
 /-- The LLS auxiliary term is nonnegative by construction. -/
 theorem llsAuxiliaryTerm_nonneg (q : ℕ) : 0 ≤ llsAuxiliaryTerm q :=

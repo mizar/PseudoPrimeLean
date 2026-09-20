@@ -16,5 +16,4 @@ import PseudoPrime.LLS.Extensions.QNeOneLogWeightedBounds
 import PseudoPrime.LLS.Extensions.EvenWeightedComparison
 import PseudoPrime.LLS.WeightedComparisonGRH
 
-
 /-! Public umbrella for LLS-specific extensions and quadratic refinements. -/

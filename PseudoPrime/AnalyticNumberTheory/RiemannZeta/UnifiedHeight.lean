@@ -34,44 +34,28 @@ theorem tendsto_farLeftGoodHeightIndex_atTop :
   exact_mod_cast
     (show (m : ℝ) ≤ ⌈farLeftHeightSeq m⌉₊ by
       exact
-        (le_trans
-          (by
-            linarith only [add_one_le_farLeftHeightSeq
-                m])
+        (le_trans (by linarith only [add_one_le_farLeftHeightSeq m])
           (Nat.le_ceil (farLeftHeightSeq m))))
 
 /-- The unified contour heights tend to infinity. -/
 theorem tendsto_unifiedContourHeightSeq_atTop :
     Filter.Tendsto unifiedContourHeightSeq Filter.atTop Filter.atTop := by
-  exact
-    tendsto_goodHeightSeq_atTop.comp
-      tendsto_farLeftGoodHeightIndex_atTop
+  exact tendsto_goodHeightSeq_atTop.comp tendsto_farLeftGoodHeightIndex_atTop
 
 /-- The unified height dominates the original far-left height at every stage. -/
 theorem farLeftHeightSeq_le_unifiedContourHeightSeq (m : ℕ) :
-    farLeftHeightSeq m ≤
-      unifiedContourHeightSeq m := by
+    farLeftHeightSeq m ≤ unifiedContourHeightSeq m := by
   calc
-    farLeftHeightSeq m ≤
-        (farLeftGoodHeightIndex m : ℝ) :=
-      Nat.le_ceil (farLeftHeightSeq m)
+    farLeftHeightSeq m ≤ (farLeftGoodHeightIndex m : ℝ) := Nat.le_ceil (farLeftHeightSeq m)
     _ ≤ 8 + (farLeftGoodHeightIndex m : ℝ) := by linarith only []
-    _ ≤ unifiedContourHeightSeq m := by
-      exact
-        (goodHeightSeq_mem
-            (farLeftGoodHeightIndex m)).1
+    _ ≤ unifiedContourHeightSeq m := by exact (goodHeightSeq_mem (farLeftGoodHeightIndex m)).1
 
 /-- The unified height is at most a fixed additive enlargement of the far-left height. -/
 theorem unifiedContourHeightSeq_lt_farLeftHeightSeq_add_ten (m : ℕ) :
-    unifiedContourHeightSeq m <
-      farLeftHeightSeq m + 10 := by
-  have hgood :=
-    (goodHeightSeq_mem (farLeftGoodHeightIndex m)).2
-  have hceil :
-    (farLeftGoodHeightIndex m : ℝ) <
-      farLeftHeightSeq m + 1 := by
-    exact
-      Nat.ceil_lt_add_one (farLeftHeightSeq_pos m).le
+    unifiedContourHeightSeq m < farLeftHeightSeq m + 10 := by
+  have hgood := (goodHeightSeq_mem (farLeftGoodHeightIndex m)).2
+  have hceil : (farLeftGoodHeightIndex m : ℝ) < farLeftHeightSeq m + 1 := by
+    exact Nat.ceil_lt_add_one (farLeftHeightSeq_pos m).le
   unfold unifiedContourHeightSeq at *
   linarith only [hgood, hceil]
 
@@ -81,9 +65,7 @@ theorem unifiedContourHeightSeq_good (m : ℕ) :
     ∀ ρ : ℂ,
       riemannZeta ρ = 0 →
         |ρ.im - (8 + (farLeftGoodHeightIndex m : ℝ))| ≤ 2 →
-        1 /
-            (4 * jensenLogConst *
-              Real.log (8 + (farLeftGoodHeightIndex m : ℝ) + 2)) ≤
+        1 / (4 * jensenLogConst * Real.log (8 + (farLeftGoodHeightIndex m : ℝ) + 2)) ≤
           |unifiedContourHeightSeq m - ρ.im| := by
   exact goodHeightSeq_good (farLeftGoodHeightIndex m)
 

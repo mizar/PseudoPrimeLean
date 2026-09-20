@@ -42,8 +42,8 @@ theorem exists_primeNegOneWitness_of_LLS (hLLS : LLS.llsTheorem11S1Character) (n
       (by simpa only [NumberTheory.characterModulus] using hq)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns)
   have hℓmem :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hℓprime
-      hℓndvd hℓchar
+    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hℓprime hℓndvd
+      hℓchar
   exact ⟨ℓ, hℓmem, by simpa only [NumberTheory.characterModulus] using hℓbound⟩
 
 /-- Under the LLS bound, the least odd-prime Jacobi `-1` witness satisfies its explicit bound. -/

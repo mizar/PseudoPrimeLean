@@ -39,8 +39,7 @@ theorem primePrimorialCount_zero : primePrimorialCount 0 = 1 := by
 
 /-- Adding one factor multiplies the count-indexed primorial by the next prime. -/
 theorem primePrimorialCount_succ (k : ℕ) :
-    primePrimorialCount (k + 1) =
-      primePrimorialCount k * primeByIndex k := by
+    primePrimorialCount (k + 1) = primePrimorialCount k * primeByIndex k := by
   simp only [primePrimorialCount, Finset.prod_range_succ]
 
 /-- Every count-indexed primorial is positive. -/
@@ -77,8 +76,7 @@ theorem primePrimorialCount_card_le_prod {s : Finset ℕ} (hprime : ∀ p ∈ s,
     primePrimorialCount s.card ≤ ∏ p ∈ s, p := by
   rw [primePrimorialCount, ← Fin.prod_univ_eq_prod_range]
   calc
-    ∏ i : Fin s.card, primeByIndex i ≤
-        ∏ i : Fin s.card, s.orderEmbOfFin rfl i :=
+    ∏ i : Fin s.card, primeByIndex i ≤ ∏ i : Fin s.card, s.orderEmbOfFin rfl i :=
       Finset.prod_le_prod fun i _ => primeByIndex_le_orderEmbOfFin hprime i
     _ = ∏ p : s, (p : ℕ) := Equiv.prod_comp (s.orderIsoOfFin rfl).toEquiv fun p : s => (p : ℕ)
     _ = ∏ p ∈ s, p := by simpa only [id_eq] using (Finset.prod_coe_sort s id)
@@ -111,11 +109,8 @@ theorem primeByIndex_five : primeByIndex 5 = 13 := by
 
 /-- The product of the first six primes is `30030`. -/
 theorem primePrimorialCount_six_eq : primePrimorialCount 6 = 30030 := by
-  simp only [primePrimorialCount, Finset.prod_range_succ,
-    Finset.prod_range_zero, primeByIndex_zero,
-    primeByIndex_one, primeByIndex_two,
-    primeByIndex_three, primeByIndex_four,
-    primeByIndex_five]
+  simp only [primePrimorialCount, Finset.prod_range_succ, Finset.prod_range_zero, primeByIndex_zero,
+    primeByIndex_one, primeByIndex_two, primeByIndex_three, primeByIndex_four, primeByIndex_five]
   norm_num only
 
 end PseudoPrime.NumberTheory

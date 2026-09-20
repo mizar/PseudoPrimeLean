@@ -40,9 +40,7 @@ theorem norm_digamma_le_of_logGamma_ball_bound {c : ℂ} {R U : ℝ} (hR : 0 < R
     (hball : ∀ w ∈ Metric.ball c R, 0 < w.re) (hMpos : Real.log ‖Complex.Gamma c‖ < U)
     (hupper : ∀ w ∈ Metric.ball c R, Real.log ‖Complex.Gamma w‖ ≤ U) :
     ‖Complex.digamma c‖ ≤ 4 * (U - Real.log ‖Complex.Gamma c‖) / R := by
-  obtain ⟨g, hg', hgRe⟩ :=
-    RiemannZeta.exists_hasDerivAt_digamma_re_eq_log_norm_Gamma hR
-      hball
+  obtain ⟨g, hg', hgRe⟩ := RiemannZeta.exists_hasDerivAt_digamma_re_eq_log_norm_Gamma hR hball
   have hccenter : c ∈ Metric.ball c R := Metric.mem_ball_self hR
   set M : ℝ := U - (g c).re with hM_def
   have hMpos' : 0 < M := by
@@ -147,8 +145,7 @@ theorem norm_digamma_sub_shift_nat_le {z : ℂ} (n : ℕ) (hz : z.im ≠ 0) :
     ih =>
     have hzn_im : (z + (n : ℂ)).im = z.im := by
       simp only [Complex.add_im, Complex.natCast_im, add_zero]
-    have hzm : ∀ m : ℕ, z ≠ -(m : ℂ) :=
-      ne_neg_nat_of_im_ne_zero hz
+    have hzm : ∀ m : ℕ, z ≠ -(m : ℂ) := ne_neg_nat_of_im_ne_zero hz
     have hzn_ne : ∀ m : ℕ, z + (n : ℂ) ≠ -(m : ℂ) := by
       intro m h
       apply hzm (m + n)
@@ -275,8 +272,7 @@ theorem exists_C_forall_norm_digamma_large_im_le :
         ∀ a t : ℝ,
           4 * (|a| + 3) ≤ |t| →
             ‖Complex.digamma ((a : ℂ) + (t : ℂ) * Complex.I)‖ ≤ C * (1 + Real.log (|t| + 2)) := by
-  obtain ⟨C₁, hC₁⟩ :=
-    RiemannZeta.exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform
+  obtain ⟨C₁, hC₁⟩ := RiemannZeta.exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform
   set C : ℝ := 69 + 80 * Real.pi + 32 * max C₁ 0 + 64 + 10 with hC_def
   have hCnonneg : 0 ≤ C := by
     have h1 : (0 : ℝ) ≤ max C₁ 0 := le_max_right _ _
@@ -344,8 +340,7 @@ theorem exists_C_forall_norm_digamma_large_im_le :
     have hwre_le := hupper1 w hw
     have hwre_ge1 := hball_re1 w hw
     have h1 : Real.Gamma w.re ≤ max (Real.Gamma 1) (Real.Gamma X) :=
-      RiemannZeta.Real.Gamma_le_max_of_mem_Icc' (by norm_num only)
-        hX1 ⟨hwre_ge1, hwre_le⟩
+      RiemannZeta.Real.Gamma_le_max_of_mem_Icc' (by norm_num only) hX1 ⟨hwre_ge1, hwre_le⟩
     have hmax_eq : max (Real.Gamma 1) (Real.Gamma X) = Real.Gamma X := by
       rw [Real.Gamma_one]; exact max_eq_right hΓX_ge1
     rw [hmax_eq] at h1

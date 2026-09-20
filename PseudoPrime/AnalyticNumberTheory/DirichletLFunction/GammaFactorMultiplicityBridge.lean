@@ -122,11 +122,8 @@ theorem analyticOrderAt_LFunction_eq_completedLFunction_of_gamma_ne_zero {N : �
     DirichletCharacter.LFunction χ = fun z =>
       DirichletCharacter.completedLFunction χ z * (DirichletCharacter.gammaFactor χ z)⁻¹ := by
     funext z
-    rw [dirichletLFunction_eq_completed_div_gammaFactor
-        χ z
-        (Or.inr
-          (dirichletCharacter_level_ne_one_of_ne_one
-            hne)),
+    rw [dirichletLFunction_eq_completed_div_gammaFactor χ z
+        (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne)),
       div_eq_mul_inv]
   have hmul :
     analyticOrderAt

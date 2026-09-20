@@ -41,8 +41,7 @@ directly against the named `primitiveHorizontalHeightSeq` (rather than an opaque
 steps can reuse the same height sequence's nonvanishing/good-height facts without re-choosing `T`.
 -/
 theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     ∃ η : ℕ → ℝ,
       Filter.Tendsto η Filter.atTop (nhds 0) ∧
@@ -61,8 +60,7 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small {N : ℕ} [
                             Complex.I)‖ /
                     (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k) ^ 2 ≤
                   η k := by
-  obtain ⟨CΓ, hCΓnonneg, hCΓ⟩ :=
-    exists_norm_logDeriv_gammaFactor_horizontal_le
+  obtain ⟨CΓ, hCΓnonneg, hCΓ⟩ := exists_norm_logDeriv_gammaFactor_horizontal_le
   set T : ℕ → ℝ := primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad with hT_def
   set ε : ℕ → ℝ := primitiveHorizontalStripEpsilon hN2 hGRH hprimitive hne hinv hquad with hε_def
   set η : ℕ → ℝ := fun k =>
@@ -137,9 +135,7 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small {N : ℕ} [
         intro h
         rw [h] at hTreal_ge1
         norm_num only at hTreal_ge1
-      have hbridge :=
-        logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor
-          hne hFne hsim_ne
+      have hbridge := logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor hne hFne hsim_ne
       have hgamma_bound := hCΓ χ σ Treal hσ hTreal_ge1
       rw [habs] at hgamma_bound
       have hcompleted_diff_le :
@@ -240,8 +236,7 @@ later steps can reuse the same height sequence's nonvanishing/good-height facts 
 re-choosing `T`.
 -/
 theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ η : ℕ → ℝ,
       Filter.Tendsto η Filter.atTop (nhds 0) ∧
@@ -260,8 +255,7 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh {N :
                             Complex.I)‖ /
                     (primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k) ^ 2 ≤
                   η k := by
-  obtain ⟨CΓ, hCΓnonneg, hCΓ⟩ :=
-    exists_norm_logDeriv_gammaFactor_horizontal_le
+  obtain ⟨CΓ, hCΓnonneg, hCΓ⟩ := exists_norm_logDeriv_gammaFactor_horizontal_le
   set T : ℕ → ℝ := primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv with hT_def
   set ε : ℕ → ℝ := primitiveHorizontalStripEpsilon_of_grh hN2 hGRH hprimitive hne hinv with hε_def
   set η : ℕ → ℝ := fun k =>
@@ -336,9 +330,7 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh {N :
         intro h
         rw [h] at hTreal_ge1
         norm_num only at hTreal_ge1
-      have hbridge :=
-        logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor
-          hne hFne hsim_ne
+      have hbridge := logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor hne hFne hsim_ne
       have hgamma_bound := hCΓ χ σ Treal hσ hTreal_ge1
       rw [habs] at hgamma_bound
       have hcompleted_diff_le :

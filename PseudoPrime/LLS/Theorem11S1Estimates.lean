@@ -42,14 +42,12 @@ theorem llsPart1PrimitiveWeightedUpperAt_of_grh_generic {q : ℕ} [NeZero q]
     exact inv_eq_one.mp hinvone
   have hN2 : 2 ≤ χ.conductor := by
     have hN1 : χ.conductor ≠ 1 :=
-      AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-        hprimne
+      AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
     have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
     omega
   have hy : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
   have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := lt_trans (by norm_num only) hy
-  have hx64 : (64 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 :=
-    Analysis.sq_ge_64_of_ge_8 hy.le
+  have hx64 : (64 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 := Analysis.sq_ge_64_of_ge_8 hy.le
   have hsqrt : Real.sqrt ((llsTheorem11S1RadiusRoot q) ^ 2) = llsTheorem11S1RadiusRoot q := by
     rw [Real.sqrt_sq_eq_abs, abs_of_pos hypos]
   have hraw := primitiveGenericLogWeightedUpper_of_grh_generic hN2 hGRH hprimitive hprimne hinv hx64
@@ -88,8 +86,7 @@ theorem llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_generic {q : ℕ}
     exact inv_eq_one.mp hinvone
   have hy : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
   have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := lt_trans (by norm_num only) hy
-  have hx64 : (64 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 :=
-    Analysis.sq_ge_64_of_ge_8 hy.le
+  have hx64 : (64 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 := Analysis.sq_ge_64_of_ge_8 hy.le
   have hsqrt : Real.sqrt ((llsTheorem11S1RadiusRoot q) ^ 2) = llsTheorem11S1RadiusRoot q := by
     rw [Real.sqrt_sq_eq_abs, abs_of_pos hypos]
   have hraw :=
@@ -97,8 +94,7 @@ theorem llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_generic {q : ℕ}
       (show 2 ≤ χ.conductor
         by
         have hN1 : χ.conductor ≠ 1 :=
-          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-            hprimne
+          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
         omega)
       hGRH hprimitive hprimne hinv hx64
@@ -127,8 +123,7 @@ theorem llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_generic {q : ℕ}
           (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum
                 (llsTheorem11S1RadiusRoot q ^ 2) χ.primitiveCharacter).re +
             ((1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 *
-                |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                    χ.primitiveCharacter| +
+                |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
               1 / 4) :=
         by ring
       _ ≤
@@ -136,11 +131,9 @@ theorem llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_generic {q : ℕ}
                 (Real.log χ.conductor - Real.log Real.pi) -
               1 / 4 -
               (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 *
-                |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                    χ.primitiveCharacter| +
+                |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
             ((1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 *
-                |AnalyticNumberTheory.DirichletLFunction.primitiveBRe
-                    χ.primitiveCharacter| +
+                |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| +
               1 / 4) :=
         hstep
       _ = _ := by ring
@@ -235,8 +228,7 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero
     (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hq : 3000 ≤ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (h24 : LLSRiemannReciprocalLowerBound) (hsmall : llsTheorem11S1NoSmallPrime χ) :
-    (characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re ≤
+    (characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re ≤
       llsPart1PrimitiveFullLevelUpperBound q := by
   have hweighted := llsPart1PrimitiveWeightedUpperAt_of_grh_generic χ hq hne hGRH
   unfold LLSPart1PrimitiveWeightedUpperAt at hweighted
@@ -254,9 +246,7 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero
   have hx2 : (2 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 := by
     have h64 := Analysis.sq_ge_64_of_ge_8 hy8.le
     exact le_trans (by norm_num only) h64
-  have habsorb :=
-    primitiveLogConductorAbsorption
-      ((llsTheorem11S1RadiusRoot q) ^ 2) χ hx2 hqd
+  have habsorb := primitiveLogConductorAbsorption ((llsTheorem11S1RadiusRoot q) ^ 2) χ hx2 hqd
   have hlogxnn : (0 : ℝ) ≤ Real.log ((llsTheorem11S1RadiusRoot q) ^ 2) :=
     Real.log_nonneg (le_trans (by norm_num only) hx2)
   have hC22nonneg :
@@ -301,8 +291,7 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero
   rw [show Real.log ((χ.conductor : ℝ) / Real.pi) = Real.log χ.conductor - Real.log Real.pi from
       Real.log_div (by exact_mod_cast χ.conductor_ne_zero) Real.pi_ne_zero] at hweighted
   change
-    (characterLogWeightedSum
-          (llsTheorem11S1RadiusRoot q ^ 2) χ).re ≤
+    (characterLogWeightedSum (llsTheorem11S1RadiusRoot q ^ 2) χ).re ≤
       (2 * llsTheorem11S1RadiusRoot q + 2 + Real.log (llsTheorem11S1RadiusRoot q ^ 2)) /
               (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 *
             (1 / 2 * (1 - 1 / llsTheorem11S1RadiusRoot q ^ 2) * (Real.log ↑q - Real.log Real.pi) -
@@ -311,17 +300,14 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero
           1 / 2 * (Real.log ↑q - Real.log Real.pi) * Real.log (llsTheorem11S1RadiusRoot q ^ 2) -
         11 / 4
   change
-    (characterLogWeightedSum
-          (llsTheorem11S1RadiusRoot q ^ 2) χ.primitiveCharacter).re ≤
+    (characterLogWeightedSum (llsTheorem11S1RadiusRoot q ^ 2) χ.primitiveCharacter).re ≤
       (2 * llsTheorem11S1RadiusRoot q + 2 + Real.log (llsTheorem11S1RadiusRoot q ^ 2)) *
-            |primitiveBRe
-                χ.primitiveCharacter| +
+            |primitiveBRe χ.primitiveCharacter| +
           (Real.log ↑χ.conductor - Real.log Real.pi) * Real.log (llsTheorem11S1RadiusRoot q ^ 2) /
             2 -
         11 / 4 at hweighted
   have hmain :
-    (characterLogWeightedSum
-          (llsTheorem11S1RadiusRoot q ^ 2) χ.primitiveCharacter).re ≤
+    (characterLogWeightedSum (llsTheorem11S1RadiusRoot q ^ 2) χ.primitiveCharacter).re ≤
       (2 * llsTheorem11S1RadiusRoot q + 2 + Real.log (llsTheorem11S1RadiusRoot q ^ 2)) /
               (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 *
             (1 / 2 * (1 - 1 / llsTheorem11S1RadiusRoot q ^ 2) * (Real.log ↑q - Real.log Real.pi) -
@@ -332,10 +318,8 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero
         11 / 4 := by
     exact hweighted.trans (sub_le_sub_right (add_le_add_left hmul _) _)
   have hsub :
-    (characterLogWeightedSum
-            (llsTheorem11S1RadiusRoot q ^ 2) χ.primitiveCharacter).re -
-        primitiveLogLevelChangeCorrection
-          (llsTheorem11S1RadiusRoot q ^ 2) χ ≤
+    (characterLogWeightedSum (llsTheorem11S1RadiusRoot q ^ 2) χ.primitiveCharacter).re -
+        primitiveLogLevelChangeCorrection (llsTheorem11S1RadiusRoot q ^ 2) χ ≤
       (2 * llsTheorem11S1RadiusRoot q + 2 + Real.log (llsTheorem11S1RadiusRoot q ^ 2)) /
               (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 *
             (1 / 2 * (1 - 1 / llsTheorem11S1RadiusRoot q ^ 2) * (Real.log ↑q - Real.log Real.pi) -
@@ -344,24 +328,19 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero
           (Real.log ↑χ.conductor - Real.log Real.pi) * Real.log (llsTheorem11S1RadiusRoot q ^ 2) /
             2 -
         11 / 4 -
-        primitiveLogLevelChangeCorrection
-          (llsTheorem11S1RadiusRoot q ^ 2) χ :=
+        primitiveLogLevelChangeCorrection (llsTheorem11S1RadiusRoot q ^ 2) χ :=
     sub_le_sub_right hmain _
   have hcorr :
     (Real.log ↑χ.conductor - Real.log Real.pi) * Real.log (llsTheorem11S1RadiusRoot q ^ 2) / 2 -
-        primitiveLogLevelChangeCorrection
-          (llsTheorem11S1RadiusRoot q ^ 2) χ ≤
+        primitiveLogLevelChangeCorrection (llsTheorem11S1RadiusRoot q ^ 2) χ ≤
       (Real.log ↑q - Real.log Real.pi) * Real.log (llsTheorem11S1RadiusRoot q ^ 2) / 2 := by
     have h :=
       add_le_add_right habsorb (-Real.log Real.pi * Real.log (llsTheorem11S1RadiusRoot q ^ 2) / 2)
     convert h using 1 <;> ring
   calc
-    (characterLogWeightedSum
-            (llsTheorem11S1RadiusRoot q ^ 2) χ).re =
-        (characterLogWeightedSum
-              (llsTheorem11S1RadiusRoot q ^ 2) χ.primitiveCharacter).re -
-          primitiveLogLevelChangeCorrection
-            (llsTheorem11S1RadiusRoot q ^ 2) χ :=
+    (characterLogWeightedSum (llsTheorem11S1RadiusRoot q ^ 2) χ).re =
+        (characterLogWeightedSum (llsTheorem11S1RadiusRoot q ^ 2) χ.primitiveCharacter).re -
+          primitiveLogLevelChangeCorrection (llsTheorem11S1RadiusRoot q ^ 2) χ :=
       by
       rw [hexact]
       ring
@@ -379,16 +358,14 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero
                     ((Real.log ↑χ.conductor - Real.log Real.pi) *
                           Real.log (llsTheorem11S1RadiusRoot q ^ 2) /
                         2 -
-                      primitiveLogLevelChangeCorrection
-                        (llsTheorem11S1RadiusRoot q ^ 2) χ) -
+                      primitiveLogLevelChangeCorrection (llsTheorem11S1RadiusRoot q ^ 2) χ) -
                   11 / 4 :=
               by ring
             _ =
                 ((Real.log ↑χ.conductor - Real.log Real.pi) *
                           Real.log (llsTheorem11S1RadiusRoot q ^ 2) /
                         2 -
-                      primitiveLogLevelChangeCorrection
-                        (llsTheorem11S1RadiusRoot q ^ 2) χ) +
+                      primitiveLogLevelChangeCorrection (llsTheorem11S1RadiusRoot q ^ 2) χ) +
                     (2 * llsTheorem11S1RadiusRoot q + 2 +
                           Real.log (llsTheorem11S1RadiusRoot q ^ 2)) /
                         (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 *
@@ -410,17 +387,17 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero
                   11 / 4 :=
               by
               convert
-                  sub_le_sub_right
-                    (add_le_add_left hcorr
-                      ((2 * llsTheorem11S1RadiusRoot q + 2 +
-                            Real.log (llsTheorem11S1RadiusRoot q ^ 2)) /
-                          (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 *
-                        (1 / 2 * (1 - 1 / llsTheorem11S1RadiusRoot q ^ 2) *
-                            (Real.log ↑q - Real.log Real.pi) -
-                          llsAuxiliaryTerm q -
-                          1 / 4)))
-                    (11 / 4) using
-                  1
+                sub_le_sub_right
+                  (add_le_add_left hcorr
+                    ((2 * llsTheorem11S1RadiusRoot q + 2 +
+                          Real.log (llsTheorem11S1RadiusRoot q ^ 2)) /
+                        (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 *
+                      (1 / 2 * (1 - 1 / llsTheorem11S1RadiusRoot q ^ 2) *
+                          (Real.log ↑q - Real.log Real.pi) -
+                        llsAuxiliaryTerm q -
+                        1 / 4)))
+                  (11 / 4) using
+                1
               try ring
             _ = _ := by ring)
 
@@ -435,8 +412,8 @@ theorem characterLogWeightedSum_re_le_upper_of_grh_generic {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hq : 3000 ≤ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (h24 : LLSRiemannReciprocalLowerBound) (hsmall : llsTheorem11S1NoSmallPrime χ) :
-    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re ≤
+    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ).re ≤
       llsTheorem11S1UpperBound q := by
   have hfull := characterLogWeightedSum_re_le_fullLevel_of_grh_generic χ hq hne hGRH h24 hsmall
   have hcoarse := llsPart1PrimitiveFullLevelUpperBound_le_fullLevel hq
@@ -456,8 +433,7 @@ theorem llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit {q : ℕ} [N
     (hlower : LLSPart1PrimitiveReciprocalLowerAtWithQuotient χ)
     (haux :
       llsAuxiliaryTerm q ≤
-        2 * Real.log (Real.log q) - 8 / 5 -
-          AnalyticNumberTheory.Arithmetic.primeFactorLogSum q)
+        2 * Real.log (Real.log q) - 8 / 5 - AnalyticNumberTheory.Arithmetic.primeFactorLogSum q)
     (hlog : 0 ≤ Real.log ((χ.conductor : ℝ) / Real.pi)) :
     LLSPart1PrimitiveZeroMassRawUpperWithQuotientAt χ b := by
   have hy : (8 : ℝ) ≤ llsTheorem11S1RadiusRoot q := (eight_lt_llsTheorem11S1RadiusRoot hq).le
@@ -483,8 +459,7 @@ theorem llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit {q : ℕ} [N
   have hauxnonneg := llsAuxiliaryTerm_nonneg q
   have hbase :
     llsAuxiliaryTerm q =
-      2 * Real.log (Real.log q) - 8 / 5 -
-        AnalyticNumberTheory.Arithmetic.primeFactorLogSum q := by
+      2 * Real.log (Real.log q) - 8 / 5 - AnalyticNumberTheory.Arithmetic.primeFactorLogSum q := by
     exact le_antisymm haux (le_max_right _ _)
   have hraw' := hraw
   have hlower' := hlower
@@ -640,8 +615,7 @@ theorem llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit {q : ℕ} [N
               (1 / 2) * (1 - 1 / (llsTheorem11S1RadiusRoot q) ^ 2) *
                   Real.log ((χ.conductor : ℝ) / Real.pi) +
                 (-llsAuxiliaryTerm q - 1 / 4 +
-                  AnalyticNumberTheory.Arithmetic.primeFactorLogSum
-                    (q / χ.conductor)) :=
+                  AnalyticNumberTheory.Arithmetic.primeFactorLogSum (q / χ.conductor)) :=
             by ring
           _ ≤ _ := h
           _ = _ := by ring
@@ -652,14 +626,12 @@ theorem llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit {q : ℕ} [N
         by
         have h :=
           add_le_add hauxterm
-            (le_refl
-              (AnalyticNumberTheory.Arithmetic.primeFactorLogSum (q / χ.conductor)))
+            (le_refl (AnalyticNumberTheory.Arithmetic.primeFactorLogSum (q / χ.conductor)))
         calc
           _ =
               Real.log ((χ.conductor : ℝ) / Real.pi) / 2 +
                 (-llsAuxiliaryTerm q - 1 / 4 +
-                  AnalyticNumberTheory.Arithmetic.primeFactorLogSum
-                    (q / χ.conductor)) :=
+                  AnalyticNumberTheory.Arithmetic.primeFactorLogSum (q / χ.conductor)) :=
             by ring
           _ ≤ _ := add_le_add (le_refl (Real.log ((χ.conductor : ℝ) / Real.pi) / 2)) h
           _ = _ := by ring
@@ -681,13 +653,11 @@ theorem llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit_of_conductor
     (hlower : LLSPart1PrimitiveReciprocalLowerAtWithQuotient χ)
     (haux :
       llsAuxiliaryTerm q ≤
-        2 * Real.log (Real.log q) - 8 / 5 -
-          AnalyticNumberTheory.Arithmetic.primeFactorLogSum q) :
+        2 * Real.log (Real.log q) - 8 / 5 - AnalyticNumberTheory.Arithmetic.primeFactorLogSum q) :
     LLSPart1PrimitiveZeroMassRawUpperWithQuotientAt χ b := by
   exact
     llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit χ b hq hraw hlower haux
-      (AnalyticNumberTheory.Arithmetic.log_conductor_div_pi_nonneg_of_four_le
-        hconductor)
+      (AnalyticNumberTheory.Arithmetic.log_conductor_div_pi_nonneg_of_four_le hconductor)
 
 /-!
 Restricted raw shared-witness core for the branch where both numerical side conditions are
@@ -702,8 +672,7 @@ def LLSPart1PrimitiveRawCoreBoundsWithQuotientOfLargeConductor : Prop :=
       llsTheorem11S1NoSmallPrime χ →
       4 ≤ χ.conductor →
       llsAuxiliaryTerm q ≤
-        2 * Real.log (Real.log q) - 8 / 5 -
-          AnalyticNumberTheory.Arithmetic.primeFactorLogSum q →
+        2 * Real.log (Real.log q) - 8 / 5 - AnalyticNumberTheory.Arithmetic.primeFactorLogSum q →
       ∃ b : ℝ,
         0 ≤ b ∧
           LLSPart1PrimitiveWeightedUpperAt χ b ∧
@@ -722,16 +691,16 @@ theorem llsPart1PrimitiveRawCoreBoundsWithQuotientOfLargeConductor_of_grh_generi
   intro q _ χ hq hne hsmall hconductor haux
   let _ : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
   refine
-    ⟨|AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|,
-      abs_nonneg _, ?_, ?_, ?_⟩
+    ⟨|AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|, abs_nonneg _, ?_,
+      ?_, ?_⟩
   · exact llsPart1PrimitiveWeightedUpperAt_of_grh_generic χ hq hne hGRH
   · exact llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_riemann h24 χ hq hsmall
   · have hraw := llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_generic χ hq hne hGRH
     have hlower := llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_riemann h24 χ hq hsmall
     exact
       llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit_of_conductor_ge_four χ
-        |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| hq
-        hconductor hraw hlower haux
+        |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| hq hconductor
+        hraw hlower haux
 
 /-!
 The simplified large-conductor core obtained from the raw core. This consumes
@@ -745,8 +714,7 @@ def LLSPart1PrimitiveCoreBoundsWithQuotientOfLargeConductor : Prop :=
       llsTheorem11S1NoSmallPrime χ →
       4 ≤ χ.conductor →
       llsAuxiliaryTerm q ≤
-        2 * Real.log (Real.log q) - 8 / 5 -
-          AnalyticNumberTheory.Arithmetic.primeFactorLogSum q →
+        2 * Real.log (Real.log q) - 8 / 5 - AnalyticNumberTheory.Arithmetic.primeFactorLogSum q →
       ∃ b : ℝ,
         0 ≤ b ∧
           LLSPart1PrimitiveWeightedUpperAt χ b ∧ LLSPart1PrimitiveZeroMassUpperWithQuotientAt χ b
@@ -778,10 +746,9 @@ theorem llsPrimitiveLogWeightedSum_re_le_comparisonUpperWithQuotient_of_large_co
     (hconductor : 4 ≤ χ.conductor)
     (haux :
       llsAuxiliaryTerm q ≤
-        2 * Real.log (Real.log q) - 8 / 5 -
-          AnalyticNumberTheory.Arithmetic.primeFactorLogSum q) :
-    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ.primitiveCharacter).re ≤
+        2 * Real.log (Real.log q) - 8 / 5 - AnalyticNumberTheory.Arithmetic.primeFactorLogSum q) :
+    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ.primitiveCharacter).re ≤
       llsTheorem11S1PrimitiveUpperBound χ +
         (2 * llsTheorem11S1RadiusRoot q + 2 + Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) *
           llsPart1PrimitiveReciprocalQuotientCorrection χ := by
@@ -804,10 +771,9 @@ theorem characterLogWeightedSum_re_le_comparisonUpperWithQuotient_of_large_condu
     (hconductor : 4 ≤ χ.conductor)
     (haux :
       llsAuxiliaryTerm q ≤
-        2 * Real.log (Real.log q) - 8 / 5 -
-          AnalyticNumberTheory.Arithmetic.primeFactorLogSum q) :
-    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re ≤
+        2 * Real.log (Real.log q) - 8 / 5 - AnalyticNumberTheory.Arithmetic.primeFactorLogSum q) :
+    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ).re ≤
       llsTheorem11S1ComparisonUpperBoundWithQuotient χ := by
   have hprimitive :=
     llsPrimitiveLogWeightedSum_re_le_comparisonUpperWithQuotient_of_large_conductor hGRH h24 χ hq
@@ -819,16 +785,16 @@ theorem characterLogWeightedSum_re_le_comparisonUpperWithQuotient_of_large_condu
       ((llsTheorem11S1RadiusRoot q) ^ 2) χ (sq_pos_of_pos hy)
   have hre :=
     Complex.re_le_norm
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ -
-        AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ.primitiveCharacter)
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ -
+        AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ.primitiveCharacter)
   rw [llsTheorem11S1ComparisonUpperBoundWithQuotient, llsTheorem11S1ComparisonUpperBound] at ⊢
   calc
-    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-            ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re =
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-                ((llsTheorem11S1RadiusRoot q) ^ 2) χ -
+    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+            χ).re =
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+                χ -
               AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
                 ((llsTheorem11S1RadiusRoot q) ^ 2) χ.primitiveCharacter).re +
           (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
@@ -837,8 +803,8 @@ theorem characterLogWeightedSum_re_le_comparisonUpperWithQuotient_of_large_condu
       rw [Complex.sub_re]
       ring
     _ ≤
-        ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-                ((llsTheorem11S1RadiusRoot q) ^ 2) χ -
+        ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+                χ -
               AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
                 ((llsTheorem11S1RadiusRoot q) ^ 2) χ.primitiveCharacter‖ +
           (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
@@ -903,8 +869,7 @@ theorem llsPart1PrimitiveReciprocalQuotientCorrection_le_log_quotient_factor {q 
       (1 - 1 / llsTheorem11S1RadiusRoot q)⁻¹ ^ 2 * Real.log (q / χ.conductor : ℕ) := by
   unfold llsPart1PrimitiveReciprocalQuotientCorrection
   exact
-    mul_le_mul_of_nonneg_left
-      (AnalyticNumberTheory.Arithmetic.primeFactorLogSum_quotient_le_log χ)
+    mul_le_mul_of_nonneg_left (AnalyticNumberTheory.Arithmetic.primeFactorLogSum_quotient_le_log χ)
       (sq_nonneg _)
 
 /-!

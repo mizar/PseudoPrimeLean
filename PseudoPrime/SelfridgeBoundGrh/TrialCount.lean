@@ -34,8 +34,7 @@ def classicalTrialCountThrough (i : ℕ) : ℕ :=
 /-- For a classical candidate `i` (odd and at least `5`), the trial count equals `(i-3)/2`.
 Unfolding the count and using the candidate conditions gives this alternative closed form. -/
 theorem classicalTrialCountThrough_eq_sub_three_div_two {i : ℕ}
-    (hi : PrimeTest.isClassicalCandidate i) :
-    classicalTrialCountThrough i = (i - 3) / 2 := by
+    (hi : PrimeTest.isClassicalCandidate i) : classicalTrialCountThrough i = (i - 3) / 2 := by
   obtain ⟨h5, k, hk⟩ := hi
   unfold classicalTrialCountThrough
   omega
@@ -53,23 +52,15 @@ theorem classicalTrialCountThrough_mono {a b : ℕ} (hab : a ≤ b) :
 `classicalTrialCountThrough` to the first stopping value. This is the pointwise trial count
 corresponding to `classicalNeOneTrialMaximum`. -/
 noncomputable def classicalNeOneTrialCount (n : ℕ)
-    (h :
-      (PrimeTest.FirstStopNeOneSet PrimeTest.isClassicalCandidate
-          n).Nonempty) :
-    ℕ :=
-  classicalTrialCountThrough
-    (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n h)
+    (h : (PrimeTest.FirstStopNeOneSet PrimeTest.isClassicalCandidate n).Nonempty) : ℕ :=
+  classicalTrialCountThrough (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n h)
 
 /-- Given `n` and nonemptiness of its classical pure `-1` stopping set, apply
 `classicalTrialCountThrough` to the first stopping value. This is the pointwise trial count
 corresponding to `classicalNegOneTrialMaximum`. -/
 noncomputable def classicalNegOneTrialCount (n : ℕ)
-    (h :
-      (PrimeTest.FirstStopNegOneSet PrimeTest.isClassicalCandidate
-          n).Nonempty) :
-    ℕ :=
-  classicalTrialCountThrough
-    (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n h)
+    (h : (PrimeTest.FirstStopNegOneSet PrimeTest.isClassicalCandidate n).Nonempty) : ℕ :=
+  classicalTrialCountThrough (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n h)
 
 /-- Apply `classicalTrialCountThrough` to the largest classical `≠1` stopping value up to `B`.
 This is the aggregate count used in `classicalTrialMaximum_elementary_bound_explicit`.
@@ -102,8 +93,7 @@ theorem classicalTrialCountThrough_real_le (i : ℕ) :
 `classicalNegOneMaximum_eq_QNegOne_of_399_le`, apply `elementary_formula_real`, then apply
 `classicalTrialCountThrough_real_le`. This is the real bound used by the explicit count theorem. -/
 theorem classicalNegOneTrialMaximum_real_le
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ}
-    (hB : 751 ≤ B) :
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ} (hB : 751 ≤ B) :
     (classicalNegOneTrialMaximum B : ℝ) ≤ PseudoSquare.elementaryRadius B / 2 + 1 := by
   have hM : (classicalNegOneMaximum B : ℝ) ≤ PseudoSquare.elementaryRadius B := by
     have h399 : 399 ≤ B := by omega
@@ -119,8 +109,7 @@ theorem classicalNegOneTrialMaximum_real_le
 Count monotonicity transports the stopping-value comparison; unfolding `elementaryRadius`
 in `classicalNegOneTrialMaximum_real_le` gives the explicit upper bound. -/
 theorem classicalTrialMaximum_elementary_bound_explicit
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ}
-    (hB : 751 ≤ B) :
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ} (hB : 751 ≤ B) :
     classicalNeOneTrialMaximum B ≤ classicalNegOneTrialMaximum B ∧
       (classicalNegOneTrialMaximum B : ℝ) ≤
         (Real.log (4 * (B : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (B : ℝ))) + 3) ^ 2 / 2 +

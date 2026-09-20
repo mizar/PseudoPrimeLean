@@ -21,9 +21,8 @@ the quadratic character at level `4 * n`.
 Output: the zero lies on the critical line when it has positive real part.
 This is the quadratic-character specialization used by the analytic bounds.
 -/
-theorem grh_primitiveQuadraticCharacter_zero
-    (hGRH : GRH.GeneralizedRiemannHypothesis) (n : ℕ) (hn : Odd n)
-    (s : ℂ) (hszero : (NumberTheory.primitiveQuadraticCharacter n hn).LFunction s = 0)
+theorem grh_primitiveQuadraticCharacter_zero (hGRH : GRH.GeneralizedRiemannHypothesis) (n : ℕ)
+    (hn : Odd n) (s : ℂ) (hszero : (NumberTheory.primitiveQuadraticCharacter n hn).LFunction s = 0)
     (hspos : 0 < s.re) : s.re = (1 : ℝ) / 2 := by
   exact
     hGRH.zero_re_eq_half _ (NumberTheory.primitiveQuadraticCharacter n hn)

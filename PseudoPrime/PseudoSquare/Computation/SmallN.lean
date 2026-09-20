@@ -59,16 +59,14 @@ def smallNegOneCheckAll : Bool :=
 -- BEGIN GENERATED smallNegOneCheckAll_valid
 /-- Kernel-checked checker block restricted to [0, 16). -/
 private theorem smallNegOneCheckAll_valid_block_0 :
-    ∀ n : Fin 750, 0 ≤ n.val → n.val < 16 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 0 ≤ n.val → n.val < 16 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num <;> decide
 
 /-- Kernel-checked checker block restricted to [16, 32). -/
 private theorem smallNegOneCheckAll_valid_block_16 :
-    ∀ n : Fin 750, 16 ≤ n.val → n.val < 32 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 16 ≤ n.val → n.val < 32 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -76,16 +74,14 @@ private theorem smallNegOneCheckAll_valid_block_16 :
 
 /-- Kernel-checked checker block restricted to [32, 48). -/
 private theorem smallNegOneCheckAll_valid_block_32 :
-    ∀ n : Fin 750, 32 ≤ n.val → n.val < 48 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 32 ≤ n.val → n.val < 48 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [48, 64). -/
 private theorem smallNegOneCheckAll_valid_block_48 :
-    ∀ n : Fin 750, 48 ≤ n.val → n.val < 64 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 48 ≤ n.val → n.val < 64 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -93,16 +89,14 @@ private theorem smallNegOneCheckAll_valid_block_48 :
 
 /-- Kernel-checked checker block restricted to [64, 80). -/
 private theorem smallNegOneCheckAll_valid_block_64 :
-    ∀ n : Fin 750, 64 ≤ n.val → n.val < 80 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 64 ≤ n.val → n.val < 80 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [80, 96). -/
 private theorem smallNegOneCheckAll_valid_block_80 :
-    ∀ n : Fin 750, 80 ≤ n.val → n.val < 96 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 80 ≤ n.val → n.val < 96 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -110,16 +104,14 @@ private theorem smallNegOneCheckAll_valid_block_80 :
 
 /-- Kernel-checked checker block restricted to [96, 112). -/
 private theorem smallNegOneCheckAll_valid_block_96 :
-    ∀ n : Fin 750, 96 ≤ n.val → n.val < 112 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 96 ≤ n.val → n.val < 112 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [112, 128). -/
 private theorem smallNegOneCheckAll_valid_block_112 :
-    ∀ n : Fin 750, 112 ≤ n.val → n.val < 128 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 112 ≤ n.val → n.val < 128 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -127,24 +119,21 @@ private theorem smallNegOneCheckAll_valid_block_112 :
 
 /-- Kernel-checked checker block restricted to [128, 144). -/
 private theorem smallNegOneCheckAll_valid_block_128 :
-    ∀ n : Fin 750, 128 ≤ n.val → n.val < 144 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 128 ≤ n.val → n.val < 144 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [144, 160). -/
 private theorem smallNegOneCheckAll_valid_block_144 :
-    ∀ n : Fin 750, 144 ≤ n.val → n.val < 160 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 144 ≤ n.val → n.val < 160 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [160, 176). -/
 private theorem smallNegOneCheckAll_valid_block_160 :
-    ∀ n : Fin 750, 160 ≤ n.val → n.val < 176 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 160 ≤ n.val → n.val < 176 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -152,32 +141,28 @@ private theorem smallNegOneCheckAll_valid_block_160 :
 
 /-- Kernel-checked checker block restricted to [176, 192). -/
 private theorem smallNegOneCheckAll_valid_block_176 :
-    ∀ n : Fin 750, 176 ≤ n.val → n.val < 192 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 176 ≤ n.val → n.val < 192 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [192, 208). -/
 private theorem smallNegOneCheckAll_valid_block_192 :
-    ∀ n : Fin 750, 192 ≤ n.val → n.val < 208 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 192 ≤ n.val → n.val < 208 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [208, 224). -/
 private theorem smallNegOneCheckAll_valid_block_208 :
-    ∀ n : Fin 750, 208 ≤ n.val → n.val < 224 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 208 ≤ n.val → n.val < 224 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [224, 240). -/
 private theorem smallNegOneCheckAll_valid_block_224 :
-    ∀ n : Fin 750, 224 ≤ n.val → n.val < 240 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 224 ≤ n.val → n.val < 240 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -185,32 +170,28 @@ private theorem smallNegOneCheckAll_valid_block_224 :
 
 /-- Kernel-checked checker block restricted to [240, 256). -/
 private theorem smallNegOneCheckAll_valid_block_240 :
-    ∀ n : Fin 750, 240 ≤ n.val → n.val < 256 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 240 ≤ n.val → n.val < 256 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [256, 272). -/
 private theorem smallNegOneCheckAll_valid_block_256 :
-    ∀ n : Fin 750, 256 ≤ n.val → n.val < 272 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 256 ≤ n.val → n.val < 272 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [272, 288). -/
 private theorem smallNegOneCheckAll_valid_block_272 :
-    ∀ n : Fin 750, 272 ≤ n.val → n.val < 288 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 272 ≤ n.val → n.val < 288 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [288, 304). -/
 private theorem smallNegOneCheckAll_valid_block_288 :
-    ∀ n : Fin 750, 288 ≤ n.val → n.val < 304 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 288 ≤ n.val → n.val < 304 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -218,32 +199,28 @@ private theorem smallNegOneCheckAll_valid_block_288 :
 
 /-- Kernel-checked checker block restricted to [304, 320). -/
 private theorem smallNegOneCheckAll_valid_block_304 :
-    ∀ n : Fin 750, 304 ≤ n.val → n.val < 320 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 304 ≤ n.val → n.val < 320 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [320, 336). -/
 private theorem smallNegOneCheckAll_valid_block_320 :
-    ∀ n : Fin 750, 320 ≤ n.val → n.val < 336 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 320 ≤ n.val → n.val < 336 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [336, 352). -/
 private theorem smallNegOneCheckAll_valid_block_336 :
-    ∀ n : Fin 750, 336 ≤ n.val → n.val < 352 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 336 ≤ n.val → n.val < 352 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [352, 368). -/
 private theorem smallNegOneCheckAll_valid_block_352 :
-    ∀ n : Fin 750, 352 ≤ n.val → n.val < 368 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 352 ≤ n.val → n.val < 368 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -251,40 +228,35 @@ private theorem smallNegOneCheckAll_valid_block_352 :
 
 /-- Kernel-checked checker block restricted to [368, 384). -/
 private theorem smallNegOneCheckAll_valid_block_368 :
-    ∀ n : Fin 750, 368 ≤ n.val → n.val < 384 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 368 ≤ n.val → n.val < 384 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [384, 400). -/
 private theorem smallNegOneCheckAll_valid_block_384 :
-    ∀ n : Fin 750, 384 ≤ n.val → n.val < 400 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 384 ≤ n.val → n.val < 400 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [400, 416). -/
 private theorem smallNegOneCheckAll_valid_block_400 :
-    ∀ n : Fin 750, 400 ≤ n.val → n.val < 416 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 400 ≤ n.val → n.val < 416 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [416, 432). -/
 private theorem smallNegOneCheckAll_valid_block_416 :
-    ∀ n : Fin 750, 416 ≤ n.val → n.val < 432 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 416 ≤ n.val → n.val < 432 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [432, 448). -/
 private theorem smallNegOneCheckAll_valid_block_432 :
-    ∀ n : Fin 750, 432 ≤ n.val → n.val < 448 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 432 ≤ n.val → n.val < 448 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -292,48 +264,42 @@ private theorem smallNegOneCheckAll_valid_block_432 :
 
 /-- Kernel-checked checker block restricted to [448, 464). -/
 private theorem smallNegOneCheckAll_valid_block_448 :
-    ∀ n : Fin 750, 448 ≤ n.val → n.val < 464 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 448 ≤ n.val → n.val < 464 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [464, 480). -/
 private theorem smallNegOneCheckAll_valid_block_464 :
-    ∀ n : Fin 750, 464 ≤ n.val → n.val < 480 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 464 ≤ n.val → n.val < 480 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [480, 496). -/
 private theorem smallNegOneCheckAll_valid_block_480 :
-    ∀ n : Fin 750, 480 ≤ n.val → n.val < 496 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 480 ≤ n.val → n.val < 496 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [496, 512). -/
 private theorem smallNegOneCheckAll_valid_block_496 :
-    ∀ n : Fin 750, 496 ≤ n.val → n.val < 512 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 496 ≤ n.val → n.val < 512 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [512, 528). -/
 private theorem smallNegOneCheckAll_valid_block_512 :
-    ∀ n : Fin 750, 512 ≤ n.val → n.val < 528 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 512 ≤ n.val → n.val < 528 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [528, 544). -/
 private theorem smallNegOneCheckAll_valid_block_528 :
-    ∀ n : Fin 750, 528 ≤ n.val → n.val < 544 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 528 ≤ n.val → n.val < 544 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -341,48 +307,42 @@ private theorem smallNegOneCheckAll_valid_block_528 :
 
 /-- Kernel-checked checker block restricted to [544, 560). -/
 private theorem smallNegOneCheckAll_valid_block_544 :
-    ∀ n : Fin 750, 544 ≤ n.val → n.val < 560 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 544 ≤ n.val → n.val < 560 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [560, 576). -/
 private theorem smallNegOneCheckAll_valid_block_560 :
-    ∀ n : Fin 750, 560 ≤ n.val → n.val < 576 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 560 ≤ n.val → n.val < 576 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [576, 592). -/
 private theorem smallNegOneCheckAll_valid_block_576 :
-    ∀ n : Fin 750, 576 ≤ n.val → n.val < 592 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 576 ≤ n.val → n.val < 592 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [592, 608). -/
 private theorem smallNegOneCheckAll_valid_block_592 :
-    ∀ n : Fin 750, 592 ≤ n.val → n.val < 608 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 592 ≤ n.val → n.val < 608 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [608, 624). -/
 private theorem smallNegOneCheckAll_valid_block_608 :
-    ∀ n : Fin 750, 608 ≤ n.val → n.val < 624 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 608 ≤ n.val → n.val < 624 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [624, 640). -/
 private theorem smallNegOneCheckAll_valid_block_624 :
-    ∀ n : Fin 750, 624 ≤ n.val → n.val < 640 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 624 ≤ n.val → n.val < 640 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -390,48 +350,42 @@ private theorem smallNegOneCheckAll_valid_block_624 :
 
 /-- Kernel-checked checker block restricted to [640, 656). -/
 private theorem smallNegOneCheckAll_valid_block_640 :
-    ∀ n : Fin 750, 640 ≤ n.val → n.val < 656 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 640 ≤ n.val → n.val < 656 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [656, 672). -/
 private theorem smallNegOneCheckAll_valid_block_656 :
-    ∀ n : Fin 750, 656 ≤ n.val → n.val < 672 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 656 ≤ n.val → n.val < 672 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [672, 688). -/
 private theorem smallNegOneCheckAll_valid_block_672 :
-    ∀ n : Fin 750, 672 ≤ n.val → n.val < 688 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 672 ≤ n.val → n.val < 688 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [688, 704). -/
 private theorem smallNegOneCheckAll_valid_block_688 :
-    ∀ n : Fin 750, 688 ≤ n.val → n.val < 704 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 688 ≤ n.val → n.val < 704 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [704, 720). -/
 private theorem smallNegOneCheckAll_valid_block_704 :
-    ∀ n : Fin 750, 704 ≤ n.val → n.val < 720 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 704 ≤ n.val → n.val < 720 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
 /-- Kernel-checked checker block restricted to [720, 736). -/
 private theorem smallNegOneCheckAll_valid_block_720 :
-    ∀ n : Fin 750, 720 ≤ n.val → n.val < 736 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 720 ≤ n.val → n.val < 736 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
@@ -439,14 +393,12 @@ private theorem smallNegOneCheckAll_valid_block_720 :
 
 /-- Kernel-checked checker block restricted to [736, 750). -/
 private theorem smallNegOneCheckAll_valid_block_736 :
-    ∀ n : Fin 750, 736 ≤ n.val → n.val < 750 →
-      smallNegOneCheck n = true := by
+    ∀ n : Fin 750, 736 ≤ n.val → n.val < 750 → smallNegOneCheck n = true := by
   intro n hlo hhi
   simp only [smallNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num
 
-theorem smallNegOneCheckAll_valid :
-    (List.finRange 750).all smallNegOneCheck = true := by
+theorem smallNegOneCheckAll_valid : (List.finRange 750).all smallNegOneCheck = true := by
   apply List.all_eq_true.mpr
   intro n hn
   by_cases h368 : n.val < 368
@@ -667,8 +619,7 @@ theorem not_isSquare_399 : ¬IsSquare 399 := by
   interval_cases k <;> norm_num only at hk
 
 /-- The least odd-prime Jacobi `-1` witness for `399` is exactly `31`. -/
-theorem primeNegOneWitness_399_eq_31
-    (hw : (NumberTheory.PrimeNegOneWitnessSet 399).Nonempty) :
+theorem primeNegOneWitness_399_eq_31 (hw : (NumberTheory.PrimeNegOneWitnessSet 399).Nonempty) :
     NumberTheory.primeNegOneWitness 399 hw = 31 := by
   have hle : NumberTheory.primeNegOneWitness 399 hw ≤ 31 :=
     smallNegOneWitnessBound 399 (by decide) not_isSquare_399 (by norm_num only)
@@ -697,8 +648,7 @@ theorem QNegOne_eq_thirty_one_of_399_le_of_lt_750 {B : ℕ} (h399 : 399 ≤ B) (
     apply NumberTheory.mem_admissibleFinset_iff.mpr
     exact ⟨by norm_num only, h399, by decide, not_isSquare_399⟩
   have hw :=
-    NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide)
-      not_isSquare_399
+    NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide) not_isSquare_399
   rw [← primeNegOneWitness_399_eq_31 hw]
   exact primeNegOneWitness_le_QNegOne hadm
 

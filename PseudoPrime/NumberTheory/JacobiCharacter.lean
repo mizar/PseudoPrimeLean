@@ -68,8 +68,7 @@ theorem jacobiNumeratorCharacter_apply_natCast (n : ℕ) (hn : Odd n) (a : ℕ) 
 /-- The Jacobi numerator character lifted from level `n` to level `4 * n`. -/
 noncomputable def liftedJacobiNumeratorCharacter (n : ℕ) (hn : Odd n) :
     DirichletCharacter ℤ (4 * n) :=
-  DirichletCharacter.changeLevel (R := ℤ) (n.dvd_mul_left 4)
-    (jacobiNumeratorCharacter n hn)
+  DirichletCharacter.changeLevel (R := ℤ) (n.dvd_mul_left 4) (jacobiNumeratorCharacter n hn)
 
 /-- The character `χ₄` lifted from level `4` to level `4 * n`. -/
 noncomputable def liftedChiFour (n : ℕ) : DirichletCharacter ℤ (4 * n) :=
@@ -81,9 +80,7 @@ numerator character, while the other odd residue class includes the lifted `χ�
 -/
 noncomputable def quadraticCharacter (n : ℕ) (hn : Odd n) : DirichletCharacter ℤ (4 * n) :=
   if n % 4 = 1 then liftedJacobiNumeratorCharacter n hn
-  else
-    liftedJacobiNumeratorCharacter n hn *
-      liftedChiFour n
+  else liftedJacobiNumeratorCharacter n hn * liftedChiFour n
 
 /-- The quadratic character with its integer values embedded into the complex numbers. -/
 noncomputable def complexQuadraticCharacter (n : ℕ) (hn : Odd n) : DirichletCharacter ℂ (4 * n) :=
@@ -91,25 +88,21 @@ noncomputable def complexQuadraticCharacter (n : ℕ) (hn : Odd n) : DirichletCh
 
 /-- Evaluation of the complex character is the complex cast of the integer-valued character. -/
 theorem complexQuadraticCharacter_apply (n : ℕ) (hn : Odd n) (a : ZMod (4 * n)) :
-    complexQuadraticCharacter n hn a =
-      (quadraticCharacter n hn a : ℂ) :=
+    complexQuadraticCharacter n hn a = (quadraticCharacter n hn a : ℂ) :=
   rfl
 
 /-- Evaluation of the lifted Jacobi character at an integer coprime to `4 * n`. -/
 theorem liftedJacobiNumeratorCharacter_apply_of_coprime (n : ℕ) (hn : Odd n) {a : ℕ}
     (ha : Nat.Coprime a (4 * n)) :
-    liftedJacobiNumeratorCharacter n hn ((a : ℤ) : ZMod (4 * n)) =
-      jacobiSym a n := by
+    liftedJacobiNumeratorCharacter n hn ((a : ℤ) : ZMod (4 * n)) = jacobiSym a n := by
   rw [liftedJacobiNumeratorCharacter,
-    DirichletCharacter.changeLevel_eq_cast_of_dvd'
-      (jacobiNumeratorCharacter n hn) (n.dvd_mul_left 4) ha.isCoprime]
-  simpa only [Int.cast_natCast] using
-    jacobiNumeratorCharacter_apply_natCast n hn a
+    DirichletCharacter.changeLevel_eq_cast_of_dvd' (jacobiNumeratorCharacter n hn)
+      (n.dvd_mul_left 4) ha.isCoprime]
+  simpa only [Int.cast_natCast] using jacobiNumeratorCharacter_apply_natCast n hn a
 
 /-- Evaluation of the lifted `χ₄` factor at an integer coprime to `4 * n`. -/
 theorem liftedChiFour_apply_of_coprime (n : ℕ) {a : ℕ} (ha : Nat.Coprime a (4 * n)) :
-    liftedChiFour n ((a : ℤ) : ZMod (4 * n)) =
-      ZMod.χ₄ ((a : ℤ) : ZMod 4) := by
+    liftedChiFour n ((a : ℤ) : ZMod (4 * n)) = ZMod.χ₄ ((a : ℤ) : ZMod 4) := by
   rw [liftedChiFour,
     DirichletCharacter.changeLevel_eq_cast_of_dvd' ZMod.χ₄ (Nat.dvd_mul_right 4 n) ha.isCoprime]
 
@@ -123,7 +116,6 @@ theorem quadraticCharacter_apply_of_coprime (n : ℕ) (hn : Odd n) {a : ℕ}
   · simp only [quadraticCharacter, hn4, ite_true,
       liftedJacobiNumeratorCharacter_apply_of_coprime n hn ha]
   · simp only [quadraticCharacter, hn4, ite_false, MulChar.mul_apply,
-      liftedJacobiNumeratorCharacter_apply_of_coprime n hn ha,
-      liftedChiFour_apply_of_coprime n ha]
+      liftedJacobiNumeratorCharacter_apply_of_coprime n hn ha, liftedChiFour_apply_of_coprime n ha]
 
 end PseudoPrime.NumberTheory

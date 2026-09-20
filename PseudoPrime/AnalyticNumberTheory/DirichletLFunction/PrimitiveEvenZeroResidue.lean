@@ -33,10 +33,7 @@ closed form.
 -/
 theorem deriv_dirichletReciprocalEvenZeroRegularization_zero {x : ℝ} (hx : 0 < x) (m : ℕ)
     {g : ℂ → ℂ} (hg : AnalyticAt ℂ g 0) (hg0 : g 0 ≠ 0) :
-    deriv
-        (dirichletReciprocalEvenZeroRegularization
-          x m g)
-        0 =
+    deriv (dirichletReciprocalEvenZeroRegularization x m g) 0 =
       (1 / x : ℂ) * (logDeriv g 0 + (m : ℂ) * (Complex.log x + 1)) := by
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   have hlogDerivG : DifferentiableAt ℂ (logDeriv g) 0 := by
@@ -62,9 +59,7 @@ theorem deriv_dirichletReciprocalEvenZeroRegularization_zero {x : ℝ} (hx : 0 <
         norm_num only)
   have hprod := (hA.mul hB).mul hC
   have hR :
-    HasDerivAt
-      (dirichletReciprocalEvenZeroRegularization
-        x m g)
+    HasDerivAt (dirichletReciprocalEvenZeroRegularization x m g)
       ((-(logDeriv g 0) * (x : ℂ) ^ ((0 : ℂ) - 1) +
             (-((m : ℂ) + (0 : ℂ) * logDeriv g 0)) * ((x : ℂ) ^ ((0 : ℂ) - 1) * Complex.log x * 1)) *
           ((0 - 1 : ℂ))⁻¹ +
@@ -73,8 +68,7 @@ theorem deriv_dirichletReciprocalEvenZeroRegularization_zero {x : ℝ} (hx : 0 <
       0 := by
     apply hprod.congr_of_eventuallyEq
     filter_upwards with s
-    unfold
-      dirichletReciprocalEvenZeroRegularization
+    unfold dirichletReciprocalEvenZeroRegularization
     simp only [Pi.mul_apply]
     ring
   rw [hR.deriv]

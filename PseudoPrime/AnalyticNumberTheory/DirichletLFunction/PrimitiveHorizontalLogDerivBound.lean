@@ -55,8 +55,7 @@ integrate over a horizontal segment
 and let `n → ∞` along.
 -/
 theorem exists_primitiveHorizontalLogDerivBound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {n : ℝ}
     (hn : 1 ≤ n) {σ : ℝ} (hσ : |σ| ≤ 2) :
     ∃ T ∈ Set.Icc n (2 * n),
@@ -72,37 +71,27 @@ theorem exists_primitiveHorizontalLogDerivBound {N : ℕ} [NeZero N] (hN2 : 2 �
                   R ^ 2 +
                 2 * ‖(σ : ℂ) + T * Complex.I‖ / R ^ 2 *
                   (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (2 * R)) /
+                      (max 1 (completedLFunctionBallBound N (2 * R)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2) +
-                ‖(σ : ℂ) + T * Complex.I‖ *
-                    Real.sqrt
-                      (2 * |primitiveBRe χ|) *
+                ‖(σ : ℂ) + T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                     Real.sqrt
                       (Real.log
-                          (max 1
-                              (completedLFunctionBallBound
-                                N (2 * R)) /
+                          (max 1 (completedLFunctionBallBound N (2 * R)) /
                             ‖DirichletCharacter.completedLFunction χ 0‖) /
                         Real.log 2) /
                   δ := by
   have hN1 : 1 < N := by omega
   obtain ⟨T, hT, hTgood⟩ :=
-    exists_primitiveGoodHeightRadius hN1
-      hprimitive hne hinv hn (show 2 * n ≤ 16 * n by linarith)
+    exists_primitiveGoodHeightRadius hN1 hprimitive hne hinv hn (show 2 * n ≤ 16 * n by linarith)
   obtain ⟨R, hR, hRgood⟩ :=
-    exists_primitiveGoodRadius hN1 hprimitive
-      hne hinv (show (1 : ℝ) ≤ 8 * n by linarith)
+    exists_primitiveGoodRadius hN1 hprimitive hne hinv (show (1 : ℝ) ≤ 8 * n by linarith)
   rw [show (2 : ℝ) * (8 * n) = 16 * n from by ring] at hR hRgood
   set δ :=
     n /
       (4 *
         (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * (16 * n))) /
+              (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2 +
           1)) with
@@ -110,14 +99,12 @@ theorem exists_primitiveHorizontalLogDerivBound {N : ℕ} [NeZero N] (hN2 : 2 �
   have hBnonnegT :
     (0 : ℝ) ≤
       Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * (16 * n))) /
+          (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 :=
     le_trans (Nat.cast_nonneg _)
-      (card_primitiveZeroOrdinatesInBall_le hN1
-        hprimitive hne hinv (show (0 : ℝ) < 16 * n by linarith))
+      (card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv
+        (show (0 : ℝ) < 16 * n by linarith))
   have hδ_pos : 0 < δ := by
     rw [hδ_def]; positivity
   refine ⟨T, hT, R, hR, δ, hδ_pos, ?_⟩
@@ -143,15 +130,13 @@ theorem exists_primitiveHorizontalLogDerivBound {N : ℕ} [NeZero N] (hN2 : 2 �
     have hmargin := hRgood ρ hζ hρle
     rw [hρR, sub_self, abs_zero] at hmargin
     have hcardR :=
-      card_primitiveZeroNormsInBall_le hN1
-        hprimitive hne hinv (show (0 : ℝ) < 2 * (8 * n) by linarith)
+      card_primitiveZeroNormsInBall_le hN1 hprimitive hne hinv
+        (show (0 : ℝ) < 2 * (8 * n) by linarith)
     rw [show (2 : ℝ) * (2 * (8 * n)) = 4 * (8 * n) from by ring] at hcardR
     have hBnonnegR :
       (0 : ℝ) ≤
         Real.log
-            (max 1
-                (completedLFunctionBallBound N
-                  (4 * (8 * n))) /
+            (max 1 (completedLFunctionBallBound N (4 * (8 * n))) /
               ‖DirichletCharacter.completedLFunction χ 0‖) /
           Real.log 2 :=
       le_trans (Nat.cast_nonneg _) hcardR
@@ -160,9 +145,7 @@ theorem exists_primitiveHorizontalLogDerivBound {N : ℕ} [NeZero N] (hN2 : 2 �
         8 * n /
           (4 *
             (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (4 * (8 * n))) /
+                  (max 1 (completedLFunctionBallBound N (4 * (8 * n))) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2 +
               1)) := by
@@ -183,8 +166,8 @@ theorem exists_primitiveHorizontalLogDerivBound {N : ℕ} [NeZero N] (hN2 : 2 �
       _ = |(s - ρ).im| := by rw [Complex.sub_im]
       _ ≤ ‖s - ρ‖ := Complex.abs_im_le_norm _
   exact
-    norm_centeredLogDeriv_le_of_separation hN2
-      hGRH hprimitive hne hinv hquad hRge1 hzf hs_le hsne hδ_pos hsep
+    norm_centeredLogDeriv_le_of_separation hN2 hGRH hprimitive hne hinv hquad hRge1 hzf hs_le hsne
+      hδ_pos hsep
 
 /--
 Input/assumptions: GRH, `2 ≤ N`, a primitive nontrivial complex Dirichlet character with
@@ -201,8 +184,7 @@ never mentioned `χ.IsQuadratic` and is reused verbatim.
 Role: supplies a pointwise good-height bound for a general primitive character.
 -/
 theorem exists_primitiveHorizontalLogDerivBound_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) {σ : ℝ}
     (hσ : |σ| ≤ 2) :
     ∃ T ∈ Set.Icc n (2 * n),
@@ -218,37 +200,27 @@ theorem exists_primitiveHorizontalLogDerivBound_of_grh {N : ℕ} [NeZero N] (hN2
                   R ^ 2 +
                 2 * ‖(σ : ℂ) + T * Complex.I‖ / R ^ 2 *
                   (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (2 * R)) /
+                      (max 1 (completedLFunctionBallBound N (2 * R)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2) +
-                ‖(σ : ℂ) + T * Complex.I‖ *
-                    Real.sqrt
-                      (2 * |primitiveBRe χ|) *
+                ‖(σ : ℂ) + T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                     Real.sqrt
                       (Real.log
-                          (max 1
-                              (completedLFunctionBallBound
-                                N (2 * R)) /
+                          (max 1 (completedLFunctionBallBound N (2 * R)) /
                             ‖DirichletCharacter.completedLFunction χ 0‖) /
                         Real.log 2) /
                   δ := by
   have hN1 : 1 < N := by omega
   obtain ⟨T, hT, hTgood⟩ :=
-    exists_primitiveGoodHeightRadius hN1
-      hprimitive hne hinv hn (show 2 * n ≤ 16 * n by linarith)
+    exists_primitiveGoodHeightRadius hN1 hprimitive hne hinv hn (show 2 * n ≤ 16 * n by linarith)
   obtain ⟨R, hR, hRgood⟩ :=
-    exists_primitiveGoodRadius hN1 hprimitive
-      hne hinv (show (1 : ℝ) ≤ 8 * n by linarith)
+    exists_primitiveGoodRadius hN1 hprimitive hne hinv (show (1 : ℝ) ≤ 8 * n by linarith)
   rw [show (2 : ℝ) * (8 * n) = 16 * n from by ring] at hR hRgood
   set δ :=
     n /
       (4 *
         (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * (16 * n))) /
+              (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2 +
           1)) with
@@ -256,14 +228,12 @@ theorem exists_primitiveHorizontalLogDerivBound_of_grh {N : ℕ} [NeZero N] (hN2
   have hBnonnegT :
     (0 : ℝ) ≤
       Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * (16 * n))) /
+          (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 :=
     le_trans (Nat.cast_nonneg _)
-      (card_primitiveZeroOrdinatesInBall_le hN1
-        hprimitive hne hinv (show (0 : ℝ) < 16 * n by linarith))
+      (card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv
+        (show (0 : ℝ) < 16 * n by linarith))
   have hδ_pos : 0 < δ := by
     rw [hδ_def]; positivity
   refine ⟨T, hT, R, hR, δ, hδ_pos, ?_⟩
@@ -289,15 +259,13 @@ theorem exists_primitiveHorizontalLogDerivBound_of_grh {N : ℕ} [NeZero N] (hN2
     have hmargin := hRgood ρ hζ hρle
     rw [hρR, sub_self, abs_zero] at hmargin
     have hcardR :=
-      card_primitiveZeroNormsInBall_le hN1
-        hprimitive hne hinv (show (0 : ℝ) < 2 * (8 * n) by linarith)
+      card_primitiveZeroNormsInBall_le hN1 hprimitive hne hinv
+        (show (0 : ℝ) < 2 * (8 * n) by linarith)
     rw [show (2 : ℝ) * (2 * (8 * n)) = 4 * (8 * n) from by ring] at hcardR
     have hBnonnegR :
       (0 : ℝ) ≤
         Real.log
-            (max 1
-                (completedLFunctionBallBound N
-                  (4 * (8 * n))) /
+            (max 1 (completedLFunctionBallBound N (4 * (8 * n))) /
               ‖DirichletCharacter.completedLFunction χ 0‖) /
           Real.log 2 :=
       le_trans (Nat.cast_nonneg _) hcardR
@@ -306,9 +274,7 @@ theorem exists_primitiveHorizontalLogDerivBound_of_grh {N : ℕ} [NeZero N] (hN2
         8 * n /
           (4 *
             (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (4 * (8 * n))) /
+                  (max 1 (completedLFunctionBallBound N (4 * (8 * n))) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2 +
               1)) := by
@@ -329,8 +295,8 @@ theorem exists_primitiveHorizontalLogDerivBound_of_grh {N : ℕ} [NeZero N] (hN2
       _ = |(s - ρ).im| := by rw [Complex.sub_im]
       _ ≤ ‖s - ρ‖ := Complex.abs_im_le_norm _
   exact
-    norm_centeredLogDeriv_le_of_separation_of_grh
-      hN2 hGRH hprimitive hne hinv hRge1 hzf hs_le hsne hδ_pos hsep
+    norm_centeredLogDeriv_le_of_separation_of_grh hN2 hGRH hprimitive hne hinv hRge1 hzf hs_le hsne
+      hδ_pos hsep
 
 /-! ### A single `T, R, δ` for every `σ` on both horizontal edges -/
 
@@ -358,8 +324,7 @@ Role: the uniform horizontal-strip interface: replaces the pointwise
 integral) with the needed `∃ T, R, δ, ∀ σ` order.
 -/
 theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {n : ℝ}
     (hn : 1 ≤ n) :
     ∃ T ∈ Set.Icc n (2 * n),
@@ -370,9 +335,7 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZ
               n /
                 (8 *
                   (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * (16 * n))) /
+                        (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2 +
                     1)) ∧
@@ -387,21 +350,13 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZ
                         R ^ 2 +
                       2 * ‖(σ : ℂ) + T * Complex.I‖ / R ^ 2 *
                         (Real.log
-                            (max 1
-                                (completedLFunctionBallBound
-                                  N (2 * R)) /
+                            (max 1 (completedLFunctionBallBound N (2 * R)) /
                               ‖DirichletCharacter.completedLFunction χ 0‖) /
                           Real.log 2) +
-                      ‖(σ : ℂ) + T * Complex.I‖ *
-                          Real.sqrt
-                            (2 *
-                              |primitiveBRe
-                                  χ|) *
+                      ‖(σ : ℂ) + T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                           Real.sqrt
                             (Real.log
-                                (max 1
-                                    (completedLFunctionBallBound
-                                      N (2 * R)) /
+                                (max 1 (completedLFunctionBallBound N (2 * R)) /
                                   ‖DirichletCharacter.completedLFunction χ 0‖) /
                               Real.log 2) /
                         δ ∧
@@ -414,21 +369,13 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZ
                         R ^ 2 +
                       2 * ‖(σ : ℂ) - T * Complex.I‖ / R ^ 2 *
                         (Real.log
-                            (max 1
-                                (completedLFunctionBallBound
-                                  N (2 * R)) /
+                            (max 1 (completedLFunctionBallBound N (2 * R)) /
                               ‖DirichletCharacter.completedLFunction χ 0‖) /
                           Real.log 2) +
-                      ‖(σ : ℂ) - T * Complex.I‖ *
-                          Real.sqrt
-                            (2 *
-                              |primitiveBRe
-                                  χ|) *
+                      ‖(σ : ℂ) - T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                           Real.sqrt
                             (Real.log
-                                (max 1
-                                    (completedLFunctionBallBound
-                                      N (2 * R)) /
+                                (max 1 (completedLFunctionBallBound N (2 * R)) /
                                   ‖DirichletCharacter.completedLFunction χ 0‖) /
                               Real.log 2) /
                         δ ∧
@@ -436,19 +383,16 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZ
                   DirichletCharacter.completedLFunction χ ((σ : ℂ) - T * Complex.I) ≠ 0 := by
   have hN1 : 1 < N := by omega
   obtain ⟨T, hT, hTgood⟩ :=
-    exists_primitiveGoodHeightRadius_twoSided
-      hN1 hprimitive hne hinv hn (show 2 * n ≤ 16 * n by linarith)
+    exists_primitiveGoodHeightRadius_twoSided hN1 hprimitive hne hinv hn
+      (show 2 * n ≤ 16 * n by linarith)
   obtain ⟨R, hR, hRgood⟩ :=
-    exists_primitiveGoodRadius hN1 hprimitive
-      hne hinv (show (1 : ℝ) ≤ 8 * n by linarith)
+    exists_primitiveGoodRadius hN1 hprimitive hne hinv (show (1 : ℝ) ≤ 8 * n by linarith)
   rw [show (2 : ℝ) * (8 * n) = 16 * n from by ring] at hR hRgood
   set δ :=
     n /
       (8 *
         (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * (16 * n))) /
+              (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2 +
           1)) with
@@ -456,14 +400,12 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZ
   have hBnonnegT :
     (0 : ℝ) ≤
       Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * (16 * n))) /
+          (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 :=
     le_trans (Nat.cast_nonneg _)
-      (card_primitiveZeroOrdinatesInBall_le hN1
-        hprimitive hne hinv (show (0 : ℝ) < 16 * n by linarith))
+      (card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv
+        (show (0 : ℝ) < 16 * n by linarith))
   have hδ_pos : 0 < δ := by
     rw [hδ_def]; positivity
   refine ⟨T, hT, R, hR, δ, hδ_pos, hδ_def, ?_⟩
@@ -478,15 +420,13 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZ
     have hmargin := hRgood ρ hζ hρle
     rw [hρR, sub_self, abs_zero] at hmargin
     have hcardR :=
-      card_primitiveZeroNormsInBall_le hN1
-        hprimitive hne hinv (show (0 : ℝ) < 2 * (8 * n) by linarith)
+      card_primitiveZeroNormsInBall_le hN1 hprimitive hne hinv
+        (show (0 : ℝ) < 2 * (8 * n) by linarith)
     rw [show (2 : ℝ) * (2 * (8 * n)) = 4 * (8 * n) from by ring] at hcardR
     have hBnonnegR :
       (0 : ℝ) ≤
         Real.log
-            (max 1
-                (completedLFunctionBallBound N
-                  (4 * (8 * n))) /
+            (max 1 (completedLFunctionBallBound N (4 * (8 * n))) /
               ‖DirichletCharacter.completedLFunction χ 0‖) /
           Real.log 2 :=
       le_trans (Nat.cast_nonneg _) hcardR
@@ -495,9 +435,7 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZ
         8 * n /
           (4 *
             (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (4 * (8 * n))) /
+                  (max 1 (completedLFunctionBallBound N (4 * (8 * n))) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2 +
               1)) := by
@@ -565,10 +503,10 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZ
       _ = |((σ : ℂ) - T * Complex.I - ρ).im| := by simp only [Complex.sub_im]
       _ ≤ ‖(σ : ℂ) - T * Complex.I - ρ‖ := Complex.abs_im_le_norm _
   exact
-    ⟨norm_centeredLogDeriv_le_of_separation hN2
-        hGRH hprimitive hne hinv hquad hRge1 hzf hplus_le hplus_sne hδ_pos hplus_sep,
-      norm_centeredLogDeriv_le_of_separation hN2
-        hGRH hprimitive hne hinv hquad hRge1 hzf hminus_le hminus_sne hδ_pos hminus_sep,
+    ⟨norm_centeredLogDeriv_le_of_separation hN2 hGRH hprimitive hne hinv hquad hRge1 hzf hplus_le
+        hplus_sne hδ_pos hplus_sep,
+      norm_centeredLogDeriv_le_of_separation hN2 hGRH hprimitive hne hinv hquad hRge1 hzf hminus_le
+        hminus_sne hδ_pos hminus_sep,
       hplus_sne, hminus_sne⟩
 
 /--
@@ -586,8 +524,7 @@ ingredient (`DirichletLFunction.exists_primitiveGoodHeightRadius_twoSided`,
 Role: supplies uniform bounds and nonvanishing on both horizontal strips for general characters.
 -/
 theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) :
     ∃ T ∈ Set.Icc n (2 * n),
       ∃ R ∈ Set.Icc (8 * n) (16 * n),
@@ -597,9 +534,7 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh {N : �
               n /
                 (8 *
                   (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * (16 * n))) /
+                        (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2 +
                     1)) ∧
@@ -614,21 +549,13 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh {N : �
                         R ^ 2 +
                       2 * ‖(σ : ℂ) + T * Complex.I‖ / R ^ 2 *
                         (Real.log
-                            (max 1
-                                (completedLFunctionBallBound
-                                  N (2 * R)) /
+                            (max 1 (completedLFunctionBallBound N (2 * R)) /
                               ‖DirichletCharacter.completedLFunction χ 0‖) /
                           Real.log 2) +
-                      ‖(σ : ℂ) + T * Complex.I‖ *
-                          Real.sqrt
-                            (2 *
-                              |primitiveBRe
-                                  χ|) *
+                      ‖(σ : ℂ) + T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                           Real.sqrt
                             (Real.log
-                                (max 1
-                                    (completedLFunctionBallBound
-                                      N (2 * R)) /
+                                (max 1 (completedLFunctionBallBound N (2 * R)) /
                                   ‖DirichletCharacter.completedLFunction χ 0‖) /
                               Real.log 2) /
                         δ ∧
@@ -641,21 +568,13 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh {N : �
                         R ^ 2 +
                       2 * ‖(σ : ℂ) - T * Complex.I‖ / R ^ 2 *
                         (Real.log
-                            (max 1
-                                (completedLFunctionBallBound
-                                  N (2 * R)) /
+                            (max 1 (completedLFunctionBallBound N (2 * R)) /
                               ‖DirichletCharacter.completedLFunction χ 0‖) /
                           Real.log 2) +
-                      ‖(σ : ℂ) - T * Complex.I‖ *
-                          Real.sqrt
-                            (2 *
-                              |primitiveBRe
-                                  χ|) *
+                      ‖(σ : ℂ) - T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                           Real.sqrt
                             (Real.log
-                                (max 1
-                                    (completedLFunctionBallBound
-                                      N (2 * R)) /
+                                (max 1 (completedLFunctionBallBound N (2 * R)) /
                                   ‖DirichletCharacter.completedLFunction χ 0‖) /
                               Real.log 2) /
                         δ ∧
@@ -663,19 +582,16 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh {N : �
                   DirichletCharacter.completedLFunction χ ((σ : ℂ) - T * Complex.I) ≠ 0 := by
   have hN1 : 1 < N := by omega
   obtain ⟨T, hT, hTgood⟩ :=
-    exists_primitiveGoodHeightRadius_twoSided
-      hN1 hprimitive hne hinv hn (show 2 * n ≤ 16 * n by linarith)
+    exists_primitiveGoodHeightRadius_twoSided hN1 hprimitive hne hinv hn
+      (show 2 * n ≤ 16 * n by linarith)
   obtain ⟨R, hR, hRgood⟩ :=
-    exists_primitiveGoodRadius hN1 hprimitive
-      hne hinv (show (1 : ℝ) ≤ 8 * n by linarith)
+    exists_primitiveGoodRadius hN1 hprimitive hne hinv (show (1 : ℝ) ≤ 8 * n by linarith)
   rw [show (2 : ℝ) * (8 * n) = 16 * n from by ring] at hR hRgood
   set δ :=
     n /
       (8 *
         (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * (16 * n))) /
+              (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2 +
           1)) with
@@ -683,14 +599,12 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh {N : �
   have hBnonnegT :
     (0 : ℝ) ≤
       Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * (16 * n))) /
+          (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 :=
     le_trans (Nat.cast_nonneg _)
-      (card_primitiveZeroOrdinatesInBall_le hN1
-        hprimitive hne hinv (show (0 : ℝ) < 16 * n by linarith))
+      (card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv
+        (show (0 : ℝ) < 16 * n by linarith))
   have hδ_pos : 0 < δ := by
     rw [hδ_def]; positivity
   refine ⟨T, hT, R, hR, δ, hδ_pos, hδ_def, ?_⟩
@@ -705,15 +619,13 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh {N : �
     have hmargin := hRgood ρ hζ hρle
     rw [hρR, sub_self, abs_zero] at hmargin
     have hcardR :=
-      card_primitiveZeroNormsInBall_le hN1
-        hprimitive hne hinv (show (0 : ℝ) < 2 * (8 * n) by linarith)
+      card_primitiveZeroNormsInBall_le hN1 hprimitive hne hinv
+        (show (0 : ℝ) < 2 * (8 * n) by linarith)
     rw [show (2 : ℝ) * (2 * (8 * n)) = 4 * (8 * n) from by ring] at hcardR
     have hBnonnegR :
       (0 : ℝ) ≤
         Real.log
-            (max 1
-                (completedLFunctionBallBound N
-                  (4 * (8 * n))) /
+            (max 1 (completedLFunctionBallBound N (4 * (8 * n))) /
               ‖DirichletCharacter.completedLFunction χ 0‖) /
           Real.log 2 :=
       le_trans (Nat.cast_nonneg _) hcardR
@@ -722,9 +634,7 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh {N : �
         8 * n /
           (4 *
             (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (4 * (8 * n))) /
+                  (max 1 (completedLFunctionBallBound N (4 * (8 * n))) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2 +
               1)) := by
@@ -792,17 +702,16 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh {N : �
       _ = |((σ : ℂ) - T * Complex.I - ρ).im| := by simp only [Complex.sub_im]
       _ ≤ ‖(σ : ℂ) - T * Complex.I - ρ‖ := Complex.abs_im_le_norm _
   exact
-    ⟨norm_centeredLogDeriv_le_of_separation_of_grh
-        hN2 hGRH hprimitive hne hinv hRge1 hzf hplus_le hplus_sne hδ_pos hplus_sep,
-      norm_centeredLogDeriv_le_of_separation_of_grh
-        hN2 hGRH hprimitive hne hinv hRge1 hzf hminus_le hminus_sne hδ_pos hminus_sep,
+    ⟨norm_centeredLogDeriv_le_of_separation_of_grh hN2 hGRH hprimitive hne hinv hRge1 hzf hplus_le
+        hplus_sne hδ_pos hplus_sep,
+      norm_centeredLogDeriv_le_of_separation_of_grh hN2 hGRH hprimitive hne hinv hRge1 hzf hminus_le
+        hminus_sne hδ_pos hminus_sep,
       hplus_sne, hminus_sne⟩
 
 /-- Thin wrapper: `exists_primitiveHorizontalStripLogDerivBound_with_nonzero` without the
 nonvanishing facts, for callers that only need the strip argument bound itself. -/
 theorem exists_primitiveHorizontalStripLogDerivBound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {n : ℝ}
     (hn : 1 ≤ n) :
     ∃ T ∈ Set.Icc n (2 * n),
@@ -813,9 +722,7 @@ theorem exists_primitiveHorizontalStripLogDerivBound {N : ℕ} [NeZero N] (hN2 :
               n /
                 (8 *
                   (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * (16 * n))) /
+                        (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2 +
                     1)) ∧
@@ -830,21 +737,13 @@ theorem exists_primitiveHorizontalStripLogDerivBound {N : ℕ} [NeZero N] (hN2 :
                         R ^ 2 +
                       2 * ‖(σ : ℂ) + T * Complex.I‖ / R ^ 2 *
                         (Real.log
-                            (max 1
-                                (completedLFunctionBallBound
-                                  N (2 * R)) /
+                            (max 1 (completedLFunctionBallBound N (2 * R)) /
                               ‖DirichletCharacter.completedLFunction χ 0‖) /
                           Real.log 2) +
-                      ‖(σ : ℂ) + T * Complex.I‖ *
-                          Real.sqrt
-                            (2 *
-                              |primitiveBRe
-                                  χ|) *
+                      ‖(σ : ℂ) + T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                           Real.sqrt
                             (Real.log
-                                (max 1
-                                    (completedLFunctionBallBound
-                                      N (2 * R)) /
+                                (max 1 (completedLFunctionBallBound N (2 * R)) /
                                   ‖DirichletCharacter.completedLFunction χ 0‖) /
                               Real.log 2) /
                         δ ∧
@@ -857,21 +756,13 @@ theorem exists_primitiveHorizontalStripLogDerivBound {N : ℕ} [NeZero N] (hN2 :
                         R ^ 2 +
                       2 * ‖(σ : ℂ) - T * Complex.I‖ / R ^ 2 *
                         (Real.log
-                            (max 1
-                                (completedLFunctionBallBound
-                                  N (2 * R)) /
+                            (max 1 (completedLFunctionBallBound N (2 * R)) /
                               ‖DirichletCharacter.completedLFunction χ 0‖) /
                           Real.log 2) +
-                      ‖(σ : ℂ) - T * Complex.I‖ *
-                          Real.sqrt
-                            (2 *
-                              |primitiveBRe
-                                  χ|) *
+                      ‖(σ : ℂ) - T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                           Real.sqrt
                             (Real.log
-                                (max 1
-                                    (completedLFunctionBallBound
-                                      N (2 * R)) /
+                                (max 1 (completedLFunctionBallBound N (2 * R)) /
                                   ‖DirichletCharacter.completedLFunction χ 0‖) /
                               Real.log 2) /
                         δ := by
@@ -883,8 +774,7 @@ theorem exists_primitiveHorizontalStripLogDerivBound {N : ℕ} [NeZero N] (hN2 :
 nonvanishing facts, for callers that only need the strip argument bound itself (no quadratic
 hypothesis). -/
 theorem exists_primitiveHorizontalStripLogDerivBound_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) :
     ∃ T ∈ Set.Icc n (2 * n),
       ∃ R ∈ Set.Icc (8 * n) (16 * n),
@@ -894,9 +784,7 @@ theorem exists_primitiveHorizontalStripLogDerivBound_of_grh {N : ℕ} [NeZero N]
               n /
                 (8 *
                   (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * (16 * n))) /
+                        (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2 +
                     1)) ∧
@@ -911,21 +799,13 @@ theorem exists_primitiveHorizontalStripLogDerivBound_of_grh {N : ℕ} [NeZero N]
                         R ^ 2 +
                       2 * ‖(σ : ℂ) + T * Complex.I‖ / R ^ 2 *
                         (Real.log
-                            (max 1
-                                (completedLFunctionBallBound
-                                  N (2 * R)) /
+                            (max 1 (completedLFunctionBallBound N (2 * R)) /
                               ‖DirichletCharacter.completedLFunction χ 0‖) /
                           Real.log 2) +
-                      ‖(σ : ℂ) + T * Complex.I‖ *
-                          Real.sqrt
-                            (2 *
-                              |primitiveBRe
-                                  χ|) *
+                      ‖(σ : ℂ) + T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                           Real.sqrt
                             (Real.log
-                                (max 1
-                                    (completedLFunctionBallBound
-                                      N (2 * R)) /
+                                (max 1 (completedLFunctionBallBound N (2 * R)) /
                                   ‖DirichletCharacter.completedLFunction χ 0‖) /
                               Real.log 2) /
                         δ ∧
@@ -938,21 +818,13 @@ theorem exists_primitiveHorizontalStripLogDerivBound_of_grh {N : ℕ} [NeZero N]
                         R ^ 2 +
                       2 * ‖(σ : ℂ) - T * Complex.I‖ / R ^ 2 *
                         (Real.log
-                            (max 1
-                                (completedLFunctionBallBound
-                                  N (2 * R)) /
+                            (max 1 (completedLFunctionBallBound N (2 * R)) /
                               ‖DirichletCharacter.completedLFunction χ 0‖) /
                           Real.log 2) +
-                      ‖(σ : ℂ) - T * Complex.I‖ *
-                          Real.sqrt
-                            (2 *
-                              |primitiveBRe
-                                  χ|) *
+                      ‖(σ : ℂ) - T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                           Real.sqrt
                             (Real.log
-                                (max 1
-                                    (completedLFunctionBallBound
-                                      N (2 * R)) /
+                                (max 1 (completedLFunctionBallBound N (2 * R)) /
                                   ‖DirichletCharacter.completedLFunction χ 0‖) /
                               Real.log 2) /
                         δ := by
@@ -984,9 +856,7 @@ structure PrimitiveHorizontalStripData {N : ℕ} [NeZero N] (χ : DirichletChara
       n /
         (8 *
           (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * (16 * n))) /
+                (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2 +
             1))
@@ -1002,19 +872,13 @@ structure PrimitiveHorizontalStripData {N : ℕ} [NeZero N] (χ : DirichletChara
                 R ^ 2 +
               2 * ‖(σ : ℂ) + T * Complex.I‖ / R ^ 2 *
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) +
-              ‖(σ : ℂ) + T * Complex.I‖ *
-                  Real.sqrt
-                    (2 * |primitiveBRe χ|) *
+              ‖(σ : ℂ) + T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                   Real.sqrt
                     (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * R)) /
+                        (max 1 (completedLFunctionBallBound N (2 * R)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2) /
                 δ ∧
@@ -1027,19 +891,13 @@ structure PrimitiveHorizontalStripData {N : ℕ} [NeZero N] (χ : DirichletChara
                 R ^ 2 +
               2 * ‖(σ : ℂ) - T * Complex.I‖ / R ^ 2 *
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) +
-              ‖(σ : ℂ) - T * Complex.I‖ *
-                  Real.sqrt
-                    (2 * |primitiveBRe χ|) *
+              ‖(σ : ℂ) - T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                   Real.sqrt
                     (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * R)) /
+                        (max 1 (completedLFunctionBallBound N (2 * R)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2) /
                 δ
@@ -1054,8 +912,7 @@ structure PrimitiveHorizontalStripData {N : ℕ} [NeZero N] (χ : DirichletChara
 /-- Constructs `PrimitiveHorizontalStripData` via `choose` on
 `exists_primitiveHorizontalStripLogDerivBound_with_nonzero`. -/
 noncomputable def primitiveHorizontalStripData {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {n : ℝ}
     (hn : 1 ≤ n) : PrimitiveHorizontalStripData χ n := by
   choose T hT R hR δ hδpos hδeq hall using
@@ -1066,8 +923,7 @@ noncomputable def primitiveHorizontalStripData {N : ℕ} [NeZero N] (hN2 : 2 ≤
 
 /-- The sequence version: `n := k + 1` (`k : ℕ`) makes the `1 ≤ n` side condition disappear. -/
 noncomputable def primitiveHorizontalStripDataSeq {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (k : ℕ) :
     PrimitiveHorizontalStripData χ ((k : ℝ) + 1) :=
   primitiveHorizontalStripData hN2 hGRH hprimitive hne hinv hquad
@@ -1077,8 +933,7 @@ noncomputable def primitiveHorizontalStripDataSeq {N : ℕ} [NeZero N] (hN2 : 2 
 /-- Constructs `PrimitiveHorizontalStripData` via `choose` on
 `exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh` (no quadratic hypothesis). -/
 noncomputable def primitiveHorizontalStripData_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) :
     PrimitiveHorizontalStripData χ n := by
   choose T hT R hR δ hδpos hδeq hall using
@@ -1090,8 +945,7 @@ noncomputable def primitiveHorizontalStripData_of_grh {N : ℕ} [NeZero N] (hN2 
 /-- The sequence version of `primitiveHorizontalStripData_of_grh`: `n := k + 1` (`k : ℕ`) makes the
 `1 ≤ n` side condition disappear. -/
 noncomputable def primitiveHorizontalStripDataSeq_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) :
     PrimitiveHorizontalStripData χ ((k : ℝ) + 1) :=
   primitiveHorizontalStripData_of_grh hN2 hGRH hprimitive hne hinv
@@ -1118,45 +972,32 @@ step towards showing the strip argument bound is `o(T²)` (the horizontal argume
 theorem H2LogBound_le_explicit {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {X : ℝ} (hX : 1 ≤ X) :
     Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                X) /
-            ‖DirichletCharacter.completedLFunction χ 0‖) /
+          (max 1 (completedLFunctionBallBound N X) / ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 ≤
       ((4 * (N : ℝ) + 3) * (X + 3) * Real.log (X + 3) -
           Real.log ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 := by
   have hF0pos : (0 : ℝ) < ‖DirichletCharacter.completedLFunction χ 0‖ :=
-    norm_pos_iff.mpr
-      (dirichletCompletedLFunction_zero_ne_zero_of_primitive
-        hprimitive hne)
+    norm_pos_iff.mpr (dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne)
   have hlogX3nonneg : 0 ≤ Real.log (X + 3) := Real.log_nonneg (by linarith)
   have hexpnonneg : (0 : ℝ) ≤ (4 * (N : ℝ) + 3) * ((X + 3) * Real.log (X + 3)) := by positivity
   have hexp_ge1 : (1 : ℝ) ≤ Real.exp ((4 * (N : ℝ) + 3) * ((X + 3) * Real.log (X + 3))) := by
     rw [show (1 : ℝ) = Real.exp 0 from Real.exp_zero.symm]
     exact Real.exp_le_exp.mpr hexpnonneg
-  have hexp :=
-    completedLFunctionBallBound_le_exp (N := N)
-      hN2 hX
+  have hexp := completedLFunctionBallBound_le_exp (N := N) hN2 hX
   have hmax_le :
     max 1 (completedLFunctionBallBound N X) ≤
       Real.exp ((4 * (N : ℝ) + 3) * ((X + 3) * Real.log (X + 3))) :=
     max_le hexp_ge1 hexp
-  have hmaxpos :
-    (0 : ℝ) <
-      max 1 (completedLFunctionBallBound N X) :=
-    lt_max_of_lt_left one_pos
+  have hmaxpos : (0 : ℝ) < max 1 (completedLFunctionBallBound N X) := lt_max_of_lt_left one_pos
   have hdiv_le :
-    max 1 (completedLFunctionBallBound N X) /
-        ‖DirichletCharacter.completedLFunction χ 0‖ ≤
+    max 1 (completedLFunctionBallBound N X) / ‖DirichletCharacter.completedLFunction χ 0‖ ≤
       Real.exp ((4 * (N : ℝ) + 3) * ((X + 3) * Real.log (X + 3))) /
         ‖DirichletCharacter.completedLFunction χ 0‖ := by
     gcongr
   have hlog_le :
     Real.log
-        (max 1
-            (completedLFunctionBallBound N X) /
-          ‖DirichletCharacter.completedLFunction χ 0‖) ≤
+        (max 1 (completedLFunctionBallBound N X) / ‖DirichletCharacter.completedLFunction χ 0‖) ≤
       Real.log
         (Real.exp ((4 * (N : ℝ) + 3) * ((X + 3) * Real.log (X + 3))) /
           ‖DirichletCharacter.completedLFunction χ 0‖) :=
@@ -1194,9 +1035,7 @@ theorem exists_K_forall_H2LogBound_thirtyTwo_le {N : ℕ} [NeZero N] (hN2 : 2 �
               Real.log 2 ≤
             K * n * Real.log n := by
   have hF0pos : (0 : ℝ) < ‖DirichletCharacter.completedLFunction χ 0‖ :=
-    norm_pos_iff.mpr
-      (dirichletCompletedLFunction_zero_ne_zero_of_primitive
-        hprimitive hne)
+    norm_pos_iff.mpr (dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne)
   have hlog2pos : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   set C₁ : ℝ := Real.log 35 + 1 with hC1_def
   have hC1pos : 0 < C₁ := by
@@ -1271,22 +1110,13 @@ theorem hadamardHorizontalErrorCoeff_pos {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
         1 := by
   have hN1 : 1 < N := hN2
   have hF0pos : (0 : ℝ) < ‖DirichletCharacter.completedLFunction χ 0‖ :=
-    norm_pos_iff.mpr
-      (dirichletCompletedLFunction_zero_ne_zero_of_primitive
-        hprimitive hne)
+    norm_pos_iff.mpr (dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne)
   have h0R : ‖(0 : ℂ)‖ ≤ R := by
     rw [norm_zero]; linarith
-  have hboundge :
-    ‖DirichletCharacter.completedLFunction χ 0‖ ≤
-      completedLFunctionBallBound N R :=
-    norm_completedLFunction_le_completedLFunctionBallBound
-      hN1 hprimitive hne hinv (by linarith) h0R
-  have hboundpos :
-    (0 : ℝ) < completedLFunctionBallBound N R :=
-    hF0pos.trans_le hboundge
-  have hbound_exp :=
-    completedLFunctionBallBound_le_exp (N := N)
-      hN2 hR
+  have hboundge : ‖DirichletCharacter.completedLFunction χ 0‖ ≤ completedLFunctionBallBound N R :=
+    norm_completedLFunction_le_completedLFunctionBallBound hN1 hprimitive hne hinv (by linarith) h0R
+  have hboundpos : (0 : ℝ) < completedLFunctionBallBound N R := hF0pos.trans_le hboundge
+  have hbound_exp := completedLFunctionBallBound_le_exp (N := N) hN2 hR
   have hlog_bound_le :
     Real.log (completedLFunctionBallBound N R) ≤
       (4 * (N : ℝ) + 3) * (R + 3) * Real.log (R + 3) := by
@@ -1299,8 +1129,7 @@ theorem hadamardHorizontalErrorCoeff_pos {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
         from by ring]
   have hlogF0_le_bound :
     Real.log ‖DirichletCharacter.completedLFunction χ 0‖ ≤
-      Real.log
-        (completedLFunctionBallBound N R) :=
+      Real.log (completedLFunctionBallBound N R) :=
     Real.log_le_log hF0pos hboundge
   linarith
 
@@ -1312,14 +1141,10 @@ theorem H2LogBound_nonneg {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : DirichletChar
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ} (hR : 0 < R) :
     (0 : ℝ) ≤
       Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * R)) /
+          (max 1 (completedLFunctionBallBound N (2 * R)) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 :=
-  le_trans (Nat.cast_nonneg _)
-    (card_primitiveZeroOrdinatesInBall_le hN1
-      hprimitive hne hinv hR)
+  le_trans (Nat.cast_nonneg _) (card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv hR)
 
 /-! ### the horizontal pointwise bound: the strip argument genus-sum term's core new asymptotic
 fact -/
@@ -1331,8 +1156,7 @@ Substitute `‖σ ± T·I‖ ≤ 4n`, with `n := k+1`, in `PrimitiveHorizontalSt
 and divide all three terms by the chosen height squared. Keep the chosen `R` and `δ`
 explicit until the later asymptotic comparison. -/
 noncomputable def primitiveHorizontalStripEpsilon {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (k : ℕ) :
     ℝ :=
   let n : ℝ := (k : ℝ) + 1
@@ -1344,18 +1168,14 @@ noncomputable def primitiveHorizontalStripEpsilon {N : ℕ} [NeZero N] (hN2 : 2 
         d.R ^ 2 +
       8 * n *
           (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * d.R)) /
+              (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) /
         d.R ^ 2 +
       4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
           Real.sqrt
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * d.R)) /
+                (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) /
         d.δ) /
@@ -1371,8 +1191,7 @@ substitution direction (both coefficients being multiplied by `‖s‖` are `≥
 Role: the `∀ k σ, ... ≤ ε k` half of the horizontal estimate limit.
 -/
 theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (k : ℕ)
     {σ : ℝ} (hσ : |σ| ≤ 2) :
     ‖logDeriv (DirichletCharacter.completedLFunction χ)
@@ -1427,19 +1246,13 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
               d.R ^ 2 +
             2 * ‖s‖ / d.R ^ 2 *
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) +
-            ‖s‖ *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
+            ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                 Real.sqrt
                   (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (2 * d.R)) /
+                      (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2) /
               d.δ ≤
@@ -1450,20 +1263,14 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
               d.R ^ 2 +
             8 * n *
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) /
               d.R ^ 2 +
-            4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
                 Real.sqrt
                   (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (2 * d.R)) /
+                      (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2) /
               d.δ := by
@@ -1495,16 +1302,12 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
     have hE2num :
       2 * ‖s‖ *
           (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * d.R)) /
+              (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) ≤
         8 * n *
           (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * d.R)) /
+              (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) := by
       have hscale : 2 * ‖s‖ ≤ 8 * n := by linarith [hs]
@@ -1512,32 +1315,24 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
     have hE2 :
       2 * ‖s‖ / d.R ^ 2 *
           (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * d.R)) /
+              (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) ≤
         8 * n *
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * d.R)) /
+                (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) /
           d.R ^ 2 := by
       have heq :
         2 * ‖s‖ / d.R ^ 2 *
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * d.R)) /
+                (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) =
           2 * ‖s‖ *
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * d.R)) /
+                (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) *
             (d.R ^ 2)⁻¹ := by
@@ -1548,43 +1343,30 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
       ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) /
           d.δ ≤
-        4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) /
           d.δ := by
-      have h1 :
-        ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) ≤
-          4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) :=
+      have h1 : ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) ≤ 4 * n * Real.sqrt (2 * |primitiveBRe χ|) :=
         mul_le_mul_of_nonneg_right hs (Real.sqrt_nonneg _)
       have h2 :
         ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) ≤
-          4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
+          4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) :=
         mul_le_mul_of_nonneg_right h1 (Real.sqrt_nonneg _)
@@ -1593,44 +1375,32 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
         ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                 Real.sqrt
                   (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (2 * d.R)) /
+                      (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2) /
               d.δ =
-            ‖s‖ *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+            ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
               Real.sqrt
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) *
               d.δ⁻¹ :=
           div_eq_mul_inv _ _
         _ ≤
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
               Real.sqrt
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) *
               d.δ⁻¹ :=
           mul_le_mul_of_nonneg_right h2 hδinv_nonneg
         _ =
-            4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
                 Real.sqrt
                   (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (2 * d.R)) /
+                      (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2) /
               d.δ :=
@@ -1648,19 +1418,13 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
                 d.R ^ 2 +
               2 * ‖(σ : ℂ) + d.T * Complex.I‖ / d.R ^ 2 *
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) +
-              ‖(σ : ℂ) + d.T * Complex.I‖ *
-                  Real.sqrt
-                    (2 * |primitiveBRe χ|) *
+              ‖(σ : ℂ) + d.T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                   Real.sqrt
                     (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * d.R)) /
+                        (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2) /
                 d.δ) /
@@ -1676,20 +1440,14 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
                   d.R ^ 2 +
                 8 * n *
                     (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * d.R)) /
+                        (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2) /
                   d.R ^ 2 +
-                4 * n *
-                    Real.sqrt
-                      (2 * |primitiveBRe χ|) *
+                4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
                     Real.sqrt
                       (Real.log
-                          (max 1
-                              (completedLFunctionBallBound
-                                N (2 * d.R)) /
+                          (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                             ‖DirichletCharacter.completedLFunction χ 0‖) /
                         Real.log 2) /
                   d.δ) /
@@ -1707,19 +1465,13 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
                 d.R ^ 2 +
               2 * ‖(σ : ℂ) - d.T * Complex.I‖ / d.R ^ 2 *
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) +
-              ‖(σ : ℂ) - d.T * Complex.I‖ *
-                  Real.sqrt
-                    (2 * |primitiveBRe χ|) *
+              ‖(σ : ℂ) - d.T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                   Real.sqrt
                     (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * d.R)) /
+                        (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2) /
                 d.δ) /
@@ -1735,20 +1487,14 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
                   d.R ^ 2 +
                 8 * n *
                     (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * d.R)) /
+                        (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2) /
                   d.R ^ 2 +
-                4 * n *
-                    Real.sqrt
-                      (2 * |primitiveBRe χ|) *
+                4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
                     Real.sqrt
                       (Real.log
-                          (max 1
-                              (completedLFunctionBallBound
-                                N (2 * d.R)) /
+                          (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                             ‖DirichletCharacter.completedLFunction χ 0‖) /
                         Real.log 2) /
                   d.δ) /
@@ -1759,8 +1505,7 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
 /-- Generic (`hquad`-free) analogue of `primitiveHorizontalStripEpsilon`, built on
 `primitiveHorizontalStripDataSeq_of_grh`. -/
 noncomputable def primitiveHorizontalStripEpsilon_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) : ℝ :=
   let n : ℝ := (k : ℝ) + 1
   let d := primitiveHorizontalStripDataSeq_of_grh hN2 hGRH hprimitive hne hinv k
@@ -1771,18 +1516,14 @@ noncomputable def primitiveHorizontalStripEpsilon_of_grh {N : ℕ} [NeZero N] (h
         d.R ^ 2 +
       8 * n *
           (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * d.R)) /
+              (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) /
         d.R ^ 2 +
       4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
           Real.sqrt
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * d.R)) /
+                (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) /
         d.δ) /
@@ -1799,8 +1540,7 @@ substitution direction (both coefficients being multiplied by `‖s‖` are `≥
 Role: the `∀ k σ, ... ≤ ε k` half of the generic horizontal estimate limit.
 -/
 theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) {σ : ℝ} (hσ : |σ| ≤ 2) :
     ‖logDeriv (DirichletCharacter.completedLFunction χ)
                 ((σ : ℂ) +
@@ -1854,19 +1594,13 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
               d.R ^ 2 +
             2 * ‖s‖ / d.R ^ 2 *
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) +
-            ‖s‖ *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
+            ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                 Real.sqrt
                   (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (2 * d.R)) /
+                      (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2) /
               d.δ ≤
@@ -1877,20 +1611,14 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
               d.R ^ 2 +
             8 * n *
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) /
               d.R ^ 2 +
-            4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
                 Real.sqrt
                   (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (2 * d.R)) /
+                      (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2) /
               d.δ := by
@@ -1922,16 +1650,12 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
     have hE2num :
       2 * ‖s‖ *
           (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * d.R)) /
+              (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) ≤
         8 * n *
           (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * d.R)) /
+              (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) := by
       have hscale : 2 * ‖s‖ ≤ 8 * n := by linarith [hs]
@@ -1939,32 +1663,24 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
     have hE2 :
       2 * ‖s‖ / d.R ^ 2 *
           (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * d.R)) /
+              (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) ≤
         8 * n *
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * d.R)) /
+                (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) /
           d.R ^ 2 := by
       have heq :
         2 * ‖s‖ / d.R ^ 2 *
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * d.R)) /
+                (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) =
           2 * ‖s‖ *
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * d.R)) /
+                (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) *
             (d.R ^ 2)⁻¹ := by
@@ -1975,43 +1691,30 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
       ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) /
           d.δ ≤
-        4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) /
           d.δ := by
-      have h1 :
-        ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) ≤
-          4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) :=
+      have h1 : ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) ≤ 4 * n * Real.sqrt (2 * |primitiveBRe χ|) :=
         mul_le_mul_of_nonneg_right hs (Real.sqrt_nonneg _)
       have h2 :
         ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) ≤
-          4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
+          4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) :=
         mul_le_mul_of_nonneg_right h1 (Real.sqrt_nonneg _)
@@ -2020,44 +1723,32 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
         ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                 Real.sqrt
                   (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (2 * d.R)) /
+                      (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2) /
               d.δ =
-            ‖s‖ *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+            ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
               Real.sqrt
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) *
               d.δ⁻¹ :=
           div_eq_mul_inv _ _
         _ ≤
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
               Real.sqrt
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) *
               d.δ⁻¹ :=
           mul_le_mul_of_nonneg_right h2 hδinv_nonneg
         _ =
-            4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
                 Real.sqrt
                   (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (2 * d.R)) /
+                      (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2) /
               d.δ :=
@@ -2075,19 +1766,13 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
                 d.R ^ 2 +
               2 * ‖(σ : ℂ) + d.T * Complex.I‖ / d.R ^ 2 *
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) +
-              ‖(σ : ℂ) + d.T * Complex.I‖ *
-                  Real.sqrt
-                    (2 * |primitiveBRe χ|) *
+              ‖(σ : ℂ) + d.T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                   Real.sqrt
                     (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * d.R)) /
+                        (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2) /
                 d.δ) /
@@ -2103,20 +1788,14 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
                   d.R ^ 2 +
                 8 * n *
                     (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * d.R)) /
+                        (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2) /
                   d.R ^ 2 +
-                4 * n *
-                    Real.sqrt
-                      (2 * |primitiveBRe χ|) *
+                4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
                     Real.sqrt
                       (Real.log
-                          (max 1
-                              (completedLFunctionBallBound
-                                N (2 * d.R)) /
+                          (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                             ‖DirichletCharacter.completedLFunction χ 0‖) /
                         Real.log 2) /
                   d.δ) /
@@ -2134,19 +1813,13 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
                 d.R ^ 2 +
               2 * ‖(σ : ℂ) - d.T * Complex.I‖ / d.R ^ 2 *
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) +
-              ‖(σ : ℂ) - d.T * Complex.I‖ *
-                  Real.sqrt
-                    (2 * |primitiveBRe χ|) *
+              ‖(σ : ℂ) - d.T * Complex.I‖ * Real.sqrt (2 * |primitiveBRe χ|) *
                   Real.sqrt
                     (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * d.R)) /
+                        (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2) /
                 d.δ) /
@@ -2162,20 +1835,14 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
                   d.R ^ 2 +
                 8 * n *
                     (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * d.R)) /
+                        (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2) /
                   d.R ^ 2 +
-                4 * n *
-                    Real.sqrt
-                      (2 * |primitiveBRe χ|) *
+                4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
                     Real.sqrt
                       (Real.log
-                          (max 1
-                              (completedLFunctionBallBound
-                                N (2 * d.R)) /
+                          (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                             ‖DirichletCharacter.completedLFunction χ 0‖) /
                         Real.log 2) /
                   d.δ) /
@@ -2211,9 +1878,7 @@ theorem tendsto_primitiveHorizontalStripCleanEnvelope_atTop {N : ℕ} [NeZero N]
   have hterm1 :
     Filter.Tendsto (fun n : ℝ => 12 * Real.log 2 * K * Real.log n / n ^ 2) Filter.atTop
       (nhds 0) := by
-    have :=
-      General.tendsto_log_div_sq_atTop.const_mul
-        (12 * Real.log 2 * K)
+    have := General.tendsto_log_div_sq_atTop.const_mul (12 * Real.log 2 * K)
     simpa only [mul_div_assoc, mul_zero] using this
   have hterm2 : Filter.Tendsto (fun n : ℝ => 12 / n ^ 3) Filter.atTop (nhds 0) := by
     have := hinv3.const_mul (12 : ℝ)
@@ -2228,11 +1893,8 @@ theorem tendsto_primitiveHorizontalStripCleanEnvelope_atTop {N : ℕ} [NeZero N]
             (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) /
           n ^ 2)
       Filter.atTop (nhds 0) := by
-    have hcore :=
-      General.tendsto_sqrt_mul_add_one_div_sq_atTop K hK
-    have :=
-      hcore.const_mul
-        (32 * Real.sqrt (2 * |primitiveBRe χ|))
+    have hcore := General.tendsto_sqrt_mul_add_one_div_sq_atTop K hK
+    have := hcore.const_mul (32 * Real.sqrt (2 * |primitiveBRe χ|))
     simpa only [Nat.ofNat_nonneg, Real.sqrt_mul, mul_assoc, mul_div_assoc, mul_zero] using this
   have hsum := ((hterm1.add hterm2).add hterm3).add hterm4
   rw [show (0 : ℝ) + 0 + 0 + 0 = 0 from by ring] at hsum
@@ -2256,8 +1918,7 @@ bound) both by `K n log n` (via `H2LogBound_le_explicit` +
 Role: supplies the eventual algebraic comparison used in the squeeze argument.
 -/
 theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     ∃ K : ℝ,
       0 < K ∧
@@ -2291,16 +1952,13 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
   -- B_R ≤ K n log n
   have hBR_le :
     Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * d.R)) /
+          (max 1 (completedLFunctionBallBound N (2 * d.R)) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 ≤
       K * n * Real.log n := by
     have h1 := H2LogBound_le_explicit hN2 hprimitive hne (show (1 : ℝ) ≤ 2 * d.R by linarith)
     have h2 : (2 * d.R + 3) * Real.log (2 * d.R + 3) ≤ (32 * n + 3) * Real.log (32 * n + 3) :=
-      General.add_three_mul_log_add_three_mono (by linarith)
-        (by linarith)
+      General.add_three_mul_log_add_three_mono (by linarith) (by linarith)
     have hnum :
       (4 * (N : ℝ) + 3) * (2 * d.R + 3) * Real.log (2 * d.R + 3) -
           Real.log ‖DirichletCharacter.completedLFunction χ 0‖ ≤
@@ -2330,9 +1988,7 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
   -- B₃₂ (underlying δ's bound) ≤ K n log n
   have hB32_le :
     Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * (16 * n))) /
+          (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 ≤
       K * n * Real.log n := by
@@ -2346,8 +2002,7 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
         1 ≤
       Real.log 2 * (K * n * Real.log n) + 1 := by
     have h2 : (d.R + 3) * Real.log (d.R + 3) ≤ (32 * n + 3) * Real.log (32 * n + 3) :=
-      General.add_three_mul_log_add_three_mono (by linarith)
-        (by linarith)
+      General.add_three_mul_log_add_three_mono (by linarith) (by linarith)
     have hcoef : (0 : ℝ) ≤ 4 * (N : ℝ) + 3 := by positivity
     have hnum :
       (4 * (N : ℝ) + 3) * (d.R + 3) * Real.log (d.R + 3) ≤
@@ -2378,9 +2033,7 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
     have hnum :
       8 *
           (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * (16 * n))) /
+                (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2 +
             1) ≤
@@ -2394,18 +2047,13 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
     hAR_def
   set BR :=
     Real.log
-        (max 1
-            (completedLFunctionBallBound N
-              (2 * d.R)) /
+        (max 1 (completedLFunctionBallBound N (2 * d.R)) /
           ‖DirichletCharacter.completedLFunction χ 0‖) /
       Real.log 2 with
     hBR_def
   change
     (768 * n * AR / d.R ^ 2 + 8 * n * BR / d.R ^ 2 +
-          4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt BR /
-            d.δ) /
+          4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ) /
         d.T ^ 2 ≤
       12 * Real.log 2 * K * Real.log n / n ^ 2 + 12 / n ^ 3 + K / 8 * Real.log n / n ^ 2 +
         32 * Real.sqrt (2 * |primitiveBRe χ|) *
@@ -2477,174 +2125,92 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
       _ ≤ K * n * Real.log n / (8 * n ^ 3) := hstep2
       _ = K / 8 * Real.log n / n ^ 2 := heq2
   have hterm3 :
-    4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-          Real.sqrt BR /
-        d.δ /
-        d.T ^ 2 ≤
+    4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ / d.T ^ 2 ≤
       32 * Real.sqrt (2 * |primitiveBRe χ|) *
           (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) /
         n ^ 2 := by
     have hsqrtBR_le : Real.sqrt BR ≤ Real.sqrt (K * n * Real.log n) := Real.sqrt_le_sqrt hBR_le
     have hδpos := d.δ_pos
-    have hbase_nonneg :
-      0 ≤
-        4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt BR /
-          d.δ := by
+    have hbase_nonneg : 0 ≤ 4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ := by
       positivity
     have hstep0 :
-      4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt BR /
-          d.δ ≤
-        4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt (K * n * Real.log n) /
-          d.δ := by
+      4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ ≤
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) / d.δ := by
       have h1 :
-        4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt BR ≤
-          4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt (K * n * Real.log n) :=
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR ≤
+          4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) :=
         mul_le_mul_of_nonneg_left hsqrtBR_le (by positivity)
       calc
-        4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt BR /
-              d.δ =
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt BR *
-              d.δ⁻¹ :=
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ =
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR * d.δ⁻¹ :=
           div_eq_mul_inv _ _
-        _ ≤
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt (K * n * Real.log n) *
-              d.δ⁻¹ :=
+        _ ≤ 4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) * d.δ⁻¹ :=
           mul_le_mul_of_nonneg_right h1 (inv_nonneg.mpr hδpos.le)
-        _ =
-            4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt (K * n * Real.log n) /
-              d.δ :=
+        _ = 4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) / d.δ :=
           (div_eq_mul_inv _ _).symm
     have hstep1 :
-      4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt (K * n * Real.log n) /
-          d.δ ≤
-        4 * n *
-          Real.sqrt (2 * |primitiveBRe χ|) *
-          Real.sqrt (K * n * Real.log n) *
+      4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) / d.δ ≤
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) *
           (8 * (K * n * Real.log n + 1) / n) := by
       have hbase2_nonneg :
-        0 ≤
-          4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt (K * n * Real.log n) := by
+        0 ≤ 4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) := by
         positivity
       calc
-        4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt (K * n * Real.log n) /
-              d.δ =
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt (K * n * Real.log n) *
-              d.δ⁻¹ :=
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) / d.δ =
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) * d.δ⁻¹ :=
           div_eq_mul_inv _ _
         _ ≤
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt (K * n * Real.log n) *
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) *
               (8 * (K * n * Real.log n + 1) / n) :=
           mul_le_mul_of_nonneg_left hδinv_le hbase2_nonneg
     have heq1 :
-      4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-          Real.sqrt (K * n * Real.log n) *
+      4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) *
           (8 * (K * n * Real.log n + 1) / n) =
         32 * Real.sqrt (2 * |primitiveBRe χ|) *
           (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) := by
       field_simp; ring
     have hcombine :
-      4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt BR /
-          d.δ ≤
+      4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ ≤
         32 * Real.sqrt (2 * |primitiveBRe χ|) *
           (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) := by
       calc
-        4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt BR /
-              d.δ ≤
-            4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt (K * n * Real.log n) /
-              d.δ :=
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ ≤
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) / d.δ :=
           hstep0
         _ ≤
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt (K * n * Real.log n) *
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) *
               (8 * (K * n * Real.log n + 1) / n) :=
           hstep1
         _ =
-            32 *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+            32 * Real.sqrt (2 * |primitiveBRe χ|) *
               (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) :=
           heq1
     calc
-      4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt BR /
-            d.δ /
-            d.T ^ 2 ≤
-          (4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt BR /
-              d.δ) /
-            n ^ 2 :=
+      4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ / d.T ^ 2 ≤
+          (4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ) / n ^ 2 :=
         hTdenom_swap _ hbase_nonneg
       _ ≤
-          (32 *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+          (32 * Real.sqrt (2 * |primitiveBRe χ|) *
               (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1))) /
             n ^ 2 :=
         by gcongr
   have hnum := add_le_add (add_le_add hterm1 hterm2) hterm3
   calc
     (768 * n * AR / d.R ^ 2 + 8 * n * BR / d.R ^ 2 +
-            4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt BR /
-              d.δ) /
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ) /
           d.T ^ 2 =
         768 * n * AR / d.R ^ 2 / d.T ^ 2 + 8 * n * BR / d.R ^ 2 / d.T ^ 2 +
-          4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt BR /
-            d.δ /
-            d.T ^ 2 :=
+          4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ / d.T ^ 2 :=
       by ring
     _ ≤
         (12 * Real.log 2 * K * Real.log n / n ^ 2 + 12 / n ^ 3 + K / 8 * Real.log n / n ^ 2) +
-          32 *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+          32 * Real.sqrt (2 * |primitiveBRe χ|) *
               (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) /
             n ^ 2 :=
       hnum
     _ =
         12 * Real.log 2 * K * Real.log n / n ^ 2 + 12 / n ^ 3 + K / 8 * Real.log n / n ^ 2 +
-          32 *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+          32 * Real.sqrt (2 * |primitiveBRe χ|) *
               (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) /
             n ^ 2 :=
       by ring
@@ -2654,8 +2220,7 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
 /-- `primitiveHorizontalStripEpsilon` is always `≥ 0` (each of its three terms is a nonnegative
 numerator over a positive denominator). -/
 theorem primitiveHorizontalStripEpsilon_nonneg {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (k : ℕ) :
     0 ≤ primitiveHorizontalStripEpsilon hN2 hGRH hprimitive hne hinv hquad k := by
   have hN1 : 1 < N := by omega
@@ -2679,19 +2244,14 @@ theorem primitiveHorizontalStripEpsilon_nonneg {N : ℕ} [NeZero N] (hN2 : 2 ≤
             d.R ^ 2 +
           8 * ((k : ℝ) + 1) *
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) /
             d.R ^ 2 +
-          4 * ((k : ℝ) + 1) *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+          4 * ((k : ℝ) + 1) * Real.sqrt (2 * |primitiveBRe χ|) *
               Real.sqrt
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) /
             d.δ) /
@@ -2711,22 +2271,17 @@ theorem primitiveHorizontalStripEpsilon_nonneg {N : ℕ} [NeZero N] (hN2 : 2 ≤
     0 ≤
       8 * ((k : ℝ) + 1) *
           (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * d.R)) /
+              (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) /
         d.R ^ 2 :=
     div_nonneg (mul_nonneg (mul_nonneg (by norm_num only) hk_nonneg) hBR_nonneg) hR2_nonneg
   have hterm3 :
     0 ≤
-      4 * ((k : ℝ) + 1) *
-          Real.sqrt (2 * |primitiveBRe χ|) *
+      4 * ((k : ℝ) + 1) * Real.sqrt (2 * |primitiveBRe χ|) *
           Real.sqrt
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * d.R)) /
+                (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) /
         d.δ :=
@@ -2742,8 +2297,7 @@ Combines the eventual clean-envelope domination
 (`tendsto_primitiveHorizontalStripCleanEnvelope_atTop`), and nonnegativity, via
 `tendsto_of_tendsto_of_tendsto_of_le_of_le'` (squeeze with `Eventually` bounds on both sides). -/
 theorem tendsto_primitiveHorizontalStripEpsilon_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     Filter.Tendsto (primitiveHorizontalStripEpsilon hN2 hGRH hprimitive hne hinv hquad) Filter.atTop
       (nhds 0) := by
@@ -2777,8 +2331,7 @@ Role: the limit interface for the horizontal contour edges, replacing
 bound with a single `n → ∞` limit statement.
 -/
 theorem exists_primitiveHorizontalHeightSeq_completedLogDeriv_small {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     ∃ T ε : ℕ → ℝ,
       Filter.Tendsto T Filter.atTop Filter.atTop ∧
@@ -2812,22 +2365,19 @@ theorem exists_primitiveHorizontalHeightSeq_completedLogDeriv_small {N : ℕ} [N
 /-- Named alias for the height sequence, so downstream files don't need to destructure
 `exists_primitiveHorizontalHeightSeq_completedLogDeriv_small`'s existential at every use site. -/
 noncomputable def primitiveHorizontalHeightSeq {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (k : ℕ) :
     ℝ :=
   (primitiveHorizontalStripDataSeq hN2 hGRH hprimitive hne hinv hquad k).T
 
 theorem primitiveHorizontalHeightSeq_ge {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (k : ℕ) :
     (k : ℝ) + 1 ≤ primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k :=
   (primitiveHorizontalStripDataSeq hN2 hGRH hprimitive hne hinv hquad k).T_mem.1
 
 theorem tendsto_primitiveHorizontalHeightSeq_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     Filter.Tendsto (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad) Filter.atTop
       Filter.atTop := by
@@ -2838,8 +2388,7 @@ theorem tendsto_primitiveHorizontalHeightSeq_atTop {N : ℕ} [NeZero N] (hN2 : 2
       hnn_tendsto
 
 theorem primitiveHorizontalHeightSeq_completedLFunction_ne_zero {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (k : ℕ)
     {σ : ℝ} (hσ : |σ| ≤ 2) :
     DirichletCharacter.completedLFunction χ
@@ -2853,8 +2402,7 @@ theorem primitiveHorizontalHeightSeq_completedLFunction_ne_zero {N : ℕ} [NeZer
   (primitiveHorizontalStripDataSeq hN2 hGRH hprimitive hne hinv hquad k).nonzero σ hσ
 
 theorem primitiveHorizontalHeightSeq_completedLogDeriv_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (k : ℕ)
     {σ : ℝ} (hσ : |σ| ≤ 2) :
     ‖logDeriv (DirichletCharacter.completedLFunction χ)
@@ -2884,8 +2432,7 @@ bound) both by `K n log n` (via `H2LogBound_le_explicit` +
 Role: supplies the eventual comparison for the generic-character squeeze argument.
 -/
 theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ K : ℝ,
       0 < K ∧
@@ -2919,16 +2466,13 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : 
   -- B_R ≤ K n log n
   have hBR_le :
     Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * d.R)) /
+          (max 1 (completedLFunctionBallBound N (2 * d.R)) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 ≤
       K * n * Real.log n := by
     have h1 := H2LogBound_le_explicit hN2 hprimitive hne (show (1 : ℝ) ≤ 2 * d.R by linarith)
     have h2 : (2 * d.R + 3) * Real.log (2 * d.R + 3) ≤ (32 * n + 3) * Real.log (32 * n + 3) :=
-      General.add_three_mul_log_add_three_mono (by linarith)
-        (by linarith)
+      General.add_three_mul_log_add_three_mono (by linarith) (by linarith)
     have hnum :
       (4 * (N : ℝ) + 3) * (2 * d.R + 3) * Real.log (2 * d.R + 3) -
           Real.log ‖DirichletCharacter.completedLFunction χ 0‖ ≤
@@ -2958,9 +2502,7 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : 
   -- B₃₂ (underlying δ's bound) ≤ K n log n
   have hB32_le :
     Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * (16 * n))) /
+          (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 ≤
       K * n * Real.log n := by
@@ -2974,8 +2516,7 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : 
         1 ≤
       Real.log 2 * (K * n * Real.log n) + 1 := by
     have h2 : (d.R + 3) * Real.log (d.R + 3) ≤ (32 * n + 3) * Real.log (32 * n + 3) :=
-      General.add_three_mul_log_add_three_mono (by linarith)
-        (by linarith)
+      General.add_three_mul_log_add_three_mono (by linarith) (by linarith)
     have hcoef : (0 : ℝ) ≤ 4 * (N : ℝ) + 3 := by positivity
     have hnum :
       (4 * (N : ℝ) + 3) * (d.R + 3) * Real.log (d.R + 3) ≤
@@ -3006,9 +2547,7 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : 
     have hnum :
       8 *
           (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * (16 * n))) /
+                (max 1 (completedLFunctionBallBound N (2 * (16 * n))) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2 +
             1) ≤
@@ -3022,18 +2561,13 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : 
     hAR_def
   set BR :=
     Real.log
-        (max 1
-            (completedLFunctionBallBound N
-              (2 * d.R)) /
+        (max 1 (completedLFunctionBallBound N (2 * d.R)) /
           ‖DirichletCharacter.completedLFunction χ 0‖) /
       Real.log 2 with
     hBR_def
   change
     (768 * n * AR / d.R ^ 2 + 8 * n * BR / d.R ^ 2 +
-          4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt BR /
-            d.δ) /
+          4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ) /
         d.T ^ 2 ≤
       12 * Real.log 2 * K * Real.log n / n ^ 2 + 12 / n ^ 3 + K / 8 * Real.log n / n ^ 2 +
         32 * Real.sqrt (2 * |primitiveBRe χ|) *
@@ -3105,174 +2639,92 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : 
       _ ≤ K * n * Real.log n / (8 * n ^ 3) := hstep2
       _ = K / 8 * Real.log n / n ^ 2 := heq2
   have hterm3 :
-    4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-          Real.sqrt BR /
-        d.δ /
-        d.T ^ 2 ≤
+    4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ / d.T ^ 2 ≤
       32 * Real.sqrt (2 * |primitiveBRe χ|) *
           (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) /
         n ^ 2 := by
     have hsqrtBR_le : Real.sqrt BR ≤ Real.sqrt (K * n * Real.log n) := Real.sqrt_le_sqrt hBR_le
     have hδpos := d.δ_pos
-    have hbase_nonneg :
-      0 ≤
-        4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt BR /
-          d.δ := by
+    have hbase_nonneg : 0 ≤ 4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ := by
       positivity
     have hstep0 :
-      4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt BR /
-          d.δ ≤
-        4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt (K * n * Real.log n) /
-          d.δ := by
+      4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ ≤
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) / d.δ := by
       have h1 :
-        4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt BR ≤
-          4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt (K * n * Real.log n) :=
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR ≤
+          4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) :=
         mul_le_mul_of_nonneg_left hsqrtBR_le (by positivity)
       calc
-        4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt BR /
-              d.δ =
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt BR *
-              d.δ⁻¹ :=
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ =
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR * d.δ⁻¹ :=
           div_eq_mul_inv _ _
-        _ ≤
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt (K * n * Real.log n) *
-              d.δ⁻¹ :=
+        _ ≤ 4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) * d.δ⁻¹ :=
           mul_le_mul_of_nonneg_right h1 (inv_nonneg.mpr hδpos.le)
-        _ =
-            4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt (K * n * Real.log n) /
-              d.δ :=
+        _ = 4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) / d.δ :=
           (div_eq_mul_inv _ _).symm
     have hstep1 :
-      4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt (K * n * Real.log n) /
-          d.δ ≤
-        4 * n *
-          Real.sqrt (2 * |primitiveBRe χ|) *
-          Real.sqrt (K * n * Real.log n) *
+      4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) / d.δ ≤
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) *
           (8 * (K * n * Real.log n + 1) / n) := by
       have hbase2_nonneg :
-        0 ≤
-          4 * n *
-            Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt (K * n * Real.log n) := by
+        0 ≤ 4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) := by
         positivity
       calc
-        4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt (K * n * Real.log n) /
-              d.δ =
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt (K * n * Real.log n) *
-              d.δ⁻¹ :=
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) / d.δ =
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) * d.δ⁻¹ :=
           div_eq_mul_inv _ _
         _ ≤
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt (K * n * Real.log n) *
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) *
               (8 * (K * n * Real.log n + 1) / n) :=
           mul_le_mul_of_nonneg_left hδinv_le hbase2_nonneg
     have heq1 :
-      4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-          Real.sqrt (K * n * Real.log n) *
+      4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) *
           (8 * (K * n * Real.log n + 1) / n) =
         32 * Real.sqrt (2 * |primitiveBRe χ|) *
           (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) := by
       field_simp; ring
     have hcombine :
-      4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-            Real.sqrt BR /
-          d.δ ≤
+      4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ ≤
         32 * Real.sqrt (2 * |primitiveBRe χ|) *
           (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) := by
       calc
-        4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt BR /
-              d.δ ≤
-            4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt (K * n * Real.log n) /
-              d.δ :=
+        4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ ≤
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) / d.δ :=
           hstep0
         _ ≤
-            4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt (K * n * Real.log n) *
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt (K * n * Real.log n) *
               (8 * (K * n * Real.log n + 1) / n) :=
           hstep1
         _ =
-            32 *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+            32 * Real.sqrt (2 * |primitiveBRe χ|) *
               (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) :=
           heq1
     calc
-      4 * n * Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt BR /
-            d.δ /
-            d.T ^ 2 ≤
-          (4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt BR /
-              d.δ) /
-            n ^ 2 :=
+      4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ / d.T ^ 2 ≤
+          (4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ) / n ^ 2 :=
         hTdenom_swap _ hbase_nonneg
       _ ≤
-          (32 *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+          (32 * Real.sqrt (2 * |primitiveBRe χ|) *
               (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1))) /
             n ^ 2 :=
         by gcongr
   have hnum := add_le_add (add_le_add hterm1 hterm2) hterm3
   calc
     (768 * n * AR / d.R ^ 2 + 8 * n * BR / d.R ^ 2 +
-            4 * n *
-                Real.sqrt
-                  (2 * |primitiveBRe χ|) *
-                Real.sqrt BR /
-              d.δ) /
+            4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ) /
           d.T ^ 2 =
         768 * n * AR / d.R ^ 2 / d.T ^ 2 + 8 * n * BR / d.R ^ 2 / d.T ^ 2 +
-          4 * n *
-              Real.sqrt (2 * |primitiveBRe χ|) *
-              Real.sqrt BR /
-            d.δ /
-            d.T ^ 2 :=
+          4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ / d.T ^ 2 :=
       by ring
     _ ≤
         (12 * Real.log 2 * K * Real.log n / n ^ 2 + 12 / n ^ 3 + K / 8 * Real.log n / n ^ 2) +
-          32 *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+          32 * Real.sqrt (2 * |primitiveBRe χ|) *
               (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) /
             n ^ 2 :=
       hnum
     _ =
         12 * Real.log 2 * K * Real.log n / n ^ 2 + 12 / n ^ 3 + K / 8 * Real.log n / n ^ 2 +
-          32 *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+          32 * Real.sqrt (2 * |primitiveBRe χ|) *
               (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) /
             n ^ 2 :=
       by ring
@@ -3282,8 +2734,7 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : 
 /-- `primitiveHorizontalStripEpsilon_of_grh` is always `≥ 0` (each of its three terms is a
 nonnegative numerator over a positive denominator). -/
 theorem primitiveHorizontalStripEpsilon_nonneg_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) :
     0 ≤ primitiveHorizontalStripEpsilon_of_grh hN2 hGRH hprimitive hne hinv k := by
   have hN1 : 1 < N := by omega
@@ -3307,19 +2758,14 @@ theorem primitiveHorizontalStripEpsilon_nonneg_of_grh {N : ℕ} [NeZero N] (hN2 
             d.R ^ 2 +
           8 * ((k : ℝ) + 1) *
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * d.R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) /
             d.R ^ 2 +
-          4 * ((k : ℝ) + 1) *
-              Real.sqrt (2 * |primitiveBRe χ|) *
+          4 * ((k : ℝ) + 1) * Real.sqrt (2 * |primitiveBRe χ|) *
               Real.sqrt
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * d.R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) /
             d.δ) /
@@ -3339,22 +2785,17 @@ theorem primitiveHorizontalStripEpsilon_nonneg_of_grh {N : ℕ} [NeZero N] (hN2 
     0 ≤
       8 * ((k : ℝ) + 1) *
           (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * d.R)) /
+              (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) /
         d.R ^ 2 :=
     div_nonneg (mul_nonneg (mul_nonneg (by norm_num only) hk_nonneg) hBR_nonneg) hR2_nonneg
   have hterm3 :
     0 ≤
-      4 * ((k : ℝ) + 1) *
-          Real.sqrt (2 * |primitiveBRe χ|) *
+      4 * ((k : ℝ) + 1) * Real.sqrt (2 * |primitiveBRe χ|) *
           Real.sqrt
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * d.R)) /
+                (max 1 (completedLFunctionBallBound N (2 * d.R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) /
         d.δ :=
@@ -3371,8 +2812,7 @@ Combines the eventual clean-envelope domination
 limit (`tendsto_primitiveHorizontalStripCleanEnvelope_atTop`), and nonnegativity, via
 `tendsto_of_tendsto_of_tendsto_of_le_of_le'` (squeeze with `Eventually` bounds on both sides). -/
 theorem tendsto_primitiveHorizontalStripEpsilon_atTop_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     Filter.Tendsto (primitiveHorizontalStripEpsilon_of_grh hN2 hGRH hprimitive hne hinv)
       Filter.atTop (nhds 0) := by
@@ -3407,8 +2847,7 @@ Role: the generic horizontal-edge limit interface, replacing
 bound with a single `n → ∞` limit statement.
 -/
 theorem exists_primitiveHorizontalHeightSeq_completedLogDeriv_small_of_grh {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ T ε : ℕ → ℝ,
       Filter.Tendsto T Filter.atTop Filter.atTop ∧
@@ -3443,21 +2882,18 @@ theorem exists_primitiveHorizontalHeightSeq_completedLogDeriv_small_of_grh {N : 
 `exists_primitiveHorizontalHeightSeq_completedLogDeriv_small_of_grh`'s existential at every use
 site. -/
 noncomputable def primitiveHorizontalHeightSeq_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) : ℝ :=
   (primitiveHorizontalStripDataSeq_of_grh hN2 hGRH hprimitive hne hinv k).T
 
 theorem primitiveHorizontalHeightSeq_ge_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) :
     (k : ℝ) + 1 ≤ primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k :=
   (primitiveHorizontalStripDataSeq_of_grh hN2 hGRH hprimitive hne hinv k).T_mem.1
 
 theorem tendsto_primitiveHorizontalHeightSeq_atTop_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     Filter.Tendsto (primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv) Filter.atTop
       Filter.atTop := by
@@ -3468,8 +2904,7 @@ theorem tendsto_primitiveHorizontalHeightSeq_atTop_of_grh {N : ℕ} [NeZero N] (
       hnn_tendsto
 
 theorem primitiveHorizontalHeightSeq_completedLFunction_ne_zero_of_grh {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) {σ : ℝ} (hσ : |σ| ≤ 2) :
     DirichletCharacter.completedLFunction χ
           ((σ : ℂ) +
@@ -3482,8 +2917,7 @@ theorem primitiveHorizontalHeightSeq_completedLFunction_ne_zero_of_grh {N : ℕ}
   (primitiveHorizontalStripDataSeq_of_grh hN2 hGRH hprimitive hne hinv k).nonzero σ hσ
 
 theorem primitiveHorizontalHeightSeq_completedLogDeriv_bound_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) {σ : ℝ} (hσ : |σ| ≤ 2) :
     ‖logDeriv (DirichletCharacter.completedLFunction χ)
                 ((σ : ℂ) +

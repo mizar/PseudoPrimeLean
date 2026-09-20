@@ -31,26 +31,17 @@ theorem llsRiemannReciprocalVerticalIntegralLowerBound_of_riemannHypothesis
     (hRH : RiemannHypothesis) : LLSRiemannReciprocalVerticalIntegralLowerBound := by
   intro x hx τ hτ
   have hx0 : (0 : ℝ) < x := by linarith
-  have heq2 :=
-    reciprocalWeightedMangoldtSum_eq_integral hx0 (τ :=
-      2) (by norm_num only)
-  have heqτ :=
-    reciprocalWeightedMangoldtSum_eq_integral hx0 hτ
+  have heq2 := reciprocalWeightedMangoldtSum_eq_integral hx0 (τ := 2) (by norm_num only)
+  have heqτ := reciprocalWeightedMangoldtSum_eq_integral hx0 hτ
   have hre_eq :
     ((2 * Real.pi : ℝ)⁻¹ •
-          ∫ y : ℝ,
-            riemannZetaReciprocalContourKernel x
-              ((τ : ℂ) + y * Complex.I)).re =
+          ∫ y : ℝ, riemannZetaReciprocalContourKernel x ((τ : ℂ) + y * Complex.I)).re =
       ((2 * Real.pi : ℝ)⁻¹ •
-          ∫ y : ℝ,
-            riemannZetaReciprocalContourKernel x
-              ((2 : ℂ) + y * Complex.I)).re := by
+          ∫ y : ℝ, riemannZetaReciprocalContourKernel x ((2 : ℂ) + y * Complex.I)).re := by
     rw [← heqτ, heq2]
     norm_num only [Complex.ofReal_ofNat]
   rw [hre_eq]
-  exact
-    re_integral_riemannZetaReciprocalContourKernel_two_ge_of_riemannHypothesis
-      hRH hx
+  exact re_integral_riemannZetaReciprocalContourKernel_two_ge_of_riemannHypothesis hRH hx
 
 /-- RH and the numerical remainder estimate give the reciprocal lower bound `log x - 8/5`
 for `x ≥ 2`, as used in LLS Section 3.1. -/

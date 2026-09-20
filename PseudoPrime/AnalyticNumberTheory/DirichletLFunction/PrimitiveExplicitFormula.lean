@@ -31,9 +31,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
         (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * χ (n : ZMod N) *
           General.mellinWeightOne ((n : ℝ) / x) =
       (2 * Real.pi : ℝ)⁻¹ •
-        ∫ y : ℝ,
-          dirichletReciprocalContourKernel x χ
-            ((τ : ℂ) + y * Complex.I) := by
+        ∫ y : ℝ, dirichletReciprocalContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
   set σ : ℝ := τ - 1 with hσ_def
   have hσ0 : (0 : ℝ) < σ := by
     rw [hσ_def]; linarith
@@ -42,8 +40,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ (((τ : ℂ) + y * Complex.I) * ((τ : ℂ) + y * Complex.I - 1))⁻¹ with hK_def
   have hK_int : MeasureTheory.Integrable K := by
-    have hVI :=
-      General.verticalIntegrable_mellinReciprocalKernel hσ0.ne' hσ1
+    have hVI := General.verticalIntegrable_mellinReciprocalKernel hσ0.ne' hσ1
     unfold Complex.VerticalIntegrable at hVI
     have heq : (fun y : ℝ ↦ (((σ : ℂ) + y * Complex.I) * ((σ : ℂ) + y * Complex.I + 1))⁻¹) = K := by
       funext y
@@ -104,9 +101,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
     have hnx : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-    have hmellin :=
-      General.mellinInv_mellinWeightOne_eq (σ := σ) (x :=
-        (n : ℝ) / x) hσ0 hnx
+    have hmellin := General.mellinInv_mellinWeightOne_eq (σ := σ) (x := (n : ℝ) / x) hσ0 hnx
     rw [← hmellin]
     simp only [mellinInv, smul_eq_mul, one_div]
   have hterm :
@@ -124,8 +119,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
     apply MeasureTheory.integral_congr_ae
     filter_upwards with y
     simp only [hG_def, hH_def, hK_def]
-    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg,
-      one_div, Complex.ofReal_natCast]
+    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div, Complex.ofReal_natCast]
     have hshift : ((τ : ℂ) + y * Complex.I - 1) = (σ : ℂ) + y * Complex.I := by
       rw [hσ_def]; push_cast; ring
     have hshift' : ((σ : ℂ) + y * Complex.I + 1) = (τ : ℂ) + y * Complex.I := by
@@ -222,18 +216,13 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
     hInterchange.tsum_eq
   -- (5) identify the inner sum over `n` with the primitive reciprocal contour kernel
   have hinner :
-    ∀ y : ℝ,
-      ∑' n : ℕ, G n y =
-        dirichletReciprocalContourKernel x χ
-          ((τ : ℂ) + y * Complex.I) := by
+    ∀ y : ℝ, ∑' n : ℕ, G n y = dirichletReciprocalContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
     intro y
     have hs : (1 : ℝ) < ((τ : ℂ) + y * Complex.I).re := by
       simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
       linarith
-    have hLS :=
-      lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re
-        χ hs
+    have hLS := lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ hs
     have hsum :
       ∑' n : ℕ,
           (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
@@ -267,10 +256,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
                 (n : ℂ) ^ (-((τ : ℂ) + y * Complex.I))) *
             (x : ℂ) ^ ((τ : ℂ) + y * Complex.I - 1) :=
         by rw [tsum_mul_right, tsum_mul_left]
-      _ =
-          dirichletReciprocalContourKernel x χ
-            ((τ : ℂ) + y * Complex.I) :=
-        by
+      _ = dirichletReciprocalContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
         rw [hsum, hK_def]
         unfold dirichletReciprocalContourKernel
         simp only [div_eq_mul_inv]
@@ -301,11 +287,8 @@ theorem characterReciprocalWeightedSum_eq_integral {N : ℕ} [NeZero N] (χ : Di
     {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     (Arithmetic.characterReciprocalWeightedSum x χ : ℂ) =
       (2 * Real.pi : ℝ)⁻¹ •
-        ∫ y : ℝ,
-          dirichletReciprocalContourKernel x χ
-            ((τ : ℂ) + y * Complex.I) := by
+        ∫ y : ℝ, dirichletReciprocalContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
   rw [← Arithmetic.characterReciprocalWeightedTerm_tsum_eq χ hx,
-    characterReciprocalWeightedTerm_tsum_eq_integral
-      χ hx hτ]
+    characterReciprocalWeightedTerm_tsum_eq_integral χ hx hτ]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

@@ -33,9 +33,7 @@ theorem riemannZeta_zero_re_eq_half_of_riemannHypothesis (hRH : RiemannHypothesi
 /-- Under RH, a nontrivial zeta zero satisfies `normSq (ρ - 1) = normSq ρ`. -/
 theorem normSq_riemannZeta_zero_sub_one_eq_of_riemannHypothesis (hRH : RiemannHypothesis) {ρ : ℂ}
     (hρ : riemannZeta ρ = 0) (hre : 0 ≤ ρ.re) : Complex.normSq (ρ - 1) = Complex.normSq ρ := by
-  have hhalf :=
-    riemannZeta_zero_re_eq_half_of_riemannHypothesis
-      hRH hρ hre
+  have hhalf := riemannZeta_zero_re_eq_half_of_riemannHypothesis hRH hρ hre
   simp only [Complex.normSq_apply, Complex.sub_re, Complex.sub_im, Complex.one_re, Complex.one_im]
   rw [hhalf]
   ring

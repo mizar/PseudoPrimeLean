@@ -12,8 +12,7 @@ def ConductorPrimeSupport {q : ℕ} (χ : DirichletCharacter ℂ q) : Prop :=
 theorem apply_eq_primitiveCharacter_of_conductorPrimeSupport {q n : ℕ} (χ : DirichletCharacter ℂ q)
     (hsupport : ConductorPrimeSupport χ) : χ n = χ.primitiveCharacter n := by
   by_cases hconductor : Nat.Coprime n χ.conductor
-  · apply
-      apply_eq_primitiveCharacter_of_coprime_quotient
+  · apply apply_eq_primitiveCharacter_of_coprime_quotient
     by_contra hquotient
     obtain ⟨p, hp, hpn, hpquotient⟩ := Nat.Prime.not_coprime_iff_dvd.mp hquotient
     have hpq : p ∣ q := hpquotient.trans (Nat.div_dvd_of_dvd χ.conductor_dvd_level)
@@ -35,15 +34,11 @@ theorem apply_eq_primitiveCharacter_of_conductorPrimeSupport {q n : ℕ} (χ : D
 /-- Equal prime support removes the conductor-quotient error from the reciprocal sum. -/
 theorem characterReciprocalWeightedSum_eq_primitive_of_conductorPrimeSupport {q : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hsupport : ConductorPrimeSupport χ) :
-    characterReciprocalWeightedSum x χ =
-      characterReciprocalWeightedSum x
-        χ.primitiveCharacter := by
-  rw [characterReciprocalWeightedSum,
-    characterReciprocalWeightedSum]
+    characterReciprocalWeightedSum x χ = characterReciprocalWeightedSum x χ.primitiveCharacter := by
+  rw [characterReciprocalWeightedSum, characterReciprocalWeightedSum]
   apply Finset.sum_congr rfl
   intro n _
-  rw [characterReciprocalWeightedTerm,
-    characterReciprocalWeightedTerm,
+  rw [characterReciprocalWeightedTerm, characterReciprocalWeightedTerm,
     apply_eq_primitiveCharacter_of_conductorPrimeSupport χ hsupport]
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

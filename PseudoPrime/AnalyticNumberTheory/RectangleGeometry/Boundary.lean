@@ -75,11 +75,8 @@ theorem integral_inv_sub_I_neg_one_one :
         continuous_const
   rw [intervalIntegral.integral_add hg hh, intervalIntegral.integral_ofReal,
     intervalIntegral.integral_mul_const, intervalIntegral.integral_ofReal]
-  rw [show (∫ x : ℝ in (-1)..1, g x) = 0 by
-      exact
-        integral_self_mul_inv_one_add_sq_neg_one_one]
-  rw [show (∫ x : ℝ in (-1)..1, h x) = Real.pi / 2 by
-      exact integral_inv_one_add_sq_neg_one_one]
+  rw [show (∫ x : ℝ in (-1)..1, g x) = 0 by exact integral_self_mul_inv_one_add_sq_neg_one_one]
+  rw [show (∫ x : ℝ in (-1)..1, h x) = Real.pi / 2 by exact integral_inv_one_add_sq_neg_one_one]
   simp only [Complex.ofReal_zero, Complex.ofReal_div, Complex.ofReal_ofNat, zero_add]
 
 /-- The normalized upper-edge simple-pole integral is `-πi/2`. -/
@@ -118,8 +115,7 @@ theorem integral_inv_one_add_mul_I_neg_one_one :
         simp only [Complex.inv_I]
         ring
   rw [intervalIntegral.integral_congr fun y _ ↦ hpoint y]
-  rw [intervalIntegral.integral_const_mul,
-    integral_inv_sub_I_neg_one_one]
+  rw [intervalIntegral.integral_const_mul, integral_inv_sub_I_neg_one_one]
 
 /-- The normalized left-edge integrand has integral `i(πi/2)`. -/
 theorem integral_inv_neg_one_add_mul_I_neg_one_one :
@@ -166,8 +162,7 @@ theorem integral_inv_sub_mul_I_neg_radius_radius {r : ℝ} (hr : 0 < r) :
     rw [mul_inv_rev]
     ring
   rw [intervalIntegral.integral_congr fun x _ ↦ hpoint' x]
-  rw [intervalIntegral.integral_const_mul,
-    integral_inv_sub_I_neg_one_one]
+  rw [intervalIntegral.integral_const_mul, integral_inv_sub_I_neg_one_one]
   simp only [Complex.real_smul, ne_eq, Complex.ofReal_eq_zero, hr.ne', not_false_eq_true,
     mul_inv_cancel_left₀]
 
@@ -186,8 +181,7 @@ theorem integral_inv_add_mul_I_neg_radius_radius {r : ℝ} (hr : 0 < r) :
     simpa only [neg_neg] using
       intervalIntegral.integral_comp_neg (f := fun t : ℝ ↦ ((t : ℂ) - r * Complex.I)⁻¹) (a := -r)
         (b := r)
-  rw [hcomp,
-    integral_inv_sub_mul_I_neg_radius_radius hr]
+  rw [hcomp, integral_inv_sub_mul_I_neg_radius_radius hr]
 
 /-- Positive real scaling preserves the normalized right-edge integral. -/
 theorem integral_inv_radius_add_mul_I_neg_radius_radius {r : ℝ} (hr : 0 < r) :
@@ -206,8 +200,7 @@ theorem integral_inv_radius_add_mul_I_neg_radius_radius {r : ℝ} (hr : 0 < r) :
         simp only [Complex.inv_I]
         ring
   rw [intervalIntegral.integral_congr fun y _ ↦ hpoint y]
-  rw [intervalIntegral.integral_const_mul,
-    integral_inv_sub_mul_I_neg_radius_radius hr]
+  rw [intervalIntegral.integral_const_mul, integral_inv_sub_mul_I_neg_radius_radius hr]
 
 /-- Positive real scaling preserves the normalized left-edge integral. -/
 theorem integral_inv_neg_radius_add_mul_I_neg_radius_radius {r : ℝ} (hr : 0 < r) :
@@ -234,8 +227,7 @@ theorem integral_inv_neg_radius_add_mul_I_neg_radius_radius {r : ℝ} (hr : 0 < 
     simpa only [neg_neg] using
       intervalIntegral.integral_comp_neg (f := fun t : ℝ ↦ ((t : ℂ) - r * Complex.I)⁻¹) (a := -r)
         (b := r)
-  rw [hcomp,
-    integral_inv_sub_mul_I_neg_radius_radius hr]
+  rw [hcomp, integral_inv_sub_mul_I_neg_radius_radius hr]
 
 /--
 Integrating a shifted inverse square along a horizontal line gives its primitive's endpoint
@@ -354,8 +346,7 @@ theorem I_smul_integral_inv_cube_add_mul_I (a b d : ℝ) (hd : d ≠ 0) :
         (Complex.I * ((d : ℂ) + y * Complex.I)⁻¹ ^ 3) y := by
       convert ((hline.inv (hne y)).pow 2).const_mul (-(1 / 2 : ℂ)) using 1
       · funext x
-        simp only [Complex.ofRealCLM_apply, Pi.inv_apply, Pi.pow_apply,
-          div_eq_mul_inv, pow_two]
+        simp only [Complex.ofRealCLM_apply, Pi.inv_apply, Pi.pow_apply, div_eq_mul_inv, pow_two]
         ring
       · simp only [Complex.ofRealCLM_apply, Complex.ofReal_one, Pi.inv_apply, div_eq_mul_inv,
           inv_pow]
@@ -374,14 +365,9 @@ def rectangleOpenBox (z w : ℂ) : Set ℂ :=
   Set.Ioo (min z.re w.re) (max z.re w.re) ×ℂ Set.Ioo (min z.im w.im) (max z.im w.im)
 
 /-- Every point of an open rectangle has a positive closed-ball neighborhood inside it. -/
-theorem exists_closedBall_subset_rectangleOpenBox {z w s : ℂ}
-    (hs : s ∈ rectangleOpenBox z w) :
-    ∃ ε : ℝ,
-      0 < ε ∧
-        Metric.closedBall s ε ⊆
-          rectangleOpenBox z w := by
-  have hopen : IsOpen (rectangleOpenBox z w) :=
-    isOpen_Ioo.reProdIm isOpen_Ioo
+theorem exists_closedBall_subset_rectangleOpenBox {z w s : ℂ} (hs : s ∈ rectangleOpenBox z w) :
+    ∃ ε : ℝ, 0 < ε ∧ Metric.closedBall s ε ⊆ rectangleOpenBox z w := by
+  have hopen : IsOpen (rectangleOpenBox z w) := isOpen_Ioo.reProdIm isOpen_Ioo
   obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp (hopen.mem_nhds hs)
   refine ⟨r / 2, half_pos hr, ?_⟩
   exact (Metric.closedBall_subset_ball (half_lt_self hr)).trans hball
@@ -411,8 +397,7 @@ theorem Finset.exists_common_closedBall_subset {ι : Type*} (points : Finset ι)
 
 /-- Every open rectangular box is contained in its corresponding closed box. -/
 theorem rectangleOpenBox_subset_rectangleClosedBox (z w : ℂ) :
-    rectangleOpenBox z w ⊆
-      Rectangle.rectangleClosedBox z w := by
+    rectangleOpenBox z w ⊆ Rectangle.rectangleClosedBox z w := by
   intro s hs
   exact ⟨⟨le_of_lt hs.1.1, le_of_lt hs.1.2⟩, ⟨le_of_lt hs.2.1, le_of_lt hs.2.2⟩⟩
 
@@ -424,8 +409,8 @@ upgrades the two coordinatewise weak inequalities to strict ones.  This is the l
 grid-line avoidance to open-cell membership.
 -/
 theorem mem_rectangleOpenBox_of_mem_closedBox_of_ne {a b s : ℂ} (hre : a.re < b.re)
-    (him : a.im < b.im) (hs : s ∈ Rectangle.rectangleClosedBox a b)
-    (hsare : s.re ≠ a.re) (hsbre : s.re ≠ b.re) (hsaim : s.im ≠ a.im) (hsbim : s.im ≠ b.im) :
+    (him : a.im < b.im) (hs : s ∈ Rectangle.rectangleClosedBox a b) (hsare : s.re ≠ a.re)
+    (hsbre : s.re ≠ b.re) (hsaim : s.im ≠ a.im) (hsbim : s.im ≠ b.im) :
     s ∈ rectangleOpenBox a b := by
   have hsre := hs.1
   have hsim := hs.2
@@ -441,8 +426,7 @@ theorem mem_rectangleOpenBox_of_mem_closedBox_of_ne {a b s : ℂ} (hre : a.re < 
 /-- Real-coordinate separation makes two open rectangular boxes disjoint. -/
 theorem rectangleOpenBox_disjoint_of_re_separated {a b c d : ℂ}
     (hsep : max a.re b.re ≤ min c.re d.re) :
-    Disjoint (rectangleOpenBox a b)
-      (rectangleOpenBox c d) := by
+    Disjoint (rectangleOpenBox a b) (rectangleOpenBox c d) := by
   apply Set.disjoint_left.mpr
   intro s hs ht
   have hcross : min c.re d.re < max a.re b.re := ht.1.1.trans hs.1.2
@@ -451,8 +435,7 @@ theorem rectangleOpenBox_disjoint_of_re_separated {a b c d : ℂ}
 /-- Imaginary-coordinate separation makes two open rectangular boxes disjoint. -/
 theorem rectangleOpenBox_disjoint_of_im_separated {a b c d : ℂ}
     (hsep : max a.im b.im ≤ min c.im d.im) :
-    Disjoint (rectangleOpenBox a b)
-      (rectangleOpenBox c d) := by
+    Disjoint (rectangleOpenBox a b) (rectangleOpenBox c d) := by
   apply Set.disjoint_left.mpr
   intro s hs ht
   have hcross : min c.im d.im < max a.im b.im := ht.2.1.trans hs.2.2
@@ -464,21 +447,12 @@ theorem rectangleOpenBox_disjoint_of_coordinate_separated {a b c d : ℂ}
       max a.re b.re ≤ min c.re d.re ∨
         max c.re d.re ≤ min a.re b.re ∨
         max a.im b.im ≤ min c.im d.im ∨ max c.im d.im ≤ min a.im b.im) :
-    Disjoint (rectangleOpenBox a b)
-      (rectangleOpenBox c d) := by
+    Disjoint (rectangleOpenBox a b) (rectangleOpenBox c d) := by
   rcases hsep with hre | hre | him | him
-  · exact
-      rectangleOpenBox_disjoint_of_re_separated
-        hre
-  · exact
-      (rectangleOpenBox_disjoint_of_re_separated
-          hre).symm
-  · exact
-      rectangleOpenBox_disjoint_of_im_separated
-        him
-  · exact
-      (rectangleOpenBox_disjoint_of_im_separated
-          him).symm
+  · exact rectangleOpenBox_disjoint_of_re_separated hre
+  · exact (rectangleOpenBox_disjoint_of_re_separated hre).symm
+  · exact rectangleOpenBox_disjoint_of_im_separated him
+  · exact (rectangleOpenBox_disjoint_of_im_separated him).symm
 
 /-- A nonempty real open interval contains a point outside any prescribed finite set. -/
 theorem exists_between_not_mem_finset (forbidden : Finset ℝ) {a b : ℝ} (hab : a < b) :
@@ -504,21 +478,15 @@ noncomputable def avoidingCut (forbidden : Finset ℝ) (a b : ℝ) : ℝ :=
 /-- An avoiding cut between ordered endpoints satisfies its inequalities and finite avoidance. -/
 theorem avoidingCut_spec (forbidden : Finset ℝ) {a b : ℝ} (hab : a < b) :
     a < avoidingCut forbidden a b ∧
-      avoidingCut forbidden a b < b ∧
-      avoidingCut forbidden a b ∉ forbidden := by
-  exact
-    Classical.epsilon_spec
-      (exists_between_not_mem_finset forbidden
-        hab)
+      avoidingCut forbidden a b < b ∧ avoidingCut forbidden a b ∉ forbidden := by
+  exact Classical.epsilon_spec (exists_between_not_mem_finset forbidden hab)
 
 /-- The first defining corner belongs to its closed rectangular box. -/
-theorem left_mem_rectangleClosedBox (z w : ℂ) :
-    z ∈ Rectangle.rectangleClosedBox z w := by
+theorem left_mem_rectangleClosedBox (z w : ℂ) : z ∈ Rectangle.rectangleClosedBox z w := by
   exact ⟨Set.left_mem_uIcc, Set.left_mem_uIcc⟩
 
 /-- The second defining corner belongs to its closed rectangular box. -/
-theorem right_mem_rectangleClosedBox (z w : ℂ) :
-    w ∈ Rectangle.rectangleClosedBox z w := by
+theorem right_mem_rectangleClosedBox (z w : ℂ) : w ∈ Rectangle.rectangleClosedBox z w := by
   exact ⟨Set.right_mem_uIcc, Set.right_mem_uIcc⟩
 
 /--
@@ -531,8 +499,7 @@ cell remains inside its outer rectangle.
 theorem rectangleClosedBox_subset_rectangleClosedBox {a b z w : ℂ}
     (hare : a.re ∈ Set.uIcc z.re w.re) (hbre : b.re ∈ Set.uIcc z.re w.re)
     (haim : a.im ∈ Set.uIcc z.im w.im) (hbim : b.im ∈ Set.uIcc z.im w.im) :
-    Rectangle.rectangleClosedBox a b ⊆
-      Rectangle.rectangleClosedBox z w := by
+    Rectangle.rectangleClosedBox a b ⊆ Rectangle.rectangleClosedBox z w := by
   intro s hs
   exact ⟨Set.uIcc_subset_uIcc hare hbre hs.1, Set.uIcc_subset_uIcc haim hbim hs.2⟩
 
@@ -599,8 +566,7 @@ def coordinateIntervalsSeparated (p q : ℝ × ℝ) : Prop :=
   p.2 ≤ q.1 ∨ q.2 ≤ p.1
 
 /-- Coordinate-interval separation is symmetric. -/
-instance :
-    Std.Symm coordinateIntervalsSeparated :=
+instance : Std.Symm coordinateIntervalsSeparated :=
   ⟨fun _ _ h ↦ h.elim Or.inr Or.inl⟩
 
 /-- Consecutive intervals of a strictly increasing list occur in nonoverlapping order. -/
@@ -616,25 +582,16 @@ theorem List.consecutivePairs_pairwise_separated {values : List ℝ}
       simp only [List.consecutivePairs, List.tail_cons, List.zip_cons_cons, List.pairwise_cons]
       refine ⟨?_, ih htail⟩
       intro pair hpair
-      rcases
-        List.mem_cons.mp
-          (List.fst_mem_of_mem_consecutivePairs
-            hpair) with
-        h | h
+      rcases List.mem_cons.mp (List.fst_mem_of_mem_consecutivePairs hpair) with h | h
       · exact h ▸ le_rfl
       · exact le_of_lt ((List.pairwise_cons.mp htail).1 pair.1 h)
 
 /-- Two distinct consecutive intervals of a strictly increasing list are separated. -/
 theorem List.consecutivePairs_separated {values : List ℝ} (hvalues : values.Pairwise (· < ·))
     {p q : ℝ × ℝ} (hp : p ∈ values.consecutivePairs) (hq : q ∈ values.consecutivePairs)
-    (hne : p ≠ q) :
-    coordinateIntervalsSeparated p q := by
-  have hpairs :=
-    List.consecutivePairs_pairwise_separated
-      hvalues
-  have hsymmetric :
-    values.consecutivePairs.Pairwise
-      coordinateIntervalsSeparated :=
+    (hne : p ≠ q) : coordinateIntervalsSeparated p q := by
+  have hpairs := List.consecutivePairs_pairwise_separated hvalues
+  have hsymmetric : values.consecutivePairs.Pairwise coordinateIntervalsSeparated :=
     hpairs.imp fun hab ↦ Or.inl hab
   exact hsymmetric.forall hp hq hne
 
@@ -661,9 +618,7 @@ theorem List.not_between_of_mem_consecutivePairs {values : List ℝ}
           · exact (not_lt_of_ge (le_of_lt ((List.pairwise_cons.mp htail).1 u hu))) hbetween.2
       · rcases List.mem_cons.mp hu with rfl | hu
         · intro hbetween
-          have hfirst :=
-            List.fst_mem_of_mem_consecutivePairs
-              hpair
+          have hfirst := List.fst_mem_of_mem_consecutivePairs hpair
           exact
             (not_lt_of_ge (le_of_lt ((List.pairwise_cons.mp hvalues).1 pair.1 hfirst))) hbetween.1
         · exact ih htail hpair hu
@@ -686,10 +641,7 @@ theorem List.Nodup.consecutivePairs {A : Type*} {values : List A} (hvalues : val
       rw [List.nodup_cons]
       refine ⟨?_, ih hvalues.2⟩
       intro hpair
-      exact
-        hvalues.1
-          (List.fst_mem_of_mem_consecutivePairs
-            hpair)
+      exact hvalues.1 (List.fst_mem_of_mem_consecutivePairs hpair)
 
 /--
 The oriented boundary integral around an axis-aligned rectangle with opposite corners `z` and `w`.
@@ -719,28 +671,21 @@ structure RectangleBoundaryIntegrable (f : ℂ → ℂ) (z w : ℂ) : Prop where
 
 /-- Edge integrability is preserved by pointwise addition. -/
 theorem RectangleBoundaryIntegrable.add {f g : ℂ → ℂ} {z w : ℂ}
-    (hf : RectangleBoundaryIntegrable f z w)
-    (hg : RectangleBoundaryIntegrable g z w) :
-    RectangleBoundaryIntegrable
-      (fun s : ℂ ↦ f s + g s) z w :=
+    (hf : RectangleBoundaryIntegrable f z w) (hg : RectangleBoundaryIntegrable g z w) :
+    RectangleBoundaryIntegrable (fun s : ℂ ↦ f s + g s) z w :=
   ⟨hf.bottom.add hg.bottom, hf.top.add hg.top, hf.right.add hg.right, hf.left.add hg.left⟩
 
 /-- Edge integrability is preserved by multiplication by a complex constant. -/
 theorem RectangleBoundaryIntegrable.const_mul {f : ℂ → ℂ} {z w : ℂ}
-    (hf : RectangleBoundaryIntegrable f z w)
-    (a : ℂ) :
-    RectangleBoundaryIntegrable
-      (fun s : ℂ ↦ a * f s) z w :=
+    (hf : RectangleBoundaryIntegrable f z w) (a : ℂ) :
+    RectangleBoundaryIntegrable (fun s : ℂ ↦ a * f s) z w :=
   ⟨hf.bottom.const_mul a, hf.top.const_mul a, hf.right.const_mul a, hf.left.const_mul a⟩
 
 /-- Boundary integration is additive when both summands are integrable on all four edges. -/
 theorem rectangleBoundaryIntegral_add {f g : ℂ → ℂ} {z w : ℂ}
-    (hf : RectangleBoundaryIntegrable f z w)
-    (hg : RectangleBoundaryIntegrable g z w) :
-    rectangleBoundaryIntegral
-        (fun s : ℂ ↦ f s + g s) z w =
-      rectangleBoundaryIntegral f z w +
-        rectangleBoundaryIntegral g z w := by
+    (hf : RectangleBoundaryIntegrable f z w) (hg : RectangleBoundaryIntegrable g z w) :
+    rectangleBoundaryIntegral (fun s : ℂ ↦ f s + g s) z w =
+      rectangleBoundaryIntegral f z w + rectangleBoundaryIntegral g z w := by
   unfold rectangleBoundaryIntegral
   rw [intervalIntegral.integral_add hf.bottom hg.bottom,
     intervalIntegral.integral_add hf.top hg.top, intervalIntegral.integral_add hf.right hg.right,
@@ -749,9 +694,7 @@ theorem rectangleBoundaryIntegral_add {f g : ℂ → ℂ} {z w : ℂ}
 
 /-- A complex scalar can be pulled through a rectangle boundary integral. -/
 theorem rectangleBoundaryIntegral_const_mul (a : ℂ) (f : ℂ → ℂ) (z w : ℂ) :
-    rectangleBoundaryIntegral
-        (fun s : ℂ ↦ a * f s) z w =
-      a * rectangleBoundaryIntegral f z w := by
+    rectangleBoundaryIntegral (fun s : ℂ ↦ a * f s) z w = a * rectangleBoundaryIntegral f z w := by
   unfold rectangleBoundaryIntegral
   simp only [intervalIntegral.integral_const_mul, smul_eq_mul]
   ring
@@ -759,8 +702,7 @@ theorem rectangleBoundaryIntegral_const_mul (a : ℂ) (f : ℂ → ℂ) (z w : �
 /-- Functions agreeing on a closed rectangle have equal boundary integrals. -/
 theorem rectangleBoundaryIntegral_congr_closedBox {f g : ℂ → ℂ} {z w : ℂ}
     (hfg : Set.EqOn f g (Rectangle.rectangleClosedBox z w)) :
-    rectangleBoundaryIntegral f z w =
-      rectangleBoundaryIntegral g z w := by
+    rectangleBoundaryIntegral f z w = rectangleBoundaryIntegral g z w := by
   unfold rectangleBoundaryIntegral
   have horizontal (c : ℝ) (hc : c ∈ Set.uIcc z.im w.im) :
     (∫ t : ℝ in z.re..w.re, f (t + c * Complex.I)) =
@@ -807,8 +749,7 @@ theorem not_mem_Ioo_min_max_self_right (a b : ℝ) : b ∉ Set.Ioo (min a b) (ma
 
 /-- A point on a fixed-imaginary-part edge never lies in the open rectangle. -/
 theorem not_mem_rectangleOpenBox_of_im_eq {z w : ℂ} {c : ℝ} (hedge : c = z.im ∨ c = w.im) (t : ℝ) :
-    ((t : ℂ) + c * Complex.I) ∉
-      rectangleOpenBox z w := by
+    ((t : ℂ) + c * Complex.I) ∉ rectangleOpenBox z w := by
   rw [rectangleOpenBox, Complex.mem_reProdIm]
   rintro ⟨-, him⟩
   have him' : ((t : ℂ) + (c : ℂ) * Complex.I).im = c := by
@@ -816,16 +757,12 @@ theorem not_mem_rectangleOpenBox_of_im_eq {z w : ℂ} {c : ℝ} (hedge : c = z.i
       mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
   rw [him'] at him
   rcases hedge with rfl | rfl
-  · exact
-      not_mem_Ioo_min_max_self_left z.im w.im him
-  · exact
-      not_mem_Ioo_min_max_self_right z.im w.im
-        him
+  · exact not_mem_Ioo_min_max_self_left z.im w.im him
+  · exact not_mem_Ioo_min_max_self_right z.im w.im him
 
 /-- A point on a fixed-real-part edge never lies in the open rectangle. -/
 theorem not_mem_rectangleOpenBox_of_re_eq {z w : ℂ} {c : ℝ} (hedge : c = z.re ∨ c = w.re) (t : ℝ) :
-    ((c : ℂ) + t * Complex.I) ∉
-      rectangleOpenBox z w := by
+    ((c : ℂ) + t * Complex.I) ∉ rectangleOpenBox z w := by
   rw [rectangleOpenBox, Complex.mem_reProdIm]
   rintro ⟨hre, -⟩
   have hre' : ((c : ℂ) + (t : ℂ) * Complex.I).re = c := by
@@ -833,11 +770,8 @@ theorem not_mem_rectangleOpenBox_of_re_eq {z w : ℂ} {c : ℝ} (hedge : c = z.r
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
   rw [hre'] at hre
   rcases hedge with rfl | rfl
-  · exact
-      not_mem_Ioo_min_max_self_left z.re w.re hre
-  · exact
-      not_mem_Ioo_min_max_self_right z.re w.re
-        hre
+  · exact not_mem_Ioo_min_max_self_left z.re w.re hre
+  · exact not_mem_Ioo_min_max_self_right z.re w.re hre
 
 /--
 Functions agreeing on a rectangle's boundary have equal boundary integrals.
@@ -849,12 +783,8 @@ which a Laurent decomposition centered at an interior singularity cannot supply 
 itself under Lean's junk-value convention for `(z - c)⁻¹`.
 -/
 theorem rectangleBoundaryIntegral_congr_boundary {f g : ℂ → ℂ} {z w : ℂ}
-    (hfg :
-      Set.EqOn f g
-        (Rectangle.rectangleClosedBox z w \
-          rectangleOpenBox z w)) :
-    rectangleBoundaryIntegral f z w =
-      rectangleBoundaryIntegral g z w := by
+    (hfg : Set.EqOn f g (Rectangle.rectangleClosedBox z w \ rectangleOpenBox z w)) :
+    rectangleBoundaryIntegral f z w = rectangleBoundaryIntegral g z w := by
   unfold rectangleBoundaryIntegral
   have horizontal (c : ℝ) (hc : c ∈ Set.uIcc z.im w.im) (hedge : c = z.im ∨ c = w.im) :
     (∫ t : ℝ in z.re..w.re, f (t + c * Complex.I)) =
@@ -862,10 +792,7 @@ theorem rectangleBoundaryIntegral_congr_boundary {f g : ℂ → ℂ} {z w : ℂ}
     apply intervalIntegral.integral_congr
     intro t ht
     apply hfg
-    refine
-      ⟨⟨?_, ?_⟩,
-        not_mem_rectangleOpenBox_of_im_eq hedge
-          t⟩
+    refine ⟨⟨?_, ?_⟩, not_mem_rectangleOpenBox_of_im_eq hedge t⟩
     · simpa only [Set.mem_preimage, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
         mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using ht
     · simpa only [Set.mem_preimage, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
@@ -877,10 +804,7 @@ theorem rectangleBoundaryIntegral_congr_boundary {f g : ℂ → ℂ} {z w : ℂ}
     apply intervalIntegral.integral_congr
     intro t ht
     apply hfg
-    refine
-      ⟨⟨?_, ?_⟩,
-        not_mem_rectangleOpenBox_of_re_eq hedge
-          t⟩
+    refine ⟨⟨?_, ?_⟩, not_mem_rectangleOpenBox_of_re_eq hedge t⟩
     · simpa only [Set.mem_preimage, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
         mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using hc
     · simpa only [Set.mem_preimage, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
@@ -892,11 +816,9 @@ theorem rectangleBoundaryIntegral_congr_boundary {f g : ℂ → ℂ} {z w : ℂ}
 
 /-- A function differentiable on the closed rectangle has zero rectangle boundary integral. -/
 theorem rectangleBoundaryIntegral_eq_zero_of_differentiableOn (f : ℂ → ℂ) (z w : ℂ)
-    (hf :
-      DifferentiableOn ℂ f (Rectangle.rectangleClosedBox z w)) :
+    (hf : DifferentiableOn ℂ f (Rectangle.rectangleClosedBox z w)) :
     rectangleBoundaryIntegral f z w = 0 := by
-  unfold rectangleBoundaryIntegral
-    Rectangle.rectangleClosedBox at *
+  unfold rectangleBoundaryIntegral Rectangle.rectangleClosedBox at *
   exact Complex.integral_boundary_rect_eq_zero_of_differentiableOn f z w hf
 
 /--
@@ -908,8 +830,7 @@ coordinate of `c`.  This is the reusable bridge from origin-centered model kerne
 principal parts at an arbitrary center.
 -/
 theorem rectangleBoundaryIntegral_comp_sub_translate (f : ℂ → ℂ) (c z w : ℂ) :
-    rectangleBoundaryIntegral
-        (fun s : ℂ ↦ f (s - c)) (c + z) (c + w) =
+    rectangleBoundaryIntegral (fun s : ℂ ↦ f (s - c)) (c + z) (c + w) =
       rectangleBoundaryIntegral f z w := by
   unfold rectangleBoundaryIntegral
   simp only [Complex.add_re, Complex.add_im]
@@ -943,8 +864,7 @@ theorem rectangleBoundaryIntegral_comp_sub_translate (f : ℂ → ℂ) (c z w : 
 
 /-- The centered simple-pole square integral is radius-independent for every positive radius. -/
 theorem rectangleBoundaryIntegral_inv_zero_centeredSquare {r : ℝ} (hr : 0 < r) :
-    rectangleBoundaryIntegral (fun z : ℂ ↦ z⁻¹)
-        ((-r : ℝ) - r * Complex.I) (r + r * Complex.I) =
+    rectangleBoundaryIntegral (fun z : ℂ ↦ z⁻¹) ((-r : ℝ) - r * Complex.I) (r + r * Complex.I) =
       2 * Real.pi * Complex.I := by
   unfold rectangleBoundaryIntegral
   simp only [Complex.sub_re, Complex.sub_im, Complex.add_re, Complex.add_im, Complex.ofReal_re,
@@ -958,14 +878,10 @@ theorem rectangleBoundaryIntegral_inv_zero_centeredSquare {r : ℝ} (hr : 0 < r)
           congr 1
           push_cast
           ring]
-    exact
-      integral_inv_sub_mul_I_neg_radius_radius hr
-  rw [hbottom,
-    integral_inv_add_mul_I_neg_radius_radius hr,
-    integral_inv_radius_add_mul_I_neg_radius_radius
-      hr,
-    integral_inv_neg_radius_add_mul_I_neg_radius_radius
-      hr]
+    exact integral_inv_sub_mul_I_neg_radius_radius hr
+  rw [hbottom, integral_inv_add_mul_I_neg_radius_radius hr,
+    integral_inv_radius_add_mul_I_neg_radius_radius hr,
+    integral_inv_neg_radius_add_mul_I_neg_radius_radius hr]
   ring_nf
   rw [Complex.I_pow_three]
   ring
@@ -979,21 +895,16 @@ endpoint differences cancel at the corners, without invoking a residue theorem a
 center.
 -/
 theorem rectangleBoundaryIntegral_inv_sq_zero_centeredSquare {r : ℝ} (hr : 0 < r) :
-    rectangleBoundaryIntegral
-        (fun z : ℂ ↦ z⁻¹ ^ 2) ((-r : ℝ) - r * Complex.I) (r + r * Complex.I) =
+    rectangleBoundaryIntegral (fun z : ℂ ↦ z⁻¹ ^ 2) ((-r : ℝ) - r * Complex.I) (r + r * Complex.I) =
       0 := by
   have hr0 : r ≠ 0 := ne_of_gt hr
   unfold rectangleBoundaryIntegral
   simp only [Complex.sub_re, Complex.sub_im, Complex.add_re, Complex.add_im, Complex.ofReal_re,
     Complex.ofReal_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im, mul_zero,
     mul_one, sub_zero, zero_sub, add_zero, zero_add]
-  rw [integral_inv_sq_add_mul_I (-r) r (-r)
-      (neg_ne_zero.mpr hr0),
-    integral_inv_sq_add_mul_I (-r) r r hr0,
-    I_smul_integral_inv_sq_add_mul_I (-r) r r
-      hr0,
-    I_smul_integral_inv_sq_add_mul_I (-r) r (-r)
-      (neg_ne_zero.mpr hr0)]
+  rw [integral_inv_sq_add_mul_I (-r) r (-r) (neg_ne_zero.mpr hr0),
+    integral_inv_sq_add_mul_I (-r) r r hr0, I_smul_integral_inv_sq_add_mul_I (-r) r r hr0,
+    I_smul_integral_inv_sq_add_mul_I (-r) r (-r) (neg_ne_zero.mpr hr0)]
   ring
 
 /--
@@ -1001,21 +912,16 @@ The inverse-cube principal part has zero boundary integral on every positive-rad
 centered at the origin.  The four values of the primitive `-z⁻² / 2` cancel at the corners.
 -/
 theorem rectangleBoundaryIntegral_inv_cube_zero_centeredSquare {r : ℝ} (hr : 0 < r) :
-    rectangleBoundaryIntegral
-        (fun z : ℂ ↦ z⁻¹ ^ 3) ((-r : ℝ) - r * Complex.I) (r + r * Complex.I) =
+    rectangleBoundaryIntegral (fun z : ℂ ↦ z⁻¹ ^ 3) ((-r : ℝ) - r * Complex.I) (r + r * Complex.I) =
       0 := by
   have hr0 : r ≠ 0 := ne_of_gt hr
   unfold rectangleBoundaryIntegral
   simp only [Complex.sub_re, Complex.sub_im, Complex.add_re, Complex.add_im, Complex.ofReal_re,
     Complex.ofReal_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im, mul_zero,
     mul_one, sub_zero, zero_sub, add_zero, zero_add]
-  rw [integral_inv_cube_add_mul_I (-r) r (-r)
-      (neg_ne_zero.mpr hr0),
-    integral_inv_cube_add_mul_I (-r) r r hr0,
-    I_smul_integral_inv_cube_add_mul_I (-r) r r
-      hr0,
-    I_smul_integral_inv_cube_add_mul_I (-r) r
-      (-r) (neg_ne_zero.mpr hr0)]
+  rw [integral_inv_cube_add_mul_I (-r) r (-r) (neg_ne_zero.mpr hr0),
+    integral_inv_cube_add_mul_I (-r) r r hr0, I_smul_integral_inv_cube_add_mul_I (-r) r r hr0,
+    I_smul_integral_inv_cube_add_mul_I (-r) r (-r) (neg_ne_zero.mpr hr0)]
   ring
 
 /--
@@ -1035,10 +941,8 @@ theorem rectangleBoundaryIntegral_eq_add_vertical (f : ℂ → ℂ) (z w : ℂ) 
     (htopRight :
       IntervalIntegrable (fun x : ℝ ↦ f (x + w.im * Complex.I)) MeasureTheory.volume m w.re) :
     rectangleBoundaryIntegral f z w =
-      rectangleBoundaryIntegral f z
-          (m + w.im * Complex.I) +
-        rectangleBoundaryIntegral f
-          (m + z.im * Complex.I) w := by
+      rectangleBoundaryIntegral f z (m + w.im * Complex.I) +
+        rectangleBoundaryIntegral f (m + z.im * Complex.I) w := by
   unfold rectangleBoundaryIntegral
   rw [← intervalIntegral.integral_add_adjacent_intervals hbottomLeft hbottomRight]
   rw [← intervalIntegral.integral_add_adjacent_intervals htopLeft htopRight]
@@ -1097,10 +1001,8 @@ theorem rectangleBoundaryIntegral_eq_add_horizontal (f : ℂ → ℂ) (z w : ℂ
     (hleftTop :
       IntervalIntegrable (fun y : ℝ ↦ f (z.re + y * Complex.I)) MeasureTheory.volume m w.im) :
     rectangleBoundaryIntegral f z w =
-      rectangleBoundaryIntegral f z
-          (w.re + m * Complex.I) +
-        rectangleBoundaryIntegral f
-          (z.re + m * Complex.I) w := by
+      rectangleBoundaryIntegral f z (w.re + m * Complex.I) +
+        rectangleBoundaryIntegral f (z.re + m * Complex.I) w := by
   unfold rectangleBoundaryIntegral
   rw [← intervalIntegral.integral_add_adjacent_intervals hrightBottom hrightTop]
   rw [← intervalIntegral.integral_add_adjacent_intervals hleftBottom hleftTop]
@@ -1145,10 +1047,8 @@ the algebraic identity; later geometric applications may impose monotonicity sep
 noncomputable def rectangleVerticalSubdivision (f : ℂ → ℂ) (z w : ℂ) : List ℝ → ℂ
   | [] => rectangleBoundaryIntegral f z w
   | m :: ms =>
-    rectangleBoundaryIntegral f z
-        (m + w.im * Complex.I) +
-      rectangleVerticalSubdivision f
-        (m + z.im * Complex.I) w ms
+    rectangleBoundaryIntegral f z (m + w.im * Complex.I) +
+      rectangleVerticalSubdivision f (m + z.im * Complex.I) w ms
 
 /--
 The interval-integrability certificate consumed by a successive vertical subdivision.
@@ -1166,8 +1066,7 @@ def RectangleVerticalSubdivisionIntegrable (f : ℂ → ℂ) (z w : ℂ) : List 
       IntervalIntegrable (fun x : ℝ ↦ f (x + z.im * Complex.I)) MeasureTheory.volume m w.re ∧
       IntervalIntegrable (fun x : ℝ ↦ f (x + w.im * Complex.I)) MeasureTheory.volume z.re m ∧
       IntervalIntegrable (fun x : ℝ ↦ f (x + w.im * Complex.I)) MeasureTheory.volume m w.re ∧
-      RectangleVerticalSubdivisionIntegrable f
-        (m + z.im * Complex.I) w ms
+      RectangleVerticalSubdivisionIntegrable f (m + z.im * Complex.I) w ms
 
 /--
 The sum of rectangular boundary integrals obtained by successively cutting at imaginary
@@ -1180,10 +1079,8 @@ subdivides the remainder, providing the horizontal counterpart of
 noncomputable def rectangleHorizontalSubdivision (f : ℂ → ℂ) (z w : ℂ) : List ℝ → ℂ
   | [] => rectangleBoundaryIntegral f z w
   | m :: ms =>
-    rectangleBoundaryIntegral f z
-        (w.re + m * Complex.I) +
-      rectangleHorizontalSubdivision f
-        (z.re + m * Complex.I) w ms
+    rectangleBoundaryIntegral f z (w.re + m * Complex.I) +
+      rectangleHorizontalSubdivision f (z.re + m * Complex.I) w ms
 
 /--
 The interval-integrability certificate consumed by a successive horizontal subdivision.
@@ -1198,8 +1095,7 @@ def RectangleHorizontalSubdivisionIntegrable (f : ℂ → ℂ) (z w : ℂ) : Lis
       IntervalIntegrable (fun y : ℝ ↦ f (w.re + y * Complex.I)) MeasureTheory.volume m w.im ∧
       IntervalIntegrable (fun y : ℝ ↦ f (z.re + y * Complex.I)) MeasureTheory.volume z.im m ∧
       IntervalIntegrable (fun y : ℝ ↦ f (z.re + y * Complex.I)) MeasureTheory.volume m w.im ∧
-      RectangleHorizontalSubdivisionIntegrable f
-        (z.re + m * Complex.I) w ms
+      RectangleHorizontalSubdivisionIntegrable f (z.re + m * Complex.I) w ms
 
 /--
 A finite sequence of certified horizontal cuts preserves the outer rectangular boundary integral.
@@ -1209,19 +1105,15 @@ vertical analogue, this supplies the two finite one-dimensional stages of rectan
 subdivision.
 -/
 theorem rectangleBoundaryIntegral_eq_horizontalSubdivision (f : ℂ → ℂ) (z w : ℂ) (cuts : List ℝ)
-    (hcuts :
-      RectangleHorizontalSubdivisionIntegrable f
-        z w cuts) :
-    rectangleBoundaryIntegral f z w =
-      rectangleHorizontalSubdivision f z w
-        cuts := by
+    (hcuts : RectangleHorizontalSubdivisionIntegrable f z w cuts) :
+    rectangleBoundaryIntegral f z w = rectangleHorizontalSubdivision f z w cuts := by
   induction cuts generalizing z with
   | nil => rfl
   | cons m ms
     ih =>
     rcases hcuts with ⟨hrightBottom, hrightTop, hleftBottom, hleftTop, hrest⟩
-    rw [rectangleBoundaryIntegral_eq_add_horizontal f z w m
-      hrightBottom hrightTop hleftBottom hleftTop]
+    rw [rectangleBoundaryIntegral_eq_add_horizontal f z w m hrightBottom hrightTop hleftBottom
+        hleftTop]
     simp only [rectangleHorizontalSubdivision]
     rw [ih (z.re + m * Complex.I) hrest]
 
@@ -1234,13 +1126,10 @@ the common imaginary cut list.  Thus the resulting terms are precisely the cells
 the rectangular grid, ordered strip by strip.
 -/
 noncomputable def rectangleGridSubdivision (f : ℂ → ℂ) (z w : ℂ) : List ℝ → List ℝ → ℂ
-  | [], ycuts =>
-    rectangleHorizontalSubdivision f z w ycuts
+  | [], ycuts => rectangleHorizontalSubdivision f z w ycuts
   | m :: ms, ycuts =>
-    rectangleHorizontalSubdivision f z
-        (m + w.im * Complex.I) ycuts +
-      rectangleGridSubdivision f
-        (m + z.im * Complex.I) w ms ycuts
+    rectangleHorizontalSubdivision f z (m + w.im * Complex.I) ycuts +
+      rectangleGridSubdivision f (m + z.im * Complex.I) w ms ycuts
 
 /--
 The recursive interval-integrability certificate for a finite rectangular grid.
@@ -1250,18 +1139,14 @@ cut it records the four hypotheses needed to split off the left strip, the horiz
 inside that strip, and the complete grid certificate for the remaining strips.
 -/
 def RectangleGridSubdivisionIntegrable (f : ℂ → ℂ) (z w : ℂ) : List ℝ → List ℝ → Prop
-  | [], ycuts =>
-    RectangleHorizontalSubdivisionIntegrable f z
-      w ycuts
+  | [], ycuts => RectangleHorizontalSubdivisionIntegrable f z w ycuts
   | m :: ms, ycuts =>
     IntervalIntegrable (fun x : ℝ ↦ f (x + z.im * Complex.I)) MeasureTheory.volume z.re m ∧
       IntervalIntegrable (fun x : ℝ ↦ f (x + z.im * Complex.I)) MeasureTheory.volume m w.re ∧
       IntervalIntegrable (fun x : ℝ ↦ f (x + w.im * Complex.I)) MeasureTheory.volume z.re m ∧
       IntervalIntegrable (fun x : ℝ ↦ f (x + w.im * Complex.I)) MeasureTheory.volume m w.re ∧
-      RectangleHorizontalSubdivisionIntegrable f
-        z (m + w.im * Complex.I) ycuts ∧
-      RectangleGridSubdivisionIntegrable f
-        (m + z.im * Complex.I) w ms ycuts
+      RectangleHorizontalSubdivisionIntegrable f z (m + w.im * Complex.I) ycuts ∧
+      RectangleGridSubdivisionIntegrable f (m + z.im * Complex.I) w ms ycuts
 
 /--
 Uniform vertical interval integrability supplies every recursive horizontal-cut certificate.
@@ -1274,8 +1159,7 @@ theorem rectangleHorizontalSubdivisionIntegrable_of_forall (f : ℂ → ℂ) (z 
     (hvertical :
       ∀ c a b : ℝ,
         IntervalIntegrable (fun y : ℝ ↦ f (c + y * Complex.I)) MeasureTheory.volume a b) :
-    RectangleHorizontalSubdivisionIntegrable f z
-      w cuts := by
+    RectangleHorizontalSubdivisionIntegrable f z w cuts := by
   induction cuts generalizing z with
   | nil => trivial
   | cons m ms ih =>
@@ -1324,16 +1208,13 @@ structure RectangleGridEdgeIntegrable (f : ℂ → ℂ) (z w : ℂ) : Prop where
 
 /-- A bounded edge certificate supplies every recursive horizontal-cut hypothesis. -/
 theorem RectangleGridEdgeIntegrable.horizontalSubdivision {f : ℂ → ℂ} {outerLeft outerRight z w : ℂ}
-    (edges :
-      RectangleGridEdgeIntegrable f outerLeft
-        outerRight)
+    (edges : RectangleGridEdgeIntegrable f outerLeft outerRight)
     (hzre : z.re ∈ Set.uIcc outerLeft.re outerRight.re)
     (hwre : w.re ∈ Set.uIcc outerLeft.re outerRight.re)
     (hzim : z.im ∈ Set.uIcc outerLeft.im outerRight.im)
     (hwim : w.im ∈ Set.uIcc outerLeft.im outerRight.im) (cuts : List ℝ)
     (hcuts : ∀ c ∈ cuts, c ∈ Set.uIcc outerLeft.im outerRight.im) :
-    RectangleHorizontalSubdivisionIntegrable f z
-      w cuts := by
+    RectangleHorizontalSubdivisionIntegrable f z w cuts := by
   induction cuts generalizing z with
   | nil => trivial
   | cons m ms ih =>
@@ -1355,17 +1236,14 @@ theorem RectangleGridEdgeIntegrable.horizontalSubdivision {f : ℂ → ℂ} {out
 
 /-- A bounded edge certificate supplies the complete recursive finite-grid certificate. -/
 theorem RectangleGridEdgeIntegrable.gridSubdivision {f : ℂ → ℂ} {outerLeft outerRight z w : ℂ}
-    (edges :
-      RectangleGridEdgeIntegrable f outerLeft
-        outerRight)
+    (edges : RectangleGridEdgeIntegrable f outerLeft outerRight)
     (hzre : z.re ∈ Set.uIcc outerLeft.re outerRight.re)
     (hwre : w.re ∈ Set.uIcc outerLeft.re outerRight.re)
     (hzim : z.im ∈ Set.uIcc outerLeft.im outerRight.im)
     (hwim : w.im ∈ Set.uIcc outerLeft.im outerRight.im) (xcuts ycuts : List ℝ)
     (hxcuts : ∀ c ∈ xcuts, c ∈ Set.uIcc outerLeft.re outerRight.re)
     (hycuts : ∀ c ∈ ycuts, c ∈ Set.uIcc outerLeft.im outerRight.im) :
-    RectangleGridSubdivisionIntegrable f z w
-      xcuts ycuts := by
+    RectangleGridSubdivisionIntegrable f z w xcuts ycuts := by
   induction xcuts generalizing z with
   | nil => exact edges.horizontalSubdivision hzre hwre hzim hwim ycuts hycuts
   | cons m ms ih =>
@@ -1411,13 +1289,10 @@ structure RectangleGridCoordinateIntegrable (f : ℂ → ℂ) (xcoordinates ycoo
 /-- Finite coordinate-line integrability supplies a horizontal subdivision certificate. -/
 theorem RectangleGridCoordinateIntegrable.horizontalSubdivision {f : ℂ → ℂ}
     {xcoordinates ycoordinates : List ℝ} {z w : ℂ}
-    (edges :
-      RectangleGridCoordinateIntegrable f
-        xcoordinates ycoordinates)
+    (edges : RectangleGridCoordinateIntegrable f xcoordinates ycoordinates)
     (hzre : z.re ∈ xcoordinates) (hwre : w.re ∈ xcoordinates) (hzim : z.im ∈ ycoordinates)
     (hwim : w.im ∈ ycoordinates) (cuts : List ℝ) (hcuts : ∀ c ∈ cuts, c ∈ ycoordinates) :
-    RectangleHorizontalSubdivisionIntegrable f z
-      w cuts := by
+    RectangleHorizontalSubdivisionIntegrable f z w cuts := by
   induction cuts generalizing z with
   | nil => trivial
   | cons m ms ih =>
@@ -1440,14 +1315,11 @@ theorem RectangleGridCoordinateIntegrable.horizontalSubdivision {f : ℂ → ℂ
 /-- Finite coordinate-line integrability supplies a complete grid subdivision certificate. -/
 theorem RectangleGridCoordinateIntegrable.gridSubdivision {f : ℂ → ℂ}
     {xcoordinates ycoordinates : List ℝ} {z w : ℂ}
-    (edges :
-      RectangleGridCoordinateIntegrable f
-        xcoordinates ycoordinates)
+    (edges : RectangleGridCoordinateIntegrable f xcoordinates ycoordinates)
     (hzre : z.re ∈ xcoordinates) (hwre : w.re ∈ xcoordinates) (hzim : z.im ∈ ycoordinates)
     (hwim : w.im ∈ ycoordinates) (xcuts ycuts : List ℝ) (hxcuts : ∀ c ∈ xcuts, c ∈ xcoordinates)
     (hycuts : ∀ c ∈ ycuts, c ∈ ycoordinates) :
-    RectangleGridSubdivisionIntegrable f z w
-      xcuts ycuts := by
+    RectangleGridSubdivisionIntegrable f z w xcuts ycuts := by
   induction xcuts generalizing z with
   | nil => exact edges.horizontalSubdivision hzre hwre hzim hwim ycuts hycuts
   | cons m ms ih =>
@@ -1484,25 +1356,18 @@ horizontal theorem to that strip, and applies the induction hypothesis to all re
 Consequently every internal grid edge is cancelled by kernel-checked interval-integral algebra.
 -/
 theorem rectangleBoundaryIntegral_eq_gridSubdivision (f : ℂ → ℂ) (z w : ℂ) (xcuts ycuts : List ℝ)
-    (hgrid :
-      RectangleGridSubdivisionIntegrable f z w
-        xcuts ycuts) :
-    rectangleBoundaryIntegral f z w =
-      rectangleGridSubdivision f z w xcuts
-        ycuts := by
+    (hgrid : RectangleGridSubdivisionIntegrable f z w xcuts ycuts) :
+    rectangleBoundaryIntegral f z w = rectangleGridSubdivision f z w xcuts ycuts := by
   induction xcuts generalizing z with
-  | nil =>
-    exact
-      rectangleBoundaryIntegral_eq_horizontalSubdivision
-        f z w ycuts hgrid
+  | nil => exact rectangleBoundaryIntegral_eq_horizontalSubdivision f z w ycuts hgrid
   | cons m ms
     ih =>
     rcases hgrid with ⟨hbottomLeft, hbottomRight, htopLeft, htopRight, hleftStrip, hrest⟩
-    rw [rectangleBoundaryIntegral_eq_add_vertical
-        f z w m hbottomLeft hbottomRight htopLeft htopRight]
+    rw [rectangleBoundaryIntegral_eq_add_vertical f z w m hbottomLeft hbottomRight htopLeft
+        htopRight]
     simp only [rectangleGridSubdivision]
-    rw [rectangleBoundaryIntegral_eq_horizontalSubdivision
-        f z (m + w.im * Complex.I) ycuts hleftStrip]
+    rw [rectangleBoundaryIntegral_eq_horizontalSubdivision f z (m + w.im * Complex.I) ycuts
+        hleftStrip]
     rw [ih (m + z.im * Complex.I) hrest]
 
 /--
@@ -1514,9 +1379,7 @@ including degenerate or repeated cells when the cut list itself contains repeate
 -/
 def rectangleHorizontalCells (z w : ℂ) : List ℝ → List (ℂ × ℂ)
   | [] => [(z, w)]
-  | m :: ms =>
-    (z, w.re + m * Complex.I) ::
-      rectangleHorizontalCells (z.re + m * Complex.I) w ms
+  | m :: ms => (z, w.re + m * Complex.I) :: rectangleHorizontalCells (z.re + m * Complex.I) w ms
 
 /-- Turn one adjacent pair of imaginary coordinates into a cell with fixed real endpoints. -/
 def horizontalCellOfImagPair (left right : ℝ) (pair : ℝ × ℝ) : ℂ × ℂ :=
@@ -1527,68 +1390,58 @@ Horizontal cells are the image of consecutive pairs in the endpoint-augmented co
 -/
 theorem rectangleHorizontalCells_eq_map_consecutivePairs (z w : ℂ) (cuts : List ℝ) :
     rectangleHorizontalCells z w cuts =
-      ((z.im :: cuts ++ [w.im]).consecutivePairs).map
-        (horizontalCellOfImagPair z.re w.re) := by
+      ((z.im :: cuts ++ [w.im]).consecutivePairs).map (horizontalCellOfImagPair z.re w.re) := by
   induction cuts generalizing z with
   | nil =>
-    simp only [rectangleHorizontalCells,
-      List.nil_append, List.cons_append, List.consecutivePairs, List.tail_cons, List.zip_cons_cons,
-      List.map_cons]
+    simp only [rectangleHorizontalCells, List.nil_append, List.cons_append, List.consecutivePairs,
+      List.tail_cons, List.zip_cons_cons, List.map_cons]
     congr 2 <;> apply Complex.ext <;>
       simp only [Complex.add_re, Complex.add_im, Complex.ofReal_re, Complex.ofReal_im,
         Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im, mul_zero, mul_one, sub_self,
         add_zero, zero_add]
   | cons m ms
     ih =>
-    simp only [rectangleHorizontalCells,
-      List.cons_append, List.consecutivePairs, List.tail_cons, List.zip_cons_cons, List.map_cons]
+    simp only [rectangleHorizontalCells, List.cons_append, List.consecutivePairs, List.tail_cons,
+      List.zip_cons_cons, List.map_cons]
     congr 1
     · apply Prod.ext <;> apply Complex.ext <;>
-        simp only [horizontalCellOfImagPair,
-          Complex.add_re, Complex.add_im, Complex.ofReal_re, Complex.ofReal_im, Complex.mul_re,
-          Complex.mul_im, Complex.I_re, Complex.I_im, mul_zero, mul_one, sub_self, add_zero,
-          zero_add]
+        simp only [horizontalCellOfImagPair, Complex.add_re, Complex.add_im, Complex.ofReal_re,
+          Complex.ofReal_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im, mul_zero,
+          mul_one, sub_self, add_zero, zero_add]
     · change
         rectangleHorizontalCells (z.re + m * Complex.I) w ms =
-          ((m :: ms ++ [w.im]).consecutivePairs).map
-            (horizontalCellOfImagPair z.re w.re)
-      simpa only [horizontalCellOfImagPair,
-        Complex.add_re, Complex.add_im, Complex.ofReal_re, Complex.ofReal_im, Complex.mul_re,
-        Complex.mul_im, Complex.I_re, Complex.I_im, mul_zero, mul_one, sub_self, add_zero,
-        zero_add] using ih (z.re + m * Complex.I)
+          ((m :: ms ++ [w.im]).consecutivePairs).map (horizontalCellOfImagPair z.re w.re)
+      simpa only [horizontalCellOfImagPair, Complex.add_re, Complex.add_im, Complex.ofReal_re,
+        Complex.ofReal_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im, mul_zero,
+        mul_one, sub_self, add_zero, zero_add] using ih (z.re + m * Complex.I)
 
 /-- The conversion from imaginary-coordinate pairs to horizontal cells is injective. -/
 theorem horizontalCellOfImagPair_injective (left right : ℝ) :
-    Function.Injective
-      (horizontalCellOfImagPair left right) := by
+    Function.Injective (horizontalCellOfImagPair left right) := by
   intro p q hpq
   apply Prod.ext
   · have him := congrArg (fun cell : ℂ × ℂ ↦ cell.1.im) hpq
-    simpa only [horizontalCellOfImagPair,
-      Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im,
-      Complex.I_re, mul_one, mul_zero, add_zero, zero_add] using him
+    simpa only [horizontalCellOfImagPair, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
+      Complex.ofReal_re, Complex.I_im, Complex.I_re, mul_one, mul_zero, add_zero, zero_add] using
+      him
   · have him := congrArg (fun cell : ℂ × ℂ ↦ cell.2.im) hpq
-    simpa only [horizontalCellOfImagPair,
-      Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im,
-      Complex.I_re, mul_one, mul_zero, add_zero, zero_add] using him
+    simpa only [horizontalCellOfImagPair, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
+      Complex.ofReal_re, Complex.I_im, Complex.I_re, mul_one, mul_zero, add_zero, zero_add] using
+      him
 
 /-- The horizontal subdivision value is the boundary-integral sum over its ordered cell list. -/
 theorem rectangleHorizontalSubdivision_eq_sum_cells (f : ℂ → ℂ) (z w : ℂ) (cuts : List ℝ) :
     rectangleHorizontalSubdivision f z w cuts =
       List.sum
         ((rectangleHorizontalCells z w cuts).map
-          (fun cell : ℂ × ℂ ↦
-            rectangleBoundaryIntegral f cell.1
-              cell.2)) := by
+          (fun cell : ℂ × ℂ ↦ rectangleBoundaryIntegral f cell.1 cell.2)) := by
   induction cuts generalizing z with
   | nil =>
-    simp only [rectangleHorizontalSubdivision,
-      rectangleHorizontalCells, List.map_cons,
+    simp only [rectangleHorizontalSubdivision, rectangleHorizontalCells, List.map_cons,
       List.map_nil, List.sum_cons, List.sum_nil, add_zero]
   | cons m ms
     ih =>
-    simp only [rectangleHorizontalSubdivision,
-      rectangleHorizontalCells, List.map_cons,
+    simp only [rectangleHorizontalSubdivision, rectangleHorizontalCells, List.map_cons,
       List.sum_cons]
     rw [ih (z.re + m * Complex.I)]
 
@@ -1600,13 +1453,10 @@ For increasing coordinates this is bottom-to-top within left-to-right strips. A 
 repeated cuts and their multiplicities even when no ordering hypothesis is imposed.
 -/
 def rectangleGridCells (z w : ℂ) : List ℝ → List ℝ → List (ℂ × ℂ)
-  | [], ycuts =>
-    rectangleHorizontalCells z w ycuts
+  | [], ycuts => rectangleHorizontalCells z w ycuts
   | m :: ms, ycuts =>
-    rectangleHorizontalCells z
-        (m + w.im * Complex.I) ycuts ++
-      rectangleGridCells (m + z.im * Complex.I) w
-        ms ycuts
+    rectangleHorizontalCells z (m + w.im * Complex.I) ycuts ++
+      rectangleGridCells (m + z.im * Complex.I) w ms ycuts
 
 /-- Convert a pair of real-coordinate intervals into their rectangular complex cell. -/
 def gridCellOfCoordinatePairs (pairs : (ℝ × ℝ) × (ℝ × ℝ)) : ℂ × ℂ :=
@@ -1626,33 +1476,26 @@ theorem rectangleGridCells_eq_map_product_consecutivePairs (z w : ℂ) (xcuts yc
     rw [rectangleHorizontalCells_eq_map_consecutivePairs]
     simp only [List.consecutivePairs, List.cons_append, List.tail_cons, List.nil_append,
       List.zip_cons_cons, List.zip_nil_right, List.product_cons, List.nil_product, List.append_nil,
-      List.map_map, List.map_inj_left,
-      horizontalCellOfImagPair,
-      Function.comp_apply,
+      List.map_map, List.map_inj_left, horizontalCellOfImagPair, Function.comp_apply,
       gridCellOfCoordinatePairs, implies_true]
   | cons m ms
     ih =>
-    simp only [rectangleGridCells,
-      List.cons_append, List.consecutivePairs, List.tail_cons, List.zip_cons_cons,
-      List.product_cons, List.map_append]
+    simp only [rectangleGridCells, List.cons_append, List.consecutivePairs, List.tail_cons,
+      List.zip_cons_cons, List.product_cons, List.map_append]
     rw [rectangleHorizontalCells_eq_map_consecutivePairs]
     simp only [Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.ofReal_re,
       Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero, mul_one, sub_zero, add_zero,
       zero_add, List.map_map]
     have hprefix :
-      ((z.im :: ycuts ++ [w.im]).consecutivePairs).map
-          (horizontalCellOfImagPair z.re m) =
+      ((z.im :: ycuts ++ [w.im]).consecutivePairs).map (horizontalCellOfImagPair z.re m) =
         ((z.im :: ycuts ++ [w.im]).consecutivePairs).map
-          (gridCellOfCoordinatePairs ∘ fun pair ↦
-            ((z.re, m), pair)) := by
+          (gridCellOfCoordinatePairs ∘ fun pair ↦ ((z.re, m), pair)) := by
       apply List.map_congr_left
       intro pair hpair
       apply Prod.ext <;> apply Complex.ext <;>
-        simp only [horizontalCellOfImagPair,
-          Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-          Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero, Complex.add_im,
-          Complex.mul_im, zero_add, Function.comp_apply,
-          gridCellOfCoordinatePairs]
+        simp only [horizontalCellOfImagPair, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+          Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero,
+          Complex.add_im, Complex.mul_im, zero_add, Function.comp_apply, gridCellOfCoordinatePairs]
     rw [hprefix]
     rw [ih (m + z.im * Complex.I)]
     simp only [List.consecutivePairs, List.cons_append, List.tail_cons, Complex.add_re,
@@ -1660,65 +1503,50 @@ theorem rectangleGridCells_eq_map_product_consecutivePairs (z w : ℂ) (xcuts yc
       mul_one, sub_self, add_zero, Complex.add_im, Complex.mul_im, zero_add]
 
 /-- The coordinate-pair conversion to a complex grid cell is injective. -/
-theorem gridCellOfCoordinatePairs_injective :
-    Function.Injective
-      gridCellOfCoordinatePairs := by
+theorem gridCellOfCoordinatePairs_injective : Function.Injective gridCellOfCoordinatePairs := by
   intro p q hpq
   apply Prod.ext <;> apply Prod.ext
   · have hre := congrArg (fun cell : ℂ × ℂ ↦ cell.1.re) hpq
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.ofReal_im,
-      Complex.I_im, mul_one, sub_self, add_zero] using hre
+    simpa only [gridCellOfCoordinatePairs, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+      Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using
+      hre
   · have hre := congrArg (fun cell : ℂ × ℂ ↦ cell.2.re) hpq
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.ofReal_im,
-      Complex.I_im, mul_one, sub_self, add_zero] using hre
+    simpa only [gridCellOfCoordinatePairs, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+      Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using
+      hre
   · have him := congrArg (fun cell : ℂ × ℂ ↦ cell.1.im) hpq
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im, mul_one,
-      Complex.I_re, mul_zero, add_zero, zero_add] using him
+    simpa only [gridCellOfCoordinatePairs, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
+      Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add] using
+      him
   · have him := congrArg (fun cell : ℂ × ℂ ↦ cell.2.im) hpq
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im, mul_one,
-      Complex.I_re, mul_zero, add_zero, zero_add] using him
+    simpa only [gridCellOfCoordinatePairs, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
+      Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add] using
+      him
 
 /-- Duplicate-free endpoint coordinate lists produce a duplicate-free rectangular grid. -/
 theorem rectangleGridCells_nodup {z w : ℂ} {xcuts ycuts : List ℝ}
     (hxcoordinates : (z.re :: xcuts ++ [w.re]).Nodup)
     (hycoordinates : (z.im :: ycuts ++ [w.im]).Nodup) :
-    (rectangleGridCells z w xcuts
-        ycuts).Nodup := by
+    (rectangleGridCells z w xcuts ycuts).Nodup := by
   rw [rectangleGridCells_eq_map_product_consecutivePairs]
-  apply
-    List.Nodup.map
-      gridCellOfCoordinatePairs_injective
+  apply List.Nodup.map gridCellOfCoordinatePairs_injective
   exact
-    (List.Nodup.consecutivePairs
-          hxcoordinates).product
-      (List.Nodup.consecutivePairs hycoordinates)
+    (List.Nodup.consecutivePairs hxcoordinates).product (List.Nodup.consecutivePairs hycoordinates)
 
 /-- Every cell of a strict rectangular grid is itself strictly ordered on both coordinates. -/
-theorem mem_rectangleGridCells_re_lt_im_lt
-    {z w : ℂ} {xcuts ycuts : List ℝ}
+theorem mem_rectangleGridCells_re_lt_im_lt {z w : ℂ} {xcuts ycuts : List ℝ}
     (hxorder : (z.re :: xcuts ++ [w.re]).Pairwise (· < ·))
-    (hyorder : (z.im :: ycuts ++ [w.im]).Pairwise (· < ·))
-    {cell : ℂ × ℂ} (hcell : cell ∈
-      rectangleGridCells z w xcuts ycuts) :
+    (hyorder : (z.im :: ycuts ++ [w.im]).Pairwise (· < ·)) {cell : ℂ × ℂ}
+    (hcell : cell ∈ rectangleGridCells z w xcuts ycuts) :
     cell.1.re < cell.2.re ∧ cell.1.im < cell.2.im := by
   rw [rectangleGridCells_eq_map_product_consecutivePairs] at hcell
   obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hcell
   have hpMem := List.mem_product.mp hp
-  have hpReal :=
-    List.rel_of_mem_consecutivePairs
-      hxorder hpMem.1
-  have hpImag :=
-    List.rel_of_mem_consecutivePairs
-      hyorder hpMem.2
-  simpa only [gridCellOfCoordinatePairs,
-    Complex.add_re, Complex.ofReal_re,
-    Complex.mul_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im,
-    mul_one, sub_self, add_zero, Complex.add_im, Complex.mul_im, zero_add]
-    using And.intro hpReal hpImag
+  have hpReal := List.rel_of_mem_consecutivePairs hxorder hpMem.1
+  have hpImag := List.rel_of_mem_consecutivePairs hyorder hpMem.2
+  simpa only [gridCellOfCoordinatePairs, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+    Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero,
+    Complex.add_im, Complex.mul_im, zero_add] using And.intro hpReal hpImag
 
 /--
 Distinct cells of a strictly ordered rectangular grid have disjoint open boxes.
@@ -1730,58 +1558,36 @@ and
 `rectangleOpenBox_disjoint_of_coordinate_separated`
 finishes the geometric argument.
 -/
-theorem rectangleGridCells_openBox_disjoint
-    {z w : ℂ} {xcuts ycuts : List ℝ}
+theorem rectangleGridCells_openBox_disjoint {z w : ℂ} {xcuts ycuts : List ℝ}
     (hxorder : (z.re :: xcuts ++ [w.re]).Pairwise (· < ·))
-    (hyorder : (z.im :: ycuts ++ [w.im]).Pairwise (· < ·))
-    {cell other : ℂ × ℂ} (hcell : cell ∈
-      rectangleGridCells z w xcuts ycuts)
-    (hother : other ∈
-      rectangleGridCells z w xcuts ycuts)
-    (hne : cell ≠ other) :
-    Disjoint (rectangleOpenBox cell.1 cell.2)
-      (rectangleOpenBox other.1 other.2) := by
-  rw [rectangleGridCells_eq_map_product_consecutivePairs]
-    at hcell hother
+    (hyorder : (z.im :: ycuts ++ [w.im]).Pairwise (· < ·)) {cell other : ℂ × ℂ}
+    (hcell : cell ∈ rectangleGridCells z w xcuts ycuts)
+    (hother : other ∈ rectangleGridCells z w xcuts ycuts) (hne : cell ≠ other) :
+    Disjoint (rectangleOpenBox cell.1 cell.2) (rectangleOpenBox other.1 other.2) := by
+  rw [rectangleGridCells_eq_map_product_consecutivePairs] at hcell hother
   obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hcell
   obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hother
   have hpMem := List.mem_product.mp hp
   have hqMem := List.mem_product.mp hq
-  have hpReal :=
-    List.rel_of_mem_consecutivePairs
-      hxorder hpMem.1
-  have hqReal :=
-    List.rel_of_mem_consecutivePairs
-      hxorder hqMem.1
-  have hpImag :=
-    List.rel_of_mem_consecutivePairs
-      hyorder hpMem.2
-  have hqImag :=
-    List.rel_of_mem_consecutivePairs
-      hyorder hqMem.2
-  apply
-    rectangleOpenBox_disjoint_of_coordinate_separated
-  simp only [
-    gridCellOfCoordinatePairs, Complex.add_re,
-    Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
-    Complex.I_re, Complex.I_im,
-    mul_zero, mul_one, add_zero, zero_add, zero_sub, neg_zero,
-    max_eq_right (le_of_lt hpReal), min_eq_left (le_of_lt hpReal),
-    max_eq_right (le_of_lt hqReal), min_eq_left (le_of_lt hqReal),
-    max_eq_right (le_of_lt hpImag), min_eq_left (le_of_lt hpImag),
-    max_eq_right (le_of_lt hqImag), min_eq_left (le_of_lt hqImag)]
+  have hpReal := List.rel_of_mem_consecutivePairs hxorder hpMem.1
+  have hqReal := List.rel_of_mem_consecutivePairs hxorder hqMem.1
+  have hpImag := List.rel_of_mem_consecutivePairs hyorder hpMem.2
+  have hqImag := List.rel_of_mem_consecutivePairs hyorder hqMem.2
+  apply rectangleOpenBox_disjoint_of_coordinate_separated
+  simp only [gridCellOfCoordinatePairs, Complex.add_re, Complex.add_im, Complex.mul_re,
+    Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero,
+    mul_one, add_zero, zero_add, zero_sub, neg_zero, max_eq_right (le_of_lt hpReal),
+    min_eq_left (le_of_lt hpReal), max_eq_right (le_of_lt hqReal), min_eq_left (le_of_lt hqReal),
+    max_eq_right (le_of_lt hpImag), min_eq_left (le_of_lt hpImag), max_eq_right (le_of_lt hqImag),
+    min_eq_left (le_of_lt hqImag)]
   by_cases hreal : p.1 = q.1
   · have himag : p.2 ≠ q.2 := by
       intro himag
-      exact hne (congrArg
-        gridCellOfCoordinatePairs
-          (Prod.ext hreal himag))
-    rcases List.consecutivePairs_separated
-      hyorder hpMem.2 hqMem.2 himag with h | h
+      exact hne (congrArg gridCellOfCoordinatePairs (Prod.ext hreal himag))
+    rcases List.consecutivePairs_separated hyorder hpMem.2 hqMem.2 himag with h | h
     · exact Or.inr (Or.inr (Or.inl h))
     · exact Or.inr (Or.inr (Or.inr h))
-  · rcases List.consecutivePairs_separated
-      hxorder hpMem.1 hqMem.1 hreal with h | h
+  · rcases List.consecutivePairs_separated hxorder hpMem.1 hqMem.1 hreal with h | h
     · exact Or.inl h
     · exact Or.inr (Or.inl h)
 
@@ -1793,69 +1599,50 @@ entries of the endpoint-augmented coordinate lists.  Global coordinate avoidance
 supplies the four local inequalities required by
 `PseudoPrime.AnalyticNumberTheory.RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne`.
 -/
-theorem mem_rectangleGridCell_openBox_of_avoids_coordinates
-    {z w s : ℂ} {xcuts ycuts : List ℝ}
+theorem mem_rectangleGridCell_openBox_of_avoids_coordinates {z w s : ℂ} {xcuts ycuts : List ℝ}
     (hxorder : (z.re :: xcuts ++ [w.re]).Pairwise (· < ·))
-    (hyorder : (z.im :: ycuts ++ [w.im]).Pairwise (· < ·))
-    {cell : ℂ × ℂ} (hcell : cell ∈
-      rectangleGridCells z w xcuts ycuts)
+    (hyorder : (z.im :: ycuts ++ [w.im]).Pairwise (· < ·)) {cell : ℂ × ℂ}
+    (hcell : cell ∈ rectangleGridCells z w xcuts ycuts)
     (hsclosed : s ∈ Rectangle.rectangleClosedBox cell.1 cell.2)
-    (hxavoid : s.re ∉ z.re :: xcuts ++ [w.re])
-    (hyavoid : s.im ∉ z.im :: ycuts ++ [w.im]) :
+    (hxavoid : s.re ∉ z.re :: xcuts ++ [w.re]) (hyavoid : s.im ∉ z.im :: ycuts ++ [w.im]) :
     s ∈ rectangleOpenBox cell.1 cell.2 := by
-  rw [rectangleGridCells_eq_map_product_consecutivePairs]
-    at hcell
+  rw [rectangleGridCells_eq_map_product_consecutivePairs] at hcell
   obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hcell
   have hpMem := List.mem_product.mp hp
-  have hpReal := List.rel_of_mem_consecutivePairs
-    hxorder hpMem.1
-  have hpImag := List.rel_of_mem_consecutivePairs
-    hyorder hpMem.2
-  apply
-    mem_rectangleOpenBox_of_mem_closedBox_of_ne
-  · simpa only [gridCellOfCoordinatePairs,
-      Complex.add_re, Complex.ofReal_re,
-      Complex.mul_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im,
-      mul_one, sub_self, add_zero] using hpReal
-  · simpa only [gridCellOfCoordinatePairs,
-      Complex.add_im, Complex.ofReal_im,
-      Complex.mul_im, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
-      mul_zero, add_zero, zero_add] using hpImag
+  have hpReal := List.rel_of_mem_consecutivePairs hxorder hpMem.1
+  have hpImag := List.rel_of_mem_consecutivePairs hyorder hpMem.2
+  apply mem_rectangleOpenBox_of_mem_closedBox_of_ne
+  · simpa only [gridCellOfCoordinatePairs, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+      Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using
+      hpReal
+  · simpa only [gridCellOfCoordinatePairs, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
+      Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add] using
+      hpImag
   · exact hsclosed
   · intro heq
     apply hxavoid
     rw [heq]
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_re, Complex.ofReal_re,
-      Complex.mul_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im,
-      mul_one, sub_self, add_zero] using
+    simpa only [gridCellOfCoordinatePairs, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+      Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using
       List.fst_mem_of_mem_consecutivePairs hpMem.1
   · intro heq
     apply hxavoid
     rw [heq]
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_re, Complex.ofReal_re,
-      Complex.mul_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im,
-      mul_one, sub_self, add_zero] using
+    simpa only [gridCellOfCoordinatePairs, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+      Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using
       List.snd_mem_of_mem_consecutivePairs hpMem.1
   · intro heq
     apply hyavoid
     rw [heq]
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_im, Complex.ofReal_im,
-      Complex.mul_im, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
-      mul_zero, add_zero, zero_add] using
-      List.fst_mem_of_mem_consecutivePairs
-        hpMem.2
+    simpa only [gridCellOfCoordinatePairs, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
+      Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add] using
+      List.fst_mem_of_mem_consecutivePairs hpMem.2
   · intro heq
     apply hyavoid
     rw [heq]
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_im, Complex.ofReal_im,
-      Complex.mul_im, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
-      mul_zero, add_zero, zero_add] using
-      List.snd_mem_of_mem_consecutivePairs
-        hpMem.2
+    simpa only [gridCellOfCoordinatePairs, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
+      Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add] using
+      List.snd_mem_of_mem_consecutivePairs hpMem.2
 
 /--
 Two points separated by a grid coordinate cannot belong to the same open grid cell.
@@ -1864,69 +1651,57 @@ For the coordinate direction witnessing separation, both points lying in one ope
 the separating coordinate strictly inside a consecutive interval.  This contradicts
 `PseudoPrime.AnalyticNumberTheory.RectangleGeometry.List.not_between_of_mem_consecutivePairs`.
 -/
-theorem eq_of_mem_same_gridCell_openBox_of_coordinateSeparated
-    {z w s t : ℂ} {xcuts ycuts : List ℝ}
+theorem eq_of_mem_same_gridCell_openBox_of_coordinateSeparated {z w s t : ℂ} {xcuts ycuts : List ℝ}
     (hxorder : (z.re :: xcuts ++ [w.re]).Pairwise (· < ·))
-    (hyorder : (z.im :: ycuts ++ [w.im]).Pairwise (· < ·))
-    {cell : ℂ × ℂ} (hcell : cell ∈
-      rectangleGridCells z w xcuts ycuts)
-    (hsopen : s ∈ rectangleOpenBox cell.1 cell.2)
-    (htopen : t ∈ rectangleOpenBox cell.1 cell.2)
-    (hsep : (∃ u ∈ z.re :: xcuts ++ [w.re],
-      (s.re < u ∧ u < t.re) ∨ (t.re < u ∧ u < s.re)) ∨
-      ∃ v ∈ z.im :: ycuts ++ [w.im],
-        (s.im < v ∧ v < t.im) ∨ (t.im < v ∧ v < s.im)) : s = t := by
-  rw [rectangleGridCells_eq_map_product_consecutivePairs]
-    at hcell
+    (hyorder : (z.im :: ycuts ++ [w.im]).Pairwise (· < ·)) {cell : ℂ × ℂ}
+    (hcell : cell ∈ rectangleGridCells z w xcuts ycuts)
+    (hsopen : s ∈ rectangleOpenBox cell.1 cell.2) (htopen : t ∈ rectangleOpenBox cell.1 cell.2)
+    (hsep :
+      (∃ u ∈ z.re :: xcuts ++ [w.re], (s.re < u ∧ u < t.re) ∨ (t.re < u ∧ u < s.re)) ∨
+        ∃ v ∈ z.im :: ycuts ++ [w.im], (s.im < v ∧ v < t.im) ∨ (t.im < v ∧ v < s.im)) :
+    s = t := by
+  rw [rectangleGridCells_eq_map_product_consecutivePairs] at hcell
   obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hcell
   have hpMem := List.mem_product.mp hp
-  have hpReal :=
-    List.rel_of_mem_consecutivePairs
-      hxorder hpMem.1
-  have hpImag :=
-    List.rel_of_mem_consecutivePairs
-      hyorder hpMem.2
+  have hpReal := List.rel_of_mem_consecutivePairs hxorder hpMem.1
+  have hpImag := List.rel_of_mem_consecutivePairs hyorder hpMem.2
   have hsre : p.1.1 < s.re ∧ s.re < p.1.2 := by
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+    simpa only [gridCellOfCoordinatePairs, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
       Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero,
       min_eq_left (le_of_lt hpReal), max_eq_right (le_of_lt hpReal), Set.mem_preimage,
       Set.mem_Ioo] using hsopen.1
   have hsim : p.2.1 < s.im ∧ s.im < p.2.2 := by
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_im, Complex.ofReal_im, Complex.mul_im,
+    simpa only [gridCellOfCoordinatePairs, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
       Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add,
       min_eq_left (le_of_lt hpImag), max_eq_right (le_of_lt hpImag), Set.mem_preimage,
       Set.mem_Ioo] using hsopen.2
   have htre : p.1.1 < t.re ∧ t.re < p.1.2 := by
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+    simpa only [gridCellOfCoordinatePairs, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
       Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero,
       min_eq_left (le_of_lt hpReal), max_eq_right (le_of_lt hpReal), Set.mem_preimage,
       Set.mem_Ioo] using htopen.1
   have htim : p.2.1 < t.im ∧ t.im < p.2.2 := by
-    simpa only [gridCellOfCoordinatePairs,
-      Complex.add_im, Complex.ofReal_im, Complex.mul_im,
+    simpa only [gridCellOfCoordinatePairs, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
       Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add,
       min_eq_left (le_of_lt hpImag), max_eq_right (le_of_lt hpImag), Set.mem_preimage,
       Set.mem_Ioo] using htopen.2
   rcases hsep with ⟨u, hu, hstu | htsu⟩ | ⟨v, hv, hstv | htsv⟩
-  · exact False.elim (
-      List.not_between_of_mem_consecutivePairs
-        hxorder hpMem.1 hu
-      ⟨hsre.1.trans hstu.1, hstu.2.trans htre.2⟩)
-  · exact False.elim (
-      List.not_between_of_mem_consecutivePairs
-        hxorder hpMem.1 hu
-      ⟨htre.1.trans htsu.1, htsu.2.trans hsre.2⟩)
-  · exact False.elim (
-      List.not_between_of_mem_consecutivePairs
-        hyorder hpMem.2 hv
-      ⟨hsim.1.trans hstv.1, hstv.2.trans htim.2⟩)
-  · exact False.elim (
-      List.not_between_of_mem_consecutivePairs
-        hyorder hpMem.2 hv
-      ⟨htim.1.trans htsv.1, htsv.2.trans hsim.2⟩)
+  · exact
+      False.elim
+        (List.not_between_of_mem_consecutivePairs hxorder hpMem.1 hu
+          ⟨hsre.1.trans hstu.1, hstu.2.trans htre.2⟩)
+  · exact
+      False.elim
+        (List.not_between_of_mem_consecutivePairs hxorder hpMem.1 hu
+          ⟨htre.1.trans htsu.1, htsu.2.trans hsre.2⟩)
+  · exact
+      False.elim
+        (List.not_between_of_mem_consecutivePairs hyorder hpMem.2 hv
+          ⟨hsim.1.trans hstv.1, hstv.2.trans htim.2⟩)
+  · exact
+      False.elim
+        (List.not_between_of_mem_consecutivePairs hyorder hpMem.2 hv
+          ⟨htim.1.trans htsv.1, htsv.2.trans hsim.2⟩)
 
 /--
 Strictly increasing interior coordinates remain strictly ordered after adjoining both endpoints.
@@ -1958,9 +1733,7 @@ retained as the direct input expected by the grid-cell list API.
 theorem endpointAugmentedCoordinates_nodup {a b : ℝ} {cuts : List ℝ} (hab : a < b)
     (hcuts : cuts.Pairwise (· < ·)) (hinside : ∀ u ∈ cuts, a < u ∧ u < b) :
     (a :: cuts ++ [b]).Nodup := by
-  exact
-    (endpointAugmentedCoordinates_pairwise hab
-        hcuts hinside).nodup
+  exact (endpointAugmentedCoordinates_pairwise hab hcuts hinside).nodup
 
 /--
 Consecutive intervals of ordered interior cuts cover the entire outer closed interval.
@@ -2007,23 +1780,17 @@ membership.  This is the finite-grid coverage theorem used by the singularity le
 theorem exists_mem_rectangleGridCell_closedBox {z w s : ℂ} {xcuts ycuts : List ℝ}
     (hre : z.re < w.re) (him : z.im < w.im) (hxorder : xcuts.Pairwise (· < ·))
     (hyorder : ycuts.Pairwise (· < ·)) (hxcuts : ∀ u ∈ xcuts, z.re < u ∧ u < w.re)
-    (hycuts : ∀ v ∈ ycuts, z.im < v ∧ v < w.im)
-    (hs : s ∈ Rectangle.rectangleClosedBox z w) :
+    (hycuts : ∀ v ∈ ycuts, z.im < v ∧ v < w.im) (hs : s ∈ Rectangle.rectangleClosedBox z w) :
     ∃ cell ∈ rectangleGridCells z w xcuts ycuts,
       s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 := by
-  obtain ⟨xp, hxp, hsx⟩ :=
-    exists_mem_consecutivePair_of_mem_uIcc hre
-      hxorder hxcuts hs.1
-  obtain ⟨yp, hyp, hsy⟩ :=
-    exists_mem_consecutivePair_of_mem_uIcc him
-      hyorder hycuts hs.2
-  refine
-    ⟨gridCellOfCoordinatePairs (xp, yp), ?_, ?_⟩
+  obtain ⟨xp, hxp, hsx⟩ := exists_mem_consecutivePair_of_mem_uIcc hre hxorder hxcuts hs.1
+  obtain ⟨yp, hyp, hsy⟩ := exists_mem_consecutivePair_of_mem_uIcc him hyorder hycuts hs.2
+  refine ⟨gridCellOfCoordinatePairs (xp, yp), ?_, ?_⟩
   · rw [rectangleGridCells_eq_map_product_consecutivePairs]
     exact List.mem_map.mpr ⟨(xp, yp), List.mem_product.mpr ⟨hxp, hyp⟩, rfl⟩
   · simp only [Rectangle.rectangleClosedBox, gridCellOfCoordinatePairs, Complex.add_re,
-    Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im,
-    mul_one, zero_sub, neg_zero, add_zero, Complex.add_im, Complex.mul_im, zero_add]
+      Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im,
+      mul_one, zero_sub, neg_zero, add_zero, Complex.add_im, Complex.mul_im, zero_add]
     exact ⟨Set.Icc_subset_uIcc hsx, Set.Icc_subset_uIcc hsy⟩
 
 /--
@@ -2037,23 +1804,19 @@ theorem rectangleHorizontalCells_closedBox_subset {a b z w : ℂ} {cuts : List �
     (haim : a.im ∈ Set.uIcc z.im w.im) (hbim : b.im ∈ Set.uIcc z.im w.im)
     (hcuts : ∀ y ∈ cuts, y ∈ Set.uIcc z.im w.im) :
     ∀ cell ∈ rectangleHorizontalCells a b cuts,
-      Rectangle.rectangleClosedBox cell.1 cell.2 ⊆
-        Rectangle.rectangleClosedBox z w := by
+      Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w := by
   induction cuts generalizing a with
   | nil =>
     intro cell hcell
     simp only [rectangleHorizontalCells, List.mem_singleton] at hcell
     rw [hcell]
-    exact
-      rectangleClosedBox_subset_rectangleClosedBox
-        hare hbre haim hbim
+    exact rectangleClosedBox_subset_rectangleClosedBox hare hbre haim hbim
   | cons m ms ih =>
     intro cell hcell
     simp only [rectangleHorizontalCells, List.mem_cons] at hcell
     rcases hcell with rfl | hcell
     · change
-        Rectangle.rectangleClosedBox a (b.re + m * Complex.I) ⊆
-          Rectangle.rectangleClosedBox z w
+        Rectangle.rectangleClosedBox a (b.re + m * Complex.I) ⊆ Rectangle.rectangleClosedBox z w
       have hm : m ∈ Set.uIcc z.im w.im := hcuts m (by simp only [List.mem_cons, true_or])
       have hnewre : (b.re + m * Complex.I).re ∈ Set.uIcc z.re w.re := by
         simpa only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
@@ -2061,9 +1824,7 @@ theorem rectangleHorizontalCells_closedBox_subset {a b z w : ℂ} {cuts : List �
       have hnewim : (b.re + m * Complex.I).im ∈ Set.uIcc z.im w.im := by
         simpa only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
           Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add] using hm
-      exact
-        rectangleClosedBox_subset_rectangleClosedBox
-          hare hnewre haim hnewim
+      exact rectangleClosedBox_subset_rectangleClosedBox hare hnewre haim hnewim
     · have hm : m ∈ Set.uIcc z.im w.im := hcuts m (by simp only [List.mem_cons, true_or])
       have hnewre : (a.re + m * Complex.I).re ∈ Set.uIcc z.re w.re := by
         simpa only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
@@ -2080,20 +1841,15 @@ theorem rectangleGridCells_closedBox_subset_of_endpoints {a b z w : ℂ} {xcuts 
     (haim : a.im ∈ Set.uIcc z.im w.im) (hbim : b.im ∈ Set.uIcc z.im w.im)
     (hxcuts : ∀ x ∈ xcuts, x ∈ Set.uIcc z.re w.re) (hycuts : ∀ y ∈ ycuts, y ∈ Set.uIcc z.im w.im) :
     ∀ cell ∈ rectangleGridCells a b xcuts ycuts,
-      Rectangle.rectangleClosedBox cell.1 cell.2 ⊆
-        Rectangle.rectangleClosedBox z w := by
+      Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w := by
   induction xcuts generalizing a with
-  | nil =>
-    exact
-      rectangleHorizontalCells_closedBox_subset
-        hare hbre haim hbim hycuts
+  | nil => exact rectangleHorizontalCells_closedBox_subset hare hbre haim hbim hycuts
   | cons m ms ih =>
     intro cell hcell
     simp only [rectangleGridCells, List.mem_append] at hcell
     rcases hcell with hcell | hcell
     · apply
-        rectangleHorizontalCells_closedBox_subset
-          hare
+        rectangleHorizontalCells_closedBox_subset hare
           (by
             simpa only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
               Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using
@@ -2118,33 +1874,23 @@ theorem rectangleGridCells_closedBox_subset_of_endpoints {a b z w : ℂ} {xcuts 
 theorem rectangleGridCells_closedBox_subset {z w : ℂ} {xcuts ycuts : List ℝ}
     (hxcuts : ∀ x ∈ xcuts, x ∈ Set.uIcc z.re w.re) (hycuts : ∀ y ∈ ycuts, y ∈ Set.uIcc z.im w.im) :
     ∀ cell ∈ rectangleGridCells z w xcuts ycuts,
-      Rectangle.rectangleClosedBox cell.1 cell.2 ⊆
-        Rectangle.rectangleClosedBox z w := by
+      Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w := by
   exact
-    rectangleGridCells_closedBox_subset_of_endpoints
-      Set.left_mem_uIcc Set.right_mem_uIcc Set.left_mem_uIcc Set.right_mem_uIcc hxcuts hycuts
+    rectangleGridCells_closedBox_subset_of_endpoints Set.left_mem_uIcc Set.right_mem_uIcc
+      Set.left_mem_uIcc Set.right_mem_uIcc hxcuts hycuts
 
 /-- The grid subdivision value is the boundary-integral sum over its ordered cell list. -/
 theorem rectangleGridSubdivision_eq_sum_cells (f : ℂ → ℂ) (z w : ℂ) (xcuts ycuts : List ℝ) :
     rectangleGridSubdivision f z w xcuts ycuts =
       List.sum
         ((rectangleGridCells z w xcuts ycuts).map
-          (fun cell : ℂ × ℂ ↦
-            rectangleBoundaryIntegral f cell.1
-              cell.2)) := by
+          (fun cell : ℂ × ℂ ↦ rectangleBoundaryIntegral f cell.1 cell.2)) := by
   induction xcuts generalizing z with
-  | nil =>
-    exact
-      rectangleHorizontalSubdivision_eq_sum_cells
-        f z w ycuts
+  | nil => exact rectangleHorizontalSubdivision_eq_sum_cells f z w ycuts
   | cons m ms
     ih =>
-    simp only [rectangleGridSubdivision,
-      rectangleGridCells, List.map_append,
-      List.sum_append]
-    rw [
-      rectangleHorizontalSubdivision_eq_sum_cells
-        f z (m + w.im * Complex.I) ycuts]
+    simp only [rectangleGridSubdivision, rectangleGridCells, List.map_append, List.sum_append]
+    rw [rectangleHorizontalSubdivision_eq_sum_cells f z (m + w.im * Complex.I) ycuts]
     rw [ih (m + z.im * Complex.I)]
 
 /--
@@ -2155,27 +1901,16 @@ produce repeated or degenerate cells whose multiplicity is retained by the order
 but intentionally erased by `List.toFinset`.
 -/
 theorem rectangleGridSubdivision_eq_sum_toFinset (f : ℂ → ℂ) (z w : ℂ) (xcuts ycuts : List ℝ)
-    (hnodup :
-      (rectangleGridCells z w xcuts
-          ycuts).Nodup) :
+    (hnodup : (rectangleGridCells z w xcuts ycuts).Nodup) :
     rectangleGridSubdivision f z w xcuts ycuts =
-      ∑
-        cell ∈
-          (rectangleGridCells z w xcuts
-              ycuts).toFinset,
-        rectangleBoundaryIntegral f cell.1
-          cell.2 := by
+      ∑ cell ∈ (rectangleGridCells z w xcuts ycuts).toFinset,
+        rectangleBoundaryIntegral f cell.1 cell.2 := by
   rw [rectangleGridSubdivision_eq_sum_cells]
   let cells := rectangleGridCells z w xcuts ycuts
   change cells.Nodup at hnodup
   change
-    List.sum
-        (cells.map
-          (fun cell : ℂ × ℂ ↦
-            rectangleBoundaryIntegral f cell.1
-              cell.2)) =
-      ∑ cell ∈ cells.toFinset,
-        rectangleBoundaryIntegral f cell.1 cell.2
+    List.sum (cells.map (fun cell : ℂ × ℂ ↦ rectangleBoundaryIntegral f cell.1 cell.2)) =
+      ∑ cell ∈ cells.toFinset, rectangleBoundaryIntegral f cell.1 cell.2
   revert hnodup
   induction cells with
   | nil =>
@@ -2195,32 +1930,15 @@ and every other cell integral vanishes, the finite sum reduces to that cell.  Th
 cancellation layer used before proving analytic regularity of the cells surrounding a puncture.
 -/
 theorem rectangleBoundaryIntegral_eq_cell_of_grid (f : ℂ → ℂ) (z w : ℂ) (xcuts ycuts : List ℝ)
-    (center : ℂ × ℂ)
-    (hgrid :
-      RectangleGridSubdivisionIntegrable f z w
-        xcuts ycuts)
-    (hnodup :
-      (rectangleGridCells z w xcuts ycuts).Nodup)
-    (hcenter :
-      center ∈
-        (rectangleGridCells z w xcuts
-            ycuts).toFinset)
+    (center : ℂ × ℂ) (hgrid : RectangleGridSubdivisionIntegrable f z w xcuts ycuts)
+    (hnodup : (rectangleGridCells z w xcuts ycuts).Nodup)
+    (hcenter : center ∈ (rectangleGridCells z w xcuts ycuts).toFinset)
     (hzero :
-      ∀
-        cell ∈
-          (rectangleGridCells z w xcuts
-              ycuts).toFinset,
-        cell ≠ center →
-          rectangleBoundaryIntegral f cell.1
-              cell.2 =
-            0) :
-    rectangleBoundaryIntegral f z w =
-      rectangleBoundaryIntegral f center.1
-        center.2 := by
-  rw [rectangleBoundaryIntegral_eq_gridSubdivision
-      f z w xcuts ycuts hgrid]
-  rw [rectangleGridSubdivision_eq_sum_toFinset f
-      z w xcuts ycuts hnodup]
+      ∀ cell ∈ (rectangleGridCells z w xcuts ycuts).toFinset,
+        cell ≠ center → rectangleBoundaryIntegral f cell.1 cell.2 = 0) :
+    rectangleBoundaryIntegral f z w = rectangleBoundaryIntegral f center.1 center.2 := by
+  rw [rectangleBoundaryIntegral_eq_gridSubdivision f z w xcuts ycuts hgrid]
+  rw [rectangleGridSubdivision_eq_sum_toFinset f z w xcuts ycuts hnodup]
   apply Finset.sum_eq_single center
   · intro cell hcell hne
     exact hzero cell hcell hne
@@ -2229,12 +1947,9 @@ theorem rectangleBoundaryIntegral_eq_cell_of_grid (f : ℂ → ℂ) (z w : ℂ) 
 
 /-- The rectangle determined by the two internal cuts is the middle cell of the `3 × 3` grid. -/
 theorem innerRectangle_mem_threeByThreeGrid (z w a b : ℂ) :
-    (a, b) ∈
-      rectangleGridCells z w [a.re, b.re]
-        [a.im, b.im] := by
-  simp only [rectangleGridCells,
-    rectangleHorizontalCells, List.mem_append,
-    List.mem_cons, List.not_mem_nil, or_false]
+    (a, b) ∈ rectangleGridCells z w [a.re, b.re] [a.im, b.im] := by
+  simp only [rectangleGridCells, rectangleHorizontalCells, List.mem_append, List.mem_cons,
+    List.not_mem_nil, or_false]
   right
   left
   right
@@ -2247,28 +1962,15 @@ theorem innerRectangle_mem_threeByThreeGrid (z w a b : ℂ) :
 In a `3 × 3` subdivision, vanishing of the eight noncentral cells identifies both boundaries.
 -/
 theorem rectangleBoundaryIntegral_eq_innerRectangle (f : ℂ → ℂ) (z w a b : ℂ)
-    (hgrid :
-      RectangleGridSubdivisionIntegrable f z w
-        [a.re, b.re] [a.im, b.im])
-    (hnodup :
-      (rectangleGridCells z w [a.re, b.re]
-          [a.im, b.im]).Nodup)
+    (hgrid : RectangleGridSubdivisionIntegrable f z w [a.re, b.re] [a.im, b.im])
+    (hnodup : (rectangleGridCells z w [a.re, b.re] [a.im, b.im]).Nodup)
     (hzero :
-      ∀
-        cell ∈
-          (rectangleGridCells z w [a.re, b.re]
-              [a.im, b.im]).toFinset,
-        cell ≠ (a, b) →
-          rectangleBoundaryIntegral f cell.1
-              cell.2 =
-            0) :
-    rectangleBoundaryIntegral f z w =
-      rectangleBoundaryIntegral f a b := by
+      ∀ cell ∈ (rectangleGridCells z w [a.re, b.re] [a.im, b.im]).toFinset,
+        cell ≠ (a, b) → rectangleBoundaryIntegral f cell.1 cell.2 = 0) :
+    rectangleBoundaryIntegral f z w = rectangleBoundaryIntegral f a b := by
   apply
-    rectangleBoundaryIntegral_eq_cell_of_grid f z
-      w [a.re, b.re] [a.im, b.im] (a, b) hgrid hnodup
-  · simpa only [List.mem_toFinset] using
-      innerRectangle_mem_threeByThreeGrid z w a b
+    rectangleBoundaryIntegral_eq_cell_of_grid f z w [a.re, b.re] [a.im, b.im] (a, b) hgrid hnodup
+  · simpa only [List.mem_toFinset] using innerRectangle_mem_threeByThreeGrid z w a b
   · exact hzero
 
 /-- The lower-left corner of the axis-aligned square of coordinate radius `r` around `c`. -/
@@ -2281,9 +1983,7 @@ def centeredSquareUpper (c : ℂ) (r : ℝ) : ℂ :=
 
 /-- The simple principal part is integrable on all four edges of a positive centered square. -/
 theorem rectangleBoundaryIntegrable_sub_center_inv_centeredSquare (c : ℂ) {r : ℝ} (hr : 0 < r) :
-    RectangleBoundaryIntegrable
-      (fun z : ℂ ↦ (z - c)⁻¹)
-      (centeredSquareLower c r)
+    RectangleBoundaryIntegrable (fun z : ℂ ↦ (z - c)⁻¹) (centeredSquareLower c r)
       (centeredSquareUpper c r) := by
   have horizontal (k : ℝ) (hk : k ≠ 0) :
     Continuous (fun t : ℝ ↦ (t + (c.im + k) * Complex.I - c)⁻¹) := by
@@ -2309,29 +2009,27 @@ theorem rectangleBoundaryIntegrable_sub_center_inv_centeredSquare (c : ℂ) {r :
             add_sub_cancel_left, Complex.zero_re] using hre)
   constructor
   · simpa only [centeredSquareLower, sub_eq_add_neg, Complex.add_im, Complex.ofReal_im,
-    Complex.neg_im, neg_zero, add_zero, Complex.mul_im, Complex.add_re, Complex.ofReal_re,
-    Complex.neg_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add, Complex.ofReal_add,
-    Complex.ofReal_neg, Complex.mul_re, centeredSquareUpper] using
-    (horizontal (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.re - r) (c.re + r)
+      Complex.neg_im, neg_zero, add_zero, Complex.mul_im, Complex.add_re, Complex.ofReal_re,
+      Complex.neg_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add, Complex.ofReal_add,
+      Complex.ofReal_neg, Complex.mul_re, centeredSquareUpper] using
+      (horizontal (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.re - r) (c.re + r)
   · simpa only [centeredSquareUpper, Complex.add_im, Complex.ofReal_im, add_zero, Complex.mul_im,
-    Complex.add_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add,
-    Complex.ofReal_add, centeredSquareLower, Complex.sub_re, Complex.mul_re, Complex.sub_im,
-    sub_self] using (horizontal r hr.ne').intervalIntegrable (c.re - r) (c.re + r)
+      Complex.add_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add,
+      Complex.ofReal_add, centeredSquareLower, Complex.sub_re, Complex.mul_re, Complex.sub_im,
+      sub_self] using (horizontal r hr.ne').intervalIntegrable (c.re - r) (c.re + r)
   · simpa only [centeredSquareUpper, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
-    Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, add_zero, Complex.I_im, mul_one,
-    sub_self, Complex.ofReal_add, centeredSquareLower, Complex.sub_im, Complex.mul_im,
-    Complex.sub_re, zero_add] using (vertical r hr.ne').intervalIntegrable (c.im - r) (c.im + r)
+      Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, add_zero, Complex.I_im, mul_one,
+      sub_self, Complex.ofReal_add, centeredSquareLower, Complex.sub_im, Complex.mul_im,
+      Complex.sub_re, zero_add] using (vertical r hr.ne').intervalIntegrable (c.im - r) (c.im + r)
   · simpa only [centeredSquareLower, sub_eq_add_neg, Complex.add_re, Complex.ofReal_re,
-    Complex.neg_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im,
-    Complex.neg_im, neg_zero, add_zero, Complex.I_im, mul_one, Complex.ofReal_add,
-    Complex.ofReal_neg, Complex.mul_im, zero_add, centeredSquareUpper] using
-    (vertical (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.im - r) (c.im + r)
+      Complex.neg_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im,
+      Complex.neg_im, neg_zero, add_zero, Complex.I_im, mul_one, Complex.ofReal_add,
+      Complex.ofReal_neg, Complex.mul_im, zero_add, centeredSquareUpper] using
+      (vertical (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.im - r) (c.im + r)
 
 /-- The double principal part is integrable on all four edges of a positive centered square. -/
 theorem rectangleBoundaryIntegrable_sub_center_inv_sq_centeredSquare (c : ℂ) {r : ℝ} (hr : 0 < r) :
-    RectangleBoundaryIntegrable
-      (fun z : ℂ ↦ (z - c)⁻¹ ^ 2)
-      (centeredSquareLower c r)
+    RectangleBoundaryIntegrable (fun z : ℂ ↦ (z - c)⁻¹ ^ 2) (centeredSquareLower c r)
       (centeredSquareUpper c r) := by
   have horizontal (k : ℝ) (hk : k ≠ 0) :
     Continuous (fun t : ℝ ↦ (t + (c.im + k) * Complex.I - c)⁻¹ ^ 2) := by
@@ -2349,28 +2047,29 @@ theorem rectangleBoundaryIntegrable_sub_center_inv_sq_centeredSquare (c : ℂ) {
     have hre := congrArg Complex.re hzero
     exact
       hk
-        (by simpa only [Complex.sub_re, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+        (by
+          simpa only [Complex.sub_re, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
             Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero,
             add_sub_cancel_left, Complex.zero_re] using hre)
   constructor
   · simpa only [centeredSquareLower, sub_eq_add_neg, Complex.add_im, Complex.ofReal_im,
-    Complex.neg_im, neg_zero, add_zero, Complex.mul_im, Complex.add_re, Complex.ofReal_re,
-    Complex.neg_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add, Complex.ofReal_add,
-    Complex.ofReal_neg, inv_pow, Complex.mul_re, centeredSquareUpper] using
-    (horizontal (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.re - r) (c.re + r)
+      Complex.neg_im, neg_zero, add_zero, Complex.mul_im, Complex.add_re, Complex.ofReal_re,
+      Complex.neg_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add, Complex.ofReal_add,
+      Complex.ofReal_neg, inv_pow, Complex.mul_re, centeredSquareUpper] using
+      (horizontal (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.re - r) (c.re + r)
   · simpa only [centeredSquareUpper, Complex.add_im, Complex.ofReal_im, add_zero, Complex.mul_im,
-    Complex.add_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add,
-    Complex.ofReal_add, inv_pow, centeredSquareLower, Complex.sub_re, Complex.mul_re,
-    Complex.sub_im, sub_self] using (horizontal r hr.ne').intervalIntegrable (c.re - r) (c.re + r)
+      Complex.add_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add,
+      Complex.ofReal_add, inv_pow, centeredSquareLower, Complex.sub_re, Complex.mul_re,
+      Complex.sub_im, sub_self] using (horizontal r hr.ne').intervalIntegrable (c.re - r) (c.re + r)
   · simpa only [centeredSquareUpper, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
-    Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, add_zero, Complex.I_im, mul_one,
-    sub_self, Complex.ofReal_add, inv_pow, centeredSquareLower, Complex.sub_im, Complex.mul_im,
-    Complex.sub_re, zero_add] using (vertical r hr.ne').intervalIntegrable (c.im - r) (c.im + r)
+      Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, add_zero, Complex.I_im, mul_one,
+      sub_self, Complex.ofReal_add, inv_pow, centeredSquareLower, Complex.sub_im, Complex.mul_im,
+      Complex.sub_re, zero_add] using (vertical r hr.ne').intervalIntegrable (c.im - r) (c.im + r)
   · simpa only [centeredSquareLower, sub_eq_add_neg, Complex.add_re, Complex.ofReal_re,
-    Complex.neg_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im,
-    Complex.neg_im, neg_zero, add_zero, Complex.I_im, mul_one, Complex.ofReal_add,
-    Complex.ofReal_neg, inv_pow, Complex.mul_im, zero_add, centeredSquareUpper] using
-    (vertical (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.im - r) (c.im + r)
+      Complex.neg_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im,
+      Complex.neg_im, neg_zero, add_zero, Complex.I_im, mul_one, Complex.ofReal_add,
+      Complex.ofReal_neg, inv_pow, Complex.mul_im, zero_add, centeredSquareUpper] using
+      (vertical (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.im - r) (c.im + r)
 
 /--
 Input/assumptions: a center and positive centered-square radius.
@@ -2381,9 +2080,7 @@ Role: supplies the edge-integrability premise for triple-pole Laurent boundary f
 -/
 theorem rectangleBoundaryIntegrable_sub_center_inv_cube_centeredSquare (c : ℂ) {r : ℝ}
     (hr : 0 < r) :
-    RectangleBoundaryIntegrable
-      (fun z : ℂ ↦ (z - c)⁻¹ ^ 3)
-      (centeredSquareLower c r)
+    RectangleBoundaryIntegrable (fun z : ℂ ↦ (z - c)⁻¹ ^ 3) (centeredSquareLower c r)
       (centeredSquareUpper c r) := by
   have horizontal (k : ℝ) (hk : k ≠ 0) :
     Continuous (fun t : ℝ ↦ (t + (c.im + k) * Complex.I - c)⁻¹ ^ 3) := by
@@ -2407,23 +2104,23 @@ theorem rectangleBoundaryIntegrable_sub_center_inv_cube_centeredSquare (c : ℂ)
             add_sub_cancel_left, Complex.zero_re] using hre)
   constructor
   · simpa only [centeredSquareLower, sub_eq_add_neg, Complex.add_im, Complex.ofReal_im,
-    Complex.neg_im, neg_zero, add_zero, Complex.mul_im, Complex.add_re, Complex.ofReal_re,
-    Complex.neg_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add, Complex.ofReal_add,
-    Complex.ofReal_neg, inv_pow, Complex.mul_re, centeredSquareUpper] using
-    (horizontal (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.re - r) (c.re + r)
+      Complex.neg_im, neg_zero, add_zero, Complex.mul_im, Complex.add_re, Complex.ofReal_re,
+      Complex.neg_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add, Complex.ofReal_add,
+      Complex.ofReal_neg, inv_pow, Complex.mul_re, centeredSquareUpper] using
+      (horizontal (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.re - r) (c.re + r)
   · simpa only [centeredSquareUpper, Complex.add_im, Complex.ofReal_im, add_zero, Complex.mul_im,
-    Complex.add_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add,
-    Complex.ofReal_add, inv_pow, centeredSquareLower, Complex.sub_re, Complex.mul_re,
-    Complex.sub_im, sub_self] using (horizontal r hr.ne').intervalIntegrable (c.re - r) (c.re + r)
+      Complex.add_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add,
+      Complex.ofReal_add, inv_pow, centeredSquareLower, Complex.sub_re, Complex.mul_re,
+      Complex.sub_im, sub_self] using (horizontal r hr.ne').intervalIntegrable (c.re - r) (c.re + r)
   · simpa only [centeredSquareUpper, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
-    Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, add_zero, Complex.I_im, mul_one,
-    sub_self, Complex.ofReal_add, inv_pow, centeredSquareLower, Complex.sub_im, Complex.mul_im,
-    Complex.sub_re, zero_add] using (vertical r hr.ne').intervalIntegrable (c.im - r) (c.im + r)
+      Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, add_zero, Complex.I_im, mul_one,
+      sub_self, Complex.ofReal_add, inv_pow, centeredSquareLower, Complex.sub_im, Complex.mul_im,
+      Complex.sub_re, zero_add] using (vertical r hr.ne').intervalIntegrable (c.im - r) (c.im + r)
   · simpa only [centeredSquareLower, sub_eq_add_neg, Complex.add_re, Complex.ofReal_re,
-    Complex.neg_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im,
-    Complex.neg_im, neg_zero, add_zero, Complex.I_im, mul_one, Complex.ofReal_add,
-    Complex.ofReal_neg, inv_pow, Complex.mul_im, zero_add, centeredSquareUpper] using
-    (vertical (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.im - r) (c.im + r)
+      Complex.neg_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im,
+      Complex.neg_im, neg_zero, add_zero, Complex.I_im, mul_one, Complex.ofReal_add,
+      Complex.ofReal_neg, inv_pow, Complex.mul_im, zero_add, centeredSquareUpper] using
+      (vertical (-r) (neg_ne_zero.mpr hr.ne')).intervalIntegrable (c.im - r) (c.im + r)
 
 /--
 The simple pole at `c` has boundary integral `2πi` on every positive-radius centered square.
@@ -2434,22 +2131,16 @@ and the radius-independent origin computation give
 the result.  This is the local simple-pole certificate used by downstream punctured contour.
 -/
 theorem rectangleBoundaryIntegral_sub_center_inv_centeredSquare (c : ℂ) {r : ℝ} (hr : 0 < r) :
-    rectangleBoundaryIntegral
-        (fun z : ℂ ↦ (z - c)⁻¹)
-        (centeredSquareLower c r)
+    rectangleBoundaryIntegral (fun z : ℂ ↦ (z - c)⁻¹) (centeredSquareLower c r)
         (centeredSquareUpper c r) =
       2 * Real.pi * Complex.I := by
-  have hlower :
-    centeredSquareLower c r =
-      c + ((-r : ℝ) - r * Complex.I) := by
+  have hlower : centeredSquareLower c r = c + ((-r : ℝ) - r * Complex.I) := by
     apply Complex.ext <;>
       simp only [centeredSquareLower, sub_eq_add_neg, Complex.add_re, Complex.ofReal_re,
         Complex.neg_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im,
         Complex.neg_im, neg_zero, add_zero, Complex.I_im, mul_one, Complex.ofReal_neg,
         Complex.mul_im, zero_add]
-  have hupper :
-    centeredSquareUpper c r =
-      c + (r + r * Complex.I) := by
+  have hupper : centeredSquareUpper c r = c + (r + r * Complex.I) := by
     apply Complex.ext <;>
       simp only [centeredSquareUpper, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
         Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, add_zero, Complex.I_im, mul_one,
@@ -2465,78 +2156,62 @@ Translation reduces the statement to the origin-centered endpoint-cancellation t
 the double-pole certificate needed for the logarithmic-derivative kernel at a zeta pole.
 -/
 theorem rectangleBoundaryIntegral_sub_center_inv_sq_centeredSquare (c : ℂ) {r : ℝ} (hr : 0 < r) :
-    rectangleBoundaryIntegral
-        (fun z : ℂ ↦ (z - c)⁻¹ ^ 2)
-        (centeredSquareLower c r)
+    rectangleBoundaryIntegral (fun z : ℂ ↦ (z - c)⁻¹ ^ 2) (centeredSquareLower c r)
         (centeredSquareUpper c r) =
       0 := by
-  have hlower :
-    centeredSquareLower c r =
-      c + ((-r : ℝ) - r * Complex.I) := by
+  have hlower : centeredSquareLower c r = c + ((-r : ℝ) - r * Complex.I) := by
     apply Complex.ext <;>
-      simp only [centeredSquareLower,
-        sub_eq_add_neg, Complex.add_re, Complex.ofReal_re, Complex.neg_re, Complex.mul_re,
-        Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, Complex.neg_im, neg_zero,
-        add_zero, Complex.I_im, mul_one, Complex.ofReal_neg, Complex.mul_im, zero_add]
-  have hupper :
-    centeredSquareUpper c r =
-      c + (r + r * Complex.I) := by
+      simp only [centeredSquareLower, sub_eq_add_neg, Complex.add_re, Complex.ofReal_re,
+        Complex.neg_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im,
+        Complex.neg_im, neg_zero, add_zero, Complex.I_im, mul_one, Complex.ofReal_neg,
+        Complex.mul_im, zero_add]
+  have hupper : centeredSquareUpper c r = c + (r + r * Complex.I) := by
     apply Complex.ext <;>
-      simp only [centeredSquareUpper,
-        Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im,
-        Complex.ofReal_im, add_zero, Complex.I_im, mul_one, sub_self, Complex.mul_im, zero_add]
+      simp only [centeredSquareUpper, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+        Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, add_zero, Complex.I_im, mul_one,
+        sub_self, Complex.mul_im, zero_add]
   rw [hlower, hupper]
   calc
-    rectangleBoundaryIntegral
-          (fun z : ℂ ↦ (z - c)⁻¹ ^ 2) (c + ((-r : ℝ) - r * Complex.I)) (c + (r + r * Complex.I)) =
-        rectangleBoundaryIntegral
-          (fun z : ℂ ↦ z⁻¹ ^ 2) ((-r : ℝ) - r * Complex.I) (r + r * Complex.I) :=
+    rectangleBoundaryIntegral (fun z : ℂ ↦ (z - c)⁻¹ ^ 2) (c + ((-r : ℝ) - r * Complex.I))
+          (c + (r + r * Complex.I)) =
+        rectangleBoundaryIntegral (fun z : ℂ ↦ z⁻¹ ^ 2) ((-r : ℝ) - r * Complex.I)
+          (r + r * Complex.I) :=
       by
       exact
-        rectangleBoundaryIntegral_comp_sub_translate
-          (fun z : ℂ ↦ z⁻¹ ^ 2) c ((-r : ℝ) - r * Complex.I) (r + r * Complex.I)
-    _ = 0 :=
-      rectangleBoundaryIntegral_inv_sq_zero_centeredSquare
-        hr
+        rectangleBoundaryIntegral_comp_sub_translate (fun z : ℂ ↦ z⁻¹ ^ 2) c
+          ((-r : ℝ) - r * Complex.I) (r + r * Complex.I)
+    _ = 0 := rectangleBoundaryIntegral_inv_sq_zero_centeredSquare hr
 
 /--
 The third-order principal part at `c` has zero boundary integral on every centered square.
 Translation reduces the claim to the origin-centered primitive computation.
 -/
 theorem rectangleBoundaryIntegral_sub_center_inv_cube_centeredSquare (c : ℂ) {r : ℝ} (hr : 0 < r) :
-    rectangleBoundaryIntegral
-        (fun z : ℂ ↦ (z - c)⁻¹ ^ 3)
-        (centeredSquareLower c r)
+    rectangleBoundaryIntegral (fun z : ℂ ↦ (z - c)⁻¹ ^ 3) (centeredSquareLower c r)
         (centeredSquareUpper c r) =
       0 := by
-  have hlower :
-    centeredSquareLower c r =
-      c + ((-r : ℝ) - r * Complex.I) := by
+  have hlower : centeredSquareLower c r = c + ((-r : ℝ) - r * Complex.I) := by
     apply Complex.ext <;>
-      simp only [centeredSquareLower,
-        sub_eq_add_neg, Complex.add_re, Complex.ofReal_re, Complex.neg_re, Complex.mul_re,
-        Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, Complex.neg_im, neg_zero,
-        add_zero, Complex.I_im, mul_one, Complex.ofReal_neg, Complex.mul_im, zero_add]
-  have hupper :
-    centeredSquareUpper c r =
-      c + (r + r * Complex.I) := by
+      simp only [centeredSquareLower, sub_eq_add_neg, Complex.add_re, Complex.ofReal_re,
+        Complex.neg_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im,
+        Complex.neg_im, neg_zero, add_zero, Complex.I_im, mul_one, Complex.ofReal_neg,
+        Complex.mul_im, zero_add]
+  have hupper : centeredSquareUpper c r = c + (r + r * Complex.I) := by
     apply Complex.ext <;>
-      simp only [centeredSquareUpper,
-        Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im,
-        Complex.ofReal_im, add_zero, Complex.I_im, mul_one, sub_self, Complex.mul_im, zero_add]
+      simp only [centeredSquareUpper, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+        Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, add_zero, Complex.I_im, mul_one,
+        sub_self, Complex.mul_im, zero_add]
   rw [hlower, hupper]
   calc
-    rectangleBoundaryIntegral
-          (fun z : ℂ ↦ (z - c)⁻¹ ^ 3) (c + ((-r : ℝ) - r * Complex.I)) (c + (r + r * Complex.I)) =
-        rectangleBoundaryIntegral
-          (fun z : ℂ ↦ z⁻¹ ^ 3) ((-r : ℝ) - r * Complex.I) (r + r * Complex.I) :=
+    rectangleBoundaryIntegral (fun z : ℂ ↦ (z - c)⁻¹ ^ 3) (c + ((-r : ℝ) - r * Complex.I))
+          (c + (r + r * Complex.I)) =
+        rectangleBoundaryIntegral (fun z : ℂ ↦ z⁻¹ ^ 3) ((-r : ℝ) - r * Complex.I)
+          (r + r * Complex.I) :=
       by
       exact
-        rectangleBoundaryIntegral_comp_sub_translate
-          (fun z : ℂ ↦ z⁻¹ ^ 3) c ((-r : ℝ) - r * Complex.I) (r + r * Complex.I)
-    _ = 0 :=
-      rectangleBoundaryIntegral_inv_cube_zero_centeredSquare
-        hr
+        rectangleBoundaryIntegral_comp_sub_translate (fun z : ℂ ↦ z⁻¹ ^ 3) c
+          ((-r : ℝ) - r * Complex.I) (r + r * Complex.I)
+    _ = 0 := rectangleBoundaryIntegral_inv_cube_zero_centeredSquare hr
 
 /--
 A local Laurent decomposition evaluates a centered-square boundary integral from its simple-pole
@@ -2551,35 +2226,20 @@ there as well would force `g c = kernel c`, which need not match the analytic re
 theorem rectangleBoundaryIntegral_eq_two_pi_I_mul_of_principalParts (kernel g : ℂ → ℂ) (c A B : ℂ)
     {r : ℝ} (hr : 0 < r)
     (hsq :
-      RectangleBoundaryIntegrable
-        (fun z : ℂ ↦ (z - c)⁻¹ ^ 2)
-        (centeredSquareLower c r)
+      RectangleBoundaryIntegrable (fun z : ℂ ↦ (z - c)⁻¹ ^ 2) (centeredSquareLower c r)
         (centeredSquareUpper c r))
     (hinv :
-      RectangleBoundaryIntegrable
-        (fun z : ℂ ↦ (z - c)⁻¹)
-        (centeredSquareLower c r)
+      RectangleBoundaryIntegrable (fun z : ℂ ↦ (z - c)⁻¹) (centeredSquareLower c r)
         (centeredSquareUpper c r))
-    (hgint :
-      RectangleBoundaryIntegrable g
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r))
+    (hgint : RectangleBoundaryIntegrable g (centeredSquareLower c r) (centeredSquareUpper c r))
     (hgdiff :
       DifferentiableOn ℂ g
-        (Rectangle.rectangleClosedBox
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r)))
+        (Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r)))
     (hkernel :
       Set.EqOn kernel (fun z : ℂ ↦ A * (z - c)⁻¹ ^ 2 + (B * (z - c)⁻¹ + g z))
-        (Rectangle.rectangleClosedBox
-            (centeredSquareLower c r)
-            (centeredSquareUpper c r) \
-          rectangleOpenBox
-            (centeredSquareLower c r)
-            (centeredSquareUpper c r))) :
-    rectangleBoundaryIntegral kernel
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) =
+        (Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) \
+          rectangleOpenBox (centeredSquareLower c r) (centeredSquareUpper c r))) :
+    rectangleBoundaryIntegral kernel (centeredSquareLower c r) (centeredSquareUpper c r) =
       2 * Real.pi * Complex.I * B := by
   rw [rectangleBoundaryIntegral_congr_boundary hkernel]
   rw [rectangleBoundaryIntegral_add (hsq.const_mul A) ((hinv.const_mul B).add hgint)]
@@ -2597,48 +2257,30 @@ coefficient.  The cubic and quadratic terms have zero centered-square boundary i
 theorem rectangleBoundaryIntegral_eq_two_pi_I_mul_of_cubicPrincipalParts (kernel g : ℂ → ℂ)
     (c A B C : ℂ) {r : ℝ} (hr : 0 < r)
     (hcube :
-      RectangleBoundaryIntegrable
-        (fun z : ℂ ↦ (z - c)⁻¹ ^ 3)
-        (centeredSquareLower c r)
+      RectangleBoundaryIntegrable (fun z : ℂ ↦ (z - c)⁻¹ ^ 3) (centeredSquareLower c r)
         (centeredSquareUpper c r))
     (hsq :
-      RectangleBoundaryIntegrable
-        (fun z : ℂ ↦ (z - c)⁻¹ ^ 2)
-        (centeredSquareLower c r)
+      RectangleBoundaryIntegrable (fun z : ℂ ↦ (z - c)⁻¹ ^ 2) (centeredSquareLower c r)
         (centeredSquareUpper c r))
     (hinv :
-      RectangleBoundaryIntegrable
-        (fun z : ℂ ↦ (z - c)⁻¹)
-        (centeredSquareLower c r)
+      RectangleBoundaryIntegrable (fun z : ℂ ↦ (z - c)⁻¹) (centeredSquareLower c r)
         (centeredSquareUpper c r))
-    (hgint :
-      RectangleBoundaryIntegrable g
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r))
+    (hgint : RectangleBoundaryIntegrable g (centeredSquareLower c r) (centeredSquareUpper c r))
     (hgdiff :
       DifferentiableOn ℂ g
-        (Rectangle.rectangleClosedBox
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r)))
+        (Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r)))
     (hkernel :
       Set.EqOn kernel (fun z : ℂ ↦ A * (z - c)⁻¹ ^ 3 + (B * (z - c)⁻¹ ^ 2 + (C * (z - c)⁻¹ + g z)))
-        (Rectangle.rectangleClosedBox
-            (centeredSquareLower c r)
-            (centeredSquareUpper c r) \
-          rectangleOpenBox
-            (centeredSquareLower c r)
-            (centeredSquareUpper c r))) :
-    rectangleBoundaryIntegral kernel
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) =
+        (Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) \
+          rectangleOpenBox (centeredSquareLower c r) (centeredSquareUpper c r))) :
+    rectangleBoundaryIntegral kernel (centeredSquareLower c r) (centeredSquareUpper c r) =
       2 * Real.pi * Complex.I * C := by
   rw [rectangleBoundaryIntegral_congr_boundary hkernel]
-  rw [rectangleBoundaryIntegral_add
-      (hcube.const_mul A) ((hsq.const_mul B).add ((hinv.const_mul C).add hgint))]
+  rw [rectangleBoundaryIntegral_add (hcube.const_mul A)
+      ((hsq.const_mul B).add ((hinv.const_mul C).add hgint))]
   rw [rectangleBoundaryIntegral_add (hsq.const_mul B) ((hinv.const_mul C).add hgint)]
   rw [rectangleBoundaryIntegral_add (hinv.const_mul C) hgint]
-  rw [rectangleBoundaryIntegral_const_mul,
-    rectangleBoundaryIntegral_const_mul,
+  rw [rectangleBoundaryIntegral_const_mul, rectangleBoundaryIntegral_const_mul,
     rectangleBoundaryIntegral_const_mul]
   rw [rectangleBoundaryIntegral_sub_center_inv_cube_centeredSquare c hr]
   rw [rectangleBoundaryIntegral_sub_center_inv_sq_centeredSquare c hr]
@@ -2654,10 +2296,7 @@ their corresponding coordinate inequalities are used, so the square corners them
 belong to the Euclidean ball.
 -/
 theorem centeredSquare_cuts_inside {z w c : ℂ} {r : ℝ} (hre : z.re < w.re) (him : z.im < w.im)
-    (hr : 0 < r)
-    (hball :
-      Metric.closedBall c r ⊆
-        rectangleOpenBox z w) :
+    (hr : 0 < r) (hball : Metric.closedBall c r ⊆ rectangleOpenBox z w) :
     z.re < (centeredSquareLower c r).re ∧
       (centeredSquareLower c r).re < (centeredSquareUpper c r).re ∧
       (centeredSquareUpper c r).re < w.re ∧
@@ -2684,14 +2323,11 @@ theorem centeredSquare_cuts_inside {z w c : ℂ} {r : ℝ} (hre : z.re < w.re) (
       (show c + r * Complex.I ∈ Metric.closedBall c r by
         simp only [Metric.mem_closedBall, dist_self_add_left, Complex.norm_mul, Complex.norm_real,
           Real.norm_eq_abs, abs_of_pos hr, Complex.norm_I, mul_one, Std.le_refl])
-  simp only [rectangleOpenBox,
-    min_eq_left hre.le, max_eq_right hre.le, min_eq_left him.le,
+  simp only [rectangleOpenBox, min_eq_left hre.le, max_eq_right hre.le, min_eq_left him.le,
     max_eq_right him.le] at hleft hright hbottom htop
-  simp only [centeredSquareLower,
-    centeredSquareUpper, Complex.add_re,
-    Complex.add_im, Complex.sub_re, Complex.sub_im, Complex.mul_re, Complex.mul_im,
-    Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero, mul_one, sub_zero,
-    add_zero, zero_add]
+  simp only [centeredSquareLower, centeredSquareUpper, Complex.add_re, Complex.add_im,
+    Complex.sub_re, Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.ofReal_re,
+    Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero, mul_one, sub_zero, add_zero, zero_add]
   constructor
   · simpa only [Complex.sub_re, Complex.ofReal_re] using hleft.1.1
   constructor
@@ -2708,18 +2344,11 @@ theorem centeredSquare_cuts_inside {z w c : ℂ} {r : ℝ} (hre : z.re < w.re) (
 
 /-- A cell-contained axial ball places its entire centered square in the parent closed box. -/
 theorem centeredSquare_closedBox_subset_parent {z w c : ℂ} {r : ℝ} (hre : z.re < w.re)
-    (him : z.im < w.im) (hr : 0 < r)
-    (hball :
-      Metric.closedBall c r ⊆
-        rectangleOpenBox z w) :
-    Rectangle.rectangleClosedBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) ⊆
+    (him : z.im < w.im) (hr : 0 < r) (hball : Metric.closedBall c r ⊆ rectangleOpenBox z w) :
+    Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) ⊆
       Rectangle.rectangleClosedBox z w := by
-  have hcuts :=
-    centeredSquare_cuts_inside hre him hr hball
-  apply
-    rectangleClosedBox_subset_rectangleClosedBox
+  have hcuts := centeredSquare_cuts_inside hre him hr hball
+  apply rectangleClosedBox_subset_rectangleClosedBox
   · exact Set.mem_uIcc_of_le hcuts.1.le (hcuts.2.1.trans hcuts.2.2.1).le
   · exact Set.mem_uIcc_of_le (hcuts.1.trans hcuts.2.1).le hcuts.2.2.1.le
   · exact Set.mem_uIcc_of_le hcuts.2.2.2.1.le (hcuts.2.2.2.2.1.trans hcuts.2.2.2.2.2).le
@@ -2727,61 +2356,45 @@ theorem centeredSquare_closedBox_subset_parent {z w c : ℂ} {r : ℝ} (hre : z.
 
 /-- A centered square's endpoint-augmented coordinates avoid its center. -/
 theorem centeredSquare_augmented_coordinates_avoid {z w c : ℂ} {r : ℝ} (hre : z.re < w.re)
-    (him : z.im < w.im) (hr : 0 < r)
-    (hc : c ∈ rectangleOpenBox z w) :
-    (∀
-        u ∈
-          z.re ::
-              [(centeredSquareLower c r).re,
-                (centeredSquareUpper c r).re] ++
-            [w.re],
+    (him : z.im < w.im) (hr : 0 < r) (hc : c ∈ rectangleOpenBox z w) :
+    (∀ u ∈ z.re :: [(centeredSquareLower c r).re, (centeredSquareUpper c r).re] ++ [w.re],
         c.re ≠ u) ∧
-      ∀
-        v ∈
-          z.im ::
-              [(centeredSquareLower c r).im,
-                (centeredSquareUpper c r).im] ++
-            [w.im],
+      ∀ v ∈ z.im :: [(centeredSquareLower c r).im, (centeredSquareUpper c r).im] ++ [w.im],
         c.im ≠ v := by
-  simp only [rectangleOpenBox,
-    min_eq_left hre.le, max_eq_right hre.le, min_eq_left him.le, max_eq_right him.le] at hc
+  simp only [rectangleOpenBox, min_eq_left hre.le, max_eq_right hre.le, min_eq_left him.le,
+    max_eq_right him.le] at hc
   constructor
   · intro u hu
     simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at hu
     rcases hu with (rfl | rfl | rfl) | rfl
     · exact ne_of_gt hc.1.1
-    · simp only [centeredSquareLower,
-        Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-        Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero, ne_eq]
+    · simp only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+        Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+        Complex.I_im, mul_one, add_zero, ne_eq]
       linarith
-    · simp only [centeredSquareUpper,
-        Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.add_im,
-        Complex.ofReal_im, add_zero, Complex.I_im, mul_one, sub_self, ne_eq, left_eq_add, hr.ne',
-        not_false_eq_true]
+    · simp only [centeredSquareUpper, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+        Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, add_zero, Complex.I_im, mul_one,
+        sub_self, ne_eq, left_eq_add, hr.ne', not_false_eq_true]
     · exact ne_of_lt hc.1.2
   · intro v hv
     simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at hv
     rcases hv with (rfl | rfl | rfl) | rfl
     · exact ne_of_gt hc.2.1
-    · simp only [centeredSquareLower,
-        Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im, Complex.sub_re,
-        Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add, ne_eq]
+    · simp only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self,
+        Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
+        mul_zero, add_zero, zero_add, ne_eq]
       linarith
-    · simp only [centeredSquareUpper,
-        Complex.add_im, Complex.ofReal_im, add_zero, Complex.mul_im, Complex.add_re,
-        Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add, ne_eq,
-        left_eq_add, hr.ne', not_false_eq_true]
+    · simp only [centeredSquareUpper, Complex.add_im, Complex.ofReal_im, add_zero, Complex.mul_im,
+        Complex.add_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add,
+        ne_eq, left_eq_add, hr.ne', not_false_eq_true]
     · exact ne_of_lt hc.2.2
 
 /-- Strict outer and inner coordinates make the corresponding `3 × 3` grid duplicate-free. -/
 theorem threeByThreeGrid_nodup {z w a b : ℂ} (hzare : z.re < a.re) (habre : a.re < b.re)
     (hbwre : b.re < w.re) (hzaim : z.im < a.im) (habim : a.im < b.im) (hbwim : b.im < w.im) :
-    (rectangleGridCells z w [a.re, b.re]
-        [a.im, b.im]).Nodup := by
+    (rectangleGridCells z w [a.re, b.re] [a.im, b.im]).Nodup := by
   apply rectangleGridCells_nodup
-  · apply
-      endpointAugmentedCoordinates_nodup
-        (hzare.trans (habre.trans hbwre))
+  · apply endpointAugmentedCoordinates_nodup (hzare.trans (habre.trans hbwre))
     · simp only [List.pairwise_cons, List.mem_cons, List.not_mem_nil, or_false, forall_eq, habre,
         IsEmpty.forall_iff, implies_true, List.Pairwise.nil, and_self]
     · intro u hu
@@ -2789,9 +2402,7 @@ theorem threeByThreeGrid_nodup {z w a b : ℂ} (hzare : z.re < a.re) (habre : a.
       rcases hu with rfl | rfl
       · exact ⟨hzare, habre.trans hbwre⟩
       · exact ⟨hzare.trans habre, hbwre⟩
-  · apply
-      endpointAugmentedCoordinates_nodup
-        (hzaim.trans (habim.trans hbwim))
+  · apply endpointAugmentedCoordinates_nodup (hzaim.trans (habim.trans hbwim))
     · simp only [List.pairwise_cons, List.mem_cons, List.not_mem_nil, or_false, forall_eq, habim,
         IsEmpty.forall_iff, implies_true, List.Pairwise.nil, and_self]
     · intro v hv
@@ -2802,42 +2413,30 @@ theorem threeByThreeGrid_nodup {z w a b : ℂ} (hzare : z.re < a.re) (habre : a.
 
 /-- A positive-radius centered square contains its center in its open rectangle. -/
 theorem center_mem_centeredSquare_openBox (c : ℂ) {r : ℝ} (hr : 0 < r) :
-    c ∈
-      rectangleOpenBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) := by
-  have hre :
-    (centeredSquareLower c r).re <
-      (centeredSquareUpper c r).re := by
-    simp only [centeredSquareLower,
-      Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-      Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-      centeredSquareUpper, Complex.add_im]
+    c ∈ rectangleOpenBox (centeredSquareLower c r) (centeredSquareUpper c r) := by
+  have hre : (centeredSquareLower c r).re < (centeredSquareUpper c r).re := by
+    simp only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+      Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+      Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im]
     linarith
-  have him :
-    (centeredSquareLower c r).im <
-      (centeredSquareUpper c r).im := by
-    simp only [centeredSquareLower,
-      Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im, Complex.sub_re,
-      Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add,
-      centeredSquareUpper, Complex.add_re]
+  have him : (centeredSquareLower c r).im < (centeredSquareUpper c r).im := by
+    simp only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self,
+      Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
+      mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re]
     linarith
-  simp only [rectangleOpenBox,
-    min_eq_left hre.le, max_eq_right hre.le, min_eq_left him.le, max_eq_right him.le]
+  simp only [rectangleOpenBox, min_eq_left hre.le, max_eq_right hre.le, min_eq_left him.le,
+    max_eq_right him.le]
   constructor <;> constructor <;>
-    simp only [centeredSquareLower,
-      centeredSquareUpper, Complex.add_re,
-      Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im,
-      Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero, Complex.add_im, Complex.mul_im,
-      zero_add, sub_lt_self_iff, lt_add_iff_pos_right] <;>
+    simp only [centeredSquareLower, centeredSquareUpper, Complex.add_re, Complex.sub_re,
+      Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im,
+      sub_self, Complex.I_im, mul_one, add_zero, Complex.add_im, Complex.mul_im, zero_add,
+      sub_lt_self_iff, lt_add_iff_pos_right] <;>
     linarith
 
 /-- Every strictly smaller closed ball lies in the open centered square. -/
 theorem closedBall_subset_centeredSquare_openBox (c : ℂ) {ρ r : ℝ} (hρ : 0 ≤ ρ) (hρr : ρ < r) :
     Metric.closedBall c ρ ⊆
-      rectangleOpenBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) := by
+      rectangleOpenBox (centeredSquareLower c r) (centeredSquareUpper c r) := by
   intro z hz
   have hnorm : ‖z - c‖ ≤ ρ := by simpa only [Metric.mem_closedBall, dist_eq_norm] using hz
   have hre := (Complex.abs_re_le_norm (z - c)).trans hnorm
@@ -2846,9 +2445,7 @@ theorem closedBall_subset_centeredSquare_openBox (c : ℂ) {ρ r : ℝ} (hρ : 0
   simp only [Complex.sub_re] at hre
   simp only [Complex.sub_im] at him
   have hr : 0 < r := hρ.trans_lt hρr
-  simp only [rectangleOpenBox,
-    centeredSquareLower,
-    centeredSquareUpper, Complex.add_re,
+  simp only [rectangleOpenBox, centeredSquareLower, centeredSquareUpper, Complex.add_re,
     Complex.add_im, Complex.sub_re, Complex.sub_im, Complex.mul_re, Complex.mul_im,
     Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero, mul_one, sub_zero,
     add_zero, zero_add]
@@ -2867,22 +2464,14 @@ the hypothesis that the cell is not the middle rectangle.
 -/
 theorem not_mem_noncentral_threeByThreeGridCell {z w a b c : ℂ} (hzare : z.re < a.re)
     (habre : a.re < b.re) (hbwre : b.re < w.re) (hzaim : z.im < a.im) (habim : a.im < b.im)
-    (hbwim : b.im < w.im)
-    (hc : c ∈ rectangleOpenBox a b)
-    {cell : ℂ × ℂ}
-    (hcell :
-      cell ∈
-        rectangleGridCells z w [a.re, b.re]
-          [a.im, b.im])
-    (hne : cell ≠ (a, b)) :
+    (hbwim : b.im < w.im) (hc : c ∈ rectangleOpenBox a b) {cell : ℂ × ℂ}
+    (hcell : cell ∈ rectangleGridCells z w [a.re, b.re] [a.im, b.im]) (hne : cell ≠ (a, b)) :
     c ∉ Rectangle.rectangleClosedBox cell.1 cell.2 := by
-  simp only [rectangleGridCells,
-    rectangleHorizontalCells, List.mem_append,
-    List.mem_cons, List.not_mem_nil, or_false] at hcell
+  simp only [rectangleGridCells, rectangleHorizontalCells, List.mem_append, List.mem_cons,
+    List.not_mem_nil, or_false] at hcell
   rcases hcell with (rfl | rfl | rfl) | (rfl | rfl | rfl) | (rfl | rfl | rfl)
   all_goals
-    simp only [rectangleOpenBox,
-      min_eq_left habre.le, max_eq_right habre.le, min_eq_left habim.le,
+    simp only [rectangleOpenBox, min_eq_left habre.le, max_eq_right habre.le, min_eq_left habim.le,
       max_eq_right habim.le] at hc
   all_goals
     simp only [Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.ofReal_re,
@@ -2912,37 +2501,26 @@ def rectangleClosedBoxBoundary (z w : ℂ) : Set ℂ :=
 Every point of a centered-square boundary is at least its coordinate radius from the center.
 -/
 theorem centeredSquare_radius_le_norm_sub_of_mem_boundary {c s : ℂ} {r : ℝ}
-    (hs :
-      s ∈
-        rectangleClosedBoxBoundary
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r)) :
+    (hs : s ∈ rectangleClosedBoxBoundary (centeredSquareLower c r) (centeredSquareUpper c r)) :
     r ≤ ‖s - c‖ := by
   by_contra hnorm
   have hlt : ‖s - c‖ < r := lt_of_not_ge hnorm
   have hsball : s ∈ Metric.closedBall c ‖s - c‖ := by
     simp only [Metric.mem_closedBall, dist_eq_norm]
     exact le_rfl
-  have hsopen :=
-    closedBall_subset_centeredSquare_openBox c
-      (norm_nonneg (s - c)) hlt hsball
+  have hsopen := closedBall_subset_centeredSquare_openBox c (norm_nonneg (s - c)) hlt hsball
   exact hs.2 hsopen
 
 /-- A nonnegative-radius centered square lies in the circumscribed ball of radius `√2 * r`. -/
 theorem centeredSquare_closedRectangle_subset_closedBall (c : ℂ) {r : ℝ} (hr : 0 ≤ r) :
-    Rectangle.rectangleClosedBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) ⊆
+    Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) ⊆
       Metric.closedBall c (Real.sqrt 2 * r) := by
   intro s hs
   have hcorners : c.re - r ≤ c.re + r ∧ c.im - r ≤ c.im + r := by constructor <;> linarith
-  simp only [Rectangle.rectangleClosedBox,
-    Rectangle.rectangleClosedBox, Complex.mem_reProdIm,
-    centeredSquareLower,
-    centeredSquareUpper, Complex.add_re,
-    Complex.add_im, Complex.sub_re, Complex.sub_im, Complex.mul_re, Complex.mul_im,
-    Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero, mul_one, sub_zero,
-    add_zero, zero_add] at hs
+  simp only [Rectangle.rectangleClosedBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm,
+    centeredSquareLower, centeredSquareUpper, Complex.add_re, Complex.add_im, Complex.sub_re,
+    Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
+    Complex.I_re, Complex.I_im, mul_zero, mul_one, sub_zero, add_zero, zero_add] at hs
   rw [Set.uIcc_of_le hcorners.1, Set.uIcc_of_le hcorners.2] at hs
   have hre : |(s - c).re| ≤ r := by
     rw [abs_le]
@@ -2975,9 +2553,7 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul {f h : �
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            rectangleBoundaryIntegral f
-                (centeredSquareLower c r)
-                (centeredSquareUpper c r) =
+            rectangleBoundaryIntegral f (centeredSquareLower c r) (centeredSquareUpper c r) =
               2 * Real.pi * Complex.I * h c := by
   obtain ⟨rg, hrg, hganalytic⟩ := hh.exists_ball_analyticOnNhd
   have hevent : ∀ᶠ z in nhds c, z ∈ ({c}ᶜ : Set ℂ) → (z - c) * f z = h z :=
@@ -2996,148 +2572,99 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul {f h : �
   have hsqrt2r : Real.sqrt 2 * r < min rg re :=
     (mul_le_mul_of_nonneg_left hrR (Real.sqrt_nonneg 2)).trans_lt hsqrt2R
   have hsquareSubsetRg :
-    Rectangle.rectangleClosedBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) ⊆
+    Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) ⊆
       Metric.ball c rg :=
-    (centeredSquare_closedRectangle_subset_closedBall
-          c hr.le).trans
+    (centeredSquare_closedRectangle_subset_closedBall c hr.le).trans
       (Metric.closedBall_subset_ball (hsqrt2r.trans_le (min_le_left rg re)))
   have hsquareSubsetRe :
-    Rectangle.rectangleClosedBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) ⊆
+    Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) ⊆
       Metric.ball c re :=
-    (centeredSquare_closedRectangle_subset_closedBall
-          c hr.le).trans
+    (centeredSquare_closedRectangle_subset_closedBall c hr.le).trans
       (Metric.closedBall_subset_ball (hsqrt2r.trans_le (min_le_right rg re)))
   have hboundaryNeC :
-    ∀
-      z ∈
-        rectangleClosedBoxBoundary
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r),
+    ∀ z ∈ rectangleClosedBoxBoundary (centeredSquareLower c r) (centeredSquareUpper c r),
       z ≠ c := by
     intro z hz hzc
-    have hdist :=
-      centeredSquare_radius_le_norm_sub_of_mem_boundary
-        hz
+    have hdist := centeredSquare_radius_le_norm_sub_of_mem_boundary hz
     rw [hzc, sub_self, norm_zero] at hdist
     exact absurd hdist (not_le.mpr hr)
   have heqBoundary :
-    ∀
-      z ∈
-        rectangleClosedBoxBoundary
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r),
+    ∀ z ∈ rectangleClosedBoxBoundary (centeredSquareLower c r) (centeredSquareUpper c r),
       (z - c) * f z = h z :=
     fun z hz ↦ hball (hsquareSubsetRe hz.1) (Set.mem_compl_singleton_iff.mpr (hboundaryNeC z hz))
   have hmemEdge :
     ∀ z : ℂ,
-      z.re ∈
-          Set.uIcc (centeredSquareLower c r).re
-            (centeredSquareUpper c r).re →
-        z.im ∈
-          Set.uIcc (centeredSquareLower c r).im
-            (centeredSquareUpper c r).im →
+      z.re ∈ Set.uIcc (centeredSquareLower c r).re (centeredSquareUpper c r).re →
+        z.im ∈ Set.uIcc (centeredSquareLower c r).im (centeredSquareUpper c r).im →
         ContinuousAt (dslope h c) z := by
     intro z hre him
     have hz :
-      z ∈
-        Rectangle.rectangleClosedBox
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r) :=
+      z ∈ Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) :=
       Complex.mem_reProdIm.mpr ⟨hre, him⟩
     rcases eq_or_ne z c with rfl | hne
     · exact (General.AnalyticAt.dslope hh).continuousAt
     · exact (continuousAt_dslope_of_ne hne).mpr (hganalytic z (hsquareSubsetRg hz)).continuousAt
   have hgint :
-    RectangleBoundaryIntegrable (dslope h c)
-      (centeredSquareLower c r)
+    RectangleBoundaryIntegrable (dslope h c) (centeredSquareLower c r)
       (centeredSquareUpper c r) := by
     constructor
-    · apply
-        intervalIntegrable_horizontal_of_continuousAt
+    · apply intervalIntegrable_horizontal_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simpa only [centeredSquareLower,
-          Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-          Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-          centeredSquareUpper, Complex.add_im,
-          Complex.mul_im, zero_add, Complex.ofReal_sub] using ht
-      · simp only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
-          Complex.ofReal_sub, Set.left_mem_uIcc]
-    · apply
-        intervalIntegrable_horizontal_of_continuousAt
+      · simpa only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.mul_im,
+          zero_add, Complex.ofReal_sub] using ht
+      · simp only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
+          mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re, Complex.ofReal_sub,
+          Set.left_mem_uIcc]
+    · apply intervalIntegrable_horizontal_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simpa only [centeredSquareLower,
-          Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-          Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-          centeredSquareUpper, Complex.add_im,
-          Complex.mul_im, zero_add, Complex.ofReal_add] using ht
-      · simp only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
-          Complex.ofReal_add, Set.right_mem_uIcc]
-    · apply
-        intervalIntegrable_vertical_of_continuousAt
+      · simpa only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.mul_im,
+          zero_add, Complex.ofReal_add] using ht
+      · simp only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
+          mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re, Complex.ofReal_add,
+          Set.right_mem_uIcc]
+    · apply intervalIntegrable_vertical_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simp only [centeredSquareLower,
-            Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
-            mul_zero,
-            Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-            centeredSquareUpper, Complex.add_im,
-            Complex.ofReal_add, Set.right_mem_uIcc]
-      · simpa only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
+      · simp only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.ofReal_add,
+          Set.right_mem_uIcc]
+      · simpa only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im,
+          sub_self, Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one,
+          Complex.I_re, mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re,
           Complex.mul_re, Complex.ofReal_add] using ht
-    · apply
-        intervalIntegrable_vertical_of_continuousAt
+    · apply intervalIntegrable_vertical_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simp only [centeredSquareLower,
-            Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
-            mul_zero,
-            Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-            centeredSquareUpper, Complex.add_im,
-            Complex.ofReal_sub, Set.left_mem_uIcc]
-      · simpa only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
+      · simp only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.ofReal_sub,
+          Set.left_mem_uIcc]
+      · simpa only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im,
+          sub_self, Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one,
+          Complex.I_re, mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re,
           Complex.mul_re, Complex.ofReal_sub] using ht
   have hgdiff :
     DifferentiableOn ℂ (dslope h c)
-      (Rectangle.rectangleClosedBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r)) := by
+      (Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r)) := by
     intro z hz
     rcases eq_or_ne z c with rfl | hne
-    · exact
-        (General.AnalyticAt.dslope hh).differentiableAt.differentiableWithinAt
+    · exact (General.AnalyticAt.dslope hh).differentiableAt.differentiableWithinAt
     · exact
         ((differentiableAt_dslope_of_ne hne).mpr
             (hganalytic z (hsquareSubsetRg hz)).differentiableAt).differentiableWithinAt
   have hkernel :
     Set.EqOn f (fun z : ℂ ↦ (0 : ℂ) * (z - c)⁻¹ ^ 2 + (h c * (z - c)⁻¹ + dslope h c z))
-      (Rectangle.rectangleClosedBox
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r) \
-        rectangleOpenBox
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r)) := by
+      (Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) \
+        rectangleOpenBox (centeredSquareLower c r) (centeredSquareUpper c r)) := by
     intro z hz
     have hne : z ≠ c := hboundaryNeC z hz
     have hsub : z - c ≠ 0 := sub_ne_zero.mpr hne
@@ -3152,13 +2679,9 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul {f h : �
     ring
   unfold rectangleBoundaryIntegral
   exact
-    rectangleBoundaryIntegral_eq_two_pi_I_mul_of_principalParts
-      f (dslope h c) c 0 (h c) hr
-      (rectangleBoundaryIntegrable_sub_center_inv_sq_centeredSquare
-        c hr)
-      (rectangleBoundaryIntegrable_sub_center_inv_centeredSquare
-        c hr)
-      hgint hgdiff hkernel
+    rectangleBoundaryIntegral_eq_two_pi_I_mul_of_principalParts f (dslope h c) c 0 (h c) hr
+      (rectangleBoundaryIntegrable_sub_center_inv_sq_centeredSquare c hr)
+      (rectangleBoundaryIntegrable_sub_center_inv_centeredSquare c hr) hgint hgdiff hkernel
 
 /--
 A punctured-neighborhood simple-pole identity yields the expected boundary integral on some
@@ -3172,13 +2695,9 @@ theorem exists_rectangleBoundaryIntegral_eq_two_pi_I_mul {f h : ℂ → ℂ} {c 
     (heq : Filter.EventuallyEq (nhdsWithin c ({c}ᶜ : Set ℂ)) (fun z ↦ (z - c) * f z) h) :
     ∃ R : ℝ,
       0 < R ∧
-        rectangleBoundaryIntegral f
-            (centeredSquareLower c R)
-            (centeredSquareUpper c R) =
+        rectangleBoundaryIntegral f (centeredSquareLower c R) (centeredSquareUpper c R) =
           2 * Real.pi * Complex.I * h c := by
-  obtain ⟨R, hR, hforall⟩ :=
-    exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul
-      hh heq
+  obtain ⟨R, hR, hforall⟩ := exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul hh heq
   exact ⟨R, hR, hforall R hR le_rfl⟩
 
 /--
@@ -3196,9 +2715,7 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv {f 
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            rectangleBoundaryIntegral f
-                (centeredSquareLower c r)
-                (centeredSquareUpper c r) =
+            rectangleBoundaryIntegral f (centeredSquareLower c r) (centeredSquareUpper c r) =
               2 * Real.pi * Complex.I * deriv h c := by
   obtain ⟨rg, hrg, hganalytic⟩ := hh.exists_ball_analyticOnNhd
   have hevent : ∀ᶠ z in nhds c, z ∈ ({c}ᶜ : Set ℂ) → (z - c) ^ 2 * f z = h z :=
@@ -3216,155 +2733,105 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv {f 
   have hsqrt2r : Real.sqrt 2 * r < min rg re :=
     (mul_le_mul_of_nonneg_left hrR (Real.sqrt_nonneg 2)).trans_lt hsqrt2R
   have hsquareSubsetRg :
-    Rectangle.rectangleClosedBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) ⊆
+    Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) ⊆
       Metric.ball c rg :=
-    (centeredSquare_closedRectangle_subset_closedBall
-          c hr.le).trans
+    (centeredSquare_closedRectangle_subset_closedBall c hr.le).trans
       (Metric.closedBall_subset_ball (hsqrt2r.trans_le (min_le_left rg re)))
   have hsquareSubsetRe :
-    Rectangle.rectangleClosedBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) ⊆
+    Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) ⊆
       Metric.ball c re :=
-    (centeredSquare_closedRectangle_subset_closedBall
-          c hr.le).trans
+    (centeredSquare_closedRectangle_subset_closedBall c hr.le).trans
       (Metric.closedBall_subset_ball (hsqrt2r.trans_le (min_le_right rg re)))
   have hboundaryNeC :
-    ∀
-      z ∈
-        rectangleClosedBoxBoundary
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r),
+    ∀ z ∈ rectangleClosedBoxBoundary (centeredSquareLower c r) (centeredSquareUpper c r),
       z ≠ c := by
     intro z hz hzc
-    have hdist :=
-      centeredSquare_radius_le_norm_sub_of_mem_boundary
-        hz
+    have hdist := centeredSquare_radius_le_norm_sub_of_mem_boundary hz
     rw [hzc, sub_self, norm_zero] at hdist
     exact absurd hdist (not_le.mpr hr)
   have heqBoundary :
-    ∀
-      z ∈
-        rectangleClosedBoxBoundary
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r),
+    ∀ z ∈ rectangleClosedBoxBoundary (centeredSquareLower c r) (centeredSquareUpper c r),
       (z - c) ^ 2 * f z = h z :=
     fun z hz ↦ hball (hsquareSubsetRe hz.1) (Set.mem_compl_singleton_iff.mpr (hboundaryNeC z hz))
   have hmemEdge :
     ∀ z : ℂ,
-      z.re ∈
-          Set.uIcc (centeredSquareLower c r).re
-            (centeredSquareUpper c r).re →
-        z.im ∈
-          Set.uIcc (centeredSquareLower c r).im
-            (centeredSquareUpper c r).im →
+      z.re ∈ Set.uIcc (centeredSquareLower c r).re (centeredSquareUpper c r).re →
+        z.im ∈ Set.uIcc (centeredSquareLower c r).im (centeredSquareUpper c r).im →
         ContinuousAt (dslope (dslope h c) c) z := by
     intro z hre him
     have hz :
-      z ∈
-        Rectangle.rectangleClosedBox
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r) :=
+      z ∈ Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) :=
       Complex.mem_reProdIm.mpr ⟨hre, him⟩
     rcases eq_or_ne z c with rfl | hne
-    · exact
-        (General.AnalyticAt.dslope
-            (General.AnalyticAt.dslope hh)).continuousAt
+    · exact (General.AnalyticAt.dslope (General.AnalyticAt.dslope hh)).continuousAt
     · exact
         (continuousAt_dslope_of_ne hne).mpr
           (((differentiableAt_dslope_of_ne hne).mpr
               (hganalytic z (hsquareSubsetRg hz)).differentiableAt)).continuousAt
   have hgint :
-    RectangleBoundaryIntegrable
-      (dslope (dslope h c) c)
-      (centeredSquareLower c r)
+    RectangleBoundaryIntegrable (dslope (dslope h c) c) (centeredSquareLower c r)
       (centeredSquareUpper c r) := by
     constructor
-    · apply
-        intervalIntegrable_horizontal_of_continuousAt
+    · apply intervalIntegrable_horizontal_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simpa only [centeredSquareLower,
-          Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-          Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-          centeredSquareUpper, Complex.add_im,
-          Complex.mul_im, zero_add, Complex.ofReal_sub] using ht
-      · simp only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
-          Complex.ofReal_sub, Set.left_mem_uIcc]
-    · apply
-        intervalIntegrable_horizontal_of_continuousAt
+      · simpa only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.mul_im,
+          zero_add, Complex.ofReal_sub] using ht
+      · simp only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
+          mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re, Complex.ofReal_sub,
+          Set.left_mem_uIcc]
+    · apply intervalIntegrable_horizontal_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simpa only [centeredSquareLower,
-          Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-          Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-          centeredSquareUpper, Complex.add_im,
-          Complex.mul_im, zero_add, Complex.ofReal_add] using ht
-      · simp only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
-          Complex.ofReal_add, Set.right_mem_uIcc]
-    · apply
-        intervalIntegrable_vertical_of_continuousAt
+      · simpa only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.mul_im,
+          zero_add, Complex.ofReal_add] using ht
+      · simp only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
+          mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re, Complex.ofReal_add,
+          Set.right_mem_uIcc]
+    · apply intervalIntegrable_vertical_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simp only [centeredSquareLower,
-          Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-          Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-          centeredSquareUpper, Complex.add_im,
-          Complex.ofReal_add, Set.right_mem_uIcc]
-      · simpa only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
+      · simp only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.ofReal_add,
+          Set.right_mem_uIcc]
+      · simpa only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im,
+          sub_self, Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one,
+          Complex.I_re, mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re,
           Complex.mul_re, Complex.ofReal_add] using ht
-    · apply
-        intervalIntegrable_vertical_of_continuousAt
+    · apply intervalIntegrable_vertical_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simp only [centeredSquareLower,
-          Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-          Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-          centeredSquareUpper, Complex.add_im,
-          Complex.ofReal_sub, Set.left_mem_uIcc]
-      · simpa only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
+      · simp only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.ofReal_sub,
+          Set.left_mem_uIcc]
+      · simpa only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im,
+          sub_self, Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one,
+          Complex.I_re, mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re,
           Complex.mul_re, Complex.ofReal_sub] using ht
   have hgdiff :
     DifferentiableOn ℂ (dslope (dslope h c) c)
-      (Rectangle.rectangleClosedBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r)) := by
+      (Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r)) := by
     intro z hz
     rcases eq_or_ne z c with rfl | hne
     · exact
         (General.AnalyticAt.dslope
-            (General.AnalyticAt.dslope
-              hh)).differentiableAt.differentiableWithinAt
+            (General.AnalyticAt.dslope hh)).differentiableAt.differentiableWithinAt
     · exact
         ((differentiableAt_dslope_of_ne hne).mpr
             ((differentiableAt_dslope_of_ne hne).mpr
               (hganalytic z (hsquareSubsetRg hz)).differentiableAt)).differentiableWithinAt
   have hkernel :
     Set.EqOn f (fun z : ℂ ↦ h c * (z - c)⁻¹ ^ 2 + (deriv h c * (z - c)⁻¹ + dslope (dslope h c) c z))
-      (Rectangle.rectangleClosedBox
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r) \
-        rectangleOpenBox
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r)) := by
+      (Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) \
+        rectangleOpenBox (centeredSquareLower c r) (centeredSquareUpper c r)) := by
     intro z hz
     have hne : z ≠ c := hboundaryNeC z hz
     have hsub : z - c ≠ 0 := sub_ne_zero.mpr hne
@@ -3382,13 +2849,9 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv {f 
     ring
   unfold rectangleBoundaryIntegral
   exact
-    rectangleBoundaryIntegral_eq_two_pi_I_mul_of_principalParts
-      f (dslope (dslope h c) c) c (h c) (deriv h c) hr
-      (rectangleBoundaryIntegrable_sub_center_inv_sq_centeredSquare
-        c hr)
-      (rectangleBoundaryIntegrable_sub_center_inv_centeredSquare
-        c hr)
-      hgint hgdiff hkernel
+    rectangleBoundaryIntegral_eq_two_pi_I_mul_of_principalParts f (dslope (dslope h c) c) c (h c)
+      (deriv h c) hr (rectangleBoundaryIntegrable_sub_center_inv_sq_centeredSquare c hr)
+      (rectangleBoundaryIntegrable_sub_center_inv_centeredSquare c hr) hgint hgdiff hkernel
 
 /--
 A cubic punctured-neighborhood identity yields the expected boundary integral on every
@@ -3403,9 +2866,7 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_cubic {f 
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            rectangleBoundaryIntegral f
-                (centeredSquareLower c r)
-                (centeredSquareUpper c r) =
+            rectangleBoundaryIntegral f (centeredSquareLower c r) (centeredSquareUpper c r) =
               2 * Real.pi * Complex.I * dslope (dslope h c) c c := by
   obtain ⟨rg, hrg, hganalytic⟩ := hh.exists_ball_analyticOnNhd
   have hevent : ∀ᶠ z in nhds c, z ∈ ({c}ᶜ : Set ℂ) → (z - c) ^ 3 * f z = h z :=
@@ -3423,169 +2884,113 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_cubic {f 
   have hsqrt2r : Real.sqrt 2 * r < min rg re :=
     (mul_le_mul_of_nonneg_left hrR (Real.sqrt_nonneg 2)).trans_lt hsqrt2R
   have hsquareSubsetRg :
-    Rectangle.rectangleClosedBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) ⊆
+    Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) ⊆
       Metric.ball c rg :=
-    (centeredSquare_closedRectangle_subset_closedBall
-          c hr.le).trans
+    (centeredSquare_closedRectangle_subset_closedBall c hr.le).trans
       (Metric.closedBall_subset_ball (hsqrt2r.trans_le (min_le_left rg re)))
   have hsquareSubsetRe :
-    Rectangle.rectangleClosedBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r) ⊆
+    Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) ⊆
       Metric.ball c re :=
-    (centeredSquare_closedRectangle_subset_closedBall
-          c hr.le).trans
+    (centeredSquare_closedRectangle_subset_closedBall c hr.le).trans
       (Metric.closedBall_subset_ball (hsqrt2r.trans_le (min_le_right rg re)))
   have hboundaryNeC :
-    ∀
-      z ∈
-        rectangleClosedBoxBoundary
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r),
+    ∀ z ∈ rectangleClosedBoxBoundary (centeredSquareLower c r) (centeredSquareUpper c r),
       z ≠ c := by
     intro z hz hzc
-    have hdist :=
-      centeredSquare_radius_le_norm_sub_of_mem_boundary
-        hz
+    have hdist := centeredSquare_radius_le_norm_sub_of_mem_boundary hz
     rw [hzc, sub_self, norm_zero] at hdist
     exact absurd hdist (not_le.mpr hr)
   have heqBoundary :
-    ∀
-      z ∈
-        rectangleClosedBoxBoundary
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r),
+    ∀ z ∈ rectangleClosedBoxBoundary (centeredSquareLower c r) (centeredSquareUpper c r),
       (z - c) ^ 3 * f z = h z :=
     fun z hz ↦ hball (hsquareSubsetRe hz.1) (Set.mem_compl_singleton_iff.mpr (hboundaryNeC z hz))
   have hmemEdge :
     ∀ z : ℂ,
-      z.re ∈
-          Set.uIcc (centeredSquareLower c r).re
-            (centeredSquareUpper c r).re →
-        z.im ∈
-          Set.uIcc (centeredSquareLower c r).im
-            (centeredSquareUpper c r).im →
+      z.re ∈ Set.uIcc (centeredSquareLower c r).re (centeredSquareUpper c r).re →
+        z.im ∈ Set.uIcc (centeredSquareLower c r).im (centeredSquareUpper c r).im →
         ContinuousAt (dslope (dslope (dslope h c) c) c) z := by
     intro z hre him
     have hz :
-      z ∈
-        Rectangle.rectangleClosedBox
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r) :=
+      z ∈ Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) :=
       Complex.mem_reProdIm.mpr ⟨hre, him⟩
     rcases eq_or_ne z c with rfl | hne
-    · exact
-        (General.analyticAt_dslope_dslope_dslope hh).continuousAt
+    · exact (General.analyticAt_dslope_dslope_dslope hh).continuousAt
     · exact
         (continuousAt_dslope_of_ne hne).mpr
           (((differentiableAt_dslope_of_ne hne).mpr
               ((differentiableAt_dslope_of_ne hne).mpr
                 (hganalytic z (hsquareSubsetRg hz)).differentiableAt)).continuousAt)
   have hgint :
-    RectangleBoundaryIntegrable
-      (dslope (dslope (dslope h c) c) c)
-      (centeredSquareLower c r)
+    RectangleBoundaryIntegrable (dslope (dslope (dslope h c) c) c) (centeredSquareLower c r)
       (centeredSquareUpper c r) := by
     constructor
-    · apply
-        intervalIntegrable_horizontal_of_continuousAt
+    · apply intervalIntegrable_horizontal_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simpa only [centeredSquareLower,
-          Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-          Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-          centeredSquareUpper, Complex.add_im,
-          Complex.mul_im, zero_add, Complex.ofReal_sub] using ht
-      · simp only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
-          Complex.ofReal_sub, Set.left_mem_uIcc]
-    · apply
-        intervalIntegrable_horizontal_of_continuousAt
+      · simpa only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.mul_im,
+          zero_add, Complex.ofReal_sub] using ht
+      · simp only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
+          mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re, Complex.ofReal_sub,
+          Set.left_mem_uIcc]
+    · apply intervalIntegrable_horizontal_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simpa only [centeredSquareLower,
-          Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-          Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-          centeredSquareUpper, Complex.add_im,
-          Complex.mul_im, zero_add, Complex.ofReal_add] using ht
-      · simp only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
-          Complex.ofReal_add, Set.right_mem_uIcc]
-    · apply
-        intervalIntegrable_vertical_of_continuousAt
+      · simpa only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.mul_im,
+          zero_add, Complex.ofReal_add] using ht
+      · simp only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
+          mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re, Complex.ofReal_add,
+          Set.right_mem_uIcc]
+    · apply intervalIntegrable_vertical_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simp only [centeredSquareLower,
-            Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
-            mul_zero,
-            Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-            centeredSquareUpper, Complex.add_im,
-            Complex.ofReal_add, Set.right_mem_uIcc]
-      · simpa only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
+      · simp only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.ofReal_add,
+          Set.right_mem_uIcc]
+      · simpa only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im,
+          sub_self, Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one,
+          Complex.I_re, mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re,
           Complex.mul_re, Complex.ofReal_add] using ht
-    · apply
-        intervalIntegrable_vertical_of_continuousAt
+    · apply intervalIntegrable_vertical_of_continuousAt
       intro t ht
       apply hmemEdge
-      · simp only [centeredSquareLower,
-          Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-          Complex.sub_im, Complex.ofReal_im, sub_self, Complex.I_im, mul_one, add_zero,
-          centeredSquareUpper, Complex.add_im,
-          Complex.ofReal_sub, Set.left_mem_uIcc]
-      · simpa only [centeredSquareLower,
-          Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self, Complex.mul_im,
-          Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero,
-          add_zero, zero_add,
-          centeredSquareUpper, Complex.add_re,
+      · simp only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
+          Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
+          Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im, Complex.ofReal_sub,
+          Set.left_mem_uIcc]
+      · simpa only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im,
+          sub_self, Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one,
+          Complex.I_re, mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re,
           Complex.mul_re, Complex.ofReal_sub] using ht
   have hgdiff :
     DifferentiableOn ℂ (dslope (dslope (dslope h c) c) c)
-      (Rectangle.rectangleClosedBox
-        (centeredSquareLower c r)
-        (centeredSquareUpper c r)) := by
+      (Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r)) := by
     intro z hz
     rcases eq_or_ne z c with rfl | hne
-    · exact
-        (General.analyticAt_dslope_dslope_dslope
-            hh).differentiableAt.differentiableWithinAt
+    · exact (General.analyticAt_dslope_dslope_dslope hh).differentiableAt.differentiableWithinAt
     · exact
         ((differentiableAt_dslope_of_ne hne).mpr
             ((differentiableAt_dslope_of_ne hne).mpr
               ((differentiableAt_dslope_of_ne hne).mpr
                 (hganalytic z (hsquareSubsetRg hz)).differentiableAt))).differentiableWithinAt
   have hkernel :=
-    General.eqOn_cubicPrincipalParts_of_mul_eq (f := f) (h := h)
-      (S :=
-      Rectangle.rectangleClosedBox
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r) \
-        rectangleOpenBox
-          (centeredSquareLower c r)
-          (centeredSquareUpper c r))
+    General.eqOn_cubicPrincipalParts_of_mul_eq (f := f) (h := h) (S :=
+      Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) \
+        rectangleOpenBox (centeredSquareLower c r) (centeredSquareUpper c r))
       (fun z hz ↦ hboundaryNeC z hz) (fun z hz ↦ heqBoundary z hz)
   unfold rectangleBoundaryIntegral
   exact
-    rectangleBoundaryIntegral_eq_two_pi_I_mul_of_cubicPrincipalParts
-      f (dslope (dslope (dslope h c) c) c) c (h c) (deriv h c) (dslope (dslope h c) c c) hr
-      (rectangleBoundaryIntegrable_sub_center_inv_cube_centeredSquare
-        c hr)
-      (rectangleBoundaryIntegrable_sub_center_inv_sq_centeredSquare
-        c hr)
-      (rectangleBoundaryIntegrable_sub_center_inv_centeredSquare
-        c hr)
-      hgint hgdiff hkernel
+    rectangleBoundaryIntegral_eq_two_pi_I_mul_of_cubicPrincipalParts f
+      (dslope (dslope (dslope h c) c) c) c (h c) (deriv h c) (dslope (dslope h c) c c) hr
+      (rectangleBoundaryIntegrable_sub_center_inv_cube_centeredSquare c hr)
+      (rectangleBoundaryIntegrable_sub_center_inv_sq_centeredSquare c hr)
+      (rectangleBoundaryIntegrable_sub_center_inv_centeredSquare c hr) hgint hgdiff hkernel
 
 /--
 A punctured-neighborhood double-pole identity yields the expected boundary integral on some
@@ -3599,57 +3004,43 @@ theorem exists_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv {f h : ℂ → �
     (heq : Filter.EventuallyEq (nhdsWithin c ({c}ᶜ : Set ℂ)) (fun z ↦ (z - c) ^ 2 * f z) h) :
     ∃ R : ℝ,
       0 < R ∧
-        rectangleBoundaryIntegral f
-            (centeredSquareLower c R)
-            (centeredSquareUpper c R) =
+        rectangleBoundaryIntegral f (centeredSquareLower c R) (centeredSquareUpper c R) =
           2 * Real.pi * Complex.I * deriv h c := by
   obtain ⟨R, hR, hforall⟩ :=
-    exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv
-      hh heq
+    exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv hh heq
   exact ⟨R, hR, hforall R hR le_rfl⟩
 
 /-- The boundary of a closed rectangle is closed. -/
 theorem isClosed_rectangleClosedBoxBoundary (z w : ℂ) :
-    IsClosed
-      (rectangleClosedBoxBoundary z w) := by
-  exact
-    (Rectangle.isCompact_rectangleClosedBox z w).isClosed.sdiff
-      (isOpen_Ioo.reProdIm isOpen_Ioo)
+    IsClosed (rectangleClosedBoxBoundary z w) := by
+  exact (Rectangle.isCompact_rectangleClosedBox z w).isClosed.sdiff (isOpen_Ioo.reProdIm isOpen_Ioo)
 
 /-- The boundary of a closed rectangle contains its first corner. -/
 theorem nonempty_rectangleClosedBoxBoundary (z w : ℂ) :
-    (rectangleClosedBoxBoundary z
-        w).Nonempty := by
+    (rectangleClosedBoxBoundary z w).Nonempty := by
   refine ⟨z, ?_⟩
   rcases le_total z.re w.re with h | h
-  · simp only [rectangleClosedBoxBoundary,
-        Rectangle.rectangleClosedBox, Complex.reProdIm, h,
-        Set.uIcc_of_le, inf_of_le_left, sup_of_le_right, Set.mem_sdiff, Set.mem_inter_iff,
-        Set.mem_preimage, Set.mem_Icc, Std.le_refl, and_self, Set.left_mem_uIcc, Set.mem_Ioo,
-        lt_self_iff_false, false_and, min_lt_iff, false_or, lt_max_iff, true_and]
+  · simp only [rectangleClosedBoxBoundary, Rectangle.rectangleClosedBox, Complex.reProdIm, h,
+      Set.uIcc_of_le, inf_of_le_left, sup_of_le_right, Set.mem_sdiff, Set.mem_inter_iff,
+      Set.mem_preimage, Set.mem_Icc, Std.le_refl, and_self, Set.left_mem_uIcc, Set.mem_Ioo,
+      lt_self_iff_false, false_and, min_lt_iff, false_or, lt_max_iff, true_and]
     intro hf
     exact hf
-  · simp only [rectangleClosedBoxBoundary,
-        Rectangle.rectangleClosedBox, Complex.reProdIm, h,
-        Set.uIcc_of_ge, inf_of_le_right, sup_of_le_left, Set.mem_sdiff, Set.mem_inter_iff,
-        Set.mem_preimage, Set.mem_Icc, Std.le_refl, and_self, Set.left_mem_uIcc, Set.mem_Ioo,
-        lt_self_iff_false, and_false, min_lt_iff, false_or, lt_max_iff, true_and, false_and]
+  · simp only [rectangleClosedBoxBoundary, Rectangle.rectangleClosedBox, Complex.reProdIm, h,
+      Set.uIcc_of_ge, inf_of_le_right, sup_of_le_left, Set.mem_sdiff, Set.mem_inter_iff,
+      Set.mem_preimage, Set.mem_Icc, Std.le_refl, and_self, Set.left_mem_uIcc, Set.mem_Ioo,
+      lt_self_iff_false, and_false, min_lt_iff, false_or, lt_max_iff, true_and, false_and]
     intro hf
     exact hf
 
 /-- Half the distance from a point to the closed rectangle boundary. -/
 noncomputable def rectangleClosedBoxBoundaryClearance (s z w : ℂ) : ℝ :=
-  Metric.infDist s
-      (rectangleClosedBoxBoundary z w) /
-    2
+  Metric.infDist s (rectangleClosedBoxBoundary z w) / 2
 
 /-- A radius bounded by all boundary distances gives a boundary-disjoint closed ball. -/
 theorem disjoint_closedBall_rectangleClosedBoxBoundary {z w s : ℂ} {ε : ℝ}
-    (hsep :
-      ∀ y ∈ rectangleClosedBoxBoundary z w,
-        ε < dist s y) :
-    Disjoint (Metric.closedBall s ε)
-      (rectangleClosedBoxBoundary z w) := by
+    (hsep : ∀ y ∈ rectangleClosedBoxBoundary z w, ε < dist s y) :
+    Disjoint (Metric.closedBall s ε) (rectangleClosedBoxBoundary z w) := by
   rw [Set.disjoint_left]
   intro y hyball hyboundary
   have hyball' : dist s y ≤ ε := by simpa only [Metric.mem_closedBall, dist_comm] using hyball

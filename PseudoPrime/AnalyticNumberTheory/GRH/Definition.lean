@@ -24,9 +24,7 @@ set lies on the critical line. This per-character predicate is specialized at mo
 recover RH. -/
 def DirichletRiemannHypothesis {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) : Prop :=
   ∀ s : ℂ,
-    χ.LFunction s = 0 →
-      s ∉ (Int.cast : ℤ → ℂ) '' dirichletTrivialZeros χ →
-      s.re = (1 : ℝ) / 2
+    χ.LFunction s = 0 → s ∉ (Int.cast : ℤ → ℂ) '' dirichletTrivialZeros χ → s.re = (1 : ℝ) / 2
 
 /--
 The generalized Riemann hypothesis for all primitive Dirichlet characters.
@@ -36,14 +34,12 @@ critical line. Includes modulus one, so it supplies both the zeta and character 
 -/
 @[wikidata Q685140]
 def GeneralizedRiemannHypothesis : Prop :=
-  ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q),
-    χ.IsPrimitive → DirichletRiemannHypothesis χ
+  ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ.IsPrimitive → DirichletRiemannHypothesis χ
 
 /-- Modulus-one Dirichlet RH is exactly RH. The proof identifies its L-function with zeta;
 the excluded pole value is nonzero in mathlib. Used to extract RH from GRH. -/
 theorem dirichletRiemannHypothesis_one_iff :
-    DirichletRiemannHypothesis (1 : DirichletCharacter ℂ 1) ↔
-      RiemannHypothesis := by
+    DirichletRiemannHypothesis (1 : DirichletCharacter ℂ 1) ↔ RiemannHypothesis := by
   have htriv (s : ℂ) :
     s ∉ (Int.cast : ℤ → ℂ) '' ({z : ℤ | ∃ n : ℕ, z = -2 * ((n : ℤ) + 1)} : Set ℤ) ↔
       ¬∃ n : ℕ, s = -2 * ((n : ℂ) + 1) := by
@@ -65,8 +61,7 @@ theorem dirichletRiemannHypothesis_one_iff :
         _ = ((-2 * ((n : ℤ) + 1) : ℤ) : ℂ) := by rw [← hn]
         _ = -2 * ((n : ℂ) + 1) := by
           norm_num only [Int.cast_neg, Int.cast_mul, Int.cast_add, Int.cast_natCast]
-  simp only [DirichletRiemannHypothesis,
-    DirichletCharacter.LFunction_modOne_eq,
+  simp only [DirichletRiemannHypothesis, DirichletCharacter.LFunction_modOne_eq,
     dirichletTrivialZeros, RiemannHypothesis, ite_eq_left]
   simp only [htriv]
   constructor
@@ -75,8 +70,7 @@ theorem dirichletRiemannHypothesis_one_iff :
 
 /-- GRH implies RH by applying the modulus-one equivalence to the primitive trivial character.
 Supplies the RH input of existing zeta estimates without an independent assumption. -/
-theorem GeneralizedRiemannHypothesis.riemann
-    (h : GeneralizedRiemannHypothesis) :
+theorem GeneralizedRiemannHypothesis.riemann (h : GeneralizedRiemannHypothesis) :
     RiemannHypothesis := by
   have hDirichlet : DirichletRiemannHypothesis 1 :=
     h 1 1 DirichletCharacter.isPrimitive_one_level_one
@@ -85,8 +79,7 @@ theorem GeneralizedRiemannHypothesis.riemann
 /-- Trivial zeros have nonpositive real part, hence cannot lie in the open critical strip.
 Input: positive real part. Output: exclusion from the prescribed set, for the strip adapter. -/
 theorem not_mem_dirichletTrivialZeros_of_re_pos {q : ℕ} (χ : DirichletCharacter ℂ q) {s : ℂ}
-    (hs : 0 < s.re) :
-    s ∉ (Int.cast : ℤ → ℂ) '' dirichletTrivialZeros χ := by
+    (hs : 0 < s.re) : s ∉ (Int.cast : ℤ → ℂ) '' dirichletTrivialZeros χ := by
   classical
   unfold dirichletTrivialZeros
   split_ifs <;> rintro ⟨z, ⟨n, rfl⟩, rfl⟩ <;>
@@ -100,12 +93,9 @@ theorem not_mem_dirichletTrivialZeros_of_re_pos {q : ℕ} (χ : DirichletCharact
 Input: GRH, a primitive character, and a zero with positive real part.
 Output: real part one half.
 Proof: positive real part excludes every trivial zero. Preserves the analytic consumers' API. -/
-theorem GeneralizedRiemannHypothesis.zero_re_eq_half
-    (h : GeneralizedRiemannHypothesis) (q : ℕ) [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hp : χ.IsPrimitive) (s : ℂ) (hz : χ.LFunction s = 0)
+theorem GeneralizedRiemannHypothesis.zero_re_eq_half (h : GeneralizedRiemannHypothesis) (q : ℕ)
+    [NeZero q] (χ : DirichletCharacter ℂ q) (hp : χ.IsPrimitive) (s : ℂ) (hz : χ.LFunction s = 0)
     (hpos : 0 < s.re) : s.re = (1 : ℝ) / 2 := by
-  exact
-    h q χ hp s hz
-      (not_mem_dirichletTrivialZeros_of_re_pos χ hpos)
+  exact h q χ hp s hz (not_mem_dirichletTrivialZeros_of_re_pos χ hpos)
 
 end PseudoPrime.AnalyticNumberTheory.GRH

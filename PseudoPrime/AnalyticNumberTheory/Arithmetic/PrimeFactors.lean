@@ -31,8 +31,7 @@ noncomputable def primeFactorLogSum (q : ℕ) : ℝ :=
 
 /-- The project count agrees with mathlib's arithmetic function `cardDistinctFactors`. -/
 theorem distinctPrimeFactorCount_eq_cardDistinctFactors (q : ℕ) :
-    distinctPrimeFactorCount q =
-      ArithmeticFunction.cardDistinctFactors q :=
+    distinctPrimeFactorCount q = ArithmeticFunction.cardDistinctFactors q :=
   rfl
 
 /--
@@ -69,8 +68,7 @@ theorem log_conductor_div_pi_nonneg_of_four_le {n : ℕ} (hn : 4 ≤ n) :
 
 /- Each summand `log p / (p - 1)` is at most `log 2`. -/
 theorem primeFactorLogSum_le_card_mul_log_two {n : ℕ} :
-    primeFactorLogSum n ≤
-      (n.primeFactors.card : ℝ) * Real.log 2 := by
+    primeFactorLogSum n ≤ (n.primeFactors.card : ℝ) * Real.log 2 := by
   have hpow : ∀ k : ℕ, k + 1 ≤ 2 ^ k := by
     intro k
     induction k with
@@ -111,12 +109,9 @@ theorem primeFactorLogSum_le_card_mul_log_two {n : ℕ} :
 
 /- The complementary level quotient inherits the preceding logarithmic bound. -/
 theorem primeFactorLogSum_quotient_le_log {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
-    primeFactorLogSum (q / χ.conductor) ≤
-      Real.log (q / χ.conductor : ℕ) := by
-  have hsum :=
-    primeFactorLogSum_le_card_mul_log_two (n := q / χ.conductor)
-  have hcard :=
-    DirichletLFunction.card_primeFactors_quotient_le_log_div_log_two χ
+    primeFactorLogSum (q / χ.conductor) ≤ Real.log (q / χ.conductor : ℕ) := by
+  have hsum := primeFactorLogSum_le_card_mul_log_two (n := q / χ.conductor)
+  have hcard := DirichletLFunction.card_primeFactors_quotient_le_log_div_log_two χ
   have hlog2 : 0 < Real.log 2 := Real.log_pos one_lt_two
   calc
     primeFactorLogSum (q / χ.conductor) ≤ ((q / χ.conductor).primeFactors.card : ℝ) * Real.log 2 :=

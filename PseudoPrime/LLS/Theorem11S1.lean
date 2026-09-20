@@ -74,8 +74,8 @@ def llsTheorem11S1PrimitiveUpperBounds : Prop :=
     3000 ≤ q →
       χ ≠ 1 →
       llsTheorem11S1NoSmallPrime χ →
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-            ((llsTheorem11S1RadiusRoot q) ^ 2) χ.primitiveCharacter).re ≤
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+            χ.primitiveCharacter).re ≤
         llsTheorem11S1PrimitiveUpperBound χ
 
 /-- The upper bound for the original character before the final Section 3.1 simplification. -/
@@ -95,8 +95,8 @@ theorem characterLogWeightedSum_re_le_comparisonUpper
     (hprimitive : llsTheorem11S1PrimitiveUpperBounds) {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) (hχ : χ ≠ 1)
     (hsmall : llsTheorem11S1NoSmallPrime χ) :
-    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re ≤
+    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ).re ≤
       llsTheorem11S1ComparisonUpperBound χ := by
   have hqone : (1 : ℝ) < q := by exact_mod_cast (show 1 < q by omega)
   have hy : 0 < llsTheorem11S1RadiusRoot q := by
@@ -106,17 +106,17 @@ theorem characterLogWeightedSum_re_le_comparisonUpper
       ((llsTheorem11S1RadiusRoot q) ^ 2) χ (sq_pos_of_pos hy)
   have hre :=
     Complex.re_le_norm
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ -
-        AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ.primitiveCharacter)
+      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ -
+        AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ.primitiveCharacter)
   have hprimitiveUpper := hprimitive q χ hq hχ hsmall
   rw [llsTheorem11S1ComparisonUpperBound]
   calc
-    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-            ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re =
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-                ((llsTheorem11S1RadiusRoot q) ^ 2) χ -
+    (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+            χ).re =
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+                χ -
               AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
                 ((llsTheorem11S1RadiusRoot q) ^ 2) χ.primitiveCharacter).re +
           (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
@@ -125,8 +125,8 @@ theorem characterLogWeightedSum_re_le_comparisonUpper
       rw [Complex.sub_re]
       ring
     _ ≤
-        ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-                ((llsTheorem11S1RadiusRoot q) ^ 2) χ -
+        ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+                χ -
               AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
                 ((llsTheorem11S1RadiusRoot q) ^ 2) χ.primitiveCharacter‖ +
           llsTheorem11S1PrimitiveUpperBound χ :=
@@ -163,8 +163,8 @@ def llsTheorem11S1WeightedLowerBounds : Prop :=
       χ ≠ 1 →
       llsTheorem11S1NoSmallPrime χ →
       llsTheorem11S1LowerBound q ≤
-        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-            ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+            χ).re
 
 /--
 The algebraic and numerical simplification of the comparison upper bound.
@@ -188,8 +188,8 @@ theorem llsTheorem11S1AnalyticBounds_of_staged_bounds (hlower : llsTheorem11S1We
     (hsimplify : llsTheorem11S1ComparisonUpperSimplification) : llsTheorem11S1AnalyticBounds := by
   intro q _ χ hq hχ hsmall
   refine
-    ⟨(AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re,
+    ⟨(AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ).re,
       hlower q χ hq hχ hsmall, ?_⟩
   exact
     (characterLogWeightedSum_re_le_comparisonUpper hprimitive χ hq hχ hsmall).trans

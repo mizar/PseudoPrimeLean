@@ -46,10 +46,7 @@ theorem meromorphicOrderAt_riemannZeta_ne_top (s : ℂ) : meromorphicOrderAt rie
     rw [riemannZeta_zero]; norm_num only
   have horderZero : meromorphicOrderAt riemannZeta 0 = 0 :=
     hanalyticZero.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff.mpr hzetaZero
-  apply
-    (meromorphic_riemannZeta.exists_meromorphicOrderAt_ne_top_iff_forall.mp
-        ?_)
-      s
+  apply (meromorphic_riemannZeta.exists_meromorphicOrderAt_ne_top_iff_forall.mp ?_) s
   exact
     ⟨0, by
       rw [horderZero];
@@ -66,17 +63,14 @@ theorem analyticOrderAt_riemannZeta_ne_top {ρ : ℂ} (hρ1 : ρ ≠ 1) :
   intro htop
   have hmero := hanalytic.meromorphicOrderAt_eq
   rw [htop] at hmero
-  exact
-    meromorphicOrderAt_riemannZeta_ne_top ρ
-      (by simpa only [ENat.map_top] using hmero)
+  exact meromorphicOrderAt_riemannZeta_ne_top ρ (by simpa only [ENat.map_top] using hmero)
 
 /-- Every zeta zero away from one has positive multiplicity. -/
 theorem riemannZetaZeroMultiplicity_pos {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
     0 < riemannZetaZeroMultiplicity ρ := by
   have hanalytic : AnalyticAt ℂ riemannZeta ρ := analyticOn_riemannZeta ρ hρ1
   have horder : analyticOrderAt riemannZeta ρ ≠ 0 := hanalytic.analyticOrderAt_ne_zero.mpr hzero
-  have hfinite :=
-    analyticOrderAt_riemannZeta_ne_top hρ1
+  have hfinite := analyticOrderAt_riemannZeta_ne_top hρ1
   have hcast := Nat.cast_analyticOrderNatAt hfinite
   apply Nat.pos_of_ne_zero
   intro hmult
@@ -92,14 +86,10 @@ analytic function, where `m` is its analytic multiplicity. At nonzeros `m=0`. -/
 theorem exists_riemannZeta_localFactor {ρ : ℂ} (hρ1 : ρ ≠ 1) :
     ∃ g : ℂ → ℂ,
       AnalyticAt ℂ g ρ ∧
-        g ρ ≠ 0 ∧
-        riemannZeta =ᶠ[nhds ρ] fun s ↦
-          (s - ρ) ^ riemannZetaZeroMultiplicity ρ •
-            g s := by
+        g ρ ≠ 0 ∧ riemannZeta =ᶠ[nhds ρ] fun s ↦ (s - ρ) ^ riemannZetaZeroMultiplicity ρ • g s := by
   have hanalytic : AnalyticAt ℂ riemannZeta ρ := analyticOn_riemannZeta ρ hρ1
   simpa only [riemannZetaZeroMultiplicity] using
-    hanalytic.analyticOrderAt_ne_top.mp
-      (analyticOrderAt_riemannZeta_ne_top hρ1)
+    hanalytic.analyticOrderAt_ne_top.mp (analyticOrderAt_riemannZeta_ne_top hρ1)
 
 /--
 Near a zeta zero, `ζ'/ζ` is its multiplicity divided by `s-ρ`, plus an analytic logarithmic
@@ -112,20 +102,12 @@ theorem exists_eventuallyEq_logDeriv_riemannZeta_at_zero {ρ : ℂ} (hρ1 : ρ �
         AnalyticAt ℂ g ρ ∧
         g ρ ≠ 0 ∧
         Filter.EventuallyEq (nhdsWithin ρ ({ρ}ᶜ : Set ℂ)) (logDeriv riemannZeta)
-          (fun s ↦
-            (riemannZetaZeroMultiplicity ρ : ℂ) /
-                (s - ρ) +
-              logDeriv g s) := by
-  obtain ⟨g, hganalytic, hgzero, hfactor⟩ :=
-    exists_riemannZeta_localFactor hρ1
-  refine
-    ⟨g, riemannZetaZeroMultiplicity_pos hρ1 hzero,
-      hganalytic, hgzero, ?_⟩
+          (fun s ↦ (riemannZetaZeroMultiplicity ρ : ℂ) / (s - ρ) + logDeriv g s) := by
+  obtain ⟨g, hganalytic, hgzero, hfactor⟩ := exists_riemannZeta_localFactor hρ1
+  refine ⟨g, riemannZetaZeroMultiplicity_pos hρ1 hzero, hganalytic, hgzero, ?_⟩
   have hlog :
     Filter.EventuallyEq (nhdsWithin ρ ({ρ}ᶜ : Set ℂ)) (logDeriv riemannZeta)
-      (logDeriv fun s ↦
-        (s - ρ) ^ riemannZetaZeroMultiplicity ρ •
-          g s) :=
+      (logDeriv fun s ↦ (s - ρ) ^ riemannZetaZeroMultiplicity ρ • g s) :=
     (logDeriv_congr_nhds hfactor).filter_mono nhdsWithin_le_nhds
   have hganalyticEventually : ∀ᶠ s in nhdsWithin ρ ({ρ}ᶜ : Set ℂ), AnalyticAt ℂ g s :=
     hganalytic.eventually_analyticAt.filter_mono nhdsWithin_le_nhds
@@ -136,13 +118,7 @@ theorem exists_eventuallyEq_logDeriv_riemannZeta_at_zero {ρ : ℂ} (hρ1 : ρ �
     hlogs hsanalytic hgs hsρ
   simp only [smul_eq_mul] at hlogs
   rw [hlogs]
-  change
-    logDeriv
-        ((fun s ↦
-            (s - ρ) ^ riemannZetaZeroMultiplicity ρ) *
-          g)
-        s =
-      _
+  change logDeriv ((fun s ↦ (s - ρ) ^ riemannZetaZeroMultiplicity ρ) * g) s = _
   rw [logDeriv_mul s]
   · rw [logDeriv_fun_pow (by fun_prop)]
     simp only [logDeriv_apply]
@@ -177,17 +153,14 @@ theorem meromorphicOrderAt_riemannZeta_deriv_div_eq_neg_one {ρ : ℂ} (hρ1 : �
     (hzero : riemannZeta ρ = 0) (hfinite : meromorphicOrderAt riemannZeta ρ ≠ ⊤) :
     meromorphicOrderAt (fun s ↦ deriv riemannZeta s / riemannZeta s) ρ = -1 := by
   change meromorphicOrderAt (logDeriv riemannZeta) ρ = -1
-  exact
-    meromorphicOrderAt_logDeriv_riemannZeta_eq_neg_one
-      hρ1 hzero hfinite
+  exact meromorphicOrderAt_logDeriv_riemannZeta_eq_neg_one hρ1 hzero hfinite
 
 /-- The zeta zeros in a compact set avoiding one form a finite set. -/
 theorem finite_riemannZeta_zerosOn {K : Set ℂ} (hcompact : IsCompact K)
     (hone : K ⊆ ({1}ᶜ : Set ℂ)) : (K ∩ riemannZeta ⁻¹' {0}).Finite := by
   have hanalytic : AnalyticOnNhd ℂ riemannZeta K := analyticOn_riemannZeta.mono hone
   have hnormal : MeromorphicNFOn riemannZeta K := hanalytic.meromorphicNFOn
-  rw [hnormal.zero_set_eq_divisor_support fun u ↦
-      meromorphicOrderAt_riemannZeta_ne_top u]
+  rw [hnormal.zero_set_eq_divisor_support fun u ↦ meromorphicOrderAt_riemannZeta_ne_top u]
   exact (MeromorphicOn.divisor riemannZeta K).finiteSupport hcompact
 
 /-- The zeta zeros in any compact set form a finite set, even when the set contains the pole. -/
@@ -200,11 +173,10 @@ theorem finite_riemannZeta_zerosOn_compact {K : Set ℂ} (hcompact : IsCompact K
   have hanalytic : AnalyticOnNhd ℂ riemannZeta V := analyticOn_riemannZeta.mono hVone
   have hnormal : MeromorphicNFOn riemannZeta V := hanalytic.meromorphicNFOn
   have hsupport : (Function.support (MeromorphicOn.divisor riemannZeta V)).Finite :=
-    meromorphic_riemannZeta.meromorphicOn.divisor_support_finite_of_subset
-      hcompact (fun _ hs ↦ hs.1)
+    meromorphic_riemannZeta.meromorphicOn.divisor_support_finite_of_subset hcompact
+      (fun _ hs ↦ hs.1)
   have hVfinite : (V ∩ riemannZeta ⁻¹' {0}).Finite := by
-    rw [hnormal.zero_set_eq_divisor_support fun u ↦
-        meromorphicOrderAt_riemannZeta_ne_top u]
+    rw [hnormal.zero_set_eq_divisor_support fun u ↦ meromorphicOrderAt_riemannZeta_ne_top u]
     exact hsupport
   apply (hVfinite.union (Set.finite_singleton 1)).subset
   intro s hs
@@ -215,17 +187,13 @@ theorem finite_riemannZeta_zerosOn_compact {K : Set ℂ} (hcompact : IsCompact K
 /-- The zeta zeros in a closed rectangle avoiding one form a finite set. -/
 theorem finite_riemannZeta_zerosInRectangle {z w : ℂ}
     (hone : Rectangle.rectangleClosedBox z w ⊆ ({1}ᶜ : Set ℂ)) :
-    (Rectangle.rectangleClosedBox z w ∩
-        riemannZeta ⁻¹' {0}).Finite :=
-  finite_riemannZeta_zerosOn
-    (Rectangle.isCompact_rectangleClosedBox z w) hone
+    (Rectangle.rectangleClosedBox z w ∩ riemannZeta ⁻¹' {0}).Finite :=
+  finite_riemannZeta_zerosOn (Rectangle.isCompact_rectangleClosedBox z w) hone
 
 /-- The zeta zeros in an arbitrary closed rectangle form a finite set. -/
 theorem finite_riemannZeta_zerosInAnyRectangle (z w : ℂ) :
-    (Rectangle.rectangleClosedBox z w ∩
-        riemannZeta ⁻¹' {0}).Finite :=
-  finite_riemannZeta_zerosOn_compact
-    (Rectangle.isCompact_rectangleClosedBox z w)
+    (Rectangle.rectangleClosedBox z w ∩ riemannZeta ⁻¹' {0}).Finite :=
+  finite_riemannZeta_zerosOn_compact (Rectangle.isCompact_rectangleClosedBox z w)
 
 /--
 The finite ledger of zeta zeros in a closed rectangle avoiding one.
@@ -234,8 +202,7 @@ The proof argument certifies that the rectangle contains no pole of zeta.  Each 
 equipped with the local certificates proved above.
 -/
 noncomputable def riemannZetaZerosInRectangle (z w : ℂ)
-    (hone : Rectangle.rectangleClosedBox z w ⊆ ({1}ᶜ : Set ℂ)) :
-    Finset ℂ :=
+    (hone : Rectangle.rectangleClosedBox z w ⊆ ({1}ᶜ : Set ℂ)) : Finset ℂ :=
   (finite_riemannZeta_zerosInRectangle hone).toFinset
 
 /-- The finite zeta-zero ledger in an arbitrary closed rectangle. -/
@@ -246,34 +213,29 @@ noncomputable def riemannZetaZerosInAnyRectangle (z w : ℂ) : Finset ℂ :=
 theorem mem_riemannZetaZerosInRectangle_iff {z w ρ : ℂ}
     {hone : Rectangle.rectangleClosedBox z w ⊆ ({1}ᶜ : Set ℂ)} :
     ρ ∈ riemannZetaZerosInRectangle z w hone ↔
-      ρ ∈ Rectangle.rectangleClosedBox z w ∧
-        riemannZeta ρ = 0 := by
+      ρ ∈ Rectangle.rectangleClosedBox z w ∧ riemannZeta ρ = 0 := by
   simp only [riemannZetaZerosInRectangle, Set.Finite.mem_toFinset, Set.mem_inter_iff,
     Set.mem_preimage, Set.mem_singleton_iff]
 
 /-- Membership in the unrestricted rectangular zero ledger has the expected specification. -/
 theorem mem_riemannZetaZerosInAnyRectangle_iff {z w ρ : ℂ} :
     ρ ∈ riemannZetaZerosInAnyRectangle z w ↔
-      ρ ∈ Rectangle.rectangleClosedBox z w ∧
-        riemannZeta ρ = 0 := by
+      ρ ∈ Rectangle.rectangleClosedBox z w ∧ riemannZeta ρ = 0 := by
   simp only [riemannZetaZerosInAnyRectangle, Set.Finite.mem_toFinset, Set.mem_inter_iff,
     Set.mem_preimage, Set.mem_singleton_iff]
 
 /-- Every zero in the unrestricted rectangular ledger differs from zero. -/
 theorem ne_zero_of_mem_riemannZetaZerosInAnyRectangle {z w ρ : ℂ}
-    (hρ : ρ ∈ riemannZetaZerosInAnyRectangle z w) :
-    ρ ≠ 0 := by
+    (hρ : ρ ∈ riemannZetaZerosInAnyRectangle z w) : ρ ≠ 0 := by
   intro hρzero
-  rw [hρzero,
-    mem_riemannZetaZerosInAnyRectangle_iff] at hρ
+  rw [hρzero, mem_riemannZetaZerosInAnyRectangle_iff] at hρ
   have hzetaZero : riemannZeta 0 ≠ 0 := by
     rw [riemannZeta_zero]; norm_num only
   exact hzetaZero hρ.2
 
 /-- Every zero in the unrestricted rectangular ledger differs from one. -/
 theorem ne_one_of_mem_riemannZetaZerosInAnyRectangle {z w ρ : ℂ}
-    (hρ : ρ ∈ riemannZetaZerosInAnyRectangle z w) :
-    ρ ≠ 1 := by
+    (hρ : ρ ∈ riemannZetaZerosInAnyRectangle z w) : ρ ≠ 1 := by
   intro hρone
   rw [hρone, mem_riemannZetaZerosInAnyRectangle_iff] at hρ
   exact riemannZeta_one_ne_zero hρ.2

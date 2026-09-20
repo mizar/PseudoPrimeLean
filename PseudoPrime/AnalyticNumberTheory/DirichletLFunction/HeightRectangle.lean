@@ -19,49 +19,33 @@ noncomputable def primitiveReciprocalLeftRe (A : ℕ) : ℝ :=
 
 /-- The lower-left corner of the shared-height rectangle. -/
 noncomputable def primitiveReciprocalLowerCorner {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (A k : ℕ) :
     ℂ :=
   ((primitiveReciprocalLeftRe A : ℝ) : ℂ) -
-    (primitiveHorizontalHeightSeq hN2 hGRH
-          hprimitive hne hinv hquad k :
-        ℂ) *
-      Complex.I
+    (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k : ℂ) * Complex.I
 
 /-- The upper-right corner of the shared-height rectangle. -/
 noncomputable def primitiveReciprocalUpperCorner {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (k : ℕ) :
     ℂ :=
   ((2 : ℝ) : ℂ) +
-    (primitiveHorizontalHeightSeq hN2 hGRH
-          hprimitive hne hinv hquad k :
-        ℂ) *
-      Complex.I
+    (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k : ℂ) * Complex.I
 
 /-! Generic (`hquad`-free) rectangle corners for the GRH height sequence. -/
 
 noncomputable def primitiveHeightSeqLowerCorner_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A k : ℕ) : ℂ :=
   ((primitiveReciprocalLeftRe A : ℝ) : ℂ) -
-    (primitiveHorizontalHeightSeq_of_grh hN2
-          hGRH hprimitive hne hinv k :
-        ℂ) *
-      Complex.I
+    (primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k : ℂ) * Complex.I
 
 noncomputable def primitiveHeightSeqUpperCorner_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) : ℂ :=
   ((2 : ℝ) : ℂ) +
-    (primitiveHorizontalHeightSeq_of_grh hN2
-          hGRH hprimitive hne hinv k :
-        ℂ) *
-      Complex.I
+    (primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k : ℂ) * Complex.I
 
 /-! The following coordinate proof intentionally uses simplification to expose
 the complex components. -/
@@ -69,29 +53,21 @@ the complex components. -/
 /-- Real and imaginary coordinates, together with strict rectangle orientation
 for generic corners. -/
 theorem primitiveHeightSeqRectangleFacts_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A k : ℕ) (hA : 2 ≤ A) :
     (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k).re =
         primitiveReciprocalLeftRe A ∧
       (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k).im =
-        -(primitiveHorizontalHeightSeq_of_grh
-            hN2 hGRH hprimitive hne hinv k) ∧
+        -(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k) ∧
       (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k).re = 2 ∧
       (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k).im =
-        primitiveHorizontalHeightSeq_of_grh hN2
-          hGRH hprimitive hne hinv k ∧
+        primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k ∧
       (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k).re <
         (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k).re ∧
       (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k).im <
         (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k).im := by
-  have hTge :=
-    primitiveHorizontalHeightSeq_ge_of_grh hN2
-      hGRH hprimitive hne hinv k
-  have hTpos :
-    (0 : ℝ) <
-      primitiveHorizontalHeightSeq_of_grh hN2
-        hGRH hprimitive hne hinv k := by
+  have hTge := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
+  have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := by
     have hknn : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
     linarith
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
@@ -121,64 +97,46 @@ theorem primitiveHeightSeqRectangleFacts_of_grh {N : ℕ} [NeZero N] (hN2 : 2 �
 
 /-- Generic GRH height-sequence horizontal edges contain no ordinary `L`-zeros. -/
 theorem dirichletLFunction_ne_zero_of_im_eq_primitiveHeightSeq_of_grh {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) {s : ℂ}
     (him :
-      s.im =
-          primitiveHorizontalHeightSeq_of_grh
-            hN2 hGRH hprimitive hne hinv k ∨
-        s.im =
-          -(primitiveHorizontalHeightSeq_of_grh
-              hN2 hGRH hprimitive hne hinv k)) :
+      s.im = primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k ∨
+        s.im = -(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k)) :
     DirichletCharacter.LFunction χ s ≠ 0 := by
   intro hL
-  have hTge :=
-    primitiveHorizontalHeightSeq_ge_of_grh hN2
-      hGRH hprimitive hne hinv k
-  have hTpos :
-    (0 : ℝ) <
-      primitiveHorizontalHeightSeq_of_grh hN2
-        hGRH hprimitive hne hinv k := by
+  have hTge := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
+  have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := by
     have hknn : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
     linarith
   have himne : s.im ≠ 0 := by
     rcases him with h | h
     · rw [h]; exact hTpos.ne'
     · rw [h]; exact (neg_lt_zero.mpr hTpos).ne
-  have hΓne : DirichletCharacter.gammaFactor χ s ≠ 0 :=
-    gammaFactor_ne_zero_of_im_ne_zero himne
+  have hΓne : DirichletCharacter.gammaFactor χ s ≠ 0 := gammaFactor_ne_zero_of_im_ne_zero himne
   have hFeq :=
-    dirichletLFunction_eq_completed_div_gammaFactor
-      χ s
-      (Or.inr
-        (dirichletCharacter_level_ne_one_of_ne_one
-          hne))
+    dirichletLFunction_eq_completed_div_gammaFactor χ s
+      (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))
   have hFzero : DirichletCharacter.completedLFunction χ s = 0 := by
     apply (div_eq_zero_iff.mp (hFeq ▸ hL)).resolve_right hΓne
   by_cases hre0 : s.re ≤ 0
   · have hs1re : (1 : ℝ) ≤ (1 - s).re := by
       simp only [Complex.sub_re, Complex.one_re, le_sub_self_iff]
       linarith
-    exact
-      completedLFunction_ne_zero_farLeft
-        hprimitive hne hinv hs1re hFzero
+    exact completedLFunction_ne_zero_farLeft hprimitive hne hinv hs1re hFzero
   · rw [not_le] at hre0
     by_cases hre1 : (1 : ℝ) ≤ s.re
     · exact DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hne) hre1 hL
     · rw [not_le] at hre1
       have hhalf := hGRH.zero_re_eq_half N χ hprimitive s hL hre0
       obtain ⟨hpos_ne, hneg_ne⟩ :=
-        primitiveHorizontalHeightSeq_completedLFunction_ne_zero_of_grh
-          hN2 hGRH hprimitive hne hinv k (by norm_num only : |(1 / 2 : ℝ)| ≤ 2)
+        primitiveHorizontalHeightSeq_completedLFunction_ne_zero_of_grh hN2 hGRH hprimitive hne hinv
+          k (by norm_num only : |(1 / 2 : ℝ)| ≤ 2)
       rcases him with h | h
       · apply hpos_ne
         have hseq :
           s =
             ((1 / 2 : ℝ) : ℂ) +
-              (primitiveHorizontalHeightSeq_of_grh
-                    hN2 hGRH hprimitive hne hinv k :
-                  ℂ) *
+              (primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k : ℂ) *
                 Complex.I := by
           apply Complex.ext
           · simp only [hhalf, one_div, Complex.ofReal_inv, Complex.ofReal_ofNat, Complex.add_re,
@@ -194,9 +152,7 @@ theorem dirichletLFunction_ne_zero_of_im_eq_primitiveHeightSeq_of_grh {N : ℕ} 
         have hseq :
           s =
             ((1 / 2 : ℝ) : ℂ) -
-              (primitiveHorizontalHeightSeq_of_grh
-                    hN2 hGRH hprimitive hne hinv k :
-                  ℂ) *
+              (primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k : ℂ) *
                 Complex.I := by
           apply Complex.ext
           · simp only [hhalf, one_div, Complex.ofReal_inv, Complex.ofReal_ofNat, Complex.sub_re,
@@ -211,37 +167,27 @@ theorem dirichletLFunction_ne_zero_of_im_eq_primitiveHeightSeq_of_grh {N : ℕ} 
 
 /-- Every singularity of the generic GRH height-sequence rectangle is interior to that rectangle. -/
 theorem primitiveHeightSeq_singularities_mem_open_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A k : ℕ) (hA : 2 ≤ A) :
     ∀
       s ∈
-        dirichletLFunctionSingularitiesInRectangle
-          χ hne (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
+        dirichletLFunctionSingularitiesInRectangle χ hne
+          (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
           (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k),
       s ∈
         RectangleGeometry.rectangleOpenBox
           (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
           (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k) := by
   intro s hs
-  obtain ⟨hrect, hcase⟩ :=
-    mem_dirichletLFunctionSingularitiesInRectangle_iff.mp
-      hs
+  obtain ⟨hrect, hcase⟩ := mem_dirichletLFunctionSingularitiesInRectangle_iff.mp hs
   obtain ⟨hzre, hzim, hwre, hwim, hre, him⟩ :=
     primitiveHeightSeqRectangleFacts_of_grh hN2 hGRH hprimitive hne hinv A k hA
-  have hTge :=
-    primitiveHorizontalHeightSeq_ge_of_grh hN2
-      hGRH hprimitive hne hinv k
-  have hTpos :
-    (0 : ℝ) <
-      primitiveHorizontalHeightSeq_of_grh hN2
-        hGRH hprimitive hne hinv k := by
+  have hTge := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
+  have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := by
     have hknn : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
     linarith
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
-  apply
-    RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne
-      hre him hrect
+  apply RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne hre him hrect
   · rcases hcase with hs0 | hs1 | hLzero
     · rw [hs0, hzre, primitiveReciprocalLeftRe]
       simp only [Complex.zero_re, one_div, ne_eq]
@@ -255,9 +201,7 @@ theorem primitiveHeightSeq_singularities_mem_open_of_grh {N : ℕ} [NeZero N] (h
         apply Complex.ext <;> simp only [← heq, Complex.re_add_im]
       rw [primitiveReciprocalLeftRe] at hseq
       rw [hseq] at hLzero
-      exact
-        dirichletLFunction_ne_zero_leftVertical
-          hprimitive hne hinv A hA s.im hLzero
+      exact dirichletLFunction_ne_zero_leftVertical hprimitive hne hinv A hA s.im hLzero
   · rcases hcase with hs0 | hs1 | hLzero
     · rw [hs0, hwre]
       change (0 : ℝ) ≠ 2
@@ -317,40 +261,26 @@ of `hopen`
 for every `A`.
 -/
 theorem dirichletLFunction_ne_zero_of_im_eq_primitiveHorizontalHeightSeq {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (k : ℕ)
     {s : ℂ}
     (him :
-      s.im =
-          primitiveHorizontalHeightSeq hN2 hGRH
-            hprimitive hne hinv hquad k ∨
-        s.im =
-          -(primitiveHorizontalHeightSeq hN2
-              hGRH hprimitive hne hinv hquad k)) :
+      s.im = primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k ∨
+        s.im = -(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k)) :
     DirichletCharacter.LFunction χ s ≠ 0 := by
   intro hL
-  have hTge :=
-    primitiveHorizontalHeightSeq_ge hN2 hGRH
-      hprimitive hne hinv hquad k
-  have hTpos :
-    (0 : ℝ) <
-      primitiveHorizontalHeightSeq hN2 hGRH
-        hprimitive hne hinv hquad k := by
+  have hTge := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
+  have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k := by
     have hknn : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
     linarith
   have himne : s.im ≠ 0 := by
     rcases him with h | h
     · rw [h]; exact hTpos.ne'
     · rw [h]; exact (neg_lt_zero.mpr hTpos).ne
-  have hΓne : DirichletCharacter.gammaFactor χ s ≠ 0 :=
-    gammaFactor_ne_zero_of_im_ne_zero himne
+  have hΓne : DirichletCharacter.gammaFactor χ s ≠ 0 := gammaFactor_ne_zero_of_im_ne_zero himne
   have hFeq :=
-    dirichletLFunction_eq_completed_div_gammaFactor
-      χ s
-      (Or.inr
-        (dirichletCharacter_level_ne_one_of_ne_one
-          hne))
+    dirichletLFunction_eq_completed_div_gammaFactor χ s
+      (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))
   have hL' : DirichletCharacter.completedLFunction χ s / DirichletCharacter.gammaFactor χ s = 0 :=
     hFeq ▸ hL
   have hFzero : DirichletCharacter.completedLFunction χ s = 0 :=
@@ -359,9 +289,7 @@ theorem dirichletLFunction_ne_zero_of_im_eq_primitiveHorizontalHeightSeq {N : �
   · have hs1re : (1 : ℝ) ≤ (1 - s).re := by
       simp only [Complex.sub_re, Complex.one_re, le_sub_self_iff]
       linarith
-    exact
-      completedLFunction_ne_zero_farLeft
-        hprimitive hne hinv hs1re hFzero
+    exact completedLFunction_ne_zero_farLeft hprimitive hne hinv hs1re hFzero
   · rw [not_le] at hre0
     by_cases hre1 : (1 : ℝ) ≤ s.re
     · exact DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hne) hre1 hL
@@ -369,16 +297,14 @@ theorem dirichletLFunction_ne_zero_of_im_eq_primitiveHorizontalHeightSeq {N : �
       have hhalf := hGRH.zero_re_eq_half N χ hprimitive s hL hre0
       have hσ : |(1 / 2 : ℝ)| ≤ 2 := by norm_num only
       obtain ⟨hpos_ne, hneg_ne⟩ :=
-        primitiveHorizontalHeightSeq_completedLFunction_ne_zero
-          hN2 hGRH hprimitive hne hinv hquad k hσ
+        primitiveHorizontalHeightSeq_completedLFunction_ne_zero hN2 hGRH hprimitive hne hinv hquad k
+          hσ
       rcases him with h | h
       · apply hpos_ne
         have hseq :
           s =
             ((1 / 2 : ℝ) : ℂ) +
-              (primitiveHorizontalHeightSeq hN2
-                    hGRH hprimitive hne hinv hquad k :
-                  ℂ) *
+              (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k : ℂ) *
                 Complex.I := by
           apply Complex.ext
           · simp only [hhalf, one_div, Complex.ofReal_inv, Complex.ofReal_ofNat, Complex.add_re,
@@ -394,9 +320,7 @@ theorem dirichletLFunction_ne_zero_of_im_eq_primitiveHorizontalHeightSeq {N : �
         have hseq :
           s =
             ((1 / 2 : ℝ) : ℂ) -
-              (primitiveHorizontalHeightSeq hN2
-                    hGRH hprimitive hne hinv hquad k :
-                  ℂ) *
+              (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k : ℂ) *
                 Complex.I := by
           apply Complex.ext
           · simp only [hhalf, one_div, Complex.ofReal_inv, Complex.ofReal_ofNat, Complex.sub_re,
@@ -429,14 +353,13 @@ Role: **the shared-height argument `hopen` certificate**, feeding
 uniformly in `A` for the height-sequence rectangle.
 -/
 theorem primitiveHorizontalHeightSeq_singularities_mem_open {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (A k : ℕ)
     (hA : 2 ≤ A) :
     ∀
       s ∈
-        dirichletLFunctionSingularitiesInRectangle
-          χ hne (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
+        dirichletLFunctionSingularitiesInRectangle χ hne
+          (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
           (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k),
       s ∈
         RectangleGeometry.rectangleOpenBox
@@ -445,17 +368,12 @@ theorem primitiveHorizontalHeightSeq_singularities_mem_open {N : ℕ} [NeZero N]
   intro s hs
   set z := primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k with hz_def
   set w := primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k with hw_def
-  obtain ⟨hrect, hcase⟩ :=
-    mem_dirichletLFunctionSingularitiesInRectangle_iff.mp
-      hs
+  obtain ⟨hrect, hcase⟩ := mem_dirichletLFunctionSingularitiesInRectangle_iff.mp hs
   have hzre : z.re = primitiveReciprocalLeftRe A := by
     rw [hz_def, primitiveReciprocalLowerCorner]
     simp only [Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, sub_zero]
-  have hzim :
-    z.im =
-      -(primitiveHorizontalHeightSeq hN2 hGRH
-          hprimitive hne hinv hquad k) := by
+  have hzim : z.im = -(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k) := by
     rw [hz_def, primitiveReciprocalLowerCorner]
     simp only [Complex.sub_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im,
       mul_one, Complex.I_re, mul_zero, add_zero, zero_sub]
@@ -464,21 +382,13 @@ theorem primitiveHorizontalHeightSeq_singularities_mem_open {N : ℕ} [NeZero N]
     simp only [Complex.ofReal_ofNat, Complex.add_re, Complex.re_ofNat, Complex.mul_re,
       Complex.ofReal_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self,
       add_zero]
-  have hwim :
-    w.im =
-      primitiveHorizontalHeightSeq hN2 hGRH
-        hprimitive hne hinv hquad k := by
+  have hwim : w.im = primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k := by
     rw [hw_def, primitiveReciprocalUpperCorner]
     simp only [Complex.ofReal_ofNat, Complex.add_im, Complex.im_ofNat, Complex.mul_im,
       Complex.ofReal_re, Complex.I_im, mul_one, Complex.ofReal_im, Complex.I_re, mul_zero, add_zero,
       zero_add]
-  have hTge :=
-    primitiveHorizontalHeightSeq_ge hN2 hGRH
-      hprimitive hne hinv hquad k
-  have hTpos :
-    (0 : ℝ) <
-      primitiveHorizontalHeightSeq hN2 hGRH
-        hprimitive hne hinv hquad k := by
+  have hTge := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
+  have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k := by
     have hknn : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
     linarith
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
@@ -486,9 +396,7 @@ theorem primitiveHorizontalHeightSeq_singularities_mem_open {N : ℕ} [NeZero N]
     rw [hzre, hwre, primitiveReciprocalLeftRe]; linarith
   have him_lt : z.im < w.im := by
     rw [hzim, hwim]; linarith
-  apply
-    RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne
-      hre_lt him_lt hrect
+  apply RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne hre_lt him_lt hrect
   · rcases hcase with hs0 | hs1 | hLzero
     · rw [hs0, hzre, primitiveReciprocalLeftRe]
       simp only [Complex.zero_re, one_div, ne_eq]
@@ -505,9 +413,7 @@ theorem primitiveHorizontalHeightSeq_singularities_mem_open {N : ℕ} [NeZero N]
             Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
       rw [primitiveReciprocalLeftRe] at hseq
       rw [hseq] at hLzero
-      exact
-        quadraticDirichletLFunction_ne_zero_leftVertical
-          hprimitive hne hquad A hA s.im hLzero
+      exact quadraticDirichletLFunction_ne_zero_leftVertical hprimitive hne hquad A hA s.im hLzero
   · rcases hcase with hs0 | hs1 | hLzero
     · rw [hs0, hwre]
       change (0 : ℝ) ≠ 2
@@ -548,19 +454,16 @@ theorem primitiveHorizontalHeightSeq_singularities_mem_open {N : ℕ} [NeZero N]
 /-- Common geometric facts about the height-sequence rectangle's corners, spelled out once so
 downstream `hopen`/contour-identity proofs don't each redo the four `rw`+`simp?` unfoldings. -/
 theorem primitiveReciprocalCorners_facts {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (A k : ℕ)
     (hA : 2 ≤ A) :
     (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k).re =
         primitiveReciprocalLeftRe A ∧
       (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k).im =
-        -(primitiveHorizontalHeightSeq hN2 hGRH
-            hprimitive hne hinv hquad k) ∧
+        -(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k) ∧
       (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k).re = 2 ∧
       (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k).im =
-        primitiveHorizontalHeightSeq hN2 hGRH
-          hprimitive hne hinv hquad k ∧
+        primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k ∧
       (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k).re <
         (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k).re ∧
       (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k).im <
@@ -573,8 +476,7 @@ theorem primitiveReciprocalCorners_facts {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, sub_zero]
   have hzim :
     (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k).im =
-      -(primitiveHorizontalHeightSeq hN2 hGRH
-          hprimitive hne hinv hquad k) := by
+      -(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k) := by
     rw [primitiveReciprocalLowerCorner]
     simp only [Complex.sub_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im,
       mul_one, Complex.I_re, mul_zero, add_zero, zero_sub]
@@ -585,19 +487,13 @@ theorem primitiveReciprocalCorners_facts {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
       add_zero]
   have hwim :
     (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k).im =
-      primitiveHorizontalHeightSeq hN2 hGRH
-        hprimitive hne hinv hquad k := by
+      primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k := by
     rw [primitiveReciprocalUpperCorner]
     simp only [Complex.ofReal_ofNat, Complex.add_im, Complex.im_ofNat, Complex.mul_im,
       Complex.ofReal_re, Complex.I_im, mul_one, Complex.ofReal_im, Complex.I_re, mul_zero, add_zero,
       zero_add]
-  have hTge :=
-    primitiveHorizontalHeightSeq_ge hN2 hGRH
-      hprimitive hne hinv hquad k
-  have hTpos :
-    (0 : ℝ) <
-      primitiveHorizontalHeightSeq hN2 hGRH
-        hprimitive hne hinv hquad k := by
+  have hTge := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
+  have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k := by
     have hknn : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
     linarith
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
@@ -617,29 +513,24 @@ Role: supplies the two membership hypotheses needed by
 to split the residue sum into `r(1) + r(0) + (ordinary-zero sum)`.
 -/
 theorem primitiveReciprocalMellinPoints_mem_singularities_heightSeq {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) (A k : ℕ)
     (hA : 2 ≤ A) :
     (0 : ℂ) ∈
-        dirichletLFunctionSingularitiesInRectangle
-          χ hne (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
+        dirichletLFunctionSingularitiesInRectangle χ hne
+          (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
           (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k) ∧
       (1 : ℂ) ∈
-        dirichletLFunctionSingularitiesInRectangle
-          χ hne (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
+        dirichletLFunctionSingularitiesInRectangle χ hne
+          (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
           (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k) := by
   obtain ⟨hzre, hzim, hwre, hwim, hre, him⟩ :=
     primitiveReciprocalCorners_facts hN2 hGRH hprimitive hne hinv hquad A k hA
   set z := primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k
   set w := primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
-  have h0mem :
-    (0 : ℂ) ∈
-      dirichletCompletedLFunctionRectangleBox z
-        w := by
-    rw [dirichletCompletedLFunctionRectangleBox,
-      Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
+  have h0mem : (0 : ℂ) ∈ dirichletCompletedLFunctionRectangleBox z w := by
+    rw [dirichletCompletedLFunctionRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
     refine ⟨Set.mem_uIcc.mpr (Or.inl ⟨?_, ?_⟩), Set.mem_uIcc.mpr (Or.inl ⟨?_, ?_⟩)⟩
     · rw [hzre, primitiveReciprocalLeftRe]
       simp only [one_div, Complex.zero_re, tsub_le_iff_right, zero_add]
@@ -648,23 +539,13 @@ theorem primitiveReciprocalMellinPoints_mem_singularities_heightSeq {N : ℕ} [N
       change (0 : ℝ) ≤ 2
       norm_num only
     · rw [hzim]
-      change
-        -primitiveHorizontalHeightSeq hN2 hGRH
-              hprimitive hne hinv hquad k ≤
-          0
+      change -primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k ≤ 0
       linarith
     · rw [hwim]
-      change
-        (0 : ℝ) ≤
-          primitiveHorizontalHeightSeq hN2 hGRH
-            hprimitive hne hinv hquad k
+      change (0 : ℝ) ≤ primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k
       linarith
-  have h1mem :
-    (1 : ℂ) ∈
-      dirichletCompletedLFunctionRectangleBox z
-        w := by
-    rw [dirichletCompletedLFunctionRectangleBox,
-      Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
+  have h1mem : (1 : ℂ) ∈ dirichletCompletedLFunctionRectangleBox z w := by
+    rw [dirichletCompletedLFunctionRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
     refine ⟨Set.mem_uIcc.mpr (Or.inl ⟨?_, ?_⟩), Set.mem_uIcc.mpr (Or.inl ⟨?_, ?_⟩)⟩
     · rw [hzre, primitiveReciprocalLeftRe]
       simp only [one_div, Complex.one_re, tsub_le_iff_right]
@@ -673,50 +554,35 @@ theorem primitiveReciprocalMellinPoints_mem_singularities_heightSeq {N : ℕ} [N
       change (1 : ℝ) ≤ 2
       norm_num only
     · rw [hzim]
-      change
-        -primitiveHorizontalHeightSeq hN2 hGRH
-              hprimitive hne hinv hquad k ≤
-          0
+      change -primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k ≤ 0
       linarith
     · rw [hwim]
-      change
-        (0 : ℝ) ≤
-          primitiveHorizontalHeightSeq hN2 hGRH
-            hprimitive hne hinv hquad k
+      change (0 : ℝ) ≤ primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k
       linarith
   exact
-    ⟨mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr
-        ⟨h0mem, Or.inl rfl⟩,
-      mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr
-        ⟨h1mem, Or.inr (Or.inl rfl)⟩⟩
+    ⟨mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr ⟨h0mem, Or.inl rfl⟩,
+      mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr ⟨h1mem, Or.inr (Or.inl rfl)⟩⟩
 
 /-- The Mellin points `0` and `1` belong to the generic GRH height-sequence rectangle. -/
 theorem primitiveReciprocalMellinPoints_mem_singularities_heightSeq_of_grh {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A k : ℕ) (hA : 2 ≤ A) :
     (0 : ℂ) ∈
-        dirichletLFunctionSingularitiesInRectangle
-          χ hne (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
+        dirichletLFunctionSingularitiesInRectangle χ hne
+          (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
           (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k) ∧
       (1 : ℂ) ∈
-        dirichletLFunctionSingularitiesInRectangle
-          χ hne (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
+        dirichletLFunctionSingularitiesInRectangle χ hne
+          (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
           (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k) := by
   obtain ⟨hzre, hzim, hwre, hwim, _, _⟩ :=
     primitiveHeightSeqRectangleFacts_of_grh hN2 hGRH hprimitive hne hinv A k hA
   set z := primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k
   set w := primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
-  have hTge :=
-    primitiveHorizontalHeightSeq_ge_of_grh hN2
-      hGRH hprimitive hne hinv k
-  have h0mem :
-    (0 : ℂ) ∈
-      dirichletCompletedLFunctionRectangleBox z
-        w := by
-    rw [dirichletCompletedLFunctionRectangleBox,
-      Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
+  have hTge := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
+  have h0mem : (0 : ℂ) ∈ dirichletCompletedLFunctionRectangleBox z w := by
+    rw [dirichletCompletedLFunctionRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
     refine ⟨Set.mem_uIcc.mpr (Or.inl ⟨?_, ?_⟩), Set.mem_uIcc.mpr (Or.inl ⟨?_, ?_⟩)⟩
     · rw [hzre, primitiveReciprocalLeftRe]
       simp only [one_div, Complex.zero_re, tsub_le_iff_right, zero_add]
@@ -730,12 +596,8 @@ theorem primitiveReciprocalMellinPoints_mem_singularities_heightSeq_of_grh {N : 
     · rw [hwim]
       simp only [Complex.zero_im]
       linarith
-  have h1mem :
-    (1 : ℂ) ∈
-      dirichletCompletedLFunctionRectangleBox z
-        w := by
-    rw [dirichletCompletedLFunctionRectangleBox,
-      Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
+  have h1mem : (1 : ℂ) ∈ dirichletCompletedLFunctionRectangleBox z w := by
+    rw [dirichletCompletedLFunctionRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
     refine ⟨Set.mem_uIcc.mpr (Or.inl ⟨?_, ?_⟩), Set.mem_uIcc.mpr (Or.inl ⟨?_, ?_⟩)⟩
     · rw [hzre, primitiveReciprocalLeftRe]
       simp only [one_div, Complex.one_re, tsub_le_iff_right]
@@ -750,9 +612,7 @@ theorem primitiveReciprocalMellinPoints_mem_singularities_heightSeq_of_grh {N : 
       simp only [Complex.one_im]
       linarith
   exact
-    ⟨mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr
-        ⟨h0mem, Or.inl rfl⟩,
-      mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr
-        ⟨h1mem, Or.inr (Or.inl rfl)⟩⟩
+    ⟨mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr ⟨h0mem, Or.inl rfl⟩,
+      mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr ⟨h1mem, Or.inr (Or.inl rfl)⟩⟩
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

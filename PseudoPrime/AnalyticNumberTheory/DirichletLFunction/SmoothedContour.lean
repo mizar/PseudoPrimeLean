@@ -92,10 +92,7 @@ Role: is the regular part for the reciprocal simple-pole contour identity at zer
 theorem analyticAt_dirichletReciprocalMellinZeroRegularization {N : ℕ} [NeZero N] {x : ℝ}
     (hx : 0 < x) {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1)
     (hLzero : DirichletCharacter.LFunction χ 0 ≠ 0) :
-    AnalyticAt ℂ
-      (dirichletReciprocalMellinZeroRegularization
-        x χ)
-      0 := by
+    AnalyticAt ℂ (dirichletReciprocalMellinZeroRegularization x χ) 0 := by
   have hL := (DirichletCharacter.differentiable_LFunction hχ).analyticAt 0
   have hlog :
     AnalyticAt ℂ
@@ -114,9 +111,7 @@ Role: is the regular part for the logarithmic double-pole contour identity at ze
 -/
 theorem analyticAt_dirichletLogMellinZeroRegularization {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) (hLzero : DirichletCharacter.LFunction χ 0 ≠ 0) :
-    AnalyticAt ℂ
-      (dirichletLogMellinZeroRegularization x χ)
-      0 := by
+    AnalyticAt ℂ (dirichletLogMellinZeroRegularization x χ) 0 := by
   have hL := (DirichletCharacter.differentiable_LFunction hχ).analyticAt 0
   have hlog :
     AnalyticAt ℂ
@@ -135,18 +130,13 @@ Role: supplies the simple-principal-part equality at the lower Mellin endpoint.
 theorem eventuallyEq_dirichletReciprocalMellinZeroRegularization {N : ℕ} [NeZero N] (x : ℝ)
     (χ : DirichletCharacter ℂ N) :
     Filter.EventuallyEq (nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ))
-      (fun s ↦
-        (s - 0) *
-          dirichletReciprocalContourKernel x χ
-            s)
-      (dirichletReciprocalMellinZeroRegularization
-        x χ) := by
+      (fun s ↦ (s - 0) * dirichletReciprocalContourKernel x χ s)
+      (dirichletReciprocalMellinZeroRegularization x χ) := by
   have honeNhds : ∀ᶠ s : ℂ in nhds 0, s ≠ 1 := compl_singleton_mem_nhds (by norm_num only)
   have hone : ∀ᶠ s in nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ), s ≠ 1 :=
     honeNhds.filter_mono nhdsWithin_le_nhds
   filter_upwards [hone, eventually_mem_nhdsWithin] with s hs1 hs0
-  unfold dirichletReciprocalContourKernel
-    dirichletReciprocalMellinZeroRegularization
+  unfold dirichletReciprocalContourKernel dirichletReciprocalMellinZeroRegularization
   have hs0' : s ≠ 0 := Set.mem_compl_singleton_iff.mp hs0
   have hs1' : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
   simp only [sub_zero]
@@ -161,14 +151,10 @@ Role: supplies the double-principal-part equality at the lower Mellin endpoint.
 theorem eventuallyEq_dirichletLogMellinZeroRegularization {N : ℕ} [NeZero N] (x : ℝ)
     (χ : DirichletCharacter ℂ N) :
     Filter.EventuallyEq (nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ))
-      (fun s ↦
-        (s - 0) ^ 2 *
-          dirichletLogContourKernel x χ s)
-      (dirichletLogMellinZeroRegularization x
-        χ) := by
+      (fun s ↦ (s - 0) ^ 2 * dirichletLogContourKernel x χ s)
+      (dirichletLogMellinZeroRegularization x χ) := by
   filter_upwards [eventually_mem_nhdsWithin] with s hs0
-  unfold dirichletLogContourKernel
-    dirichletLogMellinZeroRegularization
+  unfold dirichletLogContourKernel dirichletLogMellinZeroRegularization
   have hs0' : s ≠ 0 := Set.mem_compl_singleton_iff.mp hs0
   simp only [sub_zero]
   field_simp
@@ -188,22 +174,15 @@ theorem exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_zero_
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            RectangleGeometry.rectangleBoundaryIntegral
-                (dirichletReciprocalContourKernel
-                  x χ)
+            RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ)
                 (RectangleGeometry.centeredSquareLower 0 r)
                 (RectangleGeometry.centeredSquareUpper 0 r) =
-              2 * Real.pi * Complex.I *
-                dirichletReciprocalMellinZeroRegularization
-                  x χ 0 := by
+              2 * Real.pi * Complex.I * dirichletReciprocalMellinZeroRegularization x χ 0 := by
   exact
     RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul
-      (analyticAt_dirichletReciprocalMellinZeroRegularization
-        hx hne
-        (dirichletLFunction_zero_ne_zero_of_primitive_odd
-          hprimitive hne hodd))
-      (eventuallyEq_dirichletReciprocalMellinZeroRegularization
-        x χ)
+      (analyticAt_dirichletReciprocalMellinZeroRegularization hx hne
+        (dirichletLFunction_zero_ne_zero_of_primitive_odd hprimitive hne hodd))
+      (eventuallyEq_dirichletReciprocalMellinZeroRegularization x χ)
 
 /--
 Input/assumptions: odd nontrivial primitive character and positive cutoff.
@@ -220,23 +199,15 @@ theorem exists_radius_forall_dirichletRectangleBoundaryIntegral_log_zero_of_prim
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            RectangleGeometry.rectangleBoundaryIntegral
-                (dirichletLogContourKernel x χ)
+            RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ)
                 (RectangleGeometry.centeredSquareLower 0 r)
                 (RectangleGeometry.centeredSquareUpper 0 r) =
-              2 * Real.pi * Complex.I *
-                deriv
-                  (dirichletLogMellinZeroRegularization
-                    x χ)
-                  0 := by
+              2 * Real.pi * Complex.I * deriv (dirichletLogMellinZeroRegularization x χ) 0 := by
   exact
     RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv
-      (analyticAt_dirichletLogMellinZeroRegularization
-        hx hne
-        (dirichletLFunction_zero_ne_zero_of_primitive_odd
-          hprimitive hne hodd))
-      (eventuallyEq_dirichletLogMellinZeroRegularization
-        x χ)
+      (analyticAt_dirichletLogMellinZeroRegularization hx hne
+        (dirichletLFunction_zero_ne_zero_of_primitive_odd hprimitive hne hodd))
+      (eventuallyEq_dirichletLogMellinZeroRegularization x χ)
 
 /--
 Definition: the reciprocal primitive kernel with its even-character combined pole at zero removed.
@@ -265,10 +236,7 @@ Role: is the regular part for the even reciprocal double-pole certificate.
 -/
 theorem analyticAt_dirichletReciprocalEvenZeroRegularization {x : ℝ} (hx : 0 < x) (m : ℕ)
     {g : ℂ → ℂ} (hganalytic : AnalyticAt ℂ g 0) (hgzero : g 0 ≠ 0) :
-    AnalyticAt ℂ
-      (dirichletReciprocalEvenZeroRegularization
-        x m g)
-      0 := by
+    AnalyticAt ℂ (dirichletReciprocalEvenZeroRegularization x m g) 0 := by
   have hlog : AnalyticAt ℂ (logDeriv g) 0 := by
     unfold logDeriv
     exact hganalytic.deriv.div hganalytic hgzero
@@ -287,9 +255,7 @@ Role: is the regular part for the even logarithmic triple-pole certificate.
 -/
 theorem analyticAt_dirichletLogEvenZeroRegularization {x : ℝ} (hx : 0 < x) (m : ℕ) {g : ℂ → ℂ}
     (hganalytic : AnalyticAt ℂ g 0) (hgzero : g 0 ≠ 0) :
-    AnalyticAt ℂ
-      (dirichletLogEvenZeroRegularization x m g)
-      0 := by
+    AnalyticAt ℂ (dirichletLogEvenZeroRegularization x m g) 0 := by
   have hlog : AnalyticAt ℂ (logDeriv g) 0 := by
     unfold logDeriv
     exact hganalytic.deriv.div hganalytic hgzero
@@ -309,9 +275,7 @@ Role: this is the regular-locus analytic input for the primitive reciprocal cont
 theorem differentiableAt_dirichletReciprocalContourKernel {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1)
     (hL : DirichletCharacter.LFunction χ s ≠ 0) :
-    DifferentiableAt ℂ
-      (dirichletReciprocalContourKernel x χ)
-      s := by
+    DifferentiableAt ℂ (dirichletReciprocalContourKernel x χ) s := by
   have hdiff : DifferentiableAt ℂ (DirichletCharacter.LFunction χ) s :=
     (DirichletCharacter.differentiable_LFunction hχ) s
   have hderiv : DifferentiableAt ℂ (deriv (DirichletCharacter.LFunction χ)) s :=
@@ -334,8 +298,7 @@ Role: this is the regular-locus analytic input for the primitive logarithmic con
 theorem differentiableAt_dirichletLogContourKernel {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) {s : ℂ} (hs0 : s ≠ 0)
     (hL : DirichletCharacter.LFunction χ s ≠ 0) :
-    DifferentiableAt ℂ
-      (dirichletLogContourKernel x χ) s := by
+    DifferentiableAt ℂ (dirichletLogContourKernel x χ) s := by
   have hdiff : DifferentiableAt ℂ (DirichletCharacter.LFunction χ) s :=
     (DirichletCharacter.differentiable_LFunction hχ) s
   have hderiv : DifferentiableAt ℂ (deriv (DirichletCharacter.LFunction χ)) s :=
@@ -369,9 +332,7 @@ Role: provides the regular part needed for the simple-pole contour residue at on
 -/
 theorem analyticAt_dirichletReciprocalOneRegularization {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) :
-    AnalyticAt ℂ
-      (dirichletReciprocalOneRegularization x χ)
-      1 := by
+    AnalyticAt ℂ (dirichletReciprocalOneRegularization x χ) 1 := by
   have hL : DirichletCharacter.LFunction χ (1 : ℂ) ≠ 0 :=
     dirichletLFunction_one_ne_zero_of_ne_one hχ
   have hlog :
@@ -397,18 +358,13 @@ Role: this is the simple-principal-part equality used by the shared rectangular 
 theorem eventuallyEq_dirichletReciprocalOneRegularization {N : ℕ} [NeZero N] (x : ℝ)
     (χ : DirichletCharacter ℂ N) :
     Filter.EventuallyEq (nhdsWithin (1 : ℂ) ({1}ᶜ : Set ℂ))
-      (fun s ↦
-        (s - 1) *
-          dirichletReciprocalContourKernel x χ
-            s)
-      (dirichletReciprocalOneRegularization x
-        χ) := by
+      (fun s ↦ (s - 1) * dirichletReciprocalContourKernel x χ s)
+      (dirichletReciprocalOneRegularization x χ) := by
   have hzeroNhds : ∀ᶠ s : ℂ in nhds 1, s ≠ 0 := compl_singleton_mem_nhds one_ne_zero
   have hzeroEventually : ∀ᶠ s in nhdsWithin (1 : ℂ) ({1}ᶜ : Set ℂ), s ≠ 0 :=
     hzeroNhds.filter_mono nhdsWithin_le_nhds
   filter_upwards [hzeroEventually, eventually_mem_nhdsWithin] with s hs0 hs1
-  unfold dirichletReciprocalContourKernel
-    dirichletReciprocalOneRegularization
+  unfold dirichletReciprocalContourKernel dirichletReciprocalOneRegularization
   have hs1' : s - 1 ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hs1)
   field_simp
 
@@ -426,20 +382,14 @@ theorem exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_eq_re
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            RectangleGeometry.rectangleBoundaryIntegral
-                (dirichletReciprocalContourKernel
-                  x χ)
+            RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ)
                 (RectangleGeometry.centeredSquareLower 1 r)
                 (RectangleGeometry.centeredSquareUpper 1 r) =
-              2 * Real.pi * Complex.I *
-                dirichletReciprocalOneRegularization
-                  x χ 1 := by
+              2 * Real.pi * Complex.I * dirichletReciprocalOneRegularization x χ 1 := by
   exact
     RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul
-      (analyticAt_dirichletReciprocalOneRegularization
-        hx hχ)
-      (eventuallyEq_dirichletReciprocalOneRegularization
-        x χ)
+      (analyticAt_dirichletReciprocalOneRegularization hx hχ)
+      (eventuallyEq_dirichletReciprocalOneRegularization x χ)
 
 /--
 Input/assumptions: a nontrivial character and a vertical line strictly right of `Re s = 1`.
@@ -452,13 +402,8 @@ explicit formula.
 -/
 theorem continuous_dirichletLogContourKernel_line {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {τ : ℝ} (hτ : 1 < τ) :
-    Continuous
-      (fun y : ℝ ↦
-        dirichletLogContourKernel x χ
-          ((τ : ℂ) + y * Complex.I)) := by
-  have hOn :
-    ContinuousOn (dirichletLogContourKernel x χ)
-      {s : ℂ | 1 < s.re} := by
+    Continuous (fun y : ℝ ↦ dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I)) := by
+  have hOn : ContinuousOn (dirichletLogContourKernel x χ) {s : ℂ | 1 < s.re} := by
     intro s hs
     simp only [Set.mem_ofPred_eq] at hs
     have hs0 : s ≠ 0 := by
@@ -467,8 +412,7 @@ theorem continuous_dirichletLogContourKernel_line {N : ℕ} [NeZero N] {x : ℝ}
       DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ) hs.le
     exact
       ContinuousAt.continuousWithinAt
-        (differentiableAt_dirichletLogContourKernel
-            hx hχ hs0 hL).continuousAt
+        (differentiableAt_dirichletLogContourKernel hx hχ hs0 hL).continuousAt
   have hg : Continuous (fun y : ℝ ↦ (τ : ℂ) + y * Complex.I) := by fun_prop
   exact
     hOn.comp_continuous hg
@@ -485,14 +429,8 @@ Role: this provides the measurability input for the reciprocal right-edge integr
 -/
 theorem continuous_dirichletReciprocalContourKernel_line {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {τ : ℝ} (hτ : 1 < τ) :
-    Continuous
-      (fun y : ℝ ↦
-        dirichletReciprocalContourKernel x χ
-          ((τ : ℂ) + y * Complex.I)) := by
-  have hOn :
-    ContinuousOn
-      (dirichletReciprocalContourKernel x χ)
-      {s : ℂ | 1 < s.re} := by
+    Continuous (fun y : ℝ ↦ dirichletReciprocalContourKernel x χ ((τ : ℂ) + y * Complex.I)) := by
+  have hOn : ContinuousOn (dirichletReciprocalContourKernel x χ) {s : ℂ | 1 < s.re} := by
     intro s hs
     simp only [Set.mem_ofPred_eq] at hs
     have hs0 : s ≠ 0 := by
@@ -503,8 +441,7 @@ theorem continuous_dirichletReciprocalContourKernel_line {N : ℕ} [NeZero N] {x
       DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ) hs.le
     exact
       ContinuousAt.continuousWithinAt
-        (differentiableAt_dirichletReciprocalContourKernel
-            hx hχ hs0 hs1 hL).continuousAt
+        (differentiableAt_dirichletReciprocalContourKernel hx hχ hs0 hs1 hL).continuousAt
   have hg : Continuous (fun y : ℝ ↦ (τ : ℂ) + y * Complex.I) := by fun_prop
   exact
     hOn.comp_continuous hg
@@ -523,26 +460,19 @@ Role: it removes the primitive right-edge integrability part of downstream expli
 theorem integrable_dirichletLogContourKernel {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {τ : ℝ} (hτ : 1 < τ) :
     MeasureTheory.Integrable
-      (fun y : ℝ ↦
-        dirichletLogContourKernel x χ
-          ((τ : ℂ) + y * Complex.I)) := by
+      (fun y : ℝ ↦ dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I)) := by
   set C : ℝ := ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ τ with hC_def
   have hxτ : (0 : ℝ) < x ^ τ := Real.rpow_pos_of_pos hx τ
   have hτ0 : τ ≠ 0 := by linarith
   apply
     MeasureTheory.Integrable.mono'
-      (((General.verticalIntegrable_mellinLogKernel
-              hτ0).norm).const_mul
-        (C * x ^ τ))
-  · exact
-      (continuous_dirichletLogContourKernel_line
-          hx χ hχ hτ).aestronglyMeasurable
+      (((General.verticalIntegrable_mellinLogKernel hτ0).norm).const_mul (C * x ^ τ))
+  · exact (continuous_dirichletLogContourKernel_line hx χ hχ hτ).aestronglyMeasurable
   · filter_upwards with y
     set s : ℂ := (τ : ℂ) + y * Complex.I with hs_def
     have hAle :
       ‖-deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s‖ ≤ C :=
-      norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum
-        χ hτ y
+      norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum χ hτ y
     have hAle' :
       ‖-(deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s)‖ ≤ C := by
       simpa only [← neg_div] using hAle
@@ -553,9 +483,7 @@ theorem integrable_dirichletLogContourKernel {N : ℕ} [NeZero N] {x : ℝ} (hx 
       simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
     have hKnorm : ‖s⁻¹ ^ 2‖ = (‖s‖ ^ 2)⁻¹ := by rw [norm_pow, norm_inv, inv_pow]
-    change
-      ‖dirichletLogContourKernel x χ s‖ ≤
-        C * x ^ τ * ‖s⁻¹ ^ 2‖
+    change ‖dirichletLogContourKernel x χ s‖ ≤ C * x ^ τ * ‖s⁻¹ ^ 2‖
     unfold dirichletLogContourKernel
     rw [norm_div, norm_mul, hBnorm, norm_pow, div_eq_mul_inv, hKnorm]
     exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hAle' hxτ.le) (by positivity)
@@ -569,9 +497,7 @@ Role: it supplies the second right-edge integral required by the primitive downs
 theorem integrable_dirichletReciprocalContourKernel {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {τ : ℝ} (hτ : 1 < τ) :
     MeasureTheory.Integrable
-      (fun y : ℝ ↦
-        dirichletReciprocalContourKernel x χ
-          ((τ : ℂ) + y * Complex.I)) := by
+      (fun y : ℝ ↦ dirichletReciprocalContourKernel x χ ((τ : ℂ) + y * Complex.I)) := by
   set C : ℝ := ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ τ with hC_def
   set σ : ℝ := τ - 1 with hσ_def
   have hxσ : (0 : ℝ) < x ^ σ := Real.rpow_pos_of_pos hx σ
@@ -581,19 +507,14 @@ theorem integrable_dirichletReciprocalContourKernel {N : ℕ} [NeZero N] {x : �
     rw [hσ_def]; intro h; linarith
   apply
     MeasureTheory.Integrable.mono'
-      (((General.verticalIntegrable_mellinReciprocalKernel hσ0
-              hσ1).norm).const_mul
-        (C * x ^ σ))
-  · exact
-      (continuous_dirichletReciprocalContourKernel_line
-          hx χ hχ hτ).aestronglyMeasurable
+      (((General.verticalIntegrable_mellinReciprocalKernel hσ0 hσ1).norm).const_mul (C * x ^ σ))
+  · exact (continuous_dirichletReciprocalContourKernel_line hx χ hχ hτ).aestronglyMeasurable
   · filter_upwards with y
     set s : ℂ := (τ : ℂ) + y * Complex.I with hs_def
     set s' : ℂ := (σ : ℂ) + y * Complex.I with hs'_def
     have hAle :
       ‖-deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s‖ ≤ C :=
-      norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum
-        χ hτ y
+      norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum χ hτ y
     have hAle' :
       ‖-(deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s)‖ ≤ C := by
       simpa only [← neg_div] using hAle
@@ -607,9 +528,7 @@ theorem integrable_dirichletReciprocalContourKernel {N : ℕ} [NeZero N] {x : �
       rw [hs_def, hs'_def, hσ_def]
       push_cast
       ring
-    change
-      ‖dirichletReciprocalContourKernel x χ s‖ ≤
-        C * x ^ σ * ‖(s' * (s' + 1))⁻¹‖
+    change ‖dirichletReciprocalContourKernel x χ s‖ ≤ C * x ^ σ * ‖(s' * (s' + 1))⁻¹‖
     unfold dirichletReciprocalContourKernel
     rw [norm_div, norm_mul, hBnorm, div_eq_mul_inv, ← hDenomEq, ← norm_inv]
     exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hAle' hxσ.le) (norm_nonneg _)
@@ -625,18 +544,9 @@ interface.
 theorem tendsto_intervalIntegral_dirichletLogContourKernel {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {τ : ℝ} (hτ : 1 < τ) :
     Filter.Tendsto
-      (fun T : ℝ ↦
-        ∫ y in (-T)..T,
-          dirichletLogContourKernel x χ
-            ((τ : ℂ) + y * Complex.I))
-      Filter.atTop
-      (nhds
-        (∫ y : ℝ,
-          dirichletLogContourKernel x χ
-            ((τ : ℂ) + y * Complex.I))) :=
-  MeasureTheory.intervalIntegral_tendsto_integral
-    (integrable_dirichletLogContourKernel hx χ
-      hχ hτ)
+      (fun T : ℝ ↦ ∫ y in (-T)..T, dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I))
+      Filter.atTop (nhds (∫ y : ℝ, dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I))) :=
+  MeasureTheory.intervalIntegral_tendsto_integral (integrable_dirichletLogContourKernel hx χ hχ hτ)
     Analysis.tendsto_neg_atTop_atBot' Filter.tendsto_id
 
 /--
@@ -650,19 +560,12 @@ explicit formula.
 theorem tendsto_intervalIntegral_dirichletReciprocalContourKernel {N : ℕ} [NeZero N] {x : ℝ}
     (hx : 0 < x) (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {τ : ℝ} (hτ : 1 < τ) :
     Filter.Tendsto
-      (fun T : ℝ ↦
-        ∫ y in (-T)..T,
-          dirichletReciprocalContourKernel x χ
-            ((τ : ℂ) + y * Complex.I))
+      (fun T : ℝ ↦ ∫ y in (-T)..T, dirichletReciprocalContourKernel x χ ((τ : ℂ) + y * Complex.I))
       Filter.atTop
-      (nhds
-        (∫ y : ℝ,
-          dirichletReciprocalContourKernel x χ
-            ((τ : ℂ) + y * Complex.I))) :=
+      (nhds (∫ y : ℝ, dirichletReciprocalContourKernel x χ ((τ : ℂ) + y * Complex.I))) :=
   MeasureTheory.intervalIntegral_tendsto_integral
-    (integrable_dirichletReciprocalContourKernel
-      hx χ hχ hτ)
-    Analysis.tendsto_neg_atTop_atBot' Filter.tendsto_id
+    (integrable_dirichletReciprocalContourKernel hx χ hχ hτ) Analysis.tendsto_neg_atTop_atBot'
+    Filter.tendsto_id
 
 /--
 Input/assumptions: a zero location, multiplicity, and its nonvanishing analytic local factor.
@@ -692,26 +595,16 @@ Role: connects the even trivial zero to the shared double-pole contour API.
 theorem exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization {N : ℕ} [NeZero N] (x : ℝ)
     {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) (heven : χ.Even) :
     ∃ g : ℂ → ℂ,
-      0 <
-          dirichletLFunctionZeroMultiplicity χ
-            0 ∧
+      0 < dirichletLFunctionZeroMultiplicity χ 0 ∧
         AnalyticAt ℂ g 0 ∧
         g 0 ≠ 0 ∧
         Filter.EventuallyEq (nhdsWithin 0 ({0}ᶜ : Set ℂ))
-          (fun s ↦
-            (s - 0) ^ 2 *
-              dirichletReciprocalContourKernel x
-                χ s)
-          (dirichletReciprocalEvenZeroRegularization
-            x
-            (dirichletLFunctionZeroMultiplicity
-              χ 0)
+          (fun s ↦ (s - 0) ^ 2 * dirichletReciprocalContourKernel x χ s)
+          (dirichletReciprocalEvenZeroRegularization x (dirichletLFunctionZeroMultiplicity χ 0)
             g) := by
   obtain ⟨g, hpos, hganalytic, hgzero, hlog⟩ :=
-    exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero
-      hne
-      (dirichletLFunction_zero_of_even hne
-        heven)
+    exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero hne
+      (dirichletLFunction_zero_of_even hne heven)
   refine ⟨g, hpos, hganalytic, hgzero, ?_⟩
   have honeNhds : ∀ᶠ s : ℂ in nhds 0, s ≠ 1 := compl_singleton_mem_nhds (by norm_num only)
   have hone : ∀ᶠ s in nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ), s ≠ 1 :=
@@ -719,14 +612,10 @@ theorem exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization {N : ℕ} 
   filter_upwards [hlog, hone, eventually_mem_nhdsWithin] with s hlogs hs1 hs0
   have hlogs' :
     deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s =
-      (dirichletLFunctionZeroMultiplicity χ 0 :
-            ℂ) /
-          (s - 0) +
-        logDeriv g s := by
+      (dirichletLFunctionZeroMultiplicity χ 0 : ℂ) / (s - 0) + logDeriv g s := by
     rw [← logDeriv_apply]
     exact hlogs
-  unfold dirichletReciprocalContourKernel
-    dirichletReciprocalEvenZeroRegularization
+  unfold dirichletReciprocalContourKernel dirichletReciprocalEvenZeroRegularization
   rw [hlogs']
   have hs0' : s ≠ 0 := Set.mem_compl_singleton_iff.mp hs0
   have hs1' : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
@@ -742,36 +631,23 @@ Role: connects the even trivial zero to the triple-pole contour API.
 theorem exists_eventuallyEq_dirichletLogEvenZeroRegularization {N : ℕ} [NeZero N] (x : ℝ)
     {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) (heven : χ.Even) :
     ∃ g : ℂ → ℂ,
-      0 <
-          dirichletLFunctionZeroMultiplicity χ
-            0 ∧
+      0 < dirichletLFunctionZeroMultiplicity χ 0 ∧
         AnalyticAt ℂ g 0 ∧
         g 0 ≠ 0 ∧
         Filter.EventuallyEq (nhdsWithin 0 ({0}ᶜ : Set ℂ))
-          (fun s ↦
-            (s - 0) ^ 3 *
-              dirichletLogContourKernel x χ s)
-          (dirichletLogEvenZeroRegularization x
-            (dirichletLFunctionZeroMultiplicity
-              χ 0)
-            g) := by
+          (fun s ↦ (s - 0) ^ 3 * dirichletLogContourKernel x χ s)
+          (dirichletLogEvenZeroRegularization x (dirichletLFunctionZeroMultiplicity χ 0) g) := by
   obtain ⟨g, hpos, hganalytic, hgzero, hlog⟩ :=
-    exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero
-      hne
-      (dirichletLFunction_zero_of_even hne
-        heven)
+    exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero hne
+      (dirichletLFunction_zero_of_even hne heven)
   refine ⟨g, hpos, hganalytic, hgzero, ?_⟩
   filter_upwards [hlog, eventually_mem_nhdsWithin] with s hlogs hs0
   have hlogs' :
     deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s =
-      (dirichletLFunctionZeroMultiplicity χ 0 :
-            ℂ) /
-          (s - 0) +
-        logDeriv g s := by
+      (dirichletLFunctionZeroMultiplicity χ 0 : ℂ) / (s - 0) + logDeriv g s := by
     rw [← logDeriv_apply]
     exact hlogs
-  unfold dirichletLogContourKernel
-    dirichletLogEvenZeroRegularization
+  unfold dirichletLogContourKernel dirichletLogEvenZeroRegularization
   rw [hlogs']
   have hs0' : s ≠ 0 := Set.mem_compl_singleton_iff.mp hs0
   simp only [sub_zero]
@@ -788,28 +664,20 @@ theorem exists_dirichletRectangleBoundaryIntegral_reciprocal_zero_of_even {N : �
     ∃ R : ℝ,
       0 < R ∧
         ∃ g : ℂ → ℂ,
-          RectangleGeometry.rectangleBoundaryIntegral
-              (dirichletReciprocalContourKernel
-                x χ)
+          RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ)
               (RectangleGeometry.centeredSquareLower 0 R)
               (RectangleGeometry.centeredSquareUpper 0 R) =
             2 * Real.pi * Complex.I *
               deriv
-                (dirichletReciprocalEvenZeroRegularization
-                  x
-                  (dirichletLFunctionZeroMultiplicity
-                    χ 0)
-                  g)
+                (dirichletReciprocalEvenZeroRegularization x
+                  (dirichletLFunctionZeroMultiplicity χ 0) g)
                 0 := by
   obtain ⟨g, -, hganalytic, hgzero, heq⟩ :=
-    exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization
-      x hne heven
+    exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization x hne heven
   obtain ⟨R, hR, hboundary⟩ :=
     RectangleGeometry.exists_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv
-      (analyticAt_dirichletReciprocalEvenZeroRegularization
-        hx
-        (dirichletLFunctionZeroMultiplicity χ 0)
-        hganalytic hgzero)
+      (analyticAt_dirichletReciprocalEvenZeroRegularization hx
+        (dirichletLFunctionZeroMultiplicity χ 0) hganalytic hgzero)
       heq
   exact ⟨R, hR, g, hboundary⟩
 
@@ -821,10 +689,7 @@ Role: makes the reciprocal local pole cancellation usable by the rectangle princ
 -/
 theorem analyticAt_dirichletReciprocalZeroRegularization {x : ℝ} (hx : 0 < x) {ρ : ℂ} (hρ0 : ρ ≠ 0)
     (hρ1 : ρ ≠ 1) (m : ℕ) {g : ℂ → ℂ} (hganalytic : AnalyticAt ℂ g ρ) (hgzero : g ρ ≠ 0) :
-    AnalyticAt ℂ
-      (dirichletReciprocalZeroRegularization x ρ
-        m g)
-      ρ := by
+    AnalyticAt ℂ (dirichletReciprocalZeroRegularization x ρ m g) ρ := by
   have hlog : AnalyticAt ℂ (logDeriv g) ρ := by
     unfold logDeriv
     exact hganalytic.deriv.div hganalytic hgzero
@@ -844,9 +709,7 @@ Role: makes the logarithmic local pole cancellation usable by the rectangle prin
 -/
 theorem analyticAt_dirichletLogZeroRegularization {x : ℝ} (hx : 0 < x) {ρ : ℂ} (hρ0 : ρ ≠ 0) (m : ℕ)
     {g : ℂ → ℂ} (hganalytic : AnalyticAt ℂ g ρ) (hgzero : g ρ ≠ 0) :
-    AnalyticAt ℂ
-      (dirichletLogZeroRegularization x ρ m g)
-      ρ := by
+    AnalyticAt ℂ (dirichletLogZeroRegularization x ρ m g) ρ := by
   have hlog : AnalyticAt ℂ (logDeriv g) ρ := by
     unfold logDeriv
     exact hganalytic.deriv.div hganalytic hgzero
@@ -864,11 +727,9 @@ Content: evaluate the absorbed-pole numerator at `s = ρ`.
 Role: identifies the residue coefficient used by the finite reciprocal ledger.
 -/
 theorem dirichletReciprocalZeroRegularization_self (x : ℝ) (ρ : ℂ) (m : ℕ) (g : ℂ → ℂ) :
-    dirichletReciprocalZeroRegularization x ρ m
-        g ρ =
+    dirichletReciprocalZeroRegularization x ρ m g ρ =
       -(m : ℂ) * (x : ℂ) ^ (ρ - 1) / (ρ * (ρ - 1)) := by
-  simp only [dirichletReciprocalZeroRegularization,
-    sub_self, zero_mul, add_zero, neg_mul]
+  simp only [dirichletReciprocalZeroRegularization, sub_self, zero_mul, add_zero, neg_mul]
 
 /--
 Input/assumptions: arbitrary `x,ρ,m,g`; no regularity or pole-avoidance assumptions.
@@ -877,10 +738,8 @@ Content: evaluate the absorbed-pole numerator at `s = ρ`.
 Role: identifies the residue coefficient used by the finite logarithmic ledger.
 -/
 theorem dirichletLogZeroRegularization_self (x : ℝ) (ρ : ℂ) (m : ℕ) (g : ℂ → ℂ) :
-    dirichletLogZeroRegularization x ρ m g ρ =
-      -(m : ℂ) * (x : ℂ) ^ ρ / ρ ^ 2 := by
-  simp only [dirichletLogZeroRegularization,
-    sub_self, zero_mul, add_zero, neg_mul]
+    dirichletLogZeroRegularization x ρ m g ρ = -(m : ℂ) * (x : ℂ) ^ ρ / ρ ^ 2 := by
+  simp only [dirichletLogZeroRegularization, sub_self, zero_mul, add_zero, neg_mul]
 
 /--
 Input/assumptions: a nontrivial character, an ordinary `L`-zero away from `0,1`,
@@ -894,24 +753,15 @@ theorem exists_eventuallyEq_reciprocalKernel_dirichletLFunctionZeroRegularizatio
     (x : ℝ) {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) {ρ : ℂ} (hρ0 : ρ ≠ 0) (hρ1 : ρ ≠ 1)
     (hzero : DirichletCharacter.LFunction χ ρ = 0) :
     ∃ g : ℂ → ℂ,
-      0 <
-          dirichletLFunctionZeroMultiplicity χ
-            ρ ∧
+      0 < dirichletLFunctionZeroMultiplicity χ ρ ∧
         AnalyticAt ℂ g ρ ∧
         g ρ ≠ 0 ∧
         Filter.EventuallyEq (nhdsWithin ρ ({ρ}ᶜ : Set ℂ))
-          (fun s ↦
-            (s - ρ) *
-              dirichletReciprocalContourKernel x
-                χ s)
-          (dirichletReciprocalZeroRegularization
-            x ρ
-            (dirichletLFunctionZeroMultiplicity
-              χ ρ)
+          (fun s ↦ (s - ρ) * dirichletReciprocalContourKernel x χ s)
+          (dirichletReciprocalZeroRegularization x ρ (dirichletLFunctionZeroMultiplicity χ ρ)
             g) := by
   obtain ⟨g, hpos, hganalytic, hgzero, hlog⟩ :=
-    exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero
-      hχ hzero
+    exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero hχ hzero
   refine ⟨g, hpos, hganalytic, hgzero, ?_⟩
   have hzeroNhds : ∀ᶠ s : ℂ in nhds ρ, s ≠ 0 := compl_singleton_mem_nhds hρ0
   have hzeroEventually : ∀ᶠ s in nhdsWithin ρ ({ρ}ᶜ : Set ℂ), s ≠ 0 :=
@@ -923,15 +773,10 @@ theorem exists_eventuallyEq_reciprocalKernel_dirichletLFunctionZeroRegularizatio
     hs1 hsρ
   have hlogs' :
     deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s =
-      (dirichletLFunctionZeroMultiplicity χ ρ :
-            ℂ) /
-          (s - ρ) +
-        logDeriv g s := by
+      (dirichletLFunctionZeroMultiplicity χ ρ : ℂ) / (s - ρ) + logDeriv g s := by
     rw [← logDeriv_apply]
     exact hlogs
-  rw [dirichletReciprocalContourKernel,
-    dirichletReciprocalZeroRegularization,
-    hlogs']
+  rw [dirichletReciprocalContourKernel, dirichletReciprocalZeroRegularization, hlogs']
   have hsρ' : s - ρ ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hsρ)
   field_simp
 
@@ -947,22 +792,14 @@ theorem exists_eventuallyEq_logKernel_dirichletLFunctionZeroRegularization {N : 
     (x : ℝ) {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) {ρ : ℂ} (hρ0 : ρ ≠ 0)
     (hzero : DirichletCharacter.LFunction χ ρ = 0) :
     ∃ g : ℂ → ℂ,
-      0 <
-          dirichletLFunctionZeroMultiplicity χ
-            ρ ∧
+      0 < dirichletLFunctionZeroMultiplicity χ ρ ∧
         AnalyticAt ℂ g ρ ∧
         g ρ ≠ 0 ∧
         Filter.EventuallyEq (nhdsWithin ρ ({ρ}ᶜ : Set ℂ))
-          (fun s ↦
-            (s - ρ) *
-              dirichletLogContourKernel x χ s)
-          (dirichletLogZeroRegularization x ρ
-            (dirichletLFunctionZeroMultiplicity
-              χ ρ)
-            g) := by
+          (fun s ↦ (s - ρ) * dirichletLogContourKernel x χ s)
+          (dirichletLogZeroRegularization x ρ (dirichletLFunctionZeroMultiplicity χ ρ) g) := by
   obtain ⟨g, hpos, hganalytic, hgzero, hlog⟩ :=
-    exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero
-      hχ hzero
+    exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero hχ hzero
   refine ⟨g, hpos, hganalytic, hgzero, ?_⟩
   have hzeroNhds : ∀ᶠ s : ℂ in nhds ρ, s ≠ 0 := compl_singleton_mem_nhds hρ0
   have hzeroEventually : ∀ᶠ s in nhdsWithin ρ ({ρ}ᶜ : Set ℂ), s ≠ 0 :=
@@ -970,14 +807,10 @@ theorem exists_eventuallyEq_logKernel_dirichletLFunctionZeroRegularization {N : 
   filter_upwards [hlog, hzeroEventually, eventually_mem_nhdsWithin] with s hlogs hs0 hsρ
   have hlogs' :
     deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s =
-      (dirichletLFunctionZeroMultiplicity χ ρ :
-            ℂ) /
-          (s - ρ) +
-        logDeriv g s := by
+      (dirichletLFunctionZeroMultiplicity χ ρ : ℂ) / (s - ρ) + logDeriv g s := by
     rw [← logDeriv_apply]
     exact hlogs
-  rw [dirichletLogContourKernel,
-    dirichletLogZeroRegularization, hlogs']
+  rw [dirichletLogContourKernel, dirichletLogZeroRegularization, hlogs']
   have hsρ' : s - ρ ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hsρ)
   field_simp
 
@@ -996,66 +829,41 @@ theorem exists_radius_forall_dirichletRectangleBoundaryIntegrals_eq_zeroContribu
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            RectangleGeometry.rectangleBoundaryIntegral
-                  (dirichletReciprocalContourKernel
-                    x χ)
+            RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ)
                   (RectangleGeometry.centeredSquareLower ρ r)
                   (RectangleGeometry.centeredSquareUpper ρ r) =
                 2 * Real.pi * Complex.I *
-                  (-(dirichletLFunctionZeroMultiplicity
-                            χ ρ :
-                          ℂ) *
-                      (x : ℂ) ^ (ρ - 1) /
+                  (-(dirichletLFunctionZeroMultiplicity χ ρ : ℂ) * (x : ℂ) ^ (ρ - 1) /
                     (ρ * (ρ - 1))) ∧
-              RectangleGeometry.rectangleBoundaryIntegral
-                  (dirichletLogContourKernel x
-                    χ)
+              RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ)
                   (RectangleGeometry.centeredSquareLower ρ r)
                   (RectangleGeometry.centeredSquareUpper ρ r) =
                 2 * Real.pi * Complex.I *
-                  (-(dirichletLFunctionZeroMultiplicity
-                            χ ρ :
-                          ℂ) *
-                      (x : ℂ) ^ ρ /
-                    ρ ^ 2) := by
+                  (-(dirichletLFunctionZeroMultiplicity χ ρ : ℂ) * (x : ℂ) ^ ρ / ρ ^ 2) := by
   obtain ⟨g1, -, hganalytic1, hgzero1, heq1⟩ :=
-    exists_eventuallyEq_reciprocalKernel_dirichletLFunctionZeroRegularization
-      x hχ hρ0 hρ1 hzero
+    exists_eventuallyEq_reciprocalKernel_dirichletLFunctionZeroRegularization x hχ hρ0 hρ1 hzero
   obtain ⟨g2, -, hganalytic2, hgzero2, heq2⟩ :=
-    exists_eventuallyEq_logKernel_dirichletLFunctionZeroRegularization
-      x hχ hρ0 hzero
+    exists_eventuallyEq_logKernel_dirichletLFunctionZeroRegularization x hχ hρ0 hzero
   have hh1 :
     AnalyticAt ℂ
-      (dirichletReciprocalZeroRegularization x ρ
-        (dirichletLFunctionZeroMultiplicity χ ρ)
-        g1)
-      ρ :=
-    analyticAt_dirichletReciprocalZeroRegularization
-      hx hρ0 hρ1 _ hganalytic1 hgzero1
+      (dirichletReciprocalZeroRegularization x ρ (dirichletLFunctionZeroMultiplicity χ ρ) g1) ρ :=
+    analyticAt_dirichletReciprocalZeroRegularization hx hρ0 hρ1 _ hganalytic1 hgzero1
   have hh2 :
-    AnalyticAt ℂ
-      (dirichletLogZeroRegularization x ρ
-        (dirichletLFunctionZeroMultiplicity χ ρ)
-        g2)
+    AnalyticAt ℂ (dirichletLogZeroRegularization x ρ (dirichletLFunctionZeroMultiplicity χ ρ) g2)
       ρ :=
-    analyticAt_dirichletLogZeroRegularization hx
-      hρ0 _ hganalytic2 hgzero2
+    analyticAt_dirichletLogZeroRegularization hx hρ0 _ hganalytic2 hgzero2
   obtain ⟨R1, hR1, h1⟩ :=
-    RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul
-      hh1 heq1
+    RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul hh1 heq1
   obtain ⟨R2, hR2, h2⟩ :=
-    RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul
-      hh2 heq2
+    RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul hh2 heq2
   let R := min R1 R2
   have hR : 0 < R := lt_min hR1 hR2
   refine ⟨R, hR, fun r hr hrR ↦ ?_⟩
   have hR1' : r ≤ R1 := hrR.trans (min_le_left _ _)
   have hR2' : r ≤ R2 := hrR.trans (min_le_right _ _)
   refine ⟨?_, ?_⟩
-  · rw [h1 r hr hR1',
-      dirichletReciprocalZeroRegularization_self]
-  · rw [h2 r hr hR2',
-      dirichletLogZeroRegularization_self]
+  · rw [h1 r hr hR1', dirichletReciprocalZeroRegularization_self]
+  · rw [h2 r hr hR2', dirichletLogZeroRegularization_self]
 
 /--
 **the local residue step**: the reciprocal-kernel residue at any point of the primitive singularity
@@ -1084,37 +892,23 @@ noncomputable def dirichletReciprocalResidueAt {N : ℕ} [NeZero N] {χ : Dirich
     if s = 0 then
       if h : χ.Even then
         deriv
-          (dirichletReciprocalEvenZeroRegularization
-            x
-            (dirichletLFunctionZeroMultiplicity
-              χ 0)
+          (dirichletReciprocalEvenZeroRegularization x (dirichletLFunctionZeroMultiplicity χ 0)
             (Classical.choose
-              (exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization
-                x hne h)))
+              (exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization x hne h)))
           0
-      else
-        dirichletReciprocalMellinZeroRegularization
-          x χ 0
+      else dirichletReciprocalMellinZeroRegularization x χ 0
     else
-      if s = 1 then
-        dirichletReciprocalOneRegularization x χ
-          1
-      else
-        dirichletLFunctionReciprocalZeroContribution
-          x χ s
+      if s = 1 then dirichletReciprocalOneRegularization x χ 1
+      else dirichletLFunctionReciprocalZeroContribution x χ s
 
 /-- At `s = 0` for an even character, the residue unfolds to the chosen even-zero derivative. -/
 theorem dirichletReciprocalResidueAt_zero_of_even {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) (x : ℝ) (heven : χ.Even) :
     dirichletReciprocalResidueAt hne x 0 =
       deriv
-        (dirichletReciprocalEvenZeroRegularization
-          x
-          (dirichletLFunctionZeroMultiplicity χ
-            0)
+        (dirichletReciprocalEvenZeroRegularization x (dirichletLFunctionZeroMultiplicity χ 0)
           (Classical.choose
-            (exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization
-              x hne heven)))
+            (exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization x hne heven)))
         0 := by
   classical
   unfold dirichletReciprocalResidueAt
@@ -1123,9 +917,7 @@ theorem dirichletReciprocalResidueAt_zero_of_even {N : ℕ} [NeZero N] {χ : Dir
 /-- At `s = 0` for an odd character, the residue unfolds to the odd Mellin regularization. -/
 theorem dirichletReciprocalResidueAt_zero_of_odd {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) (x : ℝ) (hodd : χ.Odd) :
-    dirichletReciprocalResidueAt hne x 0 =
-      dirichletReciprocalMellinZeroRegularization
-        x χ 0 := by
+    dirichletReciprocalResidueAt hne x 0 = dirichletReciprocalMellinZeroRegularization x χ 0 := by
   classical
   unfold dirichletReciprocalResidueAt
   rw [ite_eq_left rfl, dite_eq_right hodd.not_even]
@@ -1133,9 +925,7 @@ theorem dirichletReciprocalResidueAt_zero_of_odd {N : ℕ} [NeZero N] {χ : Diri
 /-- At `s = 1`, the residue unfolds to the Mellin-one regularization. -/
 theorem dirichletReciprocalResidueAt_one {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) (x : ℝ) :
-    dirichletReciprocalResidueAt hne x 1 =
-      dirichletReciprocalOneRegularization x χ
-        1 := by
+    dirichletReciprocalResidueAt hne x 1 = dirichletReciprocalOneRegularization x χ 1 := by
   classical
   unfold dirichletReciprocalResidueAt
   rw [ite_eq_right (by norm_num only), ite_eq_left rfl]
@@ -1143,9 +933,7 @@ theorem dirichletReciprocalResidueAt_one {N : ℕ} [NeZero N] {χ : DirichletCha
 /-- Away from `0` and `1`, the residue unfolds to the ordinary zero contribution. -/
 theorem dirichletReciprocalResidueAt_zero_ne_one {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) (x : ℝ) {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
-    dirichletReciprocalResidueAt hne x s =
-      dirichletLFunctionReciprocalZeroContribution
-        x χ s := by
+    dirichletReciprocalResidueAt hne x s = dirichletLFunctionReciprocalZeroContribution x χ s := by
   classical
   unfold dirichletReciprocalResidueAt
   rw [ite_eq_right hs0, ite_eq_right hs1]
@@ -1163,32 +951,23 @@ theorem exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_resid
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            RectangleGeometry.rectangleBoundaryIntegral
-                (dirichletReciprocalContourKernel
-                  x χ)
+            RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ)
                 (RectangleGeometry.centeredSquareLower 0 r)
                 (RectangleGeometry.centeredSquareUpper 0 r) =
-              2 * Real.pi * Complex.I *
-                dirichletReciprocalResidueAt hne
-                  x 0 := by
+              2 * Real.pi * Complex.I * dirichletReciprocalResidueAt hne x 0 := by
   classical
   rcases χ.even_or_odd with heven | hodd
-  · rw [dirichletReciprocalResidueAt_zero_of_even
-        hne x heven]
+  · rw [dirichletReciprocalResidueAt_zero_of_even hne x heven]
     obtain ⟨-, hganalytic, hgzero, heq⟩ :=
       Classical.choose_spec
-        (exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization
-          x hne heven)
+        (exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization x hne heven)
     exact
       RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv
-        (analyticAt_dirichletReciprocalEvenZeroRegularization
-          hx _ hganalytic hgzero)
-        heq
-  · rw [dirichletReciprocalResidueAt_zero_of_odd
-        hne x hodd]
+        (analyticAt_dirichletReciprocalEvenZeroRegularization hx _ hganalytic hgzero) heq
+  · rw [dirichletReciprocalResidueAt_zero_of_odd hne x hodd]
     exact
-      exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_zero_of_primitive_odd
-        hx hprimitive hne hodd
+      exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_zero_of_primitive_odd hx
+        hprimitive hne hodd
 
 /--
 **the local boundary step (general form)**: some centered square's reciprocal boundary integral
@@ -1204,39 +983,30 @@ theorem exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_resid
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            RectangleGeometry.rectangleBoundaryIntegral
-                (dirichletReciprocalContourKernel
-                  x χ)
+            RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ)
                 (RectangleGeometry.centeredSquareLower s r)
                 (RectangleGeometry.centeredSquareUpper s r) =
-              2 * Real.pi * Complex.I *
-                dirichletReciprocalResidueAt hne
-                  x s := by
+              2 * Real.pi * Complex.I * dirichletReciprocalResidueAt hne x s := by
   rcases hs with rfl | rfl | hzero
   · exact
-      exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_residueAt_zero
-        hx hprimitive hne
+      exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_residueAt_zero hx
+        hprimitive hne
   · rw [dirichletReciprocalResidueAt_one hne x]
-    exact
-      exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_eq_residueAtOne
-        hx hne
+    exact exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_eq_residueAtOne hx hne
   · by_cases hs0 : s = 0
     · subst hs0
       exact
-        exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_residueAt_zero
-          hx hprimitive hne
+        exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_residueAt_zero hx
+          hprimitive hne
     · by_cases hs1 : s = 1
       · subst hs1
-        rw [dirichletReciprocalResidueAt_one hne
-            x]
+        rw [dirichletReciprocalResidueAt_one hne x]
         exact
-          exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_eq_residueAtOne
-            hx hne
-      · rw [dirichletReciprocalResidueAt_zero_ne_one
-            hne x hs0 hs1]
+          exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_eq_residueAtOne hx hne
+      · rw [dirichletReciprocalResidueAt_zero_ne_one hne x hs0 hs1]
         exact
-          (exists_radius_forall_dirichletRectangleBoundaryIntegrals_eq_zeroContributions
-                hx hne hs0 hs1 hzero).imp
+          (exists_radius_forall_dirichletRectangleBoundaryIntegrals_eq_zeroContributions hx hne hs0
+                hs1 hzero).imp
             fun R hR => ⟨hR.1, fun r hr hrR => (hR.2 r hr hrR).1⟩
 
 /--
@@ -1250,50 +1020,27 @@ Role: is the horizontal edge input for a finite primitive grid subdivision.
 theorem intervalIntegrable_dirichletKernels_horizontal {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) {z w : ℂ} {c a b : ℝ} (ha : a ∈ Set.uIcc z.re w.re)
     (hb : b ∈ Set.uIcc z.re w.re) (hc : c ∈ Set.uIcc z.im w.im)
-    (havoid :
-      ∀
-        s ∈
-          dirichletLFunctionSingularitiesInRectangle
-            χ hχ z w,
-        s.im ≠ c) :
-    IntervalIntegrable
-        (fun t : ℝ ↦
-          dirichletReciprocalContourKernel x χ
-            (t + c * Complex.I))
+    (havoid : ∀ s ∈ dirichletLFunctionSingularitiesInRectangle χ hχ z w, s.im ≠ c) :
+    IntervalIntegrable (fun t : ℝ ↦ dirichletReciprocalContourKernel x χ (t + c * Complex.I))
         MeasureTheory.volume a b ∧
-      IntervalIntegrable
-        (fun t : ℝ ↦
-          dirichletLogContourKernel x χ
-            (t + c * Complex.I))
+      IntervalIntegrable (fun t : ℝ ↦ dirichletLogContourKernel x χ (t + c * Complex.I))
         MeasureTheory.volume a b := by
-  have hregular :=
-    horizontal_segment_subset_dirichletLFunctionContourRegularSet
-      ha hb hc havoid
-  constructor <;>
-    apply
-      RectangleGeometry.intervalIntegrable_horizontal_of_continuousAt <;>
+  have hregular := horizontal_segment_subset_dirichletLFunctionContourRegularSet ha hb hc havoid
+  constructor <;> apply RectangleGeometry.intervalIntegrable_horizontal_of_continuousAt <;>
     intro t ht
   · have hs' :
       (((t : ℂ) + c * Complex.I) ≠ 0 ∧ ((t : ℂ) + c * Complex.I) ≠ 1) ∧
         DirichletCharacter.LFunction χ ((t : ℂ) + c * Complex.I) ≠ 0 := by
-      simpa only [ne_eq,
-        dirichletLFunctionContourRegularSet,
-        Set.preimage_compl, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
-        Set.mem_preimage] using hregular t ht
-    have hd :=
-      differentiableAt_dirichletReciprocalContourKernel
-        hx hχ hs'.1.1 hs'.1.2 hs'.2
+      simpa only [ne_eq, dirichletLFunctionContourRegularSet, Set.preimage_compl, Set.mem_inter_iff,
+        Set.mem_compl_iff, Set.mem_singleton_iff, Set.mem_preimage] using hregular t ht
+    have hd := differentiableAt_dirichletReciprocalContourKernel hx hχ hs'.1.1 hs'.1.2 hs'.2
     exact hd.continuousAt
   · have hs' :
       (((t : ℂ) + c * Complex.I) ≠ 0 ∧ ((t : ℂ) + c * Complex.I) ≠ 1) ∧
         DirichletCharacter.LFunction χ ((t : ℂ) + c * Complex.I) ≠ 0 := by
-      simpa only [ne_eq,
-        dirichletLFunctionContourRegularSet,
-        Set.preimage_compl, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
-        Set.mem_preimage] using hregular t ht
-    exact
-      (differentiableAt_dirichletLogContourKernel
-          hx hχ hs'.1.1 hs'.2).continuousAt
+      simpa only [ne_eq, dirichletLFunctionContourRegularSet, Set.preimage_compl, Set.mem_inter_iff,
+        Set.mem_compl_iff, Set.mem_singleton_iff, Set.mem_preimage] using hregular t ht
+    exact (differentiableAt_dirichletLogContourKernel hx hχ hs'.1.1 hs'.2).continuousAt
 
 /--
 Input/assumptions: a vertical segment stays in the outer rectangle and avoids all primitive
@@ -1305,50 +1052,26 @@ Role: completes the coordinate-edge input for a finite primitive grid subdivisio
 theorem intervalIntegrable_dirichletKernels_vertical {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) {z w : ℂ} {c a b : ℝ} (hc : c ∈ Set.uIcc z.re w.re)
     (ha : a ∈ Set.uIcc z.im w.im) (hb : b ∈ Set.uIcc z.im w.im)
-    (havoid :
-      ∀
-        s ∈
-          dirichletLFunctionSingularitiesInRectangle
-            χ hχ z w,
-        s.re ≠ c) :
-    IntervalIntegrable
-        (fun t : ℝ ↦
-          dirichletReciprocalContourKernel x χ
-            (c + t * Complex.I))
+    (havoid : ∀ s ∈ dirichletLFunctionSingularitiesInRectangle χ hχ z w, s.re ≠ c) :
+    IntervalIntegrable (fun t : ℝ ↦ dirichletReciprocalContourKernel x χ (c + t * Complex.I))
         MeasureTheory.volume a b ∧
-      IntervalIntegrable
-        (fun t : ℝ ↦
-          dirichletLogContourKernel x χ
-            (c + t * Complex.I))
+      IntervalIntegrable (fun t : ℝ ↦ dirichletLogContourKernel x χ (c + t * Complex.I))
         MeasureTheory.volume a b := by
-  have hregular :=
-    vertical_segment_subset_dirichletLFunctionContourRegularSet
-      hc ha hb havoid
-  constructor <;>
-    apply
-      RectangleGeometry.intervalIntegrable_vertical_of_continuousAt <;>
-    intro t ht
+  have hregular := vertical_segment_subset_dirichletLFunctionContourRegularSet hc ha hb havoid
+  constructor <;> apply RectangleGeometry.intervalIntegrable_vertical_of_continuousAt <;> intro t ht
   · have hs' :
       ((c + t * Complex.I) ≠ 0 ∧ (c + t * Complex.I) ≠ 1) ∧
         DirichletCharacter.LFunction χ (c + t * Complex.I) ≠ 0 := by
-      simpa only [ne_eq,
-        dirichletLFunctionContourRegularSet,
-        Set.preimage_compl, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
-        Set.mem_preimage] using hregular t ht
-    have hd :=
-      differentiableAt_dirichletReciprocalContourKernel
-        hx hχ hs'.1.1 hs'.1.2 hs'.2
+      simpa only [ne_eq, dirichletLFunctionContourRegularSet, Set.preimage_compl, Set.mem_inter_iff,
+        Set.mem_compl_iff, Set.mem_singleton_iff, Set.mem_preimage] using hregular t ht
+    have hd := differentiableAt_dirichletReciprocalContourKernel hx hχ hs'.1.1 hs'.1.2 hs'.2
     exact hd.continuousAt
   · have hs' :
       ((c + t * Complex.I) ≠ 0 ∧ (c + t * Complex.I) ≠ 1) ∧
         DirichletCharacter.LFunction χ (c + t * Complex.I) ≠ 0 := by
-      simpa only [ne_eq,
-        dirichletLFunctionContourRegularSet,
-        Set.preimage_compl, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
-        Set.mem_preimage] using hregular t ht
-    exact
-      (differentiableAt_dirichletLogContourKernel
-          hx hχ hs'.1.1 hs'.2).continuousAt
+      simpa only [ne_eq, dirichletLFunctionContourRegularSet, Set.preimage_compl, Set.mem_inter_iff,
+        Set.mem_compl_iff, Set.mem_singleton_iff, Set.mem_preimage] using hregular t ht
+    exact (differentiableAt_dirichletLogContourKernel hx hχ hs'.1.1 hs'.2).continuousAt
 
 /--
 Input/assumptions: a nontrivial character and positive real `x`.
@@ -1358,20 +1081,15 @@ Role: enables Cauchy--Goursat on every primitive regular rectangle.
 -/
 theorem differentiableOn_dirichletReciprocalContourKernel {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) :
-    DifferentiableOn ℂ
-      (dirichletReciprocalContourKernel x χ)
-      (dirichletLFunctionContourRegularSet
-        χ) := by
+    DifferentiableOn ℂ (dirichletReciprocalContourKernel x χ)
+      (dirichletLFunctionContourRegularSet χ) := by
   intro s hs
   have hs' : (s ≠ 0 ∧ s ≠ 1) ∧ DirichletCharacter.LFunction χ s ≠ 0 := by
-    simpa only [ne_eq,
-      dirichletLFunctionContourRegularSet,
-      Set.preimage_compl, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
-      Set.mem_preimage] using hs
+    simpa only [ne_eq, dirichletLFunctionContourRegularSet, Set.preimage_compl, Set.mem_inter_iff,
+      Set.mem_compl_iff, Set.mem_singleton_iff, Set.mem_preimage] using hs
   exact
     DifferentiableAt.differentiableWithinAt
-      (differentiableAt_dirichletReciprocalContourKernel
-        hx hχ hs'.1.1 hs'.1.2 hs'.2)
+      (differentiableAt_dirichletReciprocalContourKernel hx hχ hs'.1.1 hs'.1.2 hs'.2)
 
 /--
 Input/assumptions: a nontrivial character and positive real `x`.
@@ -1381,20 +1099,14 @@ Role: enables the logarithmic Cauchy--Goursat identity on primitive regular rect
 -/
 theorem differentiableOn_dirichletLogContourKernel {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) :
-    DifferentiableOn ℂ
-      (dirichletLogContourKernel x χ)
-      (dirichletLFunctionContourRegularSet
-        χ) := by
+    DifferentiableOn ℂ (dirichletLogContourKernel x χ) (dirichletLFunctionContourRegularSet χ) := by
   intro s hs
   have hs' : (s ≠ 0 ∧ s ≠ 1) ∧ DirichletCharacter.LFunction χ s ≠ 0 := by
-    simpa only [ne_eq,
-      dirichletLFunctionContourRegularSet,
-      Set.preimage_compl, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
-      Set.mem_preimage] using hs
+    simpa only [ne_eq, dirichletLFunctionContourRegularSet, Set.preimage_compl, Set.mem_inter_iff,
+      Set.mem_compl_iff, Set.mem_singleton_iff, Set.mem_preimage] using hs
   exact
     DifferentiableAt.differentiableWithinAt
-      (differentiableAt_dirichletLogContourKernel
-        hx hχ hs'.1.1 hs'.2)
+      (differentiableAt_dirichletLogContourKernel hx hχ hs'.1.1 hs'.2)
 
 /--
 **the integrability step**: coordinate avoidance makes the primitive reciprocal kernel integrable
@@ -1404,24 +1116,20 @@ outer grid-coordinate segment.
 theorem dirichletReciprocalKernelCoordinateIntegrable {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {z w : ℂ}
     (grid : RectangleGeometry.StrictGridCuts z w)
-    (havoid :
-      grid.LedgerAvoidsCoordinates
-        (dirichletLFunctionSingularitiesInRectangle
-          χ hne z w)) :
-    RectangleGeometry.RectangleGridCoordinateIntegrable
-      (dirichletReciprocalContourKernel x χ)
+    (havoid : grid.LedgerAvoidsCoordinates (dirichletLFunctionSingularitiesInRectangle χ hne z w)) :
+    RectangleGeometry.RectangleGridCoordinateIntegrable (dirichletReciprocalContourKernel x χ)
       (z.re :: grid.xcuts ++ [w.re]) (z.im :: grid.ycuts ++ [w.im]) := by
   constructor
   · intro c hc a ha b hb
     exact
-      (intervalIntegrable_dirichletKernels_horizontal
-          hx hne (grid.xcoordinate_mem_uIcc ha) (grid.xcoordinate_mem_uIcc hb)
-          (grid.ycoordinate_mem_uIcc hc) fun s hs hsc ↦ (havoid s hs).2 (hsc ▸ hc)).1
+      (intervalIntegrable_dirichletKernels_horizontal hx hne (grid.xcoordinate_mem_uIcc ha)
+          (grid.xcoordinate_mem_uIcc hb) (grid.ycoordinate_mem_uIcc hc) fun s hs hsc ↦
+          (havoid s hs).2 (hsc ▸ hc)).1
   · intro c hc a ha b hb
     exact
-      (intervalIntegrable_dirichletKernels_vertical
-          hx hne (grid.xcoordinate_mem_uIcc hc) (grid.ycoordinate_mem_uIcc ha)
-          (grid.ycoordinate_mem_uIcc hb) fun s hs hsc ↦ (havoid s hs).1 (hsc ▸ hc)).1
+      (intervalIntegrable_dirichletKernels_vertical hx hne (grid.xcoordinate_mem_uIcc hc)
+          (grid.ycoordinate_mem_uIcc ha) (grid.ycoordinate_mem_uIcc hb) fun s hs hsc ↦
+          (havoid s hs).1 (hsc ▸ hc)).1
 
 /--
 For a primitive nontrivial character, `x > 0`, and an oriented rectangle with strictly
@@ -1434,52 +1142,26 @@ theorem dirichletReciprocalFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} 
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {z w : ℂ}
     (hre : z.re < w.re) (him : z.im < w.im)
     (hopen :
-      ∀
-        s ∈
-          dirichletLFunctionSingularitiesInRectangle
-            χ hne z w,
+      ∀ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w,
         s ∈ RectangleGeometry.rectangleOpenBox z w) :
-    RectangleGeometry.rectangleBoundaryIntegral
-        (dirichletReciprocalContourKernel x χ) z
-        w =
-      ∑
-        s ∈
-          dirichletLFunctionSingularitiesInRectangle
-            χ hne z w,
-        2 * Real.pi * Complex.I *
-          dirichletReciprocalResidueAt hne x
-            s := by
-  set S :=
-    dirichletLFunctionSingularitiesInRectangle χ
-      hne z w with
-    hS_def
-  have hclosed : ∀ s ∈ S, s ∈ Rectangle.rectangleClosedBox z w :=
-    fun s hs ↦
-    (mem_dirichletLFunctionSingularitiesInRectangle_iff.mp
-        hs).1
-  set grid :=
-    RectangleGeometry.generatedStrictGridCuts S z w hre him
-      hopen with
-    hgrid_def
-  set cells :=
-    (RectangleGeometry.rectangleGridCells z w grid.xcuts
-        grid.ycuts).toFinset with
+    RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ) z w =
+      ∑ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w,
+        2 * Real.pi * Complex.I * dirichletReciprocalResidueAt hne x s := by
+  set S := dirichletLFunctionSingularitiesInRectangle χ hne z w with hS_def
+  have hclosed : ∀ s ∈ S, s ∈ Rectangle.rectangleClosedBox z w := fun s hs ↦
+    (mem_dirichletLFunctionSingularitiesInRectangle_iff.mp hs).1
+  set grid := RectangleGeometry.generatedStrictGridCuts S z w hre him hopen with hgrid_def
+  set cells := (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset with
     hcells_def
-  have interior :=
-    RectangleGeometry.generatedGridInteriorSeparation S z w hre him
-      hopen hclosed
+  have interior := RectangleGeometry.generatedGridInteriorSeparation S z w hre him hopen hclosed
   set assignment := interior.toAssignment with hassignment_def
   have havoidCuts : grid.LedgerAvoidsCuts S :=
-    RectangleGeometry.generatedStrictGridCuts_avoidsCuts S z w hre
-      him hopen
+    RectangleGeometry.generatedStrictGridCuts_avoidsCuts S z w hre him hopen
   have havoid : grid.LedgerAvoidsCoordinates S :=
     grid.ledgerAvoidsCoordinates_of_open hopen havoidCuts
-  have hcoordint :=
-    dirichletReciprocalKernelCoordinateIntegrable
-      hx hne grid havoid
+  have hcoordint := dirichletReciprocalKernelCoordinateIntegrable hx hne grid havoid
   have hgridint :
-    RectangleGeometry.RectangleGridSubdivisionIntegrable
-      (dirichletReciprocalContourKernel x χ) z w
+    RectangleGeometry.RectangleGridSubdivisionIntegrable (dirichletReciprocalContourKernel x χ) z w
       grid.xcuts grid.ycuts := by
     apply
       hcoordint.gridSubdivision List.mem_cons_self
@@ -1498,17 +1180,14 @@ theorem dirichletReciprocalFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} 
           simp only [List.cons_append, List.mem_cons, List.mem_append, hc, List.not_mem_nil,
             or_false, true_or, or_true])
   have hsum :
-    RectangleGeometry.rectangleBoundaryIntegral
-        (dirichletReciprocalContourKernel x χ) z
-        w =
+    RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ) z w =
       ∑ cell ∈ cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (dirichletReciprocalContourKernel x χ)
-          cell.1 cell.2 := by
-    rw [RectangleGeometry.rectangleBoundaryIntegral_eq_gridSubdivision
-        _ z w grid.xcuts grid.ycuts hgridint,
-      RectangleGeometry.rectangleGridSubdivision_eq_sum_toFinset _
-        z w grid.xcuts grid.ycuts grid.cells_nodup]
+        RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ) cell.1
+          cell.2 := by
+    rw [RectangleGeometry.rectangleBoundaryIntegral_eq_gridSubdivision _ z w grid.xcuts grid.ycuts
+        hgridint,
+      RectangleGeometry.rectangleGridSubdivision_eq_sum_toFinset _ z w grid.xcuts grid.ycuts
+        grid.cells_nodup]
   have hxcuts : ∀ u ∈ grid.xcuts, u ∈ Set.uIcc z.re w.re := fun u hu ↦
     Set.mem_uIcc_of_le (grid.xcuts_inside u hu).1.le (grid.xcuts_inside u hu).2.le
   have hycuts : ∀ v ∈ grid.ycuts, v ∈ Set.uIcc z.im w.im := fun v hv ↦
@@ -1516,78 +1195,54 @@ theorem dirichletReciprocalFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} 
   have hdiff :
     ∀ cell ∈ cells,
       ∀ y ∈ Rectangle.rectangleClosedBox cell.1 cell.2,
-        y ∉ S →
-          DifferentiableAt ℂ
-            (dirichletReciprocalContourKernel x
-              χ)
-            y := by
+        y ∉ S → DifferentiableAt ℂ (dirichletReciprocalContourKernel x χ) y := by
     intro cell hcell y hy hyS
     have hcellSubset :=
-      RectangleGeometry.rectangleGridCells_closedBox_subset hxcuts
-        hycuts cell (by simpa only [hcells_def, List.mem_toFinset] using hcell)
-    have hyz : y ∈ Rectangle.rectangleClosedBox z w :=
-      hcellSubset hy
+      RectangleGeometry.rectangleGridCells_closedBox_subset hxcuts hycuts cell
+        (by simpa only [hcells_def, List.mem_toFinset] using hcell)
+    have hyz : y ∈ Rectangle.rectangleClosedBox z w := hcellSubset hy
     have hy' : ¬(y = 0 ∨ y = 1 ∨ DirichletCharacter.LFunction χ y = 0) := fun hmem ↦
-      hyS
-        (mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr
-          ⟨hyz, hmem⟩)
+      hyS (mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr ⟨hyz, hmem⟩)
     push Not at hy'
-    exact
-      differentiableAt_dirichletReciprocalContourKernel
-        hx hne hy'.1 hy'.2.1 hy'.2.2
+    exact differentiableAt_dirichletReciprocalContourKernel hx hne hy'.1 hy'.2.1 hy'.2.2
   have hsingular_res :
     ∀ cell ∈ RectangleGeometry.finiteSingularCells S cells,
-      RectangleGeometry.rectangleBoundaryIntegral
-          (dirichletReciprocalContourKernel x χ)
-          cell.1 cell.2 =
+      RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ) cell.1
+          cell.2 =
         2 * Real.pi * Complex.I *
-          dirichletReciprocalResidueAt hne x
-            (assignment.pointOfCell cell) := by
+          dirichletReciprocalResidueAt hne x (assignment.pointOfCell cell) := by
     intro cell hcell
-    have hcellmem :=
-      RectangleGeometry.mem_singularCells_iff.mp hcell
+    have hcellmem := RectangleGeometry.mem_singularCells_iff.mp hcell
     have hcellOrder :=
-      RectangleGeometry.mem_rectangleGridCells_re_lt_im_lt
-        grid.xcoordinates_pairwise grid.ycoordinates_pairwise
-        (by simpa only [hcells_def, List.mem_toFinset] using hcellmem.1)
+      RectangleGeometry.mem_rectangleGridCells_re_lt_im_lt grid.xcoordinates_pairwise
+        grid.ycoordinates_pairwise (by simpa only [hcells_def, List.mem_toFinset] using hcellmem.1)
     set c := assignment.pointOfCell cell with hc_def
     have hpointS : c ∈ S := assignment.point_mem_ledger cell hcell
-    have hpointHyp :=
-      (mem_dirichletLFunctionSingularitiesInRectangle_iff.mp
-          hpointS).2
+    have hpointHyp := (mem_dirichletLFunctionSingularitiesInRectangle_iff.mp hpointS).2
     obtain ⟨Rc, hRc, hcert⟩ :=
-      exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_residueAt
-        hx hprimitive hne hpointHyp
+      exists_radius_forall_dirichletRectangleBoundaryIntegral_reciprocal_residueAt hx hprimitive hne
+        hpointHyp
     obtain ⟨ε, hε, hball⟩ := interior.exists_closedBall_pointOfCell_subset_open hcell
     set r := min (ε / 2) (Rc / 2) with hr_def
     have hr : 0 < r := lt_min (by linarith) (by linarith)
-    have hball' :
-      Metric.closedBall c r ⊆
-        RectangleGeometry.rectangleOpenBox cell.1 cell.2 :=
+    have hball' : Metric.closedBall c r ⊆ RectangleGeometry.rectangleOpenBox cell.1 cell.2 :=
       (Metric.closedBall_subset_closedBall
             (le_trans (min_le_left _ _) (by linarith : ε / 2 ≤ ε))).trans
         hball
-    have hcuts :=
-      RectangleGeometry.centeredSquare_cuts_inside hcellOrder.1
-        hcellOrder.2 hr hball'
+    have hcuts := RectangleGeometry.centeredSquare_cuts_inside hcellOrder.1 hcellOrder.2 hr hball'
     set a := RectangleGeometry.centeredSquareLower c r with ha_def
     set b := RectangleGeometry.centeredSquareUpper c r with hb_def
     have hpoint : c ∈ RectangleGeometry.rectangleOpenBox a b :=
       RectangleGeometry.center_mem_centeredSquare_openBox c hr
     have hdiffCell :
       ∀ y ∈ Rectangle.rectangleClosedBox cell.1 cell.2,
-        y ∉ S →
-          DifferentiableAt ℂ
-            (dirichletReciprocalContourKernel x
-              χ)
-            y :=
+        y ∉ S → DifferentiableAt ℂ (dirichletReciprocalContourKernel x χ) y :=
       hdiff cell hcellmem.1
-    have hcopen :
-      c ∈ RectangleGeometry.rectangleOpenBox cell.1 cell.2 :=
+    have hcopen : c ∈ RectangleGeometry.rectangleOpenBox cell.1 cell.2 :=
       hball' (Metric.mem_closedBall_self hr.le)
     have havoidSq :=
-      RectangleGeometry.centeredSquare_augmented_coordinates_avoid
-        hcellOrder.1 hcellOrder.2 hr hcopen
+      RectangleGeometry.centeredSquare_augmented_coordinates_avoid hcellOrder.1 hcellOrder.2 hr
+        hcopen
     set xs := cell.1.re :: [a.re, b.re] ++ [cell.2.re] with hxs_def
     set ys := cell.1.im :: [a.im, b.im] ++ [cell.2.im] with hys_def
     have hxmem : ∀ u ∈ xs, u ∈ Set.uIcc cell.1.re cell.2.re := by
@@ -1607,12 +1262,10 @@ theorem dirichletReciprocalFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} 
       · exact Set.mem_uIcc_of_le (hcuts.2.2.2.1.trans hcuts.2.2.2.2.1).le hcuts.2.2.2.2.2.le
       · exact Set.right_mem_uIcc
     have hcoordint :=
-      assignment.kernelCoordinateIntegrable
-        (dirichletReciprocalContourKernel x χ)
-        hcell hdiffCell xs ys hxmem hymem havoidSq.1 havoidSq.2
+      assignment.kernelCoordinateIntegrable (dirichletReciprocalContourKernel x χ) hcell hdiffCell
+        xs ys hxmem hymem havoidSq.1 havoidSq.2
     have hgrid3 :
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (dirichletReciprocalContourKernel x χ)
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (dirichletReciprocalContourKernel x χ)
         cell.1 cell.2 [a.re, b.re] [a.im, b.im] :=
       hcoordint.gridSubdivision
         (by
@@ -1639,20 +1292,16 @@ theorem dirichletReciprocalFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} 
             simp only [hys_def, List.cons_append, List.nil_append, List.mem_cons, List.not_mem_nil,
               or_false, true_or, or_true])
     have hshrink :=
-      assignment.parent_boundaryIntegral_eq_of_shrink
-        (dirichletReciprocalContourKernel x χ)
-        hcell hcuts.1 hcuts.2.1 hcuts.2.2.1 hcuts.2.2.2.1 hcuts.2.2.2.2.1 hcuts.2.2.2.2.2 hpoint
-        hdiffCell hgrid3
+      assignment.parent_boundaryIntegral_eq_of_shrink (dirichletReciprocalContourKernel x χ) hcell
+        hcuts.1 hcuts.2.1 hcuts.2.2.1 hcuts.2.2.2.1 hcuts.2.2.2.2.1 hcuts.2.2.2.2.2 hpoint hdiffCell
+        hgrid3
     rw [hshrink]
     have hrRc : r ≤ Rc := le_trans (min_le_right _ _) (by linarith : Rc / 2 ≤ Rc)
     exact hcert r hr hrRc
   exact
-    RectangleGeometry.rectangleBoundaryIntegral_eq_sum_res
-      (dirichletReciprocalContourKernel x χ)
-      (fun s ↦
-        2 * Real.pi * Complex.I *
-          dirichletReciprocalResidueAt hne x s)
-      S cells z w assignment hsum hdiff hsingular_res
+    RectangleGeometry.rectangleBoundaryIntegral_eq_sum_res (dirichletReciprocalContourKernel x χ)
+      (fun s ↦ 2 * Real.pi * Complex.I * dirichletReciprocalResidueAt hne x s) S cells z w
+      assignment hsum hdiff hsingular_res
 
 /--
 **the outer-rectangle step**: once both Mellin points lie in the outer rectangle, the residue sum
@@ -1666,35 +1315,15 @@ is always well-defined regardless of parity.
 -/
 theorem dirichletSplitReciprocalSingularitySum {N : ℕ} [NeZero N] (x : ℝ)
     {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {z w : ℂ}
-    (h1 :
-      (1 : ℂ) ∈
-        dirichletLFunctionSingularitiesInRectangle
-          χ hne z w)
-    (h0 :
-      (0 : ℂ) ∈
-        dirichletLFunctionSingularitiesInRectangle
-          χ hne z w) :
-    ∑
-        s ∈
-          dirichletLFunctionSingularitiesInRectangle
-            χ hne z w,
+    (h1 : (1 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w)
+    (h0 : (0 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w) :
+    ∑ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w,
         dirichletReciprocalResidueAt hne x s =
-      dirichletReciprocalResidueAt hne x 1 +
-        dirichletReciprocalResidueAt hne x 0 +
-        ∑
-          ρ ∈
-            ((dirichletLFunctionSingularitiesInRectangle
-                      χ hne z w).erase
-                  1).erase
-              0,
-          dirichletReciprocalResidueAt hne x
-            ρ := by
+      dirichletReciprocalResidueAt hne x 1 + dirichletReciprocalResidueAt hne x 0 +
+        ∑ ρ ∈ ((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0,
+          dirichletReciprocalResidueAt hne x ρ := by
   classical
-  have h0' :
-    (0 : ℂ) ∈
-      (dirichletLFunctionSingularitiesInRectangle
-            χ hne z w).erase
-        1 :=
+  have h0' : (0 : ℂ) ∈ (dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1 :=
     Finset.mem_erase.mpr ⟨by norm_num only, h0⟩
   rw [← Finset.add_sum_erase _ _ h1, ← Finset.add_sum_erase _ _ h0']
   ring
@@ -1707,19 +1336,10 @@ The comparison to completed-zero norms is a separate multiplicity-bridge step.
 -/
 theorem dirichletReciprocalResidueAt_eq_zeroContribution_of_mem_erase {N : ℕ} [NeZero N] (x : ℝ)
     {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {z w : ℂ} {ρ : ℂ}
-    (hρ :
-      ρ ∈
-        ((dirichletLFunctionSingularitiesInRectangle
-                  χ hne z w).erase
-              1).erase
-          0) :
-    dirichletReciprocalResidueAt hne x ρ =
-      dirichletLFunctionReciprocalZeroContribution
-        x χ ρ := by
+    (hρ : ρ ∈ ((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0) :
+    dirichletReciprocalResidueAt hne x ρ = dirichletLFunctionReciprocalZeroContribution x χ ρ := by
   have hρ0 : ρ ≠ 0 := (Finset.mem_erase.mp hρ).1
   have hρ1 : ρ ≠ 1 := (Finset.mem_erase.mp (Finset.mem_of_mem_erase hρ)).1
-  exact
-    dirichletReciprocalResidueAt_zero_ne_one hne
-      x hρ0 hρ1
+  exact dirichletReciprocalResidueAt_zero_ne_one hne x hρ0 hρ1
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

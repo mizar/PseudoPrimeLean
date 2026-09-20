@@ -25,8 +25,7 @@ theorem eventuallyEq_riemannZetaOneLogDerivativeRegularization :
 
 /-- The regularized negative logarithmic derivative is differentiable at one. -/
 theorem differentiableAt_riemannZetaOneLogDerivativeRegularization :
-    DifferentiableAt ℂ
-      riemannZetaOneLogDerivativeRegularization 1 := by
+    DifferentiableAt ℂ riemannZetaOneLogDerivativeRegularization 1 := by
   have hzetaOne : riemannZeta₁ 1 ≠ 0 := by
     simp only [riemannZeta₁_one, ne_eq, one_ne_zero, not_false_eq_true]
   unfold riemannZetaOneLogDerivativeRegularization
@@ -34,8 +33,7 @@ theorem differentiableAt_riemannZetaOneLogDerivativeRegularization :
 
 /-- The regularized negative logarithmic derivative is analytic near one. -/
 theorem analyticAt_riemannZetaOneLogDerivativeRegularization :
-    AnalyticAt ℂ
-      riemannZetaOneLogDerivativeRegularization 1 := by
+    AnalyticAt ℂ riemannZetaOneLogDerivativeRegularization 1 := by
   have hzetaOne : riemannZeta₁ 1 ≠ 0 := by
     simp only [riemannZeta₁_one, ne_eq, one_ne_zero, not_false_eq_true]
   have hquotient : AnalyticAt ℂ (fun s ↦ deriv riemannZeta₁ s / riemannZeta₁ s) 1 :=
@@ -46,15 +44,13 @@ theorem analyticAt_riemannZetaOneLogDerivativeRegularization :
 
 /-- The regularized negative logarithmic derivative has value one at one. -/
 theorem riemannZetaOneLogDerivativeRegularization_one :
-    riemannZetaOneLogDerivativeRegularization 1 =
-      1 := by
-  simp only [riemannZetaOneLogDerivativeRegularization,
-    sub_self, deriv_riemannZeta₁_one, riemannZeta₁_one, div_one, zero_mul, sub_zero]
+    riemannZetaOneLogDerivativeRegularization 1 = 1 := by
+  simp only [riemannZetaOneLogDerivativeRegularization, sub_self, deriv_riemannZeta₁_one,
+    riemannZeta₁_one, div_one, zero_mul, sub_zero]
 
 /-- The derivative of the regularized negative zeta logarithmic derivative at one is `-γ`. -/
 theorem deriv_riemannZetaOneLogDerivativeRegularization_one :
-    deriv riemannZetaOneLogDerivativeRegularization 1 =
-      -Real.eulerMascheroniConstant := by
+    deriv riemannZetaOneLogDerivativeRegularization 1 = -Real.eulerMascheroniConstant := by
   have hzetaOne : riemannZeta₁ 1 ≠ 0 := by
     simp only [riemannZeta₁_one, ne_eq, one_ne_zero, not_false_eq_true]
   have hquotient : DifferentiableAt ℂ (fun s ↦ deriv riemannZeta₁ s / riemannZeta₁ s) 1 := by

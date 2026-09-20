@@ -18,13 +18,10 @@ theorem tendsto_farLeftLength_div_unifiedContourHeightSeq :
     Filter.Tendsto (fun m : ℕ => (2 * (m : ℝ) + 1 / 2) / unifiedContourHeightSeq m) Filter.atTop
       (nhds 0) := by
   have hbound :
-    ∀ m : ℕ,
-      (2 * (m : ℝ) + 1 / 2) / unifiedContourHeightSeq m ≤
-        3 / (farLeftBTerm m + 1) := by
+    ∀ m : ℕ, (2 * (m : ℝ) + 1 / 2) / unifiedContourHeightSeq m ≤ 3 / (farLeftBTerm m + 1) := by
     intro m
     have hUpos : 0 < unifiedContourHeightSeq m :=
-      (farLeftHeightSeq_pos m).trans_le
-        (farLeftHeightSeq_le_unifiedContourHeightSeq m)
+      (farLeftHeightSeq_pos m).trans_le (farLeftHeightSeq_le_unifiedContourHeightSeq m)
     have hlength : 2 * (m : ℝ) + 1 / 2 ≤ 3 * ((m : ℝ) + 1) := by
       linarith only [Nat.cast_nonneg (α := ℝ) m]
     calc
@@ -32,64 +29,45 @@ theorem tendsto_farLeftLength_div_unifiedContourHeightSeq :
           (2 * (m : ℝ) + 1 / 2) / farLeftHeightSeq m :=
         by
         exact
-          div_le_div_of_nonneg_left (by positivity)
-            (farLeftHeightSeq_pos m)
+          div_le_div_of_nonneg_left (by positivity) (farLeftHeightSeq_pos m)
             (farLeftHeightSeq_le_unifiedContourHeightSeq m)
       _ ≤ (3 * ((m : ℝ) + 1)) / farLeftHeightSeq m :=
-        div_le_div_of_nonneg_right hlength
-          (farLeftHeightSeq_pos m).le
+        div_le_div_of_nonneg_right hlength (farLeftHeightSeq_pos m).le
       _ = 3 / (farLeftBTerm m + 1) := by
         simp only [farLeftHeightSeq]
         field_simp
-  have hden :
-    Filter.Tendsto (fun m : ℕ => farLeftBTerm m + 1)
-      Filter.atTop Filter.atTop :=
-    Filter.tendsto_atTop_add_const_right Filter.atTop 1
-      tendsto_farLeftBTerm_atTop
-  have hrhs :
-    Filter.Tendsto
-      (fun m : ℕ => 3 / (farLeftBTerm m + 1))
-      Filter.atTop (nhds 0) := by
+  have hden : Filter.Tendsto (fun m : ℕ => farLeftBTerm m + 1) Filter.atTop Filter.atTop :=
+    Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_farLeftBTerm_atTop
+  have hrhs : Filter.Tendsto (fun m : ℕ => 3 / (farLeftBTerm m + 1)) Filter.atTop (nhds 0) := by
     simpa only [div_eq_mul_inv, Pi.inv_apply, mul_zero] using hden.inv_tendsto_atTop.const_mul 3
   exact
     squeeze_zero
       (fun m =>
         div_nonneg (by positivity)
-          ((farLeftHeightSeq_pos m).trans_le
-              (farLeftHeightSeq_le_unifiedContourHeightSeq m)).le)
+          ((farLeftHeightSeq_pos m).trans_le (farLeftHeightSeq_le_unifiedContourHeightSeq m)).le)
       hbound hrhs
 
 /-- The unified height still has polynomial growth and is absorbed by geometric decay. -/
 theorem tendsto_unifiedContourHeightSeq_sq_mul_pow_of_lt_one {r : ℝ} (hr : 0 ≤ r) (h'r : r < 1) :
     Filter.Tendsto (fun m : ℕ => unifiedContourHeightSeq m ^ 2 * r ^ m) Filter.atTop (nhds 0) := by
-  have hpow :=
-    tendsto_farLeftHeightSeq_sq_mul_pow_of_lt_one hr
-      h'r
+  have hpow := tendsto_farLeftHeightSeq_sq_mul_pow_of_lt_one hr h'r
   have hrpow := tendsto_pow_atTop_nhds_zero_of_lt_one hr h'r
   have hmajor :
-    Filter.Tendsto
-      (fun m : ℕ =>
-        (2 * farLeftHeightSeq m ^ 2 + 200) * r ^ m)
-      Filter.atTop (nhds 0) := by
+    Filter.Tendsto (fun m : ℕ => (2 * farLeftHeightSeq m ^ 2 + 200) * r ^ m) Filter.atTop
+      (nhds 0) := by
     have hsum := (hpow.const_mul 2).add (hrpow.const_mul 200)
     convert hsum using 1
     · funext m
       ring
     · ring_nf
   apply squeeze_zero (fun m => by positivity) (fun m => ?_) hmajor
-  have hUle :
-    unifiedContourHeightSeq m ≤
-      farLeftHeightSeq m + 10 :=
+  have hUle : unifiedContourHeightSeq m ≤ farLeftHeightSeq m + 10 :=
     (unifiedContourHeightSeq_lt_farLeftHeightSeq_add_ten m).le
-  have hFnn : 0 ≤ farLeftHeightSeq m :=
-    (farLeftHeightSeq_pos m).le
+  have hFnn : 0 ≤ farLeftHeightSeq m := (farLeftHeightSeq_pos m).le
   have hUnn : 0 ≤ unifiedContourHeightSeq m :=
     hFnn.trans (farLeftHeightSeq_le_unifiedContourHeightSeq m)
-  have hsquare :
-    unifiedContourHeightSeq m ^ 2 ≤
-      2 * farLeftHeightSeq m ^ 2 + 200 := by
-    nlinarith only [hUle, hFnn, hUnn,
-      sq_nonneg (farLeftHeightSeq m - 10)]
+  have hsquare : unifiedContourHeightSeq m ^ 2 ≤ 2 * farLeftHeightSeq m ^ 2 + 200 := by
+    nlinarith only [hUle, hFnn, hUnn, sq_nonneg (farLeftHeightSeq m - 10)]
   exact mul_le_mul_of_nonneg_right hsquare (by positivity)
 
 /-- Zeta has no zero on the upper horizontal line selected by the unified good-height sequence. -/
@@ -97,11 +75,8 @@ theorem riemannZeta_ne_zero_on_unified_upper (m : ℕ) (σ : ℝ) :
     riemannZeta ((σ : ℂ) + unifiedContourHeightSeq m * Complex.I) ≠ 0 := by
   exact
     riemannZeta_ne_zero_of_good_height
-      (by
-        linarith only [goodHeightSeq_mem
-              (farLeftGoodHeightIndex m) |>.1])
-      (goodHeightSeq_mem (farLeftGoodHeightIndex m))
-      (unifiedContourHeightSeq_good m) σ
+      (by linarith only [goodHeightSeq_mem (farLeftGoodHeightIndex m) |>.1])
+      (goodHeightSeq_mem (farLeftGoodHeightIndex m)) (unifiedContourHeightSeq_good m) σ
 
 /-- Zeta has no zero on the conjugate lower horizontal line of the unified sequence. -/
 theorem riemannZeta_ne_zero_on_unified_lower (m : ℕ) (σ : ℝ) :
@@ -124,13 +99,11 @@ noncomputable def unifiedFarLeftLinearConst : ℝ :=
 
 /-- On the unified heights, the far-left logarithmic-derivative majorant is linear in height. -/
 theorem farLeftZetaLogDerivBound_unified_le (m : ℕ) :
-    farLeftZetaLogDerivBound m
-        (unifiedContourHeightSeq m) ≤
+    farLeftZetaLogDerivBound m (unifiedContourHeightSeq m) ≤
       unifiedFarLeftLinearConst * unifiedContourHeightSeq m := by
   set T := unifiedContourHeightSeq m
   have hT1 : (1 : ℝ) ≤ T :=
-    (one_le_farLeftHeightSeq m).trans
-      (farLeftHeightSeq_le_unifiedContourHeightSeq m)
+    (one_le_farLeftHeightSeq m).trans (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   have hTpos : 0 < T := one_pos.trans_le hT1
   have hsinh : Real.sinh (Real.pi / 2) ≤ Real.sinh (Real.pi * T / 2) :=
     Real.sinh_le_sinh.mpr (by nlinarith only [Real.pi_pos, hT1])
@@ -142,13 +115,10 @@ theorem farLeftZetaLogDerivBound_unified_le (m : ℕ) :
       Real.pi / 2 * Real.sqrt (1 + 1 / Real.sinh (Real.pi / 2) ^ 2) := by
     gcongr
   have hB : farLeftBTerm m ≤ T :=
-    (farLeftBTerm_le_farLeftHeightSeq m).trans
-      (farLeftHeightSeq_le_unifiedContourHeightSeq m)
-  unfold farLeftZetaLogDerivBound
-    unifiedFarLeftLinearConst
+    (farLeftBTerm_le_farLeftHeightSeq m).trans (farLeftHeightSeq_le_unifiedContourHeightSeq m)
+  unfold farLeftZetaLogDerivBound unifiedFarLeftLinearConst
   rw [abs_of_pos hTpos]
-  have hA :=
-    le_abs_self qMinusOneHorizontalFarLeftConst
+  have hA := le_abs_self qMinusOneHorizontalFarLeftConst
   have hDnn : 0 ≤ Real.pi / 2 * Real.sqrt (1 + 1 / Real.sinh (Real.pi / 2) ^ 2) := by positivity
   have hconst :
     |qMinusOneHorizontalFarLeftConst| +
@@ -165,24 +135,18 @@ noncomputable def unifiedLeftVerticalLinearConst : ℝ :=
 
 /-- The left-vertical logarithmic-derivative bound is linear on the unified heights. -/
 theorem leftVerticalZetaLogDerivBound_unified_le (m : ℕ) :
-    leftVerticalZetaLogDerivBound m
-        (unifiedContourHeightSeq m) ≤
+    leftVerticalZetaLogDerivBound m (unifiedContourHeightSeq m) ≤
       unifiedLeftVerticalLinearConst * unifiedContourHeightSeq m := by
   set T := unifiedContourHeightSeq m
   have hT1 : (1 : ℝ) ≤ T :=
-    (one_le_farLeftHeightSeq m).trans
-      (farLeftHeightSeq_le_unifiedContourHeightSeq m)
+    (one_le_farLeftHeightSeq m).trans (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   have hTm : (m : ℝ) + 1 ≤ T :=
-    (add_one_le_farLeftHeightSeq m).trans
-      (farLeftHeightSeq_le_unifiedContourHeightSeq m)
+    (add_one_le_farLeftHeightSeq m).trans (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   have hTpos : 0 < T := one_pos.trans_le hT1
-  unfold leftVerticalZetaLogDerivBound
-    unifiedLeftVerticalLinearConst
+  unfold leftVerticalZetaLogDerivBound unifiedLeftVerticalLinearConst
   rw [abs_of_pos hTpos]
   have hC := le_abs_self qMinusOneLeftVerticalConst
-  have hCT :
-    |qMinusOneLeftVerticalConst| ≤
-      |qMinusOneLeftVerticalConst| * T :=
+  have hCT : |qMinusOneLeftVerticalConst| ≤ |qMinusOneLeftVerticalConst| * T :=
     le_mul_of_one_le_right (abs_nonneg _) hT1
   nlinarith only [hC, hCT, hTm]
 
@@ -200,8 +164,8 @@ noncomputable def unifiedTauRectangleUpper (τ : ℝ) (m : ℕ) : ℂ :=
 
 /-- The unified rectangle ending at `τ > 1` has no kernel singularity on its boundary. -/
 theorem llsRiemannRectangleBoundaryIsRegular_unified_tau {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
-    RiemannZetaRectangleBoundaryIsRegular
-      (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) := by
+    RiemannZetaRectangleBoundaryIsRegular (unifiedRectangleLower m)
+      (unifiedTauRectangleUpper τ m) := by
   intro s hs
   have hUpos : 0 < unifiedContourHeightSeq m :=
     (farLeftHeightSeq_pos m).trans_le (farLeftHeightSeq_le_unifiedContourHeightSeq m)
@@ -309,20 +273,17 @@ theorem llsRiemannRectangleBoundaryIsRegular_unified_tau {τ : ℝ} (hτ : 1 < �
   exfalso
   apply hs.2
   exact
-    RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne
-      hre him hsbox hsleft hsright hslower hsupper
+    RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne hre him hsbox hsleft hsright
+      hslower hsupper
 
 /-- Both Mellin singularities lie inside every unified rectangle ending at `τ > 1`. -/
 theorem zero_one_mem_llsClosedRectangle_unified_tau {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
     (0 : ℂ) ∈
-        Rectangle.rectangleClosedBox (unifiedRectangleLower m)
-          (unifiedTauRectangleUpper τ m) ∧
+        Rectangle.rectangleClosedBox (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) ∧
       (1 : ℂ) ∈
-        Rectangle.rectangleClosedBox (unifiedRectangleLower m)
-          (unifiedTauRectangleUpper τ m) := by
+        Rectangle.rectangleClosedBox (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) := by
   have hUpos : 0 < unifiedContourHeightSeq m :=
-    (farLeftHeightSeq_pos m).trans_le
-      (farLeftHeightSeq_le_unifiedContourHeightSeq m)
+    (farLeftHeightSeq_pos m).trans_le (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   have hm : (0 : ℝ) ≤ m := Nat.cast_nonneg m
   have hleft : -(2 * (m : ℝ) + 1) < τ := by linarith
   have hheight : -unifiedContourHeightSeq m < unifiedContourHeightSeq m := by linarith
@@ -343,20 +304,16 @@ belongs to the corresponding unified rectangle. No separate assumption `τ > 1` 
 theorem mem_unifiedTauRectangle (τ : ℝ) (m : ℕ) {p : ℂ} (hre1 : -(2 * (m : ℝ) + 1) ≤ p.re)
     (hre2 : p.re ≤ τ) (him1 : -unifiedContourHeightSeq m ≤ p.im)
     (him2 : p.im ≤ unifiedContourHeightSeq m) :
-    p ∈
-      Rectangle.rectangleClosedBox (unifiedRectangleLower m)
-        (unifiedTauRectangleUpper τ m) := by
+    p ∈ Rectangle.rectangleClosedBox (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) := by
   unfold Rectangle.rectangleClosedBox unifiedRectangleLower unifiedTauRectangleUpper
   refine ⟨Set.mem_uIcc.mpr (Or.inl ⟨hre1, hre2⟩), Set.mem_uIcc.mpr (Or.inl ⟨him1, him2⟩)⟩
 
 /-- The origin lies in every unified `τ`-rectangle with `τ > 1`. -/
 theorem zero_mem_unifiedTauRectangle {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
     (0 : ℂ) ∈
-      Rectangle.rectangleClosedBox (unifiedRectangleLower m)
-        (unifiedTauRectangleUpper τ m) := by
+      Rectangle.rectangleClosedBox (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) := by
   have hH : (1 : ℝ) ≤ unifiedContourHeightSeq m :=
-    (one_le_farLeftHeightSeq m).trans
-      (farLeftHeightSeq_le_unifiedContourHeightSeq m)
+    (one_le_farLeftHeightSeq m).trans (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   have hmR : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
   exact
     mem_unifiedTauRectangle τ m (p := 0)
@@ -372,11 +329,9 @@ theorem zero_mem_unifiedTauRectangle {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
 /-- The point `1` lies in every unified `τ`-rectangle with `τ > 1`. -/
 theorem one_mem_unifiedTauRectangle {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
     (1 : ℂ) ∈
-      Rectangle.rectangleClosedBox (unifiedRectangleLower m)
-        (unifiedTauRectangleUpper τ m) := by
+      Rectangle.rectangleClosedBox (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) := by
   have hH : (1 : ℝ) ≤ unifiedContourHeightSeq m :=
-    (one_le_farLeftHeightSeq m).trans
-      (farLeftHeightSeq_le_unifiedContourHeightSeq m)
+    (one_le_farLeftHeightSeq m).trans (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   have hmR : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
   exact
     mem_unifiedTauRectangle τ m (p := 1)

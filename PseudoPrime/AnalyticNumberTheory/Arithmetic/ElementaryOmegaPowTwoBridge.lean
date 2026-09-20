@@ -101,53 +101,33 @@ theorem certificate_of_powTwo_le_anchor {m e k : ℕ} (he4 : 4 ≤ e)
     (he : (2 : ℝ) ^ e ≤ elementaryAnchor m)
     (hnum :
       ((m + 1 : ℕ) : ℝ) *
-          ((k : ℝ) *
-                ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
-              (e : ℝ) *
-                  ElementaryOmegaPowTwoBridgeInternal.logTwoUpper /
-                2 ^ k -
+          ((k : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
+              (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper / 2 ^ k -
             1) ≤
-        elementaryOmegaConstant *
-          ((e : ℝ) *
-            ElementaryOmegaPowTwoBridgeInternal.logTwoLower)) :
-    (m : ℝ) + 1 ≤
-      elementaryOmegaRhsReal
-        (elementaryAnchor m) := by
+        elementaryOmegaConstant * ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower)) :
+    (m : ℝ) + 1 ≤ elementaryOmegaRhsReal (elementaryAnchor m) := by
   rw [show (m : ℝ) + 1 = ((m + 1 : ℕ) : ℝ) by
       push_cast; ring]
   have hdom : Real.exp (Real.exp 1) ≤ (2 : ℝ) ^ e :=
-    ElementaryOmegaPowTwoBridgeInternal.exp_exp_one_le_two_pow
-      he4
+    ElementaryOmegaPowTwoBridgeInternal.exp_exp_one_le_two_pow he4
   have hmono := elementaryOmegaRhsReal_mono hdom he
   have hepos : (0 : ℝ) < (e : ℝ) := by exact_mod_cast (by omega : 0 < e)
   have hlog2e :
-    (e : ℝ) *
-        ElementaryOmegaPowTwoBridgeInternal.logTwoLower ≤
-      Real.log ((2 : ℝ) ^ e) := by
+    (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower ≤ Real.log ((2 : ℝ) ^ e) := by
     rw [Real.log_pow]
     exact
-      mul_le_mul_of_nonneg_left
-        ElementaryOmegaPowTwoBridgeInternal.logTwoLower_lt_logTwo.le
+      mul_le_mul_of_nonneg_left ElementaryOmegaPowTwoBridgeInternal.logTwoLower_lt_logTwo.le
         hepos.le
-  have he_lower :
-    (1 : ℝ) <
-      (e : ℝ) *
-        ElementaryOmegaPowTwoBridgeInternal.logTwoLower := by
+  have he_lower : (1 : ℝ) < (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower := by
     have he4' : (4 : ℝ) ≤ (e : ℝ) := by exact_mod_cast he4
-    unfold
-      ElementaryOmegaPowTwoBridgeInternal.logTwoLower
+    unfold ElementaryOmegaPowTwoBridgeInternal.logTwoLower
     nlinarith only [he4']
   have hlog2e_gt1 : (1 : ℝ) < Real.log ((2 : ℝ) ^ e) := he_lower.trans_le hlog2e
   have hLLpos : (0 : ℝ) < Real.log (Real.log ((2 : ℝ) ^ e)) := Real.log_pos hlog2e_gt1
   have hloglog : Real.log (Real.log ((2 : ℝ) ^ e)) = Real.log ((e : ℝ) * Real.log 2) := by
     rw [Real.log_pow]
-  have hstep1 :
-    (e : ℝ) * Real.log 2 ≤
-      (e : ℝ) *
-        ElementaryOmegaPowTwoBridgeInternal.logTwoUpper :=
-    mul_le_mul_of_nonneg_left
-      ElementaryOmegaPowTwoBridgeInternal.logTwo_lt_logTwoUpper.le
-      hepos.le
+  have hstep1 : (e : ℝ) * Real.log 2 ≤ (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper :=
+    mul_le_mul_of_nonneg_left ElementaryOmegaPowTwoBridgeInternal.logTwo_lt_logTwoUpper.le hepos.le
   have hstep1pos : (0 : ℝ) < (e : ℝ) * Real.log 2 := by
     have hlog2pos : (0 : ℝ) < Real.log 2 :=
       ElementaryOmegaPowTwoBridgeInternal.logTwoLower_pos.trans
@@ -155,59 +135,36 @@ theorem certificate_of_powTwo_le_anchor {m e k : ℕ} (he4 : 4 ≤ e)
     exact mul_pos hepos hlog2pos
   have hstep2 :
     Real.log ((e : ℝ) * Real.log 2) ≤
-      Real.log
-        ((e : ℝ) *
-          ElementaryOmegaPowTwoBridgeInternal.logTwoUpper) :=
+      Real.log ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper) :=
     Real.log_le_log hstep1pos hstep1
-  have hUpos :
-    (0 : ℝ) <
-      ElementaryOmegaPowTwoBridgeInternal.logTwoUpper := by
-    unfold
-      ElementaryOmegaPowTwoBridgeInternal.logTwoUpper;
-    norm_num only
+  have hUpos : (0 : ℝ) < ElementaryOmegaPowTwoBridgeInternal.logTwoUpper := by
+    unfold ElementaryOmegaPowTwoBridgeInternal.logTwoUpper; norm_num only
   have hstep3 :=
-    ElementaryOmegaPowTwoBridgeInternal.log_le_powTwo_tangent
-      (u :=
-      (e : ℝ) *
-        ElementaryOmegaPowTwoBridgeInternal.logTwoUpper)
-      (mul_pos hepos hUpos) k
+    ElementaryOmegaPowTwoBridgeInternal.log_le_powTwo_tangent (u :=
+      (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper) (mul_pos hepos hUpos) k
   have hLLupper :
     Real.log (Real.log ((2 : ℝ) ^ e)) ≤
-      (k : ℝ) *
-            ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
-          (e : ℝ) *
-              ElementaryOmegaPowTwoBridgeInternal.logTwoUpper /
-            2 ^ k -
+      (k : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
+          (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper / 2 ^ k -
         1 := by
     rw [hloglog]
     linarith only [hstep2, hstep3]
-  have hfinal2e :
-    ((m + 1 : ℕ) : ℝ) ≤
-      elementaryOmegaRhsReal ((2 : ℝ) ^ e) := by
+  have hfinal2e : ((m + 1 : ℕ) : ℝ) ≤ elementaryOmegaRhsReal ((2 : ℝ) ^ e) := by
     unfold Arithmetic.elementaryOmegaRhsReal
     rw [le_div_iff₀ hLLpos]
     calc
       ((m + 1 : ℕ) : ℝ) * Real.log (Real.log ((2 : ℝ) ^ e)) ≤
           ((m + 1 : ℕ) : ℝ) *
-            ((k : ℝ) *
-                  ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
-                (e : ℝ) *
-                    ElementaryOmegaPowTwoBridgeInternal.logTwoUpper /
-                  2 ^ k -
+            ((k : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
+                (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper / 2 ^ k -
               1) :=
         mul_le_mul_of_nonneg_left hLLupper (by positivity)
-      _ ≤
-          elementaryOmegaConstant *
-            ((e : ℝ) *
-              ElementaryOmegaPowTwoBridgeInternal.logTwoLower) :=
+      _ ≤ elementaryOmegaConstant * ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower) :=
         hnum
-      _ ≤
-          elementaryOmegaConstant *
-            Real.log ((2 : ℝ) ^ e) :=
+      _ ≤ elementaryOmegaConstant * Real.log ((2 : ℝ) ^ e) :=
         mul_le_mul_of_nonneg_left hlog2e
           (by
-            unfold elementaryOmegaConstant;
-            norm_num only)
+            unfold elementaryOmegaConstant; norm_num only)
   exact hfinal2e.trans hmono
 
 /--
@@ -233,34 +190,24 @@ Role: lets certificates infer the primorial numeral `P` from `hP`. There is no l
   `m = 1, 2, 3, 4` use `certificate_of_powTwo_le_anchor` directly. The anchor is `3000` for
   `m = 1, 2, 3`, whereas `4 * oddPrimorial 4 = 4620 > 3000`.
 -/
-theorem certificate_of_primorial {m e k P : ℕ}
-    (hP : NumberTheory.primePrimorialCount (m + 1) = P) (he4 : 4 ≤ e)
-    (heP : (2 : ℝ) ^ e ≤ 2 * (P : ℝ))
+theorem certificate_of_primorial {m e k P : ℕ} (hP : NumberTheory.primePrimorialCount (m + 1) = P)
+    (he4 : 4 ≤ e) (heP : (2 : ℝ) ^ e ≤ 2 * (P : ℝ))
     (hnum :
       ((m + 1 : ℕ) : ℝ) *
-          ((k : ℝ) *
-                ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
-              (e : ℝ) *
-                  ElementaryOmegaPowTwoBridgeInternal.logTwoUpper /
-                2 ^ k -
+          ((k : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
+              (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper / 2 ^ k -
             1) ≤
-        elementaryOmegaConstant *
-          ((e : ℝ) *
-            ElementaryOmegaPowTwoBridgeInternal.logTwoLower)) :
-    (m : ℝ) + 1 ≤
-      elementaryOmegaRhsReal
-        (elementaryAnchor m) := by
+        elementaryOmegaConstant * ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower)) :
+    (m : ℝ) + 1 ≤ elementaryOmegaRhsReal (elementaryAnchor m) := by
   apply certificate_of_powTwo_le_anchor he4 _ hnum
   have h := primePrimorialCount_succ_eq_two_mul_oddPrimorial m
   rw [hP] at h
-  have hR : (P : ℝ) = 2 * (oddPrimorial m : ℝ) := by
-    exact_mod_cast h
+  have hR : (P : ℝ) = 2 * (oddPrimorial m : ℝ) := by exact_mod_cast h
   unfold elementaryAnchor
   calc
     (2 : ℝ) ^ e ≤ 2 * (P : ℝ) := heP
     _ = 4 * (oddPrimorial m : ℝ) := by
       rw [hR]; ring
-    _ ≤ max ((4 : ℝ) * (oddPrimorial m : ℝ)) 3000 :=
-      le_max_left _ _
+    _ ≤ max ((4 : ℝ) * (oddPrimorial m : ℝ)) 3000 := le_max_left _ _
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

@@ -156,7 +156,7 @@ theorem re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le_S2
     {χ : DirichletCharacter ℂ q} (hq1 : 1 < (Real.log q) ^ 2) (hq2 : 2 ≤ (Real.log q) ^ 2)
     {b eS : ℝ} (hcore : LLSWeightedComparisonCore χ ((Real.log q) ^ 2) b 0 0 eS) :
     riemannLogLowerAt ((Real.log q) ^ 2) ≤
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((Real.log q) ^ 2) χ).re ∧
+        (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((Real.log q) ^ 2) χ).re ∧
       Real.log ((Real.log q) ^ 2) - 8 / 5 ≤
         (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum ((Real.log q) ^ 2) χ).re ∧
       (1 - 1 / Real.sqrt ((Real.log q) ^ 2)) ^ 2 * b ≤

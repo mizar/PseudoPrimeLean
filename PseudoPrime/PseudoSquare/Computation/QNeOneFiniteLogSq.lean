@@ -56,8 +56,7 @@ theorem primeNeOneWitness_le_five_of_lt_sixteen {n : ℕ} (hn : Odd n) (hns : ¬
   rcases hp with rfl | rfl
   all_goals
     exact
-      (NumberTheory.primeNeOneWitness_le n _ ⟨by decide, by decide, hj⟩).trans
-        (by norm_num only)
+      (NumberTheory.primeNeOneWitness_le n _ ⟨by decide, by decide, hj⟩).trans (by norm_num only)
 
 theorem primeNeOneWitness_le_seven_of_lt_sixtyFour {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hB : n < 64) :
@@ -70,8 +69,7 @@ theorem primeNeOneWitness_le_seven_of_lt_sixtyFour {n : ℕ} (hn : Odd n) (hns :
   rcases hp with rfl | rfl | rfl
   all_goals
     exact
-      (NumberTheory.primeNeOneWitness_le n _ ⟨by decide, by decide, hj⟩).trans
-        (by norm_num only)
+      (NumberTheory.primeNeOneWitness_le n _ ⟨by decide, by decide, hj⟩).trans (by norm_num only)
 
 theorem log_two_mul_le_log_of_pow_two_le {n k : ℕ} (hn : 2 ^ k ≤ n) :
     (k : ℝ) * Real.log 2 ≤ Real.log (n : ℝ) := by

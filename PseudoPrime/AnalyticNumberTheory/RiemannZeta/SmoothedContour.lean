@@ -56,15 +56,11 @@ noncomputable def riemannZetaLogZeroRegularization (x : ℝ) (s : ℂ) : ℂ :=
 
 /-- The reciprocal kernel after removing its double pole at one. -/
 noncomputable def riemannZetaReciprocalOneRegularization (x : ℝ) (s : ℂ) : ℂ :=
-  riemannZetaOneLogDerivativeRegularization s *
-      (x : ℂ) ^ (s - 1) /
-    s
+  riemannZetaOneLogDerivativeRegularization s * (x : ℂ) ^ (s - 1) / s
 
 /-- The logarithmic kernel after removing its simple pole at one. -/
 noncomputable def riemannZetaLogOneRegularization (x : ℝ) (s : ℂ) : ℂ :=
-  riemannZetaOneLogDerivativeRegularization s *
-      (x : ℂ) ^ s /
-    s ^ 2
+  riemannZetaOneLogDerivativeRegularization s * (x : ℂ) ^ s / s ^ 2
 
 /-- The reciprocal kernel with a zeta-zero pole of multiplicity `m` removed at `ρ`. -/
 noncomputable def riemannZetaReciprocalZetaZeroRegularization (x : ℝ) (ρ : ℂ) (m : ℕ) (g : ℂ → ℂ)
@@ -84,8 +80,7 @@ poles are provided by `PseudoPrime.AnalyticNumberTheory.General.PoleResidueCalcu
 /-- The reciprocal contour kernel is differentiable away from zero, one, and zeta zeros. -/
 theorem differentiableAt_riemannZetaReciprocalContourKernel {x : ℝ} (hx : 0 < x) {s : ℂ}
     (hs0 : s ≠ 0) (hs1 : s ≠ 1) (hszeta : riemannZeta s ≠ 0) :
-    DifferentiableAt ℂ
-      (riemannZetaReciprocalContourKernel x) s := by
+    DifferentiableAt ℂ (riemannZetaReciprocalContourKernel x) s := by
   have hzeta : DifferentiableAt ℂ riemannZeta s := differentiableAt_riemannZeta hs1
   have hscompl : s ∈ ({1}ᶜ : Set ℂ) := by
     simpa only [Set.mem_compl_iff, Set.mem_singleton_iff, ne_eq] using hs1
@@ -101,8 +96,7 @@ theorem differentiableAt_riemannZetaReciprocalContourKernel {x : ℝ} (hx : 0 < 
 /-- The logarithmically weighted kernel is differentiable away from zero, one, and zeta zeros. -/
 theorem differentiableAt_riemannZetaLogContourKernel {x : ℝ} (hx : 0 < x) {s : ℂ} (hs0 : s ≠ 0)
     (hs1 : s ≠ 1) (hszeta : riemannZeta s ≠ 0) :
-    DifferentiableAt ℂ (riemannZetaLogContourKernel x)
-      s := by
+    DifferentiableAt ℂ (riemannZetaLogContourKernel x) s := by
   have hzeta : DifferentiableAt ℂ riemannZeta s := differentiableAt_riemannZeta hs1
   have hscompl : s ∈ ({1}ᶜ : Set ℂ) := by
     simpa only [Set.mem_compl_iff, Set.mem_singleton_iff, ne_eq] using hs1
@@ -117,51 +111,40 @@ theorem differentiableAt_riemannZetaLogContourKernel {x : ℝ} (hx : 0 < x) {s :
 
 /-- Multiplication by `s` removes the reciprocal kernel's Mellin pole away from zero and one. -/
 theorem mul_riemannZetaReciprocalContourKernel (x : ℝ) {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
-    s * riemannZetaReciprocalContourKernel x s =
-      riemannZetaReciprocalZeroRegularization x s := by
+    s * riemannZetaReciprocalContourKernel x s = riemannZetaReciprocalZeroRegularization x s := by
   unfold riemannZetaReciprocalContourKernel riemannZetaReciprocalZeroRegularization
   field_simp
 
 /-- Multiplication by `s²` removes the logarithmic kernel's double Mellin pole away from zero. -/
 theorem sq_mul_riemannZetaLogContourKernel (x : ℝ) {s : ℂ} (hs0 : s ≠ 0) :
-    s ^ 2 * riemannZetaLogContourKernel x s =
-      riemannZetaLogZeroRegularization x s := by
+    s ^ 2 * riemannZetaLogContourKernel x s = riemannZetaLogZeroRegularization x s := by
   unfold riemannZetaLogContourKernel riemannZetaLogZeroRegularization
   field_simp
 
 /-- Near zero, multiplying the reciprocal kernel by `s` gives its zero-regularized extension. -/
 theorem eventuallyEq_riemannZetaReciprocalZeroRegularization (x : ℝ) :
     Filter.EventuallyEq (nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ))
-      (fun s ↦
-        (s - 0) *
-          riemannZetaReciprocalContourKernel x s)
+      (fun s ↦ (s - 0) * riemannZetaReciprocalContourKernel x s)
       (riemannZetaReciprocalZeroRegularization x) := by
   have honeNhds : ∀ᶠ s : ℂ in nhds 0, s ≠ 1 := compl_singleton_mem_nhds (by norm_num only)
   have hone : ∀ᶠ s in nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ), s ≠ 1 :=
     honeNhds.filter_mono nhdsWithin_le_nhds
   filter_upwards [hone, eventually_mem_nhdsWithin] with s hs1 hs0
   rw [sub_zero]
-  exact
-    mul_riemannZetaReciprocalContourKernel x
-      (Set.mem_compl_singleton_iff.mp hs0) hs1
+  exact mul_riemannZetaReciprocalContourKernel x (Set.mem_compl_singleton_iff.mp hs0) hs1
 
 /-- Near zero, `s²` times the logarithmic kernel gives its zero-regularized extension. -/
 theorem eventuallyEq_riemannZetaLogZeroRegularization (x : ℝ) :
     Filter.EventuallyEq (nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ))
-      (fun s ↦
-        (s - 0) ^ 2 * riemannZetaLogContourKernel x s)
+      (fun s ↦ (s - 0) ^ 2 * riemannZetaLogContourKernel x s)
       (riemannZetaLogZeroRegularization x) := by
   filter_upwards [eventually_mem_nhdsWithin] with s hs0
   rw [sub_zero]
-  exact
-    sq_mul_riemannZetaLogContourKernel x
-      (Set.mem_compl_singleton_iff.mp hs0)
+  exact sq_mul_riemannZetaLogContourKernel x (Set.mem_compl_singleton_iff.mp hs0)
 
 /-- The reciprocal zero-regularization is analytic near zero. -/
 theorem analyticAt_riemannZetaReciprocalZeroRegularization {x : ℝ} (hx : 0 < x) :
-    AnalyticAt ℂ
-      (riemannZetaReciprocalZeroRegularization x)
-      0 := by
+    AnalyticAt ℂ (riemannZetaReciprocalZeroRegularization x) 0 := by
   have hzeta : AnalyticAt ℂ riemannZeta 0 := analyticOn_riemannZeta 0 zero_ne_one
   have hzeta0 : riemannZeta 0 ≠ 0 := by
     rw [riemannZeta_zero]; norm_num only
@@ -176,8 +159,7 @@ theorem analyticAt_riemannZetaReciprocalZeroRegularization {x : ℝ} (hx : 0 < x
 
 /-- The logarithmic zero-regularization is analytic near zero. -/
 theorem analyticAt_riemannZetaLogZeroRegularization {x : ℝ} (hx : 0 < x) :
-    AnalyticAt ℂ (riemannZetaLogZeroRegularization x)
-      0 := by
+    AnalyticAt ℂ (riemannZetaLogZeroRegularization x) 0 := by
   have hzeta : AnalyticAt ℂ riemannZeta 0 := analyticOn_riemannZeta 0 zero_ne_one
   have hzeta0 : riemannZeta 0 ≠ 0 := by
     rw [riemannZeta_zero]; norm_num only
@@ -190,19 +172,15 @@ theorem analyticAt_riemannZetaLogZeroRegularization {x : ℝ} (hx : 0 < x) :
 
 /-- The regularized logarithmic kernel has the expected leading coefficient at zero. -/
 theorem riemannZetaLogZeroRegularization_zero (x : ℝ) :
-    riemannZetaLogZeroRegularization x 0 =
-      -Complex.log (2 * Real.pi) := by
-  rw [riemannZetaLogZeroRegularization,
-    deriv_riemannZeta_zero, riemannZeta_zero]
+    riemannZetaLogZeroRegularization x 0 = -Complex.log (2 * Real.pi) := by
+  rw [riemannZetaLogZeroRegularization, deriv_riemannZeta_zero, riemannZeta_zero]
   rw [Complex.cpow_zero, mul_one]
   ring
 
 /-- The regularized reciprocal kernel has the expected residue coefficient at zero. -/
 theorem riemannZetaReciprocalZeroRegularization_zero (x : ℝ) :
-    riemannZetaReciprocalZeroRegularization x 0 =
-      Complex.log (2 * Real.pi) * (x : ℂ)⁻¹ := by
-  rw [riemannZetaReciprocalZeroRegularization,
-    deriv_riemannZeta_zero, riemannZeta_zero]
+    riemannZetaReciprocalZeroRegularization x 0 = Complex.log (2 * Real.pi) * (x : ℂ)⁻¹ := by
+  rw [riemannZetaReciprocalZeroRegularization, deriv_riemannZeta_zero, riemannZeta_zero]
   rw [show (0 : ℂ) - 1 = -1 by ring, Complex.cpow_neg_one]
   norm_num only
   ring
@@ -210,45 +188,34 @@ theorem riemannZetaReciprocalZeroRegularization_zero (x : ℝ) :
 /-- Near one, `(s-1)²` times the reciprocal kernel equals its regularized extension. -/
 theorem eventuallyEq_riemannZetaReciprocalOneRegularization (x : ℝ) :
     Filter.EventuallyEq (nhdsWithin (1 : ℂ) ({1}ᶜ : Set ℂ))
-      (fun s ↦
-        (s - 1) ^ 2 *
-          riemannZetaReciprocalContourKernel x s)
+      (fun s ↦ (s - 1) ^ 2 * riemannZetaReciprocalContourKernel x s)
       (riemannZetaReciprocalOneRegularization x) := by
   have hzeroNhds : ∀ᶠ s : ℂ in nhds 1, s ≠ 0 :=
     compl_singleton_mem_nhds (by norm_num only : (1 : ℂ) ≠ 0)
   have hzero : ∀ᶠ s in nhdsWithin (1 : ℂ) ({1}ᶜ : Set ℂ), s ≠ 0 :=
     hzeroNhds.filter_mono nhdsWithin_le_nhds
-  filter_upwards [eventually_mem_nhdsWithin,
-    eventuallyEq_riemannZetaOneLogDerivativeRegularization,
+  filter_upwards [eventually_mem_nhdsWithin, eventuallyEq_riemannZetaOneLogDerivativeRegularization,
     hzero] with s hs hsreg hs0
-  rw [riemannZetaReciprocalContourKernel,
-    riemannZetaReciprocalOneRegularization, ← hsreg]
+  rw [riemannZetaReciprocalContourKernel, riemannZetaReciprocalOneRegularization, ← hsreg]
   have hs1 : s - 1 ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hs)
   field_simp
 
 /-- Near one, `s-1` times the logarithmic kernel equals its regularized extension. -/
 theorem eventuallyEq_riemannZetaLogOneRegularization (x : ℝ) :
     Filter.EventuallyEq (nhdsWithin (1 : ℂ) ({1}ᶜ : Set ℂ))
-      (fun s ↦
-        (s - 1) * riemannZetaLogContourKernel x s)
-      (riemannZetaLogOneRegularization x) := by
+      (fun s ↦ (s - 1) * riemannZetaLogContourKernel x s) (riemannZetaLogOneRegularization x) := by
   have hzeroNhds : ∀ᶠ s : ℂ in nhds 1, s ≠ 0 :=
     compl_singleton_mem_nhds (by norm_num only : (1 : ℂ) ≠ 0)
   have hzero : ∀ᶠ s in nhdsWithin (1 : ℂ) ({1}ᶜ : Set ℂ), s ≠ 0 :=
     hzeroNhds.filter_mono nhdsWithin_le_nhds
-  filter_upwards [eventuallyEq_riemannZetaOneLogDerivativeRegularization,
-    hzero] with s hsreg hs0
-  rw [riemannZetaLogContourKernel,
-    riemannZetaLogOneRegularization, ← hsreg]
+  filter_upwards [eventuallyEq_riemannZetaOneLogDerivativeRegularization, hzero] with s hsreg hs0
+  rw [riemannZetaLogContourKernel, riemannZetaLogOneRegularization, ← hsreg]
   field_simp
 
 /-- The reciprocal one-regularization is analytic near one. -/
 theorem analyticAt_riemannZetaReciprocalOneRegularization {x : ℝ} (hx : 0 < x) :
-    AnalyticAt ℂ
-      (riemannZetaReciprocalOneRegularization x)
-      1 := by
-  have hregular :=
-    analyticAt_riemannZetaOneLogDerivativeRegularization
+    AnalyticAt ℂ (riemannZetaReciprocalOneRegularization x) 1 := by
+  have hregular := analyticAt_riemannZetaOneLogDerivativeRegularization
   have hxslit : (x : ℂ) ∈ Complex.slitPlane := Complex.ofReal_mem_slitPlane.2 hx
   have hpow : AnalyticAt ℂ (fun s : ℂ ↦ (x : ℂ) ^ (s - 1)) 1 :=
     analyticAt_const.cpow (analyticAt_id.sub analyticAt_const) hxslit
@@ -258,10 +225,8 @@ theorem analyticAt_riemannZetaReciprocalOneRegularization {x : ℝ} (hx : 0 < x)
 
 /-- The logarithmic one-regularization is analytic near one. -/
 theorem analyticAt_riemannZetaLogOneRegularization {x : ℝ} (hx : 0 < x) :
-    AnalyticAt ℂ (riemannZetaLogOneRegularization x)
-      1 := by
-  have hregular :=
-    analyticAt_riemannZetaOneLogDerivativeRegularization
+    AnalyticAt ℂ (riemannZetaLogOneRegularization x) 1 := by
+  have hregular := analyticAt_riemannZetaOneLogDerivativeRegularization
   have hxslit : (x : ℂ) ∈ Complex.slitPlane := Complex.ofReal_mem_slitPlane.2 hx
   have hpow : AnalyticAt ℂ (fun s : ℂ ↦ (x : ℂ) ^ s) 1 := analyticAt_const.cpow analyticAt_id hxslit
   have hdenominator : (1 : ℂ) ^ 2 ≠ 0 := by norm_num only
@@ -269,10 +234,8 @@ theorem analyticAt_riemannZetaLogOneRegularization {x : ℝ} (hx : 0 < x) :
   fun_prop (disch := assumption)
 
 /-- The logarithmic kernel's residue coefficient at one is `x`. -/
-theorem riemannZetaLogOneRegularization_one (x : ℝ) :
-    riemannZetaLogOneRegularization x 1 = x := by
-  simp only [riemannZetaLogOneRegularization,
-    riemannZetaOneLogDerivativeRegularization_one,
+theorem riemannZetaLogOneRegularization_one (x : ℝ) : riemannZetaLogOneRegularization x 1 = x := by
+  simp only [riemannZetaLogOneRegularization, riemannZetaOneLogDerivativeRegularization_one,
     Complex.cpow_one, one_mul, one_pow, div_one]
 
 /-!
@@ -283,11 +246,7 @@ provided by `PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting`.
 /-- The reciprocal zeta-zero regularization is analytic near its center. -/
 theorem analyticAt_riemannZetaReciprocalZetaZeroRegularization {x : ℝ} (hx : 0 < x) {ρ : ℂ}
     (hρ0 : ρ ≠ 0) (hρ1 : ρ ≠ 1) (m : ℕ) {g : ℂ → ℂ} (hganalytic : AnalyticAt ℂ g ρ)
-    (hgzero : g ρ ≠ 0) :
-    AnalyticAt ℂ
-      (riemannZetaReciprocalZetaZeroRegularization x ρ
-        m g)
-      ρ := by
+    (hgzero : g ρ ≠ 0) : AnalyticAt ℂ (riemannZetaReciprocalZetaZeroRegularization x ρ m g) ρ := by
   have hlog : AnalyticAt ℂ (logDeriv g) ρ := by
     unfold logDeriv
     exact hganalytic.deriv.div hganalytic hgzero
@@ -301,9 +260,7 @@ theorem analyticAt_riemannZetaReciprocalZetaZeroRegularization {x : ℝ} (hx : 0
 /-- The logarithmic zeta-zero regularization is analytic near its center. -/
 theorem analyticAt_riemannZetaLogZetaZeroRegularization {x : ℝ} (hx : 0 < x) {ρ : ℂ} (hρ0 : ρ ≠ 0)
     (m : ℕ) {g : ℂ → ℂ} (hganalytic : AnalyticAt ℂ g ρ) (hgzero : g ρ ≠ 0) :
-    AnalyticAt ℂ
-      (riemannZetaLogZetaZeroRegularization x ρ m g)
-      ρ := by
+    AnalyticAt ℂ (riemannZetaLogZetaZeroRegularization x ρ m g) ρ := by
   have hlog : AnalyticAt ℂ (logDeriv g) ρ := by
     unfold logDeriv
     exact hganalytic.deriv.div hganalytic hgzero
@@ -315,18 +272,14 @@ theorem analyticAt_riemannZetaLogZetaZeroRegularization {x : ℝ} (hx : 0 < x) {
 
 /-- The reciprocal zero-regularization evaluates to the weighted negative multiplicity. -/
 theorem riemannZetaReciprocalZetaZeroRegularization_self (x : ℝ) (ρ : ℂ) (m : ℕ) (g : ℂ → ℂ) :
-    riemannZetaReciprocalZetaZeroRegularization x ρ m g
-        ρ =
+    riemannZetaReciprocalZetaZeroRegularization x ρ m g ρ =
       -(m : ℂ) * (x : ℂ) ^ (ρ - 1) / (ρ * (ρ - 1)) := by
-  simp only [riemannZetaReciprocalZetaZeroRegularization,
-    sub_self, zero_mul, add_zero, neg_mul]
+  simp only [riemannZetaReciprocalZetaZeroRegularization, sub_self, zero_mul, add_zero, neg_mul]
 
 /-- The logarithmic zero-regularization evaluates to the weighted negative multiplicity. -/
 theorem riemannZetaLogZetaZeroRegularization_self (x : ℝ) (ρ : ℂ) (m : ℕ) (g : ℂ → ℂ) :
-    riemannZetaLogZetaZeroRegularization x ρ m g ρ =
-      -(m : ℂ) * (x : ℂ) ^ ρ / ρ ^ 2 := by
-  simp only [riemannZetaLogZetaZeroRegularization,
-    sub_self, zero_mul, add_zero, neg_mul]
+    riemannZetaLogZetaZeroRegularization x ρ m g ρ = -(m : ℂ) * (x : ℂ) ^ ρ / ρ ^ 2 := by
+  simp only [riemannZetaLogZetaZeroRegularization, sub_self, zero_mul, add_zero, neg_mul]
 
 /--
 At a zeta zero away from zero and one, the scaled reciprocal kernel agrees locally with its
@@ -339,15 +292,10 @@ theorem exists_eventuallyEq_reciprocalKernel_zetaZeroRegularization (x : ℝ) {�
         AnalyticAt ℂ g ρ ∧
         g ρ ≠ 0 ∧
         Filter.EventuallyEq (nhdsWithin ρ ({ρ}ᶜ : Set ℂ))
-          (fun s ↦
-            (s - ρ) *
-              riemannZetaReciprocalContourKernel x s)
-          (riemannZetaReciprocalZetaZeroRegularization
-            x ρ (riemannZetaZeroMultiplicity ρ)
-            g) := by
+          (fun s ↦ (s - ρ) * riemannZetaReciprocalContourKernel x s)
+          (riemannZetaReciprocalZetaZeroRegularization x ρ (riemannZetaZeroMultiplicity ρ) g) := by
   obtain ⟨g, hpos, hganalytic, hgzero, hlog⟩ :=
-    exists_eventuallyEq_logDeriv_riemannZeta_at_zero
-      hρ1 hzero
+    exists_eventuallyEq_logDeriv_riemannZeta_at_zero hρ1 hzero
   refine ⟨g, hpos, hganalytic, hgzero, ?_⟩
   have hzeroNhds : ∀ᶠ s : ℂ in nhds ρ, s ≠ 0 := compl_singleton_mem_nhds hρ0
   have hzeroEventually : ∀ᶠ s in nhdsWithin ρ ({ρ}ᶜ : Set ℂ), s ≠ 0 :=
@@ -359,13 +307,10 @@ theorem exists_eventuallyEq_reciprocalKernel_zetaZeroRegularization (x : ℝ) {�
     hs1 hsρ
   have hlogs' :
     deriv riemannZeta s / riemannZeta s =
-      (riemannZetaZeroMultiplicity ρ : ℂ) / (s - ρ) +
-        logDeriv g s := by
+      (riemannZetaZeroMultiplicity ρ : ℂ) / (s - ρ) + logDeriv g s := by
     rw [← logDeriv_apply]
     exact hlogs
-  rw [riemannZetaReciprocalContourKernel,
-    riemannZetaReciprocalZetaZeroRegularization,
-    hlogs']
+  rw [riemannZetaReciprocalContourKernel, riemannZetaReciprocalZetaZeroRegularization, hlogs']
   have hsρ' : s - ρ ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hsρ)
   field_simp
 
@@ -380,13 +325,10 @@ theorem exists_eventuallyEq_logKernel_zetaZeroRegularization (x : ℝ) {ρ : ℂ
         AnalyticAt ℂ g ρ ∧
         g ρ ≠ 0 ∧
         Filter.EventuallyEq (nhdsWithin ρ ({ρ}ᶜ : Set ℂ))
-          (fun s ↦
-            (s - ρ) * riemannZetaLogContourKernel x s)
-          (riemannZetaLogZetaZeroRegularization x ρ
-            (riemannZetaZeroMultiplicity ρ) g) := by
+          (fun s ↦ (s - ρ) * riemannZetaLogContourKernel x s)
+          (riemannZetaLogZetaZeroRegularization x ρ (riemannZetaZeroMultiplicity ρ) g) := by
   obtain ⟨g, hpos, hganalytic, hgzero, hlog⟩ :=
-    exists_eventuallyEq_logDeriv_riemannZeta_at_zero
-      hρ1 hzero
+    exists_eventuallyEq_logDeriv_riemannZeta_at_zero hρ1 hzero
   refine ⟨g, hpos, hganalytic, hgzero, ?_⟩
   have hzeroNhds : ∀ᶠ s : ℂ in nhds ρ, s ≠ 0 := compl_singleton_mem_nhds hρ0
   have hzeroEventually : ∀ᶠ s in nhdsWithin ρ ({ρ}ᶜ : Set ℂ), s ≠ 0 :=
@@ -394,12 +336,10 @@ theorem exists_eventuallyEq_logKernel_zetaZeroRegularization (x : ℝ) {ρ : ℂ
   filter_upwards [hlog, hzeroEventually, eventually_mem_nhdsWithin] with s hlogs hs0 hsρ
   have hlogs' :
     deriv riemannZeta s / riemannZeta s =
-      (riemannZetaZeroMultiplicity ρ : ℂ) / (s - ρ) +
-        logDeriv g s := by
+      (riemannZetaZeroMultiplicity ρ : ℂ) / (s - ρ) + logDeriv g s := by
     rw [← logDeriv_apply]
     exact hlogs
-  rw [riemannZetaLogContourKernel,
-    riemannZetaLogZetaZeroRegularization, hlogs']
+  rw [riemannZetaLogContourKernel, riemannZetaLogZetaZeroRegularization, hlogs']
   have hsρ' : s - ρ ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hsρ)
   field_simp
 
@@ -429,33 +369,24 @@ noncomputable def riemannZetaLogResidueAtOne (x : ℝ) : ℂ :=
 noncomputable def riemannZetaReciprocalMellinPoleLedger (x : ℝ) (z w : ℂ) : ℂ := by
   classical
     exact
-    (if (0 : ℂ) ∈ Rectangle.rectangleClosedBox z w then
-        riemannZetaReciprocalResidueAtZero x
+    (if (0 : ℂ) ∈ Rectangle.rectangleClosedBox z w then riemannZetaReciprocalResidueAtZero x
       else 0) +
-      if (1 : ℂ) ∈ Rectangle.rectangleClosedBox z w then
-        riemannZetaReciprocalResidueAtOne x
-      else 0
+      if (1 : ℂ) ∈ Rectangle.rectangleClosedBox z w then riemannZetaReciprocalResidueAtOne x else 0
 
 /-- The logarithmic-kernel residues at zero and one that lie inside a closed rectangle. -/
 noncomputable def riemannZetaLogMellinPoleLedger (x : ℝ) (z w : ℂ) : ℂ := by
   classical
     exact
-    (if (0 : ℂ) ∈ Rectangle.rectangleClosedBox z w then
-        riemannZetaLogResidueAtZero x
-      else 0) +
-      if (1 : ℂ) ∈ Rectangle.rectangleClosedBox z w then
-        riemannZetaLogResidueAtOne x
-      else 0
+    (if (0 : ℂ) ∈ Rectangle.rectangleClosedBox z w then riemannZetaLogResidueAtZero x else 0) +
+      if (1 : ℂ) ∈ Rectangle.rectangleClosedBox z w then riemannZetaLogResidueAtOne x else 0
 
 /-- The total reciprocal-kernel residue ledger in a closed rectangle. -/
 noncomputable def riemannZetaReciprocalContourResidueLedger (x : ℝ) (z w : ℂ) : ℂ :=
-  riemannZetaReciprocalMellinPoleLedger x z w +
-    riemannZetaReciprocalContourZeroLedger x z w
+  riemannZetaReciprocalMellinPoleLedger x z w + riemannZetaReciprocalContourZeroLedger x z w
 
 /-- The total logarithmic-kernel residue ledger in a closed rectangle. -/
 noncomputable def riemannZetaLogContourResidueLedger (x : ℝ) (z w : ℂ) : ℂ :=
-  riemannZetaLogMellinPoleLedger x z w +
-    riemannZetaLogContourZeroLedger x z w
+  riemannZetaLogMellinPoleLedger x z w + riemannZetaLogContourZeroLedger x z w
 
 /-!
 The triple-pole divided-slope decomposition is provided by
@@ -477,49 +408,34 @@ theorem exists_radius_forall_llsRectangleBoundaryIntegrals_eq_mellinResidues {x 
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            RectangleGeometry.rectangleBoundaryIntegral
-                  (riemannZetaReciprocalContourKernel
-                    x)
+            RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
                   (RectangleGeometry.centeredSquareLower 0 r)
                   (RectangleGeometry.centeredSquareUpper 0 r) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaReciprocalResidueAtZero
-                    x ∧
-              RectangleGeometry.rectangleBoundaryIntegral
-                  (riemannZetaLogContourKernel x)
+                2 * Real.pi * Complex.I * riemannZetaReciprocalResidueAtZero x ∧
+              RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
                   (RectangleGeometry.centeredSquareLower 1 r)
                   (RectangleGeometry.centeredSquareUpper 1 r) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaLogResidueAtOne x ∧
-              RectangleGeometry.rectangleBoundaryIntegral
-                  (riemannZetaReciprocalContourKernel
-                    x)
+                2 * Real.pi * Complex.I * riemannZetaLogResidueAtOne x ∧
+              RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
                   (RectangleGeometry.centeredSquareLower 1 r)
                   (RectangleGeometry.centeredSquareUpper 1 r) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaReciprocalResidueAtOne x ∧
-              RectangleGeometry.rectangleBoundaryIntegral
-                  (riemannZetaLogContourKernel x)
+                2 * Real.pi * Complex.I * riemannZetaReciprocalResidueAtOne x ∧
+              RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
                   (RectangleGeometry.centeredSquareLower 0 r)
                   (RectangleGeometry.centeredSquareUpper 0 r) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaLogResidueAtZero x := by
+                2 * Real.pi * Complex.I * riemannZetaLogResidueAtZero x := by
   obtain ⟨R1, hR1, h1⟩ :=
     RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul
-      (analyticAt_riemannZetaReciprocalZeroRegularization
-        hx)
-      (eventuallyEq_riemannZetaReciprocalZeroRegularization
-        x)
+      (analyticAt_riemannZetaReciprocalZeroRegularization hx)
+      (eventuallyEq_riemannZetaReciprocalZeroRegularization x)
   obtain ⟨R2, hR2, h2⟩ :=
     RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul
       (analyticAt_riemannZetaLogOneRegularization hx)
       (eventuallyEq_riemannZetaLogOneRegularization x)
   obtain ⟨R3, hR3, h3⟩ :=
     RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv
-      (analyticAt_riemannZetaReciprocalOneRegularization
-        hx)
-      (eventuallyEq_riemannZetaReciprocalOneRegularization
-        x)
+      (analyticAt_riemannZetaReciprocalOneRegularization hx)
+      (eventuallyEq_riemannZetaReciprocalOneRegularization x)
   obtain ⟨R4, hR4, h4⟩ :=
     RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv
       (analyticAt_riemannZetaLogZeroRegularization hx)
@@ -548,59 +464,38 @@ theorem exists_radius_forall_llsRectangleBoundaryIntegrals_eq_zeroContributions 
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            RectangleGeometry.rectangleBoundaryIntegral
-                  (riemannZetaReciprocalContourKernel
-                    x)
+            RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
                   (RectangleGeometry.centeredSquareLower ρ r)
                   (RectangleGeometry.centeredSquareUpper ρ r) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaReciprocalZeroContribution
-                    x ρ ∧
-              RectangleGeometry.rectangleBoundaryIntegral
-                  (riemannZetaLogContourKernel x)
+                2 * Real.pi * Complex.I * riemannZetaReciprocalZeroContribution x ρ ∧
+              RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
                   (RectangleGeometry.centeredSquareLower ρ r)
                   (RectangleGeometry.centeredSquareUpper ρ r) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaLogZeroContribution x
-                    ρ := by
+                2 * Real.pi * Complex.I * riemannZetaLogZeroContribution x ρ := by
   obtain ⟨g1, -, hganalytic1, hgzero1, heq1⟩ :=
-    exists_eventuallyEq_reciprocalKernel_zetaZeroRegularization
-      x hρ0 hρ1 hzero
+    exists_eventuallyEq_reciprocalKernel_zetaZeroRegularization x hρ0 hρ1 hzero
   obtain ⟨g2, -, hganalytic2, hgzero2, heq2⟩ :=
-    exists_eventuallyEq_logKernel_zetaZeroRegularization
-      x hρ0 hρ1 hzero
+    exists_eventuallyEq_logKernel_zetaZeroRegularization x hρ0 hρ1 hzero
   have hh1 :
     AnalyticAt ℂ
-      (riemannZetaReciprocalZetaZeroRegularization x ρ
-        (riemannZetaZeroMultiplicity ρ) g1)
-      ρ :=
-    analyticAt_riemannZetaReciprocalZetaZeroRegularization
-      hx hρ0 hρ1 _ hganalytic1 hgzero1
+      (riemannZetaReciprocalZetaZeroRegularization x ρ (riemannZetaZeroMultiplicity ρ) g1) ρ :=
+    analyticAt_riemannZetaReciprocalZetaZeroRegularization hx hρ0 hρ1 _ hganalytic1 hgzero1
   have hh2 :
-    AnalyticAt ℂ
-      (riemannZetaLogZetaZeroRegularization x ρ
-        (riemannZetaZeroMultiplicity ρ) g2)
-      ρ :=
-    analyticAt_riemannZetaLogZetaZeroRegularization hx
-      hρ0 _ hganalytic2 hgzero2
+    AnalyticAt ℂ (riemannZetaLogZetaZeroRegularization x ρ (riemannZetaZeroMultiplicity ρ) g2) ρ :=
+    analyticAt_riemannZetaLogZetaZeroRegularization hx hρ0 _ hganalytic2 hgzero2
   obtain ⟨R1, hR1, h1⟩ :=
-    RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul
-      hh1 heq1
+    RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul hh1 heq1
   obtain ⟨R2, hR2, h2⟩ :=
-    RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul
-      hh2 heq2
+    RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul hh2 heq2
   let R := min R1 R2
   have hR : 0 < R := lt_min hR1 hR2
   refine ⟨R, hR, fun r hr hrR ↦ ?_⟩
   have hR1' : r ≤ R1 := hrR.trans (min_le_left _ _)
   have hR2' : r ≤ R2 := hrR.trans (min_le_right _ _)
   refine ⟨?_, ?_⟩
-  · rw [h1 r hr hR1',
-      riemannZetaReciprocalZetaZeroRegularization_self,
+  · rw [h1 r hr hR1', riemannZetaReciprocalZetaZeroRegularization_self,
       riemannZetaReciprocalZeroContribution]
-  · rw [h2 r hr hR2',
-      riemannZetaLogZetaZeroRegularization_self,
-      riemannZetaLogZeroContribution]
+  · rw [h2 r hr hR2', riemannZetaLogZetaZeroRegularization_self, riemannZetaLogZeroContribution]
 
 /--
 All zeta zeros in one rectangle share a positive radius for both kernel square boundary formulas.
@@ -618,48 +513,34 @@ theorem exists_common_radius_llsRectangleBoundaryIntegrals_eq_zeroContributions 
             r ≤ R →
             ∀ ρ ∈ riemannZetaZerosInAnyRectangle z w,
               RectangleGeometry.rectangleBoundaryIntegral
-                    (RiemannZeta.riemannZetaReciprocalContourKernel
-                      x)
+                    (RiemannZeta.riemannZetaReciprocalContourKernel x)
                     (RectangleGeometry.centeredSquareLower ρ r)
                     (RectangleGeometry.centeredSquareUpper ρ r) =
-                  2 * Real.pi * Complex.I *
-                    riemannZetaReciprocalZeroContribution
-                      x ρ ∧
+                  2 * Real.pi * Complex.I * riemannZetaReciprocalZeroContribution x ρ ∧
                 RectangleGeometry.rectangleBoundaryIntegral
                     (RiemannZeta.riemannZetaLogContourKernel x)
                     (RectangleGeometry.centeredSquareLower ρ r)
                     (RectangleGeometry.centeredSquareUpper ρ r) =
-                  2 * Real.pi * Complex.I *
-                    riemannZetaLogZeroContribution x
-                      ρ := by
+                  2 * Real.pi * Complex.I * riemannZetaLogZeroContribution x ρ := by
   classical
   let S := riemannZetaZerosInAnyRectangle z w
   let certificate (ρ : ℂ) (hρ : ρ ∈ S) :=
-    exists_radius_forall_llsRectangleBoundaryIntegrals_eq_zeroContributions
-      hx
-      (ne_zero_of_mem_riemannZetaZerosInAnyRectangle
-        hρ)
+    exists_radius_forall_llsRectangleBoundaryIntegrals_eq_zeroContributions hx
+      (ne_zero_of_mem_riemannZetaZerosInAnyRectangle hρ)
       (ne_one_of_mem_riemannZetaZerosInAnyRectangle hρ)
-      ((mem_riemannZetaZerosInAnyRectangle_iff.mp
-          hρ).2)
+      ((mem_riemannZetaZerosInAnyRectangle_iff.mp hρ).2)
   let radius (ρ : ℂ) : ℝ := if hρ : ρ ∈ S then (certificate ρ hρ).choose else 1
   have hradius_pos (ρ : ℂ) (hρ : ρ ∈ S) : 0 < radius ρ := by
     dsimp only [radius]
     rw [dite_eq_left hρ]
     exact (certificate ρ hρ).choose_spec.1
   have hradius_formula (ρ : ℂ) (hρ : ρ ∈ S) (r : ℝ) (hr : 0 < r) (hrradius : r ≤ radius ρ) :
-    RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x)
-          (RectangleGeometry.centeredSquareLower ρ r)
-          (RectangleGeometry.centeredSquareUpper ρ r) =
-        2 * Real.pi * Complex.I *
-          riemannZetaReciprocalZeroContribution x ρ ∧
-      RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x)
-          (RectangleGeometry.centeredSquareLower ρ r)
-          (RectangleGeometry.centeredSquareUpper ρ r) =
-        2 * Real.pi * Complex.I *
-          riemannZetaLogZeroContribution x ρ := by
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
+          (RectangleGeometry.centeredSquareLower ρ r) (RectangleGeometry.centeredSquareUpper ρ r) =
+        2 * Real.pi * Complex.I * riemannZetaReciprocalZeroContribution x ρ ∧
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
+          (RectangleGeometry.centeredSquareLower ρ r) (RectangleGeometry.centeredSquareUpper ρ r) =
+        2 * Real.pi * Complex.I * riemannZetaLogZeroContribution x ρ := by
     dsimp only [radius] at hrradius
     rw [dite_eq_left hρ] at hrradius
     exact (certificate ρ hρ).choose_spec.2 r hr hrradius
@@ -687,92 +568,55 @@ theorem exists_common_radius_llsRectangleBoundaryIntegrals_eq_zeroContributions 
 inside the rectangle when its height avoids every singularity in the finite ledger. -/
 theorem intervalIntegrable_riemannZetaKernels_horizontal {x : ℝ} (hx : 0 < x) {z w : ℂ} {c a b : ℝ}
     (ha : a ∈ Set.uIcc z.re w.re) (hb : b ∈ Set.uIcc z.re w.re) (hc : c ∈ Set.uIcc z.im w.im)
-    (havoid :
-      ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
-        s.im ≠ c) :
-    IntervalIntegrable
-        (fun t : ℝ ↦
-          riemannZetaReciprocalContourKernel x
-            (t + c * Complex.I))
+    (havoid : ∀ s ∈ riemannZetaSingularitiesInRectangle z w, s.im ≠ c) :
+    IntervalIntegrable (fun t : ℝ ↦ riemannZetaReciprocalContourKernel x (t + c * Complex.I))
         MeasureTheory.volume a b ∧
-      IntervalIntegrable
-        (fun t : ℝ ↦
-          riemannZetaLogContourKernel x
-            (t + c * Complex.I))
+      IntervalIntegrable (fun t : ℝ ↦ riemannZetaLogContourKernel x (t + c * Complex.I))
         MeasureTheory.volume a b := by
-  have hregular :=
-    horizontal_segment_subset_riemannZetaRegularSet ha
-      hb hc havoid
-  constructor <;>
-    apply
-      RectangleGeometry.intervalIntegrable_horizontal_of_continuousAt <;>
+  have hregular := horizontal_segment_subset_riemannZetaRegularSet ha hb hc havoid
+  constructor <;> apply RectangleGeometry.intervalIntegrable_horizontal_of_continuousAt <;>
     intro t ht
   · exact
-      (differentiableAt_riemannZetaReciprocalContourKernel
-          hx (hregular t ht).1 (hregular t ht).2.1 (hregular t ht).2.2).continuousAt
+      (differentiableAt_riemannZetaReciprocalContourKernel hx (hregular t ht).1 (hregular t ht).2.1
+          (hregular t ht).2.2).continuousAt
   · exact
-      (differentiableAt_riemannZetaLogContourKernel hx
-          (hregular t ht).1 (hregular t ht).2.1 (hregular t ht).2.2).continuousAt
+      (differentiableAt_riemannZetaLogContourKernel hx (hregular t ht).1 (hregular t ht).2.1
+          (hregular t ht).2.2).continuousAt
 
 /-- Both zeta contour kernels are integrable on a ledger-avoiding vertical segment. -/
 theorem intervalIntegrable_riemannZetaKernels_vertical {x : ℝ} (hx : 0 < x) {z w : ℂ} {c a b : ℝ}
     (hc : c ∈ Set.uIcc z.re w.re) (ha : a ∈ Set.uIcc z.im w.im) (hb : b ∈ Set.uIcc z.im w.im)
-    (havoid :
-      ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
-        s.re ≠ c) :
-    IntervalIntegrable
-        (fun t : ℝ ↦
-          riemannZetaReciprocalContourKernel x
-            (c + t * Complex.I))
+    (havoid : ∀ s ∈ riemannZetaSingularitiesInRectangle z w, s.re ≠ c) :
+    IntervalIntegrable (fun t : ℝ ↦ riemannZetaReciprocalContourKernel x (c + t * Complex.I))
         MeasureTheory.volume a b ∧
-      IntervalIntegrable
-        (fun t : ℝ ↦
-          riemannZetaLogContourKernel x
-            (c + t * Complex.I))
+      IntervalIntegrable (fun t : ℝ ↦ riemannZetaLogContourKernel x (c + t * Complex.I))
         MeasureTheory.volume a b := by
-  have hregular :=
-    vertical_segment_subset_riemannZetaRegularSet hc ha
-      hb havoid
-  constructor <;>
-    apply
-      RectangleGeometry.intervalIntegrable_vertical_of_continuousAt <;>
-    intro t ht
+  have hregular := vertical_segment_subset_riemannZetaRegularSet hc ha hb havoid
+  constructor <;> apply RectangleGeometry.intervalIntegrable_vertical_of_continuousAt <;> intro t ht
   · exact
-      (differentiableAt_riemannZetaReciprocalContourKernel
-          hx (hregular t ht).1 (hregular t ht).2.1 (hregular t ht).2.2).continuousAt
+      (differentiableAt_riemannZetaReciprocalContourKernel hx (hregular t ht).1 (hregular t ht).2.1
+          (hregular t ht).2.2).continuousAt
   · exact
-      (differentiableAt_riemannZetaLogContourKernel hx
-          (hregular t ht).1 (hregular t ht).2.1 (hregular t ht).2.2).continuousAt
+      (differentiableAt_riemannZetaLogContourKernel hx (hregular t ht).1 (hregular t ht).2.1
+          (hregular t ht).2.2).continuousAt
 
 /-- For `x > 0`, both kernels are interval-integrable on a horizontal segment
 in an assigned singular cell, provided its height differs from the assigned
 point's height and the parent cell lies in the outer rectangle. -/
 theorem RiemannZetaSingularCellAssignment.intervalIntegrable_horizontal {x : ℝ} (hx : 0 < x)
-    {z w : ℂ} {cells : Finset (ℂ × ℂ)}
-    (assignment :
-      RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ}
-    (hparent :
-      parent ∈ riemannZetaSingularCells z w cells)
+    {z w : ℂ} {cells : Finset (ℂ × ℂ)} (assignment : RiemannZetaSingularCellAssignment z w cells)
+    {parent : ℂ × ℂ} (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
-      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆
-        Rectangle.rectangleClosedBox z w)
+      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
     {c a b : ℝ} (ha : a ∈ Set.uIcc parent.1.re parent.2.re)
     (hb : b ∈ Set.uIcc parent.1.re parent.2.re) (hc : c ∈ Set.uIcc parent.1.im parent.2.im)
     (havoid : (assignment.pointOfCell parent).im ≠ c) :
-    IntervalIntegrable
-        (fun t : ℝ ↦
-          riemannZetaReciprocalContourKernel x
-            (t + c * Complex.I))
+    IntervalIntegrable (fun t : ℝ ↦ riemannZetaReciprocalContourKernel x (t + c * Complex.I))
         MeasureTheory.volume a b ∧
-      IntervalIntegrable
-        (fun t : ℝ ↦
-          riemannZetaLogContourKernel x
-            (t + c * Complex.I))
+      IntervalIntegrable (fun t : ℝ ↦ riemannZetaLogContourKernel x (t + c * Complex.I))
         MeasureTheory.volume a b := by
   have hregular (t : ℝ) (ht : t ∈ Set.uIcc a b) :
-    (t : ℂ) + c * Complex.I ∈
-      RiemannZeta.riemannZetaRegularSet := by
+    (t : ℂ) + c * Complex.I ∈ RiemannZeta.riemannZetaRegularSet := by
     apply assignment.mem_regular_of_mem_parent_of_ne hparent hparentSubset
     · exact
         ⟨by
@@ -788,44 +632,30 @@ theorem RiemannZetaSingularCellAssignment.intervalIntegrable_horizontal {x : ℝ
       have him := congrArg Complex.im heq
       simpa only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
         Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add] using him.symm
-  constructor <;>
-    apply
-      RectangleGeometry.intervalIntegrable_horizontal_of_continuousAt <;>
+  constructor <;> apply RectangleGeometry.intervalIntegrable_horizontal_of_continuousAt <;>
     intro t ht
   · exact
-      (differentiableAt_riemannZetaReciprocalContourKernel
-          hx (hregular t ht).1 (hregular t ht).2.1 (hregular t ht).2.2).continuousAt
+      (differentiableAt_riemannZetaReciprocalContourKernel hx (hregular t ht).1 (hregular t ht).2.1
+          (hregular t ht).2.2).continuousAt
   · exact
-      (differentiableAt_riemannZetaLogContourKernel hx
-          (hregular t ht).1 (hregular t ht).2.1 (hregular t ht).2.2).continuousAt
+      (differentiableAt_riemannZetaLogContourKernel hx (hregular t ht).1 (hregular t ht).2.1
+          (hregular t ht).2.2).continuousAt
 
 /-- Both kernels are integrable on a vertical parent-cell segment away from the assigned point. -/
 theorem RiemannZetaSingularCellAssignment.intervalIntegrable_vertical {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)}
-    (assignment :
-      RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ}
-    (hparent :
-      parent ∈ riemannZetaSingularCells z w cells)
+    {cells : Finset (ℂ × ℂ)} (assignment : RiemannZetaSingularCellAssignment z w cells)
+    {parent : ℂ × ℂ} (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
-      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆
-        Rectangle.rectangleClosedBox z w)
+      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
     {c a b : ℝ} (hc : c ∈ Set.uIcc parent.1.re parent.2.re)
     (ha : a ∈ Set.uIcc parent.1.im parent.2.im) (hb : b ∈ Set.uIcc parent.1.im parent.2.im)
     (havoid : (assignment.pointOfCell parent).re ≠ c) :
-    IntervalIntegrable
-        (fun t : ℝ ↦
-          riemannZetaReciprocalContourKernel x
-            (c + t * Complex.I))
+    IntervalIntegrable (fun t : ℝ ↦ riemannZetaReciprocalContourKernel x (c + t * Complex.I))
         MeasureTheory.volume a b ∧
-      IntervalIntegrable
-        (fun t : ℝ ↦
-          riemannZetaLogContourKernel x
-            (c + t * Complex.I))
+      IntervalIntegrable (fun t : ℝ ↦ riemannZetaLogContourKernel x (c + t * Complex.I))
         MeasureTheory.volume a b := by
   have hregular (t : ℝ) (ht : t ∈ Set.uIcc a b) :
-    (c : ℂ) + t * Complex.I ∈
-      riemannZetaRegularSet := by
+    (c : ℂ) + t * Complex.I ∈ riemannZetaRegularSet := by
     apply assignment.mem_regular_of_mem_parent_of_ne hparent hparentSubset
     · exact
         ⟨by
@@ -841,101 +671,73 @@ theorem RiemannZetaSingularCellAssignment.intervalIntegrable_vertical {x : ℝ} 
       have hre := congrArg Complex.re heq
       simpa only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using hre.symm
-  constructor <;>
-    apply
-      RectangleGeometry.intervalIntegrable_vertical_of_continuousAt <;>
-    intro t ht
+  constructor <;> apply RectangleGeometry.intervalIntegrable_vertical_of_continuousAt <;> intro t ht
   · exact
-      (differentiableAt_riemannZetaReciprocalContourKernel
-          hx (hregular t ht).1 (hregular t ht).2.1 (hregular t ht).2.2).continuousAt
+      (differentiableAt_riemannZetaReciprocalContourKernel hx (hregular t ht).1 (hregular t ht).2.1
+          (hregular t ht).2.2).continuousAt
   · exact
-      (differentiableAt_riemannZetaLogContourKernel hx
-          (hregular t ht).1 (hregular t ht).2.1 (hregular t ht).2.2).continuousAt
+      (differentiableAt_riemannZetaLogContourKernel hx (hregular t ht).1 (hregular t ht).2.1
+          (hregular t ht).2.2).continuousAt
 
 /-- Finite parent-cell coordinates avoiding the assigned point integrate both contour kernels. -/
 theorem RiemannZetaSingularCellAssignment.kernelCoordinateIntegrable {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)}
-    (assignment :
-      RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ}
-    (hparent :
-      parent ∈ riemannZetaSingularCells z w cells)
+    {cells : Finset (ℂ × ℂ)} (assignment : RiemannZetaSingularCellAssignment z w cells)
+    {parent : ℂ × ℂ} (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
-      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆
-        Rectangle.rectangleClosedBox z w)
+      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
     (xcoordinates ycoordinates : List ℝ)
     (hxmem : ∀ c ∈ xcoordinates, c ∈ Set.uIcc parent.1.re parent.2.re)
     (hymem : ∀ c ∈ ycoordinates, c ∈ Set.uIcc parent.1.im parent.2.im)
     (hxavoid : ∀ c ∈ xcoordinates, (assignment.pointOfCell parent).re ≠ c)
     (hyavoid : ∀ c ∈ ycoordinates, (assignment.pointOfCell parent).im ≠ c) :
-    RectangleGeometry.RectangleGridCoordinateIntegrable
-        (riemannZetaReciprocalContourKernel x)
+    RectangleGeometry.RectangleGridCoordinateIntegrable (riemannZetaReciprocalContourKernel x)
         xcoordinates ycoordinates ∧
-      RectangleGeometry.RectangleGridCoordinateIntegrable
-        (riemannZetaLogContourKernel x) xcoordinates
-        ycoordinates := by
+      RectangleGeometry.RectangleGridCoordinateIntegrable (riemannZetaLogContourKernel x)
+        xcoordinates ycoordinates := by
   constructor
   · constructor
     · intro c hc a ha b hb
       exact
-        (RiemannZetaSingularCellAssignment.intervalIntegrable_horizontal
-            hx assignment hparent hparentSubset (hxmem a ha) (hxmem b hb) (hymem c hc)
-            (hyavoid c hc)).1
+        (RiemannZetaSingularCellAssignment.intervalIntegrable_horizontal hx assignment hparent
+            hparentSubset (hxmem a ha) (hxmem b hb) (hymem c hc) (hyavoid c hc)).1
     · intro c hc a ha b hb
       exact
-        (RiemannZetaSingularCellAssignment.intervalIntegrable_vertical
-            hx assignment hparent hparentSubset (hxmem c hc) (hymem a ha) (hymem b hb)
-            (hxavoid c hc)).1
+        (RiemannZetaSingularCellAssignment.intervalIntegrable_vertical hx assignment hparent
+            hparentSubset (hxmem c hc) (hymem a ha) (hymem b hb) (hxavoid c hc)).1
   · constructor
     · intro c hc a ha b hb
       exact
-        (RiemannZetaSingularCellAssignment.intervalIntegrable_horizontal
-            hx assignment hparent hparentSubset (hxmem a ha) (hxmem b hb) (hymem c hc)
-            (hyavoid c hc)).2
+        (RiemannZetaSingularCellAssignment.intervalIntegrable_horizontal hx assignment hparent
+            hparentSubset (hxmem a ha) (hxmem b hb) (hymem c hc) (hyavoid c hc)).2
     · intro c hc a ha b hb
       exact
-        (RiemannZetaSingularCellAssignment.intervalIntegrable_vertical
-            hx assignment hparent hparentSubset (hxmem c hc) (hymem a ha) (hymem b hb)
-            (hxavoid c hc)).2
+        (RiemannZetaSingularCellAssignment.intervalIntegrable_vertical hx assignment hparent
+            hparentSubset (hxmem c hc) (hymem a ha) (hymem b hb) (hxavoid c hc)).2
 
 /-- A cell-contained centered square supplies both local `3 × 3` grid certificates. -/
 theorem RiemannZetaSingularCellAssignment.centeredSquare_kernelGridSubdivisionIntegrable {x : ℝ}
     (hx : 0 < x) {z w : ℂ} {cells : Finset (ℂ × ℂ)}
-    (assignment :
-      RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ}
-    (hparent :
-      parent ∈ riemannZetaSingularCells z w cells)
+    (assignment : RiemannZetaSingularCellAssignment z w cells) {parent : ℂ × ℂ}
+    (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
-      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆
-        Rectangle.rectangleClosedBox z w)
+      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
     (hre : parent.1.re < parent.2.re) (him : parent.1.im < parent.2.im) {r : ℝ} (hr : 0 < r)
     (hball :
       Metric.closedBall (assignment.pointOfCell parent) r ⊆
         RectangleGeometry.rectangleOpenBox parent.1 parent.2) :
-    let a :=
-      RectangleGeometry.centeredSquareLower
-        (assignment.pointOfCell parent) r
-    let b :=
-      RectangleGeometry.centeredSquareUpper
-        (assignment.pointOfCell parent) r
-    RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaReciprocalContourKernel x) parent.1
-        parent.2 [a.re, b.re] [a.im, b.im] ∧
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaLogContourKernel x) parent.1
+    let a := RectangleGeometry.centeredSquareLower (assignment.pointOfCell parent) r
+    let b := RectangleGeometry.centeredSquareUpper (assignment.pointOfCell parent) r
+    RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaReciprocalContourKernel x)
+        parent.1 parent.2 [a.re, b.re] [a.im, b.im] ∧
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaLogContourKernel x) parent.1
         parent.2 [a.re, b.re] [a.im, b.im] := by
   let c := assignment.pointOfCell parent
   let a := RectangleGeometry.centeredSquareLower c r
   let b := RectangleGeometry.centeredSquareUpper c r
-  have hcopen :
-    c ∈ RectangleGeometry.rectangleOpenBox parent.1 parent.2 :=
+  have hcopen : c ∈ RectangleGeometry.rectangleOpenBox parent.1 parent.2 :=
     hball (Metric.mem_closedBall_self hr.le)
-  have hcuts :=
-    RectangleGeometry.centeredSquare_cuts_inside hre him hr hball
-  have havoid :=
-    RectangleGeometry.centeredSquare_augmented_coordinates_avoid
-      hre him hr hcopen
+  have hcuts := RectangleGeometry.centeredSquare_cuts_inside hre him hr hball
+  have havoid := RectangleGeometry.centeredSquare_augmented_coordinates_avoid hre him hr hcopen
   let xs := parent.1.re :: [a.re, b.re] ++ [parent.2.re]
   let ys := parent.1.im :: [a.im, b.im] ++ [parent.2.im]
   have hxmem : ∀ u ∈ xs, u ∈ Set.uIcc parent.1.re parent.2.re := by
@@ -955,8 +757,8 @@ theorem RiemannZetaSingularCellAssignment.centeredSquare_kernelGridSubdivisionIn
     · exact Set.mem_uIcc_of_le (hcuts.2.2.2.1.trans hcuts.2.2.2.2.1).le hcuts.2.2.2.2.2.le
     · exact Set.right_mem_uIcc
   have edges :=
-    RiemannZetaSingularCellAssignment.kernelCoordinateIntegrable
-      hx assignment hparent hparentSubset xs ys hxmem hymem havoid.1 havoid.2
+    RiemannZetaSingularCellAssignment.kernelCoordinateIntegrable hx assignment hparent hparentSubset
+      xs ys hxmem hymem havoid.1 havoid.2
   have hxcuts : ∀ u ∈ [a.re, b.re], u ∈ xs := by
     intro u hu
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hu
@@ -1015,158 +817,109 @@ structure RiemannZetaPuncturedContourCertificate (x : ℝ) (z w : ℂ) where
   radius_pos : 0 < radius
   boundary_disjoint :
     ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
-      Disjoint (Metric.closedBall s radius)
-        (RectangleGeometry.rectangleClosedBoxBoundary z w)
+      Disjoint (Metric.closedBall s radius) (RectangleGeometry.rectangleClosedBoxBoundary z w)
   pairwise_disjoint :
     ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
       ∀ t ∈ riemannZetaSingularitiesInRectangle z w,
         s ≠ t → Disjoint (Metric.closedBall s radius) (Metric.closedBall t radius)
   zero_integrals :
     ∀ ρ ∈ riemannZetaZerosInAnyRectangle z w,
-      (∮ s in C(ρ, radius),
-            riemannZetaReciprocalContourKernel x s) =
-          2 * Real.pi * Complex.I *
-            riemannZetaReciprocalZeroContribution x ρ ∧
-        (∮ s in C(ρ, radius),
-            riemannZetaLogContourKernel x s) =
-          2 * Real.pi * Complex.I *
-            riemannZetaLogZeroContribution x ρ
+      (∮ s in C(ρ, radius), riemannZetaReciprocalContourKernel x s) =
+          2 * Real.pi * Complex.I * riemannZetaReciprocalZeroContribution x ρ ∧
+        (∮ s in C(ρ, radius), riemannZetaLogContourKernel x s) =
+          2 * Real.pi * Complex.I * riemannZetaLogZeroContribution x ρ
   mellin_integrals :
-    (∮ s in C(0, radius),
-          riemannZetaReciprocalContourKernel x s) =
-        2 * Real.pi * Complex.I *
-          riemannZetaReciprocalResidueAtZero x ∧
-      (∮ s in C(1, radius),
-          riemannZetaLogContourKernel x s) =
-        2 * Real.pi * Complex.I *
-          riemannZetaLogResidueAtOne x ∧
-      (∮ s in C(1, radius),
-          riemannZetaReciprocalContourKernel x s) =
-        2 * Real.pi * Complex.I *
-          riemannZetaReciprocalResidueAtOne x ∧
-      (∮ s in C(0, radius),
-          riemannZetaLogContourKernel x s) =
-        2 * Real.pi * Complex.I *
-          riemannZetaLogResidueAtZero x
+    (∮ s in C(0, radius), riemannZetaReciprocalContourKernel x s) =
+        2 * Real.pi * Complex.I * riemannZetaReciprocalResidueAtZero x ∧
+      (∮ s in C(1, radius), riemannZetaLogContourKernel x s) =
+        2 * Real.pi * Complex.I * riemannZetaLogResidueAtOne x ∧
+      (∮ s in C(1, radius), riemannZetaReciprocalContourKernel x s) =
+        2 * Real.pi * Complex.I * riemannZetaReciprocalResidueAtOne x ∧
+      (∮ s in C(0, radius), riemannZetaLogContourKernel x s) =
+        2 * Real.pi * Complex.I * riemannZetaLogResidueAtZero x
   square_zero_integrals :
     ∀ ρ ∈ riemannZetaZerosInAnyRectangle z w,
-      RectangleGeometry.rectangleBoundaryIntegral
-            (riemannZetaReciprocalContourKernel x)
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
             (RectangleGeometry.centeredSquareLower ρ radius)
             (RectangleGeometry.centeredSquareUpper ρ radius) =
-          2 * Real.pi * Complex.I *
-            riemannZetaReciprocalZeroContribution x ρ ∧
-        RectangleGeometry.rectangleBoundaryIntegral
-            (riemannZetaLogContourKernel x)
+          2 * Real.pi * Complex.I * riemannZetaReciprocalZeroContribution x ρ ∧
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
             (RectangleGeometry.centeredSquareLower ρ radius)
             (RectangleGeometry.centeredSquareUpper ρ radius) =
-          2 * Real.pi * Complex.I *
-            riemannZetaLogZeroContribution x ρ
+          2 * Real.pi * Complex.I * riemannZetaLogZeroContribution x ρ
   square_mellin_integrals :
-    RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x)
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
           (RectangleGeometry.centeredSquareLower 0 radius)
           (RectangleGeometry.centeredSquareUpper 0 radius) =
-        2 * Real.pi * Complex.I *
-          riemannZetaReciprocalResidueAtZero x ∧
-      RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x)
+        2 * Real.pi * Complex.I * riemannZetaReciprocalResidueAtZero x ∧
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
           (RectangleGeometry.centeredSquareLower 1 radius)
           (RectangleGeometry.centeredSquareUpper 1 radius) =
-        2 * Real.pi * Complex.I *
-          riemannZetaLogResidueAtOne x ∧
-      RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x)
+        2 * Real.pi * Complex.I * riemannZetaLogResidueAtOne x ∧
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
           (RectangleGeometry.centeredSquareLower 1 radius)
           (RectangleGeometry.centeredSquareUpper 1 radius) =
-        2 * Real.pi * Complex.I *
-          riemannZetaReciprocalResidueAtOne x ∧
-      RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x)
+        2 * Real.pi * Complex.I * riemannZetaReciprocalResidueAtOne x ∧
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
           (RectangleGeometry.centeredSquareLower 0 radius)
           (RectangleGeometry.centeredSquareUpper 0 radius) =
-        2 * Real.pi * Complex.I *
-          riemannZetaLogResidueAtZero x
-  regular_subset :
-    riemannZetaPuncturedRectangle z w radius ⊆ riemannZetaRegularSet
+        2 * Real.pi * Complex.I * riemannZetaLogResidueAtZero x
+  regular_subset : riemannZetaPuncturedRectangle z w radius ⊆ riemannZetaRegularSet
 
 /-- The finite sum of reciprocal-kernel integrals around all enclosed singularities. -/
 noncomputable def riemannZetaReciprocalLocalCircleLedger (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w) :
-    ℂ := by
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) : ℂ := by
   classical
     exact
     (if (0 : ℂ) ∈ Rectangle.rectangleClosedBox z w then
-        ∮ s in C(0, certificate.radius),
-          riemannZetaReciprocalContourKernel x s
+        ∮ s in C(0, certificate.radius), riemannZetaReciprocalContourKernel x s
       else 0) +
       (if (1 : ℂ) ∈ Rectangle.rectangleClosedBox z w then
-        ∮ s in C(1, certificate.radius),
-          riemannZetaReciprocalContourKernel x s
+        ∮ s in C(1, certificate.radius), riemannZetaReciprocalContourKernel x s
       else 0) +
       ∑ ρ ∈ riemannZetaZerosInAnyRectangle z w,
-        ∮ s in C(ρ, certificate.radius),
-          riemannZetaReciprocalContourKernel x s
+        ∮ s in C(ρ, certificate.radius), riemannZetaReciprocalContourKernel x s
 
 /-- The finite sum of logarithmic-kernel integrals around all enclosed singularities. -/
 noncomputable def riemannZetaLogLocalCircleLedger (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w) :
-    ℂ := by
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) : ℂ := by
   classical
     exact
     (if (0 : ℂ) ∈ Rectangle.rectangleClosedBox z w then
-        ∮ s in C(0, certificate.radius),
-          riemannZetaLogContourKernel x s
+        ∮ s in C(0, certificate.radius), riemannZetaLogContourKernel x s
       else 0) +
       (if (1 : ℂ) ∈ Rectangle.rectangleClosedBox z w then
-        ∮ s in C(1, certificate.radius),
-          riemannZetaLogContourKernel x s
+        ∮ s in C(1, certificate.radius), riemannZetaLogContourKernel x s
       else 0) +
       ∑ ρ ∈ riemannZetaZerosInAnyRectangle z w,
-        ∮ s in C(ρ, certificate.radius),
-          riemannZetaLogContourKernel x s
+        ∮ s in C(ρ, certificate.radius), riemannZetaLogContourKernel x s
 
 /-- The reciprocal circle-integral sum indexed uniformly by the full singularity ledger. -/
 noncomputable def riemannZetaReciprocalAllSingularityCircleLedger (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w) :
-    ℂ :=
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) : ℂ :=
   ∑ s ∈ riemannZetaSingularitiesInRectangle z w,
-    ∮ u in C(s, certificate.radius),
-      riemannZetaReciprocalContourKernel x u
+    ∮ u in C(s, certificate.radius), riemannZetaReciprocalContourKernel x u
 
 /-- The logarithmic circle-integral sum indexed uniformly by the full singularity ledger. -/
 noncomputable def riemannZetaLogAllSingularityCircleLedger (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w) :
-    ℂ :=
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) : ℂ :=
   ∑ s ∈ riemannZetaSingularitiesInRectangle z w,
-    ∮ u in C(s, certificate.radius),
-      riemannZetaLogContourKernel x u
+    ∮ u in C(s, certificate.radius), riemannZetaLogContourKernel x u
 
 /-- The uniformly indexed reciprocal circle ledger equals the separated local-circle ledger. -/
 theorem riemannZetaReciprocalAllSingularityCircleLedger_eq_localCircleLedger {x : ℝ} {z w : ℂ}
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w) :
-    riemannZetaReciprocalAllSingularityCircleLedger x z
-        w certificate =
-      riemannZetaReciprocalLocalCircleLedger x z w
-        certificate := by
-  unfold
-    riemannZetaReciprocalAllSingularityCircleLedger
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) :
+    riemannZetaReciprocalAllSingularityCircleLedger x z w certificate =
+      riemannZetaReciprocalLocalCircleLedger x z w certificate := by
+  unfold riemannZetaReciprocalAllSingularityCircleLedger
   rw [sum_riemannZetaSingularitiesInRectangle]
   rfl
 
 /-- The uniformly indexed logarithmic circle ledger equals the separated local-circle ledger. -/
 theorem riemannZetaLogAllSingularityCircleLedger_eq_localCircleLedger {x : ℝ} {z w : ℂ}
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w) :
-    riemannZetaLogAllSingularityCircleLedger x z w
-        certificate =
-      riemannZetaLogLocalCircleLedger x z w
-        certificate := by
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) :
+    riemannZetaLogAllSingularityCircleLedger x z w certificate =
+      riemannZetaLogLocalCircleLedger x z w certificate := by
   unfold riemannZetaLogAllSingularityCircleLedger
   rw [sum_riemannZetaSingularitiesInRectangle]
   rfl
@@ -1180,25 +933,18 @@ are deliberately separated from the analytic evaluation of each circle already s
 punctured-contour certificate.
 -/
 structure RiemannZetaSingularCellBoundaryCertificate (x : ℝ) (z w : ℂ) (cells : Finset (ℂ × ℂ))
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z
-        w) where
-  assignment :
-    RiemannZetaSingularCellAssignment z w cells
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) where
+  assignment : RiemannZetaSingularCellAssignment z w cells
   reciprocal_boundary_eq_circle :
     ∀ cell ∈ riemannZetaSingularCells z w cells,
-      RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) cell.1
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
           cell.2 =
         ∮ u in C(assignment.pointOfCell cell, certificate.radius),
           riemannZetaReciprocalContourKernel x u
   log_boundary_eq_circle :
     ∀ cell ∈ riemannZetaSingularCells z w cells,
-      RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) cell.1
-          cell.2 =
-        ∮ u in C(assignment.pointOfCell cell, certificate.radius),
-          riemannZetaLogContourKernel x u
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2 =
+        ∮ u in C(assignment.pointOfCell cell, certificate.radius), riemannZetaLogContourKernel x u
 
 /--
 Add local boundary identities to a geometrically separated singular-cell grid.
@@ -1207,52 +953,38 @@ The separation certificate supplies the assignment automatically.  The two remai
 are precisely the reciprocal and logarithmic local boundary deformations for each singular cell.
 -/
 noncomputable def riemannZetaSingularCellBoundaryCertificateOfSeparation {x : ℝ} {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)}
-    {certificate :
-      RiemannZetaPuncturedContourCertificate x z w}
-    (separation :
-      RiemannZetaGridSingularitySeparation z w cells)
+    {cells : Finset (ℂ × ℂ)} {certificate : RiemannZetaPuncturedContourCertificate x z w}
+    (separation : RiemannZetaGridSingularitySeparation z w cells)
     (hreciprocal :
       ∀ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-            (riemannZetaReciprocalContourKernel x)
-            cell.1 cell.2 =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
+            cell.2 =
           ∮ u in C(separation.toAssignment.pointOfCell cell, certificate.radius),
             riemannZetaReciprocalContourKernel x u)
     (hlog :
       ∀ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-            (riemannZetaLogContourKernel x) cell.1
-            cell.2 =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2 =
           ∮ u in C(separation.toAssignment.pointOfCell cell, certificate.radius),
             riemannZetaLogContourKernel x u) :
-    RiemannZetaSingularCellBoundaryCertificate x z w
-      cells certificate := by
+    RiemannZetaSingularCellBoundaryCertificate x z w cells certificate := by
   exact ⟨separation.toAssignment, hreciprocal, hlog⟩
 
 /-- Add local boundary identities directly to an interior-separated grid. -/
 noncomputable def riemannZetaSingularCellBoundaryCertificateOfInteriorSeparation {x : ℝ} {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)}
-    {certificate :
-      RiemannZetaPuncturedContourCertificate x z w}
-    (interior :
-      RiemannZetaGridInteriorSeparation z w cells)
+    {cells : Finset (ℂ × ℂ)} {certificate : RiemannZetaPuncturedContourCertificate x z w}
+    (interior : RiemannZetaGridInteriorSeparation z w cells)
     (hreciprocal :
       ∀ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-            (riemannZetaReciprocalContourKernel x)
-            cell.1 cell.2 =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
+            cell.2 =
           ∮ u in C(interior.toAssignment.pointOfCell cell, certificate.radius),
             riemannZetaReciprocalContourKernel x u)
     (hlog :
       ∀ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-            (riemannZetaLogContourKernel x) cell.1
-            cell.2 =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2 =
           ∮ u in C(interior.toAssignment.pointOfCell cell, certificate.radius),
             riemannZetaLogContourKernel x u) :
-    RiemannZetaSingularCellBoundaryCertificate x z w
-      cells certificate := by
+    RiemannZetaSingularCellBoundaryCertificate x z w cells certificate := by
   exact ⟨interior.toAssignment, hreciprocal, hlog⟩
 
 /--
@@ -1265,29 +997,20 @@ singular-cell certificate then replaces precisely the nonregular cell boundaries
 small circles.  Regular-cell cancellation is derived rather than stored.
 -/
 structure RiemannZetaGridBoundaryCertificate (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z
-        w) where
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) where
   cells : Finset (ℂ × ℂ)
   cell_subset :
-    ∀ cell ∈ cells,
-      Rectangle.rectangleClosedBox cell.1 cell.2 ⊆
-        Rectangle.rectangleClosedBox z w
+    ∀ cell ∈ cells, Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w
   reciprocal_boundary_eq_cells :
-    RectangleGeometry.rectangleBoundaryIntegral
-        (riemannZetaReciprocalContourKernel x) z w =
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) z w =
       ∑ cell ∈ cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) cell.1
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
           cell.2
   log_boundary_eq_cells :
-    RectangleGeometry.rectangleBoundaryIntegral
-        (riemannZetaLogContourKernel x) z w =
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) z w =
       ∑ cell ∈ cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) cell.1 cell.2
-  singular_geometry :
-    RiemannZetaSingularCellBoundaryCertificate x z w cells certificate
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2
+  singular_geometry : RiemannZetaSingularCellBoundaryCertificate x z w cells certificate
 
 /--
 Build the grid-level boundary certificate from finite real and imaginary cut lists.
@@ -1297,66 +1020,45 @@ The two integrability certificates drive the generic grid-subdivision theorem fo
 Cell containment and singular-cell local geometry remain explicit geometric inputs.
 -/
 noncomputable def riemannZetaGridBoundaryCertificateOfCuts (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w)
-    (xcuts ycuts : List ℝ)
-    (hnodup :
-      (RectangleGeometry.rectangleGridCells z w xcuts ycuts).Nodup)
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) (xcuts ycuts : List ℝ)
+    (hnodup : (RectangleGeometry.rectangleGridCells z w xcuts ycuts).Nodup)
     (hreciprocal :
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaReciprocalContourKernel x) z w
-        xcuts ycuts)
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaReciprocalContourKernel x) z
+        w xcuts ycuts)
     (hlog :
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaLogContourKernel x) z w xcuts
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaLogContourKernel x) z w xcuts
         ycuts)
     (hsubset :
-      ∀
-        cell ∈
-          (RectangleGeometry.rectangleGridCells z w xcuts
-              ycuts).toFinset,
-        Rectangle.rectangleClosedBox cell.1 cell.2 ⊆
-          Rectangle.rectangleClosedBox z w)
+      ∀ cell ∈ (RectangleGeometry.rectangleGridCells z w xcuts ycuts).toFinset,
+        Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w)
     (geometry :
       RiemannZetaSingularCellBoundaryCertificate x z w
-        (RectangleGeometry.rectangleGridCells z w xcuts
-            ycuts).toFinset
-        certificate) :
-    RiemannZetaGridBoundaryCertificate x z w
-      certificate := by
-  let cells :=
-    (RectangleGeometry.rectangleGridCells z w xcuts ycuts).toFinset
+        (RectangleGeometry.rectangleGridCells z w xcuts ycuts).toFinset certificate) :
+    RiemannZetaGridBoundaryCertificate x z w certificate := by
+  let cells := (RectangleGeometry.rectangleGridCells z w xcuts ycuts).toFinset
   refine ⟨cells, hsubset, ?_, ?_, geometry⟩
   · unfold RectangleGeometry.rectangleBoundaryIntegral
     calc
       _ =
-          RectangleGeometry.rectangleGridSubdivision
-            (riemannZetaReciprocalContourKernel x) z w
+          RectangleGeometry.rectangleGridSubdivision (riemannZetaReciprocalContourKernel x) z w
             xcuts ycuts :=
-        RectangleGeometry.rectangleBoundaryIntegral_eq_gridSubdivision
-          _ z w xcuts ycuts hreciprocal
+        RectangleGeometry.rectangleBoundaryIntegral_eq_gridSubdivision _ z w xcuts ycuts hreciprocal
       _ =
           ∑ cell ∈ cells,
-            RectangleGeometry.rectangleBoundaryIntegral
-              (riemannZetaReciprocalContourKernel x)
+            RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
               cell.1 cell.2 :=
-        RectangleGeometry.rectangleGridSubdivision_eq_sum_toFinset
-          _ z w xcuts ycuts hnodup
+        RectangleGeometry.rectangleGridSubdivision_eq_sum_toFinset _ z w xcuts ycuts hnodup
   · unfold RectangleGeometry.rectangleBoundaryIntegral
     calc
       _ =
-          RectangleGeometry.rectangleGridSubdivision
-            (riemannZetaLogContourKernel x) z w xcuts
+          RectangleGeometry.rectangleGridSubdivision (riemannZetaLogContourKernel x) z w xcuts
             ycuts :=
-        RectangleGeometry.rectangleBoundaryIntegral_eq_gridSubdivision
-          _ z w xcuts ycuts hlog
+        RectangleGeometry.rectangleBoundaryIntegral_eq_gridSubdivision _ z w xcuts ycuts hlog
       _ =
           ∑ cell ∈ cells,
-            RectangleGeometry.rectangleBoundaryIntegral
-              (riemannZetaLogContourKernel x) cell.1
+            RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1
               cell.2 :=
-        RectangleGeometry.rectangleGridSubdivision_eq_sum_toFinset
-          _ z w xcuts ycuts hnodup
+        RectangleGeometry.rectangleGridSubdivision_eq_sum_toFinset _ z w xcuts ycuts hnodup
 
 /--
 Build the grid certificate when every cut coordinate lies in the corresponding outer interval.
@@ -1365,38 +1067,25 @@ The generic grid-cell containment theorem discharges `cell_subset`, leaving no p
 proof for callers.
 -/
 noncomputable def riemannZetaGridBoundaryCertificateOfCutsInside (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w)
-    (xcuts ycuts : List ℝ)
-    (hnodup :
-      (RectangleGeometry.rectangleGridCells z w xcuts ycuts).Nodup)
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) (xcuts ycuts : List ℝ)
+    (hnodup : (RectangleGeometry.rectangleGridCells z w xcuts ycuts).Nodup)
     (hxcuts : ∀ u ∈ xcuts, u ∈ Set.uIcc z.re w.re) (hycuts : ∀ v ∈ ycuts, v ∈ Set.uIcc z.im w.im)
     (hreciprocal :
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaReciprocalContourKernel x) z w
-        xcuts ycuts)
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaReciprocalContourKernel x) z
+        w xcuts ycuts)
     (hlog :
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaLogContourKernel x) z w xcuts
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaLogContourKernel x) z w xcuts
         ycuts)
     (geometry :
       RiemannZetaSingularCellBoundaryCertificate x z w
-        (RectangleGeometry.rectangleGridCells z w xcuts
-            ycuts).toFinset
-        certificate) :
-    RiemannZetaGridBoundaryCertificate x z w
-      certificate := by
+        (RectangleGeometry.rectangleGridCells z w xcuts ycuts).toFinset certificate) :
+    RiemannZetaGridBoundaryCertificate x z w certificate := by
   apply
-    riemannZetaGridBoundaryCertificateOfCuts x z w
-      certificate xcuts ycuts hnodup hreciprocal hlog
+    riemannZetaGridBoundaryCertificateOfCuts x z w certificate xcuts ycuts hnodup hreciprocal hlog
   · intro cell hcell
-    have hcellList :
-      cell ∈
-        RectangleGeometry.rectangleGridCells z w xcuts ycuts := by
+    have hcellList : cell ∈ RectangleGeometry.rectangleGridCells z w xcuts ycuts := by
       simpa only [List.mem_toFinset] using hcell
-    exact
-      RectangleGeometry.rectangleGridCells_closedBox_subset hxcuts
-        hycuts cell hcellList
+    exact RectangleGeometry.rectangleGridCells_closedBox_subset hxcuts hycuts cell hcellList
   · exact geometry
 
 /--
@@ -1406,32 +1095,24 @@ The generic two-dimensional cell theorem derives cell `Nodup`; cut membership se
 cell containment.
 -/
 noncomputable def riemannZetaGridBoundaryCertificateOfNodupCoordinates (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w)
-    (xcuts ycuts : List ℝ) (hxcoordinates : (z.re :: xcuts ++ [w.re]).Nodup)
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) (xcuts ycuts : List ℝ)
+    (hxcoordinates : (z.re :: xcuts ++ [w.re]).Nodup)
     (hycoordinates : (z.im :: ycuts ++ [w.im]).Nodup) (hxcuts : ∀ u ∈ xcuts, u ∈ Set.uIcc z.re w.re)
     (hycuts : ∀ v ∈ ycuts, v ∈ Set.uIcc z.im w.im)
     (hreciprocal :
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaReciprocalContourKernel x) z w
-        xcuts ycuts)
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaReciprocalContourKernel x) z
+        w xcuts ycuts)
     (hlog :
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaLogContourKernel x) z w xcuts
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaLogContourKernel x) z w xcuts
         ycuts)
     (geometry :
       RiemannZetaSingularCellBoundaryCertificate x z w
-        (RectangleGeometry.rectangleGridCells z w xcuts
-            ycuts).toFinset
-        certificate) :
-    RiemannZetaGridBoundaryCertificate x z w
-      certificate := by
+        (RectangleGeometry.rectangleGridCells z w xcuts ycuts).toFinset certificate) :
+    RiemannZetaGridBoundaryCertificate x z w certificate := by
   exact
-    riemannZetaGridBoundaryCertificateOfCutsInside x z
-      w certificate xcuts ycuts
-      (RectangleGeometry.rectangleGridCells_nodup hxcoordinates
-        hycoordinates)
-      hxcuts hycuts hreciprocal hlog geometry
+    riemannZetaGridBoundaryCertificateOfCutsInside x z w certificate xcuts ycuts
+      (RectangleGeometry.rectangleGridCells_nodup hxcoordinates hycoordinates) hxcuts hycuts
+      hreciprocal hlog geometry
 
 /--
 Coordinate avoidance makes both zeta kernels integrable on every finite grid-coordinate segment.
@@ -1443,52 +1124,44 @@ or repeated geometry declarations are used here.
 -/
 theorem RiemannZetaGrid.kernelCoordinateIntegrable {x : ℝ} (hx : 0 < x) {z w : ℂ}
     (grid : RectangleGeometry.StrictGridCuts z w)
-    (havoid :
-      (RiemannZetaGrid.LedgerAvoidsCoordinates grid)) :
-    RectangleGeometry.RectangleGridCoordinateIntegrable
-        (riemannZetaReciprocalContourKernel x)
+    (havoid : (RiemannZetaGrid.LedgerAvoidsCoordinates grid)) :
+    RectangleGeometry.RectangleGridCoordinateIntegrable (riemannZetaReciprocalContourKernel x)
         (z.re :: grid.xcuts ++ [w.re]) (z.im :: grid.ycuts ++ [w.im]) ∧
-      RectangleGeometry.RectangleGridCoordinateIntegrable
-        (riemannZetaLogContourKernel x)
+      RectangleGeometry.RectangleGridCoordinateIntegrable (riemannZetaLogContourKernel x)
         (z.re :: grid.xcuts ++ [w.re]) (z.im :: grid.ycuts ++ [w.im]) := by
   constructor
   · constructor
     · intro c hc a ha b hb
       exact
-        (intervalIntegrable_riemannZetaKernels_horizontal
-            hx (grid.xcoordinate_mem_uIcc ha) (grid.xcoordinate_mem_uIcc hb)
-            (grid.ycoordinate_mem_uIcc hc) fun s hs hsc ↦ (havoid s hs).2 (hsc ▸ hc)).1
+        (intervalIntegrable_riemannZetaKernels_horizontal hx (grid.xcoordinate_mem_uIcc ha)
+            (grid.xcoordinate_mem_uIcc hb) (grid.ycoordinate_mem_uIcc hc) fun s hs hsc ↦
+            (havoid s hs).2 (hsc ▸ hc)).1
     · intro c hc a ha b hb
       exact
-        (intervalIntegrable_riemannZetaKernels_vertical
-            hx (grid.xcoordinate_mem_uIcc hc) (grid.ycoordinate_mem_uIcc ha)
-            (grid.ycoordinate_mem_uIcc hb) fun s hs hsc ↦ (havoid s hs).1 (hsc ▸ hc)).1
+        (intervalIntegrable_riemannZetaKernels_vertical hx (grid.xcoordinate_mem_uIcc hc)
+            (grid.ycoordinate_mem_uIcc ha) (grid.ycoordinate_mem_uIcc hb) fun s hs hsc ↦
+            (havoid s hs).1 (hsc ▸ hc)).1
   · constructor
     · intro c hc a ha b hb
       exact
-        (intervalIntegrable_riemannZetaKernels_horizontal
-            hx (grid.xcoordinate_mem_uIcc ha) (grid.xcoordinate_mem_uIcc hb)
-            (grid.ycoordinate_mem_uIcc hc) fun s hs hsc ↦ (havoid s hs).2 (hsc ▸ hc)).2
+        (intervalIntegrable_riemannZetaKernels_horizontal hx (grid.xcoordinate_mem_uIcc ha)
+            (grid.xcoordinate_mem_uIcc hb) (grid.ycoordinate_mem_uIcc hc) fun s hs hsc ↦
+            (havoid s hs).2 (hsc ▸ hc)).2
     · intro c hc a ha b hb
       exact
-        (intervalIntegrable_riemannZetaKernels_vertical
-            hx (grid.xcoordinate_mem_uIcc hc) (grid.ycoordinate_mem_uIcc ha)
-            (grid.ycoordinate_mem_uIcc hb) fun s hs hsc ↦ (havoid s hs).1 (hsc ▸ hc)).2
+        (intervalIntegrable_riemannZetaKernels_vertical hx (grid.xcoordinate_mem_uIcc hc)
+            (grid.ycoordinate_mem_uIcc ha) (grid.ycoordinate_mem_uIcc hb) fun s hs hsc ↦
+            (havoid s hs).1 (hsc ▸ hc)).2
 
 /-- Coordinate avoidance supplies both recursive zeta-kernel grid certificates. -/
 theorem RiemannZetaGrid.kernelGridSubdivisionIntegrable {x : ℝ} (hx : 0 < x) {z w : ℂ}
     (grid : RectangleGeometry.StrictGridCuts z w)
-    (havoid :
-      (RiemannZetaGrid.LedgerAvoidsCoordinates grid)) :
-    RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaReciprocalContourKernel x) z w
+    (havoid : (RiemannZetaGrid.LedgerAvoidsCoordinates grid)) :
+    RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaReciprocalContourKernel x) z w
         grid.xcuts grid.ycuts ∧
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaLogContourKernel x) z w grid.xcuts
-        grid.ycuts := by
-  have edges :=
-    RiemannZetaGrid.kernelCoordinateIntegrable hx grid
-      havoid
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaLogContourKernel x) z w
+        grid.xcuts grid.ycuts := by
+  have edges := RiemannZetaGrid.kernelCoordinateIntegrable hx grid havoid
   have hxcuts : ∀ c ∈ grid.xcuts, c ∈ z.re :: grid.xcuts ++ [w.re] := by
     intro c hc
     simp only [List.cons_append, List.mem_cons, List.mem_append, hc, List.not_mem_nil, or_false,
@@ -1531,30 +1204,17 @@ theorem RiemannZetaGrid.kernelGridSubdivisionIntegrable {x : ℝ} (hx : 0 < x) {
 
 /-- The concrete finite-ledger grid has both zeta-kernel subdivision certificates. -/
 theorem riemannZetaGeneratedGridSubdivisionIntegrable {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    (hre : z.re < w.re) (him : z.im < w.im)
-    (hregular :
-      RiemannZetaRectangleBoundaryIsRegular z w) :
-    let grid :=
-      riemannZetaGeneratedStrictGridCuts z w hre him
-        hregular
-    RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaReciprocalContourKernel x) z w
+    (hre : z.re < w.re) (him : z.im < w.im) (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
+    let grid := riemannZetaGeneratedStrictGridCuts z w hre him hregular
+    RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaReciprocalContourKernel x) z w
         grid.xcuts grid.ycuts ∧
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaLogContourKernel x) z w grid.xcuts
-        grid.ycuts := by
-  let grid :=
-    riemannZetaGeneratedStrictGridCuts z w hre him
-      hregular
-  apply
-    RiemannZetaGrid.kernelGridSubdivisionIntegrable hx
-      grid
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaLogContourKernel x) z w
+        grid.xcuts grid.ycuts := by
+  let grid := riemannZetaGeneratedStrictGridCuts z w hre him hregular
+  apply RiemannZetaGrid.kernelGridSubdivisionIntegrable hx grid
   exact
-    (RiemannZetaGrid.ledgerAvoidsCoordinates_of_boundaryRegular
-        grid)
-      hregular
-      (riemannZetaGeneratedStrictGridCuts_avoidsCuts
-        hre him hregular)
+    (RiemannZetaGrid.ledgerAvoidsCoordinates_of_boundaryRegular grid) hregular
+      (riemannZetaGeneratedStrictGridCuts_avoidsCuts hre him hregular)
 
 /--
 Build the grid certificate from strictly increasing cuts lying between ordered endpoints.
@@ -1563,35 +1223,23 @@ The endpoint-augmentation theorem turns the order hypotheses into duplicate-free
 lists.  The preceding constructor then supplies both grid-cell uniqueness and containment.
 -/
 noncomputable def riemannZetaGridBoundaryCertificateOfStrictCuts (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w)
-    (xcuts ycuts : List ℝ) (hre : z.re < w.re) (him : z.im < w.im)
-    (hxorder : xcuts.Pairwise (· < ·)) (hyorder : ycuts.Pairwise (· < ·))
-    (hxcuts : ∀ u ∈ xcuts, z.re < u ∧ u < w.re) (hycuts : ∀ v ∈ ycuts, z.im < v ∧ v < w.im)
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) (xcuts ycuts : List ℝ)
+    (hre : z.re < w.re) (him : z.im < w.im) (hxorder : xcuts.Pairwise (· < ·))
+    (hyorder : ycuts.Pairwise (· < ·)) (hxcuts : ∀ u ∈ xcuts, z.re < u ∧ u < w.re)
+    (hycuts : ∀ v ∈ ycuts, z.im < v ∧ v < w.im)
     (hreciprocal :
-        RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaReciprocalContourKernel x) z w
-        xcuts ycuts)
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaReciprocalContourKernel x) z
+        w xcuts ycuts)
     (hlog :
-        RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaLogContourKernel x) z w xcuts
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaLogContourKernel x) z w xcuts
         ycuts)
     (geometry :
       RiemannZetaSingularCellBoundaryCertificate x z w
-        (RectangleGeometry.rectangleGridCells z w xcuts
-            ycuts).toFinset
-        certificate) :
-    RiemannZetaGridBoundaryCertificate x z w
-      certificate := by
-  apply
-    riemannZetaGridBoundaryCertificateOfNodupCoordinates
-      x z w certificate xcuts ycuts
-  · exact
-      RectangleGeometry.endpointAugmentedCoordinates_nodup hre
-        hxorder hxcuts
-  · exact
-      RectangleGeometry.endpointAugmentedCoordinates_nodup him
-        hyorder hycuts
+        (RectangleGeometry.rectangleGridCells z w xcuts ycuts).toFinset certificate) :
+    RiemannZetaGridBoundaryCertificate x z w certificate := by
+  apply riemannZetaGridBoundaryCertificateOfNodupCoordinates x z w certificate xcuts ycuts
+  · exact RectangleGeometry.endpointAugmentedCoordinates_nodup hre hxorder hxcuts
+  · exact RectangleGeometry.endpointAugmentedCoordinates_nodup him hyorder hycuts
   · exact fun u hu ↦ Set.mem_uIcc_of_le (le_of_lt (hxcuts u hu).1) (le_of_lt (hxcuts u hu).2)
   · exact fun v hv ↦ Set.mem_uIcc_of_le (le_of_lt (hycuts v hv).1) (le_of_lt (hycuts v hv).2)
   · exact hreciprocal
@@ -1605,43 +1253,31 @@ All coordinate ordering, interior containment, and duplicate-elimination obligat
 discharged by `grid`; only kernel integrability and singular-cell local geometry remain explicit.
 -/
 noncomputable def riemannZetaGridBoundaryCertificateOfStrictGridCuts (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w)
+    (certificate : RiemannZetaPuncturedContourCertificate x z w)
     (grid : RectangleGeometry.StrictGridCuts z w)
     (hreciprocal :
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaReciprocalContourKernel x) z w
-        grid.xcuts grid.ycuts)
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaReciprocalContourKernel x) z
+        w grid.xcuts grid.ycuts)
     (hlog :
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaLogContourKernel x) z w grid.xcuts
-        grid.ycuts)
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaLogContourKernel x) z w
+        grid.xcuts grid.ycuts)
     (geometry :
       RiemannZetaSingularCellBoundaryCertificate x z w
-        (RectangleGeometry.rectangleGridCells z w grid.xcuts
-            grid.ycuts).toFinset
-        certificate) :
-    RiemannZetaGridBoundaryCertificate x z w
-      certificate := by
+        (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset certificate) :
+    RiemannZetaGridBoundaryCertificate x z w certificate := by
   exact
-    riemannZetaGridBoundaryCertificateOfStrictCuts x z
-      w certificate grid.xcuts grid.ycuts grid.re_lt grid.im_lt grid.xcuts_pairwise
-      grid.ycuts_pairwise grid.xcuts_inside grid.ycuts_inside hreciprocal hlog geometry
+    riemannZetaGridBoundaryCertificateOfStrictCuts x z w certificate grid.xcuts grid.ycuts
+      grid.re_lt grid.im_lt grid.xcuts_pairwise grid.ycuts_pairwise grid.xcuts_inside
+      grid.ycuts_inside hreciprocal hlog geometry
 
 /-- A certified reciprocal singular-cell sum equals the uniformly indexed circle ledger. -/
 theorem RiemannZetaSingularCellBoundaryCertificate.sum_reciprocal_eq_circleLedger {x : ℝ} {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)}
-    {certificate :
-      RiemannZetaPuncturedContourCertificate x z w}
-    (geometry :
-      RiemannZetaSingularCellBoundaryCertificate x z w
-        cells certificate) :
+    {cells : Finset (ℂ × ℂ)} {certificate : RiemannZetaPuncturedContourCertificate x z w}
+    (geometry : RiemannZetaSingularCellBoundaryCertificate x z w cells certificate) :
     (∑ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) cell.1
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
           cell.2) =
-      riemannZetaReciprocalAllSingularityCircleLedger x
-        z w certificate := by
+      riemannZetaReciprocalAllSingularityCircleLedger x z w certificate := by
   rw [riemannZetaReciprocalAllSingularityCircleLedger]
   calc
     _ =
@@ -1654,23 +1290,15 @@ theorem RiemannZetaSingularCellBoundaryCertificate.sum_reciprocal_eq_circleLedge
       exact geometry.reciprocal_boundary_eq_circle cell hcell
     _ = _ :=
       geometry.assignment.sum_pointOfCell fun s ↦
-        ∮ u in C(s, certificate.radius),
-          riemannZetaReciprocalContourKernel x u
+        ∮ u in C(s, certificate.radius), riemannZetaReciprocalContourKernel x u
 
 /-- A certified logarithmic singular-cell sum equals the uniformly indexed circle ledger. -/
 theorem RiemannZetaSingularCellBoundaryCertificate.sum_log_eq_circleLedger {x : ℝ} {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)}
-    {certificate :
-      RiemannZetaPuncturedContourCertificate x z w}
-    (geometry :
-      RiemannZetaSingularCellBoundaryCertificate x z w
-        cells certificate) :
+    {cells : Finset (ℂ × ℂ)} {certificate : RiemannZetaPuncturedContourCertificate x z w}
+    (geometry : RiemannZetaSingularCellBoundaryCertificate x z w cells certificate) :
     (∑ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) cell.1
-          cell.2) =
-      riemannZetaLogAllSingularityCircleLedger x z w
-        certificate := by
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2) =
+      riemannZetaLogAllSingularityCircleLedger x z w certificate := by
   rw [riemannZetaLogAllSingularityCircleLedger]
   calc
     _ =
@@ -1683,89 +1311,58 @@ theorem RiemannZetaSingularCellBoundaryCertificate.sum_log_eq_circleLedger {x : 
       exact geometry.log_boundary_eq_circle cell hcell
     _ = _ :=
       geometry.assignment.sum_pointOfCell fun s ↦
-        ∮ u in C(s, certificate.radius),
-          riemannZetaLogContourKernel x u
+        ∮ u in C(s, certificate.radius), riemannZetaLogContourKernel x u
 
 /-- A certified reciprocal singular-cell sum equals the existing local-circle ledger. -/
 theorem RiemannZetaSingularCellBoundaryCertificate.sum_reciprocal_eq_localCircleLedger {x : ℝ}
-    {z w : ℂ} {cells : Finset (ℂ × ℂ)}
-    {certificate :
-      RiemannZetaPuncturedContourCertificate x z w}
-    (geometry :
-      RiemannZetaSingularCellBoundaryCertificate x z w
-        cells certificate) :
+    {z w : ℂ} {cells : Finset (ℂ × ℂ)} {certificate : RiemannZetaPuncturedContourCertificate x z w}
+    (geometry : RiemannZetaSingularCellBoundaryCertificate x z w cells certificate) :
     (∑ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) cell.1
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
           cell.2) =
-      riemannZetaReciprocalLocalCircleLedger x z w
-        certificate := by
+      riemannZetaReciprocalLocalCircleLedger x z w certificate := by
   exact
     geometry.sum_reciprocal_eq_circleLedger.trans
-      (riemannZetaReciprocalAllSingularityCircleLedger_eq_localCircleLedger
-        certificate)
+      (riemannZetaReciprocalAllSingularityCircleLedger_eq_localCircleLedger certificate)
 
 /-- A certified logarithmic singular-cell sum equals the existing local-circle ledger. -/
 theorem RiemannZetaSingularCellBoundaryCertificate.sum_log_eq_localCircleLedger {x : ℝ} {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)}
-    {certificate :
-      RiemannZetaPuncturedContourCertificate x z w}
-    (geometry :
-      RiemannZetaSingularCellBoundaryCertificate x z w
-        cells certificate) :
+    {cells : Finset (ℂ × ℂ)} {certificate : RiemannZetaPuncturedContourCertificate x z w}
+    (geometry : RiemannZetaSingularCellBoundaryCertificate x z w cells certificate) :
     (∑ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) cell.1
-          cell.2) =
-      riemannZetaLogLocalCircleLedger x z w
-        certificate := by
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2) =
+      riemannZetaLogLocalCircleLedger x z w certificate := by
   exact
     geometry.sum_log_eq_circleLedger.trans
-      (riemannZetaLogAllSingularityCircleLedger_eq_localCircleLedger
-        certificate)
+      (riemannZetaLogAllSingularityCircleLedger_eq_localCircleLedger certificate)
 
 /-- The remaining geometric boundary decomposition for the reciprocal kernel. -/
 def RiemannZetaReciprocalBoundaryDecomposition (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w) :
-    Prop :=
-  RectangleGeometry.rectangleBoundaryIntegral
-      (riemannZetaReciprocalContourKernel x) z w =
-    riemannZetaReciprocalLocalCircleLedger x z w
-      certificate
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) : Prop :=
+  RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) z w =
+    riemannZetaReciprocalLocalCircleLedger x z w certificate
 
 /-- The remaining geometric boundary decomposition for the logarithmic kernel. -/
 def RiemannZetaLogBoundaryDecomposition (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w) :
-    Prop :=
-  RectangleGeometry.rectangleBoundaryIntegral
-      (riemannZetaLogContourKernel x) z w =
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) : Prop :=
+  RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) z w =
     riemannZetaLogLocalCircleLedger x z w certificate
 
 /-- Both geometric decompositions attached to one punctured-contour certificate. -/
 def RiemannZetaBoundaryDecomposition (x : ℝ) (z w : ℂ)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w) :
-    Prop :=
-  RiemannZetaReciprocalBoundaryDecomposition x z w
-      certificate ∧
-    RiemannZetaLogBoundaryDecomposition x z w
-      certificate
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) : Prop :=
+  RiemannZetaReciprocalBoundaryDecomposition x z w certificate ∧
+    RiemannZetaLogBoundaryDecomposition x z w certificate
 
 /-- The finite reciprocal-kernel contour identity to be proved by residue summation. -/
 def RiemannZetaReciprocalFiniteContourIdentity (x : ℝ) (z w : ℂ) : Prop :=
-  RectangleGeometry.rectangleBoundaryIntegral
-      (riemannZetaReciprocalContourKernel x) z w =
-    2 * Real.pi * Complex.I *
-      riemannZetaReciprocalContourResidueLedger x z w
+  RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) z w =
+    2 * Real.pi * Complex.I * riemannZetaReciprocalContourResidueLedger x z w
 
 /-- The finite logarithmic-kernel contour identity to be proved by residue summation. -/
 def RiemannZetaLogFiniteContourIdentity (x : ℝ) (z w : ℂ) : Prop :=
-  RectangleGeometry.rectangleBoundaryIntegral
-      (riemannZetaLogContourKernel x) z w =
-    2 * Real.pi * Complex.I *
-      riemannZetaLogContourResidueLedger x z w
+  RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) z w =
+    2 * Real.pi * Complex.I * riemannZetaLogContourResidueLedger x z w
 
 /--
 The reciprocal finite-contour identity solved for its right vertical side.
@@ -1777,18 +1374,15 @@ to infinite height.
 Proof: unfold the four-edge boundary normalization and rearrange in `ℂ`.
 Role: it isolates the only finite-contour algebra needed by the reciprocal vertical-limit step.
 -/
-theorem riemannZetaReciprocal_rightVertical_eq_of_finiteContourIdentity
-    {x : ℝ} {z w : ℂ}
+theorem riemannZetaReciprocal_rightVertical_eq_of_finiteContourIdentity {x : ℝ} {z w : ℂ}
     (hidentity : RiemannZetaReciprocalFiniteContourIdentity x z w) :
-    Complex.I • (∫ y : ℝ in z.im..w.im,
-      riemannZetaReciprocalContourKernel x (w.re + y * Complex.I)) =
+    Complex.I •
+        (∫ y : ℝ in z.im..w.im, riemannZetaReciprocalContourKernel x (w.re + y * Complex.I)) =
       2 * Real.pi * Complex.I * riemannZetaReciprocalContourResidueLedger x z w -
-        (∫ u : ℝ in z.re..w.re,
-          riemannZetaReciprocalContourKernel x (u + z.im * Complex.I)) +
-        (∫ u : ℝ in z.re..w.re,
-          riemannZetaReciprocalContourKernel x (u + w.im * Complex.I)) +
-        Complex.I • (∫ y : ℝ in z.im..w.im,
-          riemannZetaReciprocalContourKernel x (z.re + y * Complex.I)) := by
+          (∫ u : ℝ in z.re..w.re, riemannZetaReciprocalContourKernel x (u + z.im * Complex.I)) +
+        (∫ u : ℝ in z.re..w.re, riemannZetaReciprocalContourKernel x (u + w.im * Complex.I)) +
+        Complex.I •
+          (∫ y : ℝ in z.im..w.im, riemannZetaReciprocalContourKernel x (z.re + y * Complex.I)) := by
   unfold RiemannZetaReciprocalFiniteContourIdentity at hidentity
   unfold RectangleGeometry.rectangleBoundaryIntegral at hidentity
   linear_combination hidentity
@@ -1804,35 +1398,24 @@ Proof: unfold the four-edge boundary normalization and rearrange in `ℂ`.
 Role: it gives the exact identity to which horizontal and left-edge estimates will be applied.
 -/
 theorem riemannZetaLog_rightVertical_eq_of_finiteContourIdentity {x : ℝ} {z w : ℂ}
-    (hidentity :
-      RiemannZetaLogFiniteContourIdentity x z w) :
-    Complex.I •
-        (∫ y : ℝ in z.im..w.im,
-          riemannZetaLogContourKernel x (w.re + y * Complex.I)) =
-      2 * Real.pi * Complex.I *
-            riemannZetaLogContourResidueLedger x z w -
-          (∫ u : ℝ in z.re..w.re,
-            riemannZetaLogContourKernel x (u + z.im * Complex.I)) +
-        (∫ u : ℝ in z.re..w.re,
-          riemannZetaLogContourKernel x (u + w.im * Complex.I)) +
+    (hidentity : RiemannZetaLogFiniteContourIdentity x z w) :
+    Complex.I • (∫ y : ℝ in z.im..w.im, riemannZetaLogContourKernel x (w.re + y * Complex.I)) =
+      2 * Real.pi * Complex.I * riemannZetaLogContourResidueLedger x z w -
+          (∫ u : ℝ in z.re..w.re, riemannZetaLogContourKernel x (u + z.im * Complex.I)) +
+        (∫ u : ℝ in z.re..w.re, riemannZetaLogContourKernel x (u + w.im * Complex.I)) +
         Complex.I •
-          (∫ y : ℝ in z.im..w.im,
-            riemannZetaLogContourKernel x
-              (z.re + y * Complex.I)) := by
-  unfold
-    RiemannZetaLogFiniteContourIdentity at hidentity
+          (∫ y : ℝ in z.im..w.im, riemannZetaLogContourKernel x (z.re + y * Complex.I)) := by
+  unfold RiemannZetaLogFiniteContourIdentity at hidentity
   unfold RectangleGeometry.rectangleBoundaryIntegral at hidentity
   linear_combination hidentity
 
 /-- The reciprocal kernel's residue at zero is `log(2π)/x`. -/
 theorem riemannZetaReciprocalResidueAtZero_eq (x : ℝ) :
-    riemannZetaReciprocalResidueAtZero x =
-      Complex.log (2 * Real.pi) * (x : ℂ)⁻¹ := by
+    riemannZetaReciprocalResidueAtZero x = Complex.log (2 * Real.pi) * (x : ℂ)⁻¹ := by
   exact riemannZetaReciprocalZeroRegularization_zero x
 
 /-- The logarithmic kernel's residue at one is `x`. -/
-theorem riemannZetaLogResidueAtOne_eq (x : ℝ) :
-    riemannZetaLogResidueAtOne x = x := by
+theorem riemannZetaLogResidueAtOne_eq (x : ℝ) : riemannZetaLogResidueAtOne x = x := by
   exact riemannZetaLogOneRegularization_one x
 
 /-- The reciprocal residue formula at zero survives every sufficiently small radius. -/
@@ -1842,27 +1425,22 @@ theorem exists_radius_forall_circleIntegral_reciprocalKernel_zero_eq_residue {x 
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            (∮ z in C(0, r),
-                riemannZetaReciprocalContourKernel x z) =
-              2 * Real.pi * Complex.I *
-                riemannZetaReciprocalResidueAtZero x := by
+            (∮ z in C(0, r), riemannZetaReciprocalContourKernel x z) =
+              2 * Real.pi * Complex.I * riemannZetaReciprocalResidueAtZero x := by
   have honeNhds : ∀ᶠ s : ℂ in nhds 0, s ≠ 1 :=
     compl_singleton_mem_nhds (by norm_num only : (0 : ℂ) ≠ 1)
   have hone : ∀ᶠ s : ℂ in nhdsWithin 0 ({0}ᶜ : Set ℂ), s ≠ 1 :=
     honeNhds.filter_mono nhdsWithin_le_nhds
   have heq :
     Filter.EventuallyEq (nhdsWithin 0 ({0}ᶜ : Set ℂ))
-      (fun s ↦
-        (s - 0) *
-          riemannZetaReciprocalContourKernel x s)
+      (fun s ↦ (s - 0) * riemannZetaReciprocalContourKernel x s)
       (riemannZetaReciprocalZeroRegularization x) := by
     filter_upwards [eventually_mem_nhdsWithin, hone] with s hs0 hs1
     simpa only [sub_zero] using
       mul_riemannZetaReciprocalContourKernel x (Set.mem_compl_singleton_iff.mp hs0) hs1
   simpa only [riemannZetaReciprocalResidueAtZero] using
     General.exists_radius_forall_circleIntegral_eq_two_pi_I_mul
-      (analyticAt_riemannZetaReciprocalZeroRegularization hx)
-      heq
+      (analyticAt_riemannZetaReciprocalZeroRegularization hx) heq
 
 /-- The logarithmic residue formula at one survives every sufficiently small radius. -/
 theorem exists_radius_forall_circleIntegral_logKernel_one_eq_residue {x : ℝ} (hx : 0 < x) :
@@ -1871,10 +1449,8 @@ theorem exists_radius_forall_circleIntegral_logKernel_one_eq_residue {x : ℝ} (
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            (∮ z in C(1, r),
-                riemannZetaLogContourKernel x z) =
-              2 * Real.pi * Complex.I *
-                riemannZetaLogResidueAtOne x := by
+            (∮ z in C(1, r), riemannZetaLogContourKernel x z) =
+              2 * Real.pi * Complex.I * riemannZetaLogResidueAtOne x := by
   simpa only [riemannZetaLogResidueAtOne] using
     General.exists_radius_forall_circleIntegral_eq_two_pi_I_mul
       (analyticAt_riemannZetaLogOneRegularization hx)
@@ -1882,10 +1458,8 @@ theorem exists_radius_forall_circleIntegral_logKernel_one_eq_residue {x : ℝ} (
 
 /-- The reciprocal kernel's double-pole residue at one is `log x - 1 - γ`. -/
 theorem riemannZetaReciprocalResidueAtOne_eq {x : ℝ} (hx : 0 < x) :
-    riemannZetaReciprocalResidueAtOne x =
-      Complex.log x - 1 - Real.eulerMascheroniConstant := by
-  have hregular :=
-    differentiableAt_riemannZetaOneLogDerivativeRegularization
+    riemannZetaReciprocalResidueAtOne x = Complex.log x - 1 - Real.eulerMascheroniConstant := by
+  have hregular := differentiableAt_riemannZetaOneLogDerivativeRegularization
   have hxne : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   have hcpow : (x : ℂ) ≠ 0 ∨ (1 : ℂ) - 1 ≠ 0 := Or.inl hxne
   have hpow : DifferentiableAt ℂ (fun s : ℂ ↦ (x : ℂ) ^ (s - 1)) 1 := by
@@ -1894,17 +1468,14 @@ theorem riemannZetaReciprocalResidueAtOne_eq {x : ℝ} (hx : 0 < x) :
   have hdiv := ((hregular.mul hpow).hasDerivAt.div (hasDerivAt_id 1) one_ne_zero).deriv
   change
     deriv
-        ((riemannZetaOneLogDerivativeRegularization *
-            fun s : ℂ ↦ (x : ℂ) ^ (s - 1)) /
-          (id : ℂ → ℂ))
+        ((riemannZetaOneLogDerivativeRegularization * fun s : ℂ ↦ (x : ℂ) ^ (s - 1)) / (id : ℂ → ℂ))
         1 =
       _
   rw [hdiv]
   have hmul := (hregular.hasDerivAt.mul hpow.hasDerivAt).deriv
   rw [hmul, Complex.deriv_const_cpow (by fun_prop)]
   rw [deriv_riemannZetaOneLogDerivativeRegularization_one]
-  simp only [sub_self, Complex.cpow_zero, mul_one,
-    riemannZetaOneLogDerivativeRegularization_one,
+  simp only [sub_self, Complex.cpow_zero, mul_one, riemannZetaOneLogDerivativeRegularization_one,
     differentiableAt_fun_id, differentiableAt_const, deriv_fun_sub, deriv_id'', deriv_const',
     sub_zero, one_mul, id_eq, Pi.mul_apply, one_pow, div_one]
   ring
@@ -1916,10 +1487,8 @@ theorem exists_radius_forall_circleIntegral_reciprocalKernel_one_eq_residue {x :
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            (∮ z in C(1, r),
-                riemannZetaReciprocalContourKernel x z) =
-              2 * Real.pi * Complex.I *
-                riemannZetaReciprocalResidueAtOne x := by
+            (∮ z in C(1, r), riemannZetaReciprocalContourKernel x z) =
+              2 * Real.pi * Complex.I * riemannZetaReciprocalResidueAtOne x := by
   simpa only [riemannZetaReciprocalResidueAtOne] using
     General.exists_radius_forall_circleIntegral_eq_two_pi_I_mul_deriv
       (analyticAt_riemannZetaReciprocalOneRegularization hx)
@@ -1932,22 +1501,18 @@ theorem exists_radius_forall_circleIntegral_logKernel_zero_eq_residue {x : ℝ} 
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            (∮ z in C(0, r),
-                riemannZetaLogContourKernel x z) =
-              2 * Real.pi * Complex.I *
-                riemannZetaLogResidueAtZero x := by
+            (∮ z in C(0, r), riemannZetaLogContourKernel x z) =
+              2 * Real.pi * Complex.I * riemannZetaLogResidueAtZero x := by
   have heq :
     Filter.EventuallyEq (nhdsWithin 0 ({0}ᶜ : Set ℂ))
-      (fun s ↦
-        (s - 0) ^ 2 * riemannZetaLogContourKernel x s)
+      (fun s ↦ (s - 0) ^ 2 * riemannZetaLogContourKernel x s)
       (riemannZetaLogZeroRegularization x) := by
     filter_upwards [eventually_mem_nhdsWithin] with s hs0
     simpa only [sub_zero] using
       sq_mul_riemannZetaLogContourKernel x (Set.mem_compl_singleton_iff.mp hs0)
   simpa only [riemannZetaLogResidueAtZero] using
     General.exists_radius_forall_circleIntegral_eq_two_pi_I_mul_deriv
-      (analyticAt_riemannZetaLogZeroRegularization hx)
-      heq
+      (analyticAt_riemannZetaLogZeroRegularization hx) heq
 
 /-- All four Mellin-pole formulas share one radius stable under shrinking. -/
 theorem exists_radius_forall_circleIntegrals_eq_mellinResidues {x : ℝ} (hx : 0 < x) :
@@ -1956,34 +1521,22 @@ theorem exists_radius_forall_circleIntegrals_eq_mellinResidues {x : ℝ} (hx : 0
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            (∮ z in C(0, r),
-                  riemannZetaReciprocalContourKernel x z) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaReciprocalResidueAtZero x ∧
-              (∮ z in C(1, r),
-                  riemannZetaLogContourKernel x z) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaLogResidueAtOne x ∧
-              (∮ z in C(1, r),
-                  riemannZetaReciprocalContourKernel x z) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaReciprocalResidueAtOne x ∧
-              (∮ z in C(0, r),
-                  riemannZetaLogContourKernel x z) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaLogResidueAtZero x := by
+            (∮ z in C(0, r), riemannZetaReciprocalContourKernel x z) =
+                2 * Real.pi * Complex.I * riemannZetaReciprocalResidueAtZero x ∧
+              (∮ z in C(1, r), riemannZetaLogContourKernel x z) =
+                2 * Real.pi * Complex.I * riemannZetaLogResidueAtOne x ∧
+              (∮ z in C(1, r), riemannZetaReciprocalContourKernel x z) =
+                2 * Real.pi * Complex.I * riemannZetaReciprocalResidueAtOne x ∧
+              (∮ z in C(0, r), riemannZetaLogContourKernel x z) =
+                2 * Real.pi * Complex.I * riemannZetaLogResidueAtZero x := by
   obtain ⟨RreciprocalZero, hRreciprocalZero, hreciprocalZero⟩ :=
-    exists_radius_forall_circleIntegral_reciprocalKernel_zero_eq_residue
-      hx
+    exists_radius_forall_circleIntegral_reciprocalKernel_zero_eq_residue hx
   obtain ⟨RlogOne, hRlogOne, hlogOne⟩ :=
-    exists_radius_forall_circleIntegral_logKernel_one_eq_residue
-      hx
+    exists_radius_forall_circleIntegral_logKernel_one_eq_residue hx
   obtain ⟨RreciprocalOne, hRreciprocalOne, hreciprocalOne⟩ :=
-    exists_radius_forall_circleIntegral_reciprocalKernel_one_eq_residue
-      hx
+    exists_radius_forall_circleIntegral_reciprocalKernel_one_eq_residue hx
   obtain ⟨RlogZero, hRlogZero, hlogZero⟩ :=
-    exists_radius_forall_circleIntegral_logKernel_zero_eq_residue
-      hx
+    exists_radius_forall_circleIntegral_logKernel_zero_eq_residue hx
   let R := min (min RreciprocalZero RlogOne) (min RreciprocalOne RlogZero)
   have hR : 0 < R := lt_min (lt_min hRreciprocalZero hRlogOne) (lt_min hRreciprocalOne hRlogZero)
   refine ⟨R, hR, ?_⟩
@@ -2001,16 +1554,14 @@ theorem exists_radius_forall_circleIntegrals_eq_mellinResidues {x : ℝ} (hx : 0
 /-- A reciprocal zero contribution is the center value of every matching regularization. -/
 theorem riemannZetaReciprocalZeroContribution_eq_regularization_self (x : ℝ) (ρ : ℂ) (g : ℂ → ℂ) :
     riemannZetaReciprocalZeroContribution x ρ =
-      riemannZetaReciprocalZetaZeroRegularization x ρ
-        (riemannZetaZeroMultiplicity ρ) g ρ := by
+      riemannZetaReciprocalZetaZeroRegularization x ρ (riemannZetaZeroMultiplicity ρ) g ρ := by
   rw [riemannZetaReciprocalZetaZeroRegularization_self]
   rfl
 
 /-- A logarithmic zero contribution is the center value of every matching regularization. -/
 theorem riemannZetaLogZeroContribution_eq_regularization_self (x : ℝ) (ρ : ℂ) (g : ℂ → ℂ) :
     riemannZetaLogZeroContribution x ρ =
-      riemannZetaLogZetaZeroRegularization x ρ
-        (riemannZetaZeroMultiplicity ρ) g ρ := by
+      riemannZetaLogZetaZeroRegularization x ρ (riemannZetaZeroMultiplicity ρ) g ρ := by
   rw [riemannZetaLogZetaZeroRegularization_self]
   rfl
 
@@ -2022,28 +1573,19 @@ theorem exists_radius_forall_circleIntegral_reciprocalKernel_eq_zeroContribution
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            (∮ z in C(ρ, r),
-                riemannZetaReciprocalContourKernel x
-                  z) =
-              2 * Real.pi * Complex.I *
-                riemannZetaReciprocalZeroContribution x
-                  ρ := by
+            (∮ z in C(ρ, r), riemannZetaReciprocalContourKernel x z) =
+              2 * Real.pi * Complex.I * riemannZetaReciprocalZeroContribution x ρ := by
   obtain ⟨g, _, hganalytic, hgzero, heq⟩ :=
-    exists_eventuallyEq_reciprocalKernel_zetaZeroRegularization
-      x hρ0 hρ1 hzero
+    exists_eventuallyEq_reciprocalKernel_zetaZeroRegularization x hρ0 hρ1 hzero
   have hregular :=
-    analyticAt_riemannZetaReciprocalZetaZeroRegularization
-      hx hρ0 hρ1 (riemannZetaZeroMultiplicity ρ)
-      hganalytic hgzero
+    analyticAt_riemannZetaReciprocalZetaZeroRegularization hx hρ0 hρ1
+      (riemannZetaZeroMultiplicity ρ) hganalytic hgzero
   obtain ⟨R, hR, hintegral⟩ :=
-    General.exists_radius_forall_circleIntegral_eq_two_pi_I_mul
-      hregular heq
+    General.exists_radius_forall_circleIntegral_eq_two_pi_I_mul hregular heq
   refine ⟨R, hR, ?_⟩
   intro r hr hrR
   rw [hintegral r hr hrR]
-  rw [←
-    riemannZetaReciprocalZeroContribution_eq_regularization_self
-      x ρ g]
+  rw [← riemannZetaReciprocalZeroContribution_eq_regularization_self x ρ g]
 
 /-- The logarithmic zero-contribution formula survives every sufficiently small radius. -/
 theorem exists_radius_forall_circleIntegral_logKernel_eq_zeroContribution {x : ℝ} (hx : 0 < x)
@@ -2053,27 +1595,19 @@ theorem exists_radius_forall_circleIntegral_logKernel_eq_zeroContribution {x : �
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            (∮ z in C(ρ, r),
-                riemannZetaLogContourKernel x z) =
-              2 * Real.pi * Complex.I *
-                riemannZetaLogZeroContribution x
-                  ρ := by
+            (∮ z in C(ρ, r), riemannZetaLogContourKernel x z) =
+              2 * Real.pi * Complex.I * riemannZetaLogZeroContribution x ρ := by
   obtain ⟨g, _, hganalytic, hgzero, heq⟩ :=
-    exists_eventuallyEq_logKernel_zetaZeroRegularization
-      x hρ0 hρ1 hzero
+    exists_eventuallyEq_logKernel_zetaZeroRegularization x hρ0 hρ1 hzero
   have hregular :=
-    analyticAt_riemannZetaLogZetaZeroRegularization hx
-      hρ0 (riemannZetaZeroMultiplicity ρ) hganalytic
-      hgzero
+    analyticAt_riemannZetaLogZetaZeroRegularization hx hρ0 (riemannZetaZeroMultiplicity ρ)
+      hganalytic hgzero
   obtain ⟨R, hR, hintegral⟩ :=
-    General.exists_radius_forall_circleIntegral_eq_two_pi_I_mul
-      hregular heq
+    General.exists_radius_forall_circleIntegral_eq_two_pi_I_mul hregular heq
   refine ⟨R, hR, ?_⟩
   intro r hr hrR
   rw [hintegral r hr hrR]
-  rw [←
-    riemannZetaLogZeroContribution_eq_regularization_self
-      x ρ g]
+  rw [← riemannZetaLogZeroContribution_eq_regularization_self x ρ g]
 
 /-- Both kernel formulas at a zeta zero share one radius stable under shrinking. -/
 theorem exists_radius_forall_circleIntegrals_eq_zeroContributions {x : ℝ} (hx : 0 < x) {ρ : ℂ}
@@ -2083,23 +1617,14 @@ theorem exists_radius_forall_circleIntegrals_eq_zeroContributions {x : ℝ} (hx 
         ∀ r : ℝ,
           0 < r →
             r ≤ R →
-            (∮ z in C(ρ, r),
-                  riemannZetaReciprocalContourKernel x
-                    z) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaReciprocalZeroContribution
-                    x ρ ∧
-              (∮ z in C(ρ, r),
-                  riemannZetaLogContourKernel x z) =
-                2 * Real.pi * Complex.I *
-                  riemannZetaLogZeroContribution x
-                    ρ := by
+            (∮ z in C(ρ, r), riemannZetaReciprocalContourKernel x z) =
+                2 * Real.pi * Complex.I * riemannZetaReciprocalZeroContribution x ρ ∧
+              (∮ z in C(ρ, r), riemannZetaLogContourKernel x z) =
+                2 * Real.pi * Complex.I * riemannZetaLogZeroContribution x ρ := by
   obtain ⟨Rreciprocal, hRreciprocal, hreciprocal⟩ :=
-    exists_radius_forall_circleIntegral_reciprocalKernel_eq_zeroContribution
-      hx hρ0 hρ1 hzero
+    exists_radius_forall_circleIntegral_reciprocalKernel_eq_zeroContribution hx hρ0 hρ1 hzero
   obtain ⟨Rlog, hRlog, hlog⟩ :=
-    exists_radius_forall_circleIntegral_logKernel_eq_zeroContribution
-      hx hρ0 hρ1 hzero
+    exists_radius_forall_circleIntegral_logKernel_eq_zeroContribution hx hρ0 hρ1 hzero
   refine ⟨min Rreciprocal Rlog, lt_min hRreciprocal hRlog, ?_⟩
   intro r hr hrmin
   have hrreciprocal : r ≤ Rreciprocal := le_trans hrmin (min_le_left _ _)
@@ -2116,41 +1641,27 @@ theorem exists_common_radius_circleIntegrals_eq_zeroContributions {x : ℝ} (hx 
           0 < r →
             r ≤ R →
             ∀ ρ ∈ riemannZetaZerosInAnyRectangle z w,
-              (∮ s in C(ρ, r),
-                    riemannZetaReciprocalContourKernel
-                      x s) =
-                  2 * Real.pi * Complex.I *
-                    riemannZetaReciprocalZeroContribution
-                      x ρ ∧
-                (∮ s in C(ρ, r),
-                    riemannZetaLogContourKernel x s) =
-                  2 * Real.pi * Complex.I *
-                    riemannZetaLogZeroContribution x
-                      ρ := by
+              (∮ s in C(ρ, r), riemannZetaReciprocalContourKernel x s) =
+                  2 * Real.pi * Complex.I * riemannZetaReciprocalZeroContribution x ρ ∧
+                (∮ s in C(ρ, r), riemannZetaLogContourKernel x s) =
+                  2 * Real.pi * Complex.I * riemannZetaLogZeroContribution x ρ := by
   classical
   let S := riemannZetaZerosInAnyRectangle z w
   let certificate (ρ : ℂ) (hρ : ρ ∈ S) :=
-    exists_radius_forall_circleIntegrals_eq_zeroContributions
-      hx
-      (ne_zero_of_mem_riemannZetaZerosInAnyRectangle
-        hρ)
+    exists_radius_forall_circleIntegrals_eq_zeroContributions hx
+      (ne_zero_of_mem_riemannZetaZerosInAnyRectangle hρ)
       (ne_one_of_mem_riemannZetaZerosInAnyRectangle hρ)
-      ((mem_riemannZetaZerosInAnyRectangle_iff.mp
-          hρ).2)
+      ((mem_riemannZetaZerosInAnyRectangle_iff.mp hρ).2)
   let radius (ρ : ℂ) : ℝ := if hρ : ρ ∈ S then (certificate ρ hρ).choose else 1
   have hradius_pos (ρ : ℂ) (hρ : ρ ∈ S) : 0 < radius ρ := by
     dsimp only [radius]
     rw [dite_eq_left hρ]
     exact (certificate ρ hρ).choose_spec.1
   have hradius_formula (ρ : ℂ) (hρ : ρ ∈ S) (r : ℝ) (hr : 0 < r) (hrradius : r ≤ radius ρ) :
-    (∮ s in C(ρ, r),
-          riemannZetaReciprocalContourKernel x s) =
-        2 * Real.pi * Complex.I *
-          riemannZetaReciprocalZeroContribution x ρ ∧
-      (∮ s in C(ρ, r),
-          riemannZetaLogContourKernel x s) =
-        2 * Real.pi * Complex.I *
-          riemannZetaLogZeroContribution x ρ := by
+    (∮ s in C(ρ, r), riemannZetaReciprocalContourKernel x s) =
+        2 * Real.pi * Complex.I * riemannZetaReciprocalZeroContribution x ρ ∧
+      (∮ s in C(ρ, r), riemannZetaLogContourKernel x s) =
+        2 * Real.pi * Complex.I * riemannZetaLogZeroContribution x ρ := by
     dsimp only [radius] at hrradius
     rw [dite_eq_left hρ] at hrradius
     exact (certificate ρ hρ).choose_spec.2 r hr hrradius
@@ -2178,28 +1689,17 @@ theorem exists_common_radius_circleIntegrals_eq_zeroContributions {x : ℝ} (hx 
 certificate below any prescribed positive radius. Take a minimum of the
 geometric and analytic radius bounds; all local formulas persist upon shrinking. -/
 theorem exists_riemannZetaPuncturedContourCertificate_le {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    (hregular :
-      RiemannZetaRectangleBoundaryIsRegular z w)
-    {ε : ℝ} (hε : 0 < ε) :
+    (hregular : RiemannZetaRectangleBoundaryIsRegular z w) {ε : ℝ} (hε : 0 < ε) :
     Nonempty
-      { certificate :
-        RiemannZetaPuncturedContourCertificate x z w //
-        certificate.radius ≤ ε } := by
+      { certificate : RiemannZetaPuncturedContourCertificate x z w // certificate.radius ≤ ε } := by
   obtain ⟨Rgeometry, hRgeometry, hboundary, hpairs⟩ :=
-    exists_pairwise_disjoint_riemannZetaSingularityRadius
-      hregular
-  obtain ⟨Rzero, hRzero, hzero⟩ :=
-    exists_common_radius_circleIntegrals_eq_zeroContributions
-      hx z w
-  obtain ⟨Rmellin, hRmellin, hmellin⟩ :=
-    exists_radius_forall_circleIntegrals_eq_mellinResidues
-      hx
+    exists_pairwise_disjoint_riemannZetaSingularityRadius hregular
+  obtain ⟨Rzero, hRzero, hzero⟩ := exists_common_radius_circleIntegrals_eq_zeroContributions hx z w
+  obtain ⟨Rmellin, hRmellin, hmellin⟩ := exists_radius_forall_circleIntegrals_eq_mellinResidues hx
   obtain ⟨RsquareZero, hRsquareZero, hsquareZero⟩ :=
-    exists_common_radius_llsRectangleBoundaryIntegrals_eq_zeroContributions
-      hx z w
+    exists_common_radius_llsRectangleBoundaryIntegrals_eq_zeroContributions hx z w
   obtain ⟨RsquareMellin, hRsquareMellin, hsquareMellin⟩ :=
-    exists_radius_forall_llsRectangleBoundaryIntegrals_eq_mellinResidues
-      hx
+    exists_radius_forall_llsRectangleBoundaryIntegrals_eq_mellinResidues hx
   let R := min (min (min (min Rgeometry Rzero) Rmellin) (min RsquareZero RsquareMellin)) ε
   have hR : 0 < R :=
     lt_min
@@ -2224,10 +1724,7 @@ theorem exists_riemannZetaPuncturedContourCertificate_le {x : ℝ} (hx : 0 < x) 
           mellin_integrals := hmellin R hR hRmellin'
           square_zero_integrals := hsquareZero R hR hRsquareZero'
           square_mellin_integrals := hsquareMellin R hR hRsquareMellin'
-          regular_subset :=
-            riemannZetaPuncturedRectangle_subset_regularSet
-              hR.le },
-        hRε⟩⟩
+          regular_subset := riemannZetaPuncturedRectangle_subset_regularSet hR.le }, hRε⟩⟩
   · intro s hs
     apply RectangleGeometry.disjoint_closedBall_rectangleClosedBoxBoundary
     intro y hy
@@ -2245,23 +1742,15 @@ constructor then shrinks all analytic and geometric radii below that margin, whi
 local circle formula needed by the residue ledger.
 -/
 theorem RiemannZetaGridInteriorSeparation.exists_puncturedContourCertificate_inside_cells {x : ℝ}
-    (hx : 0 < x) {z w : ℂ}
-    (hregular :
-      RiemannZetaRectangleBoundaryIsRegular z w)
-    {cells : Finset (ℂ × ℂ)}
-    (interior :
-      RiemannZetaGridInteriorSeparation z w cells) :
+    (hx : 0 < x) {z w : ℂ} (hregular : RiemannZetaRectangleBoundaryIsRegular z w)
+    {cells : Finset (ℂ × ℂ)} (interior : RiemannZetaGridInteriorSeparation z w cells) :
     Nonempty
-      { certificate :
-        RiemannZetaPuncturedContourCertificate x z w //
+      { certificate : RiemannZetaPuncturedContourCertificate x z w //
         ∀ cell ∈ riemannZetaSingularCells z w cells,
           Metric.closedBall (interior.toAssignment.pointOfCell cell) certificate.radius ⊆
-            RectangleGeometry.rectangleOpenBox cell.1
-              cell.2 } := by
+            RectangleGeometry.rectangleOpenBox cell.1 cell.2 } := by
   obtain ⟨ε, hε, hcells⟩ := interior.exists_common_cell_radius
-  obtain ⟨certificate, hradius⟩ :=
-    exists_riemannZetaPuncturedContourCertificate_le hx
-      hregular hε
+  obtain ⟨certificate, hradius⟩ := exists_riemannZetaPuncturedContourCertificate_le hx hregular hε
   refine ⟨⟨certificate, ?_⟩⟩
   intro cell hcell y hy
   apply hcells cell hcell
@@ -2272,28 +1761,20 @@ theorem exists_riemannZetaGeneratedPuncturedContourCertificate_inside_cells {x :
     {z w : ℂ} (hre : z.re < w.re) (him : z.im < w.im)
     (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
     let grid := riemannZetaGeneratedStrictGridCuts z w hre him hregular
-    let cells :=
-      (RectangleGeometry.rectangleGridCells z w grid.xcuts
-          grid.ycuts).toFinset
+    let cells := (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset
     let interior := riemannZetaGeneratedGridInteriorSeparation hre him hregular
     Nonempty
-      { certificate :
-        RiemannZetaPuncturedContourCertificate x z w //
+      { certificate : RiemannZetaPuncturedContourCertificate x z w //
         ∀ cell ∈ riemannZetaSingularCells z w cells,
           Metric.closedBall (interior.toAssignment.pointOfCell cell) certificate.radius ⊆
-            RectangleGeometry.rectangleOpenBox cell.1
-              cell.2 } := by
-  let grid :=
-    riemannZetaGeneratedStrictGridCuts z w hre him hregular
-  let cells :=
-    (RectangleGeometry.rectangleGridCells z w grid.xcuts
-        grid.ycuts).toFinset
-  let interior :
-    RiemannZetaGridInteriorSeparation z w cells :=
+            RectangleGeometry.rectangleOpenBox cell.1 cell.2 } := by
+  let grid := riemannZetaGeneratedStrictGridCuts z w hre him hregular
+  let cells := (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset
+  let interior : RiemannZetaGridInteriorSeparation z w cells :=
     riemannZetaGeneratedGridInteriorSeparation hre him hregular
   exact
-    RiemannZetaGridInteriorSeparation.exists_puncturedContourCertificate_inside_cells
-      hx hregular interior
+    RiemannZetaGridInteriorSeparation.exists_puncturedContourCertificate_inside_cells hx hregular
+      interior
 
 /--
 For the generated grid, only the two cell-to-circle identities remain to build the boundary data.
@@ -2303,76 +1784,48 @@ certificates are supplied by the generated-grid theorems.  The hypotheses are ex
 deformation statements still requiring the dedicated punctured-cell argument.
 -/
 noncomputable def riemannZetaGeneratedGridBoundaryCertificate {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    (hre : z.re < w.re) (him : z.im < w.im)
-    (hregular :
-      RiemannZetaRectangleBoundaryIsRegular z w)
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w)
+    (hre : z.re < w.re) (him : z.im < w.im) (hregular : RiemannZetaRectangleBoundaryIsRegular z w)
+    (certificate : RiemannZetaPuncturedContourCertificate x z w)
     (hreciprocal :
-      let grid :=
-        riemannZetaGeneratedStrictGridCuts z w hre him hregular
-      let cells :=
-        (RectangleGeometry.rectangleGridCells z w grid.xcuts
-            grid.ycuts).toFinset
-      let interior :=
-        riemannZetaGeneratedGridInteriorSeparation hre
-          him hregular
+      let grid := riemannZetaGeneratedStrictGridCuts z w hre him hregular
+      let cells := (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset
+      let interior := riemannZetaGeneratedGridInteriorSeparation hre him hregular
       ∀ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-            (riemannZetaReciprocalContourKernel x)
-            cell.1 cell.2 =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
+            cell.2 =
           ∮ u in C(interior.toAssignment.pointOfCell cell, certificate.radius),
             riemannZetaReciprocalContourKernel x u)
     (hlog :
-      let grid :=
-        riemannZetaGeneratedStrictGridCuts z w hre him hregular
-      let cells :=
-        (RectangleGeometry.rectangleGridCells z w grid.xcuts
-            grid.ycuts).toFinset
-      let interior :=
-        riemannZetaGeneratedGridInteriorSeparation hre
-          him hregular
+      let grid := riemannZetaGeneratedStrictGridCuts z w hre him hregular
+      let cells := (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset
+      let interior := riemannZetaGeneratedGridInteriorSeparation hre him hregular
       ∀ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-            (riemannZetaLogContourKernel x) cell.1
-            cell.2 =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2 =
           ∮ u in C(interior.toAssignment.pointOfCell cell, certificate.radius),
             riemannZetaLogContourKernel x u) :
-    RiemannZetaGridBoundaryCertificate x z w
-      certificate := by
-  let grid :=
-    riemannZetaGeneratedStrictGridCuts z w hre him
-      hregular
-  let cells :=
-    (RectangleGeometry.rectangleGridCells z w grid.xcuts
-        grid.ycuts).toFinset
-  let interior :
-    RiemannZetaGridInteriorSeparation z w cells :=
+    RiemannZetaGridBoundaryCertificate x z w certificate := by
+  let grid := riemannZetaGeneratedStrictGridCuts z w hre him hregular
+  let cells := (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset
+  let interior : RiemannZetaGridInteriorSeparation z w cells :=
     riemannZetaGeneratedGridInteriorSeparation hre him hregular
-  have hintegrable :=
-    riemannZetaGeneratedGridSubdivisionIntegrable hx hre him hregular
+  have hintegrable := riemannZetaGeneratedGridSubdivisionIntegrable hx hre him hregular
   let geometry :=
     riemannZetaSingularCellBoundaryCertificateOfInteriorSeparation interior hreciprocal hlog
   exact
-    riemannZetaGridBoundaryCertificateOfStrictGridCuts
-      x z w certificate grid hintegrable.1 hintegrable.2 geometry
+    riemannZetaGridBoundaryCertificateOfStrictGridCuts x z w certificate grid hintegrable.1
+      hintegrable.2 geometry
 
 /-- The reciprocal local-circle ledger equals `2πi` times its residue ledger. -/
 theorem riemannZetaReciprocalLocalCircleLedger_eq_residueLedger {x : ℝ} {z w : ℂ}
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w) :
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) :
     riemannZetaReciprocalLocalCircleLedger x z w certificate =
-      2 * Real.pi * Complex.I *
-        riemannZetaReciprocalContourResidueLedger x z w := by
+      2 * Real.pi * Complex.I * riemannZetaReciprocalContourResidueLedger x z w := by
   classical
   have hmellin := certificate.mellin_integrals
   have hsum :
     (∑ ρ ∈ riemannZetaZerosInAnyRectangle z w,
-        ∮ s in C(ρ, certificate.radius),
-          riemannZetaReciprocalContourKernel x s) =
-      2 * Real.pi * Complex.I *
-        riemannZetaReciprocalContourZeroLedger x z
-          w := by
+        ∮ s in C(ρ, certificate.radius), riemannZetaReciprocalContourKernel x s) =
+      2 * Real.pi * Complex.I * riemannZetaReciprocalContourZeroLedger x z w := by
     rw [riemannZetaReciprocalContourZeroLedger, Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro ρ hρ
@@ -2384,19 +1837,15 @@ theorem riemannZetaReciprocalLocalCircleLedger_eq_residueLedger {x : ℝ} {z w :
 
 /-- The logarithmic local-circle ledger equals `2πi` times its residue ledger. -/
 theorem riemannZetaLogLocalCircleLedger_eq_residueLedger {x : ℝ} {z w : ℂ}
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w) :
+    (certificate : RiemannZetaPuncturedContourCertificate x z w) :
     riemannZetaLogLocalCircleLedger x z w certificate =
-      2 * Real.pi * Complex.I *
-        riemannZetaLogContourResidueLedger x z w := by
+      2 * Real.pi * Complex.I * riemannZetaLogContourResidueLedger x z w := by
   classical
   have hmellin := certificate.mellin_integrals
   have hsum :
     (∑ ρ ∈ riemannZetaZerosInAnyRectangle z w,
-        ∮ s in C(ρ, certificate.radius),
-          riemannZetaLogContourKernel x s) =
-      2 * Real.pi * Complex.I *
-        riemannZetaLogContourZeroLedger x z w := by
+        ∮ s in C(ρ, certificate.radius), riemannZetaLogContourKernel x s) =
+      2 * Real.pi * Complex.I * riemannZetaLogContourZeroLedger x z w := by
     rw [riemannZetaLogContourZeroLedger, Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro ρ hρ
@@ -2413,12 +1862,11 @@ theorem riemannZetaReciprocalFiniteContourIdentity_of_boundaryDecomposition
     RiemannZetaReciprocalFiniteContourIdentity x z w := by
   unfold RiemannZetaReciprocalBoundaryDecomposition at hdecomposition
   unfold RiemannZetaReciprocalFiniteContourIdentity
-  rw [hdecomposition,
-    riemannZetaReciprocalLocalCircleLedger_eq_residueLedger certificate]
+  rw [hdecomposition, riemannZetaReciprocalLocalCircleLedger_eq_residueLedger certificate]
 
 /-- The geometric logarithmic decomposition implies the finite logarithmic contour identity. -/
-theorem riemannZetaLogFiniteContourIdentity_of_boundaryDecomposition
-    {x : ℝ} {z w : ℂ} (certificate : RiemannZetaPuncturedContourCertificate x z w)
+theorem riemannZetaLogFiniteContourIdentity_of_boundaryDecomposition {x : ℝ} {z w : ℂ}
+    (certificate : RiemannZetaPuncturedContourCertificate x z w)
     (hdecomposition : RiemannZetaLogBoundaryDecomposition x z w certificate) :
     RiemannZetaLogFiniteContourIdentity x z w := by
   unfold RiemannZetaLogBoundaryDecomposition at hdecomposition
@@ -2427,105 +1875,73 @@ theorem riemannZetaLogFiniteContourIdentity_of_boundaryDecomposition
 
 /-- Both geometric decompositions imply both finite zeta contour identities. -/
 theorem riemannZetaFiniteContourIdentities_of_boundaryDecomposition {x : ℝ} {z w : ℂ}
-    (certificate :
-      RiemannZetaPuncturedContourCertificate x z w)
-    (hdecomposition :
-      RiemannZetaBoundaryDecomposition x z w
-        certificate) :
+    (certificate : RiemannZetaPuncturedContourCertificate x z w)
+    (hdecomposition : RiemannZetaBoundaryDecomposition x z w certificate) :
     RiemannZetaReciprocalFiniteContourIdentity x z w ∧
       RiemannZetaLogFiniteContourIdentity x z w := by
   exact
-    ⟨riemannZetaReciprocalFiniteContourIdentity_of_boundaryDecomposition
-        certificate hdecomposition.1,
-      riemannZetaLogFiniteContourIdentity_of_boundaryDecomposition
-        certificate hdecomposition.2⟩
+    ⟨riemannZetaReciprocalFiniteContourIdentity_of_boundaryDecomposition certificate
+        hdecomposition.1,
+      riemannZetaLogFiniteContourIdentity_of_boundaryDecomposition certificate hdecomposition.2⟩
 
 /-- The reciprocal contour kernel is differentiable throughout its regular locus. -/
 theorem differentiableOn_riemannZetaReciprocalContourKernel {x : ℝ} (hx : 0 < x) :
-    DifferentiableOn ℂ
-      (riemannZetaReciprocalContourKernel x)
-      riemannZetaRegularSet := by
+    DifferentiableOn ℂ (riemannZetaReciprocalContourKernel x) riemannZetaRegularSet := by
   intro s hs
   exact
     DifferentiableAt.differentiableWithinAt
-      (differentiableAt_riemannZetaReciprocalContourKernel
-        hx hs.1 hs.2.1 hs.2.2)
+      (differentiableAt_riemannZetaReciprocalContourKernel hx hs.1 hs.2.1 hs.2.2)
 
 /-- The logarithmically weighted kernel is differentiable throughout its regular locus. -/
 theorem differentiableOn_riemannZetaLogContourKernel {x : ℝ} (hx : 0 < x) :
-    DifferentiableOn ℂ (riemannZetaLogContourKernel x)
-      riemannZetaRegularSet := by
+    DifferentiableOn ℂ (riemannZetaLogContourKernel x) riemannZetaRegularSet := by
   intro s hs
   exact
     DifferentiableAt.differentiableWithinAt
-      (differentiableAt_riemannZetaLogContourKernel hx
-        hs.1 hs.2.1 hs.2.2)
+      (differentiableAt_riemannZetaLogContourKernel hx hs.1 hs.2.1 hs.2.2)
 
 /-- Both zeta kernels are differentiable on a cell-contained punctured centered square. -/
 theorem RiemannZetaSingularCellAssignment.differentiableOn_centeredSquarePuncturedRegion {x : ℝ}
     (hx : 0 < x) {z w : ℂ} {cells : Finset (ℂ × ℂ)}
-    (assignment : RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ}
-    (hparent :
-      parent ∈ riemannZetaSingularCells z w cells)
+    (assignment : RiemannZetaSingularCellAssignment z w cells) {parent : ℂ × ℂ}
+    (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
-      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆
-        Rectangle.rectangleClosedBox z w)
+      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
     (hre : parent.1.re < parent.2.re) (him : parent.1.im < parent.2.im) {R ρ : ℝ} (hR : 0 < R)
     (hρ : 0 < ρ)
     (hball :
       Metric.closedBall (assignment.pointOfCell parent) R ⊆
         RectangleGeometry.rectangleOpenBox parent.1 parent.2) :
-    DifferentiableOn ℂ
-        (riemannZetaReciprocalContourKernel x)
-        (centeredSquarePuncturedRegion
-          (assignment.pointOfCell parent) R ρ) ∧
-      DifferentiableOn ℂ
-        (riemannZetaLogContourKernel x)
-        (centeredSquarePuncturedRegion
-          (assignment.pointOfCell parent) R ρ) := by
+    DifferentiableOn ℂ (riemannZetaReciprocalContourKernel x)
+        (centeredSquarePuncturedRegion (assignment.pointOfCell parent) R ρ) ∧
+      DifferentiableOn ℂ (riemannZetaLogContourKernel x)
+        (centeredSquarePuncturedRegion (assignment.pointOfCell parent) R ρ) := by
   have hsubset :=
     assignment.centeredSquarePuncturedRegion_subset_regularSet hparent hparentSubset hre him hR hρ
       hball
   exact
-    ⟨(differentiableOn_riemannZetaReciprocalContourKernel
-            hx).mono
-        hsubset,
-      (differentiableOn_riemannZetaLogContourKernel
-            hx).mono
-        hsubset⟩
+    ⟨(differentiableOn_riemannZetaReciprocalContourKernel hx).mono hsubset,
+      (differentiableOn_riemannZetaLogContourKernel hx).mono hsubset⟩
 
 /-- A regular rectangle has zero reciprocal-kernel boundary integral. -/
 theorem llsRectangleBoundaryIntegral_reciprocal_eq_zero {x : ℝ} (hx : 0 < x) {z w : ℂ}
     (hrect : RiemannZetaRectangleIsRegular z w) :
-    RectangleGeometry.rectangleBoundaryIntegral
-        (riemannZetaReciprocalContourKernel x) z w =
-      0 := by
-  change
-    (Set.uIcc z.re w.re ×ℂ Set.uIcc z.im w.im) ⊆
-      riemannZetaRegularSet at hrect
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) z w = 0 := by
+  change (Set.uIcc z.re w.re ×ℂ Set.uIcc z.im w.im) ⊆ riemannZetaRegularSet at hrect
   unfold RectangleGeometry.rectangleBoundaryIntegral
   exact
     Complex.integral_boundary_rect_eq_zero_of_differentiableOn _ z w
-      ((differentiableOn_riemannZetaReciprocalContourKernel
-            hx).mono
-        hrect)
+      ((differentiableOn_riemannZetaReciprocalContourKernel hx).mono hrect)
 
 /-- A regular rectangle has zero logarithmic-kernel boundary integral. -/
 theorem llsRectangleBoundaryIntegral_log_eq_zero {x : ℝ} (hx : 0 < x) {z w : ℂ}
     (hrect : RiemannZetaRectangleIsRegular z w) :
-    RectangleGeometry.rectangleBoundaryIntegral
-        (riemannZetaLogContourKernel x) z w =
-      0 := by
-  change
-    (Set.uIcc z.re w.re ×ℂ Set.uIcc z.im w.im) ⊆
-      riemannZetaRegularSet at hrect
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) z w = 0 := by
+  change (Set.uIcc z.re w.re ×ℂ Set.uIcc z.im w.im) ⊆ riemannZetaRegularSet at hrect
   unfold RectangleGeometry.rectangleBoundaryIntegral
   exact
     Complex.integral_boundary_rect_eq_zero_of_differentiableOn _ z w
-      ((differentiableOn_riemannZetaLogContourKernel
-            hx).mono
-        hrect)
+      ((differentiableOn_riemannZetaLogContourKernel hx).mono hrect)
 
 /--
 Regularity of the eight cells surrounding an inner rectangle contracts both zeta contours to it.
@@ -2535,47 +1951,26 @@ sets every noncentral cell boundary to zero, so only the inner rectangle remains
 -/
 theorem riemannZetaContourKernels_boundary_eq_innerRectangle {x : ℝ} (hx : 0 < x) {z w a b : ℂ}
     (hreciprocal :
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaReciprocalContourKernel x) z w
-        [a.re, b.re] [a.im, b.im])
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaReciprocalContourKernel x) z
+        w [a.re, b.re] [a.im, b.im])
     (hlog :
-      RectangleGeometry.RectangleGridSubdivisionIntegrable
-        (riemannZetaLogContourKernel x) z w
+      RectangleGeometry.RectangleGridSubdivisionIntegrable (riemannZetaLogContourKernel x) z w
         [a.re, b.re] [a.im, b.im])
-    (hnodup :
-      (RectangleGeometry.rectangleGridCells z w [a.re, b.re]
-          [a.im, b.im]).Nodup)
+    (hnodup : (RectangleGeometry.rectangleGridCells z w [a.re, b.re] [a.im, b.im]).Nodup)
     (hregular :
-      ∀
-        cell ∈
-          (RectangleGeometry.rectangleGridCells z w [a.re, b.re]
-              [a.im, b.im]).toFinset,
-        cell ≠ (a, b) →
-          RiemannZetaRectangleIsRegular cell.1
-            cell.2) :
-    RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) z w =
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) a b ∧
-      RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) z w =
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) a b := by
+      ∀ cell ∈ (RectangleGeometry.rectangleGridCells z w [a.re, b.re] [a.im, b.im]).toFinset,
+        cell ≠ (a, b) → RiemannZetaRectangleIsRegular cell.1 cell.2) :
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) z w =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) a b ∧
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) z w =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) a b := by
   constructor
-  · apply
-      RectangleGeometry.rectangleBoundaryIntegral_eq_innerRectangle
-        _ z w a b hreciprocal hnodup
+  · apply RectangleGeometry.rectangleBoundaryIntegral_eq_innerRectangle _ z w a b hreciprocal hnodup
     intro cell hcell hne
-    exact
-      llsRectangleBoundaryIntegral_reciprocal_eq_zero
-        hx (hregular cell hcell hne)
-  · apply
-      RectangleGeometry.rectangleBoundaryIntegral_eq_innerRectangle
-        _ z w a b hlog hnodup
+    exact llsRectangleBoundaryIntegral_reciprocal_eq_zero hx (hregular cell hcell hne)
+  · apply RectangleGeometry.rectangleBoundaryIntegral_eq_innerRectangle _ z w a b hlog hnodup
     intro cell hcell hne
-    exact
-      llsRectangleBoundaryIntegral_log_eq_zero hx
-        (hregular cell hcell hne)
+    exact llsRectangleBoundaryIntegral_log_eq_zero hx (hregular cell hcell hne)
 
 /--
 A cell-contained centered square contracts both singular-cell contours to its square boundary.
@@ -2585,49 +1980,33 @@ the inner open rectangle.  Assignment uniqueness makes all eight surrounding cel
 preceding Cauchy--Goursat contraction theorem applies without further local hypotheses.
 -/
 theorem RiemannZetaSingularCellAssignment.boundary_eq_centeredSquare {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)}
-    (assignment :
-      RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ}
-    (hparent :
-      parent ∈ riemannZetaSingularCells z w cells)
+    {cells : Finset (ℂ × ℂ)} (assignment : RiemannZetaSingularCellAssignment z w cells)
+    {parent : ℂ × ℂ} (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
-      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆
-        Rectangle.rectangleClosedBox z w)
+      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
     (hre : parent.1.re < parent.2.re) (him : parent.1.im < parent.2.im) {r : ℝ} (hr : 0 < r)
     (hball :
       Metric.closedBall (assignment.pointOfCell parent) r ⊆
         RectangleGeometry.rectangleOpenBox parent.1 parent.2) :
-    let a :=
-      RectangleGeometry.centeredSquareLower
-        (assignment.pointOfCell parent) r
-    let b :=
-      RectangleGeometry.centeredSquareUpper
-        (assignment.pointOfCell parent) r
-    RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x)
-          parent.1 parent.2 =
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) a b ∧
-      RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) parent.1
+    let a := RectangleGeometry.centeredSquareLower (assignment.pointOfCell parent) r
+    let b := RectangleGeometry.centeredSquareUpper (assignment.pointOfCell parent) r
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) parent.1
           parent.2 =
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) a b := by
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) a b ∧
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) parent.1
+          parent.2 =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) a b := by
   let c := assignment.pointOfCell parent
   let a := RectangleGeometry.centeredSquareLower c r
   let b := RectangleGeometry.centeredSquareUpper c r
-  have hcuts :=
-    RectangleGeometry.centeredSquare_cuts_inside hre him hr hball
+  have hcuts := RectangleGeometry.centeredSquare_cuts_inside hre him hr hball
   have hintegrable :=
-    RiemannZetaSingularCellAssignment.centeredSquare_kernelGridSubdivisionIntegrable
-      hx assignment hparent hparentSubset hre him hr hball
+    RiemannZetaSingularCellAssignment.centeredSquare_kernelGridSubdivisionIntegrable hx assignment
+      hparent hparentSubset hre him hr hball
   have hnodup :=
-    RectangleGeometry.threeByThreeGrid_nodup hcuts.1 hcuts.2.1
-      hcuts.2.2.1 hcuts.2.2.2.1 hcuts.2.2.2.2.1 hcuts.2.2.2.2.2
-  apply
-    riemannZetaContourKernels_boundary_eq_innerRectangle
-      hx hintegrable.1 hintegrable.2 hnodup
+    RectangleGeometry.threeByThreeGrid_nodup hcuts.1 hcuts.2.1 hcuts.2.2.1 hcuts.2.2.2.1
+      hcuts.2.2.2.2.1 hcuts.2.2.2.2.2
+  apply riemannZetaContourKernels_boundary_eq_innerRectangle hx hintegrable.1 hintegrable.2 hnodup
   exact
     assignment.threeByThree_surrounding_regular hparent hparentSubset hcuts.1 hcuts.2.1 hcuts.2.2.1
       hcuts.2.2.2.1 hcuts.2.2.2.2.1 hcuts.2.2.2.2.2
@@ -2635,34 +2014,25 @@ theorem RiemannZetaSingularCellAssignment.boundary_eq_centeredSquare {x : ℝ} (
 
 /-- Both local kernel integrals are invariant between nested circles in one singular cell. -/
 theorem RiemannZetaSingularCellAssignment.circleIntegrals_eq_of_le {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)}
-    (assignment : RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ}
-    (hparent : parent ∈ riemannZetaSingularCells z w cells)
+    {cells : Finset (ℂ × ℂ)} (assignment : RiemannZetaSingularCellAssignment z w cells)
+    {parent : ℂ × ℂ} (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
-      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆
-        Rectangle.rectangleClosedBox z w)
+      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
     {r R : ℝ} (hr : 0 < r) (hrR : r ≤ R)
     (hball :
       Metric.closedBall (assignment.pointOfCell parent) R ⊆
         RectangleGeometry.rectangleOpenBox parent.1 parent.2) :
-    (∮ u in C(assignment.pointOfCell parent, R),
-          riemannZetaReciprocalContourKernel x u) =
-        ∮ u in C(assignment.pointOfCell parent, r),
-          riemannZetaReciprocalContourKernel x u ∧
-      (∮ u in C(assignment.pointOfCell parent, R),
-          riemannZetaLogContourKernel x u) =
-        ∮ u in C(assignment.pointOfCell parent, r),
-          riemannZetaLogContourKernel x u := by
+    (∮ u in C(assignment.pointOfCell parent, R), riemannZetaReciprocalContourKernel x u) =
+        ∮ u in C(assignment.pointOfCell parent, r), riemannZetaReciprocalContourKernel x u ∧
+      (∮ u in C(assignment.pointOfCell parent, R), riemannZetaLogContourKernel x u) =
+        ∮ u in C(assignment.pointOfCell parent, r), riemannZetaLogContourKernel x u := by
   constructor
   · exact
       assignment.circleIntegral_eq_of_le hparent hparentSubset hr hrR hball
-        (differentiableOn_riemannZetaReciprocalContourKernel
-          hx)
+        (differentiableOn_riemannZetaReciprocalContourKernel hx)
   · exact
       assignment.circleIntegral_eq_of_le hparent hparentSubset hr hrR hball
-        (differentiableOn_riemannZetaLogContourKernel
-          hx)
+        (differentiableOn_riemannZetaLogContourKernel hx)
 
 /--
 Same-radius square-to-circle identities complete the local singular-cell deformation.
@@ -2673,52 +2043,38 @@ the target radius `r`.  Thus the only remaining analytic input is the same-radiu
 -/
 theorem RiemannZetaSingularCellAssignment.boundary_eq_circle_of_square_eq_circle {x : ℝ}
     (hx : 0 < x) {z w : ℂ} {cells : Finset (ℂ × ℂ)}
-    (assignment : RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ}
+    (assignment : RiemannZetaSingularCellAssignment z w cells) {parent : ℂ × ℂ}
     (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
-      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆
-        Rectangle.rectangleClosedBox z w)
+      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
     (hre : parent.1.re < parent.2.re) (him : parent.1.im < parent.2.im) {r R : ℝ} (hr : 0 < r)
     (hrR : r ≤ R)
     (hball :
       Metric.closedBall (assignment.pointOfCell parent) R ⊆
         RectangleGeometry.rectangleOpenBox parent.1 parent.2)
     (hsquareReciprocal :
-      RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x)
-          (RectangleGeometry.centeredSquareLower
-            (assignment.pointOfCell parent) R)
-          (RectangleGeometry.centeredSquareUpper
-            (assignment.pointOfCell parent) R) =
-        ∮ u in C(assignment.pointOfCell parent, R),
-          riemannZetaReciprocalContourKernel x u)
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
+          (RectangleGeometry.centeredSquareLower (assignment.pointOfCell parent) R)
+          (RectangleGeometry.centeredSquareUpper (assignment.pointOfCell parent) R) =
+        ∮ u in C(assignment.pointOfCell parent, R), riemannZetaReciprocalContourKernel x u)
     (hsquareLog :
-      RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x)
-          (RectangleGeometry.centeredSquareLower
-            (assignment.pointOfCell parent) R)
-          (RectangleGeometry.centeredSquareUpper
-            (assignment.pointOfCell parent) R) =
-        ∮ u in C(assignment.pointOfCell parent, R),
-          riemannZetaLogContourKernel x u) :
-    RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x)
-          parent.1 parent.2 =
-        ∮ u in C(assignment.pointOfCell parent, r),
-          riemannZetaReciprocalContourKernel x u ∧
-      RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) parent.1
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
+          (RectangleGeometry.centeredSquareLower (assignment.pointOfCell parent) R)
+          (RectangleGeometry.centeredSquareUpper (assignment.pointOfCell parent) R) =
+        ∮ u in C(assignment.pointOfCell parent, R), riemannZetaLogContourKernel x u) :
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) parent.1
           parent.2 =
-        ∮ u in C(assignment.pointOfCell parent, r),
-          riemannZetaLogContourKernel x u := by
+        ∮ u in C(assignment.pointOfCell parent, r), riemannZetaReciprocalContourKernel x u ∧
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) parent.1
+          parent.2 =
+        ∮ u in C(assignment.pointOfCell parent, r), riemannZetaLogContourKernel x u := by
   have hR : 0 < R := hr.trans_le hrR
   have hsquare :=
-    RiemannZetaSingularCellAssignment.boundary_eq_centeredSquare
-      hx assignment hparent hparentSubset hre him hR hball
+    RiemannZetaSingularCellAssignment.boundary_eq_centeredSquare hx assignment hparent hparentSubset
+      hre him hR hball
   have hcircle :=
-    RiemannZetaSingularCellAssignment.circleIntegrals_eq_of_le
-      hx assignment hparent hparentSubset hr hrR hball
+    RiemannZetaSingularCellAssignment.circleIntegrals_eq_of_le hx assignment hparent hparentSubset
+      hr hrR hball
   exact
     ⟨hsquare.1.trans (hsquareReciprocal.trans hcircle.1),
       hsquare.2.trans (hsquareLog.trans hcircle.2)⟩
@@ -2732,106 +2088,101 @@ case the certificate already carries matching circle and square formulas at the 
 their composition (`.trans .symm`) supplies `boundary_eq_circle_of_square_eq_circle`'s same-radius
 hypothesis directly, with `r = R = certificate.radius`.
 -/
-theorem RiemannZetaSingularCellAssignment.reciprocal_log_boundary_eq_circle_of_certificate
-    {x : ℝ} (hx : 0 < x) {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+theorem RiemannZetaSingularCellAssignment.reciprocal_log_boundary_eq_circle_of_certificate {x : ℝ}
+    (hx : 0 < x) {z w : ℂ} {cells : Finset (ℂ × ℂ)}
     (assignment : RiemannZetaSingularCellAssignment z w cells)
     (certificate : RiemannZetaPuncturedContourCertificate x z w)
-    (hcellsSubset : ∀ cell
-      ∈ cells, Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w)
-    (hballs : ∀ cell ∈ riemannZetaSingularCells z w cells,
-      Metric.closedBall (assignment.pointOfCell cell) certificate.radius ⊆
-        RectangleGeometry.rectangleOpenBox cell.1 cell.2)
-    (hcellOrder : ∀ cell ∈ riemannZetaSingularCells z w cells,
-      cell.1.re < cell.2.re ∧ cell.1.im < cell.2.im)
+    (hcellsSubset :
+      ∀ cell ∈ cells, Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w)
+    (hballs :
+      ∀ cell ∈ riemannZetaSingularCells z w cells,
+        Metric.closedBall (assignment.pointOfCell cell) certificate.radius ⊆
+          RectangleGeometry.rectangleOpenBox cell.1 cell.2)
+    (hcellOrder :
+      ∀ cell ∈ riemannZetaSingularCells z w cells, cell.1.re < cell.2.re ∧ cell.1.im < cell.2.im)
     {cell : ℂ × ℂ} (hcell : cell ∈ riemannZetaSingularCells z w cells) :
-    RectangleGeometry.rectangleBoundaryIntegral
-    (riemannZetaReciprocalContourKernel x) cell.1 cell.2 =
-      ∮ u in C(assignment.pointOfCell cell, certificate.radius),
-        riemannZetaReciprocalContourKernel x u ∧
-    RectangleGeometry.rectangleBoundaryIntegral
-    (riemannZetaLogContourKernel x) cell.1 cell.2 =
-      ∮ u in C(assignment.pointOfCell cell, certificate.radius),
-        riemannZetaLogContourKernel x u := by
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
+          cell.2 =
+        ∮ u in C(assignment.pointOfCell cell, certificate.radius),
+          riemannZetaReciprocalContourKernel x u ∧
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2 =
+        ∮ u in C(assignment.pointOfCell cell, certificate.radius),
+          riemannZetaLogContourKernel x u := by
   have hparentSubset := hcellsSubset cell (mem_riemannZetaSingularCells_iff.mp hcell).1
   have horder := hcellOrder cell hcell
   have hball := hballs cell hcell
   have hpointMem := assignment.point_mem_ledger cell hcell
   rw [mem_riemannZetaSingularitiesInRectangle_iff] at hpointMem
   rcases hpointMem.2 with h0 | h1 | hzero
-  · have hsq : RectangleGeometry.rectangleBoundaryIntegral
-      (riemannZetaReciprocalContourKernel x)
-        (RectangleGeometry.centeredSquareLower (assignment.pointOfCell cell) certificate.radius)
-        (RectangleGeometry.centeredSquareUpper (assignment.pointOfCell cell) certificate.radius) =
+  · have hsq :
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
+          (RectangleGeometry.centeredSquareLower (assignment.pointOfCell cell) certificate.radius)
+          (RectangleGeometry.centeredSquareUpper (assignment.pointOfCell cell) certificate.radius) =
         ∮ u in C(assignment.pointOfCell cell, certificate.radius),
           riemannZetaReciprocalContourKernel x u := by
       rw [h0]
       exact certificate.square_mellin_integrals.1.trans certificate.mellin_integrals.1.symm
-    have hsl : RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
-        (RectangleGeometry.centeredSquareLower (assignment.pointOfCell cell) certificate.radius)
-        (RectangleGeometry.centeredSquareUpper (assignment.pointOfCell cell) certificate.radius) =
+    have hsl :
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
+          (RectangleGeometry.centeredSquareLower (assignment.pointOfCell cell) certificate.radius)
+          (RectangleGeometry.centeredSquareUpper (assignment.pointOfCell cell) certificate.radius) =
         ∮ u in C(assignment.pointOfCell cell, certificate.radius),
           riemannZetaLogContourKernel x u := by
       rw [h0]
-      exact certificate.square_mellin_integrals.2.2.2.trans
-        certificate.mellin_integrals.2.2.2.symm
-    exact RiemannZetaSingularCellAssignment.boundary_eq_circle_of_square_eq_circle
-      hx assignment hcell hparentSubset
-      horder.1 horder.2 certificate.radius_pos le_rfl hball hsq hsl
-  · have hsq : RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
-        (RectangleGeometry.centeredSquareLower (assignment.pointOfCell cell) certificate.radius)
-        (RectangleGeometry.centeredSquareUpper (assignment.pointOfCell cell) certificate.radius) =
+      exact certificate.square_mellin_integrals.2.2.2.trans certificate.mellin_integrals.2.2.2.symm
+    exact
+      RiemannZetaSingularCellAssignment.boundary_eq_circle_of_square_eq_circle hx assignment hcell
+        hparentSubset horder.1 horder.2 certificate.radius_pos le_rfl hball hsq hsl
+  · have hsq :
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
+          (RectangleGeometry.centeredSquareLower (assignment.pointOfCell cell) certificate.radius)
+          (RectangleGeometry.centeredSquareUpper (assignment.pointOfCell cell) certificate.radius) =
         ∮ u in C(assignment.pointOfCell cell, certificate.radius),
           riemannZetaReciprocalContourKernel x u := by
       rw [h1]
-      exact certificate.square_mellin_integrals.2.2.1.trans
-        certificate.mellin_integrals.2.2.1.symm
-    have hsl : RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
-        (RectangleGeometry.centeredSquareLower (assignment.pointOfCell cell) certificate.radius)
-        (RectangleGeometry.centeredSquareUpper (assignment.pointOfCell cell) certificate.radius) =
+      exact certificate.square_mellin_integrals.2.2.1.trans certificate.mellin_integrals.2.2.1.symm
+    have hsl :
+      RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
+          (RectangleGeometry.centeredSquareLower (assignment.pointOfCell cell) certificate.radius)
+          (RectangleGeometry.centeredSquareUpper (assignment.pointOfCell cell) certificate.radius) =
         ∮ u in C(assignment.pointOfCell cell, certificate.radius),
           riemannZetaLogContourKernel x u := by
       rw [h1]
       exact certificate.square_mellin_integrals.2.1.trans certificate.mellin_integrals.2.1.symm
-    exact RiemannZetaSingularCellAssignment.boundary_eq_circle_of_square_eq_circle
-      hx assignment hcell hparentSubset
-      horder.1 horder.2 certificate.radius_pos le_rfl hball hsq hsl
+    exact
+      RiemannZetaSingularCellAssignment.boundary_eq_circle_of_square_eq_circle hx assignment hcell
+        hparentSubset horder.1 horder.2 certificate.radius_pos le_rfl hball hsq hsl
   · have hρmem := mem_riemannZetaZerosInAnyRectangle_iff.mpr ⟨hpointMem.1, hzero⟩
-    have hsq := (certificate.square_zero_integrals _ hρmem).1.trans
-      (certificate.zero_integrals _ hρmem).1.symm
-    have hsl := (certificate.square_zero_integrals _ hρmem).2.trans
-      (certificate.zero_integrals _ hρmem).2.symm
-    exact RiemannZetaSingularCellAssignment.boundary_eq_circle_of_square_eq_circle
-      hx assignment hcell hparentSubset
-      horder.1 horder.2 certificate.radius_pos le_rfl hball hsq hsl
+    have hsq :=
+      (certificate.square_zero_integrals _ hρmem).1.trans
+        (certificate.zero_integrals _ hρmem).1.symm
+    have hsl :=
+      (certificate.square_zero_integrals _ hρmem).2.trans
+        (certificate.zero_integrals _ hρmem).2.symm
+    exact
+      RiemannZetaSingularCellAssignment.boundary_eq_circle_of_square_eq_circle hx assignment hcell
+        hparentSubset horder.1 horder.2 certificate.radius_pos le_rfl hball hsq hsl
 
 /-- Every certified cell has zero reciprocal-kernel boundary integral. -/
 theorem RiemannZetaRegularCellLedger.reciprocal_cell_integral_eq_zero {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    (ledger : RiemannZetaRegularCellLedger z w)
-    {cell : ℂ × ℂ} (hcell : cell ∈ ledger.cells) :
-    RectangleGeometry.rectangleBoundaryIntegral
-        (riemannZetaReciprocalContourKernel x) cell.1
+    (ledger : RiemannZetaRegularCellLedger z w) {cell : ℂ × ℂ} (hcell : cell ∈ ledger.cells) :
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
         cell.2 =
       0 := by
-  exact
-    llsRectangleBoundaryIntegral_reciprocal_eq_zero hx
-      (ledger.cell_isRegular hcell)
+  exact llsRectangleBoundaryIntegral_reciprocal_eq_zero hx (ledger.cell_isRegular hcell)
 
 /-- Every certified cell has zero logarithmic-kernel boundary integral. -/
 theorem RiemannZetaRegularCellLedger.log_cell_integral_eq_zero {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    (ledger : RiemannZetaRegularCellLedger z w)
-    {cell : ℂ × ℂ} (hcell : cell ∈ ledger.cells) :
-    RectangleGeometry.rectangleBoundaryIntegral
-        (riemannZetaLogContourKernel x) cell.1 cell.2 =
+    (ledger : RiemannZetaRegularCellLedger z w) {cell : ℂ × ℂ} (hcell : cell ∈ ledger.cells) :
+    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2 =
       0 := by
   exact llsRectangleBoundaryIntegral_log_eq_zero hx (ledger.cell_isRegular hcell)
 
 /-- The sum of reciprocal-kernel boundary integrals over a regular-cell ledger is zero. -/
 theorem RiemannZetaRegularCellLedger.sum_reciprocal_cell_integrals_eq_zero {x : ℝ} (hx : 0 < x)
-    {z w : ℂ}
-    (ledger : RiemannZetaRegularCellLedger z w) :
+    {z w : ℂ} (ledger : RiemannZetaRegularCellLedger z w) :
     (∑ cell ∈ ledger.cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) cell.1
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
           cell.2) =
       0 := by
   apply Finset.sum_eq_zero
@@ -2842,47 +2193,34 @@ theorem RiemannZetaRegularCellLedger.sum_reciprocal_cell_integrals_eq_zero {x : 
 theorem RiemannZetaRegularCellLedger.sum_log_cell_integrals_eq_zero {x : ℝ} (hx : 0 < x) {z w : ℂ}
     (ledger : RiemannZetaRegularCellLedger z w) :
     (∑ cell ∈ ledger.cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) cell.1
-          cell.2) =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2) =
       0 := by
   apply Finset.sum_eq_zero
   intro cell hcell
-  exact
-    RiemannZetaRegularCellLedger.log_cell_integral_eq_zero
-      hx ledger hcell
+  exact RiemannZetaRegularCellLedger.log_cell_integral_eq_zero hx ledger hcell
 
 /-- After filtering a finite cell family, only singular cells contribute to the reciprocal sum. -/
 theorem sum_reciprocal_cell_integrals_eq_sum_singularCells {x : ℝ} (hx : 0 < x) {z w : ℂ}
     (cells : Finset (ℂ × ℂ))
     (hsubset :
       ∀ cell ∈ cells,
-        Rectangle.rectangleClosedBox cell.1 cell.2 ⊆
-          Rectangle.rectangleClosedBox z w) :
+        Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w) :
     (∑ cell ∈ cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) cell.1
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
           cell.2) =
       ∑ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) cell.1
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
           cell.2 := by
-  let ledger :=
-    riemannZetaRegularCellLedgerOfCells z w cells
-      hsubset
-  have hzero :=
-    RiemannZetaRegularCellLedger.sum_reciprocal_cell_integrals_eq_zero
-      hx ledger
+  let ledger := riemannZetaRegularCellLedgerOfCells z w cells hsubset
+  have hzero := RiemannZetaRegularCellLedger.sum_reciprocal_cell_integrals_eq_zero hx ledger
   have hpartition :=
     sum_regularCells_add_sum_singularCells z w cells
       (fun cell ↦
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) cell.1
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
           cell.2)
   change
     (∑ cell ∈ riemannZetaRegularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaReciprocalContourKernel x) cell.1
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
           cell.2) =
       0 at hzero
   rw [← hpartition, hzero, zero_add]
@@ -2892,33 +2230,21 @@ theorem sum_log_cell_integrals_eq_sum_singularCells {x : ℝ} (hx : 0 < x) {z w 
     (cells : Finset (ℂ × ℂ))
     (hsubset :
       ∀ cell ∈ cells,
-        Rectangle.rectangleClosedBox cell.1 cell.2 ⊆
-          Rectangle.rectangleClosedBox z w) :
+        Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w) :
     (∑ cell ∈ cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) cell.1
-          cell.2) =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2) =
       ∑ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) cell.1
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1
           cell.2 := by
-  let ledger :=
-    riemannZetaRegularCellLedgerOfCells z w cells
-      hsubset
-  have hzero :=
-    RiemannZetaRegularCellLedger.sum_log_cell_integrals_eq_zero
-      hx ledger
+  let ledger := riemannZetaRegularCellLedgerOfCells z w cells hsubset
+  have hzero := RiemannZetaRegularCellLedger.sum_log_cell_integrals_eq_zero hx ledger
   have hpartition :=
     sum_regularCells_add_sum_singularCells z w cells
       (fun cell ↦
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) cell.1
-          cell.2)
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2)
   change
     (∑ cell ∈ riemannZetaRegularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral
-          (riemannZetaLogContourKernel x) cell.1
-          cell.2) =
+        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2) =
       0 at hzero
   rw [← hpartition, hzero, zero_add]
 
@@ -2930,49 +2256,35 @@ vanishes by Cauchy--Goursat, leaving only singular cells, and the stored local g
 their boundaries by the existing local-circle ledger.
 -/
 theorem RiemannZetaGridBoundaryCertificate.boundaryDecomposition {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    {certificate :
-      RiemannZetaPuncturedContourCertificate x z w}
-    (grid :
-      RiemannZetaGridBoundaryCertificate x z w
-        certificate) :
-    RiemannZetaBoundaryDecomposition x z w
-      certificate := by
+    {certificate : RiemannZetaPuncturedContourCertificate x z w}
+    (grid : RiemannZetaGridBoundaryCertificate x z w certificate) :
+    RiemannZetaBoundaryDecomposition x z w certificate := by
   constructor
   · unfold RiemannZetaReciprocalBoundaryDecomposition
     calc
       _ =
           ∑ cell ∈ grid.cells,
-            RectangleGeometry.rectangleBoundaryIntegral
-              (riemannZetaReciprocalContourKernel x)
+            RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
               cell.1 cell.2 :=
         grid.reciprocal_boundary_eq_cells
       _ =
-          ∑
-            cell ∈
-              riemannZetaSingularCells z w grid.cells,
-            RectangleGeometry.rectangleBoundaryIntegral
-              (riemannZetaReciprocalContourKernel x)
+          ∑ cell ∈ riemannZetaSingularCells z w grid.cells,
+            RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
               cell.1 cell.2 :=
-        sum_reciprocal_cell_integrals_eq_sum_singularCells
-          hx grid.cells grid.cell_subset
+        sum_reciprocal_cell_integrals_eq_sum_singularCells hx grid.cells grid.cell_subset
       _ = _ := grid.singular_geometry.sum_reciprocal_eq_localCircleLedger
   · unfold RiemannZetaLogBoundaryDecomposition
     calc
       _ =
           ∑ cell ∈ grid.cells,
-            RectangleGeometry.rectangleBoundaryIntegral
-              (riemannZetaLogContourKernel x) cell.1
+            RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1
               cell.2 :=
         grid.log_boundary_eq_cells
       _ =
-          ∑
-            cell ∈
-              riemannZetaSingularCells z w grid.cells,
-            RectangleGeometry.rectangleBoundaryIntegral
-              (riemannZetaLogContourKernel x) cell.1
+          ∑ cell ∈ riemannZetaSingularCells z w grid.cells,
+            RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1
               cell.2 :=
-        sum_log_cell_integrals_eq_sum_singularCells hx
-          grid.cells grid.cell_subset
+        sum_log_cell_integrals_eq_sum_singularCells hx grid.cells grid.cell_subset
       _ = _ := grid.singular_geometry.sum_log_eq_localCircleLedger
 
 /-- A finite grid certificate implies both finite Riemann-zeta contour identities. -/
@@ -2982,66 +2294,54 @@ theorem RiemannZetaGridBoundaryCertificate.finiteContourIdentities {x : ℝ} (hx
     RiemannZetaReciprocalFiniteContourIdentity x z w ∧
       RiemannZetaLogFiniteContourIdentity x z w := by
   exact
-    riemannZetaFiniteContourIdentities_of_boundaryDecomposition
-      certificate (grid.boundaryDecomposition hx)
+    riemannZetaFiniteContourIdentities_of_boundaryDecomposition certificate
+      (grid.boundaryDecomposition hx)
 
 /-- For positive `x`, an ordered rectangle with regular boundary admits a
 finite-grid boundary certificate. Generate separating cuts and a cell-contained
 puncture certificate, then use its matching circle and square residue formulas
 to discharge each singular-cell deformation. -/
 theorem exists_riemannZetaGeneratedGridBoundaryCertificate {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    (hre : z.re < w.re) (him : z.im < w.im)
-    (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
+    (hre : z.re < w.re) (him : z.im < w.im) (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
     ∃ certificate : RiemannZetaPuncturedContourCertificate x z w,
       Nonempty (RiemannZetaGridBoundaryCertificate x z w certificate) := by
-  let grid :=
-    riemannZetaGeneratedStrictGridCuts z w hre him hregular
-  let cells :=
-    (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset
-  let interior :
-    RiemannZetaGridInteriorSeparation z w cells :=
+  let grid := riemannZetaGeneratedStrictGridCuts z w hre him hregular
+  let cells := (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset
+  let interior : RiemannZetaGridInteriorSeparation z w cells :=
     riemannZetaGeneratedGridInteriorSeparation hre him hregular
   obtain ⟨certificate, hballs⟩ :=
-    exists_riemannZetaGeneratedPuncturedContourCertificate_inside_cells
-      hx hre him hregular
+    exists_riemannZetaGeneratedPuncturedContourCertificate_inside_cells hx hre him hregular
   have hcellsSubset :
-    ∀ cell ∈ cells,
-      Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w :=
+    ∀ cell ∈ cells, Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w :=
     fun cell hcell ↦
     RectangleGeometry.rectangleGridCells_closedBox_subset
       (fun u hu ↦ grid.xcoordinate_mem_uIcc (List.mem_cons_of_mem _ (List.mem_append_left _ hu)))
       (fun v hv ↦ grid.ycoordinate_mem_uIcc (List.mem_cons_of_mem _ (List.mem_append_left _ hv)))
       cell (List.mem_toFinset.mp hcell)
   have hcellOrder :
-    ∀ cell ∈ riemannZetaSingularCells z w cells,
-      cell.1.re < cell.2.re ∧ cell.1.im < cell.2.im :=
+    ∀ cell ∈ riemannZetaSingularCells z w cells, cell.1.re < cell.2.re ∧ cell.1.im < cell.2.im :=
     fun cell hcell ↦
-    RectangleGeometry.mem_rectangleGridCells_re_lt_im_lt
-      grid.xcoordinates_pairwise grid.ycoordinates_pairwise
-      (List.mem_toFinset.mp
-        (mem_riemannZetaSingularCells_iff.mp hcell).1)
+    RectangleGeometry.mem_rectangleGridCells_re_lt_im_lt grid.xcoordinates_pairwise
+      grid.ycoordinates_pairwise
+      (List.mem_toFinset.mp (mem_riemannZetaSingularCells_iff.mp hcell).1)
   refine
     ⟨certificate,
-      ⟨riemannZetaGeneratedGridBoundaryCertificate hx
-          hre him hregular certificate
+      ⟨riemannZetaGeneratedGridBoundaryCertificate hx hre him hregular certificate
           (fun cell hcell ↦
-            (RiemannZetaSingularCellAssignment.reciprocal_log_boundary_eq_circle_of_certificate
-                hx interior.toAssignment certificate hcellsSubset hballs hcellOrder hcell).1)
+            (RiemannZetaSingularCellAssignment.reciprocal_log_boundary_eq_circle_of_certificate hx
+                interior.toAssignment certificate hcellsSubset hballs hcellOrder hcell).1)
           (fun cell hcell ↦
-            (RiemannZetaSingularCellAssignment.reciprocal_log_boundary_eq_circle_of_certificate
-                hx interior.toAssignment certificate hcellsSubset hballs hcellOrder hcell).2)⟩⟩
+            (RiemannZetaSingularCellAssignment.reciprocal_log_boundary_eq_circle_of_certificate hx
+                interior.toAssignment certificate hcellsSubset hballs hcellOrder hcell).2)⟩⟩
 
 /-- For positive `x`, an ordered rectangle with regular boundary satisfies
 both finite zeta contour identities. Singularities inside the rectangle are allowed. -/
 theorem riemannZetaFiniteContourIdentities_of_regular {x : ℝ} (hx : 0 < x) {z w : ℂ}
-    (hre : z.re < w.re) (him : z.im < w.im)
-    (hregular :
-      RiemannZetaRectangleBoundaryIsRegular z w) :
+    (hre : z.re < w.re) (him : z.im < w.im) (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
     RiemannZetaReciprocalFiniteContourIdentity x z w ∧
       RiemannZetaLogFiniteContourIdentity x z w := by
   obtain ⟨certificate, ⟨grid⟩⟩ :=
-    exists_riemannZetaGeneratedGridBoundaryCertificate
-      hx hre him hregular
+    exists_riemannZetaGeneratedGridBoundaryCertificate hx hre him hregular
   exact grid.finiteContourIdentities hx
 
 /-- The logarithmically weighted von Mangoldt sum equals a vertical-line integral
@@ -3049,18 +2349,12 @@ of the logarithmic zeta contour kernel. Apply Mellin inversion to each weight,
 exchange the summation and integration by a summable majorant, and identify
 the von Mangoldt Dirichlet series with `-ζ'/ζ`. -/
 theorem mellinWeightTwo_vonMangoldt_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
-    ∑' n : ℕ,
-        (ArithmeticFunction.vonMangoldt n : ℂ) *
-          General.mellinWeightTwo ((n : ℝ) / x) =
-      (2 * Real.pi : ℝ)⁻¹ •
-        ∫ y : ℝ,
-          riemannZetaLogContourKernel x
-            ((τ : ℂ) + y * Complex.I) := by
+    ∑' n : ℕ, (ArithmeticFunction.vonMangoldt n : ℂ) * General.mellinWeightTwo ((n : ℝ) / x) =
+      (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, riemannZetaLogContourKernel x ((τ : ℂ) + y * Complex.I) := by
   have hτ0 : (0 : ℝ) < τ := lt_trans one_pos hτ
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ ((τ : ℂ) + y * Complex.I)⁻¹ ^ 2 with hK_def
-  have hK_int : MeasureTheory.Integrable K :=
-    General.verticalIntegrable_mellinLogKernel hτ0.ne'
+  have hK_int : MeasureTheory.Integrable K := General.verticalIntegrable_mellinLogKernel hτ0.ne'
   set H : ℕ → ℝ → ℂ := fun n y ↦
     (ArithmeticFunction.vonMangoldt n : ℂ) * (n : ℂ) ^ (-((τ : ℂ) + y * Complex.I)) *
       (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) with
@@ -3098,16 +2392,13 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (h
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
     have hnx : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-    have hmellin :=
-      General.mellinInv_mellinWeightTwo_eq (σ := τ) (x :=
-        (n : ℝ) / x) hτ0 hnx
+    have hmellin := General.mellinInv_mellinWeightTwo_eq (σ := τ) (x := (n : ℝ) / x) hτ0 hnx
     rw [← hmellin]
     simp only [mellinInv, smul_eq_mul, one_div]
   have hterm :
     ∀ n : ℕ,
       n ≠ 0 →
-        (ArithmeticFunction.vonMangoldt n : ℂ) *
-            General.mellinWeightTwo ((n : ℝ) / x) =
+        (ArithmeticFunction.vonMangoldt n : ℂ) * General.mellinWeightTwo ((n : ℝ) / x) =
           (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
@@ -3117,8 +2408,8 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (h
     apply MeasureTheory.integral_congr_ae
     filter_upwards with y
     simp only [hG_def, hH_def, hK_def]
-    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg,
-      one_div, inv_pow, Complex.ofReal_natCast]
+    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div, inv_pow,
+      Complex.ofReal_natCast]
     ring
   -- (2) each `G n` is integrable, dominated by a constant multiple of `K`
   have hGint : ∀ n : ℕ, MeasureTheory.Integrable (G n) := by
@@ -3189,10 +2480,7 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (h
     hInterchange.tsum_eq
   -- (5) identify the inner sum over `n` with the logarithmic contour kernel
   have hinner :
-    ∀ y : ℝ,
-      ∑' n : ℕ, G n y =
-        riemannZetaLogContourKernel x
-          ((τ : ℂ) + y * Complex.I) := by
+    ∀ y : ℝ, ∑' n : ℕ, G n y = riemannZetaLogContourKernel x ((τ : ℂ) + y * Complex.I) := by
     intro y
     have hLS :=
       ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div (s := (τ : ℂ) + y * Complex.I)
@@ -3226,18 +2514,13 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (h
               (ArithmeticFunction.vonMangoldt n : ℂ) * (n : ℂ) ^ (-((τ : ℂ) + y * Complex.I))) *
             (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) :=
         by rw [tsum_mul_right, tsum_mul_left]
-      _ =
-          riemannZetaLogContourKernel x
-            ((τ : ℂ) + y * Complex.I) :=
-        by
+      _ = riemannZetaLogContourKernel x ((τ : ℂ) + y * Complex.I) := by
         rw [hsum, hK_def, riemannZetaLogContourKernel]
         simp only [div_eq_mul_inv, inv_pow]
         ring
   -- assemble
   have hLHS :
-    ∑' n : ℕ,
-        (ArithmeticFunction.vonMangoldt n : ℂ) *
-          General.mellinWeightTwo ((n : ℝ) / x) =
+    ∑' n : ℕ, (ArithmeticFunction.vonMangoldt n : ℂ) * General.mellinWeightTwo ((n : ℝ) / x) =
       ∑' n : ℕ, (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     refine tsum_congr fun n ↦ ?_
     rcases eq_or_ne n 0 with rfl | hn
@@ -3256,12 +2539,9 @@ factor becomes `x^(u-1)/(u*(u-1))`. Mellin inversion and a summable majorant
 justify summing under the integral. -/
 theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     ∑' n : ℕ,
-        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) *
-          General.mellinWeightOne ((n : ℝ) / x) =
+        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * General.mellinWeightOne ((n : ℝ) / x) =
       (2 * Real.pi : ℝ)⁻¹ •
-        ∫ y : ℝ,
-          riemannZetaReciprocalContourKernel x
-            ((τ : ℂ) + y * Complex.I) := by
+        ∫ y : ℝ, riemannZetaReciprocalContourKernel x ((τ : ℂ) + y * Complex.I) := by
   set σ : ℝ := τ - 1 with hσ_def
   have hσ0 : (0 : ℝ) < σ := by
     rw [hσ_def]; linarith
@@ -3270,8 +2550,7 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ (((τ : ℂ) + y * Complex.I) * ((τ : ℂ) + y * Complex.I - 1))⁻¹ with hK_def
   have hK_int : MeasureTheory.Integrable K := by
-    have hVI :=
-      General.verticalIntegrable_mellinReciprocalKernel hσ0.ne' hσ1
+    have hVI := General.verticalIntegrable_mellinReciprocalKernel hσ0.ne' hσ1
     unfold Complex.VerticalIntegrable at hVI
     have heq : (fun y : ℝ ↦ (((σ : ℂ) + y * Complex.I) * ((σ : ℂ) + y * Complex.I + 1))⁻¹) = K := by
       funext y
@@ -3317,16 +2596,13 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
     have hnx : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-    have hmellin :=
-      General.mellinInv_mellinWeightOne_eq (σ := σ) (x :=
-        (n : ℝ) / x) hσ0 hnx
+    have hmellin := General.mellinInv_mellinWeightOne_eq (σ := σ) (x := (n : ℝ) / x) hσ0 hnx
     rw [← hmellin]
     simp only [mellinInv, smul_eq_mul, one_div]
   have hterm :
     ∀ n : ℕ,
       n ≠ 0 →
-        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) *
-            General.mellinWeightOne ((n : ℝ) / x) =
+        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * General.mellinWeightOne ((n : ℝ) / x) =
           (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
@@ -3337,8 +2613,7 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
     apply MeasureTheory.integral_congr_ae
     filter_upwards with y
     simp only [hG_def, hH_def, hK_def]
-    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg,
-      one_div, Complex.ofReal_natCast]
+    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div, Complex.ofReal_natCast]
     have hshift : ((τ : ℂ) + y * Complex.I - 1) = (σ : ℂ) + y * Complex.I := by
       rw [hσ_def]; push_cast; ring
     have hshift' : ((σ : ℂ) + y * Complex.I + 1) = (τ : ℂ) + y * Complex.I := by
@@ -3417,10 +2692,7 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
     hInterchange.tsum_eq
   -- (5) identify the inner sum over `n` with the reciprocal contour kernel
   have hinner :
-    ∀ y : ℝ,
-      ∑' n : ℕ, G n y =
-        riemannZetaReciprocalContourKernel x
-          ((τ : ℂ) + y * Complex.I) := by
+    ∀ y : ℝ, ∑' n : ℕ, G n y = riemannZetaReciprocalContourKernel x ((τ : ℂ) + y * Complex.I) := by
     intro y
     have hLS :=
       ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div (s := (τ : ℂ) + y * Complex.I)
@@ -3454,19 +2726,14 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
               (ArithmeticFunction.vonMangoldt n : ℂ) * (n : ℂ) ^ (-((τ : ℂ) + y * Complex.I))) *
             (x : ℂ) ^ ((τ : ℂ) + y * Complex.I - 1) :=
         by rw [tsum_mul_right, tsum_mul_left]
-      _ =
-          riemannZetaReciprocalContourKernel x
-            ((τ : ℂ) + y * Complex.I) :=
-        by
-        rw [hsum, hK_def,
-          riemannZetaReciprocalContourKernel]
+      _ = riemannZetaReciprocalContourKernel x ((τ : ℂ) + y * Complex.I) := by
+        rw [hsum, hK_def, riemannZetaReciprocalContourKernel]
         simp only [div_eq_mul_inv]
         ring
   -- assemble
   have hLHS :
     ∑' n : ℕ,
-        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) *
-          General.mellinWeightOne ((n : ℝ) / x) =
+        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * General.mellinWeightOne ((n : ℝ) / x) =
       ∑' n : ℕ, (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     refine tsum_congr fun n ↦ ?_
     rcases eq_or_ne n 0 with rfl | hn

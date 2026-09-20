@@ -115,34 +115,34 @@ theorem weightedReciprocalDefect_le_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ)
 /-- The even `χ̃(2)=0` branch supplies every field of the common comparison core.
 At `X ≥ 64`, its defects are bounded by `(log X)^2/2` and `log 2`, while the
 exact even error is preserved for the numerical comparison. -/
-theorem weightedComparisonCore_even_zero {q : ℕ} (χ : DirichletCharacter ℂ q)
-    [NeZero χ.conductor] (hne : χ ≠ 1) (hquad : χ.primitiveCharacter.IsQuadratic)
-    (heven : χ.primitiveCharacter.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {X : ℝ} (hX : 64 ≤ X) (hodd : OddPrimeTrivial χ X) (h2 : χ.primitiveCharacter 2 = 0) :
+theorem weightedComparisonCore_even_zero {q : ℕ} (χ : DirichletCharacter ℂ q) [NeZero χ.conductor]
+    (hne : χ ≠ 1) (hquad : χ.primitiveCharacter.IsQuadratic) (heven : χ.primitiveCharacter.Even)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {X : ℝ} (hX : 64 ≤ X)
+    (hodd : OddPrimeTrivial χ X) (h2 : χ.primitiveCharacter 2 = 0) :
     LLSWeightedComparisonCore χ.primitiveCharacter X
       |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|
       ((Real.log X) ^ 2 / 2) (Real.log 2) (Analysis.primitiveLogEvenMainError X) := by
   have hx : 2 ≤ X := le_trans (by norm_num only) hX
-  exact weightedComparisonCore_even_of_grh χ hne hquad heven hGRH hX
-    (weightedLogDefect_le_of_apply_two_eq_zero X χ hx hodd h2)
-    (weightedReciprocalDefect_le_of_apply_two_eq_zero X χ hx hodd h2)
+  exact
+    weightedComparisonCore_even_of_grh χ hne hquad heven hGRH hX
+      (weightedLogDefect_le_of_apply_two_eq_zero X χ hx hodd h2)
+      (weightedReciprocalDefect_le_of_apply_two_eq_zero X χ hx hodd h2)
 
 /-- The even `χ̃(2)=1` branch constructs the same core with reciprocal defect zero.
 The logarithmic defect keeps the envelope used by the existing numerical comparison;
 no approximation is made to the even logarithmic error. -/
-theorem weightedComparisonCore_even_one {q : ℕ} (χ : DirichletCharacter ℂ q)
-    [NeZero χ.conductor] (hne : χ ≠ 1) (hquad : χ.primitiveCharacter.IsQuadratic)
-    (heven : χ.primitiveCharacter.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {X : ℝ} (hX : 64 ≤ X) (hodd : OddPrimeTrivial χ X) (h2 : χ.primitiveCharacter 2 = 1) :
+theorem weightedComparisonCore_even_one {q : ℕ} (χ : DirichletCharacter ℂ q) [NeZero χ.conductor]
+    (hne : χ ≠ 1) (hquad : χ.primitiveCharacter.IsQuadratic) (heven : χ.primitiveCharacter.Even)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {X : ℝ} (hX : 64 ≤ X)
+    (hodd : OddPrimeTrivial χ X) (h2 : χ.primitiveCharacter 2 = 1) :
     LLSWeightedComparisonCore χ.primitiveCharacter X
       |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|
       ((Real.log X) ^ 2 / 2) 0 (Analysis.primitiveLogEvenMainError X) := by
   have hx : 2 ≤ X := le_trans (by norm_num only) hX
-  exact weightedComparisonCore_even_of_grh χ hne hquad heven hGRH hX
-    (weightedLogDefect_le_of_apply_two_eq_one X χ hquad hx hodd h2)
-    (weightedReciprocalDefect_eq_zero_of_apply_two_eq_one X χ hquad hx hodd h2).le
+  exact
+    weightedComparisonCore_even_of_grh χ hne hquad heven hGRH hX
+      (weightedLogDefect_le_of_apply_two_eq_one X χ hquad hx hodd h2)
+      (weightedReciprocalDefect_eq_zero_of_apply_two_eq_one X χ hquad hx hodd h2).le
 
 /-- The even `χ̃(2)=-1` branch supplies the sharpened logarithmic defect and
 the reciprocal defect `(4/3) log 2`. The resulting common core retains the exact
@@ -150,16 +150,17 @@ even error and is consumed by the corrected three-branch comparison. -/
 theorem weightedComparisonCore_even_neg_one {q : ℕ} (χ : DirichletCharacter ℂ q)
     [NeZero χ.conductor] (hne : χ ≠ 1) (hquad : χ.primitiveCharacter.IsQuadratic)
     (heven : χ.primitiveCharacter.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {X : ℝ} (hX : 64 ≤ X) (hodd : OddPrimeTrivial χ X) (h2 : χ.primitiveCharacter 2 = -1) :
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {X : ℝ} (hX : 64 ≤ X)
+    (hodd : OddPrimeTrivial χ X) (h2 : χ.primitiveCharacter 2 = -1) :
     LLSWeightedComparisonCore χ.primitiveCharacter X
       |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|
-      ((Real.log X) ^ 2 / 2 + Real.log 2 * (Real.log X - Real.log 2))
-      ((4 / 3) * Real.log 2) (Analysis.primitiveLogEvenMainError X) := by
-  exact weightedComparisonCore_even_of_grh χ hne hquad heven hGRH hX
-    (weightedLogDefect_le_of_apply_two_eq_neg_one X χ hquad
-      (le_trans (by norm_num only) hX) hodd h2)
-    (weightedReciprocalDefect_le_of_apply_two_eq_neg_one X χ hquad
-      (le_trans (by norm_num only) hX) hodd h2)
+      ((Real.log X) ^ 2 / 2 + Real.log 2 * (Real.log X - Real.log 2)) ((4 / 3) * Real.log 2)
+      (Analysis.primitiveLogEvenMainError X) := by
+  exact
+    weightedComparisonCore_even_of_grh χ hne hquad heven hGRH hX
+      (weightedLogDefect_le_of_apply_two_eq_neg_one X χ hquad (le_trans (by norm_num only) hX) hodd
+        h2)
+      (weightedReciprocalDefect_le_of_apply_two_eq_neg_one X χ hquad
+        (le_trans (by norm_num only) hX) hodd h2)
 
 end PseudoPrime.LLS.Extensions

@@ -846,8 +846,7 @@ theorem llsPrimitiveReciprocalEvenMainError_lt_neg_four_fifths {x : ℝ} (hx : 6
     unfold Analysis.logLinearRatio
     apply div_le_div_of_nonneg_right _ hxpos.le
     linarith
-  have hratio_anti :
-    Analysis.logLinearRatio x ≤ Analysis.logLinearRatio 64 :=
+  have hratio_anti : Analysis.logLinearRatio x ≤ Analysis.logLinearRatio 64 :=
     Analysis.strictAntiOn_logLinearRatio.antitoneOn
       (by
         simp only [Set.mem_Ici]; norm_num only)

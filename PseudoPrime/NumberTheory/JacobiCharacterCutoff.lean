@@ -23,16 +23,14 @@ namespace PseudoPrime.NumberTheory
 of its nontrivial prime powers at or below the cutoff. -/
 theorem primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness_prime_pow {n X p k : ℕ}
     (hn : Odd n) (hp : p.Prime) (hodd : Odd p) (hk : k ≠ 0) (hpowX : p ^ k ≤ X)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ PrimeNeOneWitnessSet n)
-    (hpdvd : ¬p ∣ n) :
+    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ PrimeNeOneWitnessSet n) (hpdvd : ¬p ∣ n) :
     primitiveQuadraticCharacter n hn (p ^ k : ℤ) = 1 := by
   have hpX : p ≤ X := by
     have hpowpos : 0 < p ^ k := Nat.pow_pos (Nat.zero_lt_of_lt hp.one_lt)
     have hppow : p ≤ p ^ k := Nat.le_of_dvd hpowpos (dvd_pow_self p hk)
     exact hppow.trans hpowX
   have hprime : primitiveQuadraticCharacter n hn (p : ℤ) = 1 :=
-    primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness hn hp hodd
-      hpX hno hpdvd
+    primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness hn hp hodd hpX hno hpdvd
   rw [Int.cast_pow, map_pow, hprime]
   simp only [one_pow]
 
@@ -50,8 +48,7 @@ prime-power summation range.
 theorem primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness_in_root_cutoff {n p k : ℕ}
     (hn : Odd n) {y : ℝ} (hy : 1 ≤ y) (hp : p.Prime) (hodd : Odd p) (hk : 1 ≤ k)
     (hpmem : p ∈ Finset.Ioc 0 ⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊)
-    (hno :
-      ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ PrimeNeOneWitnessSet n) :
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ PrimeNeOneWitnessSet n) :
     primitiveQuadraticCharacter n hn (p : ℤ) = 1 := by
   have hbase : 1 ≤ y ^ 2 := by nlinarith [sq_nonneg (y - 1)]
   have hkpos : (0 : ℝ) < k := by exact_mod_cast Nat.zero_lt_of_lt hk
@@ -69,31 +66,27 @@ theorem primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness_in_root_cuto
         _ ≤ (y ^ 2) ^ ((1 : ℝ) / k) := Nat.floor_le (by positivity)
     exact hpcast.trans hpow
   exact
-    primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness hn hp hodd
-      hpX hno (not_dvd_of_no_primeNeOne_witness hp hodd hpX hno)
+    primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness hn hp hodd hpX hno
+      (not_dvd_of_no_primeNeOne_witness hp hodd hpX hno)
 
 /-- The preceding cutoff lemma packaged in the exact `hodd` shape used by the analytic bounds. -/
 theorem primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness_in_log_square_range {n : ℕ}
     (hn : Odd n) {y : ℝ} (hy : 1 ≤ y)
-    (hno :
-      ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ PrimeNeOneWitnessSet n) :
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ PrimeNeOneWitnessSet n) :
     ∀ {k p : ℕ},
       k ∈ Finset.Icc 1 ⌊Real.log (y ^ 2) / Real.log 2⌋₊ →
         p ∈ Finset.Ioc 0 ⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊ →
-        p.Prime →
-        Odd p → primitiveQuadraticCharacter n hn (p : ℤ) = 1 := by
+        p.Prime → Odd p → primitiveQuadraticCharacter n hn (p : ℤ) = 1 := by
   intro k p hk hpmem hp hodd
   exact
     primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness_in_root_cutoff hn hy hp hodd
       (Finset.mem_Icc.mp hk).1 hpmem hno
 
 /-- The bridge-level version of the preceding `hodd` provider for analytic downstream theorems. -/
-theorem JacobiCharacterArithmeticData.primitiveCharacter_eq_one_in_log_square_range
-    {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
-    [NeZero (complexQuadraticCharacter n hn).conductor]
+theorem JacobiCharacterArithmeticData.primitiveCharacter_eq_one_in_log_square_range {n : ℕ}
+    {hn : Odd n} {hns : ¬IsSquare n} [NeZero (complexQuadraticCharacter n hn).conductor]
     (bridge : JacobiCharacterArithmeticData n hn hns) {y : ℝ} (hy : 1 ≤ y)
-    (hno :
-      ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ PrimeNeOneWitnessSet n) :
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ PrimeNeOneWitnessSet n) :
     ∀ {k p : ℕ},
       k ∈ Finset.Icc 1 ⌊Real.log (y ^ 2) / Real.log 2⌋₊ →
         p ∈ Finset.Ioc 0 ⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊ →

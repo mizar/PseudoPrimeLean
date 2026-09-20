@@ -26,8 +26,7 @@ theorem conductor_le_level {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) 
 
 /-- The complementary level quotient is positive. -/
 theorem quotient_pos {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) : 0 < q / χ.conductor :=
-  Nat.div_pos (conductor_le_level χ)
-    (conductor_pos χ)
+  Nat.div_pos (conductor_le_level χ) (conductor_pos χ)
 
 /-- The complementary quotient is at most the original level. -/
 theorem quotient_le_level {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) : q / χ.conductor ≤ q :=
@@ -49,12 +48,9 @@ theorem conductor_mul_quotient {q : ℕ} (χ : DirichletCharacter ℂ q) :
 theorem log_level_eq_log_conductor_add_log_quotient {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) :
     Real.log q = Real.log χ.conductor + Real.log (q / χ.conductor : ℕ) := by
-  have hconductor : (χ.conductor : ℝ) ≠ 0 := by
-    exact_mod_cast (conductor_pos χ).ne'
-  have hquotient : ((q / χ.conductor : ℕ) : ℝ) ≠ 0 := by
-    exact_mod_cast (quotient_pos χ).ne'
-  rw [← Real.log_mul hconductor hquotient, ← Nat.cast_mul,
-    conductor_mul_quotient χ]
+  have hconductor : (χ.conductor : ℝ) ≠ 0 := by exact_mod_cast (conductor_pos χ).ne'
+  have hquotient : ((q / χ.conductor : ℕ) : ℝ) ≠ 0 := by exact_mod_cast (quotient_pos χ).ne'
+  rw [← Real.log_mul hconductor hquotient, ← Nat.cast_mul, conductor_mul_quotient χ]
 
 /-- The quotient logarithm is the level logarithm minus the conductor logarithm. -/
 theorem log_quotient_eq_log_level_sub_log_conductor {q : ℕ} [NeZero q]
@@ -82,8 +78,7 @@ theorem card_primeFactors_le_log_div_log_two {m : ℕ} (hm : 0 < m) :
     exact_mod_cast Nat.pow_pos (by norm_num only : (0 : ℕ) < 2)
   have hlog : Real.log ((2 : ℕ) ^ m.primeFactors.card) ≤ Real.log m := by
     apply Real.log_le_log hpow
-    exact_mod_cast
-      two_pow_card_primeFactors_le hm
+    exact_mod_cast two_pow_card_primeFactors_le hm
   rw [Real.log_pow] at hlog
   apply (le_div_iff₀ (Real.log_pos one_lt_two)).mpr
   norm_num only [Nat.cast_ofNat] at hlog
@@ -94,8 +89,7 @@ downstream modules. -/
 theorem card_primeFactors_quotient_le_log_div_log_two {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) :
     ((q / χ.conductor).primeFactors.card : ℝ) ≤ Real.log (q / χ.conductor : ℕ) / Real.log 2 :=
-  card_primeFactors_le_log_div_log_two
-    (quotient_pos χ)
+  card_primeFactors_le_log_div_log_two (quotient_pos χ)
 
 /--
 The affine tradeoff between a smaller conductor and the complementary prime-factor contribution.

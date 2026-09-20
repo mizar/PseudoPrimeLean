@@ -510,10 +510,9 @@ theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime {n : ℕ} (h
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     ∃ D, selfridgeClassicalSearchAscending n (n - 2) = some D := by
   have hodd : Odd n := hn.odd_iff.mpr (by omega)
-  obtain ⟨p, hp, hpodd, hplt, hvalue⟩ :=
-    NumberTheory.primeHasSmallerNegOneWitness hn (by omega)
-  apply selfridgeClassicalSearchAscendingWithinTwoMul_some_of_primeWitness_lt
-    (by omega) hodd hn27 hw hs
+  obtain ⟨p, hp, hpodd, hplt, hvalue⟩ := NumberTheory.primeHasSmallerNegOneWitness hn (by omega)
+  apply
+    selfridgeClassicalSearchAscendingWithinTwoMul_some_of_primeWitness_lt (by omega) hodd hn27 hw hs
   exact (primeNegOneWitness_le n hw ⟨hp, hpodd, hvalue⟩).trans_lt hplt
 
 /-- Every prime at least `3` has a successful elementary ascending search. -/

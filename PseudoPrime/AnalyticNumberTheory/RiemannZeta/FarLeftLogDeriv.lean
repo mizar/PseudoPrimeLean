@@ -25,16 +25,14 @@ theorem exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc :
                     1) +
               20 * Real.pi * |t| +
               Real.pi / 2 * Real.sqrt (1 + 1 / Real.sinh (Real.pi * t / 2) ^ 2) := by
-  obtain ⟨C₁, hC₁⟩ :=
-    exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform
+  obtain ⟨C₁, hC₁⟩ := exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform
   refine
     ⟨Real.log (2 * Real.pi) + 8 * C₁ +
         ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (3 / 2 : ℝ),
       fun m σ t hσ ht => ?_⟩
   obtain ⟨hσlo, hσhi⟩ := hσ
   have hσ0 : σ < 0 := by linarith
-  have hbase :=
-    norm_logDeriv_riemannZeta_neg_add_mul_I_le hσ0 ht
+  have hbase := norm_logDeriv_riemannZeta_neg_add_mul_I_le hσ0 ht
   set M0 : ℝ :=
     max (max (Real.Gamma 1) (Real.Gamma 2))
       (max (Real.Gamma (2 * m + 3 / 2)) (Real.Gamma (2 * m + 5 / 2))) with
@@ -42,11 +40,9 @@ theorem exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc :
   -- Step (A): the `log(Gbound(r))` term is bounded uniformly in `σ` by `log(M0 + 1)`.
   have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
   have hGamma1_le : Real.Gamma (-σ + 1 / 2) ≤ max (Real.Gamma 1) (Real.Gamma (2 * m + 3 / 2)) :=
-    Real.Gamma_le_max_of_mem_Icc' (by norm_num only)
-      (by linarith) (by constructor <;> linarith)
+    Real.Gamma_le_max_of_mem_Icc' (by norm_num only) (by linarith) (by constructor <;> linarith)
   have hGamma2_le : Real.Gamma (-σ + 3 / 2) ≤ max (Real.Gamma 2) (Real.Gamma (2 * m + 5 / 2)) :=
-    Real.Gamma_le_max_of_mem_Icc' (by norm_num only)
-      (by linarith) (by constructor <;> linarith)
+    Real.Gamma_le_max_of_mem_Icc' (by norm_num only) (by linarith) (by constructor <;> linarith)
   have hΓ1M0 : Real.Gamma 1 ≤ M0 := le_trans (le_max_left _ _) (le_max_left _ _)
   have hΓ2M0 : Real.Gamma 2 ≤ M0 := le_trans (le_max_right _ _) (le_max_left _ _)
   have hΓ3M0 : Real.Gamma (2 * m + 3 / 2) ≤ M0 := le_trans (le_max_left _ _) (le_max_right _ _)
@@ -75,8 +71,7 @@ theorem exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc :
   -- Step (C): the von Mangoldt tail sum is bounded by its value at the segment's right endpoint.
   have h32 : (3 / 2 : ℝ) ≤ 1 - σ := by linarith
   have hsum_le :=
-    tsum_vonMangoldt_div_rpow_antitone (x := 3 / 2)
-      (y := 1 - σ) (by norm_num only) h32
+    tsum_vonMangoldt_div_rpow_antitone (x := 3 / 2) (y := 1 - σ) (by norm_num only) h32
   linarith [hbase, hlog_le, hGammaB, hsum_le]
 
 /-- A concrete witness constant for `exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc`,
@@ -114,8 +109,7 @@ theorem tendsto_farLeftBTerm_atTop : Filter.Tendsto farLeftBTerm Filter.atTop Fi
             (max (Real.Gamma (2 * (m : ℝ) + 3 / 2)) (Real.Gamma (2 * (m : ℝ) + 5 / 2))) +
           1)
       Filter.atTop Filter.atTop :=
-    Filter.tendsto_atTop_add_const_right Filter.atTop 1
-      Gamma.tendsto_max_Gamma_halfInteger_atTop
+    Filter.tendsto_atTop_add_const_right Filter.atTop 1 Gamma.tendsto_max_Gamma_halfInteger_atTop
   exact (Real.tendsto_log_atTop.comp h1).const_mul_atTop (by norm_num only)
 
 /-- `farLeftBTerm m` is positive: its Gamma maximum includes `Γ(1)=1`. -/

@@ -20,8 +20,7 @@ theorem twenty_seven_fiftieths_lt_eulerMascheroniConstant :
     (27 / 50 : ℝ) < Real.eulerMascheroniConstant := by
   have hseq := Real.eulerMascheroniSeq_lt_eulerMascheroniConstant 16
   have hlog17 :=
-    log_le_log_add_sub_div (a := (16 : ℝ)) (y := 17) (by norm_num only)
-      (by norm_num only)
+    log_le_log_add_sub_div (a := (16 : ℝ)) (y := 17) (by norm_num only) (by norm_num only)
   have hlog16eq : Real.log (16 : ℝ) = 4 * Real.log 2 := by
     rw [show (16 : ℝ) = 2 ^ 4 from by norm_num only, Real.log_pow]
     norm_num only

@@ -13,8 +13,7 @@ import Mathlib.Tactic
 namespace PseudoPrime.AnalyticNumberTheory.RiemannXi
 
 /-- A coarse rational upper bound for the Riemann zero-mass constant used by downstream modules. -/
-theorem riemannZeroMass_lt_three_twentieths :
-    riemannZeroMass < (3 / 20 : ℝ) := by
+theorem riemannZeroMass_lt_three_twentieths : riemannZeroMass < (3 / 20 : ℝ) := by
   have hlogPiLower : Real.log 3 < Real.log Real.pi :=
     Real.strictMonoOn_log (by norm_num only [Set.mem_Ioi]) Real.pi_pos Real.pi_gt_three
   have hlogPiUpper : Real.log Real.pi < Real.log 4 :=
@@ -29,8 +28,7 @@ theorem riemannZeroMass_lt_three_twentieths :
       Real.log_two_lt_d9, Real.log_three_gt_d9]
 
 /-- The existing strict zero-mass estimate also supplies the closed upper bound used here. -/
-theorem riemannZeroMass_le_three_twentieths :
-    riemannZeroMass ≤ (3 / 20 : ℝ) :=
+theorem riemannZeroMass_le_three_twentieths : riemannZeroMass ≤ (3 / 20 : ℝ) :=
   riemannZeroMass_lt_three_twentieths.le
 
 /-- A rational zero-mass bound strong enough for the strict S2 comparison.
@@ -40,10 +38,10 @@ theorem riemannZeroMass_le_one_sixteenth : riemannZeroMass ≤ (1 / 16 : ℝ) :=
   have hlo := Real.log_le_log (by norm_num only : (0 : ℝ) < 3) Real.pi_gt_three.le
   have hhi := Analysis.log_four_sub_log_pi_gt_twenty_four
   rw [Real.log_four_eq] at hhi
-  rw [riemannZeroMass, abs_le, Real.log_mul (by norm_num only) Real.pi_ne_zero,
-    Real.log_four_eq]
-  constructor <;> nlinarith only [hlo, hhi, Real.log_two_gt_d9, Real.log_two_lt_d9,
-    Real.log_three_gt_d9, Real.one_half_lt_eulerMascheroniConstant,
-    Analysis.eulerMascheroniConstant_lt_twentyNine_fiftieths]
+  rw [riemannZeroMass, abs_le, Real.log_mul (by norm_num only) Real.pi_ne_zero, Real.log_four_eq]
+  constructor <;>
+    nlinarith only [hlo, hhi, Real.log_two_gt_d9, Real.log_two_lt_d9, Real.log_three_gt_d9,
+      Real.one_half_lt_eulerMascheroniConstant,
+      Analysis.eulerMascheroniConstant_lt_twentyNine_fiftieths]
 
 end PseudoPrime.AnalyticNumberTheory.RiemannXi

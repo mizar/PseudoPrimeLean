@@ -49,9 +49,7 @@ theorem exists_neg_one_of_not_mem_qNeOneSieve_of_not_dvd {primes : Finset ℕ} {
     (hprime : ∀ p ∈ primes, p.Prime) : ∃ p ∈ primes, jacobiSym n p = -1 := by
   obtain ⟨p, hp, hne⟩ := exists_ne_one_of_not_mem_qNeOneSieve hnB hnot
   refine ⟨p, hp, ?_⟩
-  exact
-    NumberTheory.jacobi_eq_neg_one_of_prime_of_not_dvd_of_ne_one (hprime p hp)
-      (hndvd p hp) hne
+  exact NumberTheory.jacobi_eq_neg_one_of_prime_of_not_dvd_of_ne_one (hprime p hp) (hndvd p hp) hne
 
 /-- If no candidate has Jacobi value `-1`, coprimality forces every sieve stage to be `1`. -/
 theorem qNeOneSievePasses_of_not_neg_one_of_not_dvd {primes : Finset ℕ} {n : ℕ}

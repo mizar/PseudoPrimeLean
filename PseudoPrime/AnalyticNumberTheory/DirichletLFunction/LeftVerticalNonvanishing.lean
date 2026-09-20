@@ -33,26 +33,16 @@ theorem quadraticDirichletLFunction_ne_zero_leftVertical {N : ℕ} [NeZero N]
   have hs1re : (1 : ℝ) ≤ (1 - s).re := by
     have h1 : (1 - s).re = 1 - s.re := by simp only [Complex.sub_re, Complex.one_re]
     rw [h1, hsre]; linarith
-  have hFsne :=
-    completedLFunction_ne_zero_farLeft_of_isQuadratic
-      hprimitive hne hquad hs1re
+  have hFsne := completedLFunction_ne_zero_farLeft_of_isQuadratic hprimitive hne hquad hs1re
   have hΓsne : DirichletCharacter.gammaFactor χ s ≠ 0 := by
     rcases χ.even_or_odd with heven | hodd
     · exact
-        gammaFactor_ne_zero_of_even_of_half_ne_neg_nat
-          heven
-          (leftVertical_even_half_ne_neg_nat A
-            t)
+        gammaFactor_ne_zero_of_even_of_half_ne_neg_nat heven (leftVertical_even_half_ne_neg_nat A t)
     · exact
-        gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat
-          hodd
-          (leftVertical_odd_half_ne_neg_nat A t)
+        gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd (leftVertical_odd_half_ne_neg_nat A t)
   have hLeq :=
-    dirichletLFunction_eq_completed_div_gammaFactor
-      χ s
-      (Or.inr
-        (dirichletCharacter_level_ne_one_of_ne_one
-          hne))
+    dirichletLFunction_eq_completed_div_gammaFactor χ s
+      (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))
   rw [hLeq]
   exact div_ne_zero hFsne hΓsne
 
@@ -72,26 +62,16 @@ theorem dirichletLFunction_ne_zero_leftVertical {N : ℕ} [NeZero N] {χ : Diric
     rw [h1, hsre]
     have hA' : (2 : ℝ) ≤ A := by exact_mod_cast hA
     linarith
-  have hFsne :=
-    completedLFunction_ne_zero_farLeft
-      hprimitive hne hinv hs1re
+  have hFsne := completedLFunction_ne_zero_farLeft hprimitive hne hinv hs1re
   have hΓsne : DirichletCharacter.gammaFactor χ s ≠ 0 := by
     rcases χ.even_or_odd with heven | hodd
     · exact
-        gammaFactor_ne_zero_of_even_of_half_ne_neg_nat
-          heven
-          (leftVertical_even_half_ne_neg_nat A
-            t)
+        gammaFactor_ne_zero_of_even_of_half_ne_neg_nat heven (leftVertical_even_half_ne_neg_nat A t)
     · exact
-        gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat
-          hodd
-          (leftVertical_odd_half_ne_neg_nat A t)
+        gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd (leftVertical_odd_half_ne_neg_nat A t)
   have hLeq :=
-    dirichletLFunction_eq_completed_div_gammaFactor
-      χ s
-      (Or.inr
-        (dirichletCharacter_level_ne_one_of_ne_one
-          hne))
+    dirichletLFunction_eq_completed_div_gammaFactor χ s
+      (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))
   rw [hLeq]
   exact div_ne_zero hFsne hΓsne
 

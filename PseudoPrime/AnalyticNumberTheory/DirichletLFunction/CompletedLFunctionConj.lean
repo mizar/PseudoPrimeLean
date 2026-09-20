@@ -106,10 +106,7 @@ theorem WeakFEPair.Λ₀_conj (P : WeakFEPair ℂ) (hf : ∀ x, (starRingEnd ℂ
     (hε : (starRingEnd ℂ) P.ε = P.ε) (s : ℂ) :
     (starRingEnd ℂ) (P.Λ₀ s) = P.Λ₀ (starRingEnd ℂ s) := by
   unfold WeakFEPair.Λ₀
-  exact
-    mellin_conj
-      (WeakFEPair.f_modif_conj P hf hf0 hg0 hε)
-      s
+  exact mellin_conj (WeakFEPair.f_modif_conj P hf hf0 hg0 hε) s
 
 /--
 Input/assumptions: as `WeakFEPair.Λ₀_conj`, plus `P.k : ℝ` fixed by conjugation (automatic, since
@@ -246,17 +243,12 @@ theorem ZMod.completedLFunction_conj {N : ℕ} [NeZero N] (Φ : ZMod N → ℂ) 
     (starRingEnd ℂ) (ZMod.completedLFunction Φ s) =
       ZMod.completedLFunction (fun j => (starRingEnd ℂ) (Φ j)) (starRingEnd ℂ s) := by
   unfold ZMod.completedLFunction
-  rw [map_add, map_mul, map_mul,
-    Complex.conj_cpow_natCast N (-s), map_neg]
+  rw [map_add, map_mul, map_mul, Complex.conj_cpow_natCast N (-s), map_neg]
   congr 2
   · rw [map_sum]
-    exact
-      Finset.sum_congr rfl fun j _ => by
-        rw [map_mul, HurwitzZeta.completedHurwitzZetaEven_conj]
+    exact Finset.sum_congr rfl fun j _ => by rw [map_mul, HurwitzZeta.completedHurwitzZetaEven_conj]
   · rw [map_sum]
-    exact
-      Finset.sum_congr rfl fun j _ => by
-        rw [map_mul, HurwitzZeta.completedHurwitzZetaOdd_conj]
+    exact Finset.sum_congr rfl fun j _ => by rw [map_mul, HurwitzZeta.completedHurwitzZetaOdd_conj]
 
 /--
 Input/assumptions: a positive level `N`, a complex Dirichlet character `χ` of level `N`, and
@@ -272,8 +264,7 @@ theorem DirichletCharacter.completedLFunction_conj {N : ℕ} [NeZero N] (χ : Di
     (s : ℂ) :
     (starRingEnd ℂ) (DirichletCharacter.completedLFunction χ s) =
       DirichletCharacter.completedLFunction χ⁻¹ (starRingEnd ℂ s) := by
-  rw [DirichletCharacter.completedLFunction,
-    ZMod.completedLFunction_conj,
+  rw [DirichletCharacter.completedLFunction, ZMod.completedLFunction_conj,
     DirichletCharacter.completedLFunction]
   congr 1
   funext j

@@ -68,15 +68,13 @@ theorem llsTheorem11S1ComparisonUpperBound_le_fullLevel (htradeoff : LLSPart1Tra
     {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) :
     llsTheorem11S1ComparisonUpperBound χ ≤ llsPart1FullLevelUpperBound q := by
   have homega :=
-    AnalyticNumberTheory.DirichletLFunction.card_primeFactors_quotient_le_log_div_log_two
-      χ
+    AnalyticNumberTheory.DirichletLFunction.card_primeFactors_quotient_le_log_div_log_two χ
   rw [AnalyticNumberTheory.DirichletLFunction.log_quotient_eq_log_level_sub_log_conductor
       χ] at homega
   have hcore :=
-    AnalyticNumberTheory.DirichletLFunction.conductor_primeFactor_tradeoff
-      (Real.log_pos one_lt_two)
-      (AnalyticNumberTheory.DirichletLFunction.log_conductor_le_log_level χ) homega
-      (htradeoff q hq) (root := llsTheorem11S1RadiusRoot q) (logWeight :=
+    AnalyticNumberTheory.DirichletLFunction.conductor_primeFactor_tradeoff (Real.log_pos one_lt_two)
+      (AnalyticNumberTheory.DirichletLFunction.log_conductor_le_log_level χ) homega (htradeoff q hq)
+      (root := llsTheorem11S1RadiusRoot q) (logWeight :=
       Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) (offset := 2 / 5 - llsAuxiliaryTerm q) (piLog :=
       Real.log Real.pi)
   have hconductor : (χ.conductor : ℝ) ≠ 0 := by
@@ -89,8 +87,7 @@ theorem llsTheorem11S1ComparisonUpperBound_le_fullLevel (htradeoff : LLSPart1Tra
 theorem eight_lt_llsTheorem11S1RadiusRoot {q : ℕ} (hq : 3000 ≤ q) :
     (8 : ℝ) < llsTheorem11S1RadiusRoot q := by
   exact
-    (Analysis.eight_lt_log_level hq).trans_le
-      (le_add_of_nonneg_right (llsCorrectionTerm_nonneg q))
+    (Analysis.eight_lt_log_level hq).trans_le (le_add_of_nonneg_right (llsCorrectionTerm_nonneg q))
 
 /-- At the Part 1 radius, the inverse-square factor is uniformly bounded by `64 / 49`. -/
 theorem llsPart1RadiusInverseSq_le_sixtyFour_div_fortyNine {q : ℕ} (hq : 3000 ≤ q) :
@@ -148,8 +145,7 @@ theorem llsPart1IntermediateUpperBound_le_upper {q : ℕ} (hq : 3000 ≤ q) :
       hroot
   have hmul := mul_le_mul_of_nonneg_right hratio (show 0 ≤ Real.log (q : ℝ) by linarith)
   have hratioQ :
-    Analysis.logLinearRatio (Real.log q) * Real.log q =
-      2 * Real.log (Real.log q) + 1 := by
+    Analysis.logLinearRatio (Real.log q) * Real.log q = 2 * Real.log (Real.log q) + 1 := by
     rw [Analysis.logLinearRatio]
     field_simp [hlogQ.ne']
   have hrootPos : 0 < llsTheorem11S1RadiusRoot q := by linarith
@@ -493,13 +489,11 @@ theorem llsPart1ComparisonUpperSimplification : llsTheorem11S1ComparisonUpperSim
 /-- The derivative of the one-variable separation margin at a positive input. -/
 theorem hasDerivAt_llsPart1SeparationMargin {y : ℝ} (hy : 0 < y) :
     HasDerivAt llsPart1SeparationMargin
-      (6 / 5 - 2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass -
-        2 * Real.log (2 * Real.pi) / y)
+      (6 / 5 - 2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass - 2 * Real.log (2 * Real.pi) / y)
       y := by
   unfold llsPart1SeparationMargin
   have hraw :=
-    ((hasDerivAt_id y).mul_const
-          (6 / 5 - 2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass)).sub
+    ((hasDerivAt_id y).mul_const (6 / 5 - 2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass)).sub
       (Real.hasDerivAt_log hy.ne' |>.const_mul (2 * Real.log (2 * Real.pi)))
   apply
     ((hraw.add_const (19 / 20)).sub_const
@@ -520,8 +514,7 @@ theorem strictMonoOn_llsPart1SeparationMargin :
     have hratio : 2 * Real.log (2 * Real.pi) / y < (1 / 2 : ℝ) := by
       rw [div_lt_iff₀ (by linarith)]
       nlinarith only [hy, Analysis.log_two_mul_pi_lt]
-    linarith only [hratio,
-      AnalyticNumberTheory.RiemannXi.riemannZeroMass_lt_three_twentieths]
+    linarith only [hratio, AnalyticNumberTheory.RiemannXi.riemannZeroMass_lt_three_twentieths]
 
 /-- The one-variable separation margin is positive at its left endpoint. -/
 theorem llsPart1SeparationMargin_eight_pos : 0 < llsPart1SeparationMargin 8 := by
@@ -538,8 +531,7 @@ theorem llsPart1SeparationMargin_eight_pos : 0 < llsPart1SeparationMargin 8 := b
       mul_pos (show (0 : ℝ) < 1839 / 1000 by norm_num only) (sub_pos.mpr hlogTwoUpper)]
   rw [llsPart1SeparationMargin, show (8 : ℝ) = 2 ^ 3 by norm_num only, Real.log_pow]
   norm_num only [Nat.cast_ofNat]
-  nlinarith only [hproduct,
-    AnalyticNumberTheory.RiemannXi.riemannZeroMass_lt_three_twentieths]
+  nlinarith only [hproduct, AnalyticNumberTheory.RiemannXi.riemannZeroMass_lt_three_twentieths]
 
 /-- The separation margin is positive throughout the radius range used in LLS Part 1. -/
 theorem llsPart1SeparationMargin_pos {y : ℝ} (hy : 8 ≤ y) : 0 < llsPart1SeparationMargin y :=

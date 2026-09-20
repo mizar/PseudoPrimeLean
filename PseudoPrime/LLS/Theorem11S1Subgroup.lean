@@ -101,16 +101,18 @@ def PrimeOutsideSubgroup (q : ℕ) (H : Subgroup (ZMod q)ˣ) (p : ℕ) : Prop :=
 For `q ≥ 3000`, minimize the unbounded prime predicate with `Nat.find`; its least
 element is no larger than the bounded witness. This supplies the minimality conclusion
 without changing the existing existence specification. -/
-theorem exists_least_prime_outside_subgroup_of_s1 (hS1 : llsTheorem11S1)
-    (hq : 3000 ≤ q) (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤) :
-    ∃ p, PrimeOutsideSubgroup q H p ∧
-      (p : ℝ) ≤ (Real.log q + llsCorrectionTerm q) ^ 2 ∧
-      ∀ r, PrimeOutsideSubgroup q H r → p ≤ r := by
+theorem exists_least_prime_outside_subgroup_of_s1 (hS1 : llsTheorem11S1) (hq : 3000 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤) :
+    ∃ p,
+      PrimeOutsideSubgroup q H p ∧
+        (p : ℝ) ≤ (Real.log q + llsCorrectionTerm q) ^ 2 ∧
+        ∀ r, PrimeOutsideSubgroup q H r → p ≤ r := by
   classical
   obtain ⟨p, hp, hpq, u, hu, hup, hb⟩ := hS1 q hq H hH
   have hex : ∃ r, PrimeOutsideSubgroup q H r := ⟨p, hp, hpq, u, hu, hup⟩
-  exact ⟨Nat.find hex, Nat.find_spec hex,
-    (Nat.cast_le.mpr (Nat.find_min' hex ⟨hp, hpq, u, hu, hup⟩)).trans hb,
-    fun _ hr ↦ Nat.find_min' hex hr⟩
+  exact
+    ⟨Nat.find hex, Nat.find_spec hex,
+      (Nat.cast_le.mpr (Nat.find_min' hex ⟨hp, hpq, u, hu, hup⟩)).trans hb, fun _ hr ↦
+      Nat.find_min' hex hr⟩
 
 end PseudoPrime.LLS

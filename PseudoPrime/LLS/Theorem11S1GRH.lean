@@ -58,8 +58,9 @@ it with `primitiveRaw` through the algebraic and numerical reductions. The `riem
 field is not needed by this theorem. -/
 theorem LLSAnalyticCore.llsTheorem11S1Character (hcore : LLSAnalyticCore) :
     llsTheorem11S1Character := by
-  exact llsTheorem11S1Character_of_riemann_and_primitive_raw
-    hcore.riemannWeightedLowerBound hcore.primitiveRaw
+  exact
+    llsTheorem11S1Character_of_riemann_and_primitive_raw hcore.riemannWeightedLowerBound
+      hcore.primitiveRaw
 
 /-!
 The generic exact full-level route supplies the existing Part 1 analytic-bounds interface.
@@ -73,8 +74,8 @@ theorem llsPart1AnalyticBounds_of_grh_generic (h21 : LLSRiemannWeightedLowerBoun
   intro q _ χ hq hχ hsmall
   let _ : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
   refine
-    ⟨(AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
-          ((llsTheorem11S1RadiusRoot q) ^ 2) χ).re,
+    ⟨(AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
+          χ).re,
       ?_, ?_⟩
   · exact (llsPart1WeightedLowerBounds_of_riemann h21) q χ hq hχ hsmall
   · exact characterLogWeightedSum_re_le_upper_of_grh_generic χ hq hχ hGRH h24 hsmall
@@ -111,8 +112,8 @@ theorem llsPart1PrimitiveFullLevelCoreBounds_of_grh_generic
   intro q _ χ hq hne hsmall
   let _ : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
   refine
-    ⟨|AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|,
-      abs_nonneg _, ?_, ?_, ?_⟩
+    ⟨|AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|, abs_nonneg _, ?_,
+      ?_, ?_⟩
   · exact llsPart1PrimitiveWeightedUpperAt_of_grh_generic χ hq hne hGRH
   · exact llsPart1PrimitiveReciprocalLowerWithLevelChangeAt_of_riemann h24 χ hq hsmall
   · exact llsPart1PrimitiveZeroMassFullLevelRawAt_of_grh_generic χ hq hne hGRH h24 hsmall
@@ -130,19 +131,19 @@ theorem llsTheorem11S1Character_of_grh
 /-- GRH gives the proper-subgroup S1 bound through the general character theorem.
 The quotient-character construction supplies separation for every proper subgroup;
 no quadraticity or additional analytic interface is assumed. -/
-theorem llsTheorem11S1_of_grh
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) : llsTheorem11S1 := by
-  exact llsTheorem11S1_of_character (llsTheorem11S1Character_of_grh hGRH)
+theorem llsTheorem11S1_of_grh (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+    llsTheorem11S1 := by exact llsTheorem11S1_of_character (llsTheorem11S1Character_of_grh hGRH)
 
 /-- Under GRH, the least prime outside any proper subgroup at level `q ≥ 3000`
 satisfies the S1 bound. The least-prime conclusion uses the unbounded admissibility
 predicate, so minimality holds among all primes outside the subgroup. -/
 theorem exists_least_prime_outside_subgroup_of_grh
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {q : ℕ} [NeZero q] (hq : 3000 ≤ q) (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤) :
-    ∃ p, PrimeOutsideSubgroup q H p ∧
-      (p : ℝ) ≤ (Real.log q + llsCorrectionTerm q) ^ 2 ∧
-      ∀ r, PrimeOutsideSubgroup q H r → p ≤ r := by
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} [NeZero q]
+    (hq : 3000 ≤ q) (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤) :
+    ∃ p,
+      PrimeOutsideSubgroup q H p ∧
+        (p : ℝ) ≤ (Real.log q + llsCorrectionTerm q) ^ 2 ∧
+        ∀ r, PrimeOutsideSubgroup q H r → p ≤ r := by
   exact exists_least_prime_outside_subgroup_of_s1 (llsTheorem11S1_of_grh hGRH) hq H hH
 
 end PseudoPrime.LLS

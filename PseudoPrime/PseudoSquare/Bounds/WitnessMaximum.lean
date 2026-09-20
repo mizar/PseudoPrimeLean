@@ -45,8 +45,7 @@ noncomputable def QNegOne (B : ℕ) : ℕ := by
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).not_isSquare))
 
 /-- Every pointwise least `≠ 1` witness is bounded by the finite maximum `QNeOne`. -/
-theorem primeNeOneWitness_le_QNeOne {B n : ℕ}
-    (hn : n ∈ NumberTheory.admissibleFinset B) :
+theorem primeNeOneWitness_le_QNeOne {B n : ℕ} (hn : n ∈ NumberTheory.admissibleFinset B) :
     NumberTheory.primeNeOneWitness n
         (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
           (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare
@@ -77,8 +76,7 @@ theorem QNeOne_le_QNegOne (B : ℕ) : QNeOne B ≤ QNegOne B := by
         ((NumberTheory.mem_admissibleFinset_iff.mp n.property).not_isSquare))
 
 /-- Every pointwise least `-1` witness is bounded by the finite maximum `QNegOne`. -/
-theorem primeNegOneWitness_le_QNegOne {B n : ℕ}
-    (hn : n ∈ NumberTheory.admissibleFinset B) :
+theorem primeNegOneWitness_le_QNegOne {B n : ℕ} (hn : n ∈ NumberTheory.admissibleFinset B) :
     NumberTheory.primeNegOneWitness n
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare
           ((NumberTheory.mem_admissibleFinset_iff.mp hn).odd)

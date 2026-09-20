@@ -58,7 +58,7 @@ theorem re_characterLogWeightedTerm_eq_of_trivialBelow {q n : ℕ} [NeZero q]
       AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm X n := by
   by_cases hΛ : ArithmeticFunction.vonMangoldt n = 0
   · rw [AnalyticNumberTheory.Arithmetic.characterLogWeightedTerm,
-    AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm, hΛ, zero_mul]
+      AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm, hΛ, zero_mul]
     change ((0 : ℂ) * χ n).re = 0
     rw [zero_mul, Complex.zero_re]
   · obtain ⟨p, k, hp, hk, rfl⟩ :=
@@ -94,8 +94,7 @@ Role: supplies `dS = 0` in `LLSWeightedComparisonCore` for Theorem 1.1 S2.
 -/
 theorem weightedLogDefect_eq_zero_of_trivialBelow {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     {X : ℝ} (hX : 0 < X) (htrivial : LLSCharacterTrivialBelow χ X) : weightedLogDefect χ X = 0 := by
-  unfold weightedLogDefect
-    AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum
+  unfold weightedLogDefect AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum
     AnalyticNumberTheory.Arithmetic.characterLogWeightedSum
   rw [sub_eq_zero, Complex.re_sum]
   exact
@@ -112,7 +111,7 @@ theorem re_characterReciprocalWeightedTerm_eq_of_trivialBelow {q n : ℕ} [NeZer
       AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm X n := by
   by_cases hΛ : ArithmeticFunction.vonMangoldt n = 0
   · rw [AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedTerm,
-    AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm, hΛ, zero_div, zero_mul]
+      AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm, hΛ, zero_div, zero_mul]
     norm_num only [Complex.ofReal_zero, zero_mul, Complex.zero_re]
   · obtain ⟨p, k, hp, hk, rfl⟩ :=
       (isPrimePow_nat_iff (n := n)).mp (ArithmeticFunction.vonMangoldt_ne_zero_iff.mp hΛ)
@@ -132,10 +131,10 @@ theorem re_characterReciprocalWeightedTerm_eq_of_trivialBelow {q n : ℕ} [NeZer
       have hpk_eq : (p : ℝ) ^ k = X := le_antisymm (by exact_mod_cast hpk_le) (hpeq ▸ hpk_ge)
       have hnX : ((p ^ k : ℕ) : ℝ) = X := by
         push_cast; exact hpk_eq
-      have hzeroterm : AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm
-        X (p ^ k) = 0 := by
-        rw [AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm,
-        hnX, div_self hX.ne', sub_self, mul_zero]
+      have hzeroterm :
+        AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm X (p ^ k) = 0 := by
+        rw [AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm, hnX, div_self hX.ne',
+          sub_self, mul_zero]
       rw [AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedTerm, hzeroterm]
       simp
 
@@ -149,8 +148,7 @@ Role: supplies `dR = 0` in `LLSWeightedComparisonCore` for Theorem 1.1 S2.
 theorem weightedReciprocalDefect_eq_zero_of_trivialBelow {q : ℕ} [NeZero q]
     {χ : DirichletCharacter ℂ q} {X : ℝ} (hX : 0 < X) (htrivial : LLSCharacterTrivialBelow χ X) :
     weightedReciprocalDefect χ X = 0 := by
-  unfold weightedReciprocalDefect
-    AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum
+  unfold weightedReciprocalDefect AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum
     AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum
   rw [sub_eq_zero, Complex.re_sum]
   exact
@@ -169,12 +167,12 @@ theorem llsWeightedComparisonS2Defects_of_trivialBelow {q : ℕ} [NeZero q]
 /-- Triviality at every prime strictly below `X` passes to the primitive character.
 The counterexample assumption excludes those primes from the original modulus;
 the inducing character therefore has the same value. The strict cutoff is preserved. -/
-theorem characterTrivialBelow_primitiveCharacter {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} {X : ℝ} (htrivial : LLSCharacterTrivialBelow χ X) :
+theorem characterTrivialBelow_primitiveCharacter {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    {X : ℝ} (htrivial : LLSCharacterTrivialBelow χ X) :
     LLSCharacterTrivialBelow χ.primitiveCharacter X := by
   intro p hp hpx
-  have hc := hp.coprime_iff_not_dvd.mpr
-    (noSmallPrimeFactor_of_characterTrivialBelow htrivial p hp hpx)
+  have hc :=
+    hp.coprime_iff_not_dvd.mpr (noSmallPrimeFactor_of_characterTrivialBelow htrivial p hp hpx)
   have heq := χ.primitiveCharacter_apply_of_isCoprime (Nat.isCoprime_iff_coprime.mpr hc)
   simp only [Int.cast_natCast] at heq
   exact heq.trans (htrivial p hp hpx)

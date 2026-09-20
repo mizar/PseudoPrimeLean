@@ -23,8 +23,7 @@ def LLSPart1PrimitiveReciprocalExplicitFormulaRawAt {q : ℕ} (χ : DirichletCha
   let x := y ^ 2
   (1 - 1 / y) ^ 2 * b ≤
     1 / 2 * (1 - 1 / x) * Real.log ((χ.conductor : ℝ) / Real.pi) -
-      (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x
-          χ.primitiveCharacter).re -
+      (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ.primitiveCharacter).re -
       1 / 4
 
 /--

@@ -14,10 +14,7 @@ namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 equals the vertical integral of the logarithmic zeta contour kernel. -/
 theorem logWeightedMangoldtSum_eq_integral {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     (Arithmetic.logWeightedMangoldtSum x : ℂ) =
-      (2 * Real.pi : ℝ)⁻¹ •
-        ∫ y : ℝ,
-          riemannZetaLogContourKernel x
-            ((τ : ℂ) + y * Complex.I) := by
+      (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, riemannZetaLogContourKernel x ((τ : ℂ) + y * Complex.I) := by
   rw [← Arithmetic.mellinWeightTwo_vonMangoldt_tsum_eq_ofReal hx,
     mellinWeightTwo_vonMangoldt_tsum_eq hx hτ]
 
@@ -26,11 +23,8 @@ equals the vertical integral of the reciprocal zeta contour kernel. -/
 theorem reciprocalWeightedMangoldtSum_eq_integral {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     (Arithmetic.reciprocalWeightedMangoldtSum x : ℂ) =
       (2 * Real.pi : ℝ)⁻¹ •
-        ∫ y : ℝ,
-          riemannZetaReciprocalContourKernel x
-            ((τ : ℂ) + y * Complex.I) := by
-  rw [←
-    Arithmetic.mellinWeightOne_vonMangoldt_div_tsum_eq_ofReal hx,
+        ∫ y : ℝ, riemannZetaReciprocalContourKernel x ((τ : ℂ) + y * Complex.I) := by
+  rw [← Arithmetic.mellinWeightOne_vonMangoldt_div_tsum_eq_ofReal hx,
     mellinWeightOne_vonMangoldt_div_tsum_eq hx hτ]
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

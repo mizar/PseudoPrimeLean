@@ -48,8 +48,8 @@ irrelevance to identify the witness defined with a different nonemptiness proof.
 This is the direct public pointwise logarithmic-square bound.
 -/
 theorem primeNeOneWitness_cast_le_log_sq_of_11_le
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ}
-    (hn11 : 11 ≤ n) (hn : Odd n) (hns : ¬IsSquare n) :
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn11 : 11 ≤ n)
+    (hn : Odd n) (hns : ¬IsSquare n) :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
             (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)) :
@@ -66,8 +66,8 @@ The proof combines membership of the least witness with the logarithmic-square b
 This supplies an explicit existence bound for Jacobi `≠ 1` witnesses.
 -/
 theorem exists_prime_ne_one_witness_of_grh
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ}
-    (hnpos : 0 < n) (hn : Odd n) (hns : ¬IsSquare n) :
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hnpos : 0 < n)
+    (hn : Odd n) (hns : ¬IsSquare n) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ max 5 (Real.log (n : ℝ) ^ 2) ∧ jacobiSym n p ≠ 1 := by
   let hneg := NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
   let hne := NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne hneg
@@ -93,8 +93,8 @@ The proof combines membership of the least `-1` witness with the upper bound fro
 This supplies an explicit existence bound for Jacobi `-1` witnesses.
 -/
 theorem exists_prime_neg_one_witness_of_grh
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ}
-    (hnpos : 0 < n) (hn : Odd n) (hns : ¬IsSquare n) :
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hnpos : 0 < n)
+    (hn : Odd n) (hns : ¬IsSquare n) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧
@@ -111,8 +111,6 @@ theorem exists_prime_neg_one_witness_of_grh
     omega
   have hbound := (primeWitness_elementary_bound_explicit hGRH hn3 hn hns).2
   have hmemNeg := NumberTheory.primeNegOneWitness_mem n hneg
-  exact
-    ⟨NumberTheory.primeNegOneWitness n hneg, hmemNeg.1, hmemNeg.2.1, hbound,
-      hmemNeg.2.2⟩
+  exact ⟨NumberTheory.primeNegOneWitness n hneg, hmemNeg.1, hmemNeg.2.1, hbound, hmemNeg.2.2⟩
 
 end PseudoPrime.PseudoSquare

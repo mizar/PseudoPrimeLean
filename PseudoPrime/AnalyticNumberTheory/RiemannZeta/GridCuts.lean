@@ -16,14 +16,10 @@ constructor needs.  The result is the concrete grid used to eliminate the finite
 assumptions from the contour decomposition.
 -/
 noncomputable def riemannZetaGeneratedStrictGridCuts (z w : ℂ) (hre : z.re < w.re)
-    (him : z.im < w.im)
-    (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
+    (him : z.im < w.im) (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
     RectangleGeometry.StrictGridCuts z w :=
-  RectangleGeometry.generatedStrictGridCuts
-    (riemannZetaSingularitiesInRectangle z w) z w hre
-    him fun _ hs ↦
-    mem_rectangleOpenBox_of_mem_riemannZetaSingularities
-      hregular hs
+  RectangleGeometry.generatedStrictGridCuts (riemannZetaSingularitiesInRectangle z w) z w hre him
+    fun _ hs ↦ mem_rectangleOpenBox_of_mem_riemannZetaSingularities hregular hs
 
 /--
 The outer singularity ledger avoids every real and imaginary coordinate of a strict grid.
@@ -38,10 +34,9 @@ def RiemannZetaGrid.LedgerAvoidsCoordinates {z w : ℂ}
     s.re ∉ z.re :: grid.xcuts ++ [w.re] ∧ s.im ∉ z.im :: grid.ycuts ++ [w.im]
 
 /-- The outer singularity ledger avoids every internal cut coordinate of a strict grid. -/
-def RiemannZetaGrid.LedgerAvoidsCuts {z w : ℂ}
-    (grid : RectangleGeometry.StrictGridCuts z w) : Prop :=
-  ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
-    s.re ∉ grid.xcuts ∧ s.im ∉ grid.ycuts
+def RiemannZetaGrid.LedgerAvoidsCuts {z w : ℂ} (grid : RectangleGeometry.StrictGridCuts z w) :
+    Prop :=
+  ∀ s ∈ riemannZetaSingularitiesInRectangle z w, s.re ∉ grid.xcuts ∧ s.im ∉ grid.ycuts
 
 /--
 Internal cuts separate every pair of distinct singularity-ledger points in some coordinate.
@@ -60,37 +55,25 @@ def RiemannZetaGrid.LedgerPairsSeparatedByCuts {z w : ℂ}
 
 /-- The generated strict grid avoids every internal ledger coordinate. -/
 theorem riemannZetaGeneratedStrictGridCuts_avoidsCuts {z w : ℂ} (hre : z.re < w.re)
-    (him : z.im < w.im)
-    (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
+    (him : z.im < w.im) (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
     (RiemannZetaGrid.LedgerAvoidsCuts
-      (riemannZetaGeneratedStrictGridCuts z w hre him
-        hregular)) := by
+      (riemannZetaGeneratedStrictGridCuts z w hre him hregular)) := by
   intro s hs
   have havoid :=
-    RectangleGeometry.generatedStrictGridCuts_avoidsCuts
-      (riemannZetaSingularitiesInRectangle z w) z w hre him
-      (fun _ hs ↦
-        mem_rectangleOpenBox_of_mem_riemannZetaSingularities
-          hregular hs)
-      s hs
+    RectangleGeometry.generatedStrictGridCuts_avoidsCuts (riemannZetaSingularitiesInRectangle z w) z
+      w hre him (fun _ hs ↦ mem_rectangleOpenBox_of_mem_riemannZetaSingularities hregular hs) s hs
   exact havoid
 
 /-- The generated strict grid separates every pair of distinct ledger points. -/
 theorem riemannZetaGeneratedStrictGridCuts_pairSeparated {z w : ℂ} (hre : z.re < w.re)
-    (him : z.im < w.im)
-    (hregular :
-      RiemannZetaRectangleBoundaryIsRegular z w) :
+    (him : z.im < w.im) (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
     (RiemannZetaGrid.LedgerPairsSeparatedByCuts
-      (riemannZetaGeneratedStrictGridCuts z w hre him
-        hregular)) := by
+      (riemannZetaGeneratedStrictGridCuts z w hre him hregular)) := by
   intro s hs t ht hne
   exact
     RectangleGeometry.generatedStrictGridCuts_pairsSeparated
       (riemannZetaSingularitiesInRectangle z w) z w hre him
-      (fun _ hs ↦
-        mem_rectangleOpenBox_of_mem_riemannZetaSingularities
-          hregular hs)
-      s hs t ht hne
+      (fun _ hs ↦ mem_rectangleOpenBox_of_mem_riemannZetaSingularities hregular hs) s hs t ht hne
 
 /--
 Boundary regularity extends internal-cut avoidance to all endpoint-augmented coordinates.
@@ -109,11 +92,8 @@ theorem RiemannZetaGrid.ledgerAvoidsCoordinates_of_boundaryRegular {z w : ℂ}
   have hsopen : s ∈ RectangleGeometry.rectangleOpenBox z w := by
     by_contra hnot
     exact
-      not_mem_rectangleClosedBoxBoundary_of_mem_riemannZetaSingularities
-        hregular hs
-        ⟨hsclosed, by
-          simpa only [RectangleGeometry.rectangleOpenBox] using
-            hnot⟩
+      not_mem_rectangleClosedBoxBoundary_of_mem_riemannZetaSingularities hregular hs
+        ⟨hsclosed, by simpa only [RectangleGeometry.rectangleOpenBox] using hnot⟩
   have hsre : z.re < s.re ∧ s.re < w.re := by
     simpa only [min_eq_left (le_of_lt grid.re_lt), max_eq_right (le_of_lt grid.re_lt),
       Set.mem_preimage, Set.mem_Ioo] using hsopen.1
@@ -134,51 +114,31 @@ API and are not restated here.
 -/
 theorem RiemannZetaGrid.point_mem_open_of_avoidsCoordinates {z w : ℂ}
     (grid : RectangleGeometry.StrictGridCuts z w)
-    (havoid :
-      (RiemannZetaGrid.LedgerAvoidsCoordinates grid))
-    {s : ℂ}
-    (hs : s ∈ riemannZetaSingularitiesInRectangle z w)
-    {cell : ℂ × ℂ}
-    (hcell :
-      cell ∈
-        (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset)
+    (havoid : (RiemannZetaGrid.LedgerAvoidsCoordinates grid)) {s : ℂ}
+    (hs : s ∈ riemannZetaSingularitiesInRectangle z w) {cell : ℂ × ℂ}
+    (hcell : cell ∈ (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset)
     (hsclosed : s ∈ Rectangle.rectangleClosedBox cell.1 cell.2) :
     s ∈ RectangleGeometry.rectangleOpenBox cell.1 cell.2 :=
-  RectangleGeometry.StrictGridCuts.point_mem_open_of_avoidsCoordinates
-    grid (S := riemannZetaSingularitiesInRectangle z w)
-    havoid hs hcell hsclosed
+  RectangleGeometry.StrictGridCuts.point_mem_open_of_avoidsCoordinates grid (S :=
+    riemannZetaSingularitiesInRectangle z w) havoid hs hcell hsclosed
 
 /-- Pair-separating cuts make each strict grid cell contain at most one ledger point. -/
 theorem RiemannZetaGrid.cell_point_unique_of_pairSeparated {z w : ℂ}
     (grid : RectangleGeometry.StrictGridCuts z w)
-    (havoid :
-      (RiemannZetaGrid.LedgerAvoidsCoordinates grid))
-    (hseparated :
-      (RiemannZetaGrid.LedgerPairsSeparatedByCuts
-        grid))
-    (cell : ℂ × ℂ)
-    (hcell :
-      cell ∈
-        (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset)
-    (s : ℂ)
-    (hs : s ∈ riemannZetaSingularitiesInRectangle z w)
-    (hsclosed : s ∈ Rectangle.rectangleClosedBox cell.1 cell.2)
-    (t : ℂ)
+    (havoid : (RiemannZetaGrid.LedgerAvoidsCoordinates grid))
+    (hseparated : (RiemannZetaGrid.LedgerPairsSeparatedByCuts grid)) (cell : ℂ × ℂ)
+    (hcell : cell ∈ (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset)
+    (s : ℂ) (hs : s ∈ riemannZetaSingularitiesInRectangle z w)
+    (hsclosed : s ∈ Rectangle.rectangleClosedBox cell.1 cell.2) (t : ℂ)
     (ht : t ∈ riemannZetaSingularitiesInRectangle z w)
-    (htclosed : t ∈ Rectangle.rectangleClosedBox cell.1 cell.2) :
-    s = t :=
-  RectangleGeometry.StrictGridCuts.cell_point_unique_of_pairSeparated
-    grid (S := riemannZetaSingularitiesInRectangle z w)
-    havoid hseparated cell hcell hs hsclosed ht htclosed
+    (htclosed : t ∈ Rectangle.rectangleClosedBox cell.1 cell.2) : s = t :=
+  RectangleGeometry.StrictGridCuts.cell_point_unique_of_pairSeparated grid (S :=
+    riemannZetaSingularitiesInRectangle z w) havoid hseparated cell hcell hs hsclosed ht htclosed
 
 /-- Every singularity-ledger point is covered by a cell of a strict grid. -/
-theorem RiemannZetaGrid.point_covered {z w : ℂ}
-    (grid : RectangleGeometry.StrictGridCuts z w) (s : ℂ)
-    (hs :
-      s ∈ riemannZetaSingularitiesInRectangle z w) :
-    ∃
-      cell ∈
-        (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset,
+theorem RiemannZetaGrid.point_covered {z w : ℂ} (grid : RectangleGeometry.StrictGridCuts z w)
+    (s : ℂ) (hs : s ∈ riemannZetaSingularitiesInRectangle z w) :
+    ∃ cell ∈ (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset,
       s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 :=
   RectangleGeometry.StrictGridCuts.point_covered grid
     (mem_riemannZetaSingularitiesInRectangle_iff.mp hs).1
@@ -190,35 +150,21 @@ Strict grid ordering automatically supplies open-cell disjointness.  Callers onl
 cell contains at most one ledger point, that ledger points avoid grid edges, and that all ledger
 points are covered.  The result feeds directly into the singular-cell assignment constructor.
 -/
-theorem RiemannZetaGrid.interiorSeparation {z w : ℂ}
-    (grid : RectangleGeometry.StrictGridCuts z w)
+theorem RiemannZetaGrid.interiorSeparation {z w : ℂ} (grid : RectangleGeometry.StrictGridCuts z w)
     (hunique :
-      ∀
-        cell ∈
-          (RectangleGeometry.rectangleGridCells z w grid.xcuts
-              grid.ycuts).toFinset,
+      ∀ cell ∈ (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset,
         ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
           s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 →
-            ∀
-              t ∈
-                riemannZetaSingularitiesInRectangle z
-                  w,
-              t ∈ Rectangle.rectangleClosedBox cell.1 cell.2 →
-                s = t)
+            ∀ t ∈ riemannZetaSingularitiesInRectangle z w,
+              t ∈ Rectangle.rectangleClosedBox cell.1 cell.2 → s = t)
     (hopen :
       ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
-        ∀
-          cell ∈
-            (RectangleGeometry.rectangleGridCells z w grid.xcuts
-                grid.ycuts).toFinset,
+        ∀ cell ∈ (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset,
           s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 →
             s ∈ RectangleGeometry.rectangleOpenBox cell.1 cell.2)
     (hcovered :
       ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
-        ∃
-          cell ∈
-            (RectangleGeometry.rectangleGridCells z w grid.xcuts
-                grid.ycuts).toFinset,
+        ∃ cell ∈ (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset,
           s ∈ Rectangle.rectangleClosedBox cell.1 cell.2) :
     RiemannZetaGridInteriorSeparation z w
       (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset := by
@@ -234,37 +180,22 @@ disjointness.  The only remaining inputs are point separation within each cell a
 -/
 theorem RiemannZetaGrid.interiorSeparationOfAvoidsCoordinates {z w : ℂ}
     (grid : RectangleGeometry.StrictGridCuts z w)
-    (havoid :
-      (RiemannZetaGrid.LedgerAvoidsCoordinates grid))
+    (havoid : (RiemannZetaGrid.LedgerAvoidsCoordinates grid))
     (hunique :
-      ∀
-        cell ∈
-          (RectangleGeometry.rectangleGridCells z w grid.xcuts
-              grid.ycuts).toFinset,
+      ∀ cell ∈ (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset,
         ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
           s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 →
-            ∀
-              t ∈
-                riemannZetaSingularitiesInRectangle z
-                  w,
-              t ∈ Rectangle.rectangleClosedBox cell.1 cell.2 →
-                s = t)
+            ∀ t ∈ riemannZetaSingularitiesInRectangle z w,
+              t ∈ Rectangle.rectangleClosedBox cell.1 cell.2 → s = t)
     (hcovered :
       ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
-        ∃
-          cell ∈
-            (RectangleGeometry.rectangleGridCells z w grid.xcuts
-                grid.ycuts).toFinset,
+        ∃ cell ∈ (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset,
           s ∈ Rectangle.rectangleClosedBox cell.1 cell.2) :
     RiemannZetaGridInteriorSeparation z w
-      (RectangleGeometry.rectangleGridCells z w grid.xcuts
-          grid.ycuts).toFinset := by
-  apply
-    (RiemannZetaGrid.interiorSeparation grid) hunique
+      (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset := by
+  apply (RiemannZetaGrid.interiorSeparation grid) hunique
   · exact fun s hs cell hcell hsclosed ↦
-      (RiemannZetaGrid.point_mem_open_of_avoidsCoordinates
-          grid)
-        havoid hs hcell hsclosed
+      (RiemannZetaGrid.point_mem_open_of_avoidsCoordinates grid) havoid hs hcell hsclosed
   · exact hcovered
 
 /--
@@ -276,39 +207,24 @@ grid-specific geometric inputs.
 -/
 theorem RiemannZetaGrid.interiorSeparationOfBoundaryRegular {z w : ℂ}
     (grid : RectangleGeometry.StrictGridCuts z w)
-    (hregular :
-      RiemannZetaRectangleBoundaryIsRegular z w)
+    (hregular : RiemannZetaRectangleBoundaryIsRegular z w)
     (hcuts : (RiemannZetaGrid.LedgerAvoidsCuts grid))
     (hunique :
-      ∀
-        cell ∈
-          (RectangleGeometry.rectangleGridCells z w grid.xcuts
-              grid.ycuts).toFinset,
+      ∀ cell ∈ (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset,
         ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
           s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 →
-            ∀
-              t ∈
-                riemannZetaSingularitiesInRectangle z
-                  w,
-              t ∈ Rectangle.rectangleClosedBox cell.1 cell.2 →
-                s = t)
+            ∀ t ∈ riemannZetaSingularitiesInRectangle z w,
+              t ∈ Rectangle.rectangleClosedBox cell.1 cell.2 → s = t)
     (hcovered :
       ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
-        ∃
-          cell ∈
-            (RectangleGeometry.rectangleGridCells z w grid.xcuts
-                grid.ycuts).toFinset,
+        ∃ cell ∈ (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset,
           s ∈ Rectangle.rectangleClosedBox cell.1 cell.2) :
     RiemannZetaGridInteriorSeparation z w
-      (RectangleGeometry.rectangleGridCells z w grid.xcuts
-          grid.ycuts).toFinset := by
+      (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset := by
   exact
-    (RiemannZetaGrid.interiorSeparationOfAvoidsCoordinates
-        grid)
-      ((RiemannZetaGrid.ledgerAvoidsCoordinates_of_boundaryRegular
-          grid)
-        hregular hcuts)
-      hunique hcovered
+    (RiemannZetaGrid.interiorSeparationOfAvoidsCoordinates grid)
+      ((RiemannZetaGrid.ledgerAvoidsCoordinates_of_boundaryRegular grid) hregular hcuts) hunique
+      hcovered
 
 /--
 Build interior separation from boundary regularity, cut avoidance, pair separation, and coverage.
@@ -318,34 +234,18 @@ cell-level point uniqueness.  Only the finite cut certificates and cell coverage
 -/
 theorem RiemannZetaGrid.interiorSeparationOfSeparatedCuts {z w : ℂ}
     (grid : RectangleGeometry.StrictGridCuts z w)
-    (hregular :
-      RiemannZetaRectangleBoundaryIsRegular z w)
+    (hregular : RiemannZetaRectangleBoundaryIsRegular z w)
     (hcuts : (RiemannZetaGrid.LedgerAvoidsCuts grid))
-    (hseparated :
-      (RiemannZetaGrid.LedgerPairsSeparatedByCuts
-        grid))
+    (hseparated : (RiemannZetaGrid.LedgerPairsSeparatedByCuts grid))
     (hcovered :
       ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
-        ∃
-          cell ∈
-            (RectangleGeometry.rectangleGridCells z w grid.xcuts
-                grid.ycuts).toFinset,
+        ∃ cell ∈ (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset,
           s ∈ Rectangle.rectangleClosedBox cell.1 cell.2) :
     RiemannZetaGridInteriorSeparation z w
-      (RectangleGeometry.rectangleGridCells z w grid.xcuts
-          grid.ycuts).toFinset := by
-  let havoid :=
-    (RiemannZetaGrid.ledgerAvoidsCoordinates_of_boundaryRegular
-        grid)
-      hregular hcuts
-  apply
-    (RiemannZetaGrid.interiorSeparationOfBoundaryRegular
-        grid)
-      hregular hcuts
-  · exact
-      (RiemannZetaGrid.cell_point_unique_of_pairSeparated
-          grid)
-        havoid hseparated
+      (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset := by
+  let havoid := (RiemannZetaGrid.ledgerAvoidsCoordinates_of_boundaryRegular grid) hregular hcuts
+  apply (RiemannZetaGrid.interiorSeparationOfBoundaryRegular grid) hregular hcuts
+  · exact (RiemannZetaGrid.cell_point_unique_of_pairSeparated grid) havoid hseparated
   · exact hcovered
 
 /--
@@ -357,19 +257,13 @@ constructor.
 -/
 theorem RiemannZetaGrid.interiorSeparationOfCutCertificates {z w : ℂ}
     (grid : RectangleGeometry.StrictGridCuts z w)
-    (hregular :
-      RiemannZetaRectangleBoundaryIsRegular z w)
+    (hregular : RiemannZetaRectangleBoundaryIsRegular z w)
     (hcuts : (RiemannZetaGrid.LedgerAvoidsCuts grid))
-    (hseparated :
-      (RiemannZetaGrid.LedgerPairsSeparatedByCuts
-        grid)) :
+    (hseparated : (RiemannZetaGrid.LedgerPairsSeparatedByCuts grid)) :
     RiemannZetaGridInteriorSeparation z w
-      (RectangleGeometry.rectangleGridCells z w grid.xcuts
-          grid.ycuts).toFinset := by
+      (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset := by
   exact
-    (RiemannZetaGrid.interiorSeparationOfSeparatedCuts
-        grid)
-      hregular hcuts hseparated
+    (RiemannZetaGrid.interiorSeparationOfSeparatedCuts grid) hregular hcuts hseparated
       (RiemannZetaGrid.point_covered grid)
 
 /--
@@ -380,37 +274,25 @@ all been discharged upstream.  This theorem is the concrete geometry certificate
 remaining local boundary-deformation layer.
 -/
 theorem riemannZetaGeneratedGridInteriorSeparation {z w : ℂ} (hre : z.re < w.re) (him : z.im < w.im)
-    (hregular :
-      RiemannZetaRectangleBoundaryIsRegular z w) :
-    let grid :=
-      riemannZetaGeneratedStrictGridCuts z w hre him
-        hregular
+    (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
+    let grid := riemannZetaGeneratedStrictGridCuts z w hre him hregular
     RiemannZetaGridInteriorSeparation z w
-      (RectangleGeometry.rectangleGridCells z w grid.xcuts
-          grid.ycuts).toFinset := by
-  let grid :=
-    riemannZetaGeneratedStrictGridCuts z w hre him
-      hregular
+      (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset := by
+  let grid := riemannZetaGeneratedStrictGridCuts z w hre him hregular
   exact
-    (RiemannZetaGrid.interiorSeparationOfCutCertificates
-        grid)
-      hregular
-      (riemannZetaGeneratedStrictGridCuts_avoidsCuts
-        hre him hregular)
-      (riemannZetaGeneratedStrictGridCuts_pairSeparated
-        hre him hregular)
+    (RiemannZetaGrid.interiorSeparationOfCutCertificates grid) hregular
+      (riemannZetaGeneratedStrictGridCuts_avoidsCuts hre him hregular)
+      (riemannZetaGeneratedStrictGridCuts_pairSeparated hre him hregular)
 
 /-- Every real cut of a strict grid belongs to the outer unordered interval. -/
-theorem RiemannZetaGrid.xcuts_mem_uIcc {z w : ℂ}
-    (grid : RectangleGeometry.StrictGridCuts z w) {u : ℝ}
-    (hu : u ∈ grid.xcuts) : u ∈ Set.uIcc z.re w.re := by
+theorem RiemannZetaGrid.xcuts_mem_uIcc {z w : ℂ} (grid : RectangleGeometry.StrictGridCuts z w)
+    {u : ℝ} (hu : u ∈ grid.xcuts) : u ∈ Set.uIcc z.re w.re := by
   exact
     Set.mem_uIcc_of_le (le_of_lt (grid.xcuts_inside u hu).1) (le_of_lt (grid.xcuts_inside u hu).2)
 
 /-- Every imaginary cut of a strict grid belongs to the outer unordered interval. -/
-theorem RiemannZetaGrid.ycuts_mem_uIcc {z w : ℂ}
-    (grid : RectangleGeometry.StrictGridCuts z w) {v : ℝ}
-    (hv : v ∈ grid.ycuts) : v ∈ Set.uIcc z.im w.im := by
+theorem RiemannZetaGrid.ycuts_mem_uIcc {z w : ℂ} (grid : RectangleGeometry.StrictGridCuts z w)
+    {v : ℝ} (hv : v ∈ grid.ycuts) : v ∈ Set.uIcc z.im w.im := by
   exact
     Set.mem_uIcc_of_le (le_of_lt (grid.ycuts_inside v hv).1) (le_of_lt (grid.ycuts_inside v hv).2)
 

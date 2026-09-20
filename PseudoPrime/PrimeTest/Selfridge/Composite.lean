@@ -87,8 +87,7 @@ theorem exists_odd_prime_lt_of_composite_mem_firstStopNeOneSet {C : ℕ → Prop
   have hvalue : jacobiSym n i ≠ 1 := by
     rw [← jacobi_selfridgeD (hC hstop.1) hn]
     exact hstop.2.2
-  obtain ⟨p, hp, hpdvd, hpvalue⟩ :=
-    NumberTheory.exists_prime_dvd_jacobi_ne_one hi.ne' hvalue
+  obtain ⟨p, hp, hpdvd, hpvalue⟩ := NumberTheory.exists_prime_dvd_jacobi_ne_one hi.ne' hvalue
   exact
     ⟨p, hp, (hC hstop.1).of_dvd_nat hpdvd, hpdvd,
       Internal.prime_dvd_lt_of_not_prime hi hp hpdvd hcomp, hpvalue⟩
@@ -105,8 +104,7 @@ theorem exists_odd_prime_lt_of_composite_mem_firstStopNegOneSet {C : ℕ → Pro
   have hvalue : jacobiSym n i = -1 := by
     rw [← jacobi_selfridgeD (hC hstop.1) hn]
     exact hstop.2
-  obtain ⟨p, hp, hpdvd, hpvalue⟩ :=
-    NumberTheory.exists_prime_dvd_jacobi_eq_neg_one hvalue
+  obtain ⟨p, hp, hpdvd, hpvalue⟩ := NumberTheory.exists_prime_dvd_jacobi_eq_neg_one hvalue
   exact
     ⟨p, hp, (hC hstop.1).of_dvd_nat hpdvd, hpdvd,
       Internal.prime_dvd_lt_of_not_prime hi hp hpdvd hcomp, hpvalue⟩

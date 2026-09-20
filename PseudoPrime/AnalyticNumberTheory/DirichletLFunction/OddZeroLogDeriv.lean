@@ -49,9 +49,7 @@ theorem deriv_logDeriv_gammaFactor_zero_of_odd {N : ℕ} {χ : DirichletCharacte
     (logDeriv (DirichletCharacter.gammaFactor χ)) =ᶠ[nhds (0 : ℂ)]
       (fun s : ℂ => -(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma ((s + 1) / 2) / 2) := by
     filter_upwards [eventually_half_ne_neg_nat_of_odd_near_zero] with s hs
-    exact
-      logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat
-        hodd hs
+    exact logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hodd hs
   rw [heqΓ.deriv_eq]
   have hpoint : ((0 : ℂ) + 1) / 2 = (1 / 2 : ℂ) := by norm_num only
   have h1 : HasDerivAt (fun s : ℂ => (s + 1) / 2) (1 / 2 : ℂ) 0 := by
@@ -59,8 +57,7 @@ theorem deriv_logDeriv_gammaFactor_zero_of_odd {N : ℕ} {χ : DirichletCharacte
     simpa only [one_div] using ha.div_const (2 : ℂ)
   have h2 :
     HasDerivAt Complex.digamma (deriv Complex.digamma (((0 : ℂ) + 1) / 2)) (((0 : ℂ) + 1) / 2) := by
-    rw [hpoint];
-    exact Gamma.differentiableAt_digamma_half.hasDerivAt
+    rw [hpoint]; exact Gamma.differentiableAt_digamma_half.hasDerivAt
   have h3 :=
     HasDerivAt.comp (h₂ := Complex.digamma) (h := fun s : ℂ => (s + 1) / 2) (x := (0 : ℂ)) h2 h1
   have h4 :
@@ -102,22 +99,16 @@ theorem eventuallyEq_logDeriv_LFunction_zero_of_odd {N : ℕ} [NeZero N] {χ : D
       (fun s : ℂ =>
         logDeriv (DirichletCharacter.completedLFunction χ) s -
           logDeriv (DirichletCharacter.gammaFactor χ) s) := by
-  have hF0ne :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hprimitive hne
+  have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have hFcont := (DirichletCharacter.differentiable_completedLFunction hne).continuous
   have hFev : ∀ᶠ s : ℂ in nhds (0 : ℂ), DirichletCharacter.completedLFunction χ s ≠ 0 :=
     hFcont.continuousAt.eventually_ne hF0ne
   filter_upwards [hFev, eventually_half_ne_neg_nat_of_odd_near_zero] with s hFs hhalf
   have hΓne : DirichletCharacter.gammaFactor χ s ≠ 0 :=
-    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat
-      hodd hhalf
+    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd hhalf
   have hdΓ : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) s :=
-    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat
-      hodd hhalf
-  exact
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular
-      hne hFs hΓne hdΓ
+    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd hhalf
+  exact logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hFs hΓne hdΓ
 
 /--
 Input/assumptions: `N ≥ 1`, `χ` primitive nontrivial odd.
@@ -136,21 +127,16 @@ theorem deriv_logDeriv_LFunction_zero_of_odd {N : ℕ} [NeZero N] {χ : Dirichle
       deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0 - (Real.pi : ℂ) ^ 2 / 8 := by
   rw [(eventuallyEq_logDeriv_LFunction_zero_of_odd hprimitive hne hodd).deriv_eq]
   have hFdiff : DifferentiableAt ℂ (logDeriv (DirichletCharacter.completedLFunction χ)) 0 :=
-    differentiableAt_logDeriv_completedLFunction_zero
-      hprimitive hne
+    differentiableAt_logDeriv_completedLFunction_zero hprimitive hne
   have hΓdiff : DifferentiableAt ℂ (logDeriv (DirichletCharacter.gammaFactor χ)) 0 := by
     have hhalf : ∀ m : ℕ, ((0 : ℂ) + 1) / 2 ≠ -(m : ℂ) :=
       eventually_half_ne_neg_nat_of_odd_near_zero.self_of_nhds
     have hΓne : DirichletCharacter.gammaFactor χ 0 ≠ 0 :=
-      gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat
-        hodd hhalf
+      gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd hhalf
     rw [logDeriv]
     exact
-      (analyticAt_gammaFactor_of_ne_zero
-            hΓne).deriv.differentiableAt.div
-        (analyticAt_gammaFactor_of_ne_zero
-            hΓne).differentiableAt
-        hΓne
+      (analyticAt_gammaFactor_of_ne_zero hΓne).deriv.differentiableAt.div
+        (analyticAt_gammaFactor_of_ne_zero hΓne).differentiableAt hΓne
   rw [show
       (fun s : ℂ =>
           logDeriv (DirichletCharacter.completedLFunction χ) s -
@@ -183,9 +169,8 @@ theorem logDeriv_gammaFactor_zero_re_of_odd {N : ℕ} {χ : DirichletCharacter �
       Complex.one_im, Complex.im_ofNat, mul_zero, zero_div, add_zero, Complex.neg_re,
       Complex.natCast_re] at him
     linarith
-  rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat
-      hodd hhalf,
-    zero_add, Complex.digamma_one_half]
+  rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hodd hhalf, zero_add,
+    Complex.digamma_one_half]
   have heq :
     -Complex.log (Real.pi : ℂ) / 2 + (-2 * Complex.log 2 - (Real.eulerMascheroniConstant : ℂ)) / 2 =
       ((-Real.log Real.pi / 2 - Real.eulerMascheroniConstant / 2 - Real.log 2 : ℝ) : ℂ) := by
@@ -215,8 +200,7 @@ theorem logDeriv_gammaFactor_one_re_of_odd {N : ℕ} {χ : DirichletCharacter �
     have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
     simp only [add_self_div_two, Complex.one_re, Complex.neg_re, Complex.natCast_re] at him
     linarith
-  rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat
-      hodd hhalf,
+  rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hodd hhalf,
     show ((1 : ℂ) + 1) / 2 = 1 from by norm_num only, Complex.digamma_one]
   have heq :
     -Complex.log (Real.pi : ℂ) / 2 + (-(Real.eulerMascheroniConstant : ℂ)) / 2 =

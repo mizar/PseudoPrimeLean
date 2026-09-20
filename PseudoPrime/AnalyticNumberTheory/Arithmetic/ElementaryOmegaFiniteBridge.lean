@@ -21,40 +21,33 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- `PseudoPrime.AnalyticNumberTheory.Arithmetic.oddPrime` is
 `PseudoPrime.NumberTheory.primeByIndex` shifted by one index (both unfold to the same `Nat.nth`). -/
-theorem oddPrime_eq_primeByIndex_succ (k : ℕ) :
-    oddPrime k =
-      NumberTheory.primeByIndex (k + 1) :=
+theorem oddPrime_eq_primeByIndex_succ (k : ℕ) : oddPrime k = NumberTheory.primeByIndex (k + 1) :=
   rfl
 
 /-- The count-indexed primorial with `m + 1` factors is twice the `m`-factor odd
 primorial: `PseudoPrime.NumberTheory.primeByIndex 0 = 2` supplies the missing even prime. -/
 theorem primePrimorialCount_succ_eq_two_mul_oddPrimorial (m : ℕ) :
-    NumberTheory.primePrimorialCount (m + 1) =
-      2 * oddPrimorial m := by
+    NumberTheory.primePrimorialCount (m + 1) = 2 * oddPrimorial m := by
   induction m with
   | zero =>
-    rw [NumberTheory.primePrimorialCount_succ,
-      NumberTheory.primePrimorialCount_zero, NumberTheory.primeByIndex_zero,
-      oddPrimorial_zero]
+    rw [NumberTheory.primePrimorialCount_succ, NumberTheory.primePrimorialCount_zero,
+      NumberTheory.primeByIndex_zero, oddPrimorial_zero]
   | succ m
     ih =>
-    rw [NumberTheory.primePrimorialCount_succ, ih,
-      oddPrimorial_succ, ←
+    rw [NumberTheory.primePrimorialCount_succ, ih, oddPrimorial_succ, ←
       oddPrime_eq_primeByIndex_succ]
     ring
 
 /-- The real function `(7/5) * log z / loglog z`, used to transfer the elementary
 factor-count bound from a primorial anchor to `z = 4n`. -/
 noncomputable def elementaryOmegaRhsReal (z : ℝ) : ℝ :=
-  elementaryOmegaConstant * Real.log z /
-    Real.log (Real.log z)
+  elementaryOmegaConstant * Real.log z / Real.log (Real.log z)
 
 /-- `PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryOmegaRhsReal` is monotone on
 `[exp(exp 1), ∞)`: writing `u = log a`, `v = log b`,
 this is `Real.log_div_self_antitoneOn` applied to `u ≤ v` (both `≥ exp 1`), cross-multiplied. -/
 theorem elementaryOmegaRhsReal_mono {a b : ℝ} (ha : Real.exp (Real.exp 1) ≤ a) (hab : a ≤ b) :
-    elementaryOmegaRhsReal a ≤
-      elementaryOmegaRhsReal b := by
+    elementaryOmegaRhsReal a ≤ elementaryOmegaRhsReal b := by
   have hepos : (0 : ℝ) < Real.exp (Real.exp 1) := Real.exp_pos _
   have hapos : 0 < a := hepos.trans_le ha
   have hbpos : 0 < b := hapos.trans_le hab
@@ -85,13 +78,9 @@ theorem elementaryOmegaRhsReal_mono {a b : ℝ} (ha : Real.exp (Real.exp 1) ≤ 
   unfold elementaryOmegaRhsReal
   rw [← hu_def, ← hv_def]
   calc
-    elementaryOmegaConstant * u / Real.log u =
-        elementaryOmegaConstant * (u / Real.log u) :=
-      by ring
-    _ ≤ elementaryOmegaConstant * (v / Real.log v) :=
-      hscaled
-    _ = elementaryOmegaConstant * v / Real.log v := by
-      ring
+    elementaryOmegaConstant * u / Real.log u = elementaryOmegaConstant * (u / Real.log u) := by ring
+    _ ≤ elementaryOmegaConstant * (v / Real.log v) := hscaled
+    _ = elementaryOmegaConstant * v / Real.log v := by ring
 
 /-- The anchor `max (4 * oddPrimorial m) 3000` for a factor count `m`.
 It is at least `exp(exp 1)`. For odd `n ≥ 750` with `ω(n) = m`, both entries of the maximum
@@ -122,9 +111,8 @@ theorem exp_exp_one_lt_three_thousand : Real.exp (Real.exp 1) < 3000 := by
 
 /-- Every `PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryAnchor` lies in the domain where
 `PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryOmegaRhsReal` is monotone. -/
-theorem exp_exp_one_le_elementaryAnchor (m : ℕ) :
-    Real.exp (Real.exp 1) ≤ elementaryAnchor m := exp_exp_one_lt_three_thousand.le.trans
-    (le_max_right _ _)
+theorem exp_exp_one_le_elementaryAnchor (m : ℕ) : Real.exp (Real.exp 1) ≤ elementaryAnchor m :=
+  exp_exp_one_lt_three_thousand.le.trans (le_max_right _ _)
 
 /-- Every `PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryAnchor` is dominated by
 `PseudoPrime.NumberTheory.characterModulus n`, for odd `n ≥ 750` whose
@@ -132,16 +120,11 @@ distinct-prime-factor count is `m`: the primorial term by
 `PseudoPrime.AnalyticNumberTheory.Arithmetic.oddPrimorial_le_of_card_primeFactors`,
 and the `3000` term directly from `750 ≤ n`. -/
 theorem elementaryAnchor_le_characterModulus {n : ℕ} (hn : Odd n) (hn750 : 750 ≤ n) :
-    elementaryAnchor n.primeFactors.card ≤
-      (NumberTheory.characterModulus n : ℝ) := by
-  have hprim : oddPrimorial n.primeFactors.card ≤ n :=
-    oddPrimorial_le_of_card_primeFactors hn
+    elementaryAnchor n.primeFactors.card ≤ (NumberTheory.characterModulus n : ℝ) := by
+  have hprim : oddPrimorial n.primeFactors.card ≤ n := oddPrimorial_le_of_card_primeFactors hn
   have hprimR :
-    (4 : ℝ) * (oddPrimorial n.primeFactors.card : ℝ) ≤
-      (NumberTheory.characterModulus n : ℝ) := by
-    have hnat :
-      4 * oddPrimorial n.primeFactors.card ≤
-        NumberTheory.characterModulus n := by
+    (4 : ℝ) * (oddPrimorial n.primeFactors.card : ℝ) ≤ (NumberTheory.characterModulus n : ℝ) := by
+    have hnat : 4 * oddPrimorial n.primeFactors.card ≤ NumberTheory.characterModulus n := by
       unfold NumberTheory.characterModulus; omega
     exact_mod_cast hnat
   have hqle : (3000 : ℝ) ≤ (NumberTheory.characterModulus n : ℝ) := by
@@ -158,8 +141,7 @@ finite statement follows by transferring that bound from the anchor up to the ac
 `PseudoPrime.NumberTheory.characterModulus n` via
 `PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryOmegaRhsReal_mono`. -/
 theorem elementaryOmegaFiniteStatement_of_certificates
-    (hcert : ∀ m : ℕ, 1 ≤ m → m < 163 →
-      (m + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor m)) :
+    (hcert : ∀ m : ℕ, 1 ≤ m → m < 163 → (m + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor m)) :
     ElementaryOmegaFiniteStatement := by
   intro n hn hn750 hmcard
   have hn1 : 1 < n := by omega
@@ -172,10 +154,10 @@ theorem elementaryOmegaFiniteStatement_of_certificates
       omega
     · exact hpos
   have hcertm := hcert n.primeFactors.card hm1 hmcard
-  have hmono := elementaryOmegaRhsReal_mono (exp_exp_one_le_elementaryAnchor n.primeFactors.card)
-    (elementaryAnchor_le_characterModulus hn hn750)
-  have hcardeq : (NumberTheory.characterModulus n).primeFactors.card =
-      n.primeFactors.card + 1 := by
+  have hmono :=
+    elementaryOmegaRhsReal_mono (exp_exp_one_le_elementaryAnchor n.primeFactors.card)
+      (elementaryAnchor_le_characterModulus hn hn750)
+  have hcardeq : (NumberTheory.characterModulus n).primeFactors.card = n.primeFactors.card + 1 := by
     have h1 := distinctPrimeFactorCount_characterModulus hn
     rwa [distinctPrimeFactorCount_eq_primeFactors_card,
       distinctPrimeFactorCount_eq_primeFactors_card] at h1

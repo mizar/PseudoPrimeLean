@@ -15,16 +15,14 @@ namespace PseudoPrime.LLS.Extensions
 primitive inducing character at `X ≥ 64`. The logarithmic error is kept exact;
 the reciprocal estimate supplies the common zero-mass field. This constructor is
 independent of the later three-branch numerical comparison. -/
-theorem weightedComparisonCore_even_of_grh {q : ℕ} (χ : DirichletCharacter ℂ q)
-    [NeZero χ.conductor] (hne : χ ≠ 1) (hquad : χ.primitiveCharacter.IsQuadratic)
-    (heven : χ.primitiveCharacter.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {X dS dR : ℝ} (hX : 64 ≤ X)
+theorem weightedComparisonCore_even_of_grh {q : ℕ} (χ : DirichletCharacter ℂ q) [NeZero χ.conductor]
+    (hne : χ ≠ 1) (hquad : χ.primitiveCharacter.IsQuadratic) (heven : χ.primitiveCharacter.Even)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {X dS dR : ℝ} (hX : 64 ≤ X)
     (hdS : weightedLogDefect χ.primitiveCharacter X ≤ dS)
     (hdR : weightedReciprocalDefect χ.primitiveCharacter X ≤ dR) :
     LLSWeightedComparisonCore χ.primitiveCharacter X
-      |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|
-      dS dR (Analysis.primitiveLogEvenMainError X) := by
+      |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| dS dR
+      (Analysis.primitiveLogEvenMainError X) := by
   have hp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   have hf : 2 ≤ χ.conductor := by
     have h0 := NeZero.pos χ.conductor
@@ -32,12 +30,14 @@ theorem weightedComparisonCore_even_of_grh {q : ℕ} (χ : DirichletCharacter �
     omega
   have hi : χ.primitiveCharacter⁻¹ ≠ 1 := inv_ne_one.mpr hp
   refine ⟨hdS, hdR, ?_, ?_⟩
-  · have h := primitiveReciprocalRaw_of_grh hf hGRH
-      (DirichletCharacter.primitiveCharacter_isPrimitive χ) hp hi hX
+  · have h :=
+      primitiveReciprocalRaw_of_grh hf hGRH (DirichletCharacter.primitiveCharacter_isPrimitive χ) hp
+        hi hX
     rw [Real.log_div (by exact_mod_cast NeZero.ne χ.conductor) Real.pi_ne_zero]
     linarith only [h]
-  · have h := AnalyticNumberTheory.DirichletLFunction.primitiveLogWeightedUpper_of_grh_even_exact
-      hf hGRH (DirichletCharacter.primitiveCharacter_isPrimitive χ) hp hi hquad heven hX
+  · have h :=
+      AnalyticNumberTheory.DirichletLFunction.primitiveLogWeightedUpper_of_grh_even_exact hf hGRH
+        (DirichletCharacter.primitiveCharacter_isPrimitive χ) hp hi hquad heven hX
     rwa [Real.log_div (by exact_mod_cast NeZero.ne χ.conductor) Real.pi_ne_zero]
 
 end PseudoPrime.LLS.Extensions

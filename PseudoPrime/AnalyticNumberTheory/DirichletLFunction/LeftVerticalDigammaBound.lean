@@ -97,8 +97,7 @@ theorem exists_C_forall_norm_digamma_small_im_le :
                 (∀ q : ℕ, (1 : ℝ) / 4 ≤ |a + (q : ℝ)|) →
                 |u| ≤ 4 * ((A : ℝ) + 5) →
                 ‖Complex.digamma ((a : ℂ) + (u : ℂ) * Complex.I)‖ ≤ C * ((A : ℝ) + 5) ^ 2 := by
-  obtain ⟨C₁, hC₁⟩ :=
-    RiemannZeta.exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform
+  obtain ⟨C₁, hC₁⟩ := RiemannZeta.exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform
   set C : ℝ := 8 * max C₁ 0 + 32 + 80 * Real.pi + 24 with hC_def
   have hCnonneg : 0 ≤ C := by
     have h1 : (0 : ℝ) ≤ max C₁ 0 := le_max_right _ _
@@ -124,9 +123,7 @@ theorem exists_C_forall_norm_digamma_small_im_le :
     · simp only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im,
         mul_one, Complex.I_re, mul_zero, add_zero, zero_add, Complex.natCast_im, Complex.ofReal_add,
         Complex.ofReal_one, Complex.one_im]
-  have hshift_bound :=
-    RiemannZeta.norm_digamma_shift_add_mul_I_le r
-      (by linarith [hr2]) u
+  have hshift_bound := RiemannZeta.norm_digamma_shift_add_mul_I_le r (by linarith [hr2]) u
   set X : ℝ := 2 * (A : ℝ) + 10 with hX_def
   have hX2 : (2 : ℝ) ≤ X := by
     rw [hX_def]; have := Nat.cast_nonneg (α := ℝ) A; linarith

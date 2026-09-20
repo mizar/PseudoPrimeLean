@@ -37,9 +37,7 @@ theorem card_primitiveZeroOrdinatesInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
     (hR : 0 < R) :
     (primitiveZeroOrdinatesInBall χ R).card ≤
       Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * R)) /
+          (max 1 (completedLFunctionBallBound N (2 * R)) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 := by
   set U := Metric.closedBall (0 : ℂ) R with hU_def
@@ -60,9 +58,7 @@ theorem card_primitiveZeroOrdinatesInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
   have hcard1 :
     (hfin.toFinset.card : ℝ) ≤
       Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * R)) /
+          (max 1 (completedLFunctionBallBound N (2 * R)) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 := by
     have hsum_eq :
@@ -86,10 +82,7 @@ theorem card_primitiveZeroOrdinatesInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
           apply Finset.sum_le_sum
           intro u hu
           exact_mod_cast hdiv_pos u hu
-    exact
-      hstep.trans
-        (finsum_divisor_completedLFunction_le
-          hN1 hprimitive hne hinv hR)
+    exact hstep.trans (finsum_divisor_completedLFunction_le hN1 hprimitive hne hinv hR)
   refine le_trans ?_ hcard1
   exact_mod_cast Finset.card_image_le
 
@@ -112,9 +105,7 @@ theorem completedLFunction_analyticOrderAt_ne_top {N : ℕ} [NeZero N] {χ : Dir
   have hcenter : (0 : ℂ) ∈ Metric.closedBall (0 : ℂ) R := Metric.mem_closedBall_self hR.le
   have heq0 : Set.EqOn (DirichletCharacter.completedLFunction χ) 0 (Metric.closedBall (0 : ℂ) R) :=
     hAn.eqOn_zero_of_preconnected_of_eventuallyEq_zero hUconv hu (analyticOrderAt_eq_top.mp htop)
-  exact
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hprimitive hne (heq0 hcenter)
+  exact dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne (heq0 hcenter)
 
 /-- Any zero of `completedLFunction χ` inside `closedBall 0 R` is genuinely counted by `divisor`
 (order `≠ 0`, `≠ ⊤`). -/
@@ -131,9 +122,7 @@ theorem completedLFunction_zero_mem_divisorSupport {N : ℕ} [NeZero N] {χ : Di
   have hordne0 : analyticOrderAt (DirichletCharacter.completedLFunction χ) u ≠ 0 := by
     rw [Ne, (hAn u hu).analyticOrderAt_eq_zero]
     exact fun h => h hzero
-  have hordnetop :=
-    completedLFunction_analyticOrderAt_ne_top
-      hprimitive hne hR hu
+  have hordnetop := completedLFunction_analyticOrderAt_ne_top hprimitive hne hR hu
   have hmap_eq_top_iff :
     ENat.map (Nat.cast : ℕ → ℤ) (analyticOrderAt (DirichletCharacter.completedLFunction χ) u) =
         (⊤ : WithTop ℤ) ↔
@@ -158,67 +147,43 @@ theorem exists_primitiveGoodHeight {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : Diri
           n /
               (4 *
                 (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (4 * n)) /
+                      (max 1 (completedLFunctionBallBound N (4 * n)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2 +
                   1)) ≤
             |T - ρ.im| := by
   set B :=
     Real.log
-        (max 1
-            (completedLFunctionBallBound N
-              (4 * n)) /
+        (max 1 (completedLFunctionBallBound N (4 * n)) /
           ‖DirichletCharacter.completedLFunction χ 0‖) /
       Real.log 2 with
     hB_def
   set c : ℝ := n / (4 * (B + 1)) with hc_def
   have hR2n : (0 : ℝ) < 2 * n := by linarith
-  have hcard_le :
-    ((primitiveZeroOrdinatesInBall χ
-            (2 * n)).card :
-        ℝ) ≤
-      B := by
-    have hraw :=
-      card_primitiveZeroOrdinatesInBall_le hN1
-        hprimitive hne hinv hR2n
+  have hcard_le : ((primitiveZeroOrdinatesInBall χ (2 * n)).card : ℝ) ≤ B := by
+    have hraw := card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv hR2n
     rwa [show 2 * (2 * n) = 4 * n from by ring] at hraw
   have hBnonneg : (0 : ℝ) ≤ B := le_trans (Nat.cast_nonneg _) hcard_le
   have hc_pos : 0 < c := by
     rw [hc_def]; positivity
   have hc_eq : c * (4 * (B + 1)) = n := by
     rw [hc_def]; field_simp
-  have hstep :
-    c *
-        (primitiveZeroOrdinatesInBall χ
-            (2 * n)).card ≤
-      c * B :=
+  have hstep : c * (primitiveZeroOrdinatesInBall χ (2 * n)).card ≤ c * B :=
     mul_le_mul_of_nonneg_left hcard_le hc_pos.le
-  have hlenbound :
-    2 * c *
-        (primitiveZeroOrdinatesInBall χ
-            (2 * n)).card <
-      n := by
+  have hlenbound : 2 * c * (primitiveZeroOrdinatesInBall χ (2 * n)).card < n := by
     nlinarith [hstep, hc_pos, hBnonneg, hc_eq]
   obtain ⟨T, hT, hTgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos
-      (show (0 : ℝ) < n by linarith) hlenbound
+    RiemannZeta.exists_avoiding_point_length hc_pos (show (0 : ℝ) < n by linarith) hlenbound
   refine ⟨T, by rwa [show n + n = 2 * n from by ring] at hT, fun ρ hζ hρ => ?_⟩
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) (2 * n) := by
     rw [Metric.mem_closedBall, dist_zero_right]; exact hρ
-  have hordne :=
-    completedLFunction_zero_mem_divisorSupport
-      hprimitive hne hR2n hu hζ
+  have hordne := completedLFunction_zero_mem_divisorSupport hprimitive hne hR2n hu hζ
   have hsupp :
     ρ ∈
       (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
           (Metric.closedBall (0 : ℂ) (2 * n))).support :=
     hordne
-  have himmem :
-    ρ.im ∈
-      primitiveZeroOrdinatesInBall χ
-        (2 * n) := by
+  have himmem : ρ.im ∈ primitiveZeroOrdinatesInBall χ (2 * n) := by
     unfold primitiveZeroOrdinatesInBall
     rw [Finset.mem_image]
     refine ⟨ρ, ?_, rfl⟩
@@ -245,64 +210,42 @@ theorem exists_primitiveGoodHeightRadius {N : ℕ} [NeZero N] (hN1 : 1 < N)
           n /
               (4 *
                 (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (2 * Rmax)) /
+                      (max 1 (completedLFunctionBallBound N (2 * Rmax)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2 +
                   1)) ≤
             |T - ρ.im| := by
   set B :=
     Real.log
-        (max 1
-            (completedLFunctionBallBound N
-              (2 * Rmax)) /
+        (max 1 (completedLFunctionBallBound N (2 * Rmax)) /
           ‖DirichletCharacter.completedLFunction χ 0‖) /
       Real.log 2 with
     hB_def
   set c : ℝ := n / (4 * (B + 1)) with hc_def
   have hRmaxpos : (0 : ℝ) < Rmax := by linarith
-  have hcard_le :
-    ((primitiveZeroOrdinatesInBall χ
-            Rmax).card :
-        ℝ) ≤
-      B :=
-    card_primitiveZeroOrdinatesInBall_le hN1
-      hprimitive hne hinv hRmaxpos
+  have hcard_le : ((primitiveZeroOrdinatesInBall χ Rmax).card : ℝ) ≤ B :=
+    card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv hRmaxpos
   have hBnonneg : (0 : ℝ) ≤ B := le_trans (Nat.cast_nonneg _) hcard_le
   have hc_pos : 0 < c := by
     rw [hc_def]; positivity
   have hc_eq : c * (4 * (B + 1)) = n := by
     rw [hc_def]; field_simp
-  have hstep :
-    c *
-        (primitiveZeroOrdinatesInBall χ
-            Rmax).card ≤
-      c * B :=
+  have hstep : c * (primitiveZeroOrdinatesInBall χ Rmax).card ≤ c * B :=
     mul_le_mul_of_nonneg_left hcard_le hc_pos.le
-  have hlenbound :
-    2 * c *
-        (primitiveZeroOrdinatesInBall χ
-            Rmax).card <
-      n := by
+  have hlenbound : 2 * c * (primitiveZeroOrdinatesInBall χ Rmax).card < n := by
     nlinarith [hstep, hc_pos, hBnonneg, hc_eq]
   obtain ⟨T, hT, hTgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos
-      (show (0 : ℝ) < n by linarith) hlenbound
+    RiemannZeta.exists_avoiding_point_length hc_pos (show (0 : ℝ) < n by linarith) hlenbound
   refine ⟨T, by rwa [show n + n = 2 * n from by ring] at hT, fun ρ hζ hρ => ?_⟩
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) Rmax := by
     rw [Metric.mem_closedBall, dist_zero_right]; exact hρ
-  have hordne :=
-    completedLFunction_zero_mem_divisorSupport
-      hprimitive hne hRmaxpos hu hζ
+  have hordne := completedLFunction_zero_mem_divisorSupport hprimitive hne hRmaxpos hu hζ
   have hsupp :
     ρ ∈
       (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
           (Metric.closedBall (0 : ℂ) Rmax)).support :=
     hordne
-  have himmem :
-    ρ.im ∈
-      primitiveZeroOrdinatesInBall χ Rmax := by
+  have himmem : ρ.im ∈ primitiveZeroOrdinatesInBall χ Rmax := by
     unfold primitiveZeroOrdinatesInBall
     rw [Finset.mem_image]
     refine ⟨ρ, ?_, rfl⟩
@@ -315,46 +258,30 @@ negations, so that a single avoiding-point selection protects both `+iT` and `-i
 lines simultaneously for simultaneous strip bounds. -/
 noncomputable def primitiveZeroOrdinatesInBallSymm {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     (R : ℝ) : Finset ℝ :=
-  primitiveZeroOrdinatesInBall χ R ∪
-    (primitiveZeroOrdinatesInBall χ R).image
-      (fun x => -x)
+  primitiveZeroOrdinatesInBall χ R ∪ (primitiveZeroOrdinatesInBall χ R).image (fun x => -x)
 
 /-- The symmetrized ledger has cardinality at most twice the Jensen bound for one ledger. -/
 theorem card_primitiveZeroOrdinatesInBallSymm_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
     (hR : 0 < R) :
-    (primitiveZeroOrdinatesInBallSymm χ
-          R).card ≤
+    (primitiveZeroOrdinatesInBallSymm χ R).card ≤
       2 *
         (Real.log
-            (max 1
-                (completedLFunctionBallBound N
-                  (2 * R)) /
+            (max 1 (completedLFunctionBallBound N (2 * R)) /
               ‖DirichletCharacter.completedLFunction χ 0‖) /
           Real.log 2) := by
   unfold primitiveZeroOrdinatesInBallSymm
-  have hcardR :=
-    card_primitiveZeroOrdinatesInBall_le hN1
-      hprimitive hne hinv hR
+  have hcardR := card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv hR
   have hunion_le :
     ((primitiveZeroOrdinatesInBall χ R ∪
-            (primitiveZeroOrdinatesInBall χ
-                  R).image
-              (fun x => -x)).card :
+            (primitiveZeroOrdinatesInBall χ R).image (fun x => -x)).card :
         ℝ) ≤
-      ((primitiveZeroOrdinatesInBall χ R).card :
-          ℝ) +
-        (((primitiveZeroOrdinatesInBall χ
-                  R).image
-              (fun x => -x)).card :
-          ℝ) := by
+      ((primitiveZeroOrdinatesInBall χ R).card : ℝ) +
+        (((primitiveZeroOrdinatesInBall χ R).image (fun x => -x)).card : ℝ) := by
     exact_mod_cast Finset.card_union_le _ _
   have himg_le :
-    (((primitiveZeroOrdinatesInBall χ R).image
-            (fun x => -x)).card :
-        ℝ) ≤
-      ((primitiveZeroOrdinatesInBall χ R).card :
-        ℝ) := by
+    (((primitiveZeroOrdinatesInBall χ R).image (fun x => -x)).card : ℝ) ≤
+      ((primitiveZeroOrdinatesInBall χ R).card : ℝ) := by
     exact_mod_cast Finset.card_image_le
   linarith [hunion_le, himg_le, hcardR]
 
@@ -381,9 +308,7 @@ theorem exists_primitiveGoodHeightRadius_twoSided {N : ℕ} [NeZero N] (hN1 : 1 
           n /
                 (8 *
                   (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * Rmax)) /
+                        (max 1 (completedLFunctionBallBound N (2 * Rmax)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2 +
                     1)) ≤
@@ -391,79 +316,51 @@ theorem exists_primitiveGoodHeightRadius_twoSided {N : ℕ} [NeZero N] (hN1 : 1 
             n /
                 (8 *
                   (Real.log
-                        (max 1
-                            (completedLFunctionBallBound
-                              N (2 * Rmax)) /
+                        (max 1 (completedLFunctionBallBound N (2 * Rmax)) /
                           ‖DirichletCharacter.completedLFunction χ 0‖) /
                       Real.log 2 +
                     1)) ≤
               |T + ρ.im| := by
   set B :=
     Real.log
-        (max 1
-            (completedLFunctionBallBound N
-              (2 * Rmax)) /
+        (max 1 (completedLFunctionBallBound N (2 * Rmax)) /
           ‖DirichletCharacter.completedLFunction χ 0‖) /
       Real.log 2 with
     hB_def
   set c : ℝ := n / (8 * (B + 1)) with hc_def
   have hRmaxpos : (0 : ℝ) < Rmax := by linarith
-  have hcard_le :
-    ((primitiveZeroOrdinatesInBallSymm χ
-            Rmax).card :
-        ℝ) ≤
-      2 * B :=
-    card_primitiveZeroOrdinatesInBallSymm_le hN1
-      hprimitive hne hinv hRmaxpos
+  have hcard_le : ((primitiveZeroOrdinatesInBallSymm χ Rmax).card : ℝ) ≤ 2 * B :=
+    card_primitiveZeroOrdinatesInBallSymm_le hN1 hprimitive hne hinv hRmaxpos
   have hBnonneg : (0 : ℝ) ≤ B :=
     le_trans (Nat.cast_nonneg _)
-      (card_primitiveZeroOrdinatesInBall_le hN1
-        hprimitive hne hinv hRmaxpos)
+      (card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv hRmaxpos)
   have hc_pos : 0 < c := by
     rw [hc_def]; positivity
   have hc_eq : c * (8 * (B + 1)) = n := by
     rw [hc_def]; field_simp
-  have hstep :
-    c *
-        (primitiveZeroOrdinatesInBallSymm χ
-            Rmax).card ≤
-      c * (2 * B) :=
+  have hstep : c * (primitiveZeroOrdinatesInBallSymm χ Rmax).card ≤ c * (2 * B) :=
     mul_le_mul_of_nonneg_left hcard_le hc_pos.le
-  have hlenbound :
-    2 * c *
-        (primitiveZeroOrdinatesInBallSymm χ
-            Rmax).card <
-      n := by
+  have hlenbound : 2 * c * (primitiveZeroOrdinatesInBallSymm χ Rmax).card < n := by
     nlinarith [hstep, hc_pos, hBnonneg, hc_eq]
   obtain ⟨T, hT, hTgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos
-      (show (0 : ℝ) < n by linarith) hlenbound
+    RiemannZeta.exists_avoiding_point_length hc_pos (show (0 : ℝ) < n by linarith) hlenbound
   refine ⟨T, by rwa [show n + n = 2 * n from by ring] at hT, fun ρ hζ hρ => ?_⟩
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) Rmax := by
     rw [Metric.mem_closedBall, dist_zero_right]; exact hρ
-  have hordne :=
-    completedLFunction_zero_mem_divisorSupport
-      hprimitive hne hRmaxpos hu hζ
+  have hordne := completedLFunction_zero_mem_divisorSupport hprimitive hne hRmaxpos hu hζ
   have hsupp :
     ρ ∈
       (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
           (Metric.closedBall (0 : ℂ) Rmax)).support :=
     hordne
-  have himmem :
-    ρ.im ∈
-      primitiveZeroOrdinatesInBall χ Rmax := by
+  have himmem : ρ.im ∈ primitiveZeroOrdinatesInBall χ Rmax := by
     unfold primitiveZeroOrdinatesInBall
     rw [Finset.mem_image]
     refine ⟨ρ, ?_, rfl⟩
     rw [Set.Finite.mem_toFinset]
     exact hsupp
-  have hposmem :
-    ρ.im ∈
-      primitiveZeroOrdinatesInBallSymm χ Rmax :=
-    Finset.mem_union_left _ himmem
-  have hnegmem :
-    -ρ.im ∈
-      primitiveZeroOrdinatesInBallSymm χ Rmax :=
+  have hposmem : ρ.im ∈ primitiveZeroOrdinatesInBallSymm χ Rmax := Finset.mem_union_left _ himmem
+  have hnegmem : -ρ.im ∈ primitiveZeroOrdinatesInBallSymm χ Rmax :=
     Finset.mem_union_right _ (Finset.mem_image_of_mem _ himmem)
   refine ⟨hTgood ρ.im hposmem, ?_⟩
   have hneg := hTgood (-ρ.im) hnegmem
@@ -494,9 +391,7 @@ theorem card_primitiveZeroNormsInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
     (hR : 0 < R) :
     (primitiveZeroNormsInBall χ R).card ≤
       Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * R)) /
+          (max 1 (completedLFunctionBallBound N (2 * R)) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 := by
   set U := Metric.closedBall (0 : ℂ) R with hU_def
@@ -517,9 +412,7 @@ theorem card_primitiveZeroNormsInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
   have hcard1 :
     (hfin.toFinset.card : ℝ) ≤
       Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * R)) /
+          (max 1 (completedLFunctionBallBound N (2 * R)) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 := by
     have hsum_eq :
@@ -543,10 +436,7 @@ theorem card_primitiveZeroNormsInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
           apply Finset.sum_le_sum
           intro u hu
           exact_mod_cast hdiv_pos u hu
-    exact
-      hstep.trans
-        (finsum_divisor_completedLFunction_le
-          hN1 hprimitive hne hinv hR)
+    exact hstep.trans (finsum_divisor_completedLFunction_le hN1 hprimitive hne hinv hR)
   refine le_trans ?_ hcard1
   exact_mod_cast Finset.card_image_le
 
@@ -570,65 +460,43 @@ theorem exists_primitiveGoodRadius {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : Diri
           n /
               (4 *
                 (Real.log
-                      (max 1
-                          (completedLFunctionBallBound
-                            N (4 * n)) /
+                      (max 1 (completedLFunctionBallBound N (4 * n)) /
                         ‖DirichletCharacter.completedLFunction χ 0‖) /
                     Real.log 2 +
                   1)) ≤
             |R - ‖ρ‖| := by
   set B :=
     Real.log
-        (max 1
-            (completedLFunctionBallBound N
-              (4 * n)) /
+        (max 1 (completedLFunctionBallBound N (4 * n)) /
           ‖DirichletCharacter.completedLFunction χ 0‖) /
       Real.log 2 with
     hB_def
   set c : ℝ := n / (4 * (B + 1)) with hc_def
   have hR2n : (0 : ℝ) < 2 * n := by linarith
-  have hcard_le :
-    ((primitiveZeroNormsInBall χ (2 * n)).card :
-        ℝ) ≤
-      B := by
-    have hraw :=
-      card_primitiveZeroNormsInBall_le hN1
-        hprimitive hne hinv hR2n
+  have hcard_le : ((primitiveZeroNormsInBall χ (2 * n)).card : ℝ) ≤ B := by
+    have hraw := card_primitiveZeroNormsInBall_le hN1 hprimitive hne hinv hR2n
     rwa [show 2 * (2 * n) = 4 * n from by ring] at hraw
   have hBnonneg : (0 : ℝ) ≤ B := le_trans (Nat.cast_nonneg _) hcard_le
   have hc_pos : 0 < c := by
     rw [hc_def]; positivity
   have hc_eq : c * (4 * (B + 1)) = n := by
     rw [hc_def]; field_simp
-  have hstep :
-    c *
-        (primitiveZeroNormsInBall χ
-            (2 * n)).card ≤
-      c * B :=
+  have hstep : c * (primitiveZeroNormsInBall χ (2 * n)).card ≤ c * B :=
     mul_le_mul_of_nonneg_left hcard_le hc_pos.le
-  have hlenbound :
-    2 * c *
-        (primitiveZeroNormsInBall χ
-            (2 * n)).card <
-      n := by
+  have hlenbound : 2 * c * (primitiveZeroNormsInBall χ (2 * n)).card < n := by
     nlinarith [hstep, hc_pos, hBnonneg, hc_eq]
   obtain ⟨R, hR, hRgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos
-      (show (0 : ℝ) < n by linarith) hlenbound
+    RiemannZeta.exists_avoiding_point_length hc_pos (show (0 : ℝ) < n by linarith) hlenbound
   refine ⟨R, by rwa [show n + n = 2 * n from by ring] at hR, fun ρ hζ hρ => ?_⟩
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) (2 * n) := by
     rw [Metric.mem_closedBall, dist_zero_right]; exact hρ
-  have hordne :=
-    completedLFunction_zero_mem_divisorSupport
-      hprimitive hne hR2n hu hζ
+  have hordne := completedLFunction_zero_mem_divisorSupport hprimitive hne hR2n hu hζ
   have hsupp :
     ρ ∈
       (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
           (Metric.closedBall (0 : ℂ) (2 * n))).support :=
     hordne
-  have hnmem :
-    ‖ρ‖ ∈
-      primitiveZeroNormsInBall χ (2 * n) := by
+  have hnmem : ‖ρ‖ ∈ primitiveZeroNormsInBall χ (2 * n) := by
     unfold primitiveZeroNormsInBall
     rw [Finset.mem_image]
     refine ⟨ρ, ?_, rfl⟩

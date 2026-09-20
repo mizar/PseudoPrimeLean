@@ -50,17 +50,14 @@ fixed-`A` bound.
 Role: the fixed-`A` estimate used in the `A → ∞` assembly.
 -/
 theorem re_characterLogWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
     (hx : 64 ≤ x) (A : ℕ) (hA : 2 ≤ A) :
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ).re -
         (2 * Real.pi)⁻¹ *
           (∫ t : ℝ,
               AnalyticNumberTheory.DirichletLFunction.dirichletLogContourKernel x χ
-                (((AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
+                (((AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLeftRe A : ℝ) : ℂ) +
                   (t : ℂ) * Complex.I)).re ≤
       (2 * Real.sqrt x + 2 + Real.log x) *
             |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| +
@@ -68,18 +65,18 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero N] (hN2
         11 / 4 := by
   have hx1 : (1 : ℝ) ≤ x := by linarith
   have htend :=
-    AnalyticNumberTheory.DirichletLFunction.tendsto_normalized_dirichletLogBoundary_heightSeq
-      hN2 hGRH hprimitive hne hinv hquad hx1 A hA
+    AnalyticNumberTheory.DirichletLFunction.tendsto_normalized_dirichletLogBoundary_heightSeq hN2
+      hGRH hprimitive hne hinv hquad hx1 A hA
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   have hev :
     ∀ᶠ k : ℕ in Filter.atTop,
       ((-Complex.I / (2 * (Real.pi : ℂ))) *
             AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral
               (AnalyticNumberTheory.DirichletLFunction.dirichletLogContourKernel x χ)
-              (AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLowerCorner
-                hN2 hGRH hprimitive hne hinv hquad A k)
-              (AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalUpperCorner
-                hN2 hGRH hprimitive hne hinv hquad k)).re ≤
+              (AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLowerCorner hN2 hGRH
+                hprimitive hne hinv hquad A k)
+              (AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalUpperCorner hN2 hGRH
+                hprimitive hne hinv hquad k)).re ≤
         (2 * Real.sqrt x + 2 + Real.log x) *
               |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| +
             (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
@@ -88,37 +85,34 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero N] (hN2
     have hid :=
       AnalyticNumberTheory.DirichletLFunction.dirichletLogFiniteContourIdentity_heightSeq_normalized
         hN2 hGRH hprimitive hne hinv hquad (by linarith : (0 : ℝ) < x) A k hA
-    open AnalyticNumberTheory.DirichletLFunction in
-    obtain ⟨h0, h1⟩ :=
-      primitiveReciprocalMellinPoints_mem_singularities_heightSeq
-        hN2 hGRH hprimitive hne hinv hquad A k hA
-    have hbound :=
-      re_sum_llsPrimitiveLogResidueAt_le hN2 hGRH hprimitive hne hinv hquad hx (z :=
-        AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLowerCorner hN2 hGRH
-          hprimitive hne hinv hquad A k)
-        (w :=
-        AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalUpperCorner hN2 hGRH
-          hprimitive hne hinv hquad k)
-        h0 h1
-    rw [hid]
-    exact hbound
+    open
+      AnalyticNumberTheory.DirichletLFunction in
+      obtain ⟨h0, h1⟩ :=
+        primitiveReciprocalMellinPoints_mem_singularities_heightSeq hN2 hGRH hprimitive hne hinv
+          hquad A k hA
+      have hbound :=
+        re_sum_llsPrimitiveLogResidueAt_le hN2 hGRH hprimitive hne hinv hquad hx (z :=
+          AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLowerCorner hN2 hGRH hprimitive
+            hne hinv hquad A k)
+          (w :=
+          AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalUpperCorner hN2 hGRH hprimitive
+            hne hinv hquad k)
+          h0 h1
+      rw [hid]
+      exact hbound
   have hlimit := le_of_tendsto htendRe hev
   rw [Complex.sub_re] at hlimit
   have hmulre :
     ((↑(2 * Real.pi))⁻¹ *
             ∫ t : ℝ,
               AnalyticNumberTheory.DirichletLFunction.dirichletLogContourKernel x χ
-                (((AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
+                (((AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLeftRe A : ℝ) : ℂ) +
                   (t : ℂ) * Complex.I) :
           ℂ).re =
       (2 * Real.pi)⁻¹ *
         (∫ t : ℝ,
             AnalyticNumberTheory.DirichletLFunction.dirichletLogContourKernel x χ
-              (((AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLeftRe A :
-                    ℝ) :
-                  ℂ) +
+              (((AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLeftRe A : ℝ) : ℂ) +
                 (t : ℂ) * Complex.I)).re := by
     rw [show ((↑(2 * Real.pi))⁻¹ : ℂ) = (((2 * Real.pi)⁻¹ : ℝ) : ℂ) from by
         push_cast; ring,
@@ -139,8 +133,7 @@ transferring through this limit via `le_of_tendsto` removes the left-vertical te
 Role: the raw quadratic log-weighted-sum upper bound used by `PrimitiveQuadraticLemma22.lean`.
 -/
 theorem primitiveQuadraticLogWeightedUpper {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
     (hx : 64 ≤ x) :
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ).re ≤
@@ -149,46 +142,45 @@ theorem primitiveQuadraticLogWeightedUpper {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
   have hx1 : (1 : ℝ) < x := by linarith
-  open AnalyticNumberTheory.DirichletLFunction in
-  have htend := quadraticTendsto_dirichletLogContourKernel_leftVertical_integral_atTop
-      hprimitive hne hquad hx1
-  have htendRe := (Complex.continuous_re.tendsto _).comp htend
-  simp only [Complex.zero_re] at htendRe
-  have htendScaled :
-    Filter.Tendsto
-      (fun A : ℕ =>
+  open
+    AnalyticNumberTheory.DirichletLFunction in
+    have htend :=
+      quadraticTendsto_dirichletLogContourKernel_leftVertical_integral_atTop hprimitive hne hquad
+        hx1
+    have htendRe := (Complex.continuous_re.tendsto _).comp htend
+    simp only [Complex.zero_re] at htendRe
+    have htendScaled :
+      Filter.Tendsto
+        (fun A : ℕ =>
+          (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ).re -
+            (2 * Real.pi)⁻¹ *
+              (∫ t : ℝ,
+                  AnalyticNumberTheory.DirichletLFunction.dirichletLogContourKernel x χ
+                    (((AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLeftRe A : ℝ) :
+                        ℂ) +
+                      (t : ℂ) * Complex.I)).re)
+        Filter.atTop
+        (nhds
+          ((AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ).re -
+            (2 * Real.pi)⁻¹ * 0)) :=
+      Filter.Tendsto.const_sub _ (Filter.Tendsto.const_mul _ htendRe)
+    simp only [mul_zero, sub_zero] at htendScaled
+    have hev :
+      ∀ᶠ A : ℕ in Filter.atTop,
         (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ).re -
-          (2 * Real.pi)⁻¹ *
-            (∫ t : ℝ,
-                AnalyticNumberTheory.DirichletLFunction.dirichletLogContourKernel x χ
-                  (((AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLeftRe
-                          A :
-                        ℝ) :
-                      ℂ) +
-                    (t : ℂ) * Complex.I)).re)
-      Filter.atTop
-      (nhds
-        ((AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ).re -
-          (2 * Real.pi)⁻¹ * 0)) :=
-    Filter.Tendsto.const_sub _ (Filter.Tendsto.const_mul _ htendRe)
-  simp only [mul_zero, sub_zero] at htendScaled
-  have hev :
-    ∀ᶠ A : ℕ in Filter.atTop,
-      (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ).re -
-          (2 * Real.pi)⁻¹ *
-            (∫ t : ℝ,
-                AnalyticNumberTheory.DirichletLFunction.dirichletLogContourKernel x χ
-                  (((AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLeftRe
-                          A :
-                        ℝ) :
-                      ℂ) +
-                    (t : ℂ) * Complex.I)).re ≤
-        (2 * Real.sqrt x + 2 + Real.log x) *
-              |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| +
-            (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
-          11 / 4 := by
-    filter_upwards [Filter.eventually_ge_atTop 2] with A hA
-    exact re_characterLogWeightedSum_sub_leftVertical_le hN2 hGRH hprimitive hne hinv hquad hx A hA
-  exact le_of_tendsto htendScaled hev
+            (2 * Real.pi)⁻¹ *
+              (∫ t : ℝ,
+                  AnalyticNumberTheory.DirichletLFunction.dirichletLogContourKernel x χ
+                    (((AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLeftRe A : ℝ) :
+                        ℂ) +
+                      (t : ℂ) * Complex.I)).re ≤
+          (2 * Real.sqrt x + 2 + Real.log x) *
+                |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| +
+              (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
+            11 / 4 := by
+      filter_upwards [Filter.eventually_ge_atTop 2] with A hA
+      exact
+        re_characterLogWeightedSum_sub_leftVertical_le hN2 hGRH hprimitive hne hinv hquad hx A hA
+    exact le_of_tendsto htendScaled hev
 
 end PseudoPrime.LLS.Extensions

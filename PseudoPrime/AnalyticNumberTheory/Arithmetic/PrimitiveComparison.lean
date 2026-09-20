@@ -183,8 +183,7 @@ theorem characterLogWeightedTerm_primitive_re_prime_pow_of_isQuadratic {q : ℕ}
       Real.log p * (Real.log x - k * Real.log p) *
         (if Odd k then (χ.primitiveCharacter p).re else (χ.primitiveCharacter p ^ 2).re) := by
   rw [characterLogWeightedTerm_primitive_re_prime_pow x χ hx hp hk,
-    NumberTheory.isQuadratic_pow_apply hχ (p : ZMod χ.conductor) hk,
-    apply_ite Complex.re]
+    NumberTheory.isQuadratic_pow_apply hχ (p : ZMod χ.conductor) hk, apply_ite Complex.re]
 
 /-- The finite logarithmic sum difference is bounded by the quotient common-factor sum. -/
 theorem norm_characterLogWeightedSum_sub_primitive_le {q : ℕ} [NeZero q] (x : ℝ)

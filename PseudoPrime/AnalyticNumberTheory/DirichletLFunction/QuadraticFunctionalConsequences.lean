@@ -34,9 +34,7 @@ theorem completedLFunction_zero_of_one_sub_zero_isQuadratic {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hquad : χ.IsQuadratic) (s : ℂ)
     (hzero : DirichletCharacter.completedLFunction χ (1 - s) = 0) :
     DirichletCharacter.completedLFunction χ s = 0 := by
-  have h :=
-    dirichletCompletedLFunction_inv_zero_of_one_sub_zero
-      hprimitive s hzero
+  have h := dirichletCompletedLFunction_inv_zero_of_one_sub_zero hprimitive s hzero
   rwa [hquad.inv] at h
 
 /--
@@ -50,17 +48,14 @@ reflects any zero with `Re s ≤ 0` to one with `Re (1 - s) ≥ 1`, ruling out `
 remains, `0 < Re s < 1`, is exactly GRH's hypothesis window.
 -/
 theorem completedLFunction_zero_re_eq_half_of_grh_quadratic {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hquad : χ.IsQuadratic) {ρ : ℂ}
     (hzero : DirichletCharacter.completedLFunction χ ρ = 0) : ρ.re = (1 : ℝ) / 2 := by
   have hstep1 : ∀ s : ℂ, DirichletCharacter.completedLFunction χ s = 0 → 1 ≤ s.re → False := by
     intro s hs0 hs1
     have hsne0 : s ≠ 0 := by
       intro h; rw [h, Complex.zero_re] at hs1; linarith
-    have heq :=
-      dirichletLFunction_eq_completed_div_gammaFactor
-        χ s (Or.inl hsne0)
+    have heq := dirichletLFunction_eq_completed_div_gammaFactor χ s (Or.inl hsne0)
     rw [hs0, zero_div] at heq
     exact DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hne) hs1 heq
   have hlt1 : ρ.re < 1 := by
@@ -90,9 +85,7 @@ theorem completedLFunction_zero_re_eq_half_of_grh_quadratic {N : ℕ} [NeZero N]
     rw [h] at hgt0
     simp only [Complex.zero_re, lt_self_iff_false] at hgt0
   have hL0 : DirichletCharacter.LFunction χ ρ = 0 := by
-    have heq :=
-      dirichletLFunction_eq_completed_div_gammaFactor
-        χ ρ (Or.inl hρne0)
+    have heq := dirichletLFunction_eq_completed_div_gammaFactor χ ρ (Or.inl hρne0)
     rw [hzero, zero_div] at heq
     exact heq
   exact hGRH.zero_re_eq_half N χ hprimitive ρ hL0 hgt0
@@ -106,8 +99,7 @@ multiplicity is zero (both sides vanish) or GRH forces `Re ρ = 1 / 2` and
 `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.genusOneTerm_re_eq_of_re_eq_half` applies.
 -/
 theorem dirichletCompletedLFunctionQuadraticZeroMass_eq_tsum_re_inv {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     (1 / 2 : ℝ) *
         (∑' ρ : ℂ,
@@ -116,9 +108,7 @@ theorem dirichletCompletedLFunctionQuadraticZeroMass_eq_tsum_re_inv {N : ℕ} [N
       ∑' ρ : ℂ,
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) *
           (1 / ρ).re := by
-  have hsummable :=
-    summable_completedLFunctionGenusOneTerm_one
-      hN2 hprimitive hne hinv
+  have hsummable := summable_completedLFunctionGenusOneTerm_one hN2 hprimitive hne hinv
   have hpt :
     ∀ ρ : ℂ,
       (((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
@@ -131,13 +121,10 @@ theorem dirichletCompletedLFunctionQuadraticZeroMass_eq_tsum_re_inv {N : ℕ} [N
     by_cases hD0 : D = 0
     · simp only [hD0, Int.cast_zero, one_div, zero_mul, Complex.zero_re, Complex.inv_re, mul_zero]
     · have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-        dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero
-          hne hD0
+        dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
       have hre_half : ρ.re = (1 : ℝ) / 2 :=
         completedLFunction_zero_re_eq_half_of_grh_quadratic hGRH hprimitive hne hquad hzero
-      have hterm :=
-        genusOneTerm_re_eq_of_re_eq_half
-          hre_half
+      have hterm := genusOneTerm_re_eq_of_re_eq_half hre_half
       have hcast : ((D : ℤ) : ℂ) = (((D : ℤ) : ℝ) : ℂ) := by
         push_cast; ring
       rw [hcast, Complex.re_ofReal_mul, hterm]
@@ -160,9 +147,7 @@ theorem completedLFunction_logDeriv_functionalEquation_isQuadratic_at {N : ℕ} 
     -logDeriv (DirichletCharacter.completedLFunction χ) (1 - s) =
       Complex.log N + logDeriv (DirichletCharacter.completedLFunction χ) s := by
   have hFs' : DirichletCharacter.completedLFunction χ⁻¹ s ≠ 0 := by rwa [hquad.inv]
-  have h :=
-    completedLFunction_logDeriv_functionalEquation_at
-      hprimitive hne (s := s) hFs'
+  have h := completedLFunction_logDeriv_functionalEquation_at hprimitive hne (s := s) hFs'
   rwa [hquad.inv] at h
 
 /--
@@ -182,8 +167,7 @@ theorem completedLFunction_logDeriv_functionalEquation_isQuadratic {N : ℕ} [Ne
     -logDeriv (DirichletCharacter.completedLFunction χ) 1 =
       Complex.log N + logDeriv (DirichletCharacter.completedLFunction χ) 0 := by
   have hF0ne : DirichletCharacter.completedLFunction χ 0 ≠ 0 :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hprimitive hne
+    dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have h := completedLFunction_logDeriv_functionalEquation_isQuadratic_at hprimitive hne hquad hF0ne
   simpa only [sub_zero] using h
 
@@ -198,16 +182,13 @@ Role: isolates `Re (logDeriv F 0)` in terms of the zero mass — the remaining l
 particular normalization constant is left to the caller.
 -/
 theorem completedLFunction_logDeriv_zero_re_add_half_log_eq_neg_zeroMass_isQuadratic {N : ℕ}
-    [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     (logDeriv (DirichletCharacter.completedLFunction χ) 0).re + (1 / 2) * Real.log N =
       -(∑' ρ : ℂ,
           ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) *
             (1 / ρ).re) := by
-  have hH9g :=
-    completedLFunction_centeredLogDeriv_one_eq_tsum
-      hN2 hprimitive hne hinv
+  have hH9g := completedLFunction_centeredLogDeriv_one_eq_tsum hN2 hprimitive hne hinv
   have hH10c :=
     dirichletCompletedLFunctionQuadraticZeroMass_eq_tsum_re_inv hN2 hGRH hprimitive hne hinv hquad
   have hH10d := completedLFunction_logDeriv_functionalEquation_isQuadratic hprimitive hne hquad
@@ -238,15 +219,13 @@ Content: a primitive character has `conductor = N` (unfolds `IsPrimitive`), redu
 Role: the identification of `B(χ)` with the real zero mass.
 -/
 theorem primitiveBRe_eq_neg_zeroMass_isQuadratic {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     primitiveBRe χ =
       -(∑' ρ : ℂ,
           ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) *
             (1 / ρ).re) := by
-  rw [primitiveBRe,
-    (hprimitive : χ.conductor = N)]
+  rw [primitiveBRe, (hprimitive : χ.conductor = N)]
   exact
     completedLFunction_logDeriv_zero_re_add_half_log_eq_neg_zeroMass_isQuadratic hN2 hGRH hprimitive
       hne hinv hquad
@@ -261,8 +240,8 @@ nor `tsum`'s convergence are needed: `tsum_nonneg` only needs pointwise nonnegat
 Role: turns `Re B(χ) = -Z_χ` into the absolute-value form `|Re B(χ)| = Z_χ`.
 -/
 theorem primitiveZeroMass_nonneg_of_grh_quadratic {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hquad : χ.IsQuadratic) :
+    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
+    (hquad : χ.IsQuadratic) :
     0 ≤
       ∑' ρ : ℂ,
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) *
@@ -278,8 +257,7 @@ theorem primitiveZeroMass_nonneg_of_grh_quadratic {N : ℕ} [NeZero N] {χ : Dir
   · have hDnonneg : (0 : ℝ) ≤ (D : ℝ) := by
       exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic ρ
     have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero
-        hne hD0
+      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
     have hre_half : ρ.re = (1 : ℝ) / 2 :=
       completedLFunction_zero_re_eq_half_of_grh_quadratic hGRH hprimitive hne hquad hzero
     have hinv_re_pos : 0 ≤ (1 / ρ).re := by
@@ -295,8 +273,7 @@ Content: combines `primitiveBRe_eq_neg_zeroMass_isQuadratic` with the sign infor
 Role: the final closed form for `|Re B(χ)|` in terms of the real zero mass.
 -/
 theorem abs_primitiveBRe_eq_zeroMass_isQuadratic {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     |primitiveBRe χ| =
       ∑' ρ : ℂ,
@@ -315,8 +292,7 @@ needed beyond that identity's own.
 Role: a common zero estimate feeding both reciprocal-zero-term and log-zero-term bounds.
 -/
 theorem tsum_divisor_inv_normSq_eq_two_mul_abs_BRe {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     ∑' ρ : ℂ,
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) /
@@ -330,8 +306,7 @@ theorem tsum_divisor_inv_normSq_eq_two_mul_abs_BRe {N : ℕ} [NeZero N] (hN2 : 2
   by_cases hD0 : D = 0
   · simp only [hD0, Int.cast_zero, zero_div, one_div, Complex.inv_re, zero_mul, mul_zero]
   · have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero
-        hne hD0
+      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
     have hre_half : ρ.re = (1 : ℝ) / 2 :=
       completedLFunction_zero_re_eq_half_of_grh_quadratic hGRH hprimitive hne hquad hzero
     have hInvRe : (1 / ρ).re = (1 : ℝ) / 2 / Complex.normSq ρ := by
@@ -350,16 +325,13 @@ Role: the summability companion needed to legitimately bound `‖tsum‖ ≤ tsu
 reciprocal/log zero-term estimates below.
 -/
 theorem summable_divisor_div_normSq_of_grh_quadratic {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     Summable
       (fun ρ : ℂ =>
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) /
           Complex.normSq ρ) := by
-  have hsummable :=
-    summable_completedLFunctionGenusOneTerm_one
-      hN2 hprimitive hne hinv
+  have hsummable := summable_completedLFunctionGenusOneTerm_one hN2 hprimitive hne hinv
   have hsummableRe := Complex.reCLM.summable hsummable
   apply hsummableRe.congr
   intro ρ
@@ -368,12 +340,10 @@ theorem summable_divisor_div_normSq_of_grh_quadratic {N : ℕ} [NeZero N] (hN2 :
   · simp only [hD0, Int.cast_zero, one_div, zero_mul, Complex.reCLM_apply, Complex.zero_re,
       zero_div]
   · have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero
-        hne hD0
+      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
     have hre_half : ρ.re = (1 : ℝ) / 2 :=
       completedLFunction_zero_re_eq_half_of_grh_quadratic hGRH hprimitive hne hquad hzero
-    have hterm :=
-      genusOneTerm_re_eq_of_re_eq_half hre_half
+    have hterm := genusOneTerm_re_eq_of_re_eq_half hre_half
     have hInvRe : (1 / ρ).re = (1 : ℝ) / 2 / Complex.normSq ρ := by
       rw [one_div, Complex.inv_re, hre_half]
     have hcast : ((D : ℤ) : ℂ) = (((D : ℤ) : ℝ) : ℂ) := by
@@ -397,9 +367,8 @@ Role: the pointwise identity shared by the whole-line `tsum` bound
 both can reuse it.
 -/
 theorem norm_completedReciprocalZeroTerm_eq {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ} (hx : 0 < x)
-    (ρ : ℂ) :
+    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
+    (hquad : χ.IsQuadratic) {x : ℝ} (hx : 0 < x) (ρ : ℂ) :
     ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
             (x : ℂ) ^ (ρ - 1) /
           (ρ * (ρ - 1))‖ =
@@ -415,8 +384,7 @@ theorem norm_completedReciprocalZeroTerm_eq {N : ℕ} [NeZero N] {χ : Dirichlet
         fun z _ => hdiff.analyticAt z
       exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic ρ
     have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero
-        hne hD0
+      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
     have hre_half : ρ.re = (1 : ℝ) / 2 :=
       completedLFunction_zero_re_eq_half_of_grh_quadratic hGRH hprimitive hne hquad hzero
     have hconj : (1 : ℂ) - ρ = starRingEnd ℂ ρ := by
@@ -448,8 +416,7 @@ Content: `norm_completedReciprocalZeroTerm_eq` plus `norm_tsum_le_tsum_norm` and
 Role: a reciprocal-kernel zero-term bound, avoiding any need for a paper-specific `θ` device.
 -/
 theorem norm_tsum_reciprocalZeroContribution_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
     (hx : 0 < x) :
     ‖∑' ρ : ℂ,
@@ -482,8 +449,8 @@ theorem norm_tsum_reciprocalZeroContribution_le {N : ℕ} [NeZero N] (hN2 : 2 �
                 Complex.normSq ρ) /
             Real.sqrt x :=
         tsum_div_const
-      _ = 2 * |primitiveBRe χ| / Real.sqrt x :=
-        by rw [tsum_divisor_inv_normSq_eq_two_mul_abs_BRe hN2 hGRH hprimitive hne hinv hquad]
+      _ = 2 * |primitiveBRe χ| / Real.sqrt x := by
+        rw [tsum_divisor_inv_normSq_eq_two_mul_abs_BRe hN2 hGRH hprimitive hne hinv hquad]
 
 /--
 Input/assumptions: GRH, `2 ≤ N`, a primitive nontrivial quadratic complex Dirichlet character, and
@@ -497,8 +464,7 @@ mirroring the reciprocal-kernel argument.
 Role: a logarithmic-kernel zero-term bound.
 -/
 theorem norm_tsum_logZeroContribution_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
     (hx : 0 < x) :
     ‖∑' ρ : ℂ,
@@ -526,8 +492,7 @@ theorem norm_tsum_logZeroContribution_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
           fun z _ => hdiff.analyticAt z
         exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic ρ
       have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-        dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero
-          hne hD0
+        dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
       have hre_half : ρ.re = (1 : ℝ) / 2 :=
         completedLFunction_zero_re_eq_half_of_grh_quadratic hGRH hprimitive hne hquad hzero
       have hnormsq : ‖ρ ^ 2‖ = Complex.normSq ρ := by rw [norm_pow, ← Complex.normSq_eq_norm_sq]
@@ -556,8 +521,7 @@ theorem norm_tsum_logZeroContribution_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
                   ℝ) /
                 Complex.normSq ρ :=
         tsum_mul_left
-      _ = 2 * Real.sqrt x * |primitiveBRe χ| :=
-        by
+      _ = 2 * Real.sqrt x * |primitiveBRe χ| := by
         rw [tsum_divisor_inv_normSq_eq_two_mul_abs_BRe hN2 hGRH hprimitive hne hinv hquad]
         ring
 
@@ -576,19 +540,15 @@ Content: writing `1/(s-ρ)+1/ρ = s/(ρ(s-ρ))` termwise, weighted Cauchy–Schw
 Role: a pointwise ingredient for bounding the horizontal-edge log-derivative.
 -/
 theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {R : ℝ}
     (hR : 0 < R) {s : ℂ} (hsne : DirichletCharacter.completedLFunction χ s ≠ 0) {δ : ℝ} (hδ : 0 < δ)
     (hsep : ∀ ρ : ℂ, DirichletCharacter.completedLFunction χ ρ = 0 → ‖ρ‖ < R → δ ≤ ‖s - ρ‖) :
-    ‖completedLFunctionTruncatedGenusSum χ R
-          s‖ ≤
+    ‖completedLFunctionTruncatedGenusSum χ R s‖ ≤
       ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
           Real.sqrt
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * R)) /
+                (max 1 (completedLFunctionBallBound N (2 * R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) /
         δ := by
@@ -606,8 +566,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
   have hAnU : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ := fun z _ =>
     hdiff.analyticAt z
   have h0ne : DirichletCharacter.completedLFunction χ 0 ≠ 0 :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hprimitive hne
+    dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have hfin : (Function.support Dv).Finite := hAnClosed.meromorphicOn.divisor_ball_support_finite
   set S := hfin.toFinset with hS_def
   have hDv_nonneg : ∀ ρ, (0 : ℤ) ≤ Dv ρ := fun ρ =>
@@ -655,9 +614,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
     ring
   -- Step 3: triangle inequality
   have hnorm_le :
-    ‖completedLFunctionTruncatedGenusSum χ R
-          s‖ ≤
-      ‖s‖ * ∑ ρ ∈ S, (Dv ρ : ℝ) / (‖ρ‖ * ‖s - ρ‖) := by
+    ‖completedLFunctionTruncatedGenusSum χ R s‖ ≤ ‖s‖ * ∑ ρ ∈ S, (Dv ρ : ℝ) / (‖ρ‖ * ‖s - ρ‖) := by
     rw [heqsum]
     calc
       ‖∑ ρ ∈ S, ((Dv ρ : ℤ) : ℂ) * (1 / (s - ρ) + 1 / ρ)‖ ≤
@@ -684,9 +641,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
       by rw [div_pow, Real.sq_sqrt (by exact_mod_cast hDv_nonneg ρ)]
     rwa [Finset.sum_congr rfl heq1, Finset.sum_congr rfl heq2, Finset.sum_congr rfl heq3] at hkey
   -- Step 5a: bound the first Cauchy–Schwarz factor via the zero mass
-  have hfactorA :
-    ∑ ρ ∈ S, (Dv ρ : ℝ) / ‖ρ‖ ^ 2 ≤
-      2 * |primitiveBRe χ| := by
+  have hfactorA : ∑ ρ ∈ S, (Dv ρ : ℝ) / ‖ρ‖ ^ 2 ≤ 2 * |primitiveBRe χ| := by
     have hterm_eq2 :
       ∀ ρ ∈ S,
         (Dv ρ : ℝ) / ‖ρ‖ ^ 2 =
@@ -695,9 +650,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
       intro ρ hρS
       rw [hS_def, Set.Finite.mem_toFinset, Function.mem_support] at hρS
       have hρmem := hρ_ball ρ hρS
-      rw [← Complex.normSq_eq_norm_sq, hDv_def,
-        divisor_completedLFunction_domain_eq hne
-          hρmem]
+      rw [← Complex.normSq_eq_norm_sq, hDv_def, divisor_completedLFunction_domain_eq hne hρmem]
     calc
       ∑ ρ ∈ S, (Dv ρ : ℝ) / ‖ρ‖ ^ 2 =
           ∑ ρ ∈ S,
@@ -720,9 +673,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
   have hfactorB :
     ∑ ρ ∈ S, (Dv ρ : ℝ) / ‖s - ρ‖ ^ 2 ≤
       (Real.log
-            (max 1
-                (completedLFunctionBallBound N
-                  (2 * R)) /
+            (max 1 (completedLFunctionBallBound N (2 * R)) /
               ‖DirichletCharacter.completedLFunction χ 0‖) /
           Real.log 2) /
         δ ^ 2 := by
@@ -740,9 +691,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
     have hSsum :
       (∑ ρ ∈ S, (Dv ρ : ℝ)) ≤
         Real.log
-            (max 1
-                (completedLFunctionBallBound N
-                  (2 * R)) /
+            (max 1 (completedLFunctionBallBound N (2 * R)) /
               ‖DirichletCharacter.completedLFunction χ 0‖) /
           Real.log 2 := by
       have hSsumZ : (∑ ρ ∈ S, Dv ρ : ℤ) = ∑ᶠ ρ, Dv ρ := by
@@ -752,9 +701,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
       have : ((∑ ρ ∈ S, Dv ρ : ℤ) : ℝ) = ∑ ρ ∈ S, (Dv ρ : ℝ) := by
         push_cast; ring
       rw [← this, hSsumZ]
-      exact
-        finsum_divisor_ball_completedLFunction_le
-          hN1 hprimitive hne hinv hR
+      exact finsum_divisor_ball_completedLFunction_le hN1 hprimitive hne hinv hR
     calc
       ∑ ρ ∈ S, (Dv ρ : ℝ) / ‖s - ρ‖ ^ 2 ≤ ∑ ρ ∈ S, (Dv ρ : ℝ) / δ ^ 2 := Finset.sum_le_sum hterm_le
       _ = (∑ ρ ∈ S, (Dv ρ : ℝ)) / δ ^ 2 := by rw [Finset.sum_div]
@@ -763,9 +710,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
   have hH2nonneg :
     (0 : ℝ) ≤
       Real.log
-          (max 1
-              (completedLFunctionBallBound N
-                (2 * R)) /
+          (max 1 (completedLFunctionBallBound N (2 * R)) /
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 := by
     have hfinsum_nonneg :
@@ -778,15 +723,12 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
       exact MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAnClosed u
     exact
       le_trans (by exact_mod_cast hfinsum_nonneg)
-        (finsum_divisor_completedLFunction_le
-          hN1 hprimitive hne hinv hR)
+        (finsum_divisor_completedLFunction_le hN1 hprimitive hne hinv hR)
   have hCSfull :
     (∑ ρ ∈ S, (Dv ρ : ℝ) / (‖ρ‖ * ‖s - ρ‖)) ^ 2 ≤
       2 * |primitiveBRe χ| *
         (Real.log
-            (max 1
-                (completedLFunctionBallBound N
-                  (2 * R)) /
+            (max 1 (completedLFunctionBallBound N (2 * R)) /
               ‖DirichletCharacter.completedLFunction χ 0‖) /
           Real.log 2 /
           δ ^ 2) :=
@@ -801,18 +743,14 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
   have hrw :
     2 * |primitiveBRe χ| *
         (Real.log
-            (max 1
-                (completedLFunctionBallBound N
-                  (2 * R)) /
+            (max 1 (completedLFunctionBallBound N (2 * R)) /
               ‖DirichletCharacter.completedLFunction χ 0‖) /
           Real.log 2 /
           δ ^ 2) =
       (Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) /
           δ) ^
@@ -825,9 +763,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
       Real.sqrt (2 * |primitiveBRe χ|) *
           Real.sqrt
             (Real.log
-                (max 1
-                    (completedLFunctionBallBound
-                      N (2 * R)) /
+                (max 1 (completedLFunctionBallBound N (2 * R)) /
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) /
         δ := by
@@ -836,27 +772,21 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
         Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) /
           δ := by
       positivity
     nlinarith [hCSfull, hsum_nonneg, hrhs_nonneg]
   calc
-    ‖completedLFunctionTruncatedGenusSum χ R
-            s‖ ≤
-        ‖s‖ * ∑ ρ ∈ S, (Dv ρ : ℝ) / (‖ρ‖ * ‖s - ρ‖) :=
+    ‖completedLFunctionTruncatedGenusSum χ R s‖ ≤ ‖s‖ * ∑ ρ ∈ S, (Dv ρ : ℝ) / (‖ρ‖ * ‖s - ρ‖) :=
       hnorm_le
     _ ≤
         ‖s‖ *
           (Real.sqrt (2 * |primitiveBRe χ|) *
               Real.sqrt
                 (Real.log
-                    (max 1
-                        (completedLFunctionBallBound
-                          N (2 * R)) /
+                    (max 1 (completedLFunctionBallBound N (2 * R)) /
                       ‖DirichletCharacter.completedLFunction χ 0‖) /
                   Real.log 2) /
             δ) :=
@@ -865,9 +795,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
         ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) /
           δ :=
@@ -888,8 +816,7 @@ Role: a pointwise ingredient combined at a good height/radius `T`/`R`, this make
 contour edge integral vanish as `T → ∞`.
 -/
 theorem norm_centeredLogDeriv_le_of_separation {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {R : ℝ}
     (hR : 1 ≤ R) (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0) {s : ℂ}
     (hs : ‖s‖ ≤ R / 2) (hsne : DirichletCharacter.completedLFunction χ s ≠ 0) {δ : ℝ} (hδ : 0 < δ)
@@ -903,24 +830,18 @@ theorem norm_centeredLogDeriv_le_of_separation {N : ℕ} [NeZero N] (hN2 : 2 ≤
           R ^ 2 +
         2 * ‖s‖ / R ^ 2 *
           (Real.log
-              (max 1
-                  (completedLFunctionBallBound N
-                    (2 * R)) /
+              (max 1 (completedLFunctionBallBound N (2 * R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) +
         ‖s‖ * Real.sqrt (2 * |primitiveBRe χ|) *
             Real.sqrt
               (Real.log
-                  (max 1
-                      (completedLFunctionBallBound
-                        N (2 * R)) /
+                  (max 1 (completedLFunctionBallBound N (2 * R)) /
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) /
           δ := by
   have hN1 : 1 < N := by omega
-  have hH9e :=
-    norm_centeredLogDeriv_sub_truncatedGenus_le
-      hN1 hprimitive hne hinv hR hzf hs hsne
+  have hH9e := norm_centeredLogDeriv_sub_truncatedGenus_le hN1 hprimitive hne hinv hR hzf hs hsne
   have hGenus :=
     norm_completedLFunctionTruncatedGenusSum_le hN2 hGRH hprimitive hne hinv hquad
       (show (0 : ℝ) < R by linarith) hsne hδ hsep
@@ -929,18 +850,14 @@ theorem norm_centeredLogDeriv_le_of_separation {N : ℕ} [NeZero N] (hN2 : 2 ≤
             logDeriv (DirichletCharacter.completedLFunction χ) 0‖ =
         ‖((logDeriv (DirichletCharacter.completedLFunction χ) s -
                 logDeriv (DirichletCharacter.completedLFunction χ) 0) -
-              completedLFunctionTruncatedGenusSum
-                χ R s) +
-            completedLFunctionTruncatedGenusSum
-              χ R s‖ :=
+              completedLFunctionTruncatedGenusSum χ R s) +
+            completedLFunctionTruncatedGenusSum χ R s‖ :=
       by ring_nf
     _ ≤
         ‖(logDeriv (DirichletCharacter.completedLFunction χ) s -
                 logDeriv (DirichletCharacter.completedLFunction χ) 0) -
-              completedLFunctionTruncatedGenusSum
-                χ R s‖ +
-          ‖completedLFunctionTruncatedGenusSum χ
-              R s‖ :=
+              completedLFunctionTruncatedGenusSum χ R s‖ +
+          ‖completedLFunctionTruncatedGenusSum χ R s‖ :=
       norm_add_le _ _
     _ ≤ _ := add_le_add hH9e hGenus
 
@@ -963,16 +880,11 @@ Role: a finite-ledger bound supplying the truncated genus sum's own derivative-n
 to isolate `(logDeriv F)'(0)` via a slope estimate.
 -/
 theorem exists_hasDerivAt_completedLFunctionTruncatedGenusSum_zero_norm_le {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic)
     (hN2 : 2 ≤ N) {R : ℝ} (_hR : 0 < R) :
     ∃ D : ℂ,
-      HasDerivAt
-          (completedLFunctionTruncatedGenusSum χ
-            R)
-          D 0 ∧
-        ‖D‖ ≤ 2 * |primitiveBRe χ| := by
+      HasDerivAt (completedLFunctionTruncatedGenusSum χ R) D 0 ∧ ‖D‖ ≤ 2 * |primitiveBRe χ| := by
   have hdiff := DirichletCharacter.differentiable_completedLFunction hne
   have hanalyticClosed :
     AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) (Metric.closedBall (0 : ℂ) R) :=
@@ -983,15 +895,13 @@ theorem exists_hasDerivAt_completedLFunctionTruncatedGenusSum_zero_norm_le {N : 
   have hfin : (Function.support Dv).Finite :=
     hanalyticClosed.meromorphicOn.divisor_ball_support_finite
   have h0ne : DirichletCharacter.completedLFunction χ 0 ≠ 0 :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hprimitive hne
+    dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have hkey : ∀ u ∈ hfin.toFinset, u ∈ Metric.ball (0 : ℂ) R ∧ u ≠ 0 := by
     intro u hu
     rw [Set.Finite.mem_toFinset] at hu
     exact
       ⟨Dv.supportWithinDomain hu,
-        ne_of_mem_divisorBallSupport_of_completedLFunction_ne_zero
-          hne hu h0ne⟩
+        ne_of_mem_divisorBallSupport_of_completedLFunction_ne_zero hne hu h0ne⟩
   have hsub :
     ∀ s : ℂ,
       Function.support (fun ρ : ℂ => ((Dv ρ : ℤ) : ℂ) * (1 / (s - ρ) + 1 / ρ)) ⊆ hfin.toFinset := by
@@ -1003,11 +913,10 @@ theorem exists_hasDerivAt_completedLFunctionTruncatedGenusSum_zero_norm_le {N : 
     rw [hDu0]
     simp only [Int.cast_zero, one_div, zero_mul]
   have heq :
-    completedLFunctionTruncatedGenusSum χ R =
-      fun s : ℂ => ∑ ρ ∈ hfin.toFinset, ((Dv ρ : ℤ) : ℂ) * (1 / (s - ρ) + 1 / ρ) := by
+    completedLFunctionTruncatedGenusSum χ R = fun s : ℂ =>
+      ∑ ρ ∈ hfin.toFinset, ((Dv ρ : ℤ) : ℂ) * (1 / (s - ρ) + 1 / ρ) := by
     funext s
-    rw [completedLFunctionTruncatedGenusSum,
-      finsum_eq_sum_of_support_subset _ (hsub s)]
+    rw [completedLFunctionTruncatedGenusSum, finsum_eq_sum_of_support_subset _ (hsub s)]
   set D : ℂ := ∑ ρ ∈ hfin.toFinset, ((Dv ρ : ℤ) : ℂ) * (-(1 / ρ ^ 2)) with hD_def
   refine ⟨D, ?_, ?_⟩
   · rw [heq]
@@ -1047,8 +956,7 @@ theorem exists_hasDerivAt_completedLFunctionTruncatedGenusSum_zero_norm_le {N : 
       obtain ⟨hρball, _⟩ := hkey ρ hρ
       have hDeq :
         Dv ρ = MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ := by
-        rw [hDv_def,
-          divisor_ball_eq_if_univ hne,
+        rw [hDv_def, divisor_ball_eq_if_univ hne,
           ite_eq_left (by rwa [Metric.mem_ball, dist_zero_right] at hρball)]
       have hanalyticUniv : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ :=
         fun z _ => hdiff.analyticAt z
@@ -1102,31 +1010,24 @@ Content: triangle inequality combining
 Role: a fixed-`R` bound, ready for `R → ∞` along a good-radius sequence.
 -/
 theorem norm_deriv_logDeriv_completedLFunction_zero_le {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic)
     (hN2 : 2 ≤ N) {R : ℝ} (hR : 1 ≤ R)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0) :
     ‖deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0‖ ≤
-      completedLFunctionH9eSlopeError χ R +
-        2 * |primitiveBRe χ| := by
+      completedLFunctionH9eSlopeError χ R + 2 * |primitiveBRe χ| := by
   have hN1 : 1 < N := by omega
   obtain ⟨D, hD, hDnorm⟩ :=
     exists_hasDerivAt_completedLFunctionTruncatedGenusSum_zero_norm_le hGRH hprimitive hne hinv
       hquad hN2 (show (0 : ℝ) < R by linarith)
-  have hsub :=
-    norm_deriv_logDeriv_completedLFunction_zero_sub_le
-      hN1 hprimitive hne hinv hR hzf hD
+  have hsub := norm_deriv_logDeriv_completedLFunction_zero_sub_le hN1 hprimitive hne hinv hR hzf hD
   calc
     ‖deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0‖ ≤
         ‖deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0 - D‖ + ‖D‖ :=
       by
       have := norm_add_le (deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0 - D) D
       simpa only [ge_iff_le, sub_add_cancel] using this
-    _ ≤
-        completedLFunctionH9eSlopeError χ R +
-          2 * |primitiveBRe χ| :=
-      add_le_add hsub hDnorm
+    _ ≤ completedLFunctionH9eSlopeError χ R + 2 * |primitiveBRe χ| := add_le_add hsub hDnorm
 
 /--
 Input/assumptions: GRH, `2 ≤ N`, primitive nontrivial quadratic `χ`, `hinv`.
@@ -1141,49 +1042,33 @@ identity `(logDeriv F)'(0) = -Σ_ρ m_ρ/ρ²` — only the triangle-inequality 
 public API.
 -/
 theorem norm_deriv_logDeriv_completedLFunction_zero_le_two_mul_abs_BRe {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic)
     (hN2 : 2 ≤ N) :
-    ‖deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0‖ ≤
-      2 * |primitiveBRe χ| := by
-  have htendError :=
-    tendsto_completedLFunctionH9eSlopeError_atTop
-      hN2 hprimitive hne hinv
-  have htendComp :=
-    htendError.comp
-      (tendsto_completedLFunctionGoodRadius_atTop
-        hne)
+    ‖deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0‖ ≤ 2 * |primitiveBRe χ| := by
+  have htendError := tendsto_completedLFunctionH9eSlopeError_atTop hN2 hprimitive hne hinv
+  have htendComp := htendError.comp (tendsto_completedLFunctionGoodRadius_atTop hne)
   have htendSum :
     Filter.Tendsto
       (fun n : ℕ =>
-        completedLFunctionH9eSlopeError χ
-            (completedLFunctionGoodRadius hne
-              n) +
+        completedLFunctionH9eSlopeError χ (completedLFunctionGoodRadius hne n) +
           2 * |primitiveBRe χ|)
-      Filter.atTop
-      (nhds (0 + 2 * |primitiveBRe χ|)) :=
+      Filter.atTop (nhds (0 + 2 * |primitiveBRe χ|)) :=
     htendComp.add tendsto_const_nhds
   simp only [zero_add] at htendSum
   have hev :
     ∀ᶠ n : ℕ in Filter.atTop,
       ‖deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0‖ ≤
-        completedLFunctionH9eSlopeError χ
-            (completedLFunctionGoodRadius hne
-              n) +
+        completedLFunctionH9eSlopeError χ (completedLFunctionGoodRadius hne n) +
           2 * |primitiveBRe χ| := by
     filter_upwards with n
-    have hRgt :=
-      completedLFunctionGoodRadius_gt hne n
-    have hR1 :
-      (1 : ℝ) ≤
-        completedLFunctionGoodRadius hne n := by
+    have hRgt := completedLFunctionGoodRadius_gt hne n
+    have hR1 : (1 : ℝ) ≤ completedLFunctionGoodRadius hne n := by
       have hnnn : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
       linarith
     exact
       norm_deriv_logDeriv_completedLFunction_zero_le hGRH hprimitive hne hinv hquad hN2 hR1
-        (completedLFunctionGoodRadius_zeroFree
-          hne n)
+        (completedLFunctionGoodRadius_zeroFree hne n)
   exact ge_of_tendsto htendSum hev
 
 /--
@@ -1194,12 +1079,10 @@ Content: `-Re(z) ≤ ‖-z‖ = ‖z‖` (`Complex.re_le_norm`), then
 Role: a real-part corollary of the derivative-norm bound at the origin.
 -/
 theorem neg_re_deriv_logDeriv_completedLFunction_zero_le {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic)
     (hN2 : 2 ≤ N) :
-    -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re ≤
-      2 * |primitiveBRe χ| := by
+    -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re ≤ 2 * |primitiveBRe χ| := by
   have hnormBound :=
     norm_deriv_logDeriv_completedLFunction_zero_le_two_mul_abs_BRe hGRH hprimitive hne hinv hquad
       hN2
@@ -1220,23 +1103,17 @@ Role: the `s = 0` completed-`L` endpoint real part, common to both parities of a
 form built from it.
 -/
 theorem completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     (logDeriv (DirichletCharacter.completedLFunction χ) 0).re =
-      -|primitiveBRe χ| -
-        (1 / 2) * Real.log N := by
+      -|primitiveBRe χ| - (1 / 2) * Real.log N := by
   have hB := primitiveBRe_eq_neg_zeroMass_isQuadratic hN2 hGRH hprimitive hne hinv hquad
   have habs := abs_primitiveBRe_eq_zeroMass_isQuadratic hN2 hGRH hprimitive hne hinv hquad
-  have hBneg :
-    primitiveBRe χ =
-      -|primitiveBRe χ| := by
-    rw [habs, hB]
+  have hBneg : primitiveBRe χ = -|primitiveBRe χ| := by rw [habs, hB]
   have hBRe :
     primitiveBRe χ =
       (logDeriv (DirichletCharacter.completedLFunction χ) 0).re + (1 / 2) * Real.log N := by
-    rw [primitiveBRe,
-      (hprimitive : χ.conductor = N)]
+    rw [primitiveBRe, (hprimitive : χ.conductor = N)]
   rw [hBneg] at hBRe
   linarith [hBRe]
 
@@ -1250,15 +1127,11 @@ Role: the `s = 1` completed-`L` endpoint real part, common to both parities of a
 form built from it.
 -/
 theorem completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) :
     (logDeriv (DirichletCharacter.completedLFunction χ) 1).re =
-      |primitiveBRe χ| -
-        (1 / 2) * Real.log N := by
-  have hF0ne :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hprimitive hne
+      |primitiveBRe χ| - (1 / 2) * Real.log N := by
+  have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have hFE :=
     completedLFunction_logDeriv_functionalEquation_isQuadratic_at hprimitive hne hquad hF0ne
   rw [sub_zero] at hFE

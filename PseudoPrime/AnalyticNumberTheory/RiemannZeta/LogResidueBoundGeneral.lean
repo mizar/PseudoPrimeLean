@@ -20,15 +20,11 @@ theorem re_riemannZetaLogContourResidueLedger_unifiedTau_ge_of_riemannHypothesis
     (hRH : RiemannHypothesis) {x τ : ℝ} (hx : 1 < x) (hτ : 1 < τ) (m : ℕ) :
     x - Real.log (2 * Real.pi) * Real.log x - 1 -
         2 * RiemannXi.riemannZeroMass * (Real.sqrt x + 1) ≤
-      (riemannZetaLogContourResidueLedger x
-          (unifiedRectangleLower m)
+      (riemannZetaLogContourResidueLedger x (unifiedRectangleLower m)
           (unifiedTauRectangleUpper τ m)).re := by
   have hxpos : 0 < x := by linarith
-  rw [riemannZetaLogContourResidueLedger_unifiedTau_eq
-      hτ,
-    Complex.add_re, Complex.add_re,
-    riemannZetaLogResidueAtZero_eq hxpos,
-    riemannZetaLogResidueAtOne_eq]
+  rw [riemannZetaLogContourResidueLedger_unifiedTau_eq hτ, Complex.add_re, Complex.add_re,
+    riemannZetaLogResidueAtZero_eq hxpos, riemannZetaLogResidueAtOne_eq]
   have hre0 :
     (-RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero -
           Complex.log (2 * Real.pi) * Complex.log x).re =
@@ -44,16 +40,10 @@ theorem re_riemannZetaLogContourResidueLedger_unifiedTau_ge_of_riemannHypothesis
   rw [hre0, hre1]
   unfold riemannZetaLogContourZeroLedger
   have hzero_ledger :=
-    re_sum_riemannZetaLogZeroContribution_ge_of_riemannHypothesis
-      hRH hx
-      (riemannZetaZerosInAnyRectangle
-        (unifiedRectangleLower m)
-        (unifiedTauRectangleUpper τ m))
-      (fun ρ hρ =>
-        (mem_riemannZetaZerosInAnyRectangle_iff.mp
-            hρ).2)
-  have hq :=
-    RiemannXi.re_qMinusOne_add_logTrivialZeroSeries_le hRH hx
+    re_sum_riemannZetaLogZeroContribution_ge_of_riemannHypothesis hRH hx
+      (riemannZetaZerosInAnyRectangle (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m))
+      (fun ρ hρ => (mem_riemannZetaZerosInAnyRectangle_iff.mp hρ).2)
+  have hq := RiemannXi.re_qMinusOne_add_logTrivialZeroSeries_le hRH hx
   linarith [hzero_ledger, hq]
 
 /-- **The `τ = 2` case of the vertical-integral lower bound (logarithmic kernel), under RH.**
@@ -65,13 +55,10 @@ theorem re_integral_riemannZetaLogContourKernel_two_ge_of_riemannHypothesis
     x - Real.log (2 * Real.pi) * Real.log x - 1 -
         2 * RiemannXi.riemannZeroMass * (Real.sqrt x + 1) ≤
       ((2 * Real.pi : ℝ)⁻¹ •
-          ∫ y : ℝ,
-            riemannZetaLogContourKernel x
-              ((2 : ℂ) + (y : ℂ) * Complex.I)).re := by
+          ∫ y : ℝ, riemannZetaLogContourKernel x ((2 : ℂ) + (y : ℂ) * Complex.I)).re := by
   apply General.re_inv_two_pi_smul_ge_of_tendsto_residueLedger
   · simpa only [Complex.ofReal_mul, Complex.ofReal_ofNat, smul_eq_mul] using
-      tendsto_riemannZetaLogContourResidueLedger_atTop
-        hx (by norm_num only) le_rfl
+      tendsto_riemannZetaLogContourResidueLedger_atTop hx (by norm_num only) le_rfl
   · intro m
     exact
       re_riemannZetaLogContourResidueLedger_unifiedTau_ge_of_riemannHypothesis hRH hx

@@ -28,8 +28,7 @@ prime divisor with the same `-1` value.
 theorem exists_smaller_odd_prime_of_jacobi_eq_neg_one {r m : ℕ} (hmpos : 0 < m) (hmlt : m < r)
     (hmodd : Odd m) (hvalue : jacobiSym r m = -1) :
     ∃ q : ℕ, q.Prime ∧ Odd q ∧ q < r ∧ jacobiSym r q = -1 := by
-  obtain ⟨q, hqprime, hqdvd, hqvalue⟩ :=
-    exists_prime_dvd_jacobi_eq_neg_one hvalue
+  obtain ⟨q, hqprime, hqdvd, hqvalue⟩ := exists_prime_dvd_jacobi_eq_neg_one hvalue
   have hqle : q ≤ m := Nat.le_of_dvd hmpos hqdvd
   exact ⟨q, hqprime, hmodd.of_dvd_nat hqdvd, hqle.trans_lt hmlt, hqvalue⟩
 

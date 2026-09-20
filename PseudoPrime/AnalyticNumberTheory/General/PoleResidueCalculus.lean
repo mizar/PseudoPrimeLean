@@ -74,12 +74,8 @@ theorem exists_circle_of_eventuallyEq_mul_sub {f g : ℂ → ℂ} {c : ℂ} (hg 
 theorem exists_circleIntegral_eq_two_pi_I_mul {f g : ℂ → ℂ} {c : ℂ} (hg : AnalyticAt ℂ g c)
     (heq : Filter.EventuallyEq (nhdsWithin c ({c}ᶜ : Set ℂ)) (fun z ↦ (z - c) * f z) g) :
     ∃ R : ℝ, 0 < R ∧ (∮ z in C(c, R), f z) = 2 * Real.pi * Complex.I * g c := by
-  obtain ⟨R, hR, hgdifferentiable, heqsphere⟩ :=
-    exists_circle_of_eventuallyEq_mul_sub hg heq
-  exact
-    ⟨R, hR,
-      circleIntegral_eq_two_pi_I_mul_of_mul_sub_eq hR
-        hgdifferentiable heqsphere⟩
+  obtain ⟨R, hR, hgdifferentiable, heqsphere⟩ := exists_circle_of_eventuallyEq_mul_sub hg heq
+  exact ⟨R, hR, circleIntegral_eq_two_pi_I_mul_of_mul_sub_eq hR hgdifferentiable heqsphere⟩
 
 /-- A simple-pole circle formula remains valid after every positive radius shrink. -/
 theorem exists_radius_forall_circleIntegral_eq_two_pi_I_mul {f g : ℂ → ℂ} {c : ℂ}
@@ -153,10 +149,7 @@ theorem exists_circleIntegral_eq_two_pi_I_mul_deriv {f g : ℂ → ℂ} {c : ℂ
     intro hzc
     rw [hzc, Metric.mem_sphere, dist_self] at hz
     exact hR.ne' hz.symm
-  exact
-    ⟨R, hR,
-      circleIntegral_eq_two_pi_I_mul_deriv_of_sq_mul_sub_eq
-        hR hgdifferentiable heqsphere⟩
+  exact ⟨R, hR, circleIntegral_eq_two_pi_I_mul_deriv_of_sq_mul_sub_eq hR hgdifferentiable heqsphere⟩
 
 /--
 Input/assumptions: a positive circle radius, an analytic regular part, and a triple-pole identity.
@@ -201,12 +194,9 @@ theorem exists_circleIntegral_eq_two_pi_I_div_two_mul_iteratedDeriv_two {f g : �
       g := by
     filter_upwards [heq] with z hz
     simpa only [pow_succ, pow_zero, one_mul, mul_assoc] using hz
-  obtain ⟨R, hR, hdiff, hsphere⟩ :=
-    exists_circle_of_eventuallyEq_mul_sub hg heq'
+  obtain ⟨R, hR, hdiff, hsphere⟩ := exists_circle_of_eventuallyEq_mul_sub hg heq'
   refine ⟨R, hR, ?_⟩
-  apply
-    circleIntegral_eq_two_pi_I_div_two_mul_iteratedDeriv_two_of_cube_mul_sub_eq
-      hR hdiff
+  apply circleIntegral_eq_two_pi_I_div_two_mul_iteratedDeriv_two_of_cube_mul_sub_eq hR hdiff
   intro z hz
   simpa only [pow_succ, pow_zero, one_mul, mul_assoc] using hsphere z hz
 
@@ -231,9 +221,7 @@ theorem exists_radius_forall_circleIntegral_eq_two_pi_I_mul_deriv {f g : ℂ →
   intro r hr hrR
   have hrg' : r < rg := hrR.trans_lt hRrg
   have hre' : r < re := hrR.trans_lt hRre
-  apply
-    circleIntegral_eq_two_pi_I_mul_deriv_of_sq_mul_sub_eq
-      hr
+  apply circleIntegral_eq_two_pi_I_mul_deriv_of_sq_mul_sub_eq hr
   · exact hganalytic.differentiableOn.mono (Metric.closedBall_subset_ball hrg')
   · intro z hz
     apply hball (Metric.closedBall_subset_ball hre' (Metric.sphere_subset_closedBall hz))
@@ -248,10 +236,7 @@ This is the analytic remainder used in the cubic Laurent square adapter.
 -/
 theorem analyticAt_dslope_dslope_dslope {h : ℂ → ℂ} {c : ℂ} (hh : AnalyticAt ℂ h c) :
     AnalyticAt ℂ (dslope (dslope (dslope h c) c) c) c := by
-  exact
-    AnalyticAt.dslope
-      (AnalyticAt.dslope
-        (AnalyticAt.dslope hh))
+  exact AnalyticAt.dslope (AnalyticAt.dslope (AnalyticAt.dslope hh))
 
 /--
 Away from the base point, the third divided slope is the cubic Taylor remainder divided by

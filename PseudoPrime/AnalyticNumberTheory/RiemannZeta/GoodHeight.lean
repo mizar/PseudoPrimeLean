@@ -32,8 +32,8 @@ theorem exists_avoiding_point {S : Finset ℝ} {c a : ℝ} (hc : 0 < c) (hlen : 
     simp only [Set.mem_iUnion]
     rw [abs_lt] at hy
     exact ⟨y, hyS, by constructor <;> linarith [hy.1, hy.2]⟩
-  have hsum_eq : ∑ y ∈ S,
-    MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) * S.card := by
+  have hsum_eq :
+    ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) * S.card := by
     have hterm : ∀ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) :=
       fun y _ => by
       rw [Real.volume_Ioo]; congr 1; ring
@@ -63,8 +63,8 @@ theorem exists_avoiding_point_length {S : Finset ℝ} {c a L : ℝ} (hc : 0 < c)
     simp only [Set.mem_iUnion]
     rw [abs_lt] at hy
     exact ⟨y, hyS, by constructor <;> linarith [hy.1, hy.2]⟩
-  have hsum_eq : ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) =
-      ENNReal.ofReal (2 * c) * S.card := by
+  have hsum_eq :
+    ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) * S.card := by
     have hterm : ∀ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) :=
       fun y _ => by
       rw [Real.volume_Ioo]
@@ -95,8 +95,7 @@ theorem riemannZeta_zero_re_nonneg_of_im_ne_zero {ρ : ℂ} (hζ : riemannZeta �
   push Not at h
   apply him
   by_cases hnt : ∀ n : ℕ, ρ ≠ -2 * (n + 1)
-  · exact
-      absurd hζ (riemannZeta_ne_zero_of_re_neg h hnt)
+  · exact absurd hζ (riemannZeta_ne_zero_of_re_neg h hnt)
   · push Not at hnt
     obtain ⟨n, hn⟩ := hnt
     rw [hn]
@@ -114,24 +113,16 @@ radius `37/10` around `PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter
 (the same disk `PseudoPrime.AnalyticNumberTheory.RiemannZeta.finsum_divisor_riemannZeta_le_explicit`
 counts zeros in). -/
 theorem riemannZeta_zero_mem_jensenBall {H : ℝ} (hH : 8 ≤ H) {ρ : ℂ} (hζ : riemannZeta ρ = 0)
-    (him : |ρ.im - H| ≤ 2) :
-    ρ ∈
-      Metric.closedBall (jensenCenter H)
-        (37 / 10) := by
+    (him : |ρ.im - H| ≤ 2) : ρ ∈ Metric.closedBall (jensenCenter H) (37 / 10) := by
   have himpos : (0 : ℝ) < ρ.im := by
     have h1 := (abs_le.mp him).1
     linarith
-  have hre0 : 0 ≤ ρ.re :=
-    riemannZeta_zero_re_nonneg_of_im_ne_zero hζ himpos.ne'
+  have hre0 : 0 ≤ ρ.re := riemannZeta_zero_re_nonneg_of_im_ne_zero hζ himpos.ne'
   have hre1 : ρ.re ≤ 1 := riemannZeta_zero_re_le_one hζ
   simp only [Metric.mem_closedBall, dist_eq_norm]
   rw [Complex.norm_eq_sqrt_sq_add_sq]
-  have hre_eq :
-    (ρ - jensenCenter H).re = ρ.re - 3 := by
-    simp only [Complex.sub_re, jensenCenter_re]
-  have him_eq :
-    (ρ - jensenCenter H).im = ρ.im - H := by
-    simp only [Complex.sub_im, jensenCenter_im]
+  have hre_eq : (ρ - jensenCenter H).re = ρ.re - 3 := by simp only [Complex.sub_re, jensenCenter_re]
+  have him_eq : (ρ - jensenCenter H).im = ρ.im - H := by simp only [Complex.sub_im, jensenCenter_im]
   rw [hre_eq, him_eq]
   rw [show (37 / 10 : ℝ) = Real.sqrt ((37 / 10) ^ 2) from (Real.sqrt_sq (by norm_num only)).symm]
   apply Real.sqrt_le_sqrt
@@ -144,25 +135,18 @@ theorem riemannZeta_zero_mem_jensenBall {H : ℝ} (hH : 8 ≤ H) {ρ : ℂ} (hζ
 /-- The finite set of ordinates of zeros of `ζ` inside the Jensen disk around
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter H`. -/
 noncomputable def zeroOrdinatesNear (H : ℝ) : Finset ℝ :=
-  ((MeromorphicOn.divisor riemannZeta
-            (Metric.closedBall (jensenCenter H)
-              (37 / 10))).finiteSupport
+  ((MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10))).finiteSupport
         (isCompact_closedBall _ _)).toFinset.image
     Complex.im
 
 theorem card_zeroOrdinatesNear_le {H : ℝ} (hH : 8 ≤ H) :
     (zeroOrdinatesNear H).card ≤
-      ((∑ᶠ u,
-            MeromorphicOn.divisor riemannZeta
-              (Metric.closedBall (jensenCenter H)
-                (37 / 10))
-              u :
+      ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
           ℤ) :
         ℝ) := by
   set U := Metric.closedBall (jensenCenter H) (37 / 10)
   have hAn : AnalyticOnNhd ℂ riemannZeta U :=
-    (jensen_analyticOnNhd
-          (by linarith only [hH] : (4 : ℝ) ≤ H)).mono
+    (jensen_analyticOnNhd (by linarith only [hH] : (4 : ℝ) ≤ H)).mono
       (Metric.closedBall_subset_closedBall (by norm_num only))
   have hfin := (MeromorphicOn.divisor riemannZeta U).finiteSupport (isCompact_closedBall _ _)
   have hdiv_pos : ∀ u ∈ hfin.toFinset, (1 : ℤ) ≤ MeromorphicOn.divisor riemannZeta U u := by
@@ -193,49 +177,29 @@ theorem card_zeroOrdinatesNear_le {H : ℝ} (hH : 8 ≤ H) :
 the (preconnected) disk and nonzero at the center, the identity theorem rules out `ζ` vanishing
 identically near any interior point. -/
 theorem riemannZeta_analyticOrderAt_ne_top {H : ℝ} (hH : 4 ≤ H) {u : ℂ}
-    (hu :
-      u ∈
-        Metric.closedBall (jensenCenter H) (37 / 10)) :
+    (hu : u ∈ Metric.closedBall (jensenCenter H) (37 / 10)) :
     analyticOrderAt riemannZeta u ≠ ⊤ := by
   intro htop
-  have hAn :
-    AnalyticOnNhd ℂ riemannZeta
-      (Metric.closedBall (jensenCenter H) (37 / 10)) :=
-    (jensen_analyticOnNhd hH).mono
-      (Metric.closedBall_subset_closedBall (by norm_num only))
-  have hUconv :
-    IsPreconnected
-      (Metric.closedBall (jensenCenter H) (37 / 10)) :=
+  have hAn : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) :=
+    (jensen_analyticOnNhd hH).mono (Metric.closedBall_subset_closedBall (by norm_num only))
+  have hUconv : IsPreconnected (Metric.closedBall (jensenCenter H) (37 / 10)) :=
     (convex_closedBall _ _).isPreconnected
-  have hcenter :
-    jensenCenter H ∈
-      Metric.closedBall (jensenCenter H) (37 / 10) :=
+  have hcenter : jensenCenter H ∈ Metric.closedBall (jensenCenter H) (37 / 10) :=
     Metric.mem_closedBall_self (by norm_num only)
-  have heq0 :
-    Set.EqOn riemannZeta 0
-      (Metric.closedBall (jensenCenter H) (37 / 10)) :=
+  have heq0 : Set.EqOn riemannZeta 0 (Metric.closedBall (jensenCenter H) (37 / 10)) :=
     hAn.eqOn_zero_of_preconnected_of_eventuallyEq_zero hUconv hu (analyticOrderAt_eq_top.mp htop)
   exact jensen_center_ne_zero H (heq0 hcenter)
 
 /-- Any zero of `ζ` inside the Jensen disk is genuinely counted by `divisor` (order ≠ 0, ≠ ⊤). -/
 theorem riemannZeta_zero_mem_divisorSupport {H : ℝ} (hH : 4 ≤ H) {u : ℂ}
-    (hu :
-      u ∈ Metric.closedBall (jensenCenter H) (37 / 10))
-    (hζ : riemannZeta u = 0) :
-    MeromorphicOn.divisor riemannZeta
-        (Metric.closedBall (jensenCenter H) (37 / 10))
-        u ≠
-      0 := by
-  have hAn :
-    AnalyticOnNhd ℂ riemannZeta
-      (Metric.closedBall (jensenCenter H) (37 / 10)) :=
-    (jensen_analyticOnNhd hH).mono
-      (Metric.closedBall_subset_closedBall (by norm_num only))
+    (hu : u ∈ Metric.closedBall (jensenCenter H) (37 / 10)) (hζ : riemannZeta u = 0) :
+    MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u ≠ 0 := by
+  have hAn : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) :=
+    (jensen_analyticOnNhd hH).mono (Metric.closedBall_subset_closedBall (by norm_num only))
   have hordne0 : analyticOrderAt riemannZeta u ≠ 0 := by
     rw [Ne, (hAn u hu).analyticOrderAt_eq_zero]
     exact fun h => h hζ
-  have hordnetop : analyticOrderAt riemannZeta u ≠ ⊤ :=
-    riemannZeta_analyticOrderAt_ne_top hH hu
+  have hordnetop : analyticOrderAt riemannZeta u ≠ ⊤ := riemannZeta_analyticOrderAt_ne_top hH hu
   have hmap_eq_top_iff :
     ENat.map (Nat.cast : ℕ → ℤ) (analyticOrderAt riemannZeta u) = (⊤ : WithTop ℤ) ↔
       analyticOrderAt riemannZeta u = ⊤ := by
@@ -251,65 +215,39 @@ theorem exists_good_height {H : ℝ} (hH : 8 ≤ H) :
     ∃ T ∈ Set.Icc H (H + 1),
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 →
-          1 / (4 * jensenLogConst * Real.log (H + 2)) ≤
-            |T - ρ.im| := by
+          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im| := by
   have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith only [hH])
   have hLCpos : (0 : ℝ) < jensenLogConst := by
     unfold jensenLogConst
-    have h1 :
-      (0 : ℝ) ≤
-        Real.log
-          (9 + 8 * sawtoothRemainderBound (-9 / 10)) :=
-      Real.log_nonneg
-        (by
-          linarith [sawtoothRemainderBound_nonneg
-              (-9 / 10)])
+    have h1 : (0 : ℝ) ≤ Real.log (9 + 8 * sawtoothRemainderBound (-9 / 10)) :=
+      Real.log_nonneg (by linarith [sawtoothRemainderBound_nonneg (-9 / 10)])
     have h2 : (0 : ℝ) < Real.log 10 := Real.log_pos (by norm_num only)
     have h3 : (0 : ℝ) < Real.log (39 / 37) := Real.log_pos (by norm_num only)
     positivity
-  set c : ℝ :=
-    1 / (4 * jensenLogConst * Real.log (H + 2)) with
-    hc_def
+  set c : ℝ := 1 / (4 * jensenLogConst * Real.log (H + 2)) with hc_def
   have hc_pos : 0 < c := by positivity
-  have hlenbound :
-    2 * c * (zeroOrdinatesNear H).card < 1 := by
+  have hlenbound : 2 * c * (zeroOrdinatesNear H).card < 1 := by
     have hcard_le := card_zeroOrdinatesNear_le hH
-    have hexplicit :=
-      finsum_divisor_riemannZeta_le_explicit hH
-    have hcard_le' :
-      ((zeroOrdinatesNear H).card : ℝ) ≤
-        jensenLogConst * Real.log (H + 2) :=
+    have hexplicit := finsum_divisor_riemannZeta_le_explicit hH
+    have hcard_le' : ((zeroOrdinatesNear H).card : ℝ) ≤ jensenLogConst * Real.log (H + 2) :=
       hcard_le.trans hexplicit
-    have hLpos :
-      (0 : ℝ) < jensenLogConst * Real.log (H + 2) := by
-      positivity
+    have hLpos : (0 : ℝ) < jensenLogConst * Real.log (H + 2) := by positivity
     calc
-      2 * c * (zeroOrdinatesNear H).card ≤
-          2 * c *
-            (jensenLogConst * Real.log (H + 2)) :=
+      2 * c * (zeroOrdinatesNear H).card ≤ 2 * c * (jensenLogConst * Real.log (H + 2)) :=
         mul_le_mul_of_nonneg_left hcard_le' (by positivity)
       _ = 1 / 2 := by
         rw [hc_def]; field_simp; norm_num only
       _ < 1 := by norm_num only
-  obtain ⟨T, hT, hTgood⟩ :=
-    exists_avoiding_point hc_pos hlenbound
+  obtain ⟨T, hT, hTgood⟩ := exists_avoiding_point hc_pos hlenbound
   refine ⟨T, hT, fun ρ hζ him => ?_⟩
-  have hmem :
-    ρ ∈ Metric.closedBall (jensenCenter H) (37 / 10) :=
+  have hmem : ρ ∈ Metric.closedBall (jensenCenter H) (37 / 10) :=
     riemannZeta_zero_mem_jensenBall hH hζ him
   have hordne :
-    MeromorphicOn.divisor riemannZeta
-        (Metric.closedBall (jensenCenter H) (37 / 10))
-        ρ ≠
-      0 :=
-    riemannZeta_zero_mem_divisorSupport
-      (by linarith only [hH]) hmem hζ
+    MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) ρ ≠ 0 :=
+    riemannZeta_zero_mem_divisorSupport (by linarith only [hH]) hmem hζ
   have hsupp :
     ρ ∈
-      (MeromorphicOn.divisor riemannZeta
-          (Metric.closedBall (jensenCenter H)
-            (37 / 10))).support :=
+      (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10))).support :=
     hordne
   have himmem : ρ.im ∈ zeroOrdinatesNear H := by
     unfold zeroOrdinatesNear

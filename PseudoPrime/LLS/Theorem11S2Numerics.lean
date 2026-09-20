@@ -23,19 +23,19 @@ theorem theorem11S2_two_le_log {y : ℝ} (hy : 8 ≤ y) : 2 ≤ Real.log y := by
 On `[8,12]` use `log y ≥ 2`; above `12` use the certified lower bound `247/100`.
 The result retains the paper's saving `4/7`. -/
 theorem theorem11S2_zeroMass_numerator_le {y : ℝ} (hy : 8 ≤ y) :
-    1 / 2 * y - 2 * Real.log y + 17 / 20 ≤
-      (1 / 2 * y - Real.log y - 4 / 7) * (1 - 1 / y) ^ 2 := by
+    1 / 2 * y - 2 * Real.log y + 17 / 20 ≤ (1 / 2 * y - Real.log y - 4 / 7) * (1 - 1 / y) ^ 2 := by
   have hypos : 0 < y := lt_of_lt_of_le (by norm_num only) hy
   have hL := theorem11S2_two_le_log hy
   apply le_of_mul_le_mul_right _ (sq_pos_of_pos hypos)
   field_simp
   by_cases hy12 : y ≤ 12
   · nlinarith only [mul_nonneg (sub_nonneg.mpr hL)
-      (show 0 ≤ y ^ 2 + 2 * y - 1 by nlinarith only [sq_nonneg y, hy]),
+        (show 0 ≤ y ^ 2 + 2 * y - 1 by nlinarith only [sq_nonneg y, hy]),
       mul_nonneg hypos.le (sub_nonneg.mpr hy12), hy]
   · have hl := (Analysis.log_ge_twelve_lower (le_of_not_ge hy12)).le
     nlinarith only [mul_nonneg (sub_nonneg.mpr hl)
-      (show 0 ≤ y ^ 2 + 2 * y - 1 by nlinarith only [sq_nonneg y, hy]), sq_nonneg y, hy]
+        (show 0 ≤ y ^ 2 + 2 * y - 1 by nlinarith only [sq_nonneg y, hy]),
+      sq_nonneg y, hy]
 
 /-- The common reciprocal estimate with zero defect implies the paper's bound for `b`.
 The conductor logarithm is bounded by `y-1`; only nonnegative coefficients are relaxed.
@@ -47,14 +47,14 @@ theorem theorem11S2_zeroMass_le {y F R b : ℝ} (hy : 8 ≤ y) (hF : F ≤ y - 1
   have hypos : 0 < y := lt_of_lt_of_le (by norm_num only) hy
   have hsq : 1 ≤ y ^ 2 := by nlinarith only [hy]
   have hfac : 0 ≤ 1 - 1 / y ^ 2 := sub_nonneg.mpr ((div_le_one₀ (sq_pos_of_pos hypos)).mpr hsq)
-  have hmul := mul_le_mul_of_nonneg_left hF
-    (mul_nonneg (show (0 : ℝ) ≤ 1 / 2 by norm_num only) hfac)
-  have hdrop := mul_le_mul_of_nonneg_right
-    (sub_le_self 1 (show 0 ≤ 1 / y ^ 2 by positivity))
-    (show 0 ≤ y - 1 by linarith only [hy])
+  have hmul :=
+    mul_le_mul_of_nonneg_left hF (mul_nonneg (show (0 : ℝ) ≤ 1 / 2 by norm_num only) hfac)
+  have hdrop :=
+    mul_le_mul_of_nonneg_right (sub_le_self 1 (show 0 ≤ 1 / y ^ 2 by positivity))
+      (show 0 ≤ y - 1 by linarith only [hy])
   have hnum := theorem11S2_zeroMass_numerator_le hy
-  have hden : 0 < (1 - 1 / y) ^ 2 := sq_pos_of_pos
-    (sub_pos.mpr ((div_lt_one hypos).mpr (lt_of_lt_of_le (by norm_num only) hy)))
+  have hden : 0 < (1 - 1 / y) ^ 2 :=
+    sq_pos_of_pos (sub_pos.mpr ((div_lt_one hypos).mpr (lt_of_lt_of_le (by norm_num only) hy)))
   apply le_of_mul_le_mul_left _ hden
   nlinarith only [hb, hmul, hdrop, hR, hnum]
 
@@ -75,11 +75,12 @@ Certified constants `β ≤ 1/16` and `log(2π) < 1839/1000` preserve a strict g
 theorem theorem11S2_upper_lt_riemann_lower {y : ℝ} (hy : 8 ≤ y) :
     y ^ 2 - y / 7 - 4 * Real.log y - 8 / 7 < riemannLogLowerAt (y ^ 2) := by
   have hL := theorem11S2_two_le_log hy
-  have hm := mul_le_mul_of_nonneg_right
-    AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_one_sixteenth
-    (show 0 ≤ y + 1 by linarith only [hy])
-  have hp := mul_le_mul_of_nonneg_right Analysis.log_two_mul_pi_lt.le
-    (show 0 ≤ Real.log y by linarith only [hL])
+  have hm :=
+    mul_le_mul_of_nonneg_right AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_one_sixteenth
+      (show 0 ≤ y + 1 by linarith only [hy])
+  have hp :=
+    mul_le_mul_of_nonneg_right Analysis.log_two_mul_pi_lt.le
+      (show 0 ≤ Real.log y by linarith only [hL])
   rw [riemannLogLowerAt, Real.sqrt_sq (by linarith only [hy]), Real.log_pow]
   norm_num only
   nlinarith only [hm, hp, hy, hL]

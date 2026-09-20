@@ -29,11 +29,8 @@ Role: the `s = 1` half of the residue closed form, common to both parities.
 -/
 theorem dirichletReciprocalResidueAt_one_eq_neg_logDeriv {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) (x : ℝ) :
-    dirichletReciprocalResidueAt hne x 1 =
-      -logDeriv (DirichletCharacter.LFunction χ) 1 := by
-  rw [dirichletReciprocalResidueAt_one,
-    dirichletReciprocalOneRegularization,
-    logDeriv_apply]
+    dirichletReciprocalResidueAt hne x 1 = -logDeriv (DirichletCharacter.LFunction χ) 1 := by
+  rw [dirichletReciprocalResidueAt_one, dirichletReciprocalOneRegularization, logDeriv_apply]
   simp only [sub_self, Complex.cpow_zero, mul_one, div_one]
 
 /--
@@ -51,10 +48,8 @@ theorem dirichletReciprocalResidueAt_zero_of_odd_eq {N : ℕ} [NeZero N] {χ : D
     (hne : χ ≠ 1) {x : ℝ} (hx : 0 < x) (hodd : χ.Odd) :
     dirichletReciprocalResidueAt hne x 0 =
       (1 / x : ℂ) * logDeriv (DirichletCharacter.LFunction χ) 0 := by
-  rw [dirichletReciprocalResidueAt_zero_of_odd
-      hne x hodd,
-    dirichletReciprocalMellinZeroRegularization,
-    logDeriv_apply]
+  rw [dirichletReciprocalResidueAt_zero_of_odd hne x hodd,
+    dirichletReciprocalMellinZeroRegularization, logDeriv_apply]
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   have hpow : (x : ℂ) ^ ((0 : ℂ) - 1) = (x : ℂ)⁻¹ := by rw [zero_sub, Complex.cpow_neg_one]
   rw [hpow]
@@ -78,26 +73,17 @@ regularity at `0, 1`) expresses `L'/L = F'/F - Γ_χ'/Γ_χ` at both points; sub
 Role: supplies the odd endpoint sum with `log N - log π` written separately.
 -/
 theorem re_add_dirichletReciprocalResidues_zero_one_of_odd_raw {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hodd : χ.Odd) {x : ℝ}
     (hx : 0 < x) :
-    (dirichletReciprocalResidueAt hne x 0 +
-          dirichletReciprocalResidueAt hne x
-            1).re =
-      (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) -
-          (1 + 1 / x) * |primitiveBRe χ| -
+    (dirichletReciprocalResidueAt hne x 0 + dirichletReciprocalResidueAt hne x 1).re =
+      (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - (1 + 1 / x) * |primitiveBRe χ| -
           (Real.eulerMascheroniConstant / 2) * (1 - 1 / x) +
         (Real.log 2) / x := by
-  have hr0 :=
-    dirichletReciprocalResidueAt_zero_of_odd_eq
-      hne hx hodd
-  have hr1 :=
-    dirichletReciprocalResidueAt_one_eq_neg_logDeriv
-      hne x
+  have hr0 := dirichletReciprocalResidueAt_zero_of_odd_eq hne hx hodd
+  have hr1 := dirichletReciprocalResidueAt_one_eq_neg_logDeriv hne x
   have hΓ0ne : DirichletCharacter.gammaFactor χ 0 ≠ 0 :=
-    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat
-      hodd
+    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd
       (by
         intro m hm
         have him := congrArg Complex.re hm
@@ -107,8 +93,7 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_odd_raw {N : ℕ} [NeZero
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
         linarith)
   have hΓ1ne : DirichletCharacter.gammaFactor χ 1 ≠ 0 :=
-    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat
-      hodd
+    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd
       (by
         intro m hm
         have him := congrArg Complex.re hm
@@ -116,8 +101,7 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_odd_raw {N : ℕ} [NeZero
         simp only [add_self_div_two, Complex.one_re, Complex.neg_re, Complex.natCast_re] at him
         linarith)
   have hdΓ0 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 0 :=
-    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat
-      hodd
+    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
       (by
         intro m hm
         have him := congrArg Complex.re hm
@@ -127,26 +111,20 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_odd_raw {N : ℕ} [NeZero
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
         linarith)
   have hdΓ1 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 1 :=
-    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat
-      hodd
+    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
       (by
         intro m hm
         have him := congrArg Complex.re hm
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [add_self_div_two, Complex.one_re, Complex.neg_re, Complex.natCast_re] at him
         linarith)
-  have hF0ne :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive
-      hprimitive hne
+  have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have hF1ne : DirichletCharacter.completedLFunction χ 1 ≠ 0 :=
-    completedLFunction_ne_zero_of_one_le_re hne
-      (le_refl 1)
+    completedLFunction_ne_zero_of_one_le_re hne (le_refl 1)
   have hbridge0 :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular
-      hne hF0ne hΓ0ne hdΓ0
+    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF0ne hΓ0ne hdΓ0
   have hbridge1 :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular
-      hne hF1ne hΓ1ne hdΓ1
+    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF1ne hΓ1ne hdΓ1
   have hL0re :
     (logDeriv (DirichletCharacter.LFunction χ) 0).re =
       (logDeriv (DirichletCharacter.completedLFunction χ) 0).re -
@@ -161,21 +139,19 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_odd_raw {N : ℕ} [NeZero
     simp only [Complex.sub_re]
   have hL0final :
     (logDeriv (DirichletCharacter.LFunction χ) 0).re =
-      (-|primitiveBRe χ| -
-          (1 / 2) * Real.log N) -
+      (-|primitiveBRe χ| - (1 / 2) * Real.log N) -
         (-Real.log Real.pi / 2 - Real.eulerMascheroniConstant / 2 - Real.log 2) := by
     rw [hL0re,
-      completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log_of_grh
-        hN2 hGRH hprimitive hne hinv,
+      completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log_of_grh hN2 hGRH hprimitive hne
+        hinv,
       logDeriv_gammaFactor_zero_re_of_odd hodd]
   have hL1final :
     (logDeriv (DirichletCharacter.LFunction χ) 1).re =
-      (|primitiveBRe χ| -
-          (1 / 2) * Real.log N) -
+      (|primitiveBRe χ| - (1 / 2) * Real.log N) -
         (-Real.log Real.pi / 2 - Real.eulerMascheroniConstant / 2) := by
     rw [hL1re,
-      completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log_of_grh
-        hN2 hGRH hprimitive hne hinv,
+      completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log_of_grh hN2 hGRH hprimitive hne
+        hinv,
       logDeriv_gammaFactor_one_re_of_odd hodd]
   rw [hr0, hr1]
   simp only [Complex.add_re, Complex.neg_re]

@@ -35,15 +35,11 @@ theorem riemannXi_eq_zero_of_riemannZeta_zero_re_nonneg {ρ : ℂ} (hz : riemann
       rw [h]; push_cast; ring
     rw [hn', Complex.ofReal_re] at hre
     nlinarith only [hre, Nat.cast_nonneg (α := ℝ) n]
-  exact
-    (riemannXi_eq_zero_iff_of_denom_ne_zero hne1
-          (riemannZetaDenom_ne_zero hnt)).mpr
-      hz
+  exact (riemannXi_eq_zero_iff_of_denom_ne_zero hne1 (riemannZetaDenom_ne_zero hnt)).mpr hz
 
 /-- `PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi` is not the zero function
 (`PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi 0 = 1/2 ≠ 0`). -/
-theorem riemannXi_ne_zero_fun :
-    ¬Set.EqOn riemannXi 0 Set.univ := by
+theorem riemannXi_ne_zero_fun : ¬Set.EqOn riemannXi 0 Set.univ := by
   intro h
   have := h (Set.mem_univ (0 : ℂ))
   rw [riemannXi_zero] at this
@@ -53,10 +49,9 @@ theorem riemannXi_ne_zero_fun :
 /-- Xi is nonzero on a codiscrete set: its zero set is discrete.
 The identity theorem applies because xi is entire and not identically zero. -/
 theorem riemannXi_eventually_ne_zero :
-    ∀ᶠ x in Filter.codiscreteWithin Set.univ,
-      riemannXi x ≠ 0 := by
-  have hanalytic : AnalyticOnNhd ℂ riemannXi Set.univ :=
-    fun z _ => differentiable_riemannXi.analyticAt z
+    ∀ᶠ x in Filter.codiscreteWithin Set.univ, riemannXi x ≠ 0 := by
+  have hanalytic : AnalyticOnNhd ℂ riemannXi Set.univ := fun z _ =>
+    differentiable_riemannXi.analyticAt z
   rcases hanalytic.eqOn_zero_or_eventually_ne_zero_of_preconnected isPreconnected_univ with heq |
     hev
   · exact absurd heq riemannXi_ne_zero_fun
@@ -64,17 +59,13 @@ theorem riemannXi_eventually_ne_zero :
 
 /-- **The zeros of `riemannXi` inside any closed ball form a finite set.** -/
 theorem riemannXi_zeros_inter_closedBall_finite (R : ℝ) :
-    (riemannXi ⁻¹' {0} ∩
-        Metric.closedBall (0 : ℂ) R).Finite := by
-  have hmem :
-    {x : ℂ | riemannXi x ≠ 0} ∈
-      Filter.codiscreteWithin (Metric.closedBall (0 : ℂ) R) :=
+    (riemannXi ⁻¹' {0} ∩ Metric.closedBall (0 : ℂ) R).Finite := by
+  have hmem : {x : ℂ | riemannXi x ≠ 0} ∈ Filter.codiscreteWithin (Metric.closedBall (0 : ℂ) R) :=
     Filter.codiscreteWithin_mono (Set.subset_univ _) riemannXi_eventually_ne_zero
   have hfin := (isCompact_closedBall (0 : ℂ) R).finite_sdiff_of_mem_codiscreteWithin hmem
   have heq :
-    Metric.closedBall (0 : ℂ) R \
-        {x : ℂ | riemannXi x ≠ 0} = riemannXi ⁻¹' {0} ∩
-        Metric.closedBall (0 : ℂ) R := by
+    Metric.closedBall (0 : ℂ) R \ {x : ℂ | riemannXi x ≠ 0} =
+      riemannXi ⁻¹' {0} ∩ Metric.closedBall (0 : ℂ) R := by
     ext z
     simp only [Set.mem_sdiff, Set.mem_ofPred_eq, not_not, Set.mem_inter_iff, Set.mem_preimage,
       Set.mem_singleton_iff]
@@ -90,16 +81,13 @@ noncomputable def riemannXiZerosInClosedBall (R : ℝ) : Finset ℂ :=
 
 /-- Membership in the radius-`R` xi-zero ledger has its direct analytic meaning. -/
 theorem mem_riemannXiZerosInClosedBall_iff {R : ℝ} {ρ : ℂ} :
-    ρ ∈ riemannXiZerosInClosedBall R ↔
-      riemannXi ρ = 0 ∧
-        ρ ∈ Metric.closedBall (0 : ℂ) R := by
+    ρ ∈ riemannXiZerosInClosedBall R ↔ riemannXi ρ = 0 ∧ ρ ∈ Metric.closedBall (0 : ℂ) R := by
   rw [riemannXiZerosInClosedBall, Set.Finite.mem_toFinset]
   simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff]
 
 /-- Every entry of the finite xi-zero ledger is a zero in its defining closed ball. -/
 theorem riemannXi_zero_mem_closedBall_of_mem_ledger {R : ℝ} {ρ : ℂ}
-    (hρ : ρ ∈ riemannXiZerosInClosedBall R) :
-    riemannXi ρ = 0 ∧ ρ ∈ Metric.closedBall (0 : ℂ) R :=
+    (hρ : ρ ∈ riemannXiZerosInClosedBall R) : riemannXi ρ = 0 ∧ ρ ∈ Metric.closedBall (0 : ℂ) R :=
   mem_riemannXiZerosInClosedBall_iff.mp hρ
 
 /-- Increasing the radius only enlarges the finite xi-zero ledger. -/
@@ -120,22 +108,18 @@ theorem riemannXiZero_ne_zero_of_mem_ledger {R : ℝ} {ρ : ℂ}
 
 /-- A zero of `ξ` cannot lie to the left of the critical strip. This turns the zero-free
 left half-plane for `ξ` into the lower real-part bound used in zero ledgers. -/
-theorem riemannXi_zero_re_nonneg {s : ℂ}
-    (hs : riemannXi s = 0) : 0 ≤ s.re := by
+theorem riemannXi_zero_re_nonneg {s : ℂ} (hs : riemannXi s = 0) : 0 ≤ s.re := by
   by_contra hneg
   exact riemannXi_ne_zero_of_re_neg (lt_of_not_ge hneg) hs
 
 /-- A zero of `ξ` cannot lie to the right of the critical strip. -/
-theorem riemannXi_zero_re_le_one {s : ℂ}
-    (hs : riemannXi s = 0) : s.re ≤ 1 := by
+theorem riemannXi_zero_re_le_one {s : ℂ} (hs : riemannXi s = 0) : s.re ≤ 1 := by
   by_contra hgt
-  exact
-    riemannXi_ne_zero_of_one_lt_re (lt_of_not_ge hgt) hs
+  exact riemannXi_ne_zero_of_one_lt_re (lt_of_not_ge hgt) hs
 
 /-- Every xi-zero is a nontrivial zeta-zero. The strip bounds exclude the Gamma-denominator's
 trivial-zero locations, while `ξ(1)=1/2` excludes the pole at one. -/
-theorem riemannZeta_zero_of_riemannXi_zero {s : ℂ}
-    (hs : riemannXi s = 0) : riemannZeta s = 0 := by
+theorem riemannZeta_zero_of_riemannXi_zero {s : ℂ} (hs : riemannXi s = 0) : riemannZeta s = 0 := by
   have hre : 0 ≤ s.re := riemannXi_zero_re_nonneg hs
   have hs1 : s ≠ 1 := by
     intro h
@@ -147,10 +131,7 @@ theorem riemannZeta_zero_of_riemannXi_zero {s : ℂ}
     simp only [Complex.neg_re, Complex.mul_re, Complex.re_ofNat, Complex.add_re, Complex.one_re,
       Complex.add_im, Complex.one_im, Complex.natCast_re, Complex.natCast_im] at hre
     nlinarith only [hre, Nat.cast_nonneg (α := ℝ) n]
-  exact
-    (riemannXi_eq_zero_iff_of_denom_ne_zero hs1
-          (riemannZetaDenom_ne_zero hnt)).mp
-      hs
+  exact (riemannXi_eq_zero_iff_of_denom_ne_zero hs1 (riemannZetaDenom_ne_zero hnt)).mp hs
 
 /--
 Riemann's hypothesis places every zero of the completed xi function on the critical line.
@@ -185,8 +166,7 @@ Content: extract the xi-zero assertion from the ledger and apply the global crit
 Role: this is the finite-ledger form consumed by radius-by-radius Hadamard and zero-sum estimates.
 -/
 theorem riemannXiZero_re_eq_half_of_mem_ledger (hRH : RiemannHypothesis) {R : ℝ} {ρ : ℂ}
-    (hρ : ρ ∈ riemannXiZerosInClosedBall R) :
-    ρ.re = (1 : ℝ) / 2 := by
+    (hρ : ρ ∈ riemannXiZerosInClosedBall R) : ρ.re = (1 : ℝ) / 2 := by
   exact
     riemannXi_zero_re_eq_half_of_riemannHypothesis hRH
       (riemannXi_zero_mem_closedBall_of_mem_ledger hρ).1
@@ -201,19 +181,15 @@ Role: it converts radial Hadamard weights into the one-dimensional zero weights 
   modules.
 -/
 theorem norm_sq_riemannXi_zero_eq_quarter_add_im_sq_of_riemannHypothesis (hRH : RiemannHypothesis)
-    {s : ℂ} (hs : riemannXi s = 0) :
-    ‖s‖ ^ 2 = (1 : ℝ) / 4 + s.im ^ 2 := by
+    {s : ℂ} (hs : riemannXi s = 0) : ‖s‖ ^ 2 = (1 : ℝ) / 4 + s.im ^ 2 := by
   rw [← Complex.normSq_eq_norm_sq, Complex.normSq_apply,
-    riemannXi_zero_re_eq_half_of_riemannHypothesis hRH
-      hs]
+    riemannXi_zero_re_eq_half_of_riemannHypothesis hRH hs]
   ring
 
 /-- Each entry of a finite xi-zero ledger is a zeta-zero in the critical strip. -/
 theorem riemannZeta_zero_re_mem_of_mem_riemannXi_ledger {R : ℝ} {ρ : ℂ}
-    (hρ : ρ ∈ riemannXiZerosInClosedBall R) :
-    riemannZeta ρ = 0 ∧ 0 ≤ ρ.re ∧ ρ.re ≤ 1 := by
-  have hzero : riemannXi ρ = 0 :=
-    (riemannXi_zero_mem_closedBall_of_mem_ledger hρ).1
+    (hρ : ρ ∈ riemannXiZerosInClosedBall R) : riemannZeta ρ = 0 ∧ 0 ≤ ρ.re ∧ ρ.re ≤ 1 := by
+  have hzero : riemannXi ρ = 0 := (riemannXi_zero_mem_closedBall_of_mem_ledger hρ).1
   exact
     ⟨riemannZeta_zero_of_riemannXi_zero hzero, riemannXi_zero_re_nonneg hzero,
       riemannXi_zero_re_le_one hzero⟩
@@ -232,10 +208,8 @@ theorem riemannXiZeroWeight_nonneg (s : ℂ) : 0 ≤ riemannXiZeroWeight s := by
 /-- The xi-zero weight is pointwise bounded by the already summable nontrivial-zeta-zero weight.
 The zero-set correspondence and critical-strip bounds established above provide the comparison. -/
 theorem riemannXiZeroWeight_le_nontrivialZetaZeroWeightFull (s : ℂ) :
-    riemannXiZeroWeight s ≤
-      RiemannZeta.nontrivialZetaZeroWeightFull s := by
-  unfold riemannXiZeroWeight
-    RiemannZeta.nontrivialZetaZeroWeightFull
+    riemannXiZeroWeight s ≤ RiemannZeta.nontrivialZetaZeroWeightFull s := by
+  unfold riemannXiZeroWeight RiemannZeta.nontrivialZetaZeroWeightFull
   by_cases hs : riemannXi s = 0
   · rw [ite_eq_left hs]
     rw [ite_eq_left
@@ -275,13 +249,11 @@ is finite at every complex point.
 
 An infinite order would make the entire function vanish on a neighborhood; the analytic identity
 principle would then contradict `ξ(0)=1/2`. -/
-theorem riemannXi_analyticOrderAt_ne_top (s : ℂ) :
-    analyticOrderAt riemannXi s ≠ ⊤ := by
+theorem riemannXi_analyticOrderAt_ne_top (s : ℂ) : analyticOrderAt riemannXi s ≠ ⊤ := by
   intro htop
-  have hlocal : ∀ᶠ z in nhds s, riemannXi z = 0 :=
-    analyticOrderAt_eq_top.mp htop
-  have hanalytic : AnalyticOnNhd ℂ riemannXi Set.univ :=
-    fun z _ => differentiable_riemannXi.analyticAt z
+  have hlocal : ∀ᶠ z in nhds s, riemannXi z = 0 := analyticOrderAt_eq_top.mp htop
+  have hanalytic : AnalyticOnNhd ℂ riemannXi Set.univ := fun z _ =>
+    differentiable_riemannXi.analyticAt z
   have hzero :=
     hanalytic.eqOn_zero_of_preconnected_of_eventuallyEq_zero isPreconnected_univ (Set.mem_univ s)
       hlocal
@@ -294,18 +266,15 @@ noncomputable def riemannXiZeroMultiplicity (ρ : ℂ) : ℕ :=
 /-- For `Re ρ ≥ 0` and `ρ ≠ 1`, xi and zeta have equal analytic multiplicities. -/
 theorem riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity {ρ : ℂ} (hre : 0 ≤ ρ.re)
     (hρ1 : ρ ≠ 1) (hnt : ∀ n : ℕ, ρ ≠ -2 * (n + 1)) :
-    riemannXiZeroMultiplicity ρ =
-      RiemannZeta.riemannZetaZeroMultiplicity ρ := by
-  unfold riemannXiZeroMultiplicity
-    RiemannZeta.riemannZetaZeroMultiplicity analyticOrderNatAt
+    riemannXiZeroMultiplicity ρ = RiemannZeta.riemannZetaZeroMultiplicity ρ := by
+  unfold riemannXiZeroMultiplicity RiemannZeta.riemannZetaZeroMultiplicity analyticOrderNatAt
   rw [analyticOrderAt_riemannXi_eq_riemannZeta hre hρ1 hnt]
 
 /-- Every xi-zero is nontrivial and therefore has the same analytic multiplicity as the
 corresponding zeta-zero. -/
 theorem riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity_of_zero {ρ : ℂ}
     (hρ : riemannXi ρ = 0) :
-    riemannXiZeroMultiplicity ρ =
-      RiemannZeta.riemannZetaZeroMultiplicity ρ := by
+    riemannXiZeroMultiplicity ρ = RiemannZeta.riemannZetaZeroMultiplicity ρ := by
   have hre : 0 ≤ ρ.re := riemannXi_zero_re_nonneg hρ
   have hρ1 : ρ ≠ 1 := by
     intro h
@@ -320,16 +289,12 @@ theorem riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity_of_zero {ρ : �
 
 /-- The imaginary-direction reciprocal-square xi-zero weight with analytic multiplicity. -/
 noncomputable def riemannXiZeroMultiplicityWeight (s : ℂ) : ℝ :=
-  if riemannXi s = 0 then
-    riemannXiZeroMultiplicity s / (1 + s.im ^ 2)
-  else 0
+  if riemannXi s = 0 then riemannXiZeroMultiplicity s / (1 + s.im ^ 2) else 0
 
 /-- The xi multiplicity weight is pointwise bounded by the completed zeta multiplicity weight. -/
 theorem riemannXiZeroMultiplicityWeight_le_nontrivialZetaZeroMultiplicityWeightFull (s : ℂ) :
-    riemannXiZeroMultiplicityWeight s ≤
-      RiemannZeta.nontrivialZetaZeroMultiplicityWeightFull s := by
-  unfold riemannXiZeroMultiplicityWeight
-    RiemannZeta.nontrivialZetaZeroMultiplicityWeightFull
+    riemannXiZeroMultiplicityWeight s ≤ RiemannZeta.nontrivialZetaZeroMultiplicityWeightFull s := by
+  unfold riemannXiZeroMultiplicityWeight RiemannZeta.nontrivialZetaZeroMultiplicityWeightFull
   by_cases hs : riemannXi s = 0
   · rw [ite_eq_left hs]
     have hzeta : riemannZeta s = 0 := riemannZeta_zero_of_riemannXi_zero hs
@@ -353,9 +318,7 @@ theorem summable_riemannXiZeroMultiplicityWeight : Summable riemannXiZeroMultipl
 /-- The radial reciprocal-square xi-zero weight with analytic multiplicity, regularized at the
 origin for use by genus-one Hadamard factors. -/
 noncomputable def riemannXiZeroMultiplicityNormWeight (s : ℂ) : ℝ :=
-  if riemannXi s = 0 then
-    riemannXiZeroMultiplicity s / (1 + ‖s‖ ^ 2)
-  else 0
+  if riemannXi s = 0 then riemannXiZeroMultiplicity s / (1 + ‖s‖ ^ 2) else 0
 
 /--
 On RH, the radial multiplicity weight of a xi-zero has a one-dimensional critical-line form.
@@ -367,11 +330,9 @@ Role: it is the per-zero normalization for comparing finite Hadamard sums with d
   masses.
 -/
 theorem riemannXiZeroMultiplicityNormWeight_eq_criticalLine_of_riemannHypothesis
-    (hRH : RiemannHypothesis) {s : ℂ}
-    (hs : riemannXi s = 0) :
+    (hRH : RiemannHypothesis) {s : ℂ} (hs : riemannXi s = 0) :
     riemannXiZeroMultiplicityNormWeight s =
-      riemannXiZeroMultiplicity s /
-        ((5 : ℝ) / 4 + s.im ^ 2) := by
+      riemannXiZeroMultiplicity s / ((5 : ℝ) / 4 + s.im ^ 2) := by
   unfold riemannXiZeroMultiplicityNormWeight
   rw [ite_eq_left hs, norm_sq_riemannXi_zero_eq_quarter_add_im_sq_of_riemannHypothesis hRH hs]
   ring_nf
@@ -387,12 +348,9 @@ Role: together with the existing opposite inequality, this gives a uniform compa
 the radial Hadamard series and downstream zero-weight series.
 -/
 theorem four_fifths_mul_riemannXiZeroMultiplicityWeight_le_normWeight_of_riemannHypothesis
-    (hRH : RiemannHypothesis) {s : ℂ}
-    (hs : riemannXi s = 0) :
-    (4 / 5 : ℝ) * riemannXiZeroMultiplicityWeight s ≤
-      riemannXiZeroMultiplicityNormWeight s := by
-  rw [show
-      riemannXiZeroMultiplicityWeight s = riemannXiZeroMultiplicity s / (1 + s.im ^ 2)
+    (hRH : RiemannHypothesis) {s : ℂ} (hs : riemannXi s = 0) :
+    (4 / 5 : ℝ) * riemannXiZeroMultiplicityWeight s ≤ riemannXiZeroMultiplicityNormWeight s := by
+  rw [show riemannXiZeroMultiplicityWeight s = riemannXiZeroMultiplicity s / (1 + s.im ^ 2)
       by
       unfold riemannXiZeroMultiplicityWeight
       rw [ite_eq_left hs],
@@ -402,17 +360,14 @@ theorem four_fifths_mul_riemannXiZeroMultiplicityWeight_le_normWeight_of_riemann
   have hcompare : (5 : ℝ) / 4 + s.im ^ 2 ≤ (5 / 4 : ℝ) * (1 + s.im ^ 2) := by nlinarith only [himsq]
   have hinv : 1 / ((5 / 4 : ℝ) * (1 + s.im ^ 2)) ≤ 1 / ((5 : ℝ) / 4 + s.im ^ 2) :=
     one_div_le_one_div_of_le (by positivity) hcompare
-  have hmult :
-    0 ≤ (riemannXiZeroMultiplicity s : ℝ) := by
-    positivity
+  have hmult : 0 ≤ (riemannXiZeroMultiplicity s : ℝ) := by positivity
   calc
     (4 / 5 : ℝ) * (riemannXiZeroMultiplicity s / (1 + s.im ^ 2)) =
         (riemannXiZeroMultiplicity s : ℝ) * (1 / ((5 / 4 : ℝ) * (1 + s.im ^ 2))) :=
       by field_simp [hdenom.ne']
     _ ≤ (riemannXiZeroMultiplicity s : ℝ) * (1 / ((5 : ℝ) / 4 + s.im ^ 2)) :=
       mul_le_mul_of_nonneg_left hinv hmult
-    _ = riemannXiZeroMultiplicity s / ((5 : ℝ) / 4 + s.im ^ 2) :=
-      by ring
+    _ = riemannXiZeroMultiplicity s / ((5 : ℝ) / 4 + s.im ^ 2) := by ring
 
 /--
 The `4/5` radial-weight comparison on a finite xi-zero ledger under GRH.
@@ -425,17 +380,14 @@ Role: this is the finite-sum-ready form of the radial-versus-vertical comparison
 theorem four_fifths_mul_riemannXiZeroMultiplicityWeight_le_normWeight_of_mem_ledger
     (hGRH : GRH.GeneralizedRiemannHypothesis) {R : ℝ} {ρ : ℂ}
     (hρ : ρ ∈ riemannXiZerosInClosedBall R) :
-    (4 / 5 : ℝ) * riemannXiZeroMultiplicityWeight ρ ≤
-      riemannXiZeroMultiplicityNormWeight ρ :=
+    (4 / 5 : ℝ) * riemannXiZeroMultiplicityWeight ρ ≤ riemannXiZeroMultiplicityNormWeight ρ :=
   four_fifths_mul_riemannXiZeroMultiplicityWeight_le_normWeight_of_riemannHypothesis hGRH.riemann
     (riemannXi_zero_mem_closedBall_of_mem_ledger hρ).1
 
 /-- The radial multiplicity weight is bounded by the imaginary-direction multiplicity weight. -/
 theorem riemannXiZeroMultiplicityNormWeight_le_riemannXiZeroMultiplicityWeight (s : ℂ) :
-    riemannXiZeroMultiplicityNormWeight s ≤
-      riemannXiZeroMultiplicityWeight s := by
-  unfold riemannXiZeroMultiplicityNormWeight
-    riemannXiZeroMultiplicityWeight
+    riemannXiZeroMultiplicityNormWeight s ≤ riemannXiZeroMultiplicityWeight s := by
+  unfold riemannXiZeroMultiplicityNormWeight riemannXiZeroMultiplicityWeight
   by_cases hs : riemannXi s = 0
   · rw [ite_eq_left hs, ite_eq_left hs]
     apply div_le_div_of_nonneg_left (by positivity) (by positivity)
@@ -445,10 +397,8 @@ theorem riemannXiZeroMultiplicityNormWeight_le_riemannXiZeroMultiplicityWeight (
 
 /-- The finite radial xi-zero multiplicity mass is monotone as the ledger radius grows. -/
 theorem sum_riemannXiZeroMultiplicityNormWeight_mono {R S : ℝ} (hRS : R ≤ S) :
-    ∑ ρ ∈ riemannXiZerosInClosedBall R,
-        riemannXiZeroMultiplicityNormWeight ρ ≤
-      ∑ ρ ∈ riemannXiZerosInClosedBall S,
-        riemannXiZeroMultiplicityNormWeight ρ := by
+    ∑ ρ ∈ riemannXiZerosInClosedBall R, riemannXiZeroMultiplicityNormWeight ρ ≤
+      ∑ ρ ∈ riemannXiZerosInClosedBall S, riemannXiZeroMultiplicityNormWeight ρ := by
   apply Finset.sum_le_sum_of_subset_of_nonneg (riemannXiZerosInClosedBall_mono hRS)
   intro ρ _ _
   unfold riemannXiZeroMultiplicityNormWeight
@@ -457,10 +407,8 @@ theorem sum_riemannXiZeroMultiplicityNormWeight_mono {R S : ℝ} (hRS : R ≤ S)
 /-- The finite imaginary-direction xi-zero multiplicity mass is monotone as the ledger radius
 grows. -/
 theorem sum_riemannXiZeroMultiplicityWeight_mono {R S : ℝ} (hRS : R ≤ S) :
-    ∑ ρ ∈ riemannXiZerosInClosedBall R,
-        riemannXiZeroMultiplicityWeight ρ ≤
-      ∑ ρ ∈ riemannXiZerosInClosedBall S,
-        riemannXiZeroMultiplicityWeight ρ := by
+    ∑ ρ ∈ riemannXiZerosInClosedBall R, riemannXiZeroMultiplicityWeight ρ ≤
+      ∑ ρ ∈ riemannXiZerosInClosedBall S, riemannXiZeroMultiplicityWeight ρ := by
   apply Finset.sum_le_sum_of_subset_of_nonneg (riemannXiZerosInClosedBall_mono hRS)
   intro ρ _ _
   unfold riemannXiZeroMultiplicityWeight
@@ -486,12 +434,9 @@ Role: together with monotonicity, this is the order-theoretic interface required
 finite Hadamard products to a limiting zero contribution.
 -/
 theorem sum_riemannXiZeroMultiplicityNormWeight_le_tsum (R : ℝ) :
-    ∑ ρ ∈ riemannXiZerosInClosedBall R,
-        riemannXiZeroMultiplicityNormWeight ρ ≤
-      ∑' ρ : ℂ,
-        riemannXiZeroMultiplicityNormWeight ρ := by
-  apply
-    summable_riemannXiZeroMultiplicityNormWeight.sum_le_tsum
+    ∑ ρ ∈ riemannXiZerosInClosedBall R, riemannXiZeroMultiplicityNormWeight ρ ≤
+      ∑' ρ : ℂ, riemannXiZeroMultiplicityNormWeight ρ := by
+  apply summable_riemannXiZeroMultiplicityNormWeight.sum_le_tsum
   intro ρ _
   unfold riemannXiZeroMultiplicityNormWeight
   split <;> positivity
@@ -504,8 +449,7 @@ Content: the same finite-to-global summability comparison is applied to the vert
 Role: this supplies the uniform bound needed when finite contour zero sums are enlarged.
 -/
 theorem sum_riemannXiZeroMultiplicityWeight_le_tsum (R : ℝ) :
-    ∑ ρ ∈ riemannXiZerosInClosedBall R,
-        riemannXiZeroMultiplicityWeight ρ ≤
+    ∑ ρ ∈ riemannXiZerosInClosedBall R, riemannXiZeroMultiplicityWeight ρ ≤
       ∑' ρ : ℂ, riemannXiZeroMultiplicityWeight ρ := by
   apply summable_riemannXiZeroMultiplicityWeight.sum_le_tsum
   intro ρ _
@@ -521,10 +465,8 @@ Hadamard ledgers as a bounded monotone family for the later radius-limit argumen
 theorem bddAbove_range_sum_riemannXiZeroMultiplicityNormWeight :
     BddAbove
       (Set.range fun R : ℝ =>
-        ∑ ρ ∈ riemannXiZerosInClosedBall R,
-          riemannXiZeroMultiplicityNormWeight ρ) := by
-  refine
-    ⟨∑' ρ : ℂ, riemannXiZeroMultiplicityNormWeight ρ, ?_⟩
+        ∑ ρ ∈ riemannXiZerosInClosedBall R, riemannXiZeroMultiplicityNormWeight ρ) := by
+  refine ⟨∑' ρ : ℂ, riemannXiZeroMultiplicityNormWeight ρ, ?_⟩
   rintro _ ⟨R, rfl⟩
   exact sum_riemannXiZeroMultiplicityNormWeight_le_tsum R
 
@@ -536,29 +478,22 @@ Role: this is the boundedness half of the finite-contour zero-mass limit interfa
 theorem bddAbove_range_sum_riemannXiZeroMultiplicityWeight :
     BddAbove
       (Set.range fun R : ℝ =>
-        ∑ ρ ∈ riemannXiZerosInClosedBall R,
-          riemannXiZeroMultiplicityWeight ρ) := by
+        ∑ ρ ∈ riemannXiZerosInClosedBall R, riemannXiZeroMultiplicityWeight ρ) := by
   refine ⟨∑' ρ : ℂ, riemannXiZeroMultiplicityWeight ρ, ?_⟩
   rintro _ ⟨R, rfl⟩
   exact sum_riemannXiZeroMultiplicityWeight_le_tsum R
 
 /-- Every entry of a finite xi-zero ledger has strictly positive multiplicity. -/
 theorem riemannXiZeroMultiplicity_pos_of_mem_ledger {R : ℝ} {ρ : ℂ}
-    (hρ : ρ ∈ riemannXiZerosInClosedBall R) :
-    0 < riemannXiZeroMultiplicity ρ := by
+    (hρ : ρ ∈ riemannXiZerosInClosedBall R) : 0 < riemannXiZeroMultiplicity ρ := by
   unfold riemannXiZeroMultiplicity
   apply Nat.pos_of_ne_zero
   intro hnat
-  have hzero : riemannXi ρ = 0 :=
-    (riemannXi_zero_mem_closedBall_of_mem_ledger hρ).1
+  have hzero : riemannXi ρ = 0 := (riemannXi_zero_mem_closedBall_of_mem_ledger hρ).1
   have horder : analyticOrderAt riemannXi ρ ≠ 0 :=
-    (differentiable_riemannXi.analyticAt ρ).analyticOrderAt_ne_zero.mpr
-      hzero
+    (differentiable_riemannXi.analyticAt ρ).analyticOrderAt_ne_zero.mpr hzero
   apply horder
-  rw [←
-    Nat.cast_analyticOrderNatAt
-      (riemannXi_analyticOrderAt_ne_top ρ),
-    hnat]
+  rw [← Nat.cast_analyticOrderNatAt (riemannXi_analyticOrderAt_ne_top ρ), hnat]
   rfl
 
 /-- The genus-one factor attached to one nonzero zero of
@@ -678,8 +613,7 @@ theorem riemannXiMultiplicityHadamardCofactor_ne_zero {R : ℝ} (ρ : ℂ) :
   unfold riemannXiMultiplicityHadamardCofactor riemannXiMultiplicityHadamardFactor
   apply Finset.prod_ne_zero_iff.mpr
   intro σ hσ
-  have hσledger : σ ∈ riemannXiZerosInClosedBall R :=
-    Finset.mem_erase.mp hσ |>.2
+  have hσledger : σ ∈ riemannXiZerosInClosedBall R := Finset.mem_erase.mp hσ |>.2
   have hne : ρ ≠ σ := (Finset.mem_erase.mp hσ |>.1).symm
   exact
     pow_ne_zero _
@@ -687,14 +621,12 @@ theorem riemannXiMultiplicityHadamardCofactor_ne_zero {R : ℝ} (ρ : ℂ) :
 
 /-- The nonvanishing analytic unit in one multiplicity-aware genus-one factor. -/
 noncomputable def riemannXiMultiplicityHadamardUnit (s ρ : ℂ) : ℂ :=
-  ((-1 / ρ) * Complex.exp (s / ρ)) ^
-    riemannXiZeroMultiplicity ρ
+  ((-1 / ρ) * Complex.exp (s / ρ)) ^ riemannXiZeroMultiplicity ρ
 
 /-- A multiplicity-aware factor is a zero power times its nonvanishing analytic unit. -/
 theorem riemannXiMultiplicityHadamardFactor_eq_sub_pow_mul_unit {s ρ : ℂ} (hρ : ρ ≠ 0) :
     riemannXiMultiplicityHadamardFactor s ρ =
-      (s - ρ) ^ riemannXiZeroMultiplicity ρ *
-        riemannXiMultiplicityHadamardUnit s ρ := by
+      (s - ρ) ^ riemannXiZeroMultiplicity ρ * riemannXiMultiplicityHadamardUnit s ρ := by
   unfold riemannXiMultiplicityHadamardFactor riemannXiMultiplicityHadamardUnit
   rw [← mul_pow]
   congr 1
@@ -718,8 +650,7 @@ noncomputable def riemannXiMultiplicityHadamardProductUnit (R : ℝ) (ρ s : ℂ
 theorem riemannXiMultiplicityHadamardProduct_eq_sub_pow_mul_unit {R : ℝ} {ρ : ℂ}
     (hρ : ρ ∈ riemannXiZerosInClosedBall R) (s : ℂ) :
     riemannXiMultiplicityHadamardProduct R s =
-      (s - ρ) ^ riemannXiZeroMultiplicity ρ *
-        riemannXiMultiplicityHadamardProductUnit R ρ s := by
+      (s - ρ) ^ riemannXiZeroMultiplicity ρ * riemannXiMultiplicityHadamardProductUnit R ρ s := by
   rw [riemannXiMultiplicityHadamardProduct_eq_factor_mul_cofactor hρ]
   rw [riemannXiMultiplicityHadamardFactor_eq_sub_pow_mul_unit
       (riemannXiZero_ne_zero_of_mem_ledger hρ)]
@@ -749,16 +680,11 @@ is its zero power times a nonvanishing analytic factor. -/
 theorem exists_riemannXi_local_zero_factor (ρ : ℂ) :
     ∃ g : ℂ → ℂ,
       AnalyticAt ℂ g ρ ∧
-        g ρ ≠ 0 ∧
-        riemannXi =ᶠ[nhds ρ] fun s =>
-          (s - ρ) ^ riemannXiZeroMultiplicity ρ *
-            g s := by
+        g ρ ≠ 0 ∧ riemannXi =ᶠ[nhds ρ] fun s => (s - ρ) ^ riemannXiZeroMultiplicity ρ * g s := by
   have h :=
-    ((differentiable_riemannXi.analyticAt
-            ρ).analyticOrderAt_ne_top).mp
+    ((differentiable_riemannXi.analyticAt ρ).analyticOrderAt_ne_top).mp
       (riemannXi_analyticOrderAt_ne_top ρ)
-  simpa only [ne_eq, riemannXiZeroMultiplicity,
-    smul_eq_mul] using h
+  simpa only [ne_eq, riemannXiZeroMultiplicity, smul_eq_mul] using h
 
 /-- The totalized quotient of xi by its finite multiplicity-aware Hadamard product.
 At ledger zeros, division returns a totalized value rather than the analytic
@@ -813,13 +739,9 @@ theorem exists_analyticAt_riemannXiMultiplicityHadamardQuotient_extension {R : �
   · filter_upwards [hxi.filter_mono nhdsWithin_le_nhds, self_mem_nhdsWithin] with s hs hsne
     unfold riemannXiMultiplicityHadamardQuotient
     rw [hs, riemannXiMultiplicityHadamardProduct_eq_sub_pow_mul_unit hρ]
-    have hpow :
-      (s - ρ) ^ riemannXiZeroMultiplicity ρ ≠ 0 :=
-      pow_ne_zero _ (sub_ne_zero.mpr hsne)
+    have hpow : (s - ρ) ^ riemannXiZeroMultiplicity ρ ≠ 0 := pow_ne_zero _ (sub_ne_zero.mpr hsne)
     simpa only [u, Pi.div_apply] using
-      mul_div_mul_left (c :=
-        (s - ρ) ^ riemannXiZeroMultiplicity ρ) (g s)
-        (u s) hpow
+      mul_div_mul_left (c := (s - ρ) ^ riemannXiZeroMultiplicity ρ) (g s) (u s) hpow
 
 /-- A chosen analytic local extension of the finite Hadamard quotient at one ledger zero. -/
 noncomputable def riemannXiMultiplicityHadamardQuotientLocalExtension (R : ℝ) (ρ : ℂ)
@@ -901,9 +823,7 @@ theorem analyticAt_riemannXiMultiplicityHadamardEntireQuotient_of_not_mem {R : �
     (hs : s ∉ riemannXiZerosInClosedBall R) :
     AnalyticAt ℂ (riemannXiMultiplicityHadamardEntireQuotient R) s := by
   apply (analyticAt_riemannXiMultiplicityHadamardQuotient_of_not_mem hs).congr
-  filter_upwards [General.eventually_not_mem_finset_nhds_of_not_mem
-      hs] with
-    z hz
+  filter_upwards [General.eventually_not_mem_finset_nhds_of_not_mem hs] with z hz
   exact (riemannXiMultiplicityHadamardEntireQuotient_eq_quotient_of_not_mem hz).symm
 
 /-- The finite Hadamard quotient, with all removable values filled in, is entire. -/
@@ -928,8 +848,7 @@ theorem riemannXi_eq_multiplicityHadamardProduct_mul_entireQuotient (R : ℝ) (s
       riemannXiMultiplicityHadamardProduct R s *
         riemannXiMultiplicityHadamardEntireQuotient R s := by
   by_cases hs : s ∈ riemannXiZerosInClosedBall R
-  · have hxi : riemannXi s = 0 :=
-      (riemannXi_zero_mem_closedBall_of_mem_ledger hs).1
+  · have hxi : riemannXi s = 0 := (riemannXi_zero_mem_closedBall_of_mem_ledger hs).1
     have hfactor : riemannXiMultiplicityHadamardFactor s s = 0 := by
       unfold riemannXiMultiplicityHadamardFactor
       have hbase : riemannXiHadamardFactor s s = 0 :=
@@ -970,19 +889,14 @@ The coefficient of each genus-one contribution is the analytic order of
 theorem logDeriv_riemannXiMultiplicityHadamardProduct_eq_sum {R : ℝ} {s : ℂ}
     (hs : ∀ ρ ∈ riemannXiZerosInClosedBall R, s ≠ ρ) :
     logDeriv (riemannXiMultiplicityHadamardProduct R) s =
-      ∑ ρ ∈ riemannXiZerosInClosedBall R,
-        riemannXiZeroMultiplicity ρ *
-          (1 / (s - ρ) + 1 / ρ) := by
+      ∑ ρ ∈ riemannXiZerosInClosedBall R, riemannXiZeroMultiplicity ρ * (1 / (s - ρ) + 1 / ρ) := by
   unfold riemannXiMultiplicityHadamardProduct riemannXiMultiplicityHadamardFactor
   rw [show
       (fun s =>
           ∏ ρ ∈ riemannXiZerosInClosedBall R,
-            riemannXiHadamardFactor s ρ ^
-              riemannXiZeroMultiplicity ρ) =
+            riemannXiHadamardFactor s ρ ^ riemannXiZeroMultiplicity ρ) =
         ∏ ρ ∈ riemannXiZerosInClosedBall R,
-          (fun s =>
-            riemannXiHadamardFactor s ρ ^
-              riemannXiZeroMultiplicity ρ)
+          (fun s => riemannXiHadamardFactor s ρ ^ riemannXiZeroMultiplicity ρ)
       from by
       funext s
       simp only [Finset.prod_apply]]
@@ -1006,9 +920,7 @@ controlled uniformly before sending the radius to infinity. -/
 theorem logDeriv_riemannXi_eq_finite_sum_add_logDeriv_entireQuotient {R : ℝ} {s : ℂ}
     (hs : riemannXi s ≠ 0) :
     logDeriv riemannXi s =
-      (∑ ρ ∈ riemannXiZerosInClosedBall R,
-          riemannXiZeroMultiplicity ρ *
-            (1 / (s - ρ) + 1 / ρ)) +
+      (∑ ρ ∈ riemannXiZerosInClosedBall R, riemannXiZeroMultiplicity ρ * (1 / (s - ρ) + 1 / ρ)) +
         logDeriv (riemannXiMultiplicityHadamardEntireQuotient R) s := by
   obtain ⟨hproduct, hquotient⟩ :=
     riemannXiMultiplicityHadamardFactors_ne_zero_of_riemannXi_ne_zero (R := R) hs
@@ -1029,8 +941,7 @@ theorem logDeriv_riemannXi_eq_finite_sum_add_logDeriv_entireQuotient {R : ℝ} {
       rfl,
     logDeriv_mul s hproduct hquotient ((differentiable_riemannXiMultiplicityHadamardProduct R) s)
       (analyticAt_riemannXiMultiplicityHadamardEntireQuotient R s).differentiableAt]
-  have hledger :
-    ∀ ρ ∈ riemannXiZerosInClosedBall R, s ≠ ρ := by
+  have hledger : ∀ ρ ∈ riemannXiZerosInClosedBall R, s ≠ ρ := by
     intro ρ hρ hsr
     apply hs
     rw [hsr, (riemannXi_zero_mem_closedBall_of_mem_ledger hρ).1]
@@ -1045,17 +956,14 @@ noncomputable def riemannXiFiniteHadamardConstant (R : ℝ) : ℂ :=
 Every genus-one factor has logarithmic derivative zero at zero, so the complete finite zero sum
 vanishes at that point. -/
 theorem logDeriv_riemannXi_zero_eq_finiteHadamardConstant (R : ℝ) :
-    logDeriv riemannXi 0 =
-      riemannXiFiniteHadamardConstant R := by
+    logDeriv riemannXi 0 = riemannXiFiniteHadamardConstant R := by
   have hxi : riemannXi 0 ≠ 0 := by
     rw [riemannXi_zero]
     norm_num only
   rw [logDeriv_riemannXi_eq_finite_sum_add_logDeriv_entireQuotient (R := R) (s := 0) hxi]
   unfold riemannXiFiniteHadamardConstant
   have hsum :
-    ∑ ρ ∈ riemannXiZerosInClosedBall R,
-        riemannXiZeroMultiplicity ρ *
-          (1 / ((0 : ℂ) - ρ) + 1 / ρ) =
+    ∑ ρ ∈ riemannXiZerosInClosedBall R, riemannXiZeroMultiplicity ρ * (1 / ((0 : ℂ) - ρ) + 1 / ρ) =
       0 := by
     apply Finset.sum_eq_zero
     intro ρ hρ
@@ -1120,8 +1028,7 @@ theorem norm_logDeriv_riemannXiMultiplicityHadamardEntireQuotient_le_of_log_norm
     intro w hw
     rw [hhre w hw]
     exact hM w hw
-  have hbound :=
-    RiemannZeta.norm_hasDerivAt_le_of_re_le hR hhderiv hMc hRe hz
+  have hbound := RiemannZeta.norm_hasDerivAt_le_of_re_le hR hhderiv hMc hRe hz
   rw [hhre 0 (Metric.mem_ball_self hR)] at hbound
   simpa only [sub_zero] using hbound
 
@@ -1131,12 +1038,9 @@ theorem norm_logDeriv_riemannXi_sub_finiteHadamardSum_le_of_log_norm_bound {R M 
     (hM0 : Real.log ‖riemannXiMultiplicityHadamardEntireQuotient R 0‖ < M)
     (hM :
       ∀ w ∈ Metric.ball (0 : ℂ) R, Real.log ‖riemannXiMultiplicityHadamardEntireQuotient R w‖ ≤ M)
-    {z : ℂ} (hz : z ∈ Metric.ball (0 : ℂ) R)
-    (hxi : riemannXi z ≠ 0) :
+    {z : ℂ} (hz : z ∈ Metric.ball (0 : ℂ) R) (hxi : riemannXi z ≠ 0) :
     ‖logDeriv riemannXi z -
-          ∑ ρ ∈ riemannXiZerosInClosedBall R,
-            riemannXiZeroMultiplicity ρ *
-              (1 / (z - ρ) + 1 / ρ)‖ ≤
+          ∑ ρ ∈ riemannXiZerosInClosedBall R, riemannXiZeroMultiplicity ρ * (1 / (z - ρ) + 1 / ρ)‖ ≤
       4 * (M - Real.log ‖riemannXiMultiplicityHadamardEntireQuotient R 0‖) * (R + ‖z‖) /
         (R - ‖z‖) ^ 2 := by
   have hquotient :=
@@ -1195,8 +1099,7 @@ theorem exists_finiteHadamard_logDeriv_approximation_bound {R : ℝ} (hR : 0 < R
           riemannXi z ≠ 0 →
             ‖logDeriv riemannXi z -
                   ∑ ρ ∈ riemannXiZerosInClosedBall R,
-                    riemannXiZeroMultiplicity ρ *
-                      (1 / (z - ρ) + 1 / ρ)‖ ≤
+                    riemannXiZeroMultiplicity ρ * (1 / (z - ρ) + 1 / ρ)‖ ≤
               4 * (M - Real.log ‖riemannXiMultiplicityHadamardEntireQuotient R 0‖) * (R + ‖z‖) /
                 (R - ‖z‖) ^ 2 := by
   obtain ⟨M, hM0, hM⟩ := exists_log_norm_bound_riemannXiMultiplicityHadamardEntireQuotient hR
@@ -1222,8 +1125,7 @@ spurious radius-dependent center term from the limiting interface.
 theorem riemannXiMultiplicityHadamardEntireQuotient_zero (R : ℝ) :
     riemannXiMultiplicityHadamardEntireQuotient R 0 = 1 / 2 := by
   have hfactor := riemannXi_eq_multiplicityHadamardProduct_mul_entireQuotient R 0
-  rw [riemannXiMultiplicityHadamardProduct_zero, one_mul,
-    riemannXi_zero] at hfactor
+  rw [riemannXiMultiplicityHadamardProduct_zero, one_mul, riemannXi_zero] at hfactor
   exact hfactor.symm
 
 /--

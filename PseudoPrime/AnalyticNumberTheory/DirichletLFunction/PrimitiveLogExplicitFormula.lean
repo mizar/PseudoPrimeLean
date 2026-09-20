@@ -29,10 +29,7 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
     ∑' n : ℕ,
         (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
           General.mellinWeightTwo ((n : ℝ) / x) =
-      (2 * Real.pi : ℝ)⁻¹ •
-        ∫ y : ℝ,
-          dirichletLogContourKernel x χ
-            ((τ : ℂ) + y * Complex.I) := by
+      (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
   have hτ0 : (0 : ℝ) < τ := by linarith
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ (((τ : ℂ) + y * Complex.I) ^ 2)⁻¹ with hK_def
@@ -94,9 +91,7 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
     have hnx : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-    have hmellin :=
-      General.mellinInv_mellinWeightTwo_eq (σ := τ) (x :=
-        (n : ℝ) / x) hτ0 hnx
+    have hmellin := General.mellinInv_mellinWeightTwo_eq (σ := τ) (x := (n : ℝ) / x) hτ0 hnx
     rw [← hmellin]
     simp only [mellinInv, smul_eq_mul, one_div]
   have hterm :
@@ -114,8 +109,7 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
     apply MeasureTheory.integral_congr_ae
     filter_upwards with y
     simp only [hG_def, hH_def, hK_def]
-    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg,
-      one_div, Complex.ofReal_natCast]
+    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div, Complex.ofReal_natCast]
     field_simp
   -- (2) each `G n` is integrable, dominated by a constant multiple of `K`
   have hGint : ∀ n : ℕ, MeasureTheory.Integrable (G n) := by
@@ -202,18 +196,13 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
     hInterchange.tsum_eq
   -- (5) identify the inner sum over `n` with the primitive logarithmic contour kernel
   have hinner :
-    ∀ y : ℝ,
-      ∑' n : ℕ, G n y =
-        dirichletLogContourKernel x χ
-          ((τ : ℂ) + y * Complex.I) := by
+    ∀ y : ℝ, ∑' n : ℕ, G n y = dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
     intro y
     have hs : (1 : ℝ) < ((τ : ℂ) + y * Complex.I).re := by
       simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
       linarith
-    have hLS :=
-      lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re
-        χ hs
+    have hLS := lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ hs
     have hsum :
       ∑' n : ℕ,
           (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
@@ -247,10 +236,7 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
                 (n : ℂ) ^ (-((τ : ℂ) + y * Complex.I))) *
             (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) :=
         by rw [tsum_mul_right, tsum_mul_left]
-      _ =
-          dirichletLogContourKernel x χ
-            ((τ : ℂ) + y * Complex.I) :=
-        by
+      _ = dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
         rw [hsum, hK_def]
         unfold dirichletLogContourKernel
         simp only [div_eq_mul_inv]
@@ -280,12 +266,8 @@ This identifies the right edge in the logarithmic contour limit.
 theorem characterLogWeightedSum_eq_integral {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {x : ℝ}
     (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     (Arithmetic.characterLogWeightedSum x χ : ℂ) =
-      (2 * Real.pi : ℝ)⁻¹ •
-        ∫ y : ℝ,
-          dirichletLogContourKernel x χ
-            ((τ : ℂ) + y * Complex.I) := by
+      (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
   rw [← Arithmetic.characterLogWeightedTerm_tsum_eq χ hx,
-    characterLogWeightedTerm_tsum_eq_integral χ
-      hx hτ]
+    characterLogWeightedTerm_tsum_eq_integral χ hx hτ]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

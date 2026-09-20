@@ -224,10 +224,10 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
         rw [hC_def]
         nlinarith [hCψnn, hEA1, abs_nonneg (Real.log Real.pi)]
   rcases χ.even_or_odd with heven | hodd
-  · rw [logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat
-        heven (leftVertical_even_half_ne_neg_nat A t),
-      logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat
-        heven (reflectedLeftVertical_even_half_ne_neg_nat A hA t)]
+  · rw [logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat heven
+        (leftVertical_even_half_ne_neg_nat A t),
+      logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat heven
+        (reflectedLeftVertical_even_half_ne_neg_nat A hA t)]
     have hform1 :
       (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) / 2 =
         ((-(A : ℝ) / 2 - 1 / 4 : ℝ) : ℂ) + ((t / 2 : ℝ) : ℂ) * Complex.I := by
@@ -277,10 +277,10 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
     have h1 := hmain (-(A : ℝ) / 2 - 1 / 4) (t / 2) ha1 (leftEven_quarterSep A) hb1
     have h2 := hmain ((A : ℝ) / 2 + 3 / 4) (-(t / 2)) ha2 hsep2 hb2
     linarith [h1, h2]
-  · rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat
-        hodd (leftVertical_odd_half_ne_neg_nat A t),
-      logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat
-        hodd (reflectedLeftVertical_odd_half_ne_neg_nat A hA t)]
+  · rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hodd
+        (leftVertical_odd_half_ne_neg_nat A t),
+      logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hodd
+        (reflectedLeftVertical_odd_half_ne_neg_nat A hA t)]
     have hform1 :
       ((((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) + 1) / 2 =
         ((-(A : ℝ) / 2 + 1 / 4 : ℝ) : ℂ) + ((t / 2 : ℝ) : ℂ) * Complex.I := by

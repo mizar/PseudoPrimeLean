@@ -43,12 +43,10 @@ theorem norm_dirichletReciprocalContourKernel_leftVertical_le {N : ℕ} [NeZero 
       ‖logDeriv (DirichletCharacter.LFunction χ)
             (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
         D * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2))) :
-    ‖dirichletReciprocalContourKernel x χ
-          (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+    ‖dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) / (1 + t ^ 2) := by
   set s : ℂ := ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I with hs_def
-  have hden :=
-    General.one_add_sq_le_norm_mul_norm_leftVertical A hA t
+  have hden := General.one_add_sq_le_norm_mul_norm_leftVertical A hA t
   rw [← hs_def] at hden
   have hpow := General.norm_cpow_leftVertical_sub_one hx A t
   rw [← hs_def] at hpow
@@ -103,8 +101,7 @@ private theorem quadraticContinuousReciprocalKernel_leftVertical_line {N : ℕ} 
   have hg : Continuous (fun t : ℝ ↦ ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) := by
     fun_prop
   have hOn :
-    ContinuousOn
-      (dirichletReciprocalContourKernel x χ)
+    ContinuousOn (dirichletReciprocalContourKernel x χ)
       (Set.range (fun t : ℝ ↦ ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
     rintro s ⟨t, rfl⟩
     have hsre : (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I).re = -(A : ℝ) - 1 / 2 := by
@@ -120,12 +117,10 @@ private theorem quadraticContinuousReciprocalKernel_leftVertical_line {N : ℕ} 
       intro h; rw [h, Complex.zero_re] at hsre_neg; linarith
     have hs1 : ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ 1 := by
       intro h; rw [h, Complex.one_re] at hsre_neg; linarith
-    have hL :=
-      quadraticDirichletLFunction_ne_zero_leftVertical
-        hprimitive hne hquad A hA t
+    have hL := quadraticDirichletLFunction_ne_zero_leftVertical hprimitive hne hquad A hA t
     exact
-      (differentiableAt_dirichletReciprocalContourKernel
-          hx hne hs0 hs1 hL).continuousAt.continuousWithinAt
+      (differentiableAt_dirichletReciprocalContourKernel hx hne hs0 hs1
+          hL).continuousAt.continuousWithinAt
   exact hOn.comp_continuous hg (fun t => Set.mem_range_self t)
 
 /--
@@ -147,13 +142,9 @@ theorem norm_dirichletReciprocalContourKernel_leftVertical_envelope_le {N : ℕ}
               (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
           D * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)))
     (t : ℝ) :
-    ‖dirichletReciprocalContourKernel x χ
-          (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-      D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) *
-        General.logQuadraticEnvelope t := by
-  have hK :=
-    norm_dirichletReciprocalContourKernel_leftVertical_le
-      hx hA (hLbound t)
+    ‖dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+      D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) * General.logQuadraticEnvelope t := by
+  have hK := norm_dirichletReciprocalContourKernel_leftVertical_le hx hA (hLbound t)
   set BA : ℝ := ((A : ℝ) + 5) ^ 2 + 1 with hBA_def
   have hBA1 : (1 : ℝ) ≤ BA := by
     rw [hBA_def]; nlinarith [sq_nonneg ((A : ℝ) + 5)]
@@ -168,8 +159,7 @@ theorem norm_dirichletReciprocalContourKernel_leftVertical_envelope_le {N : ℕ}
     mul_le_mul_of_nonneg_left hstep (mul_nonneg hDnn hxpow_nn)
   unfold General.logQuadraticEnvelope
   calc
-    ‖dirichletReciprocalContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+    ‖dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
         D * x ^ (-(A : ℝ) - 3 / 2) * (BA + Real.log (|t| + 2)) / (1 + t ^ 2) :=
       hK
     _ ≤ D * x ^ (-(A : ℝ) - 3 / 2) * (BA * (1 + Real.log (|t| + 2))) / (1 + t ^ 2) :=
@@ -196,19 +186,18 @@ private theorem quadraticIntegrableReciprocalKernel_leftVertical {N : ℕ} [NeZe
         dirichletReciprocalContourKernel x χ
           (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
   obtain ⟨D, hDnn, hD⟩ :=
-    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le
-      hprimitive hne hquad
+    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le hprimitive hne hquad
   apply
     MeasureTheory.Integrable.mono'
       ((General.integrable_logQuadraticEnvelope.const_mul
         (D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1))))
   · exact
-      (quadraticContinuousReciprocalKernel_leftVertical_line
-          hprimitive hne hquad hx hA).aestronglyMeasurable
+      (quadraticContinuousReciprocalKernel_leftVertical_line hprimitive hne hquad hx
+          hA).aestronglyMeasurable
   · filter_upwards with t
     exact
-      norm_dirichletReciprocalContourKernel_leftVertical_envelope_le
-        hx hA hDnn (fun t => hD A hA t) t
+      norm_dirichletReciprocalContourKernel_leftVertical_envelope_le hx hA hDnn (fun t => hD A hA t)
+        t
 
 /-! ### The whole-line integral norm bound (I) -/
 
@@ -235,19 +224,16 @@ theorem norm_integral_dirichletReciprocalContourKernel_leftVertical_of_bound {N 
     ‖∫ t : ℝ,
           dirichletReciprocalContourKernel x χ
             (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-      D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) *
-        General.logQuadraticEnvelopeMass := by
+      D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) * General.logQuadraticEnvelopeMass := by
   have hg :
     MeasureTheory.Integrable
       (fun t : ℝ ↦
-        D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) *
-          General.logQuadraticEnvelope t) :=
+        D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) * General.logQuadraticEnvelope t) :=
     General.integrable_logQuadraticEnvelope.const_mul _
   have hbound :=
     MeasureTheory.norm_integral_le_of_norm_le hg
       (Filter.Eventually.of_forall fun t =>
-        norm_dirichletReciprocalContourKernel_leftVertical_envelope_le
-          hx hA hDnn hLbound t)
+        norm_dirichletReciprocalContourKernel_leftVertical_envelope_le hx hA hDnn hLbound t)
   rwa [MeasureTheory.integral_const_mul] at hbound
 
 /--
@@ -265,16 +251,14 @@ private theorem quadraticTendsto_intervalIntegralReciprocalKernel_leftVertical {
     Filter.Tendsto
       (fun T : ℝ ↦
         ∫ t in (-T)..T,
-          dirichletReciprocalContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
+          dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop
       (nhds
         (∫ t : ℝ,
           dirichletReciprocalContourKernel x χ
             (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
   MeasureTheory.intervalIntegral_tendsto_integral
-    (quadraticIntegrableReciprocalKernel_leftVertical
-      hprimitive hne hquad hx hA)
+    (quadraticIntegrableReciprocalKernel_leftVertical hprimitive hne hquad hx hA)
     Analysis.tendsto_neg_atTop_atBot' Filter.tendsto_id
 
 /--
@@ -294,28 +278,22 @@ Role: the named-height-sequence wrapper needed for the shared-height argument's 
 same finite rectangle, indexed by the same `k`).
 -/
 theorem quadraticTendsto_primitiveHorizontalHeightSeq_leftVertical_intervalIntegral {N : ℕ}
-    [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
     (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) :
     Filter.Tendsto
       (fun k : ℕ ↦
         ∫ t in
-          (-(primitiveHorizontalHeightSeq hN2
-              hGRH hprimitive hne hinv hquad
-              k))..(primitiveHorizontalHeightSeq
-            hN2 hGRH hprimitive hne hinv hquad k),
-          dirichletReciprocalContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
+          (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad
+              k))..(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k),
+          dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop
       (nhds
         (∫ t : ℝ,
           dirichletReciprocalContourKernel x χ
             (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
-  (quadraticTendsto_intervalIntegralReciprocalKernel_leftVertical
-        hprimitive hne hquad hx hA).comp
-    (tendsto_primitiveHorizontalHeightSeq_atTop
-      hN2 hGRH hprimitive hne hinv hquad)
+  (quadraticTendsto_intervalIntegralReciprocalKernel_leftVertical hprimitive hne hquad hx hA).comp
+    (tendsto_primitiveHorizontalHeightSeq_atTop hN2 hGRH hprimitive hne hinv hquad)
 
 /--
 Input/assumptions: `χ` primitive and nontrivial with nontrivial inverse, `x > 0`, and `A ≥ 2`.
@@ -334,8 +312,7 @@ theorem continuous_dirichletReciprocalContourKernel_leftVertical_line {N : ℕ} 
   have hg : Continuous (fun t : ℝ ↦ ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) := by
     fun_prop
   have hOn :
-    ContinuousOn
-      (dirichletReciprocalContourKernel x χ)
+    ContinuousOn (dirichletReciprocalContourKernel x χ)
       (Set.range (fun t : ℝ ↦ ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
     rintro s ⟨t, rfl⟩
     have hsre : (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I).re = -(A : ℝ) - 1 / 2 := by
@@ -356,12 +333,10 @@ theorem continuous_dirichletReciprocalContourKernel_leftVertical_line {N : ℕ} 
       intro h
       rw [h, Complex.one_re] at hsre_neg
       linarith
-    have hL :=
-      dirichletLFunction_ne_zero_leftVertical
-        hprimitive hne hinv A hA t
+    have hL := dirichletLFunction_ne_zero_leftVertical hprimitive hne hinv A hA t
     exact
-      (differentiableAt_dirichletReciprocalContourKernel
-          hx hne hs0 hs1 hL).continuousAt.continuousWithinAt
+      (differentiableAt_dirichletReciprocalContourKernel hx hne hs0 hs1
+          hL).continuousAt.continuousWithinAt
   exact hOn.comp_continuous hg (fun t => Set.mem_range_self t)
 
 /--
@@ -378,19 +353,18 @@ theorem integrable_dirichletReciprocalContourKernel_leftVertical {N : ℕ} [NeZe
         dirichletReciprocalContourKernel x χ
           (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
   obtain ⟨D, hDnn, hD⟩ :=
-    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general
-      hprimitive hne hinv
+    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general hprimitive hne hinv
   apply
     MeasureTheory.Integrable.mono'
       ((General.integrable_logQuadraticEnvelope.const_mul
         (D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1))))
   · exact
-      (continuous_dirichletReciprocalContourKernel_leftVertical_line
-          hprimitive hne hinv hx hA).aestronglyMeasurable
+      (continuous_dirichletReciprocalContourKernel_leftVertical_line hprimitive hne hinv hx
+          hA).aestronglyMeasurable
   · filter_upwards with t
     exact
-      norm_dirichletReciprocalContourKernel_leftVertical_envelope_le
-        hx hA hDnn (fun t => hD A hA t) t
+      norm_dirichletReciprocalContourKernel_leftVertical_envelope_le hx hA hDnn (fun t => hD A hA t)
+        t
 
 /--
 Input/assumptions: the generic left-vertical hypotheses, `x > 0`, and `A ≥ 2`.
@@ -404,16 +378,14 @@ theorem tendsto_intervalIntegral_dirichletReciprocalContourKernel_leftVertical {
     Filter.Tendsto
       (fun T : ℝ ↦
         ∫ t in -T..T,
-          dirichletReciprocalContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
+          dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop
       (nhds
         (∫ t : ℝ,
           dirichletReciprocalContourKernel x χ
             (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
   MeasureTheory.intervalIntegral_tendsto_integral
-    (integrable_dirichletReciprocalContourKernel_leftVertical
-      hprimitive hne hinv hx hA)
+    (integrable_dirichletReciprocalContourKernel_leftVertical hprimitive hne hinv hx hA)
     Analysis.tendsto_neg_atTop_atBot' Filter.tendsto_id
 
 /--
@@ -425,28 +397,23 @@ infinity.
 Role: connects the generic left edge to the same rectangles as the generic horizontal edges.
 -/
 theorem tendsto_primitiveHorizontalHeightSeq_leftVertical_intervalIntegral {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {A : ℕ}
     (hA : 2 ≤ A) :
     Filter.Tendsto
       (fun k : ℕ ↦
         ∫ t in
-          (-(primitiveHorizontalHeightSeq_of_grh
-              hN2 hGRH hprimitive hne hinv
-              k))..(primitiveHorizontalHeightSeq_of_grh
-            hN2 hGRH hprimitive hne hinv k),
-          dirichletReciprocalContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
+          (-(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv
+              k))..(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k),
+          dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop
       (nhds
         (∫ t : ℝ,
           dirichletReciprocalContourKernel x χ
             (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
-  (tendsto_intervalIntegral_dirichletReciprocalContourKernel_leftVertical
-        hprimitive hne hinv hx hA).comp
-    (tendsto_primitiveHorizontalHeightSeq_atTop_of_grh
-      hN2 hGRH hprimitive hne hinv)
+  (tendsto_intervalIntegral_dirichletReciprocalContourKernel_leftVertical hprimitive hne hinv hx
+        hA).comp
+    (tendsto_primitiveHorizontalHeightSeq_atTop_of_grh hN2 hGRH hprimitive hne hinv)
 
 /-! ### `A → ∞`: the fixed-`A` whole-line integral vanishes — the left-edge argument's completion -/
 
@@ -457,13 +424,11 @@ theorem tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N 
     Filter.Tendsto
       (fun A : ℕ ↦
         ∫ t : ℝ,
-          dirichletReciprocalContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
+          dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
   have hxpos : (0 : ℝ) < x := by linarith
   obtain ⟨D, hDnn, hD⟩ :=
-    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general
-      hprimitive hne hinv
+    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general hprimitive hne hinv
   set r : ℝ := x⁻¹ with hr_def
   have hr0 : (0 : ℝ) ≤ r := by
     rw [hr_def]; positivity
@@ -477,27 +442,23 @@ theorem tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N 
     intro A
     have hAnn : (0 : ℝ) ≤ (A : ℝ) := Nat.cast_nonneg A
     nlinarith [sq_nonneg (A : ℝ)]
-  set K : ℝ :=
-    D * x ^ (-(3 : ℝ) / 2) * General.logQuadraticEnvelopeMass *
-      26 with
-    hK_def
+  set K : ℝ := D * x ^ (-(3 : ℝ) / 2) * General.logQuadraticEnvelopeMass * 26 with hK_def
   have hbound :
     ∀ A : ℕ,
       2 ≤ A →
         ‖∫ t : ℝ,
-              dirichletReciprocalContourKernel x
-                χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+              dirichletReciprocalContourKernel x χ
+                (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
           K * (((A : ℝ) + 1) ^ 2 * r ^ A) := by
     intro A hA
     have hI :=
-      norm_integral_dirichletReciprocalContourKernel_leftVertical_of_bound
-        hxpos hA hDnn (fun t => hD A hA t)
+      norm_integral_dirichletReciprocalContourKernel_leftVertical_of_bound hxpos hA hDnn
+        (fun t => hD A hA t)
     calc
       ‖∫ t : ℝ,
-              dirichletReciprocalContourKernel x
-                χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-          D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) *
-            General.logQuadraticEnvelopeMass :=
+              dirichletReciprocalContourKernel x χ
+                (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+          D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) * General.logQuadraticEnvelopeMass :=
         hI
       _ =
           D * (x ^ (-(3 : ℝ) / 2) * r ^ A) * (((A : ℝ) + 5) ^ 2 + 1) *
@@ -507,8 +468,7 @@ theorem tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N 
           D * (x ^ (-(3 : ℝ) / 2) * r ^ A) * (26 * (((A : ℝ) + 1) ^ 2)) *
             General.logQuadraticEnvelopeMass :=
         by
-        have hMassnn :
-          (0 : ℝ) ≤ General.logQuadraticEnvelopeMass :=
+        have hMassnn : (0 : ℝ) ≤ General.logQuadraticEnvelopeMass :=
           General.logQuadraticEnvelopeMass_nonneg
         have hxpow_nn : (0 : ℝ) ≤ x ^ (-(3 : ℝ) / 2) := (Real.rpow_pos_of_pos hxpos _).le
         have hrpow_nn : (0 : ℝ) ≤ r ^ A := by positivity
@@ -550,13 +510,11 @@ theorem quadraticTendsto_dirichletReciprocalContourKernel_leftVertical_integral_
     Filter.Tendsto
       (fun A : ℕ ↦
         ∫ t : ℝ,
-          dirichletReciprocalContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
+          dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
   have hxpos : (0 : ℝ) < x := by linarith
   obtain ⟨D, hDnn, hD⟩ :=
-    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le
-      hprimitive hne hquad
+    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le hprimitive hne hquad
   have hMassnn : (0 : ℝ) ≤ General.logQuadraticEnvelopeMass :=
     General.logQuadraticEnvelopeMass_nonneg
   set r : ℝ := x⁻¹ with hr_def
@@ -572,31 +530,27 @@ theorem quadraticTendsto_dirichletReciprocalContourKernel_leftVertical_integral_
     intro A
     have hAnn : (0 : ℝ) ≤ (A : ℝ) := Nat.cast_nonneg A
     nlinarith [sq_nonneg (A : ℝ)]
-  set K : ℝ :=
-    D * x ^ (-(3 : ℝ) / 2) * General.logQuadraticEnvelopeMass *
-      26 with
-    hK_def
+  set K : ℝ := D * x ^ (-(3 : ℝ) / 2) * General.logQuadraticEnvelopeMass * 26 with hK_def
   have hKnn : (0 : ℝ) ≤ K := by
     rw [hK_def]; positivity
   have hbound :
     ∀ A : ℕ,
       2 ≤ A →
         ‖∫ t : ℝ,
-              dirichletReciprocalContourKernel x
-                χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+              dirichletReciprocalContourKernel x χ
+                (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
           K * (((A : ℝ) + 1) ^ 2 * r ^ A) := by
     intro A hA
     have hI :=
-      norm_integral_dirichletReciprocalContourKernel_leftVertical_of_bound
-        hxpos hA hDnn (fun t => hD A hA t)
+      norm_integral_dirichletReciprocalContourKernel_leftVertical_of_bound hxpos hA hDnn
+        (fun t => hD A hA t)
     have hxApow_nn : (0 : ℝ) ≤ x ^ (-(3 : ℝ) / 2) := Real.rpow_pos_of_pos hxpos _ |>.le
     have hrApow_nn : (0 : ℝ) ≤ r ^ A := by positivity
     calc
       ‖∫ t : ℝ,
-              dirichletReciprocalContourKernel x
-                χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-          D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) *
-            General.logQuadraticEnvelopeMass :=
+              dirichletReciprocalContourKernel x χ
+                (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
+          D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) * General.logQuadraticEnvelopeMass :=
         hI
       _ =
           D * (x ^ (-(3 : ℝ) / 2) * r ^ A) * (((A : ℝ) + 5) ^ 2 + 1) *

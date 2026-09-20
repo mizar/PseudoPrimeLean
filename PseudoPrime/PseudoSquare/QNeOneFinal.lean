@@ -32,21 +32,18 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
     ∃ hdn : (NumberTheory.PrimeNeOneWitnessSet n).Nonempty,
       (NumberTheory.primeNeOneWitness n hdn : ℝ) ≤ (Real.log n) ^ 2 := by
   let bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns :=
-    Classical.choice
-      (NumberTheory.exists_jacobiCharacterArithmeticData (by omega) hn hns)
+    Classical.choice (NumberTheory.exists_jacobiCharacterArithmeticData (by omega) hn hns)
   have hbpos : 0 < bridge.squareFactor := Odd.pos bridge.squareFactor_odd
   have hb2pos : 0 < bridge.squareFactor ^ 2 := pow_pos hbpos 2
   by_cases hdsmall :
     bridge.squarefreePart = 3 ∨ bridge.squarefreePart = 5 ∨ bridge.squarefreePart = 7
   · exact
-      NumberTheory.exists_primeNeOneWitness_cast_le_log_sq_of_small_squarefreePart
-        bridge hn11 hdsmall
+      NumberTheory.exists_primeNeOneWitness_cast_le_log_sq_of_small_squarefreePart bridge hn11
+        hdsmall
   by_cases hdbig : 1000000 ≤ bridge.squarefreePart
   · by_contra hbound
     have hno :
-      ∀ q,
-        q.Prime →
-          Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n := by
+      ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n := by
       intro q hq hqodd hqX hqmem
       have hleq :=
         NumberTheory.primeNeOneWitness_le n
@@ -64,8 +61,7 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
         have hleqR :
           (NumberTheory.primeNeOneWitness n
                 (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
-                  (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn
-                    hns)) :
+                  (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)) :
               ℝ) ≤
             q := by
           exact_mod_cast hleq
@@ -94,8 +90,8 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
     exact qNeOneAnalyticFalse_of_bridge_of_explicit_cutoff bridge hGRH hdbig hno
   · have hdbelow : bridge.squarefreePart < 1000000 := by omega
     have hd11 : 11 ≤ bridge.squarefreePart :=
-      NumberTheory.JacobiCharacterArithmeticData.squarefreePart_ge_eleven_of_not_small
-        bridge (by omega) (by omega) (by omega)
+      NumberTheory.JacobiCharacterArithmeticData.squarefreePart_ge_eleven_of_not_small bridge
+        (by omega) (by omega) (by omega)
     have hnsd : ¬IsSquare bridge.squarefreePart := by
       rintro ⟨k, hk⟩
       apply hns
@@ -108,8 +104,8 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
         _ = bridge.squareFactor * k * (bridge.squareFactor * k) := by ring
     let hdn : (NumberTheory.PrimeNeOneWitnessSet bridge.squarefreePart).Nonempty :=
       NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
-        (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare
-          bridge.squarefreePart_odd hnsd)
+        (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare bridge.squarefreePart_odd
+          hnsd)
     have hwd :=
       primeNeOneWitness_cast_le_log_sq_of_eleven_le_of_lt_million (n := bridge.squarefreePart)
         bridge.squarefreePart_odd hnsd hd11 hdbelow
@@ -117,8 +113,7 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
       obtain ⟨p, hp⟩ := hdn
       exact ⟨p, NumberTheory.primeNeOneWitness_mem_of_squarefreePart_mem bridge hp⟩
     refine ⟨hdnN, ?_⟩
-    have htransfer :=
-      NumberTheory.primeNeOneWitness_le_of_squarefreePart bridge (hd := hdn)
+    have htransfer := NumberTheory.primeNeOneWitness_le_of_squarefreePart bridge (hd := hdn)
     have htransferR :
       (NumberTheory.primeNeOneWitness n hdnN : ℝ) ≤
         (NumberTheory.primeNeOneWitness bridge.squarefreePart hdn : ℝ) := by

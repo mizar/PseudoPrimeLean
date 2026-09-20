@@ -69,8 +69,7 @@ theorem llsPrimitiveReciprocalEvenMainError_le_neg_quarter {x : ℝ} (hx : 64 �
     unfold Analysis.logLinearRatio
     apply div_le_div_of_nonneg_right _ hxpos.le
     linarith
-  have hratio_anti :
-    Analysis.logLinearRatio x ≤ Analysis.logLinearRatio 64 :=
+  have hratio_anti : Analysis.logLinearRatio x ≤ Analysis.logLinearRatio 64 :=
     Analysis.strictAntiOn_logLinearRatio.antitoneOn
       (by
         simp only [Set.mem_Ici]; norm_num only)

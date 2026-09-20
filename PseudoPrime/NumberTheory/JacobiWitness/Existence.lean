@@ -52,8 +52,7 @@ theorem primeNegOneWitnessSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (
     omega
   rcases hn3 with rfl | hn3
   · exact ⟨5, Nat.prime_five, by decide, Internal.jacobiSym_three_five_eq_neg_one⟩
-  · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ :=
-      oddNonsquareHasSmallerNegOneWitness hn hn3 hns
+  · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ := oddNonsquareHasSmallerNegOneWitness hn hn3 hns
     exact ⟨q, hqprime, hqodd, hqvalue⟩
 
 end PseudoPrime.NumberTheory

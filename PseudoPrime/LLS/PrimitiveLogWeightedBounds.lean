@@ -20,23 +20,17 @@ namespace PseudoPrime.LLS
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 theorem re_iteratedDeriv_two_llsPrimitiveLogEvenZeroRegularization_zero_div_two_le_of_grh {N : ℕ}
     [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) :
-    (iteratedDeriv 2
-            (dirichletLogEvenZeroRegularization
-              x 1
-              (dirichletEvenZeroLocalFactor χ))
-            0 /
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) :
+    (iteratedDeriv 2 (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) 0 /
           2).re ≤
-      (2 + Real.log x) * |primitiveBRe χ| +
-          (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
+      (2 + Real.log x) * |primitiveBRe χ| + (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
-  rw [re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_of_grh
-      hN2 hGRH hprimitive hne hinv
+  rw [re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_of_grh hN2 hGRH
+      hprimitive hne hinv
       (show (0 : ℝ) < x from lt_of_lt_of_le (show (0 : ℝ) < 64 by norm_num only) hx)]
   have hD :=
-    neg_re_deriv_logDeriv_completedLFunction_zero_le_abs_BRe_of_grh
-      hGRH hprimitive hne hinv hN2
+    neg_re_deriv_logDeriv_completedLFunction_zero_le_abs_BRe_of_grh hGRH hprimitive hne hinv hN2
   have hE := llsPrimitiveLogEvenMainError_le_neg_eleven_fourths hx
   unfold Analysis.primitiveLogEvenMainError at hE
   have hsum := add_le_add hD hE
@@ -73,22 +67,15 @@ theorem re_iteratedDeriv_two_llsPrimitiveLogEvenZeroRegularization_zero_div_two_
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 theorem re_deriv_llsPrimitiveLogMellinZeroRegularization_zero_of_odd_le_of_grh {N : ℕ} [NeZero N]
     (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hodd : χ.Odd) {x : ℝ}
-    (hx : 64 ≤ x) :
-    (deriv
-          (dirichletLogMellinZeroRegularization
-            x χ)
-          0).re ≤
-      (2 + Real.log x) * |primitiveBRe χ| +
-          (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hodd : χ.Odd) {x : ℝ} (hx : 64 ≤ x) :
+    (deriv (dirichletLogMellinZeroRegularization x χ) 0).re ≤
+      (2 + Real.log x) * |primitiveBRe χ| + (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
-  rw [re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_of_grh
-      hN2 hGRH hprimitive hne hinv hodd
-      (show (0 : ℝ) < x from lt_of_lt_of_le (show (0 : ℝ) < 64 by norm_num only) hx)]
+  rw [re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_of_grh hN2 hGRH hprimitive hne hinv
+      hodd (show (0 : ℝ) < x from lt_of_lt_of_le (show (0 : ℝ) < 64 by norm_num only) hx)]
   have hD :=
-    neg_re_deriv_logDeriv_completedLFunction_zero_le_abs_BRe_of_grh
-      hGRH hprimitive hne hinv hN2
+    neg_re_deriv_logDeriv_completedLFunction_zero_le_abs_BRe_of_grh hGRH hprimitive hne hinv hN2
   have hE := llsPrimitiveLogOddMainError_le_neg_eleven_fourths hx
   unfold Analysis.primitiveLogOddMainError at hE
   have hsum := add_le_add hD hE
@@ -123,29 +110,27 @@ theorem re_deriv_llsPrimitiveLogMellinZeroRegularization_zero_of_odd_le_of_grh {
 /-! The full generic residue ledger, after replacing both zero branch and erased ledger bounds. -/
 
 theorem re_sum_llsPrimitiveLogResidueAt_le_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) {z w : ℂ}
     (h0 :
       (0 : ℂ) ∈
-        AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle
-          χ hne z w)
+        AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle χ hne z
+          w)
     (h1 :
       (1 : ℂ) ∈
-        AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle
-          χ hne z w) :
+        AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle χ hne z
+          w) :
     (∑
           s ∈
-            AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle
-              χ hne z w,
+            AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle χ hne
+              z w,
           AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x s).re ≤
       (2 * Real.sqrt x + 2 + Real.log x) *
             |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| +
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
   have hxpos : (0 : ℝ) < x := lt_of_lt_of_le (show (0 : ℝ) < 64 by norm_num only) hx
-  rw [AnalyticNumberTheory.DirichletLFunction.dirichletSplitLogSingularitySum x hne h1
-      h0,
+  rw [AnalyticNumberTheory.DirichletLFunction.dirichletSplitLogSingularitySum x hne h1 h0,
     AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_one hne x]
   have hr0_bound :
     (AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x 0).re ≤
@@ -153,19 +138,17 @@ theorem re_sum_llsPrimitiveLogResidueAt_le_of_grh {N : ℕ} [NeZero N] (hN2 : 2 
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
     rcases χ.even_or_odd with heven | hodd
-    · rw [AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_zero_of_even hne
-          x heven]
+    · rw [AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_zero_of_even hne x heven]
       exact
         re_iteratedDeriv_two_llsPrimitiveLogEvenZeroRegularization_zero_div_two_le_of_grh hN2 hGRH
           hprimitive hne hinv hx
-    · rw [AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_zero_of_odd hne
-          x hodd]
+    · rw [AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_zero_of_odd hne x hodd]
       exact
         re_deriv_llsPrimitiveLogMellinZeroRegularization_zero_of_odd_le_of_grh hN2 hGRH hprimitive
           hne hinv hodd hx
   have herased :=
-    AnalyticNumberTheory.DirichletLFunction.re_sum_erased_primitiveLogResidues_le_of_grh
-      hN2 hGRH hprimitive hne hinv hxpos (z := z) (w := w)
+    AnalyticNumberTheory.DirichletLFunction.re_sum_erased_primitiveLogResidues_le_of_grh hN2 hGRH
+      hprimitive hne hinv hxpos (z := z) (w := w)
   simp only [Complex.add_re, Complex.zero_re]
   have hsum := add_le_add hr0_bound herased
   calc
@@ -176,8 +159,7 @@ theorem re_sum_llsPrimitiveLogResidueAt_le_of_grh {N : ℕ} [NeZero N] (hN2 : 2 
                           χ hne z w).erase
                       1).erase
                   0,
-              AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x
-                ρ).re =
+              AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x ρ).re =
         (AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x 0).re +
           (∑
               ρ ∈
@@ -185,8 +167,7 @@ theorem re_sum_llsPrimitiveLogResidueAt_le_of_grh {N : ℕ} [NeZero N] (hN2 : 2 
                           χ hne z w).erase
                       1).erase
                   0,
-              AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x
-                ρ).re :=
+              AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x ρ).re :=
       by rw [zero_add]
     _ ≤
         (2 + Real.log x) * |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| +
@@ -207,54 +188,41 @@ open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 theorem re_characterLogWeightedSum_sub_leftVertical_le_generic_of_grh {N : ℕ} [NeZero N]
     (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) (A : ℕ)
-    (hA : 2 ≤ A) :
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) (A : ℕ) (hA : 2 ≤ A) :
     (characterLogWeightedSum x χ).re -
         (2 * Real.pi)⁻¹ *
           (∫ t : ℝ,
               dirichletLogContourKernel x χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I)).re ≤
-      (2 * Real.sqrt x + 2 + Real.log x) *
-            |primitiveBRe χ| +
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re ≤
+      (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
   have hx1 : (1 : ℝ) ≤ x := le_trans (by norm_num only) hx
   have htend :=
-    tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh
-      hN2 hGRH hprimitive hne hinv hx1 A hA
+    tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh hN2 hGRH hprimitive hne hinv hx1 A hA
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   have hev :
     ∀ᶠ k : ℕ in Filter.atTop,
       ((-Complex.I / (2 * (Real.pi : ℂ))) *
             AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral
               (dirichletLogContourKernel x χ)
-              (primitiveHeightSeqLowerCorner_of_grh
-                hN2 hGRH hprimitive hne hinv A k)
-              (primitiveHeightSeqUpperCorner_of_grh
-                hN2 hGRH hprimitive hne hinv k)).re ≤
-        (2 * Real.sqrt x + 2 + Real.log x) *
-              |primitiveBRe χ| +
+              (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
+              (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k)).re ≤
+        (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
             (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
           11 / 4 := by
     filter_upwards with k
     have hid :=
-      dirichletLogFiniteContourIdentity_heightSeq_normalized_of_grh
-        hN2 hGRH hprimitive hne hinv (lt_of_lt_of_le (by norm_num only) hx) A k hA
+      dirichletLogFiniteContourIdentity_heightSeq_normalized_of_grh hN2 hGRH hprimitive hne hinv
+        (lt_of_lt_of_le (by norm_num only) hx) A k hA
     obtain ⟨h0, h1⟩ :=
-      primitiveReciprocalMellinPoints_mem_singularities_heightSeq_of_grh
-        hN2 hGRH hprimitive hne hinv A k hA
+      primitiveReciprocalMellinPoints_mem_singularities_heightSeq_of_grh hN2 hGRH hprimitive hne
+        hinv A k hA
     have hbound :=
       re_sum_llsPrimitiveLogResidueAt_le_of_grh hN2 hGRH hprimitive hne hinv hx (z :=
-        primitiveHeightSeqLowerCorner_of_grh hN2
-          hGRH hprimitive hne hinv A k)
-        (w :=
-        primitiveHeightSeqUpperCorner_of_grh hN2
-          hGRH hprimitive hne hinv k)
-        h0 h1
+        primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k) (w :=
+        primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k) h0 h1
     rw [hid]
     exact hbound
   have hlimit := le_of_tendsto htendRe hev
@@ -263,18 +231,12 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le_generic_of_grh {N : ℕ} 
     ((↑(2 * Real.pi))⁻¹ *
             ∫ t : ℝ,
               dirichletLogContourKernel x χ
-                (((primitiveReciprocalLeftRe A :
-                      ℝ) :
-                    ℂ) +
-                  (t : ℂ) * Complex.I) :
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I) :
           ℂ).re =
       (2 * Real.pi)⁻¹ *
         (∫ t : ℝ,
             dirichletLogContourKernel x χ
-              (((primitiveReciprocalLeftRe A :
-                    ℝ) :
-                  ℂ) +
-                (t : ℂ) * Complex.I)).re := by
+              (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re := by
     rw [show ((↑(2 * Real.pi))⁻¹ : ℂ) = (((2 * Real.pi)⁻¹ : ℝ) : ℂ) from by
         push_cast; ring,
       Complex.re_ofReal_mul]
@@ -286,18 +248,15 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le_generic_of_grh {N : ℕ} 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 theorem primitiveGenericLogWeightedUpper_of_grh_generic {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) :
     (characterLogWeightedSum x χ).re ≤
-      (2 * Real.sqrt x + 2 + Real.log x) *
-            |primitiveBRe χ| +
+      (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
   have hx1 : (1 : ℝ) < x := lt_of_lt_of_le (by norm_num only) hx
   have htend :=
-    tendsto_dirichletLogContourKernel_leftVertical_integral_atTop
-      hprimitive hne hinv hx1
+    tendsto_dirichletLogContourKernel_leftVertical_integral_atTop hprimitive hne hinv hx1
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   have htendScaled :
     Filter.Tendsto
@@ -306,15 +265,8 @@ theorem primitiveGenericLogWeightedUpper_of_grh_generic {N : ℕ} [NeZero N] (hN
           (2 * Real.pi)⁻¹ *
             (∫ t : ℝ,
                 dirichletLogContourKernel x χ
-                  (((primitiveReciprocalLeftRe
-                          A :
-                        ℝ) :
-                      ℂ) +
-                    (t : ℂ) * Complex.I)).re)
-      Filter.atTop
-      (nhds
-        ((characterLogWeightedSum x χ).re -
-          (2 * Real.pi)⁻¹ * 0)) :=
+                  (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re)
+      Filter.atTop (nhds ((characterLogWeightedSum x χ).re - (2 * Real.pi)⁻¹ * 0)) :=
     Filter.Tendsto.const_sub _ (Filter.Tendsto.const_mul _ htendRe)
   simp only [mul_zero, sub_zero] at htendScaled
   have hev :
@@ -323,13 +275,8 @@ theorem primitiveGenericLogWeightedUpper_of_grh_generic {N : ℕ} [NeZero N] (hN
           (2 * Real.pi)⁻¹ *
             (∫ t : ℝ,
                 dirichletLogContourKernel x χ
-                  (((primitiveReciprocalLeftRe
-                          A :
-                        ℝ) :
-                      ℂ) +
-                    (t : ℂ) * Complex.I)).re ≤
-        (2 * Real.sqrt x + 2 + Real.log x) *
-              |primitiveBRe χ| +
+                  (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re ≤
+        (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
             (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
           11 / 4 := by
     filter_upwards [Filter.eventually_ge_atTop 2] with A hA

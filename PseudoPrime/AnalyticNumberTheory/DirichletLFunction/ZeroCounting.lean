@@ -38,9 +38,7 @@ Content: it is a product of two closed bounded real intervals.
 Role: compactness gives finiteness of the primitive `L` zero ledger.
 -/
 theorem isCompact_dirichletCompletedLFunctionRectangleBox (z w : ℂ) :
-    IsCompact
-      (dirichletCompletedLFunctionRectangleBox z
-        w) := by
+    IsCompact (dirichletCompletedLFunctionRectangleBox z w) := by
   exact isCompact_uIcc.reProdIm isCompact_uIcc
 
 /--
@@ -82,8 +80,7 @@ theorem finite_dirichletLFunction_zerosOn {N : ℕ} [NeZero N] (χ : DirichletCh
     (DirichletCharacter.differentiable_LFunction hχ).analyticAt s
   have hnormal : MeromorphicNFOn (DirichletCharacter.LFunction χ) K := hanalytic.meromorphicNFOn
   rw [hnormal.zero_set_eq_divisor_support fun u ↦
-      meromorphicOrderAt_dirichletLFunction_ne_top
-        χ hχ u]
+      meromorphicOrderAt_dirichletLFunction_ne_top χ hχ u]
   exact (MeromorphicOn.divisor (DirichletCharacter.LFunction χ) K).finiteSupport hcompact
 
 /--
@@ -94,12 +91,8 @@ Role: provides the finiteness proof used to define the rectangle's `Finset` ledg
 -/
 theorem finite_dirichletLFunction_zerosInRectangle {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     (hχ : χ ≠ 1) (z w : ℂ) :
-    (dirichletCompletedLFunctionRectangleBox z
-          w ∩
-        DirichletCharacter.LFunction χ ⁻¹' {0}).Finite :=
-  finite_dirichletLFunction_zerosOn χ hχ
-    (isCompact_dirichletCompletedLFunctionRectangleBox
-      z w)
+    (dirichletCompletedLFunctionRectangleBox z w ∩ DirichletCharacter.LFunction χ ⁻¹' {0}).Finite :=
+  finite_dirichletLFunction_zerosOn χ hχ (isCompact_dirichletCompletedLFunctionRectangleBox z w)
 
 /--
 Input/assumptions: a nontrivial character and closed rectangle.
@@ -109,8 +102,7 @@ Role: its finite sums will be the primitive zero contributions in the rectangle 
 -/
 noncomputable def dirichletLFunctionZerosInRectangle {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     (hχ : χ ≠ 1) (z w : ℂ) : Finset ℂ :=
-  (finite_dirichletLFunction_zerosInRectangle χ
-      hχ z w).toFinset
+  (finite_dirichletLFunction_zerosInRectangle χ hχ z w).toFinset
 
 /--
 Input/assumptions: a point and a primitive rectangle zero ledger.
@@ -120,15 +112,10 @@ Role: lets residue and boundary arguments recover the analytic facts attached to
 -/
 theorem mem_dirichletLFunctionZerosInRectangle_iff {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     {hχ : χ ≠ 1} {z w ρ : ℂ} :
-    ρ ∈
-        dirichletLFunctionZerosInRectangle χ hχ
-          z w ↔
-      ρ ∈
-          dirichletCompletedLFunctionRectangleBox
-            z w ∧
-        DirichletCharacter.LFunction χ ρ = 0 := by
-  simp only [dirichletLFunctionZerosInRectangle,
-    Set.Finite.mem_toFinset, Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff]
+    ρ ∈ dirichletLFunctionZerosInRectangle χ hχ z w ↔
+      ρ ∈ dirichletCompletedLFunctionRectangleBox z w ∧ DirichletCharacter.LFunction χ ρ = 0 := by
+  simp only [dirichletLFunctionZerosInRectangle, Set.Finite.mem_toFinset, Set.mem_inter_iff,
+    Set.mem_preimage, Set.mem_singleton_iff]
 
 /--
 Input/assumptions: a nontrivial Dirichlet character.
@@ -146,8 +133,7 @@ theorem dirichletCompletedLFunction_two_ne_zero {N : ℕ} [NeZero N] (χ : Diric
         change (1 : ℝ) ≤ 2
         norm_num only)
   have hrelation :=
-    dirichletLFunction_eq_completed_div_gammaFactor
-      χ (2 : ℂ)
+    dirichletLFunction_eq_completed_div_gammaFactor χ (2 : ℂ)
       (Or.inl
         (by
           intro h
@@ -172,8 +158,7 @@ theorem meromorphicOrderAt_dirichletCompletedLFunction_ne_top {N : ℕ} [NeZero 
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt 2
   have horder : meromorphicOrderAt (DirichletCharacter.completedLFunction χ) 2 = 0 :=
     hanalytic.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff.mpr
-      (dirichletCompletedLFunction_two_ne_zero χ
-        hχ)
+      (dirichletCompletedLFunction_two_ne_zero χ hχ)
   have hmero : Meromorphic (DirichletCharacter.completedLFunction χ) := fun u ↦
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt u |>.meromorphicAt
   apply (hmero.exists_meromorphicOrderAt_ne_top_iff_forall.mp ?_) s
@@ -197,8 +182,7 @@ theorem finite_dirichletCompletedLFunction_zerosOn {N : ℕ} [NeZero N] (χ : Di
   have hnormal : MeromorphicNFOn (DirichletCharacter.completedLFunction χ) K :=
     hanalytic.meromorphicNFOn
   rw [hnormal.zero_set_eq_divisor_support fun u ↦
-      meromorphicOrderAt_dirichletCompletedLFunction_ne_top
-        χ hχ u]
+      meromorphicOrderAt_dirichletCompletedLFunction_ne_top χ hχ u]
   exact (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) K).finiteSupport hcompact
 
 /--
@@ -209,10 +193,8 @@ Role: this is the zero ledger naturally compatible with the completed functional
 -/
 noncomputable def dirichletCompletedLFunctionZerosInRectangle {N : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) (z w : ℂ) : Finset ℂ :=
-  (finite_dirichletCompletedLFunction_zerosOn χ
-      hχ
-      (isCompact_dirichletCompletedLFunctionRectangleBox
-        z w)).toFinset
+  (finite_dirichletCompletedLFunction_zerosOn χ hχ
+      (isCompact_dirichletCompletedLFunctionRectangleBox z w)).toFinset
 
 /--
 Input/assumptions: a point and a completed `L` rectangle zero ledger.
@@ -222,15 +204,11 @@ Role: lets later functional-equation and Gamma bookkeeping attach local data to 
 -/
 theorem mem_dirichletCompletedLFunctionZerosInRectangle_iff {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} {hχ : χ ≠ 1} {z w ρ : ℂ} :
-    ρ ∈
-        dirichletCompletedLFunctionZerosInRectangle
-          χ hχ z w ↔
-      ρ ∈
-          dirichletCompletedLFunctionRectangleBox
-            z w ∧
+    ρ ∈ dirichletCompletedLFunctionZerosInRectangle χ hχ z w ↔
+      ρ ∈ dirichletCompletedLFunctionRectangleBox z w ∧
         DirichletCharacter.completedLFunction χ ρ = 0 := by
-  simp only [dirichletCompletedLFunctionZerosInRectangle,
-    Set.Finite.mem_toFinset, Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff]
+  simp only [dirichletCompletedLFunctionZerosInRectangle, Set.Finite.mem_toFinset,
+    Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff]
 
 /--
 Definition: the analytic multiplicity of a completed primitive Dirichlet `L` zero.
@@ -252,9 +230,7 @@ Role: establishes positive coefficients for the primitive completed-Hadamard fin
 theorem dirichletCompletedLFunctionZeroMultiplicity_pos {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) {ρ : ℂ}
     (hzero : DirichletCharacter.completedLFunction χ ρ = 0) :
-    0 <
-      dirichletCompletedLFunctionZeroMultiplicity
-        χ ρ := by
+    0 < dirichletCompletedLFunctionZeroMultiplicity χ ρ := by
   have hanalytic : AnalyticAt ℂ (DirichletCharacter.completedLFunction χ) ρ :=
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt ρ
   have horder : analyticOrderAt (DirichletCharacter.completedLFunction χ) ρ ≠ 0 :=
@@ -264,8 +240,8 @@ theorem dirichletCompletedLFunctionZeroMultiplicity_pos {N : ℕ} [NeZero N]
     have hmero := hanalytic.meromorphicOrderAt_eq
     rw [htop] at hmero
     exact
-      meromorphicOrderAt_dirichletCompletedLFunction_ne_top
-        χ hχ ρ (by simpa only [ENat.map_top] using hmero)
+      meromorphicOrderAt_dirichletCompletedLFunction_ne_top χ hχ ρ
+        (by simpa only [ENat.map_top] using hmero)
   have hcast := Nat.cast_analyticOrderNatAt hfinite
   apply Nat.pos_of_ne_zero
   intro hmult
@@ -286,10 +262,7 @@ theorem exists_dirichletCompletedLFunction_localFactor {N : ℕ} [NeZero N]
       AnalyticAt ℂ g ρ ∧
         g ρ ≠ 0 ∧
         DirichletCharacter.completedLFunction χ =ᶠ[nhds ρ] fun s ↦
-          (s - ρ) ^
-              dirichletCompletedLFunctionZeroMultiplicity
-                χ ρ •
-            g s := by
+          (s - ρ) ^ dirichletCompletedLFunctionZeroMultiplicity χ ρ • g s := by
   have hanalytic : AnalyticAt ℂ (DirichletCharacter.completedLFunction χ) ρ :=
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt ρ
   have hfinite : analyticOrderAt (DirichletCharacter.completedLFunction χ) ρ ≠ ⊤ := by
@@ -297,8 +270,8 @@ theorem exists_dirichletCompletedLFunction_localFactor {N : ℕ} [NeZero N]
     have hmero := hanalytic.meromorphicOrderAt_eq
     rw [htop] at hmero
     exact
-      meromorphicOrderAt_dirichletCompletedLFunction_ne_top
-        χ hχ ρ (by simpa only [ENat.map_top] using hmero)
+      meromorphicOrderAt_dirichletCompletedLFunction_ne_top χ hχ ρ
+        (by simpa only [ENat.map_top] using hmero)
   simpa only [dirichletCompletedLFunctionZeroMultiplicity] using
     hanalytic.analyticOrderAt_ne_top.mp hfinite
 
@@ -320,8 +293,7 @@ theorem meromorphicOrderAt_logDeriv_dirichletLFunction_zero_eq_neg_one {N : ℕ}
     exact (hanalytic.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff.mp horderZero) hzero
   exact
     meromorphicOrderAt_logDeriv_eq_neg_one hanalytic.meromorphicAt horder
-      (meromorphicOrderAt_dirichletLFunction_ne_top
-        χ hχ ρ)
+      (meromorphicOrderAt_dirichletLFunction_ne_top χ hχ ρ)
 
 end DirichletLFunction
 

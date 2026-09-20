@@ -21,8 +21,7 @@ The logarithmic estimate and the reciprocal estimate are combined as a conjuncti
 `llsRiemannReciprocalLowerBound_of_riemannHypothesis`. This shared assembly supplies character
 applications that require both estimates. -/
 theorem riemannBounds_of_riemannHypothesis (hRH : RiemannHypothesis) :
-    LLSRiemannWeightedLowerBound ∧
-      LLSRiemannReciprocalLowerBound := by
+    LLSRiemannWeightedLowerBound ∧ LLSRiemannReciprocalLowerBound := by
   exact
     ⟨llsRiemannWeightedLowerBound_of_riemannHypothesis hRH,
       llsRiemannReciprocalLowerBound_of_riemannHypothesis hRH⟩

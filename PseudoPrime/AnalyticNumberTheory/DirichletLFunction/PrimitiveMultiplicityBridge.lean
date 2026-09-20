@@ -51,50 +51,31 @@ with an
 machinery.
 -/
 theorem re_sum_erased_primitiveReciprocalResidues_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {z w : ℂ} :
-    (∑
-          ρ ∈
-            ((dirichletLFunctionSingularitiesInRectangle
-                      χ hne z w).erase
-                  1).erase
-              0,
-          dirichletReciprocalResidueAt hne x
-            ρ).re ≤
+    (∑ ρ ∈ ((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0,
+          dirichletReciprocalResidueAt hne x ρ).re ≤
       2 * |primitiveBRe χ| / Real.sqrt x := by
-  set S :=
-    ((dirichletLFunctionSingularitiesInRectangle
-              χ hne z w).erase
-          1).erase
-      0 with
-    hS_def
+  set S := ((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0 with hS_def
   rw [Complex.re_sum]
   have hstep :
     ∀ ρ ∈ S,
-      (dirichletReciprocalResidueAt hne x
-            ρ).re ≤
+      (dirichletReciprocalResidueAt hne x ρ).re ≤
         ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
               (x : ℂ) ^ (ρ - 1) /
             (ρ * (ρ - 1))‖ := by
     intro ρ hρ
-    rw [dirichletReciprocalResidueAt_eq_zeroContribution_of_mem_erase
-        x hne (hS_def ▸ hρ)]
+    rw [dirichletReciprocalResidueAt_eq_zeroContribution_of_mem_erase x hne (hS_def ▸ hρ)]
     have hρ0 : ρ ≠ 0 := (Finset.mem_erase.mp hρ).1
-    exact
-      dirichletLFunctionReciprocalZeroContribution_re_le_completedTerm_norm
-        hne hx hρ0
+    exact dirichletLFunctionReciprocalZeroContribution_re_le_completedTerm_norm hne hx hρ0
   calc
-    ∑ ρ ∈ S,
-          (dirichletReciprocalResidueAt hne x
-              ρ).re ≤
+    ∑ ρ ∈ S, (dirichletReciprocalResidueAt hne x ρ).re ≤
         ∑ ρ ∈ S,
           ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
                 (x : ℂ) ^ (ρ - 1) /
               (ρ * (ρ - 1))‖ :=
       Finset.sum_le_sum hstep
     _ ≤ 2 * |primitiveBRe χ| / Real.sqrt x :=
-      sum_norm_completedReciprocalZeroTerm_le_abs_BRe_of_grh
-        hN2 hGRH hprimitive hne hinv hx S
+      sum_norm_completedReciprocalZeroTerm_le_abs_BRe_of_grh hN2 hGRH hprimitive hne hinv hx S
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

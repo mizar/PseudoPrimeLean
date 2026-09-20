@@ -67,8 +67,7 @@ theorem riemannZeta_eq_mul_sin_eventually (n : ℕ) :
 
 /-- Every trivial zero `-2(n+1)` of `ζ` is a *simple* zero. -/
 theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
-    riemannZetaZeroMultiplicity (-2 * ((n : ℂ) + 1)) =
-      1 := by
+    riemannZetaZeroMultiplicity (-2 * ((n : ℂ) + 1)) = 1 := by
   set w₀ : ℂ := -2 * ((n : ℂ) + 1) with hw₀_def
   set A : ℂ → ℂ := fun w =>
     2 * (2 * (Real.pi : ℂ)) ^ (-(1 - w)) * Complex.Gamma (1 - w) * riemannZeta (1 - w) with hA_def
@@ -193,20 +192,17 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
     hBanalytic.analyticOrderAt_eq_one_of_zero_deriv_ne_zero hBw₀_zero hBderiv_ne
   have hAorder : analyticOrderAt A w₀ = 0 := hAanalytic.analyticOrderAt_eq_zero.mpr hAw₀_ne
   have hcongr : analyticOrderAt riemannZeta w₀ = analyticOrderAt (fun w => A w * B w) w₀ :=
-    analyticOrderAt_congr
-      (riemannZeta_eq_mul_sin_eventually n)
+    analyticOrderAt_congr (riemannZeta_eq_mul_sin_eventually n)
   have hmul :
     analyticOrderAt (fun w => A w * B w) w₀ = analyticOrderAt A w₀ + analyticOrderAt B w₀ :=
     analyticOrderAt_mul hAanalytic hBanalytic
-  rw [riemannZetaZeroMultiplicity, analyticOrderNatAt,
-    hcongr, hmul, hAorder, hBorder]
+  rw [riemannZetaZeroMultiplicity, analyticOrderNatAt, hcongr, hmul, hAorder, hBorder]
   simp only [zero_add, ENat.toNat_one]
 
 /-- `ζ`'s reciprocal-kernel contribution at the `k`-th trivial zero `-2(k+1)` is exactly the
 negative of the `k`-th summand of the reciprocal trivial-zero series. -/
 theorem riemannZetaReciprocalZeroContribution_neg_two_mul_nat_add_one {x : ℝ} (hx : 0 < x) (k : ℕ) :
-    riemannZetaReciprocalZeroContribution x
-        (-2 * ((k : ℂ) + 1)) =
+    riemannZetaReciprocalZeroContribution x (-2 * ((k : ℂ) + 1)) =
       -((x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1)) : ℝ) : ℂ) := by
   unfold riemannZetaReciprocalZeroContribution
   rw [riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one]
@@ -268,8 +264,7 @@ theorem reciprocalTrivialZeroTerm_le_geometric_of_pos {x : ℝ} (hx : 0 < x) (k 
 `riemannZetaReciprocalZeroContribution_neg_two_mul_nat_add_one`: `ζ`'s logarithmic-kernel
 contribution at the `k`-th trivial zero `-2(k+1)` is `-x^{-2(k+1)}/(4(k+1)²)`. -/
 theorem riemannZetaLogZeroContribution_neg_two_mul_nat_add_one {x : ℝ} (hx : 0 < x) (k : ℕ) :
-    riemannZetaLogZeroContribution x
-        (-2 * ((k : ℂ) + 1)) =
+    riemannZetaLogZeroContribution x (-2 * ((k : ℂ) + 1)) =
       -((x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2) : ℝ) : ℂ) := by
   unfold riemannZetaLogZeroContribution
   rw [riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one]
@@ -324,8 +319,7 @@ theorem summable_logTrivialZeroTerm {x : ℝ} (hx : 1 < x) :
 
 /-- The logarithmic trivial-zero series is bounded by the Basel sum for `x > 1`. -/
 theorem riemannZetaLogTrivialZeroSeries_le_pi_sq_div_twenty_four {x : ℝ} (hx : 1 < x) :
-    riemannZetaLogTrivialZeroSeries x ≤
-      Real.pi ^ 2 / 24 := by
+    riemannZetaLogTrivialZeroSeries x ≤ Real.pi ^ 2 / 24 := by
   have hs := summable_logTrivialZeroTerm hx
   have hbase : Summable (fun k : ℕ => (1 : ℝ) / ((k : ℝ) + 1) ^ 2) := by
     have hp : Summable (fun n : ℕ => (1 : ℝ) / (n : ℝ) ^ 2) := (hasSum_zeta_two).summable
@@ -367,9 +361,7 @@ theorem riemannZetaLogTrivialZeroSeries_le_pi_sq_div_twenty_four {x : ℝ} (hx :
 /-- **Finite trivial-zero partial sums (logarithmic kernel) are bounded by the full series.** -/
 theorem sum_logTrivialZeroTerm_le {x : ℝ} (hx : 1 < x) (S : Finset ℂ)
     (hS : ∀ ρ ∈ S, ∃ n : ℕ, ρ = -2 * ((n : ℂ) + 1)) :
-    (∑ ρ ∈ S,
-        x⁻¹ ^ (2 * (trivialZeroIndex ρ + 1)) /
-          (4 * ((trivialZeroIndex ρ : ℝ) + 1) ^ 2)) ≤
+    (∑ ρ ∈ S, x⁻¹ ^ (2 * (trivialZeroIndex ρ + 1)) / (4 * ((trivialZeroIndex ρ : ℝ) + 1) ^ 2)) ≤
       riemannZetaLogTrivialZeroSeries x := by
   have hinj : Set.InjOn trivialZeroIndex S := by
     intro ρ₁ h1 ρ₂ h2 heq
@@ -377,11 +369,8 @@ theorem sum_logTrivialZeroTerm_le {x : ℝ} (hx : 1 < x) (S : Finset ℂ)
     have hs2 := trivialZeroIndex_spec (hS ρ₂ h2)
     rw [hs1, hs2, heq]
   have himg :
-    (∑ ρ ∈ S,
-        x⁻¹ ^ (2 * (trivialZeroIndex ρ + 1)) /
-          (4 * ((trivialZeroIndex ρ : ℝ) + 1) ^ 2)) =
-      ∑ k ∈ S.image trivialZeroIndex,
-        x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2) :=
+    (∑ ρ ∈ S, x⁻¹ ^ (2 * (trivialZeroIndex ρ + 1)) / (4 * ((trivialZeroIndex ρ : ℝ) + 1) ^ 2)) =
+      ∑ k ∈ S.image trivialZeroIndex, x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2) :=
     (Finset.sum_image (f := fun k : ℕ => x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2)) hinj).symm
   rw [himg]
   have hsummable := summable_logTrivialZeroTerm hx
@@ -390,8 +379,7 @@ theorem sum_logTrivialZeroTerm_le {x : ℝ} (hx : 1 < x) (S : Finset ℂ)
     hsummable.sum_le_tsum (S.image trivialZeroIndex)
       (fun k _ => div_nonneg (pow_nonneg (inv_nonneg.mpr hxnn) _) (by positivity))
   rwa [show
-      (∑' k : ℕ, x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2)) =
-        riemannZetaLogTrivialZeroSeries x
+      (∑' k : ℕ, x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2)) = riemannZetaLogTrivialZeroSeries x
       from rfl] at hle
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

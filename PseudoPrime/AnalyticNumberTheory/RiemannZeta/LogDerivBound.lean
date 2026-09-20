@@ -20,7 +20,6 @@ At good heights the zero terms are also controlled, yielding the final
 
 noncomputable section
 
-
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
 /-- `ζ` factors on `ball z R` as a finite product over its zeros there times an analytic
@@ -47,9 +46,7 @@ theorem exists_riemannZeta_zeroFree_factorization {z : ℂ} {R : ℝ} (hR : 0 < 
     intro u htop
     have hmero := (hAn u.1 u.2).meromorphicOrderAt_eq
     rw [hmero] at htop
-    apply
-      analyticOrderAt_riemannZeta_ne_top
-        (hz1 u.1 (hUclosed u.2))
+    apply analyticOrderAt_riemannZeta_ne_top (hz1 u.1 (hUclosed u.2))
     rw [← ENat.map_top (Nat.cast : ℕ → ℤ)] at htop
     exact ENat.map_natCast_injective.eq_iff.mp htop
   have h3f : (MeromorphicOn.divisor riemannZeta U).support.Finite :=
@@ -77,9 +74,9 @@ theorem exists_riemannZeta_zeroFree_factorization {z : ℂ} {R : ℝ} (hR : 0 < 
     rw [finprod_eq_prod_of_mulSupport_subset _ hsub]
     apply Finset.prod_congr rfl
     intro u _
-    rw [show MeromorphicOn.divisor riemannZeta U u =
-      ((MeromorphicOn.divisor riemannZeta U u).toNat : ℤ) from
-        (Int.toNat_of_nonneg (hdivnn u)).symm,
+    rw [show
+        MeromorphicOn.divisor riemannZeta U u = ((MeromorphicOn.divisor riemannZeta U u).toNat : ℤ)
+        from (Int.toNat_of_nonneg (hdivnn u)).symm,
       zpow_natCast]
   have hPAn : AnalyticOnNhd ℂ P Set.univ := by
     intro x _
@@ -281,8 +278,8 @@ theorem logDeriv_riemannZeta_eq_sum_add_logDeriv_at {z : ℂ} {R : ℝ} {S : Fin
 of `ζ` there), so it doesn't depend on which analytic domain it's computed within. -/
 theorem divisor_riemannZeta_eq_of_analyticOnNhd {U₁ U₂ : Set ℂ}
     (h1 : AnalyticOnNhd ℂ riemannZeta U₁) (h2 : AnalyticOnNhd ℂ riemannZeta U₂) {u : ℂ}
-    (hu1 : u ∈ U₁) (hu2 : u ∈ U₂) : MeromorphicOn.divisor riemannZeta U₁ u =
-      MeromorphicOn.divisor riemannZeta U₂ u := by
+    (hu1 : u ∈ U₁) (hu2 : u ∈ U₂) :
+    MeromorphicOn.divisor riemannZeta U₁ u = MeromorphicOn.divisor riemannZeta U₂ u := by
   rw [MeromorphicOn.AnalyticOnNhd.divisor_apply h1 hu1,
     MeromorphicOn.AnalyticOnNhd.divisor_apply h2 hu2]
 
@@ -299,9 +296,7 @@ theorem exists_logDeriv_riemannZeta_eq_sum_add_logDeriv_of_good_height {H : ℝ}
     (hgood :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 →
-          1 / (4 * jensenLogConst * Real.log (H + 2)) ≤
-            |T - ρ.im|)
+          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|)
     {σ : ℝ} (_hσ1 : -(1 : ℝ) / 2 ≤ σ) (_hσ2 : σ ≤ 2) :
     ∃ (S : Finset ℂ) (m : ℂ → ℕ) (g : ℂ → ℂ),
       AnalyticOnNhd ℂ g (Metric.ball (σ + T * Complex.I) (2 / 5)) ∧
@@ -309,9 +304,7 @@ theorem exists_logDeriv_riemannZeta_eq_sum_add_logDeriv_of_good_height {H : ℝ}
         logDeriv riemannZeta (σ + T * Complex.I) =
           (∑ u ∈ S, (m u : ℂ) / ((σ + T * Complex.I) - u)) + logDeriv g (σ + T * Complex.I) ∧
         ‖∑ u ∈ S, (m u : ℂ) / ((σ + T * Complex.I) - u)‖ ≤
-          4 *
-            (jensenLogConst * Real.log (H + 2)) ^
-              2 := by
+          4 * (jensenLogConst * Real.log (H + 2)) ^ 2 := by
   set z : ℂ := σ + T * Complex.I with hz_def
   have hzim : z.im = T := by
     simp only [hz_def, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
@@ -341,8 +334,7 @@ theorem exists_logDeriv_riemannZeta_eq_sum_add_logDeriv_of_good_height {H : ℝ}
     have : (0 : ℝ) < 1 / (4 * jensenLogConst * Real.log (H + 2)) := by positivity
     linarith
   obtain ⟨S, m, g, hgAn, hgne, hmpos, hSU, hSzero, hmeqSmall, _heqOn, hlog⟩ :=
-    exists_logDeriv_riemannZeta_eq_sum_add_logDeriv
-      (R := 2 / 5) (by norm_num only) hz1 hzgood
+    exists_logDeriv_riemannZeta_eq_sum_add_logDeriv (R := 2 / 5) (by norm_num only) hz1 hzgood
   refine ⟨S, m, g, hgAn, hgne, hlog, ?_⟩
   -- Every zero in `S` has ordinate within `2` of `H`: reused for both the margin bound and the
   -- containment in the zeta-side estimate disk.
@@ -357,10 +349,7 @@ theorem exists_logDeriv_riemannZeta_eq_sum_add_logDeriv_of_good_height {H : ℝ}
     rw [abs_le]
     constructor <;> linarith [h2.1, h2.2, hT.1, hT.2]
   -- Bound each term's denominator away from 0 via the good-height margin.
-  have hmargin :
-    ∀ u ∈ S,
-      1 / (4 * jensenLogConst * Real.log (H + 2)) ≤
-        ‖z - u‖ := by
+  have hmargin : ∀ u ∈ S, 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ ‖z - u‖ := by
     intro u hu
     have hmarg := hgood u (hSzero u hu) (hu_im_H u hu)
     have hle : |T - u.im| ≤ ‖z - u‖ := by
@@ -371,80 +360,47 @@ theorem exists_logDeriv_riemannZeta_eq_sum_add_logDeriv_of_good_height {H : ℝ}
   -- Bound the total multiplicity via the zeta-side estimate zero count.
   have hAnSmall : AnalyticOnNhd ℂ riemannZeta (Metric.ball z (2 / 5 : ℝ)) := fun w hw =>
     analyticOn_riemannZeta w (hz1 w (Metric.ball_subset_closedBall hw))
-  have hAnBig :
-    AnalyticOnNhd ℂ riemannZeta
-      (Metric.closedBall (jensenCenter H) (37 / 10)) :=
+  have hAnBig : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) :=
     (jensen_analyticOnNhd (by linarith : (4 : ℝ) ≤ H)).mono
       (Metric.closedBall_subset_closedBall (by norm_num only))
-  have hSbig :
-    ∀ u ∈ S,
-      u ∈
-        Metric.closedBall (jensenCenter H) (37 / 10) :=
-    fun u hu =>
-    riemannZeta_zero_mem_jensenBall hH (hSzero u hu)
-      (hu_im_H u hu)
+  have hSbig : ∀ u ∈ S, u ∈ Metric.closedBall (jensenCenter H) (37 / 10) := fun u hu =>
+    riemannZeta_zero_mem_jensenBall hH (hSzero u hu) (hu_im_H u hu)
   have hfin :=
-    (MeromorphicOn.divisor riemannZeta
-          (Metric.closedBall (jensenCenter H)
-            (37 / 10))).finiteSupport
+    (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10))).finiteSupport
       (isCompact_closedBall _ _)
   have hmeqBig :
     ∀ u ∈ S,
       (m u : ℤ) =
-        MeromorphicOn.divisor riemannZeta
-          (Metric.closedBall (jensenCenter H)
-            (37 / 10))
-          u :=
+        MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :=
     fun u hu =>
     (hmeqSmall u hu).trans
-      (divisor_riemannZeta_eq_of_analyticOnNhd hAnSmall
-        hAnBig (hSU u hu) (hSbig u hu))
+      (divisor_riemannZeta_eq_of_analyticOnNhd hAnSmall hAnBig (hSU u hu) (hSbig u hu))
   have hSsub : S ⊆ hfin.toFinset := by
     intro u hu
     rw [Set.Finite.mem_toFinset, Function.mem_support]
     rw [← hmeqBig u hu]
     exact_mod_cast (hmpos u hu).ne'
-  have hsum_le :
-    (∑ u ∈ S, (m u : ℝ)) ≤
-      jensenLogConst * Real.log (H + 2) := by
+  have hsum_le : (∑ u ∈ S, (m u : ℝ)) ≤ jensenLogConst * Real.log (H + 2) := by
     have hcongr :
       ∑ u ∈ S, (m u : ℝ) =
         ∑ u ∈ S,
-          (MeromorphicOn.divisor riemannZeta
-              (Metric.closedBall (jensenCenter H)
-                (37 / 10))
-              u :
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
             ℝ) :=
       Finset.sum_congr rfl (fun u hu => by exact_mod_cast hmeqBig u hu)
     rw [hcongr]
     have hcard1 :
       ∑ u ∈ S,
-          (MeromorphicOn.divisor riemannZeta
-              (Metric.closedBall (jensenCenter H)
-                (37 / 10))
-              u :
-            ℝ) ≤
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u : ℝ) ≤
         ∑ u ∈ hfin.toFinset,
-          (MeromorphicOn.divisor riemannZeta
-              (Metric.closedBall (jensenCenter H)
-                (37 / 10))
-              u :
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
             ℝ) := by
       apply Finset.sum_le_sum_of_subset_of_nonneg hSsub
       intro u _ _
       exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAnBig u
     have hcard2 :
       ∑ u ∈ hfin.toFinset,
-          (MeromorphicOn.divisor riemannZeta
-              (Metric.closedBall (jensenCenter H)
-                (37 / 10))
-              u :
-            ℝ) =
-        ((∑ᶠ u,
-              MeromorphicOn.divisor riemannZeta
-                (Metric.closedBall (jensenCenter H)
-                  (37 / 10))
-                u :
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u : ℝ) =
+        ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
             ℤ) :
           ℝ) := by
       rw [finsum_eq_finsetSum_of_support_subset _ (s := hfin.toFinset)
@@ -452,45 +408,28 @@ theorem exists_logDeriv_riemannZeta_eq_sum_add_logDeriv_of_good_height {H : ℝ}
       push_cast
       rfl
     rw [hcard2] at hcard1
-    exact
-      hcard1.trans
-        (finsum_divisor_riemannZeta_le_explicit hH)
+    exact hcard1.trans (finsum_divisor_riemannZeta_le_explicit hH)
   have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith)
   have hLCpos := jensenLogConst_pos
-  have hmarginpos :
-    (0 : ℝ) <
-      4 * jensenLogConst * Real.log (H + 2) := by
-    positivity
+  have hmarginpos : (0 : ℝ) < 4 * jensenLogConst * Real.log (H + 2) := by positivity
   calc
     ‖∑ u ∈ S, (m u : ℂ) / (z - u)‖ ≤ ∑ u ∈ S, ‖(m u : ℂ) / (z - u)‖ := norm_sum_le _ _
     _ = ∑ u ∈ S, (m u : ℝ) / ‖z - u‖ := by
       apply Finset.sum_congr rfl
       intro u _
       rw [norm_div, Complex.norm_natCast]
-    _ ≤
-        ∑ u ∈ S,
-          (m u : ℝ) *
-            (4 * jensenLogConst * Real.log (H + 2)) :=
-      by
+    _ ≤ ∑ u ∈ S, (m u : ℝ) * (4 * jensenLogConst * Real.log (H + 2)) := by
       apply Finset.sum_le_sum
       intro u hu
-      have hrecip :
-        1 / ‖z - u‖ ≤
-          4 * jensenLogConst * Real.log (H + 2) := by
+      have hrecip : 1 / ‖z - u‖ ≤ 4 * jensenLogConst * Real.log (H + 2) := by
         have h1 := one_div_le_one_div_of_le (by positivity) (hmargin u hu)
         rwa [one_div_one_div] at h1
       rw [div_eq_mul_one_div]
       exact mul_le_mul_of_nonneg_left hrecip (Nat.cast_nonneg _)
-    _ =
-        (∑ u ∈ S, (m u : ℝ)) *
-          (4 * jensenLogConst * Real.log (H + 2)) :=
-      by rw [Finset.sum_mul]
-    _ ≤
-        (jensenLogConst * Real.log (H + 2)) *
-          (4 * jensenLogConst * Real.log (H + 2)) :=
-      by apply mul_le_mul_of_nonneg_right hsum_le (by positivity)
-    _ = 4 * (jensenLogConst * Real.log (H + 2)) ^ 2 :=
-      by ring
+    _ = (∑ u ∈ S, (m u : ℝ)) * (4 * jensenLogConst * Real.log (H + 2)) := by rw [Finset.sum_mul]
+    _ ≤ (jensenLogConst * Real.log (H + 2)) * (4 * jensenLogConst * Real.log (H + 2)) := by
+      apply mul_le_mul_of_nonneg_right hsum_le (by positivity)
+    _ = 4 * (jensenLogConst * Real.log (H + 2)) ^ 2 := by ring
 
 /-!
 ### A logarithmic primitive on a zero-free disk
@@ -602,18 +541,13 @@ theorem exists_good_radius_twoSided {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T �
     (hgood :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 →
-          1 / (4 * jensenLogConst * Real.log (H + 2)) ≤
-            |T - ρ.im|)
+          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|)
     (σ : ℝ) :
     ∃ R ∈ Set.Icc (1 / 5 : ℝ) (3 / 10),
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
           ‖(σ + T * Complex.I) - ρ‖ < 2 / 5 →
-          1 /
-              (40 * jensenLogConst *
-                Real.log (H + 2)) ≤
-            |R - ‖(σ + T * Complex.I) - ρ‖| := by
+          1 / (40 * jensenLogConst * Real.log (H + 2)) ≤ |R - ‖(σ + T * Complex.I) - ρ‖| := by
   set z : ℂ := σ + T * Complex.I with hz_def
   have hzim : z.im = T := by
     simp only [hz_def, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
@@ -635,11 +569,7 @@ theorem exists_good_radius_twoSided {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T �
     rw [hzim, sub_self, abs_zero] at h2
     have hLCpos := jensenLogConst_pos
     have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith)
-    have :
-      (0 : ℝ) <
-        1 /
-          (4 * jensenLogConst * Real.log (H + 2)) := by
-      positivity
+    have : (0 : ℝ) < 1 / (4 * jensenLogConst * Real.log (H + 2)) := by positivity
     linarith
   have hAnClosed : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall z (2 / 5 : ℝ)) := fun w hw =>
     analyticOn_riemannZeta w (hz1 w hw)
@@ -676,22 +606,13 @@ theorem exists_good_radius_twoSided {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T �
     rw [MeromorphicOn.AnalyticOnNhd.divisor_apply hAnBall huU]
     rw [(hAnBall u huU).analyticOrderAt_eq_zero.mpr hne]
     simp only [ENat.map_zero, CharP.cast_eq_zero, WithTop.coe_zero, WithTop.untop₀_zero]
-  have hAnBig :
-    AnalyticOnNhd ℂ riemannZeta
-      (Metric.closedBall (jensenCenter H) (37 / 10)) :=
-    (jensen_analyticOnNhd
-          (by linarith : (4 : ℝ) ≤ H)).mono
+  have hAnBig : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) :=
+    (jensen_analyticOnNhd (by linarith : (4 : ℝ) ≤ H)).mono
       (Metric.closedBall_subset_closedBall (by norm_num only))
-  have hSbig :
-    ∀ u ∈ Sfin,
-      u ∈
-        Metric.closedBall (jensenCenter H) (37 / 10) :=
-    fun u hu =>
-    riemannZeta_zero_mem_jensenBall hH (hSzero u hu)
-      (hu_im_H u hu)
+  have hSbig : ∀ u ∈ Sfin, u ∈ Metric.closedBall (jensenCenter H) (37 / 10) := fun u hu =>
+    riemannZeta_zero_mem_jensenBall hH (hSzero u hu) (hu_im_H u hu)
   have hfinBig :=
-    (MeromorphicOn.divisor riemannZeta
-          (Metric.closedBall (jensenCenter H) (37 / 10))).finiteSupport
+    (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10))).finiteSupport
       (isCompact_closedBall _ _)
   have hSsub : Sfin ⊆ hfinBig.toFinset := by
     intro u hu
@@ -699,37 +620,26 @@ theorem exists_good_radius_twoSided {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T �
     have huU : u ∈ Metric.ball z (2 / 5 : ℝ) := by
       rw [hSfin_def, Set.Finite.mem_toFinset] at hu
       exact (MeromorphicOn.divisor riemannZeta (Metric.ball z (2 / 5 : ℝ))).supportWithinDomain hu
-    rw [←
-      divisor_riemannZeta_eq_of_analyticOnNhd hAnBall
-        hAnBig huU (hSbig u hu)]
+    rw [← divisor_riemannZeta_eq_of_analyticOnNhd hAnBall hAnBig huU (hSbig u hu)]
     rw [hSfin_def, Set.Finite.mem_toFinset] at hu
     exact hu
-  have hcard :
-    (D.card : ℝ) ≤
-      jensenLogConst * Real.log (H + 2) := by
+  have hcard : (D.card : ℝ) ≤ jensenLogConst * Real.log (H + 2) := by
     have h1 : D.card ≤ Sfin.card := Finset.card_image_le
     have h2 : Sfin.card ≤ hfinBig.toFinset.card := Finset.card_le_card hSsub
     have h3 :
       (hfinBig.toFinset.card : ℝ) ≤
-        ((∑ᶠ u,
-              MeromorphicOn.divisor riemannZeta
-                (Metric.closedBall (jensenCenter H) (37 / 10))
-                u :
+        ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
             ℤ) :
           ℝ) := by
       have heach :
         ∀ u ∈ hfinBig.toFinset,
           (1 : ℤ) ≤
-            MeromorphicOn.divisor riemannZeta
-              (Metric.closedBall (jensenCenter H) (37 / 10))
-              u := by
+            MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u := by
         intro u hu
         rw [Set.Finite.mem_toFinset, Function.mem_support] at hu
         have hnn :
           (0 : ℤ) ≤
-            MeromorphicOn.divisor riemannZeta
-              (Metric.closedBall (jensenCenter H) (37 / 10))
-              u :=
+            MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :=
           MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAnBig u
         omega
       calc
@@ -737,9 +647,7 @@ theorem exists_good_radius_twoSided {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T �
           rw [Finset.sum_const, nsmul_eq_mul, mul_one]
         _ ≤
             ∑ u ∈ hfinBig.toFinset,
-              (MeromorphicOn.divisor riemannZeta
-                  (Metric.closedBall (jensenCenter H) (37 / 10))
-                  u :
+              (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
                 ℝ) :=
           by
           apply Finset.sum_le_sum
@@ -747,8 +655,7 @@ theorem exists_good_radius_twoSided {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T �
           exact_mod_cast heach u hu
         _ =
             ((∑ᶠ u,
-                  MeromorphicOn.divisor riemannZeta
-                    (Metric.closedBall (jensenCenter H) (37 / 10))
+                  MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10))
                     u :
                 ℤ) :
               ℝ) :=
@@ -757,32 +664,26 @@ theorem exists_good_radius_twoSided {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T �
               (by rw [Set.Finite.coe_toFinset])]
           push_cast
           rfl
-    have h4 :=
-      finsum_divisor_riemannZeta_le_explicit hH
+    have h4 := finsum_divisor_riemannZeta_le_explicit hH
     calc
       (D.card : ℝ) ≤ (Sfin.card : ℝ) := by exact_mod_cast h1
       _ ≤ (hfinBig.toFinset.card : ℝ) := by exact_mod_cast h2
       _ ≤ _ := h3
       _ ≤ jensenLogConst * Real.log (H + 2) := h4
-  set c : ℝ :=
-    1 / (40 * jensenLogConst * Real.log (H + 2)) with
-    hc_def
+  set c : ℝ := 1 / (40 * jensenLogConst * Real.log (H + 2)) with hc_def
   have hLCpos := jensenLogConst_pos
   have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith)
   have hc_pos : 0 < c := by
     rw [hc_def]; positivity
   have hlen : 2 * c * (D.card : ℝ) < (1 / 10 : ℝ) := by
     calc
-      2 * c * (D.card : ℝ) ≤
-          2 * c *
-            (jensenLogConst * Real.log (H + 2)) :=
+      2 * c * (D.card : ℝ) ≤ 2 * c * (jensenLogConst * Real.log (H + 2)) :=
         mul_le_mul_of_nonneg_left hcard (by positivity)
       _ = 1 / 20 := by
         rw [hc_def]; field_simp; norm_num only
       _ < 1 / 10 := by norm_num only
   obtain ⟨R, hR, hRgood⟩ :=
-    exists_avoiding_point_length (a := 1 / 5) hc_pos
-      (by norm_num only : (0 : ℝ) < 1 / 10) hlen
+    exists_avoiding_point_length (a := 1 / 5) hc_pos (by norm_num only : (0 : ℝ) < 1 / 10) hlen
   have hR' : R ∈ Set.Icc (1 / 5 : ℝ) (3 / 10) := by
     rw [show (1 / 5 : ℝ) + 1 / 10 = 3 / 10 from by norm_num only] at hR; exact hR
   refine ⟨R, hR', ?_⟩
@@ -804,8 +705,8 @@ theorem exists_good_radius_twoSided {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T �
       exact (hAnBall ρ hρmem).analyticOrderAt_ne_zero.mpr hζ
     · rw [hmapinj]
       exact
-        riemannZeta_analyticOrderAt_ne_top_of_center
-          hz1 hzgood (Metric.ball_subset_closedBall hρmem)
+        riemannZeta_analyticOrderAt_ne_top_of_center hz1 hzgood
+          (Metric.ball_subset_closedBall hρmem)
   have hmem : ‖z - ρ‖ ∈ D := Finset.mem_image_of_mem _ hd
   exact hRgood _ hmem
 
@@ -822,20 +723,14 @@ theorem exists_good_radius {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T ∈ Set.Ic
     (hgood :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 →
-          1 / (4 * jensenLogConst * Real.log (H + 2)) ≤
-            |T - ρ.im|)
+          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|)
     (σ : ℝ) :
     ∃ R ∈ Set.Icc (1 / 5 : ℝ) (3 / 10),
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
           ‖(σ + T * Complex.I) - ρ‖ < R →
-          1 /
-              (40 * jensenLogConst *
-                Real.log (H + 2)) ≤
-            R - ‖(σ + T * Complex.I) - ρ‖ := by
-  obtain ⟨R, hR, hRgood⟩ :=
-    exists_good_radius_twoSided hH hT hgood σ
+          1 / (40 * jensenLogConst * Real.log (H + 2)) ≤ R - ‖(σ + T * Complex.I) - ρ‖ := by
+  obtain ⟨R, hR, hRgood⟩ := exists_good_radius_twoSided hH hT hgood σ
   refine ⟨R, hR, fun ρ hζ hlt => ?_⟩
   have hthis := hRgood ρ hζ (by linarith only [hR.2, hlt] : ‖(σ + T * Complex.I) - ρ‖ < 2 / 5)
   rw [abs_sub_comm] at hthis
@@ -856,9 +751,7 @@ theorem exists_riemannZeta_zeroFree_factorization_good_radius {H : ℝ} (hH : 8 
     (hgood :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 →
-          1 / (4 * jensenLogConst * Real.log (H + 2)) ≤
-            |T - ρ.im|)
+          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|)
     (σ : ℝ) :
     ∃ (R δ R2 : ℝ) (S : Finset ℂ) (m : ℂ → ℕ) (g : ℂ → ℂ),
       0 < δ ∧
@@ -870,8 +763,7 @@ theorem exists_riemannZeta_zeroFree_factorization_good_radius {H : ℝ} (hH : 8 
         (∀ u ∈ S, 0 < m u) ∧
         (∀ u ∈ S, riemannZeta u = 0) ∧
         (∀ u ∈ S, ‖(σ + T * Complex.I) - u‖ ≤ R - δ) ∧
-        (∑ u ∈ S, (m u : ℝ)) ≤
-          jensenLogConst * Real.log (H + 2) ∧
+        (∑ u ∈ S, (m u : ℝ)) ≤ jensenLogConst * Real.log (H + 2) ∧
         Set.EqOn riemannZeta (fun w => (∏ u ∈ S, (w - u) ^ m u) * g w)
           (Metric.ball (σ + T * Complex.I) R2) ∧
         ‖∑ u ∈ S, (m u : ℂ) / ((σ + T * Complex.I) - u)‖ ≤
@@ -885,17 +777,14 @@ theorem exists_riemannZeta_zeroFree_factorization_good_radius {H : ℝ} (hH : 8 
   have hTpos : (0 : ℝ) < T := by linarith [hT.1]
   have hLCpos := jensenLogConst_pos
   have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith)
-  set c : ℝ :=
-    1 / (40 * jensenLogConst * Real.log (H + 2)) with
-    hc_def
+  set c : ℝ := 1 / (40 * jensenLogConst * Real.log (H + 2)) with hc_def
   have hc_pos : 0 < c := by
     rw [hc_def]; positivity
   set δ : ℝ := min c (1 / 20) with hδ_def
   have hδ_pos : 0 < δ := lt_min hc_pos (by norm_num only)
   have hδ_c : δ ≤ c := min_le_left _ _
   have hδ_small : δ ≤ 1 / 20 := min_le_right _ _
-  obtain ⟨R, hR, hRgood⟩ :=
-    exists_good_radius_twoSided hH hT hgood σ
+  obtain ⟨R, hR, hRgood⟩ := exists_good_radius_twoSided hH hT hgood σ
   have hRgood' : ∀ ρ : ℂ, riemannZeta ρ = 0 → ‖z - ρ‖ < 2 / 5 → δ ≤ |R - ‖z - ρ‖| := fun ρ hζ hlt =>
     le_trans hδ_c (hRgood ρ hζ hlt)
   set R2 : ℝ := R + 3 * δ / 4 with hR2_def
@@ -919,17 +808,12 @@ theorem exists_riemannZeta_zeroFree_factorization_good_radius {H : ℝ} (hH : 8 
       rw [hzim]; rw [abs_le]; constructor <;> linarith [hT.1, hT.2]
     have h2 := hgood z hzero h1
     rw [hzim, sub_self, abs_zero] at h2
-    have :
-      (0 : ℝ) <
-        1 /
-          (4 * jensenLogConst * Real.log (H + 2)) := by
-      positivity
+    have : (0 : ℝ) < 1 / (4 * jensenLogConst * Real.log (H + 2)) := by positivity
     linarith
   have hz1R2 : ∀ w ∈ Metric.closedBall z R2, w ≠ 1 := fun w hw =>
     hz1 w (Metric.closedBall_subset_closedBall hR2small.le hw)
   obtain ⟨S, m, g, hgAn, hgne, hmpos, hSU, hSzero, hmeqSmall, heqOn, hlog⟩ :=
-    exists_logDeriv_riemannZeta_eq_sum_add_logDeriv
-      (R := R2) hR2pos hz1R2 hzgood
+    exists_logDeriv_riemannZeta_eq_sum_add_logDeriv (R := R2) hR2pos hz1R2 hzgood
   have hu_dist : ∀ u ∈ S, ‖z - u‖ ≤ R - δ := by
     intro u hu
     have huU := hSU u hu
@@ -957,81 +841,47 @@ theorem exists_riemannZeta_zeroFree_factorization_good_radius {H : ℝ} (hH : 8 
     rw [abs_lt] at h2'
     rw [abs_le]
     constructor <;> linarith [h2'.1, h2'.2, hT.1, hT.2]
-  have hAnBig :
-    AnalyticOnNhd ℂ riemannZeta
-      (Metric.closedBall (jensenCenter H) (37 / 10)) :=
-    (jensen_analyticOnNhd
-          (by linarith : (4 : ℝ) ≤ H)).mono
+  have hAnBig : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) :=
+    (jensen_analyticOnNhd (by linarith : (4 : ℝ) ≤ H)).mono
       (Metric.closedBall_subset_closedBall (by norm_num only))
-  have hSbig :
-    ∀ u ∈ S,
-      u ∈
-        Metric.closedBall (jensenCenter H) (37 / 10) :=
-    fun u hu =>
-    riemannZeta_zero_mem_jensenBall hH (hSzero u hu)
-      (hu_im_H u hu)
+  have hSbig : ∀ u ∈ S, u ∈ Metric.closedBall (jensenCenter H) (37 / 10) := fun u hu =>
+    riemannZeta_zero_mem_jensenBall hH (hSzero u hu) (hu_im_H u hu)
   have hfin :=
-    (MeromorphicOn.divisor riemannZeta
-          (Metric.closedBall (jensenCenter H)
-            (37 / 10))).finiteSupport
+    (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10))).finiteSupport
       (isCompact_closedBall _ _)
   have hmeqBig :
     ∀ u ∈ S,
       (m u : ℤ) =
-        MeromorphicOn.divisor riemannZeta
-          (Metric.closedBall (jensenCenter H)
-            (37 / 10))
-          u :=
+        MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :=
     fun u hu =>
     (hmeqSmall u hu).trans
-      (divisor_riemannZeta_eq_of_analyticOnNhd hAnSmall
-        hAnBig (hSU u hu) (hSbig u hu))
+      (divisor_riemannZeta_eq_of_analyticOnNhd hAnSmall hAnBig (hSU u hu) (hSbig u hu))
   have hSsub : S ⊆ hfin.toFinset := by
     intro u hu
     rw [Set.Finite.mem_toFinset, Function.mem_support]
     rw [← hmeqBig u hu]
     exact_mod_cast (hmpos u hu).ne'
-  have hsum_le :
-    (∑ u ∈ S, (m u : ℝ)) ≤
-      jensenLogConst * Real.log (H + 2) := by
+  have hsum_le : (∑ u ∈ S, (m u : ℝ)) ≤ jensenLogConst * Real.log (H + 2) := by
     have hcongr :
       ∑ u ∈ S, (m u : ℝ) =
         ∑ u ∈ S,
-          (MeromorphicOn.divisor riemannZeta
-              (Metric.closedBall (jensenCenter H)
-                (37 / 10))
-              u :
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
             ℝ) :=
       Finset.sum_congr rfl (fun u hu => by exact_mod_cast hmeqBig u hu)
     rw [hcongr]
     have hcard1 :
       ∑ u ∈ S,
-          (MeromorphicOn.divisor riemannZeta
-      (Metric.closedBall (jensenCenter H)
-        (37 / 10))
-              u :
-            ℝ) ≤
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u : ℝ) ≤
         ∑ u ∈ hfin.toFinset,
-          (MeromorphicOn.divisor riemannZeta
-              (Metric.closedBall (jensenCenter H)
-                (37 / 10))
-              u :
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
             ℝ) := by
       apply Finset.sum_le_sum_of_subset_of_nonneg hSsub
       intro u _ _
       exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAnBig u
     have hcard2 :
       ∑ u ∈ hfin.toFinset,
-          (MeromorphicOn.divisor riemannZeta
-              (Metric.closedBall (jensenCenter H)
-                (37 / 10))
-              u :
-            ℝ) =
-        ((∑ᶠ u,
-              MeromorphicOn.divisor riemannZeta
-                (Metric.closedBall (jensenCenter H)
-                  (37 / 10))
-                u :
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u : ℝ) =
+        ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
             ℤ) :
           ℝ) := by
       rw [finsum_eq_finsetSum_of_support_subset _ (s := hfin.toFinset)
@@ -1039,13 +889,8 @@ theorem exists_riemannZeta_zeroFree_factorization_good_radius {H : ℝ} (hH : 8 
       push_cast
       rfl
     rw [hcard2] at hcard1
-    exact
-      hcard1.trans
-        (finsum_divisor_riemannZeta_le_explicit hH)
-  have hmargin :
-    ∀ u ∈ S,
-      1 / (4 * jensenLogConst * Real.log (H + 2)) ≤
-        ‖z - u‖ := by
+    exact hcard1.trans (finsum_divisor_riemannZeta_le_explicit hH)
+  have hmargin : ∀ u ∈ S, 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ ‖z - u‖ := by
     intro u hu
     have hmarg := hgood u (hSzero u hu) (hu_im_H u hu)
     have hle : |T - u.im| ≤ ‖z - u‖ := by
@@ -1054,45 +899,26 @@ theorem exists_riemannZeta_zeroFree_factorization_good_radius {H : ℝ} (hH : 8 
       exact h
     linarith [hmarg, hle]
   have hnormsum_le :
-    ‖∑ u ∈ S, (m u : ℂ) / (z - u)‖ ≤
-      4 * (jensenLogConst * Real.log (H + 2)) ^ 2 := by
-    have hmarginpos :
-      (0 : ℝ) <
-        4 * jensenLogConst * Real.log (H + 2) := by
-      positivity
+    ‖∑ u ∈ S, (m u : ℂ) / (z - u)‖ ≤ 4 * (jensenLogConst * Real.log (H + 2)) ^ 2 := by
+    have hmarginpos : (0 : ℝ) < 4 * jensenLogConst * Real.log (H + 2) := by positivity
     calc
       ‖∑ u ∈ S, (m u : ℂ) / (z - u)‖ ≤ ∑ u ∈ S, ‖(m u : ℂ) / (z - u)‖ := norm_sum_le _ _
       _ = ∑ u ∈ S, (m u : ℝ) / ‖z - u‖ := by
         apply Finset.sum_congr rfl
         intro u _
         rw [norm_div, Complex.norm_natCast]
-      _ ≤
-          ∑ u ∈ S,
-            (m u : ℝ) *
-              (4 * jensenLogConst *
-                Real.log (H + 2)) :=
-        by
+      _ ≤ ∑ u ∈ S, (m u : ℝ) * (4 * jensenLogConst * Real.log (H + 2)) := by
         apply Finset.sum_le_sum
         intro u hu
-        have hrecip :
-          1 / ‖z - u‖ ≤
-            4 * jensenLogConst * Real.log (H + 2) := by
+        have hrecip : 1 / ‖z - u‖ ≤ 4 * jensenLogConst * Real.log (H + 2) := by
           have h1 := one_div_le_one_div_of_le (by positivity) (hmargin u hu)
           rwa [one_div_one_div] at h1
         rw [div_eq_mul_one_div]
         exact mul_le_mul_of_nonneg_left hrecip (Nat.cast_nonneg _)
-      _ =
-          (∑ u ∈ S, (m u : ℝ)) *
-            (4 * jensenLogConst * Real.log (H + 2)) :=
-        by rw [Finset.sum_mul]
-      _ ≤
-          (jensenLogConst * Real.log (H + 2)) *
-            (4 * jensenLogConst * Real.log (H + 2)) :=
-        by apply mul_le_mul_of_nonneg_right hsum_le (by positivity)
-      _ =
-          4 *
-            (jensenLogConst * Real.log (H + 2)) ^ 2 :=
-        by ring
+      _ = (∑ u ∈ S, (m u : ℝ)) * (4 * jensenLogConst * Real.log (H + 2)) := by rw [Finset.sum_mul]
+      _ ≤ (jensenLogConst * Real.log (H + 2)) * (4 * jensenLogConst * Real.log (H + 2)) := by
+        apply mul_le_mul_of_nonneg_right hsum_le (by positivity)
+      _ = 4 * (jensenLogConst * Real.log (H + 2)) ^ 2 := by ring
   exact
     ⟨R, δ, R2, S, m, g, hδ_pos, hR, hR1R2, hR2small, hgAn, hgne, hmpos, hSzero, hu_dist, hsum_le,
       heqOn, hnormsum_le, hlog⟩
@@ -1144,8 +970,7 @@ theorem norm_riemannZeta_le_on_good_radius_ball {H : ℝ} (hH : 8 ≤ H) {T : �
       intro hw1
       rw [hw1, Complex.one_im] at hwim
       linarith [hT.1, hR1small]
-  have hb :=
-    norm_riemannZeta_le_of_reGt_neg_one_diff_one hzmem
+  have hb := norm_riemannZeta_le_of_reGt_neg_one_diff_one hzmem
   have hnw : ‖w‖ ≤ ‖z‖ + R1 := by
     have h1 : ‖w‖ ≤ ‖z‖ + ‖w - z‖ := by
       have h := norm_add_le z (w - z)
@@ -1168,16 +993,10 @@ theorem norm_riemannZeta_le_on_good_radius_ball {H : ℝ} (hH : 8 ≤ H) {T : �
     linarith
   have hterm3 :
     ‖w‖ * (‖w‖ + 1) * sawtoothRemainderBound w.re ≤
-      (‖z‖ + R1) * (‖z‖ + R1 + 1) *
-        sawtoothRemainderBound (-9 / 10) := by
-    have hanti :
-      sawtoothRemainderBound w.re ≤
-        sawtoothRemainderBound (-9 / 10) :=
-      sawtoothRemainderBound_antitone
-        (by norm_num only) hwre9
-    have hbndnn0 :
-      (0 : ℝ) ≤ sawtoothRemainderBound w.re :=
-      sawtoothRemainderBound_nonneg w.re
+      (‖z‖ + R1) * (‖z‖ + R1 + 1) * sawtoothRemainderBound (-9 / 10) := by
+    have hanti : sawtoothRemainderBound w.re ≤ sawtoothRemainderBound (-9 / 10) :=
+      sawtoothRemainderBound_antitone (by norm_num only) hwre9
+    have hbndnn0 : (0 : ℝ) ≤ sawtoothRemainderBound w.re := sawtoothRemainderBound_nonneg w.re
     have h1 : ‖w‖ * (‖w‖ + 1) ≤ (‖z‖ + R1) * (‖z‖ + R1 + 1) :=
       mul_le_mul hnw (by linarith) (by linarith) (by linarith)
     exact mul_le_mul h1 hanti hbndnn0 (by positivity)
@@ -1234,9 +1053,7 @@ theorem exists_bound_re_logDeriv_g_good_radius {H : ℝ} (hH : 8 ≤ H) {T : ℝ
     (hgood :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 →
-          1 / (4 * jensenLogConst * Real.log (H + 2)) ≤
-            |T - ρ.im|)
+          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|)
     {σ : ℝ} (hσ1 : -(1 : ℝ) / 2 ≤ σ) (hσ2 : σ ≤ 2) :
     ∃ (R1 R2 : ℝ) (S : Finset ℂ) (m : ℂ → ℕ) (g h : ℂ → ℂ) (M : ℝ),
       0 < R1 ∧
@@ -1251,8 +1068,7 @@ theorem exists_bound_re_logDeriv_g_good_radius {H : ℝ} (hH : 8 ≤ H) {T : ℝ
   obtain
     ⟨R, δ, R2, S, m, g, hδ_pos, hR, hR1R2, hR2small, hgAn, hgne, hmpos, hSzero, hu_dist, hsum_le,
       heqOn, hnormsum_le, hlog⟩ :=
-    exists_riemannZeta_zeroFree_factorization_good_radius
-      hH hT hgood σ
+    exists_riemannZeta_zeroFree_factorization_good_radius hH hT hgood σ
   set z : ℂ := σ + T * Complex.I with hz_def
   set R1 : ℝ := R + δ / 2 with hR1_def
   have hR1pos : (0 : ℝ) < R1 := by
@@ -1260,8 +1076,7 @@ theorem exists_bound_re_logDeriv_g_good_radius {H : ℝ} (hH : 8 ≤ H) {T : ℝ
   have hR1lt25 : R1 < 2 / 5 := lt_trans hR1R2 hR2small
   have hR2pos : (0 : ℝ) < R2 := lt_trans hR1pos hR1R2
   obtain ⟨h, hh', hh_re⟩ :=
-    exists_hasDerivAt_logDeriv_re_eq_log_norm (f := g)
-      (c := z) (r := R2) hR2pos hgAn hgne
+    exists_hasDerivAt_logDeriv_re_eq_log_norm (f := g) (c := z) (r := R2) hR2pos hgAn hgne
   have hR1subR2 : Metric.closedBall z R1 ⊆ Metric.ball z R2 := by
     intro w hw
     rw [Metric.mem_closedBall] at hw
@@ -1276,16 +1091,12 @@ theorem exists_bound_re_logDeriv_g_good_radius {H : ℝ} (hH : 8 ≤ H) {T : ℝ
   have hdcc : DiffContOnCl ℂ h (Metric.ball z R1) :=
     ⟨hdiff, by
       rw [hclosure]; exact hcont⟩
-  have hζbound :=
-    norm_riemannZeta_le_on_good_radius_ball hH hT hσ1
-      hσ2 hR1pos hR1lt25
+  have hζbound := norm_riemannZeta_le_on_good_radius_ball hH hT hσ1 hσ2 hR1pos hR1lt25
   set Mζ : ℝ :=
     (‖z‖ + R1) / (T - R1) + 1 / 2 +
-      (‖z‖ + R1) * (‖z‖ + R1 + 1) *
-        sawtoothRemainderBound (-9 / 10) with
+      (‖z‖ + R1) * (‖z‖ + R1 + 1) * sawtoothRemainderBound (-9 / 10) with
     hMζ_def
-  set Nmax : ℝ :=
-    jensenLogConst * Real.log (H + 2) with hNmax_def
+  set Nmax : ℝ := jensenLogConst * Real.log (H + 2) with hNmax_def
   set M : ℝ := Real.log Mζ - Nmax * Real.log (3 * δ / 2) with hM_def
   have hδlt : δ < 2 / 5 := by
     rw [hR1_def] at hR1R2; linarith [hR.1, hR2small]
@@ -1354,9 +1165,7 @@ theorem exists_bound_re_logDeriv_g_good_radius {H : ℝ} (hH : 8 ≤ H) {T : ℝ
     rw [hM_def]
     linarith [hlogζ_le, hlogPw_ge]
   intro w hw
-  refine
-    re_le_of_forall_mem_frontier_re_le
-      (Metric.isBounded_ball) hdcc hMbound ?_
+  refine re_le_of_forall_mem_frontier_re_le (Metric.isBounded_ball) hdcc hMbound ?_
   rw [hclosure]; exact hw
 
 /-!
@@ -1504,17 +1313,12 @@ theorem exists_jensen_good_radius_twoSided {T : ℝ} (hT : 8 ≤ T) :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
           ‖jensenCenter T - ρ‖ < 37 / 10 →
-          1 /
-              (40 * jensenLogConst *
-                Real.log (T + 2)) ≤
-            |R - ‖jensenCenter T - ρ‖| := by
+          1 / (40 * jensenLogConst * Real.log (T + 2)) ≤ |R - ‖jensenCenter T - ρ‖| := by
   set z : ℂ := jensenCenter T with hz_def
   have hT4 : (4 : ℝ) ≤ T := by linarith
   have hz1 : ∀ w ∈ Metric.closedBall z (37 / 10 : ℝ), w ≠ 1 := fun w hw =>
-    (jensenBall_subset hT4
-        (Metric.closedBall_subset_closedBall (by norm_num only) hw)).2
-  have hzgood : riemannZeta z ≠ 0 :=
-    jensen_center_ne_zero T
+    (jensenBall_subset hT4 (Metric.closedBall_subset_closedBall (by norm_num only) hw)).2
+  have hzgood : riemannZeta z ≠ 0 := jensen_center_ne_zero T
   have hAnClosed : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) := fun w hw =>
     analyticOn_riemannZeta w (hz1 w hw)
   have hAnBall : AnalyticOnNhd ℂ riemannZeta (Metric.ball z (37 / 10 : ℝ)) := fun w hw =>
@@ -1523,9 +1327,7 @@ theorem exists_jensen_good_radius_twoSided {T : ℝ} (hT : 8 ≤ T) :
     MeromorphicOn.divisor_ball_support_finite hAnClosed.meromorphicOn
   set Sfin : Finset ℂ := hfin.toFinset with hSfin_def
   set D : Finset ℝ := Sfin.image (fun ρ => ‖z - ρ‖) with hD_def
-  have hcard :
-    (D.card : ℝ) ≤
-      jensenLogConst * Real.log (T + 2) := by
+  have hcard : (D.card : ℝ) ≤ jensenLogConst * Real.log (T + 2) := by
     have hfinBig :=
       (MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ))).finiteSupport
         (isCompact_closedBall _ _)
@@ -1537,24 +1339,25 @@ theorem exists_jensen_good_radius_twoSided {T : ℝ} (hT : 8 ≤ T) :
           rw [Set.Finite.mem_toFinset, Function.mem_support]
           have huU : u ∈ Metric.ball z (37 / 10 : ℝ) := by
             rw [hSfin_def, Set.Finite.mem_toFinset] at hu
-            exact (MeromorphicOn.divisor riemannZeta (Metric.ball z (37 / 10 : ℝ))
-            ).supportWithinDomain hu
+            exact
+              (MeromorphicOn.divisor riemannZeta (Metric.ball z (37 / 10 : ℝ))).supportWithinDomain
+                hu
           rw [←
-            divisor_riemannZeta_eq_of_analyticOnNhd
-              hAnBall hAnClosed huU (Metric.ball_subset_closedBall huU)]
+            divisor_riemannZeta_eq_of_analyticOnNhd hAnBall hAnClosed huU
+              (Metric.ball_subset_closedBall huU)]
           rw [hSfin_def, Set.Finite.mem_toFinset] at hu
           exact hu)
     have h3 :
       (hfinBig.toFinset.card : ℝ) ≤
-        ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℤ) : ℝ
-        ) := by
+        ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℤ) :
+          ℝ) := by
       have heach :
         ∀ u ∈ hfinBig.toFinset,
           (1 : ℤ) ≤ MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u := by
         intro u hu
         rw [Set.Finite.mem_toFinset, Function.mem_support] at hu
-        have hnn : (0 : ℤ) ≤ MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)
-        ) u :=
+        have hnn :
+          (0 : ℤ) ≤ MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u :=
           MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAnClosed u
         omega
       calc
@@ -1567,38 +1370,34 @@ theorem exists_jensen_good_radius_twoSided {T : ℝ} (hT : 8 ≤ T) :
           apply Finset.sum_le_sum
           intro u hu
           exact_mod_cast heach u hu
-        _ = ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℤ) : ℝ
-        ) := by
+        _ =
+            ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℤ) :
+              ℝ) :=
+          by
           rw [finsum_eq_finsetSum_of_support_subset _ (s := hfinBig.toFinset)
               (by rw [Set.Finite.coe_toFinset])]
           push_cast
           rfl
-    have h4 :=
-      finsum_divisor_riemannZeta_le_explicit hT
+    have h4 := finsum_divisor_riemannZeta_le_explicit hT
     calc
       (D.card : ℝ) ≤ (Sfin.card : ℝ) := by exact_mod_cast h1
       _ ≤ (hfinBig.toFinset.card : ℝ) := by exact_mod_cast h2
       _ ≤ _ := h3
       _ ≤ jensenLogConst * Real.log (T + 2) := h4
-  set c : ℝ :=
-    1 / (40 * jensenLogConst * Real.log (T + 2)) with
-    hc_def
+  set c : ℝ := 1 / (40 * jensenLogConst * Real.log (T + 2)) with hc_def
   have hLCpos := jensenLogConst_pos
   have hlogpos : (0 : ℝ) < Real.log (T + 2) := Real.log_pos (by linarith)
   have hc_pos : 0 < c := by
     rw [hc_def]; positivity
   have hlen : 2 * c * (D.card : ℝ) < (1 / 10 : ℝ) := by
     calc
-      2 * c * (D.card : ℝ) ≤
-          2 * c *
-            (jensenLogConst * Real.log (T + 2)) :=
+      2 * c * (D.card : ℝ) ≤ 2 * c * (jensenLogConst * Real.log (T + 2)) :=
         mul_le_mul_of_nonneg_left hcard (by positivity)
       _ = 1 / 20 := by
         rw [hc_def]; field_simp; norm_num only
       _ < 1 / 10 := by norm_num only
   obtain ⟨R, hR, hRgood⟩ :=
-    exists_avoiding_point_length (a := 71 / 20) hc_pos
-      (by norm_num only : (0 : ℝ) < 1 / 10) hlen
+    exists_avoiding_point_length (a := 71 / 20) hc_pos (by norm_num only : (0 : ℝ) < 1 / 10) hlen
   have hR' : R ∈ Set.Icc (71 / 20 : ℝ) (73 / 20) := by
     rw [show (71 / 20 : ℝ) + 1 / 10 = 73 / 20 from by norm_num only] at hR; exact hR
   refine ⟨R, hR', ?_⟩
@@ -1620,8 +1419,8 @@ theorem exists_jensen_good_radius_twoSided {T : ℝ} (hT : 8 ≤ T) :
       exact (hAnBall ρ hρmem).analyticOrderAt_ne_zero.mpr hζ
     · rw [hmapinj]
       exact
-        riemannZeta_analyticOrderAt_ne_top_of_center
-          hz1 hzgood (Metric.ball_subset_closedBall hρmem)
+        riemannZeta_analyticOrderAt_ne_top_of_center hz1 hzgood
+          (Metric.ball_subset_closedBall hρmem)
   have hmem : ‖z - ρ‖ ∈ D := Finset.mem_image_of_mem _ hd
   exact hRgood _ hmem
 
@@ -1635,31 +1434,22 @@ with radius near `37/10` instead of centered at the evaluation point with radius
 theorem exists_riemannZeta_zeroFree_factorization_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
     ∃ (R δ R2 : ℝ) (S : Finset ℂ) (m : ℂ → ℕ) (g : ℂ → ℂ),
       0 < δ ∧
-        1 /
-            (40 * jensenLogConst * Real.log (T + 2) +
-              50) ≤
-          δ ∧
+        1 / (40 * jensenLogConst * Real.log (T + 2) + 50) ≤ δ ∧
         R ∈ Set.Icc (71 / 20 : ℝ) (73 / 20) ∧
         R + δ / 2 < R2 ∧
         R2 < 37 / 10 ∧
-        AnalyticOnNhd ℂ g
-          (Metric.ball (jensenCenter T) R2) ∧
-        (∀ w ∈ Metric.ball (jensenCenter T) R2,
-          g w ≠ 0) ∧
+        AnalyticOnNhd ℂ g (Metric.ball (jensenCenter T) R2) ∧
+        (∀ w ∈ Metric.ball (jensenCenter T) R2, g w ≠ 0) ∧
         (∀ u ∈ S, 0 < m u) ∧
         (∀ u ∈ S, riemannZeta u = 0) ∧
         (∀ u ∈ S, ‖jensenCenter T - u‖ ≤ R - δ) ∧
-        (∑ u ∈ S, (m u : ℝ)) ≤
-          jensenLogConst * Real.log (T + 2) ∧
+        (∑ u ∈ S, (m u : ℝ)) ≤ jensenLogConst * Real.log (T + 2) ∧
         Set.EqOn riemannZeta (fun w => (∏ u ∈ S, (w - u) ^ m u) * g w)
           (Metric.ball (jensenCenter T) R2) := by
   set z : ℂ := jensenCenter T with hz_def
   have hT4 : (4 : ℝ) ≤ T := by linarith
-  have hzgood : riemannZeta z ≠ 0 :=
-    jensen_center_ne_zero T
-  set c : ℝ :=
-    1 / (40 * jensenLogConst * Real.log (T + 2)) with
-    hc_def
+  have hzgood : riemannZeta z ≠ 0 := jensen_center_ne_zero T
+  set c : ℝ := 1 / (40 * jensenLogConst * Real.log (T + 2)) with hc_def
   have hLCpos := jensenLogConst_pos
   have hlogpos : (0 : ℝ) < Real.log (T + 2) := Real.log_pos (by linarith)
   have hc_pos : 0 < c := by
@@ -1668,12 +1458,8 @@ theorem exists_riemannZeta_zeroFree_factorization_jensen_good_radius {T : ℝ} (
   have hδ_pos : 0 < δ := lt_min hc_pos (by norm_num only)
   have hδ_c : δ ≤ c := min_le_left _ _
   have hδ_small : δ ≤ 1 / 50 := min_le_right _ _
-  have hδ_ge :
-    1 / (40 * jensenLogConst * Real.log (T + 2) + 50) ≤
-      δ := by
-    set K : ℝ :=
-      40 * jensenLogConst * Real.log (T + 2) with
-      hK_def
+  have hδ_ge : 1 / (40 * jensenLogConst * Real.log (T + 2) + 50) ≤ δ := by
+    set K : ℝ := 40 * jensenLogConst * Real.log (T + 2) with hK_def
     have hKpos : 0 < K := by
       rw [hK_def]; positivity
     have hc_eq : c = 1 / K := by rw [hc_def, hK_def]
@@ -1682,8 +1468,7 @@ theorem exists_riemannZeta_zeroFree_factorization_jensen_good_radius {T : ℝ} (
     have h2 : 1 / (K + 50) ≤ 1 / 50 := one_div_le_one_div_of_le (by norm_num only) (by linarith)
     rw [hδ_def]
     exact le_min h1 h2
-  obtain ⟨R, hR, hRgood⟩ :=
-    exists_jensen_good_radius_twoSided hT
+  obtain ⟨R, hR, hRgood⟩ := exists_jensen_good_radius_twoSided hT
   have hRgood' : ∀ ρ : ℂ, riemannZeta ρ = 0 → ‖z - ρ‖ < 37 / 10 → δ ≤ |R - ‖z - ρ‖| :=
     fun ρ hζ hlt => le_trans hδ_c (hRgood ρ hζ hlt)
   set R2 : ℝ := R + 3 * δ / 4 with hR2_def
@@ -1694,13 +1479,11 @@ theorem exists_riemannZeta_zeroFree_factorization_jensen_good_radius {T : ℝ} (
   have hR2pos : (0 : ℝ) < R2 := by
     rw [hR2_def]; linarith [hR.1]
   have hz1 : ∀ w ∈ Metric.closedBall z (37 / 10 : ℝ), w ≠ 1 := fun w hw =>
-    (jensenBall_subset hT4
-        (Metric.closedBall_subset_closedBall (by norm_num only) hw)).2
+    (jensenBall_subset hT4 (Metric.closedBall_subset_closedBall (by norm_num only) hw)).2
   have hz1R2 : ∀ w ∈ Metric.closedBall z R2, w ≠ 1 := fun w hw =>
     hz1 w (Metric.closedBall_subset_closedBall hR2small.le hw)
   obtain ⟨S, m, g, hgAn, hgne, hmpos, hSU, hSzero, hmeqSmall, heqOn, hlog⟩ :=
-    exists_logDeriv_riemannZeta_eq_sum_add_logDeriv
-      (R := R2) hR2pos hz1R2 hzgood
+    exists_logDeriv_riemannZeta_eq_sum_add_logDeriv (R := R2) hR2pos hz1R2 hzgood
   have hu_dist : ∀ u ∈ S, ‖z - u‖ ≤ R - δ := by
     intro u hu
     have huU := hSU u hu
@@ -1724,20 +1507,17 @@ theorem exists_riemannZeta_zeroFree_factorization_jensen_good_radius {T : ℝ} (
   have hfin :=
     (MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ))).finiteSupport
       (isCompact_closedBall _ _)
-  have hmeqBig : ∀ u ∈ S, (m u : ℤ) =
-    MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u :=
+  have hmeqBig :
+    ∀ u ∈ S, (m u : ℤ) = MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u :=
     fun u hu =>
     (hmeqSmall u hu).trans
-      (divisor_riemannZeta_eq_of_analyticOnNhd hAnSmall
-        hAnBig (hSU u hu) (hSbig u hu))
+      (divisor_riemannZeta_eq_of_analyticOnNhd hAnSmall hAnBig (hSU u hu) (hSbig u hu))
   have hSsub : S ⊆ hfin.toFinset := by
     intro u hu
     rw [Set.Finite.mem_toFinset, Function.mem_support]
     rw [← hmeqBig u hu]
     exact_mod_cast (hmpos u hu).ne'
-  have hsum_le :
-    (∑ u ∈ S, (m u : ℝ)) ≤
-      jensenLogConst * Real.log (T + 2) := by
+  have hsum_le : (∑ u ∈ S, (m u : ℝ)) ≤ jensenLogConst * Real.log (T + 2) := by
     have hcongr :
       ∑ u ∈ S, (m u : ℝ) =
         ∑ u ∈ S, (MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℝ) :=
@@ -1746,23 +1526,21 @@ theorem exists_riemannZeta_zeroFree_factorization_jensen_good_radius {T : ℝ} (
     have hcard1 :
       ∑ u ∈ S, (MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℝ) ≤
         ∑ u ∈ hfin.toFinset,
-        (MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℝ) := by
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℝ) := by
       apply Finset.sum_le_sum_of_subset_of_nonneg hSsub
       intro u _ _
       exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAnBig u
     have hcard2 :
       ∑ u ∈ hfin.toFinset,
-      (MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℝ) =
-        ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℤ) : ℝ
-        ) := by
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℝ) =
+        ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall z (37 / 10 : ℝ)) u : ℤ) :
+          ℝ) := by
       rw [finsum_eq_finsetSum_of_support_subset _ (s := hfin.toFinset)
           (by rw [Set.Finite.coe_toFinset])]
       push_cast
       rfl
     rw [hcard2] at hcard1
-    exact
-      hcard1.trans
-        (finsum_divisor_riemannZeta_le_explicit hT)
+    exact hcard1.trans (finsum_divisor_riemannZeta_le_explicit hT)
   exact
     ⟨R, δ, R2, S, m, g, hδ_pos, hδ_ge, hR, hR1R2, hR2small, hgAn, hgne, hmpos, hSzero, hu_dist,
       hsum_le, heqOn⟩
@@ -1793,37 +1571,26 @@ theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
       (71 : ℝ) / 20 ≤ R1 ∧
         R1 < R2 ∧
         R2 < 37 / 10 ∧
-        AnalyticOnNhd ℂ g
-          (Metric.ball (jensenCenter T) R2) ∧
-        (∀ w ∈ Metric.ball (jensenCenter T) R2,
-          g w ≠ 0) ∧
+        AnalyticOnNhd ℂ g (Metric.ball (jensenCenter T) R2) ∧
+        (∀ w ∈ Metric.ball (jensenCenter T) R2, g w ≠ 0) ∧
         (∀ u ∈ S, 0 < m u) ∧
-        (∀ w ∈ Metric.ball (jensenCenter T) R2,
-          HasDerivAt h (logDeriv g w) w) ∧
+        (∀ w ∈ Metric.ball (jensenCenter T) R2, HasDerivAt h (logDeriv g w) w) ∧
         (∀ u ∈ S, riemannZeta u = 0) ∧
-        (∑ u ∈ S, (m u : ℝ)) ≤
-          jensenLogConst * Real.log (T + 2) ∧
+        (∑ u ∈ S, (m u : ℝ)) ≤ jensenLogConst * Real.log (T + 2) ∧
         Set.EqOn riemannZeta (fun w => (∏ u ∈ S, (w - u) ^ m u) * g w)
           (Metric.ball (jensenCenter T) R2) ∧
         (h (jensenCenter T)).re < M ∧
-        Real.log (1 / 2) -
-            jensenLogConst * Real.log (T + 2) *
-              Real.log 4 ≤
+        Real.log (1 / 2) - jensenLogConst * Real.log (T + 2) * Real.log 4 ≤
           (h (jensenCenter T)).re ∧
         M ≤
           Real.log (jensenM T) +
             jensenLogConst * Real.log (T + 2) *
-              (Real.log (2 / 3) +
-                  Real.log (40 * jensenLogConst + 50) +
-                  Real.log (T + 2) -
-                1) ∧
-        (∀ w ∈ Metric.closedBall (jensenCenter T) R1,
-          (h w).re ≤ M) := by
+              (Real.log (2 / 3) + Real.log (40 * jensenLogConst + 50) + Real.log (T + 2) - 1) ∧
+        (∀ w ∈ Metric.closedBall (jensenCenter T) R1, (h w).re ≤ M) := by
   obtain
     ⟨R, δ, R2, S, m, g, hδ_pos, hδ_ge, hR, hR1R2, hR2small, hgAn, hgne, hmpos, hSzero, hu_dist,
       hsum_le, heqOn⟩ :=
-    exists_riemannZeta_zeroFree_factorization_jensen_good_radius
-      hT
+    exists_riemannZeta_zeroFree_factorization_jensen_good_radius hT
   set z : ℂ := jensenCenter T with hz_def
   have hT4 : (4 : ℝ) ≤ T := by linarith
   set R1 : ℝ := R + δ / 2 with hR1_def
@@ -1833,8 +1600,7 @@ theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
   have hR1lt37 : R1 < 37 / 10 := lt_trans hR1R2 hR2small
   have hR2pos : (0 : ℝ) < R2 := lt_trans hR1pos hR1R2
   obtain ⟨h, hh', hh_re⟩ :=
-    exists_hasDerivAt_logDeriv_re_eq_log_norm (f := g)
-      (c := z) (r := R2) hR2pos hgAn hgne
+    exists_hasDerivAt_logDeriv_re_eq_log_norm (f := g) (c := z) (r := R2) hR2pos hgAn hgne
   have hR1subR2 : Metric.closedBall z R1 ⊆ Metric.ball z R2 := by
     intro w hw
     rw [Metric.mem_closedBall] at hw
@@ -1851,11 +1617,8 @@ theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
       rw [hclosure]; exact hcont⟩
   have hζbound : ∀ w ∈ Metric.closedBall z R1, ‖riemannZeta w‖ ≤ jensenM T := by
     intro w hw
-    exact
-      jensen_f_bound_ball hT4 w
-        (Metric.closedBall_subset_closedBall (by linarith) hw)
-  set Nmax : ℝ :=
-    jensenLogConst * Real.log (T + 2) with hNmax_def
+    exact jensen_f_bound_ball hT4 w (Metric.closedBall_subset_closedBall (by linarith) hw)
+  set Nmax : ℝ := jensenLogConst * Real.log (T + 2) with hNmax_def
   set M : ℝ := Real.log (jensenM T) - Nmax * Real.log (3 * δ / 2) with hM_def
   have hδlt : δ < 37 / 10 := by
     rw [hR1_def] at hR1R2; linarith [hR.1, hR2small]
@@ -1875,8 +1638,7 @@ theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
   have hzmem : z ∈ Metric.ball z R2 := Metric.mem_ball_self hR2pos
   have hPfactor_ge : ∀ u ∈ S, (2 : ℝ) ≤ ‖z - u‖ := by
     intro u hu
-    have hure : u.re ≤ 1 :=
-      riemannZeta_zero_re_le_one (hSzero u hu)
+    have hure : u.re ≤ 1 := riemannZeta_zero_re_le_one (hSzero u hu)
     have hzre3 : z.re = 3 := by
       rw [hz_def]; exact jensenCenter_re T
     have h1 : |z.re - u.re| ≤ ‖z - u‖ := by
@@ -1905,8 +1667,7 @@ theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
       · intro u _; norm_num only
       · intro u hu; exact one_le_pow₀ (by linarith [hPfactor_ge u hu])
     simpa only [ge_iff_le, Finset.prod_const_one] using h1
-  have hζz_pos : (0 : ℝ) < ‖riemannZeta z‖ :=
-    norm_pos_iff.mpr (jensen_center_ne_zero T)
+  have hζz_pos : (0 : ℝ) < ‖riemannZeta z‖ := norm_pos_iff.mpr (jensen_center_ne_zero T)
   have hPz_pos : (0 : ℝ) < ‖∏ u ∈ S, (z - u) ^ m u‖ := norm_pos_iff.mpr hPne
   have hloggz : Real.log ‖g z‖ = Real.log ‖riemannZeta z‖ - Real.log ‖∏ u ∈ S, (z - u) ^ m u‖ := by
     rw [hnormg, Real.log_div hζz_pos.ne' hPz_pos.ne']
@@ -1914,8 +1675,7 @@ theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
     rw [hh_re z hzmem, hloggz, hnormP]
   have hlogζz_le : Real.log ‖riemannZeta z‖ ≤ Real.log (jensenM T) :=
     Real.log_le_log hζz_pos
-      (jensen_f_bound_ball hT4 z
-        (Metric.mem_closedBall_self (by norm_num only)))
+      (jensen_f_bound_ball hT4 z (Metric.mem_closedBall_self (by norm_num only)))
   have hlogPnn : (0 : ℝ) ≤ Real.log (∏ u ∈ S, ‖z - u‖ ^ m u) := Real.log_nonneg hPge1
   have hextra : (0 : ℝ) < Nmax * (-Real.log (3 * δ / 2)) := by
     apply mul_pos hNmaxpos
@@ -1924,84 +1684,47 @@ theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
     M ≤
       Real.log (jensenM T) +
         jensenLogConst * Real.log (T + 2) *
-          (Real.log (2 / 3) +
-              Real.log (40 * jensenLogConst + 50) +
-              Real.log (T + 2) -
-            1) := by
-    have hδ_inv_le :
-      1 / δ ≤
-        40 * jensenLogConst * Real.log (T + 2) +
-          50 := by
-      have h1 :
-        1 / δ ≤
-          1 /
-            (1 /
-              (40 * jensenLogConst * Real.log (T + 2) +
-                50)) :=
+          (Real.log (2 / 3) + Real.log (40 * jensenLogConst + 50) + Real.log (T + 2) - 1) := by
+    have hδ_inv_le : 1 / δ ≤ 40 * jensenLogConst * Real.log (T + 2) + 50 := by
+      have h1 : 1 / δ ≤ 1 / (1 / (40 * jensenLogConst * Real.log (T + 2) + 50)) :=
         one_div_le_one_div_of_le (by positivity) hδ_ge
       rwa [one_div_one_div] at h1
     have hlog_T2_ge1 : (1 : ℝ) ≤ Real.log (T + 2) := by
       rw [Real.le_log_iff_exp_le (by linarith : (0 : ℝ) < T + 2)]
       have := Real.exp_one_lt_three
       linarith
-    have hK50pos :
-      (0 : ℝ) <
-        40 * jensenLogConst * Real.log (T + 2) +
-          50 := by
-      positivity
-    have hK50'pos :
-      (0 : ℝ) < 40 * jensenLogConst + 50 := by
-      positivity
+    have hK50pos : (0 : ℝ) < 40 * jensenLogConst * Real.log (T + 2) + 50 := by positivity
+    have hK50'pos : (0 : ℝ) < 40 * jensenLogConst + 50 := by positivity
     have hsum_le2 :
       40 * jensenLogConst * Real.log (T + 2) + 50 ≤
-        (40 * jensenLogConst + 50) *
-          Real.log (T + 2) := by
+        (40 * jensenLogConst + 50) * Real.log (T + 2) := by
       have hexpand :
         (40 * jensenLogConst + 50) * Real.log (T + 2) =
-          40 * jensenLogConst * Real.log (T + 2) +
-            50 * Real.log (T + 2) := by
+          40 * jensenLogConst * Real.log (T + 2) + 50 * Real.log (T + 2) := by
         ring
       rw [hexpand]; linarith only [hlog_T2_ge1]
     have hstep1 : -Real.log (3 * δ / 2) = Real.log (2 / 3) + Real.log (1 / δ) := by
       have heq : (3 * δ / 2 : ℝ) = (2 / 3 * (1 / δ))⁻¹ := by field_simp
       rw [heq, Real.log_inv, neg_neg, Real.log_mul (by norm_num only) (by positivity)]
-    have hstep2 :
-      Real.log (1 / δ) ≤
-        Real.log
-          (40 * jensenLogConst * Real.log (T + 2) +
-            50) :=
+    have hstep2 : Real.log (1 / δ) ≤ Real.log (40 * jensenLogConst * Real.log (T + 2) + 50) :=
       Real.log_le_log (by positivity) hδ_inv_le
     have hstep3 :
-      Real.log
-          (40 * jensenLogConst * Real.log (T + 2) +
-            50) ≤
-        Real.log
-          ((40 * jensenLogConst + 50) *
-            Real.log (T + 2)) :=
+      Real.log (40 * jensenLogConst * Real.log (T + 2) + 50) ≤
+        Real.log ((40 * jensenLogConst + 50) * Real.log (T + 2)) :=
       Real.log_le_log hK50pos hsum_le2
     have hstep4 :
-      Real.log
-          ((40 * jensenLogConst + 50) *
-            Real.log (T + 2)) =
-        Real.log (40 * jensenLogConst + 50) +
-          Real.log (Real.log (T + 2)) :=
+      Real.log ((40 * jensenLogConst + 50) * Real.log (T + 2)) =
+        Real.log (40 * jensenLogConst + 50) + Real.log (Real.log (T + 2)) :=
       Real.log_mul hK50'pos.ne' hlogTpos.ne'
     have hstep5 : Real.log (Real.log (T + 2)) ≤ Real.log (T + 2) - 1 :=
       Real.log_le_sub_one_of_pos hlogTpos
     have hfinal :
       -Real.log (3 * δ / 2) ≤
-        Real.log (2 / 3) +
-            Real.log (40 * jensenLogConst + 50) +
-            Real.log (T + 2) -
-          1 := by
+        Real.log (2 / 3) + Real.log (40 * jensenLogConst + 50) + Real.log (T + 2) - 1 := by
       rw [hstep1]; linarith [hstep2, hstep3, hstep4, hstep5]
     have hmul :
       Nmax * (-Real.log (3 * δ / 2)) ≤
-        Nmax *
-          (Real.log (2 / 3) +
-              Real.log (40 * jensenLogConst + 50) +
-              Real.log (T + 2) -
-            1) :=
+        Nmax * (Real.log (2 / 3) + Real.log (40 * jensenLogConst + 50) + Real.log (T + 2) - 1) :=
       mul_le_mul_of_nonneg_left hfinal hNmaxnn
     rw [hM_def, hNmax_def]
     linarith only [hmul, hNmax_def]
@@ -2014,8 +1737,7 @@ theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
   · -- lower bound `log(1/2) - Nmax·log4 ≤ (h z).re`
     rw [hgz_val]
     have hζz_ge : Real.log (1 / 2 : ℝ) ≤ Real.log ‖riemannZeta z‖ :=
-      Real.log_le_log (by norm_num only)
-        (jensen_center_norm_ge T)
+      Real.log_le_log (by norm_num only) (jensen_center_norm_ge T)
     have hzu_lt4 : ∀ u ∈ S, ‖z - u‖ < 4 := fun u hu => by linarith [hu_dist u hu, hR.2]
     have hlog4pos : (0 : ℝ) ≤ Real.log 4 := Real.log_nonneg (by norm_num only)
     have hlogP_le : Real.log (∏ u ∈ S, ‖z - u‖ ^ m u) ≤ Nmax * Real.log 4 := by
@@ -2093,9 +1815,7 @@ theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
       rw [hM_def]
       linarith [hlogζ_le, hlogPw_ge]
     intro w hw
-    refine
-      re_le_of_forall_mem_frontier_re_le
-        (Metric.isBounded_ball) hdcc hMbound ?_
+    refine re_le_of_forall_mem_frontier_re_le (Metric.isBounded_ball) hdcc hMbound ?_
     rw [hclosure]; exact hw
 
 /-!
@@ -2108,22 +1828,15 @@ into a fixed constant times `log(T+2)²`.
 /-- A fixed constant for the good-height bound on `‖ζ'/ζ‖`, depending on
 `jensenLogConst` and `sawtoothRemainderBound (-9/10)`, but not on height or real part. -/
 noncomputable def qMinusOneZetaLogDerivConst : ℝ :=
-  (4 * jensenLogConst ^ 2 +
-      jensenLogConst) +
+  (4 * jensenLogConst ^ 2 + jensenLogConst) +
     4 * 2880 *
-      (|Real.log
-              (9 / 2 +
-                4 * sawtoothRemainderBound (-9 / 10)) +
-            Real.log 2| +
+      (|Real.log (9 / 2 + 4 * sawtoothRemainderBound (-9 / 10)) + Real.log 2| +
         |2 +
             jensenLogConst *
-              (Real.log (2 / 3) + Real.log 4 +
-                  Real.log (40 * jensenLogConst + 50) -
-                1)| +
+              (Real.log (2 / 3) + Real.log 4 + Real.log (40 * jensenLogConst + 50) - 1)| +
         jensenLogConst)
 
-theorem qMinusOneZetaLogDerivConst_nonneg :
-    0 ≤ qMinusOneZetaLogDerivConst := by
+theorem qMinusOneZetaLogDerivConst_nonneg : 0 ≤ qMinusOneZetaLogDerivConst := by
   unfold qMinusOneZetaLogDerivConst
   have := jensenLogConst_pos
   positivity
@@ -2135,24 +1848,13 @@ theorem le_qMinusOneZetaLogDerivConst_mul_log_sq_of_semi_explicit {H T R1 M gjc 
       M ≤
         Real.log (jensenM T) +
           jensenLogConst * Real.log (T + 2) *
-            (Real.log (2 / 3) +
-                Real.log (40 * jensenLogConst + 50) +
-                Real.log (T + 2) -
-              1))
-    (hgjc_ge :
-      Real.log (1 / 2) -
-          jensenLogConst * Real.log (T + 2) *
-            Real.log 4 ≤
-        gjc)
+            (Real.log (2 / 3) + Real.log (40 * jensenLogConst + 50) + Real.log (T + 2) - 1))
+    (hgjc_ge : Real.log (1 / 2) - jensenLogConst * Real.log (T + 2) * Real.log 4 ≤ gjc)
     (hX :
       X ≤
-        jensenLogConst * Real.log (T + 2) *
-            max (4 * jensenLogConst * Real.log (H + 2))
-              1 +
+        jensenLogConst * Real.log (T + 2) * max (4 * jensenLogConst * Real.log (H + 2)) 1 +
           4 * (M - gjc) * (R1 + d) / (R1 - d) ^ 2) :
-    X ≤
-      qMinusOneZetaLogDerivConst *
-        Real.log (T + 2) ^ 2 := by
+    X ≤ qMinusOneZetaLogDerivConst * Real.log (T + 2) ^ 2 := by
   have hT8 : (8 : ℝ) ≤ T := by linarith
   have hLCpos := jensenLogConst_pos
   have hlogTpos : (0 : ℝ) < Real.log (T + 2) := Real.log_pos (by linarith)
@@ -2167,51 +1869,30 @@ theorem le_qMinusOneZetaLogDerivConst_mul_log_sq_of_semi_explicit {H T R1 M gjc 
   have hlogH_le_logT : Real.log (H + 2) ≤ Real.log (T + 2) := by
     apply Real.log_le_log (by linarith) (by linarith)
   have htermA :
-    jensenLogConst * Real.log (T + 2) *
-        max (4 * jensenLogConst * Real.log (H + 2)) 1 ≤
-      (4 * jensenLogConst ^ 2 +
-          jensenLogConst) *
-        Real.log (T + 2) ^ 2 := by
+    jensenLogConst * Real.log (T + 2) * max (4 * jensenLogConst * Real.log (H + 2)) 1 ≤
+      (4 * jensenLogConst ^ 2 + jensenLogConst) * Real.log (T + 2) ^ 2 := by
     have hmax_le :
       max (4 * jensenLogConst * Real.log (H + 2)) 1 ≤
         4 * jensenLogConst * Real.log (T + 2) + 1 := by
       apply max_le
       · have :=
-          mul_le_mul_of_nonneg_left hlogH_le_logT
-            (by positivity :
-              (0 : ℝ) ≤ 4 * jensenLogConst)
+          mul_le_mul_of_nonneg_left hlogH_le_logT (by positivity : (0 : ℝ) ≤ 4 * jensenLogConst)
         linarith [this]
-      · have hnn :
-          (0 : ℝ) ≤
-            4 * jensenLogConst * Real.log (T + 2) :=
+      · have hnn : (0 : ℝ) ≤ 4 * jensenLogConst * Real.log (T + 2) :=
           mul_nonneg (by positivity) hlogTpos.le
         linarith only [hnn]
     have h5 : Real.log (T + 2) ≤ Real.log (T + 2) ^ 2 := le_self_pow₀ hL_ge1 (by norm_num only)
     calc
-      jensenLogConst * Real.log (T + 2) *
-            max (4 * jensenLogConst * Real.log (H + 2))
-              1 ≤
-          jensenLogConst * Real.log (T + 2) *
-            (4 * jensenLogConst * Real.log (T + 2) +
-              1) :=
+      jensenLogConst * Real.log (T + 2) * max (4 * jensenLogConst * Real.log (H + 2)) 1 ≤
+          jensenLogConst * Real.log (T + 2) * (4 * jensenLogConst * Real.log (T + 2) + 1) :=
         mul_le_mul_of_nonneg_left hmax_le (by positivity)
-      _ =
-          4 * jensenLogConst ^ 2 *
-              Real.log (T + 2) ^ 2 +
-            jensenLogConst * Real.log (T + 2) :=
-        by ring
-      _ ≤
-          4 * jensenLogConst ^ 2 *
-              Real.log (T + 2) ^ 2 +
-            jensenLogConst * Real.log (T + 2) ^ 2 :=
+      _ = 4 * jensenLogConst ^ 2 * Real.log (T + 2) ^ 2 + jensenLogConst * Real.log (T + 2) := by
+        ring
+      _ ≤ 4 * jensenLogConst ^ 2 * Real.log (T + 2) ^ 2 + jensenLogConst * Real.log (T + 2) ^ 2 :=
         by
         have hkey := mul_le_mul_of_nonneg_left h5 hLCpos.le
         linarith [hkey]
-      _ =
-          (4 * jensenLogConst ^ 2 +
-              jensenLogConst) *
-            Real.log (T + 2) ^ 2 :=
-        by ring
+      _ = (4 * jensenLogConst ^ 2 + jensenLogConst) * Real.log (T + 2) ^ 2 := by ring
   -- Step B: bound `(R1 + d) / (R1 - d)²` by a fixed constant `2880`.
   have hR1d_pos : (0 : ℝ) < R1 - d := by linarith [hR1big, hd_le]
   have hRd_le : (R1 + d) / (R1 - d) ^ 2 ≤ 2880 := by
@@ -2222,10 +1903,8 @@ theorem le_qMinusOneZetaLogDerivConst_mul_log_sq_of_semi_explicit {H T R1 M gjc 
     linarith only [hnum_le, hsq]
   -- Step C: bound `M - gjc` by an explicit `A₀ + A₁·log(T+2)`
   --   `+ PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenLogConst·(log(T+2))²`.
-  set B : ℝ := sawtoothRemainderBound (-9 / 10) with
-    hB_def
-  have hBnn : (0 : ℝ) ≤ B :=
-    sawtoothRemainderBound_nonneg _
+  set B : ℝ := sawtoothRemainderBound (-9 / 10) with hB_def
+  have hBnn : (0 : ℝ) ≤ B := sawtoothRemainderBound_nonneg _
   have hjensenMpos : (0 : ℝ) < jensenM T := by
     unfold jensenM
     rw [← hB_def]
@@ -2248,33 +1927,20 @@ theorem le_qMinusOneZetaLogDerivConst_mul_log_sq_of_semi_explicit {H T R1 M gjc 
   set A1 : ℝ :=
     2 +
       jensenLogConst *
-        (Real.log (2 / 3) + Real.log 4 +
-            Real.log (40 * jensenLogConst + 50) -
-          1) with
+        (Real.log (2 / 3) + Real.log 4 + Real.log (40 * jensenLogConst + 50) - 1) with
     hA1_def
-  have hMgjc_le :
-    M - gjc ≤
-      A0 + A1 * Real.log (T + 2) +
-        jensenLogConst * Real.log (T + 2) ^ 2 := by
+  have hMgjc_le : M - gjc ≤ A0 + A1 * Real.log (T + 2) + jensenLogConst * Real.log (T + 2) ^ 2 := by
     have hkey :
-      A0 + A1 * Real.log (T + 2) +
-            jensenLogConst * Real.log (T + 2) ^ 2 -
+      A0 + A1 * Real.log (T + 2) + jensenLogConst * Real.log (T + 2) ^ 2 -
           ((Real.log (9 / 2 + 4 * B) + 2 * Real.log (T + 2)) + Real.log 2 +
             jensenLogConst * Real.log (T + 2) *
-              (Real.log (2 / 3) +
-                  Real.log (40 * jensenLogConst + 50) +
-                  Real.log (T + 2) -
-                1) +
-            jensenLogConst * Real.log (T + 2) *
-              Real.log 4) =
+              (Real.log (2 / 3) + Real.log (40 * jensenLogConst + 50) + Real.log (T + 2) - 1) +
+            jensenLogConst * Real.log (T + 2) * Real.log 4) =
         0 := by
       rw [hA0_def, hA1_def]; ring
     linarith [hMle, hgjc_ge, hlogjensenM_le, hkey, hlog2eq]
   have hMgjc_nonneg : (0 : ℝ) ≤ M - gjc := by linarith [hMc]
-  have htermB_inner :
-    M - gjc ≤
-      (|A0| + |A1| + jensenLogConst) *
-        Real.log (T + 2) ^ 2 := by
+  have htermB_inner : M - gjc ≤ (|A0| + |A1| + jensenLogConst) * Real.log (T + 2) ^ 2 := by
     have hA0le : A0 ≤ |A0| * Real.log (T + 2) ^ 2 := by
       calc
         A0 ≤ |A0| := le_abs_self _
@@ -2291,53 +1957,34 @@ theorem le_qMinusOneZetaLogDerivConst_mul_log_sq_of_semi_explicit {H T R1 M gjc 
     linarith [hMgjc_le, hA0le, hA1le]
   have htermB :
     4 * (M - gjc) * (R1 + d) / (R1 - d) ^ 2 ≤
-      4 * 2880 * (|A0| + |A1| + jensenLogConst) *
-        Real.log (T + 2) ^ 2 := by
+      4 * 2880 * (|A0| + |A1| + jensenLogConst) * Real.log (T + 2) ^ 2 := by
     have hstep1 :
       4 * (M - gjc) * (R1 + d) / (R1 - d) ^ 2 = 4 * (M - gjc) * ((R1 + d) / (R1 - d) ^ 2) := by ring
     rw [hstep1]
     calc
       4 * (M - gjc) * ((R1 + d) / (R1 - d) ^ 2) ≤ 4 * (M - gjc) * 2880 :=
         mul_le_mul_of_nonneg_left hRd_le (by positivity)
-      _ ≤
-          4 *
-            ((|A0| + |A1| + jensenLogConst) *
-              Real.log (T + 2) ^ 2) *
-            2880 :=
-        by
+      _ ≤ 4 * ((|A0| + |A1| + jensenLogConst) * Real.log (T + 2) ^ 2) * 2880 := by
         apply mul_le_mul_of_nonneg_right _ (by norm_num only)
         exact mul_le_mul_of_nonneg_left htermB_inner (by norm_num only)
-      _ =
-          4 * 2880 * (|A0| + |A1| + jensenLogConst) *
-            Real.log (T + 2) ^ 2 :=
-        by ring
+      _ = 4 * 2880 * (|A0| + |A1| + jensenLogConst) * Real.log (T + 2) ^ 2 := by ring
   have hCeq :
     qMinusOneZetaLogDerivConst =
-      (4 * jensenLogConst ^ 2 +
-          jensenLogConst) +
-        4 * 2880 * (|A0| + |A1| + jensenLogConst) := by
+      (4 * jensenLogConst ^ 2 + jensenLogConst) + 4 * 2880 * (|A0| + |A1| + jensenLogConst) := by
     unfold qMinusOneZetaLogDerivConst
     rw [hA0_def, hA1_def, hB_def]
   rw [hCeq]
   calc
     X ≤
-        jensenLogConst * Real.log (T + 2) *
-            max (4 * jensenLogConst * Real.log (H + 2))
-              1 +
+        jensenLogConst * Real.log (T + 2) * max (4 * jensenLogConst * Real.log (H + 2)) 1 +
           4 * (M - gjc) * (R1 + d) / (R1 - d) ^ 2 :=
       hX
     _ ≤
-        (4 * jensenLogConst ^ 2 +
-              jensenLogConst) *
-            Real.log (T + 2) ^ 2 +
-          4 * 2880 * (|A0| + |A1| + jensenLogConst) *
-            Real.log (T + 2) ^ 2 :=
+        (4 * jensenLogConst ^ 2 + jensenLogConst) * Real.log (T + 2) ^ 2 +
+          4 * 2880 * (|A0| + |A1| + jensenLogConst) * Real.log (T + 2) ^ 2 :=
       add_le_add htermA htermB
     _ =
-        ((4 * jensenLogConst ^ 2 +
-              jensenLogConst) +
-            4 * 2880 *
-              (|A0| + |A1| + jensenLogConst)) *
+        ((4 * jensenLogConst ^ 2 + jensenLogConst) + 4 * 2880 * (|A0| + |A1| + jensenLogConst)) *
           Real.log (T + 2) ^ 2 :=
       by ring
 
@@ -2351,9 +1998,7 @@ theorem riemannZeta_ne_zero_of_good_height {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (h
     (hgood :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 →
-          1 / (4 * jensenLogConst * Real.log (H + 2)) ≤
-            |T - ρ.im|)
+          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|)
     (σ : ℝ) : riemannZeta (σ + T * Complex.I) ≠ 0 := by
   intro hzero
   have him : (σ + T * Complex.I).im = T := by
@@ -2365,10 +2010,7 @@ theorem riemannZeta_ne_zero_of_good_height {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (h
   rw [him, sub_self, abs_zero] at h2
   have hLCpos := jensenLogConst_pos
   have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith)
-  have :
-    (0 : ℝ) <
-      1 / (4 * jensenLogConst * Real.log (H + 2)) := by
-    positivity
+  have : (0 : ℝ) < 1 / (4 * jensenLogConst * Real.log (H + 2)) := by positivity
   linarith
 
 /-!
@@ -2385,16 +2027,13 @@ theorem forall_norm_logDeriv_riemannZeta_le {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
     (hgood :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 →
-          1 / (4 * jensenLogConst * Real.log (H + 2)) ≤
-            |T - ρ.im|) :
+          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|) :
     ∀ σ : ℝ,
       -(1 : ℝ) / 2 ≤ σ →
         σ ≤ 2 →
         riemannZeta (σ + T * Complex.I) ≠ 0 →
         ‖logDeriv riemannZeta (σ + T * Complex.I)‖ ≤
-          qMinusOneZetaLogDerivConst *
-            Real.log (T + 2) ^ 2 := by
+          qMinusOneZetaLogDerivConst * Real.log (T + 2) ^ 2 := by
   have hT8 : (8 : ℝ) ≤ T := le_trans hH hT.1
   obtain
     ⟨R1, R2, S, m, g, h, M, hR1big, hR1R2, hR2small, hgAn, hgne, hmpos, hh', hSzero, hsum_le, heqOn,
@@ -2436,15 +2075,9 @@ theorem forall_norm_logDeriv_riemannZeta_le {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
     hh' w (Metric.ball_subset_ball hR1R2.le hw)
   have hMboundOpen : ∀ w ∈ Metric.ball c R1, (h w).re ≤ M := fun w hw =>
     hMbound w (Metric.ball_subset_closedBall hw)
-  have hderiv_bound :=
-    norm_hasDerivAt_le_of_re_le hR1pos hh'R1 hMc
-      hMboundOpen hzR1
-  have hdecomp :=
-    logDeriv_riemannZeta_eq_sum_add_logDeriv_at hgAn
-      hgne hmpos heqOn hzR2 hzgood
-  set margin0 : ℝ :=
-    1 / (4 * jensenLogConst * Real.log (H + 2)) with
-    hmargin0_def
+  have hderiv_bound := norm_hasDerivAt_le_of_re_le hR1pos hh'R1 hMc hMboundOpen hzR1
+  have hdecomp := logDeriv_riemannZeta_eq_sum_add_logDeriv_at hgAn hgne hmpos heqOn hzR2 hzgood
+  set margin0 : ℝ := 1 / (4 * jensenLogConst * Real.log (H + 2)) with hmargin0_def
   have hLCpos := jensenLogConst_pos
   have hlogHpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith)
   have hmargin0pos : 0 < margin0 := by
@@ -2470,9 +2103,7 @@ theorem forall_norm_logDeriv_riemannZeta_le {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
       have hsymm : |u.im - T| = |T - u.im| := abs_sub_comm _ _
       linarith [htri, hTH, hcase, hsymm, h2, hmargin1_le_1]
   have hsum_bound :
-    ‖∑ u ∈ S, (m u : ℂ) / (z - u)‖ ≤
-      (jensenLogConst * Real.log (T + 2)) /
-        margin1 := by
+    ‖∑ u ∈ S, (m u : ℂ) / (z - u)‖ ≤ (jensenLogConst * Real.log (T + 2)) / margin1 := by
     calc
       ‖∑ u ∈ S, (m u : ℂ) / (z - u)‖ ≤ ∑ u ∈ S, ‖(m u : ℂ) / (z - u)‖ := norm_sum_le _ _
       _ = ∑ u ∈ S, (m u : ℝ) / ‖z - u‖ := by
@@ -2485,14 +2116,9 @@ theorem forall_norm_logDeriv_riemannZeta_le {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
         gcongr
         exact hzu_margin u hu
       _ = (∑ u ∈ S, (m u : ℝ)) / margin1 := by rw [Finset.sum_div]
-      _ ≤
-          (jensenLogConst * Real.log (T + 2)) /
-            margin1 :=
+      _ ≤ (jensenLogConst * Real.log (T + 2)) / margin1 :=
         (div_le_div_iff_of_pos_right hmargin1pos).mpr hsum_le
-  have hmargin1_inv_le :
-    1 / margin1 ≤
-      max (4 * jensenLogConst * Real.log (H + 2))
-        1 := by
+  have hmargin1_inv_le : 1 / margin1 ≤ max (4 * jensenLogConst * Real.log (H + 2)) 1 := by
     rcases le_total margin0 1 with hcase | hcase
     · have heq : margin1 = margin0 := min_eq_left hcase
       rw [heq, hmargin0_def, one_div_one_div]
@@ -2503,9 +2129,7 @@ theorem forall_norm_logDeriv_riemannZeta_le {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
   have hlogTpos : (0 : ℝ) < Real.log (T + 2) := Real.log_pos (by linarith)
   have hsemi :
     ‖logDeriv riemannZeta z‖ ≤
-      jensenLogConst * Real.log (T + 2) *
-          max (4 * jensenLogConst * Real.log (H + 2))
-            1 +
+      jensenLogConst * Real.log (T + 2) * max (4 * jensenLogConst * Real.log (H + 2)) 1 +
         4 * (M - (h c).re) * (R1 + d) / (R1 - d) ^ 2 := by
     rw [hdecomp]
     calc
@@ -2513,28 +2137,21 @@ theorem forall_norm_logDeriv_riemannZeta_le {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
           ‖∑ u ∈ S, (m u : ℂ) / (z - u)‖ + ‖logDeriv g z‖ :=
         norm_add_le _ _
       _ ≤
-          (jensenLogConst * Real.log (T + 2)) /
-              margin1 +
+          (jensenLogConst * Real.log (T + 2)) / margin1 +
             4 * (M - (h c).re) * (R1 + d) / (R1 - d) ^ 2 :=
         add_le_add hsum_bound hderiv_bound
       _ =
-          jensenLogConst * Real.log (T + 2) *
-              (1 / margin1) +
+          jensenLogConst * Real.log (T + 2) * (1 / margin1) +
             4 * (M - (h c).re) * (R1 + d) / (R1 - d) ^ 2 :=
-        by
-        rw [div_eq_mul_one_div
-            (jensenLogConst * Real.log (T + 2))]
+        by rw [div_eq_mul_one_div (jensenLogConst * Real.log (T + 2))]
       _ ≤
-          jensenLogConst * Real.log (T + 2) *
-              max
-                (4 * jensenLogConst * Real.log (H + 2))
-                1 +
+          jensenLogConst * Real.log (T + 2) * max (4 * jensenLogConst * Real.log (H + 2)) 1 +
             4 * (M - (h c).re) * (R1 + d) / (R1 - d) ^ 2 :=
         by gcongr
   have hR1lt37 : R1 < 37 / 10 := lt_trans hR1R2 hR2small
   exact
-    le_qMinusOneZetaLogDerivConst_mul_log_sq_of_semi_explicit
-      hH hT.1 hT.2 hR1big hR1lt37 hd_le hMc hMle hgjc_ge hsemi
+    le_qMinusOneZetaLogDerivConst_mul_log_sq_of_semi_explicit hH hT.1 hT.2 hR1big hR1lt37 hd_le hMc
+      hMle hgjc_ge hsemi
 
 /-- The explicit `O((log T)²/T²)` bound decays to `0` as `T → ∞`: `log(T+2)²/T²` is squeezed
 between `0` and `4 * (log(T+2)/(T+2))²`, and the latter tends to `0` since `log t / t → 0`

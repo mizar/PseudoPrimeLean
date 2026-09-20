@@ -22,65 +22,70 @@ private theorem harmonic_add_block (n k : ℕ) :
 
 -- BEGIN GENERATED harmonic_blocks
 /-- Exact harmonic value at 32, computed from the preceding 32-term block. -/
-private theorem harmonic_block_32 : harmonic 32 =
-    (586061125622639 /
-      144403552893600 : ℚ) := by
+private theorem harmonic_block_32 : harmonic 32 = (586061125622639 / 144403552893600 : ℚ) := by
   norm_num [harmonic, Finset.sum_range_succ]
 
 /-- Exact harmonic value at 64, computed from the preceding 32-term block. -/
-private theorem harmonic_block_64 : harmonic 64 =
-    (623171679694215690971693339 /
-      131362987122535807501262400 : ℚ) := by
+private theorem harmonic_block_64 :
+    harmonic 64 = (623171679694215690971693339 / 131362987122535807501262400 : ℚ) := by
   rw [show 64 = 32 + 32 by rfl, harmonic_add_block, harmonic_block_32]
   norm_num [Finset.sum_range_succ]
 
 /-- Exact harmonic value at 96, computed from the preceding 32-term block. -/
-private theorem harmonic_block_96 : harmonic 96 =
-    (3699322246041458103739317199996707235031 /
-      718766754945489455304472257065075294400 : ℚ) := by
+private theorem harmonic_block_96 :
+    harmonic 96 =
+      (3699322246041458103739317199996707235031 / 718766754945489455304472257065075294400 : ℚ) := by
   rw [show 96 = 64 + 32 by rfl, harmonic_add_block, harmonic_block_64]
   norm_num [Finset.sum_range_succ]
 
 /-- Exact harmonic value at 128, computed from the preceding 32-term block. -/
-private theorem harmonic_block_128 : harmonic 128 =
-    (72552921080947538317446905633815133414572988188576608701 /
-      13353756090997411579403749204440236542538872688049072000 : ℚ) := by
+private theorem harmonic_block_128 :
+    harmonic 128 =
+      (72552921080947538317446905633815133414572988188576608701 /
+          13353756090997411579403749204440236542538872688049072000 :
+        ℚ) := by
   rw [show 128 = 96 + 32 by rfl, harmonic_add_block, harmonic_block_96]
   norm_num [Finset.sum_range_succ]
 
 /-- Exact harmonic value at 160, computed from the preceding 32-term block. -/
-private theorem harmonic_block_160 : harmonic 160 =
-    ((51191928 * 10 ^ 60 +
-        86341439450197272044235040542874227018635634639310431809803) /
-      (9051688 * 10 ^ 60 +
-        883684759602914678126258667842076023307933940069074670736000) : ℚ) := by
+private theorem harmonic_block_160 :
+    harmonic 160 =
+      ((51191928 * 10 ^ 60 + 86341439450197272044235040542874227018635634639310431809803) /
+          (9051688 * 10 ^ 60 + 883684759602914678126258667842076023307933940069074670736000) :
+        ℚ) := by
   rw [show 160 = 128 + 32 by rfl, harmonic_add_block, harmonic_block_128]
   norm_num [Finset.sum_range_succ]
 
 /-- Exact harmonic value at 192, computed from the preceding 32-term block. -/
-private theorem harmonic_block_192 : harmonic 192 =
-    ((28913584925453013418184 * 10 ^ 60 +
-        554684785072907056401554990076275925448503973084282785831921) /
-      (4953235368325372168838 * 10 ^ 60 +
-        690158677648217774187866309874717606205514731838121853072000) : ℚ) := by
+private theorem harmonic_block_192 :
+    harmonic 192 =
+      ((28913584925453013418184 * 10 ^ 60 +
+            554684785072907056401554990076275925448503973084282785831921) /
+          (4953235368325372168838 * 10 ^ 60 +
+            690158677648217774187866309874717606205514731838121853072000) :
+        ℚ) := by
   rw [show 192 = 160 + 32 by rfl, harmonic_add_block, harmonic_block_160]
   norm_num [Finset.sum_range_succ]
 
 /-- Exact harmonic value at 224, computed from the preceding 32-term block. -/
-private theorem harmonic_block_224 : harmonic 224 =
-    ((31694226197390460594676973029075117 * 10 ^ 60 +
-        447594166556283276266818239502270534182120445732476389857641) /
-      (5290225078451893176693594241665890 * 10 ^ 60 +
-        914638817631063334447389979640757204083936351078274058192000) : ℚ) := by
+private theorem harmonic_block_224 :
+    harmonic 224 =
+      ((31694226197390460594676973029075117 * 10 ^ 60 +
+            447594166556283276266818239502270534182120445732476389857641) /
+          (5290225078451893176693594241665890 * 10 ^ 60 +
+            914638817631063334447389979640757204083936351078274058192000) :
+        ℚ) := by
   rw [show 224 = 192 + 32 by rfl, harmonic_add_block, harmonic_block_192]
   norm_num [Finset.sum_range_succ]
 
 /-- Exact harmonic value at 256, computed from the preceding 32-term block. -/
-private theorem harmonic_block_256 : harmonic 256 =
-    ((102120333780755602922415011407986918913493325085710 * 10 ^ 60 +
-        168750386125102325162741298648605491283438121466698312402217) /
-      (16674490806895842671659008751776385350270324508909 * 10 ^ 60 +
-        651849955453691538889375930032935391666564679008085339616000) : ℚ) := by
+private theorem harmonic_block_256 :
+    harmonic 256 =
+      ((102120333780755602922415011407986918913493325085710 * 10 ^ 60 +
+            168750386125102325162741298648605491283438121466698312402217) /
+          (16674490806895842671659008751776385350270324508909 * 10 ^ 60 +
+            651849955453691538889375930032935391666564679008085339616000) :
+        ℚ) := by
   rw [show 256 = 224 + 32 by rfl, harmonic_add_block, harmonic_block_224]
   norm_num [Finset.sum_range_succ]
 

@@ -42,15 +42,13 @@ theorem analyticAt_Gamma_half : AnalyticAt ℂ Complex.Gamma (1 / 2 : ℂ) :=
   analyticAt_Gamma_of_ball (r := 1 / 4) (by norm_num only)
     (by
       simpa only [one_div, Metric.mem_ball, ne_eq, Complex.ofReal_inv, Complex.ofReal_ofNat] using
-        ball_avoids_nonpos_int (c := 1 / 2) (r := 1 / 4)
-          (by norm_num only) (by norm_num only))
+        ball_avoids_nonpos_int (c := 1 / 2) (r := 1 / 4) (by norm_num only) (by norm_num only))
 
 theorem analyticAt_Gamma_one : AnalyticAt ℂ Complex.Gamma (1 : ℂ) :=
   analyticAt_Gamma_of_ball (r := 1 / 2) (by norm_num only)
     (by
       simpa only [one_div, Metric.mem_ball, ne_eq, Complex.ofReal_one] using
-        ball_avoids_nonpos_int (c := 1) (r := 1 / 2)
-          (by norm_num only) (by norm_num only))
+        ball_avoids_nonpos_int (c := 1) (r := 1 / 2) (by norm_num only) (by norm_num only))
 
 /-- `digamma` is analytic (hence differentiable) wherever `Γ` is analytic and nonzero. -/
 theorem analyticAt_digamma {s : ℂ} (hs : AnalyticAt ℂ Complex.Gamma s) (hne : Complex.Gamma s ≠ 0) :
@@ -72,22 +70,16 @@ theorem half_ne_neg_nat (m : ℕ) : (1 / 2 : ℂ) ≠ -m := by
 theorem one_ne_neg_nat (m : ℕ) : (1 : ℂ) ≠ -m := by
   intro h
   have hm : (1 : ℝ) = -(m : ℝ) := by
-    have h' : ((1 : ℝ) : ℂ) = (-(m : ℝ) : ℂ) := by
-      convert h using 1
+    have h' : ((1 : ℝ) : ℂ) = (-(m : ℝ) : ℂ) := by convert h using 1
     exact_mod_cast h'
   nlinarith only [Nat.cast_nonneg (α := ℝ) m, hm]
 
 theorem differentiableAt_digamma_half : DifferentiableAt ℂ Complex.digamma (1 / 2 : ℂ) :=
-  (analyticAt_digamma
-      analyticAt_Gamma_half
-      (Complex.Gamma_ne_zero
-        half_ne_neg_nat)).differentiableAt
+  (analyticAt_digamma analyticAt_Gamma_half
+      (Complex.Gamma_ne_zero half_ne_neg_nat)).differentiableAt
 
 theorem differentiableAt_digamma_one : DifferentiableAt ℂ Complex.digamma (1 : ℂ) :=
-  (analyticAt_digamma
-      analyticAt_Gamma_one
-      (Complex.Gamma_ne_zero
-        one_ne_neg_nat)).differentiableAt
+  (analyticAt_digamma analyticAt_Gamma_one (Complex.Gamma_ne_zero one_ne_neg_nat)).differentiableAt
 
 theorem ball_half_avoids_int : ∀ w ∈ Metric.ball (1 / 2 : ℂ) (1 / 4), ∀ k : ℤ, w ≠ k := by
   intro w hw k hcontra
@@ -135,19 +127,14 @@ theorem digamma_sub_digamma_one_sub_eq {z : ℂ} (hz : z ∈ Metric.ball (1 / 2 
     norm_num only [Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_natCast,
       Complex.ofReal_ofNat, Nat.cast_ofNat]
   have hz1 : ∀ m : ℕ, z ≠ -m := by
-    have h :=
-      ball_avoids_nonpos_int (c := 1 / 2) (r := 1 / 4)
-        (by norm_num only) (by norm_num only)
+    have h := ball_avoids_nonpos_int (c := 1 / 2) (r := 1 / 4) (by norm_num only) (by norm_num only)
     rw [hcast] at h
     exact h z hz
   have hz2 : ∀ m : ℕ, (1 - z) ≠ -m := by
-    have h :=
-      ball_avoids_nonpos_int (c := 1 / 2) (r := 1 / 4)
-        (by norm_num only) (by norm_num only)
+    have h := ball_avoids_nonpos_int (c := 1 / 2) (r := 1 / 4) (by norm_num only) (by norm_num only)
     rw [hcast] at h
     exact h (1 - z) (one_sub_mem_ball_half hz)
-  have hsin : Complex.sin ((Real.pi : ℂ) * z) ≠ 0 :=
-    sin_pi_mul_ne_zero_of_ball hz
+  have hsin : Complex.sin ((Real.pi : ℂ) * z) ≠ 0 := sin_pi_mul_ne_zero_of_ball hz
   have hGz : Complex.Gamma z ≠ 0 := Complex.Gamma_ne_zero hz1
   have hG1z : Complex.Gamma (1 - z) ≠ 0 := Complex.Gamma_ne_zero hz2
   have hd1 : HasDerivAt Complex.Gamma (Complex.Gamma z * Complex.digamma z) z := by
@@ -333,22 +320,14 @@ theorem digamma_duplication_eq {s : ℂ} (hs : s ∈ Metric.ball (1 / 2 : ℂ) (
       Complex.ofReal_ofNat, Nat.cast_ofNat]
   have hcastone : ((1 : ℝ) : ℂ) = (1 : ℂ) := by norm_num only [Complex.ofReal_one]
   have hz1 : ∀ m : ℕ, s ≠ -m := by
-    have h :=
-      ball_avoids_nonpos_int (c := 1 / 2) (r := 1 / 4)
-        (by norm_num only) (by norm_num only)
+    have h := ball_avoids_nonpos_int (c := 1 / 2) (r := 1 / 4) (by norm_num only) (by norm_num only)
     rw [hcasthalf] at h; exact h s hs
   have hz2 : ∀ m : ℕ, (s + 1 / 2) ≠ -m := by
-    have h :=
-      ball_avoids_nonpos_int (c := 1) (r := 1 / 2)
-        (by norm_num only) (by norm_num only)
-    rw [hcastone] at h;
-    exact h (s + 1 / 2) (s_add_half_mem_ball_one hs)
+    have h := ball_avoids_nonpos_int (c := 1) (r := 1 / 2) (by norm_num only) (by norm_num only)
+    rw [hcastone] at h; exact h (s + 1 / 2) (s_add_half_mem_ball_one hs)
   have hz3 : ∀ m : ℕ, (2 * s) ≠ -m := by
-    have h :=
-      ball_avoids_nonpos_int (c := 1) (r := 1 / 2)
-        (by norm_num only) (by norm_num only)
-    rw [hcastone] at h;
-    exact h (2 * s) (two_s_mem_ball_one hs)
+    have h := ball_avoids_nonpos_int (c := 1) (r := 1 / 2) (by norm_num only) (by norm_num only)
+    rw [hcastone] at h; exact h (2 * s) (two_s_mem_ball_one hs)
   have hGs : Complex.Gamma s ≠ 0 := Complex.Gamma_ne_zero hz1
   have hGs' : Complex.Gamma (s + 1 / 2) ≠ 0 := Complex.Gamma_ne_zero hz2
   have hG2s : Complex.Gamma (2 * s) ≠ 0 := Complex.Gamma_ne_zero hz3

@@ -31,26 +31,16 @@ theorem llsRiemannLogVerticalIntegralLowerBound_of_riemannHypothesis (hRH : Riem
     LLSRiemannLogVerticalIntegralLowerBound := by
   intro x hx τ hτ
   have hx0 : (0 : ℝ) < x := by linarith
-  have heq2 :=
-    logWeightedMangoldtSum_eq_integral hx0 (τ := 2)
-      (by norm_num only)
-  have heqτ :=
-    logWeightedMangoldtSum_eq_integral hx0 hτ
+  have heq2 := logWeightedMangoldtSum_eq_integral hx0 (τ := 2) (by norm_num only)
+  have heqτ := logWeightedMangoldtSum_eq_integral hx0 hτ
   have hre_eq :
-    ((2 * Real.pi : ℝ)⁻¹ •
-          ∫ y : ℝ,
-            riemannZetaLogContourKernel x
-              ((τ : ℂ) + y * Complex.I)).re =
+    ((2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, riemannZetaLogContourKernel x ((τ : ℂ) + y * Complex.I)).re =
       ((2 * Real.pi : ℝ)⁻¹ •
-          ∫ y : ℝ,
-            riemannZetaLogContourKernel x
-              ((2 : ℂ) + y * Complex.I)).re := by
+          ∫ y : ℝ, riemannZetaLogContourKernel x ((2 : ℂ) + y * Complex.I)).re := by
     rw [← heqτ, heq2]
     norm_num only [Complex.ofReal_ofNat]
   rw [hre_eq]
-  exact
-    re_integral_riemannZetaLogContourKernel_two_ge_of_riemannHypothesis
-      hRH hx
+  exact re_integral_riemannZetaLogContourKernel_two_ge_of_riemannHypothesis hRH hx
 
 /-- RH implies the weighted-sum lower bound used from LLS Lemma 2.1. -/
 theorem llsRiemannWeightedLowerBound_of_riemannHypothesis (hRH : RiemannHypothesis) :

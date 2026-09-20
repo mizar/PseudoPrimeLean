@@ -68,50 +68,43 @@ theorem logDeriv_dirichletLFunction_reflection_leftVertical_isQuadratic {N : ℕ
   have hFsne := completedLFunction_ne_zero_farLeft_of_isQuadratic hprimitive hne hquad hs1re
   have hF1sne := completedLFunction_ne_zero_of_one_le_re hne hs1re
   have hFE :=
-    completedLFunction_logDeriv_functionalEquation_isQuadratic_at
-      hprimitive hne hquad hFsne
+    completedLFunction_logDeriv_functionalEquation_isQuadratic_at hprimitive hne hquad hFsne
   have hFeq :
     logDeriv (DirichletCharacter.completedLFunction χ) s =
       -Complex.log N - logDeriv (DirichletCharacter.completedLFunction χ) (1 - s) := by
     linear_combination -hFE
   rcases χ.even_or_odd with heven | hodd
   · have hΓs :=
-      gammaFactor_ne_zero_of_even_of_half_ne_neg_nat
-        heven (leftVertical_even_half_ne_neg_nat A t)
+      gammaFactor_ne_zero_of_even_of_half_ne_neg_nat heven (leftVertical_even_half_ne_neg_nat A t)
     have hdΓs :=
-      differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat
-        heven (leftVertical_even_half_ne_neg_nat A t)
+      differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat heven
+        (leftVertical_even_half_ne_neg_nat A t)
     have hΓ1s :=
-      gammaFactor_ne_zero_of_even_of_half_ne_neg_nat
-        heven (reflectedLeftVertical_even_half_ne_neg_nat A hA t)
+      gammaFactor_ne_zero_of_even_of_half_ne_neg_nat heven
+        (reflectedLeftVertical_even_half_ne_neg_nat A hA t)
     have hdΓ1s :=
-      differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat
-        heven (reflectedLeftVertical_even_half_ne_neg_nat A hA t)
+      differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat heven
+        (reflectedLeftVertical_even_half_ne_neg_nat A hA t)
     have hbridge_s :=
-      logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular
-        hne hFsne hΓs hdΓs
+      logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hFsne hΓs hdΓs
     have hbridge_1s :=
-      logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular
-        hne hF1sne hΓ1s hdΓ1s
+      logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF1sne hΓ1s hdΓ1s
     rw [hbridge_s, hFeq, hbridge_1s]; ring
   · have hΓs :=
-      gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat
-        hodd (leftVertical_odd_half_ne_neg_nat A t)
+      gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd (leftVertical_odd_half_ne_neg_nat A t)
     have hdΓs :=
-      differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat
-        hodd (leftVertical_odd_half_ne_neg_nat A t)
+      differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
+        (leftVertical_odd_half_ne_neg_nat A t)
     have hΓ1s :=
-      gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat
-        hodd (reflectedLeftVertical_odd_half_ne_neg_nat A hA t)
+      gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd
+        (reflectedLeftVertical_odd_half_ne_neg_nat A hA t)
     have hdΓ1s :=
-      differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat
-        hodd (reflectedLeftVertical_odd_half_ne_neg_nat A hA t)
+      differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
+        (reflectedLeftVertical_odd_half_ne_neg_nat A hA t)
     have hbridge_s :=
-      logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular
-        hne hFsne hΓs hdΓs
+      logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hFsne hΓs hdΓs
     have hbridge_1s :=
-      logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular
-        hne hF1sne hΓ1s hdΓ1s
+      logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF1sne hΓ1s hdΓ1s
     rw [hbridge_s, hFeq, hbridge_1s]; ring
 
 /-! ### The left-vertical ordinary `L'/L` bound -/
@@ -245,7 +238,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le {N : ℕ} [NeZ
               (‖Complex.log (N : ℂ)‖ + M3) * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) :=
           (by
             convert add_le_add_right hLM (CΓ * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2))) using
-                1)
+              1)
         _ = (‖Complex.log (N : ℂ)‖ + M3 + CΓ) * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) := by
           ring
         _ ≤ (‖Complex.log (N : ℂ)‖ + M3 + CΓ + 5) * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) :=
@@ -346,9 +339,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
         ‖logDeriv (DirichletCharacter.gammaFactor χ⁻¹) (1 - s)‖ +
             ‖logDeriv (DirichletCharacter.gammaFactor χ) s‖ ≤
           CΓ * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) := by
-        have heq :=
-          DirichletCharacter.gammaFactor_inv_eq
-            χ
+        have heq := DirichletCharacter.gammaFactor_inv_eq χ
         have hgf : DirichletCharacter.gammaFactor χ⁻¹ = DirichletCharacter.gammaFactor χ := by
           funext z
           exact heq z
@@ -380,7 +371,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
               (‖Complex.log (N : ℂ)‖ + M3) * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) :=
           (by
             convert add_le_add_right hLM (CΓ * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2))) using
-                1)
+              1)
         _ = (‖Complex.log (N : ℂ)‖ + M3 + CΓ) * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) := by
           ring
         _ ≤ (‖Complex.log (N : ℂ)‖ + M3 + CΓ + 5) * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) :=

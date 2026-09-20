@@ -70,15 +70,13 @@ theorem complexQuadraticCharacter_isEven (n : ℕ) (hn : Odd n) :
 /-- The associated character is primitive at its conductor. -/
 theorem primitiveQuadraticCharacter_isPrimitive (n : ℕ) (hn : Odd n) :
     (primitiveQuadraticCharacter n hn).IsPrimitive :=
-  DirichletCharacter.primitiveCharacter_isPrimitive
-    (complexQuadraticCharacter n hn)
+  DirichletCharacter.primitiveCharacter_isPrimitive (complexQuadraticCharacter n hn)
 
 /-- The conductor of the complex quadratic character is nonzero for odd `n`. -/
 theorem complexQuadraticCharacter_conductor_ne_zero (n : ℕ) (hn : Odd n) :
     (complexQuadraticCharacter n hn).conductor ≠ 0 := by
   let _ : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
-  exact
-    DirichletCharacter.conductor_ne_zero (complexQuadraticCharacter n hn)
+  exact DirichletCharacter.conductor_ne_zero (complexQuadraticCharacter n hn)
 
 /-- The conductor of the complex quadratic character carries its canonical nonzero instance. -/
 instance complexQuadraticCharacterConductorNeZero (n : ℕ) (hn : Odd n) :
@@ -91,10 +89,8 @@ value as the complex quadratic character that it induces.
 -/
 theorem primitiveQuadraticCharacter_apply_of_isCoprime (n : ℕ) (hn : Odd n) {a : ℤ}
     (ha : IsCoprime a (4 * n)) :
-    primitiveQuadraticCharacter n hn a =
-      complexQuadraticCharacter n hn a :=
-  DirichletCharacter.primitiveCharacter_apply_of_isCoprime
-    (complexQuadraticCharacter n hn) ha
+    primitiveQuadraticCharacter n hn a = complexQuadraticCharacter n hn a :=
+  DirichletCharacter.primitiveCharacter_apply_of_isCoprime (complexQuadraticCharacter n hn) ha
 
 /-- The primitive character preserves the even parity of its inducing character. -/
 theorem primitiveQuadraticCharacter_isEven (n : ℕ) (hn : Odd n) :
@@ -104,13 +100,10 @@ theorem primitiveQuadraticCharacter_isEven (n : ℕ) (hn : Odd n) :
     rw [IsCoprime.neg_left_iff]
     exact isCoprime_one_left
   have hval := primitiveQuadraticCharacter_apply_of_isCoprime n hn hcop
-  have hvalue :
-    complexQuadraticCharacter n hn (-1 : ZMod (4 * n)) = 1 := by
-    simpa only [DirichletCharacter.Even] using
-      complexQuadraticCharacter_isEven n hn
+  have hvalue : complexQuadraticCharacter n hn (-1 : ZMod (4 * n)) = 1 := by
+    simpa only [DirichletCharacter.Even] using complexQuadraticCharacter_isEven n hn
   have hval' :
-    primitiveQuadraticCharacter n hn
-        (-1 : ZMod (complexQuadraticCharacter n hn).conductor) =
+    primitiveQuadraticCharacter n hn (-1 : ZMod (complexQuadraticCharacter n hn).conductor) =
       complexQuadraticCharacter n hn (-1 : ZMod (4 * n)) := by
     simpa only [Int.cast_neg, Int.cast_one] using hval
   exact hval'.trans hvalue
@@ -127,8 +120,7 @@ theorem primitiveQuadraticCharacter_isQuadratic (n : ℕ) (hn : Odd n) :
   let _ : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
   rw [MulChar.isQuadratic_iff_sq_eq_one]
   apply
-    DirichletCharacter.changeLevel_injective
-      (complexQuadraticCharacter n hn).conductor_dvd_level
+    DirichletCharacter.changeLevel_injective (complexQuadraticCharacter n hn).conductor_dvd_level
   unfold primitiveQuadraticCharacter
   rw [map_pow, DirichletCharacter.changeLevel_primitiveCharacter, map_one]
   exact complexQuadraticCharacter_sq n hn
@@ -140,14 +132,10 @@ change of level would make the original complex quadratic character trivial as w
 theorem primitiveQuadraticCharacter_ne_one_of_not_square (n : ℕ) (hn : Odd n) (hns : ¬IsSquare n) :
     primitiveQuadraticCharacter n hn ≠ 1 := by
   intro hprimitive
-  change
-    (complexQuadraticCharacter n hn).primitiveCharacter = 1 at hprimitive
-  have hchange :=
-    DirichletCharacter.changeLevel_primitiveCharacter
-      (complexQuadraticCharacter n hn)
+  change (complexQuadraticCharacter n hn).primitiveCharacter = 1 at hprimitive
+  have hchange := DirichletCharacter.changeLevel_primitiveCharacter (complexQuadraticCharacter n hn)
   rw [hprimitive] at hchange
   simp only [DirichletCharacter.changeLevel_one] at hchange
-  exact
-    complexQuadraticCharacter_ne_one_of_not_square n hn hns hchange.symm
+  exact complexQuadraticCharacter_ne_one_of_not_square n hn hns hchange.symm
 
 end PseudoPrime.NumberTheory

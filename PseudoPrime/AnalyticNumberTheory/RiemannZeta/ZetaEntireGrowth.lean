@@ -25,46 +25,27 @@ exactly cancelled by the `(s - 1)` factor in
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.zetaEntire`,
 and separately checked at the patched point `s = 1` itself. -/
 theorem norm_zetaEntire_le_of_reGt_neg_one {s : ℂ} (hs : -1 < s.re) :
-    ‖zetaEntire s‖ ≤
-      ‖s‖ + (‖s‖ + 1) / 2 +
-        ‖s‖ * (‖s‖ + 1) ^ 2 *
-          sawtoothRemainderBound s.re := by
-  have hsawnn : 0 ≤ sawtoothRemainderBound s.re :=
-    sawtoothRemainderBound_nonneg s.re
+    ‖zetaEntire s‖ ≤ ‖s‖ + (‖s‖ + 1) / 2 + ‖s‖ * (‖s‖ + 1) ^ 2 * sawtoothRemainderBound s.re := by
+  have hsawnn : 0 ≤ sawtoothRemainderBound s.re := sawtoothRemainderBound_nonneg s.re
   rcases eq_or_ne s 1 with rfl | hne
-  · have hz1 : zetaEntire (1 : ℂ) = 1 := by
-      simp only [zetaEntire, Function.update_self]
+  · have hz1 : zetaEntire (1 : ℂ) = 1 := by simp only [zetaEntire, Function.update_self]
     rw [hz1, norm_one]
     nlinarith [norm_nonneg (1 : ℂ)]
-  · have hzeq :
-      zetaEntire s = (s - 1) * riemannZeta s := by
+  · have hzeq : zetaEntire s = (s - 1) * riemannZeta s := by
       simp only [zetaEntire, Function.update_of_ne hne]
     have hsm1_ne : s - 1 ≠ 0 := sub_ne_zero.mpr hne
     have hsm1_pos : 0 < ‖s - 1‖ := norm_pos_iff.mpr hsm1_ne
     have hζ :
-      ‖riemannZeta s‖ ≤
-        ‖s‖ / ‖s - 1‖ + 1 / 2 +
-          ‖s‖ * (‖s‖ + 1) *
-            sawtoothRemainderBound s.re :=
-      norm_riemannZeta_le_of_reGt_neg_one_diff_one
-        ⟨hs, hne⟩
+      ‖riemannZeta s‖ ≤ ‖s‖ / ‖s - 1‖ + 1 / 2 + ‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re :=
+      norm_riemannZeta_le_of_reGt_neg_one_diff_one ⟨hs, hne⟩
     have hstep1 :
       ‖zetaEntire s‖ ≤
-        ‖s - 1‖ *
-          (‖s‖ / ‖s - 1‖ + 1 / 2 +
-            ‖s‖ * (‖s‖ + 1) *
-              sawtoothRemainderBound s.re) := by
+        ‖s - 1‖ * (‖s‖ / ‖s - 1‖ + 1 / 2 + ‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re) := by
       rw [hzeq, norm_mul]
       exact mul_le_mul_of_nonneg_left hζ (norm_nonneg _)
     have hexpand :
-      ‖s - 1‖ *
-          (‖s‖ / ‖s - 1‖ + 1 / 2 +
-            ‖s‖ * (‖s‖ + 1) *
-              sawtoothRemainderBound s.re) =
-        ‖s‖ + ‖s - 1‖ / 2 +
-          ‖s - 1‖ *
-            (‖s‖ * (‖s‖ + 1) *
-              sawtoothRemainderBound s.re) := by
+      ‖s - 1‖ * (‖s‖ / ‖s - 1‖ + 1 / 2 + ‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re) =
+        ‖s‖ + ‖s - 1‖ / 2 + ‖s - 1‖ * (‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re) := by
       rw [mul_add, mul_add, mul_div_cancel₀ _ hsm1_pos.ne']
       ring
     rw [hexpand] at hstep1
@@ -72,28 +53,13 @@ theorem norm_zetaEntire_le_of_reGt_neg_one {s : ℂ} (hs : -1 < s.re) :
       calc
         ‖s - 1‖ ≤ ‖s‖ + ‖(1 : ℂ)‖ := norm_sub_le _ _
         _ = ‖s‖ + 1 := by rw [norm_one]
-    have hnn :
-      0 ≤
-        ‖s‖ * (‖s‖ + 1) *
-          sawtoothRemainderBound s.re := by
-      positivity
+    have hnn : 0 ≤ ‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re := by positivity
     calc
       ‖zetaEntire s‖ ≤
-          ‖s‖ + ‖s - 1‖ / 2 +
-            ‖s - 1‖ *
-              (‖s‖ * (‖s‖ + 1) *
-                sawtoothRemainderBound s.re) :=
+          ‖s‖ + ‖s - 1‖ / 2 + ‖s - 1‖ * (‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re) :=
         hstep1
-      _ ≤
-          ‖s‖ + (‖s‖ + 1) / 2 +
-            (‖s‖ + 1) *
-              (‖s‖ * (‖s‖ + 1) *
-                sawtoothRemainderBound s.re) :=
-        by gcongr
-      _ =
-          ‖s‖ + (‖s‖ + 1) / 2 +
-            ‖s‖ * (‖s‖ + 1) ^ 2 *
-              sawtoothRemainderBound s.re :=
-        by ring
+      _ ≤ ‖s‖ + (‖s‖ + 1) / 2 + (‖s‖ + 1) * (‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re) := by
+        gcongr
+      _ = ‖s‖ + (‖s‖ + 1) / 2 + ‖s‖ * (‖s‖ + 1) ^ 2 * sawtoothRemainderBound s.re := by ring
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta
