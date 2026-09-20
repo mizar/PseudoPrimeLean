@@ -34,9 +34,9 @@ LLSの公開入口と主張は [LLS](LLS.md) を参照する。
 
 `log` を自然対数とし、
 
-\[
+$$
 R(n)=\left(\log(4n)+\frac{24}{5}\log\log(4n)+3\right)^2
-\]
+$$
 
 と置く。[Bounds/PointwiseWitness.lean](../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) は、GRHのもとで正の奇非平方数 `n` に対し次の奇素数目撃者の存在を示す。
 

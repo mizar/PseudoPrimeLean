@@ -25,10 +25,10 @@
 `Λ` をvon Mangoldt関数、`χ` を複素Dirichlet指標とする。
 [WeightedMangoldt.lean](../PseudoPrime/AnalyticNumberTheory/Arithmetic/WeightedMangoldt.lean) は
 
-\[
+$$
 S(x,\chi)=\sum_{1\le m\le\lfloor x\rfloor}\Lambda(m)\log(x/m)\chi(m),\qquad
 T(x,\chi)=\sum_{1\le m\le\lfloor x\rfloor}\frac{\Lambda(m)}m(1-m/x)\chi(m)
-\]
+$$
 
 を `characterLogWeightedSum`、`characterReciprocalWeightedSum` として定義する。
 指標を掛けない実数版も定義し、素数冪への分解や共通因子を持つ項の分離を証明する。
@@ -63,9 +63,9 @@ RH・GRHが必要な零点評価は、それぞれの定理の引数として受
 [ElementaryOmegaFiniteCertificates.lean](../PseudoPrime/AnalyticNumberTheory/Arithmetic/ElementaryOmegaFiniteCertificates.lean)
 の `elementaryOmegaStatement` は、奇数 `n ≥ 750` に対して
 
-\[
+$$
 \omega(4n)\le\frac75\frac{\log(4n)}{\log\log(4n)}
-\]
+$$
 
 を与える。ここで `ω` は異なる素因数の個数。
 有限証明書と解析的な尾部評価を組み合わせた無条件の結果であり、Robin評価を仮定しない。

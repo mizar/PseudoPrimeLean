@@ -10,14 +10,15 @@ Lamzouri–Li–SoundararajanのTheorem 1.1に対応するS1・S2を扱う。
 
 [Statement.lean](../PseudoPrime/LLS/Statement.lean) の定義に従い、
 
-\[
+$$
 A(q)=\max\left(0,2\log\log q-\frac85-\sum_{p\mid q}\frac{\log p}{p-1}\right),
-\]
-\[
+$$
+
+$$
 B(q)=\max\left(0,2\log\log q+3+
  \frac{2\omega(q)(\log\log q)^2}{\log q}-2A(q)\right),\qquad
 X_1(q)=(\log q+B(q))^2
-\]
+$$
 
 とする。素因数和は異なる素因数についての和。
 `A(q)` は `llsAuxiliaryTerm`、`B(q)` は `llsCorrectionTerm` に対応する。
@@ -43,9 +44,9 @@ GRH、`q ≥ 3000` のもとで次が証明されている。
 `llsTheorem11S2_of_grh` は [Theorem11S2.lean](../PseudoPrime/LLS/Theorem11S2.lean) にある。
 公開仕様 `llsTheorem11S2` は、`q ≥ 3000` と
 
-\[
+$$
 \text{素数 }r<(\log q)^2\Longrightarrow r\nmid q
-\]
+$$
 
 を前提とし、真部分群 `H` に対して、`p ≤ (log q)²` でその剰余が `H` の像に入らない素数を与える。
 前提のcutoffは狭義、結論の上界は広義である。結論には `p ∤ q` が含まれず、

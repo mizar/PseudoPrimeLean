@@ -24,9 +24,9 @@ RH・GRHは仮定しない。
 
 Euler–Mascheroni定数を `γ` とすると、次を証明している。
 
-\[
+$$
 \frac{27}{50}<\gamma<\frac{29}{50}.
-\]
+$$
 
 対応する定理は `twenty_seven_fiftieths_lt_eulerMascheroniConstant` と
 `eulerMascheroniConstant_lt_twentyNine_fiftieths`。
@@ -38,9 +38,9 @@ Euler–Mascheroni定数を `γ` とすると、次を証明している。
 
 偶指標の対数誤差項は
 
-\[
+$$
 E_{\mathrm{even}}(x)=\frac{\pi^2}{24}-\frac\gamma2\log x-\frac12(\log x)^2
-\]
+$$
 
 として `primitiveLogEvenMainError` に定義されている。
 この層で定義するのは実数式であり、L関数の重み付き和に対する上界であることは
