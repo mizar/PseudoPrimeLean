@@ -14,7 +14,7 @@ p\le(\log n)^2,\qquad p^d\not\equiv1\pmod n,
 $$
 
 $$
-\forall j\in\mathbb N,\quad j<s\Longrightarrow p^{2^j d}\not\equiv-1\pmod n.
+\forall j\in\mathbb N,\quad j < s\Longrightarrow p^{2^j d}\not\equiv-1\pmod n.
 $$
 
 これは底 $p$ で Strong Miller–Rabin の合格条件がすべて失敗することを表す。
@@ -37,7 +37,7 @@ GRH 自体を証明したという主張ではない。
 | `exists_prime_millerRabin_witness_le_log_sq` | 指定した `n,s,d` に対する主定理 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
 | `exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq` | 計算済み分解を使うBoolean判定の不合格という形の系 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
 | `exists_prime_millerRabin_witness_le_log_sq_of_s2` | S2を仮定した $n\ge3000$ の接続定理 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
-| `exists_prime_millerRabin_witness_le_log_sq_of_lt_3000` | GRHを仮定しない $1<n<3000$ の定理 | [Small.lean](../PseudoPrime/MillerRabinBoundGrh/Small.lean) |
+| `exists_prime_millerRabin_witness_le_log_sq_of_lt_3000` | GRHを仮定しない $1 < n < 3000$ の定理 | [Small.lean](../PseudoPrime/MillerRabinBoundGrh/Small.lean) |
 
 次の例は主定理の前提と結論をそのまま示す。
 
@@ -70,7 +70,7 @@ Boolean系の結論は、同じ素数性・実数上界と
 ### 1. 合格条件、単元性、素因数底
 
 `PseudoPrime.PrimeTest.StrongMillerRabinPass n s d x` は
-$x^d=1$ または、ある $j<s$ に対して $x^{2^j d}=-1$ という条件を定義する。
+$x^d=1$ または、ある $j < s$ に対して $x^{2^j d}=-1$ という条件を定義する。
 合格すれば $x^{n-1}=1$ となり、 $n>1$ のもとでは $x$ は単元となる。
 したがって素因数 $p\mid n$ を底にすると不合格になる。
 
@@ -100,12 +100,12 @@ $x^d=1$ または、ある $j<s$ に対して $x^{2^j d}=-1$ という条件を�
 
 ### 3. 大きい範囲にS2を適用
 
-$n\ge3000$ に対し、 $p<(\log n)^2$ を満たす素因数があれば、1の性質でその $p$ を証人にする。
+$n\ge3000$ に対し、 $p < (\log n)^2$ を満たす素因数があれば、1の性質でその $p$ を証人にする。
 そのような素因数がなければ、[LLSのS2](LLS.md)を2の真部分群へ適用する。
 S2は $p\le(\log n)^2$ で剰余が $H$ の像に入らない素数を与えるため、
 その底は合格できない。
 
-前提の小素因数除外は狭義の $<$、証人の上界は $\le$ である。
+前提の小素因数除外は狭義の $\lt$、証人の上界は $\le$ である。
 等号端点で証人が単元になるという追加仮定は用いない。
 これが `exists_prime_millerRabin_witness_le_log_sq_of_s2` の証明である。
 最終段階で `PseudoPrime.LLS.llsTheorem11S2_of_grh` によりGRHからS2を供給する。
@@ -113,11 +113,11 @@ S2は $p\le(\log n)^2$ で剰余が $H$ の像に入らない素数を与える�
 ### 4. 小さい範囲の有限証明
 
 [Computation/Small.lean](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) は、
-$1<n<3000$ の奇合成数について、底2または底3で不合格になることを示す。
+$1 < n < 3000$ の奇合成数について、底2または底3で不合格になることを示す。
 底2での不合格を示す有限分類では2047を例外候補とし、2047の底3での不合格を別途証明する。
 公開定理は `PseudoPrime.PrimeTest.base_two_or_three_rejects_of_lt_3000`。
 
-証明は奇数 $n=2k+1$、 $0\le k<1500$ を128要素の11ブロックと92要素の最終ブロックで被覆する。
+証明は奇数 $n=2k+1$、 $0\le k < 1500$ を128要素の11ブロックと92要素の最終ブロックで被覆する。
 素数性と、明示分解・高速冪の不一致をLeanカーネルで検証し、checkerの健全性を通じて
 既存のStrong Miller–Rabin判定へ移す。外部の整数探索結果を証明根拠には使わない。
 

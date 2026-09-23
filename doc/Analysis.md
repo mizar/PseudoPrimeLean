@@ -25,7 +25,7 @@ RH・GRHは仮定しない。
 Euler–Mascheroni定数を `γ` とすると、次を証明している。
 
 $$
-\frac{27}{50}<\gamma<\frac{29}{50}.
+\frac{27}{50} < \gamma < \frac{29}{50}.
 $$
 
 対応する定理は `twenty_seven_fiftieths_lt_eulerMascheroniConstant` と

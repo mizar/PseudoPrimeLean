@@ -14,13 +14,13 @@ this decomposition is unique. The witness satisfies
 
 $$
 p^d\not\equiv1\pmod n,\qquad
-\forall j\in\mathbb N,\quad j<s\Longrightarrow p^{2^j d}\not\equiv-1\pmod n.
+\forall j\in\mathbb N,\quad j < s\Longrightarrow p^{2^j d}\not\equiv-1\pmod n.
 $$
 
 The result includes composite squares and other perfect powers; the witness may be $2$
 or a prime divisor of $n$. GRH is an explicit hypothesis.
 The proof combines an unconditional proper-subgroup construction, a kernel-checked
-finite proof for $1<n<3000$, and the GRH theorem for LLS Theorem 1.1(2).
+finite proof for $1 < n < 3000$, and the GRH theorem for LLS Theorem 1.1(2).
 
 The public results are in
 [`MillerRabinBoundGrh/FromLLS.lean`](PseudoPrime/MillerRabinBoundGrh/FromLLS.lean):

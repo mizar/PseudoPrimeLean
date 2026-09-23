@@ -14,12 +14,12 @@ $\log$ は自然対数である。 $n-1=2^s d$（ $s,d\in\mathbb N$、 $d$ は�
 
 $$
 p^d\not\equiv1\pmod n,\qquad
-\forall j\in\mathbb N,\quad j<s\Longrightarrow p^{2^j d}\not\equiv-1\pmod n.
+\forall j\in\mathbb N,\quad j < s\Longrightarrow p^{2^j d}\not\equiv-1\pmod n.
 $$
 
 平方合成数やその他の完全冪も対象に含み、証人は $2$ や $n$ の素因数でもよい。
 GRH は明示的な仮定として受け取る。証明は、合格底を含む真部分群の無条件の構成、
-$1<n<3000$ のカーネル検証による有限証明、LLS Theorem 1.1(2) の GRH 定理を組み合わせる。
+$1 < n < 3000$ のカーネル検証による有限証明、LLS Theorem 1.1(2) の GRH 定理を組み合わせる。
 
 公開定理は
 [`MillerRabinBoundGrh/FromLLS.lean`](PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) にある。

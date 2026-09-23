@@ -45,7 +45,7 @@ GRH、`q ≥ 3000` のもとで次が証明されている。
 公開仕様 `llsTheorem11S2` は、`q ≥ 3000` と
 
 $$
-\text{素数 }r<(\log q)^2\Longrightarrow r\nmid q
+\text{素数 }r < (\log q)^2\Longrightarrow r\nmid q
 $$
 
 を前提とし、真部分群 `H` に対して、`p ≤ (log q)²` でその剰余が `H` の像に入らない素数を与える。
