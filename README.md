@@ -5,6 +5,40 @@
 [Module guide and results (Japanese)](doc/README.md) ·
 [C++ / Python BPSW examples (Japanese)](doc/BPSWImplementations.md)
 
+## Prime Miller–Rabin witnesses under GRH
+
+Assuming the generalized Riemann hypothesis (GRH), every odd composite integer $n>1$
+has a prime base $p\le(\log n)^2$ that the strong Miller–Rabin test rejects.
+Here $\log$ is the natural logarithm. Write $n-1=2^s d$ with $s,d\in\mathbb N$ and $d$ odd;
+this decomposition is unique. The witness satisfies
+
+$$
+p^d\not\equiv1\pmod n,\qquad
+\forall j\in\mathbb N,\quad j<s\Longrightarrow p^{2^j d}\not\equiv-1\pmod n.
+$$
+
+The result includes composite squares and other perfect powers; the witness may be $2$
+or a prime divisor of $n$. GRH is an explicit hypothesis.
+The proof combines an unconditional proper-subgroup construction, a kernel-checked
+finite proof for $1<n<3000$, and the GRH theorem for LLS Theorem 1.1(2).
+
+The public results are in
+[`MillerRabinBoundGrh/FromLLS.lean`](PseudoPrime/MillerRabinBoundGrh/FromLLS.lean):
+
+```lean
+import PseudoPrime
+
+#check PseudoPrime.MillerRabinBoundGrh.primeMillerRabinWitnessBound_of_grh
+#check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq
+#check PseudoPrime.MillerRabinBoundGrh.exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
+```
+
+The first theorem proves the property `PrimeMillerRabinWitnessBound`; the second gives
+the witness for `n` and its decomposition `s,d`, and the third gives
+`PseudoPrime.PrimeTest.strongMillerRabinWithBase n p = false` for the executable test.
+See the [theorem and proof guide (Japanese)](doc/MillerRabinBoundGrh.md) for the assumptions,
+source mapping, and finite-range argument.
+
 ## Non-1 Jacobi witnesses and Selfridge bounds
 
 This project formalizes bounds on Jacobi witnesses and Selfridge stopping values in Lean.

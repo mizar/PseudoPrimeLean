@@ -35,6 +35,20 @@ Method Aは `P = 1, Q = (1-D)/4`。Method A*は `D = 5` の場合に `P = Q = 5`
 
 `firstStopNegOne` と `firstStopNeOne` は数学的な最小停止候補で、実行用探索と区別する。後者は `¬ n ∣ i` とJacobi値 `≠ 1` を要求して因子検出も扱う。
 
+## Miller–Rabinの素数底証人
+
+GRHの下で、任意の奇合成数 $n>1$ に対して $p\le(\log n)^2$ を満たす素数底が存在し、
+`strongMillerRabinWithBase n p = false` となることも証明されている。
+詳しい主張と利用例は [MillerRabinBoundGrh](MillerRabinBoundGrh.md) を参照する。
+この上界の入口は `PseudoPrime.MillerRabinBoundGrh.FromLLS` である。
+
+無条件の基盤は [MillerRabin/Composite.lean](../PseudoPrime/PrimeTest/MillerRabin/Composite.lean)
+の真部分群存在定理と、
+[MillerRabin/Computation/Small.lean](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean)
+の $1<n<3000$ における底2または3の不合格定理である。
+分解 $n-1=2^s d$（$s,d\in\mathbb N$、$d$ は奇数）と実行用判定の接続は
+[Decomposition.lean](../PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) にある。
+
 ## 保証と利用例
 
 `PrimalityTestSpec.prime_true` は「素数ならtrue」という完全性を表す。`bailliePSW_spec_unconditional` と `strengthenedBPSW_spec_unconditional` は探索成功も含めてこの仕様を証明し、GRHを仮定しない。逆の「trueなら素数」はこの仕様に含まれない。

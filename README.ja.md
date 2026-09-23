@@ -5,6 +5,37 @@
 [公開モジュールの構成と成果](doc/README.md) ·
 [C++・PythonのBPSW参考実装](doc/BPSWImplementations.md)
 
+## GRH 下の素数底 Miller–Rabin 証人上界
+
+一般化リーマン予想（GRH）の下で、任意の奇合成数 $n>1$ に対して、
+Strong Miller–Rabin 判定を不合格にする素数底 $p\le(\log n)^2$ が存在することを証明した。
+$\log$ は自然対数である。$n-1=2^s d$（$s,d\in\mathbb N$、$d$ は奇数）と
+一意に分解すると、この証人は次を満たす。
+
+$$
+p^d\not\equiv1\pmod n,\qquad
+\forall j\in\mathbb N,\quad j<s\Longrightarrow p^{2^j d}\not\equiv-1\pmod n.
+$$
+
+平方合成数やその他の完全冪も対象に含み、証人は $2$ や $n$ の素因数でもよい。
+GRH は明示的な仮定として受け取る。証明は、合格底を含む真部分群の無条件の構成、
+$1<n<3000$ のカーネル検証による有限証明、LLS Theorem 1.1(2) の GRH 定理を組み合わせる。
+
+公開定理は
+[`MillerRabinBoundGrh/FromLLS.lean`](PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) にある。
+
+```lean
+import PseudoPrime
+
+#check PseudoPrime.MillerRabinBoundGrh.primeMillerRabinWitnessBound_of_grh
+#check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq
+#check PseudoPrime.MillerRabinBoundGrh.exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
+```
+
+順に、命題 `PrimeMillerRabinWitnessBound` の証明、`n` とその分解 `s,d` に対する証人定理、
+実行用判定 `PseudoPrime.PrimeTest.strongMillerRabinWithBase n p = false` を与える系である。
+前提・宣言の対応と証明の流れは [Miller–Rabin 証人上界の解説](doc/MillerRabinBoundGrh.md) を参照。
+
 ## 非 1 ヤコビ目撃者と Selfridge 境界
 
 このプロジェクトは、ヤコビ目撃者（Jacobi witness）と Selfridge 停止値に関する
