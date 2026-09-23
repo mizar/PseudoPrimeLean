@@ -46,7 +46,7 @@ GRHの下で、任意の奇合成数 $n>1$ に対して $p\le(\log n)^2$ を満�
 の真部分群存在定理と、
 [MillerRabin/Computation/Small.lean](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean)
 の $1<n<3000$ における底2または3の不合格定理である。
-分解 $n-1=2^s d$（$s,d\in\mathbb N$、$d$ は奇数）と実行用判定の接続は
+分解 $n-1=2^s d$（ $s,d\in\mathbb N$、 $d$ は奇数）と実行用判定の接続は
 [Decomposition.lean](../PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) にある。
 
 ## 保証と利用例
