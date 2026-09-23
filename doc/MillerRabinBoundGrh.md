@@ -35,6 +35,7 @@ GRH 自体を証明したという主張ではない。
 | `PrimeMillerRabinWitnessBound` | GRHからすべての奇合成数とその分解に対する証人存在を述べる `Prop` | [Definition.lean](../PseudoPrime/MillerRabinBoundGrh/Definition.lean) |
 | `primeMillerRabinWitnessBound_of_grh` | 上記の `Prop` の証明 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
 | `exists_prime_millerRabin_witness_le_log_sq` | 指定した `n,s,d` に対する主定理 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
+| `exists_prime_millerRabin_witness_le_log_sq_iff_not_prime` | GRHの下で、奇数 `n > 1` の証人存在と `¬ Nat.Prime n` の同値 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
 | `exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq` | 計算済み分解を使うBoolean判定の不合格という形の系 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
 | `exists_prime_millerRabin_witness_le_log_sq_of_s2` | S2を仮定した $n\ge3000$ の接続定理 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
 | `exists_prime_millerRabin_witness_le_log_sq_of_lt_3000` | GRHを仮定しない $1 < n < 3000$ の定理 | [Small.lean](../PseudoPrime/MillerRabinBoundGrh/Small.lean) |
@@ -57,8 +58,13 @@ example
 
 #check PseudoPrime.MillerRabinBoundGrh.PrimeMillerRabinWitnessBound
 #check PseudoPrime.MillerRabinBoundGrh.primeMillerRabinWitnessBound_of_grh
+#check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
 #check PseudoPrime.MillerRabinBoundGrh.exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
 ```
+
+同値定理は `1 < n`、`Odd n`、`n - 1 = 2 ^ s * d`、`Odd d` を前提とする。
+奇素数なら対数二乗上界以下の素数底は法 `n` と互いに素なので Strong Miller–Rabin に合格し、
+そのような不合格底は存在しない。奇合成数側は主定理から従う。
 
 Boolean系の結論は、同じ素数性・実数上界と
 `PseudoPrime.PrimeTest.strongMillerRabinWithBase n p = false` である。
@@ -78,6 +84,8 @@ $x^d=1$ または、ある $j < s$ に対して $x^{2^j d}=-1$ という条件�
 `strongMillerRabinPass_isUnit`、`strongMillerRabinPass_not_of_prime_dvd` がこの性質を示す。
 同ファイルの `strongMillerRabinWithBase_eq_false_iff_not_pass_decomp` は、
 この分解での合格条件の否定を既存のBoolean判定へ接続する。
+素数入力側では、対数上界から底の互いに素性を示し、素数法の受理定理と
+指定分解の接続を組み合わせて不合格条件と矛盾させる。
 この節の宣言は `PseudoPrime.PrimeTest` 名前空間に属する。
 
 ### 2. 合格底を含む真部分群

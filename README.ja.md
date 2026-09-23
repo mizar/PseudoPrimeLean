@@ -29,10 +29,12 @@ import PseudoPrime
 
 #check PseudoPrime.MillerRabinBoundGrh.primeMillerRabinWitnessBound_of_grh
 #check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq
+#check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
 #check PseudoPrime.MillerRabinBoundGrh.exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
 ```
 
 順に、命題 `PrimeMillerRabinWitnessBound` の証明、`n` とその分解 `s,d` に対する証人定理、
+奇数入力に対する「証人が存在すること」と「`n` が素数でないこと」の同値、および
 実行用判定 `PseudoPrime.PrimeTest.strongMillerRabinWithBase n p = false` を与える系である。
 前提・宣言の対応と証明の流れは [Miller–Rabin 証人上界の解説](doc/MillerRabinBoundGrh.md) を参照。
 

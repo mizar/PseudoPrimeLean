@@ -30,11 +30,13 @@ import PseudoPrime
 
 #check PseudoPrime.MillerRabinBoundGrh.primeMillerRabinWitnessBound_of_grh
 #check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq
+#check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
 #check PseudoPrime.MillerRabinBoundGrh.exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
 ```
 
-The first theorem proves the property `PrimeMillerRabinWitnessBound`; the second gives
-the witness for `n` and its decomposition `s,d`, and the third gives
+The first theorem proves `PrimeMillerRabinWitnessBound`; the second gives the witness for `n`
+and its decomposition `s,d`; the third states that, for odd `n > 1`, this witness exists exactly
+when `n` is not prime; and the fourth gives
 `PseudoPrime.PrimeTest.strongMillerRabinWithBase n p = false` for the executable test.
 See the [theorem and proof guide (Japanese)](doc/MillerRabinBoundGrh.md) for the assumptions,
 source mapping, and finite-range argument.
