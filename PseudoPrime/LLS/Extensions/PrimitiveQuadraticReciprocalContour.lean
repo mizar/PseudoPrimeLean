@@ -123,7 +123,8 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero 
             dirichletReciprocalContourKernel x χ
               (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re := by
     rw [show ((↑(2 * Real.pi))⁻¹ : ℂ) = (((2 * Real.pi)⁻¹ : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.re_ofReal_mul]
   rw [hmulre] at hlimit
   exact hlimit
@@ -230,7 +231,8 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_lt_of_even {N : ℕ} 
             dirichletReciprocalContourKernel x χ
               (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re := by
     rw [show ((↑(2 * Real.pi))⁻¹ : ℂ) = (((2 * Real.pi)⁻¹ : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.re_ofReal_mul]
   rw [hmulre] at hlimit
   exact hlimit
@@ -355,7 +357,8 @@ theorem primitiveQuadraticReciprocalRaw' {N : ℕ} [NeZero N] (χ : DirichletCha
     have hNpos : 0 < N := NeZero.pos N
     omega
   have hinv : χ⁻¹ ≠ 1 := by
-    rw [hquad.inv]; exact hne
+    rw [hquad.inv]
+    exact hne
   have hraw := primitiveQuadraticReciprocalRaw hN2 hGRH hprimitive hne hinv hquad hx
   have hlogdiv : Real.log ((N : ℝ) / Real.pi) = Real.log N - Real.log Real.pi :=
     Real.log_div (by exact_mod_cast (NeZero.pos N).ne') Real.pi_ne_zero

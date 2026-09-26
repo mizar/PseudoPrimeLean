@@ -121,7 +121,8 @@ theorem inverseSquareLogTradeoff {y conductorLog piLog : ℝ} (hy : 8 ≤ y) (hc
     (1 - 1 / y)⁻¹ ^ 2 * ((conductorLog - piLog) / 2) ≤ conductorLog / 2 + 13 / 20 := by
   have hypos : 0 < y := by linarith
   have hyone : 0 < y - 1 := by linarith
-  have hinverse : (1 - 1 / y)⁻¹ ^ 2 = y ^ 2 / (y - 1) ^ 2 := by field_simp [hypos.ne']
+  have hinverse : (1 - 1 / y)⁻¹ ^ 2 = y ^ 2 / (y - 1) ^ 2 := by
+    field_simp (discharger := first | exact hypos.ne' | exact hyone.ne')
   rw [hinverse, div_mul_eq_mul_div, div_le_iff₀ (sq_pos_of_pos hyone)]
   have hfactor : 0 ≤ 2 * y - 1 := by linarith
   have hconductorMul := mul_le_mul_of_nonneg_left hc hfactor

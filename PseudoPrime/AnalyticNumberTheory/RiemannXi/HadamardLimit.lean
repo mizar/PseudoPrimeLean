@@ -66,13 +66,14 @@ theorem meromorphicOrderAt_riemannXi_ne_top (s : ℂ) : meromorphicOrderAt riema
   have horder : meromorphicOrderAt riemannXi 0 = 0 :=
     hanalytic.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff.mpr
       (by
-        rw [riemannXi_zero]; norm_num only)
+        rw [riemannXi_zero]
+        norm_num only)
   have hmero : Meromorphic riemannXi := fun u ↦
     differentiable_riemannXi.analyticAt u |>.meromorphicAt
   apply (hmero.exists_meromorphicOrderAt_ne_top_iff_forall.mp ?_) s
   exact
     ⟨0, by
-      rw [horder];
+      rw [horder]
       simp only [ne_eq, LinearOrderedAddCommGroupWithTop.zero_ne_top, not_false_eq_true]⟩
 
 /-- Xi admits an extended canonical decomposition on each closed ball centered
@@ -129,7 +130,8 @@ theorem norm_ecanonicalDecomp_riemannXi_eq_of_zeroFree_sphere {R : ℝ} (hR : 0 
     · have hiball : i ∈ Metric.ball (0 : ℂ) R :=
         (MeromorphicOn.divisor riemannXi (Metric.ball (0 : ℂ) R)).supportWithinDomain hi0
       have hwsphere : w ∈ Metric.sphere (0 : ℂ) R := by
-        rw [Metric.mem_sphere, dist_zero_right]; exact hw
+        rw [Metric.mem_sphere, dist_zero_right]
+        exact hw
       rw [Complex.norm_canonicalFactor_eval_circle_eq_one hiball hwsphere, Real.log_one, mul_zero]
   rw [finsum_eq_zero_of_forall_eq_zero hballzero, finsum_eq_zero_of_forall_eq_zero hspherezero,
     sub_zero, zero_add] at hlogeq
@@ -151,7 +153,8 @@ theorem norm_ecanonicalDecomp_riemannXi_zero_ge {R : ℝ} (hR : 0 < R) {g : ℂ 
   have hanalyticBall : AnalyticOnNhd ℂ riemannXi (Metric.ball (0 : ℂ) R) := fun z _ =>
     differentiable_riemannXi.analyticAt z
   have hF0ne : riemannXi 0 ≠ 0 := by
-    rw [riemannXi_zero]; norm_num only
+    rw [riemannXi_zero]
+    norm_num only
   have h0mem : (0 : ℂ) ∈ Metric.closedBall (0 : ℂ) R := by
     simp only [Metric.mem_closedBall, dist_self, hR.le]
   have horder0 := meromorphicOrderAt_riemannXi_eq_zero_of_ne_zero hF0ne
@@ -215,7 +218,8 @@ theorem norm_ecanonicalDecomp_riemannXi_zero_ge {R : ℝ} (hR : 0 < R) {g : ℂ 
   have hg0_pos : (0 : ℝ) < ‖g 0‖ := norm_pos_iff.mpr (D.ne_zero 0 h0mem)
   have hF0_pos : (0 : ℝ) < ‖riemannXi 0‖ := norm_pos_iff.mpr hF0ne
   have hlog_le : Real.log ‖riemannXi 0‖ ≤ Real.log ‖g 0‖ := by
-    rw [hlogeq]; linarith
+    rw [hlogeq]
+    linarith
   exact (Real.log_le_log_iff hF0_pos hg0_pos).mp hlog_le
 
 /-- For a positive radius with zero-free boundary, the maximum modulus principle
@@ -256,7 +260,8 @@ theorem ecanonicalDecomp_riemannXi_log_norm_oscillation_le {R : ℝ} (hR : 0 < R
   have hF0_pos : (0 : ℝ) < ‖riemannXi 0‖ :=
     norm_pos_iff.mpr
       (by
-        rw [riemannXi_zero]; norm_num only)
+        rw [riemannXi_zero]
+        norm_num only)
   have hbound_pos : (0 : ℝ) < xiOrderOneBound (R + 1) := hgz_pos.trans_le hzle
   have h1 : Real.log ‖g z‖ ≤ Real.log (xiOrderOneBound (R + 1)) :=
     (Real.log_le_log_iff hgz_pos hbound_pos).mpr hzle
@@ -377,12 +382,14 @@ theorem xiOrderOneBound_le_exp_orderOne {x : ℝ} (hx : 1 ≤ x) :
   have hx4pos : (0 : ℝ) < x + 4 := by linarith
   have hlog4pos : 0 < Real.log (x + 4) := Real.log_pos (by linarith)
   have hLpos : 0 < L := by
-    rw [hL_def]; positivity
+    rw [hL_def]
+    positivity
   -- the polynomial factor, evaluated at `x + 1`, is at most `K · (x + 4) ^ 3`
   have hx24 : (x + 2 : ℝ) ^ 3 ≤ (x + 4) ^ 3 := by apply pow_le_pow_left₀ (by linarith) (by linarith)
   set K : ℝ := 2 + 4 * RiemannZeta.sawtoothRemainderBound (1 / 2) with hK_def
   have hKnn : (0 : ℝ) ≤ K := by
-    rw [hK_def]; linarith
+    rw [hK_def]
+    linarith
   have hpoly4 :
     (x + 1) + (x + 1 + 1) / 2 +
         (x + 1) * (x + 1 + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2) ≤
@@ -392,7 +399,9 @@ theorem xiOrderOneBound_le_exp_orderOne {x : ℝ} (hx : 1 ≤ x) :
             (x + 1) * (x + 1 + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2) ≤
           K * (x + 2) ^ 3 :=
         by
-        rw [hK_def]; convert hpoly using 2; ring
+        rw [hK_def]
+        convert hpoly using 2
+        ring
       _ ≤ K * (x + 4) ^ 3 := mul_le_mul_of_nonneg_left hx24 hKnn
   -- `(x + 4) ^ 3 ≤ exp L`
   have hcubeeq : (x + 4 : ℝ) ^ 3 = Real.exp (3 * Real.log (x + 4)) := by
@@ -440,7 +449,8 @@ theorem xiOrderOneBound_le_exp_orderOne {x : ℝ} (hx : 1 ≤ x) :
       _ ≤ Real.exp L * (K * Real.exp L) :=
         mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hcube_le hKnn) (Real.exp_pos _).le
       _ = K * Real.exp (2 * L) := by
-        rw [two_mul, Real.exp_add]; ring
+        rw [two_mul, Real.exp_add]
+        ring
   have hKexp : K ≤ Real.exp K := by linarith [Real.add_one_le_exp K]
   have hB_ge1 : (1 : ℝ) ≤ Real.exp (K + 2 * L) := by
     apply Real.one_le_exp
@@ -512,9 +522,11 @@ theorem norm_logDeriv_ecanonicalDecomp_riemannXi_sub_zero_le {R : ℝ} (hR : 2 <
   have hF0_pos : (0 : ℝ) < ‖riemannXi 0‖ :=
     norm_pos_iff.mpr
       (by
-        rw [riemannXi_zero]; norm_num only)
+        rw [riemannXi_zero]
+        norm_num only)
   have h0R : ‖(0 : ℂ)‖ ≤ R := by
-    rw [norm_zero]; linarith
+    rw [norm_zero]
+    linarith
   have hboundge : ‖riemannXi 0‖ ≤ xiOrderOneBound (R + 1) :=
     norm_riemannXi_le_xiOrderOneBound_on_closedBall hR0.le
       (by simp only [Metric.mem_closedBall, dist_self, hR0.le])
@@ -542,22 +554,26 @@ theorem norm_logDeriv_ecanonicalDecomp_riemannXi_sub_zero_le {R : ℝ} (hR : 2 <
       1 with
     hM_def
   have hM0 : (hh 0).re < M := by
-    rw [hM_def]; linarith [hlog_bound_le, hlogF0_le_bound]
+    rw [hM_def]
+    linarith [hlog_bound_le, hlogF0_le_bound]
   have hRe_le : ∀ w ∈ Metric.ball (0 : ℂ) R, (hh w).re ≤ M := by
     intro w hw
     have := hosc w hw
-    rw [hM_def]; linarith
+    rw [hM_def]
+    linarith
   have h7 := General.norm_hasDerivAt_sub_le_of_re_le hR0 hh' hM0 hRe_le hs
   have hMcalc :
     M - (hh 0).re =
       xiOrderOneGrowthConstant + 2 * (R + 4) * Real.log (R + 4) - Real.log ‖riemannXi 0‖ + 1 := by
-    rw [hM_def]; ring
+    rw [hM_def]
+    ring
   rw [hMcalc] at h7
   set A : ℝ :=
     xiOrderOneGrowthConstant + 2 * (R + 4) * Real.log (R + 4) - Real.log ‖riemannXi 0‖ + 1 with
     hA_def
   have hApos : 0 < A := by
-    rw [← hMcalc]; linarith
+    rw [← hMcalc]
+    linarith
   have hRs_pos : (0 : ℝ) < R - ‖s‖ := by linarith
   have hratio : (R + ‖s‖) / (R - ‖s‖) ^ 3 ≤ 12 / R ^ 2 := by
     rw [div_le_div_iff₀ (pow_pos hRs_pos 3) (by positivity)]
@@ -586,7 +602,8 @@ theorem norm_logDeriv_ecanonicalDecomp_riemannXi_one_sub_zero_le {R : ℝ} (hR :
           (xiOrderOneGrowthConstant + 2 * (R + 4) * Real.log (R + 4) - Real.log ‖riemannXi 0‖ + 1) /
         R ^ 2 := by
   have hs1 : ‖(1 : ℂ)‖ ≤ R / 2 := by
-    rw [norm_one]; linarith
+    rw [norm_one]
+    linarith
   have h := norm_logDeriv_ecanonicalDecomp_riemannXi_sub_zero_le hR D hzf hs1
   rwa [norm_one, mul_one] at h
 
@@ -615,11 +632,13 @@ theorem sphereFactor_riemannXi_eq_one_of_zeroFree {R : ℝ}
       rw [MeromorphicOn.divisor_apply hanalyticSphere.meromorphicOn hv,
         meromorphicOrderAt_riemannXi_eq_zero_of_ne_zero (hzf v hvne)]
       rfl
-    rw [hdiv0]; funext z
+    rw [hdiv0]
+    funext z
     simp only [Pi.pow_apply, zpow_ofNat, pow_zero, Pi.one_apply]
   · have hdiv0 : MeromorphicOn.divisor riemannXi (Metric.sphere (0 : ℂ) R) v = 0 :=
       (MeromorphicOn.divisor riemannXi (Metric.sphere (0 : ℂ) R)).apply_eq_zero_of_notMem hv
-    rw [hdiv0]; funext z
+    rw [hdiv0]
+    funext z
     simp only [Pi.pow_apply, zpow_ofNat, pow_zero, Pi.one_apply]
 
 /-- For a zero-free boundary sphere, the right-hand side of the extended canonical
@@ -708,7 +727,8 @@ theorem ecanonicalDecomp_riemannXi_logDeriv_eq_at {R : ℝ} (hR : 0 < R) {g : �
             g) :
           ℂ → ℂ) =
         P * g := by
-      rw [hsphere1, mul_one]; funext z
+      rw [hsphere1, mul_one]
+      funext z
       simp only [Pi.smul_apply', smul_eq_mul, Pi.mul_apply]
     rwa [hrw] at hFeqRHS
   have hPAt : AnalyticAt ℂ P x :=
@@ -794,7 +814,8 @@ theorem logDeriv_riemannXi_canonicalFactorProduct_eq_finsum_at {R : ℝ} {x : �
     exact
       hi
         (by
-          rw [hi0]; simp only [neg_zero, zpow_ofNat, pow_zero])
+          rw [hi0]
+          simp only [neg_zero, zpow_ofNat, pow_zero])
   have hAnalyticAll : ∀ i ∈ hdfin.toFinset, AnalyticAt ℂ (Complex.canonicalFactor R i) x :=
     fun i hi => Complex.analyticOnNhd_canonicalFactor R i x (hkey i hi).1.symm
   have hcfxne :
@@ -863,7 +884,8 @@ theorem logDeriv_riemannXi_canonicalFactorProduct_eq_finsum_at {R : ℝ} {x : �
     rw [Set.Finite.coe_toFinset, Function.mem_support]
     intro h0'
     apply hi
-    rw [h0']; simp only [Int.cast_zero, zero_mul]
+    rw [h0']
+    simp only [Int.cast_zero, zero_mul]
   rw [show
       (∑ i ∈ hdfin.toFinset,
           logDeriv
@@ -973,7 +995,8 @@ theorem riemannXiTruncatedGenusSum_zero (R : ℝ) : riemannXiTruncatedGenusSum R
     by_cases hρ : ρ = 0
     · simp only [hρ, sub_self, div_zero, add_zero, mul_zero]
     · rw [show (1 : ℂ) / (0 - ρ) + 1 / ρ = 0 from by
-          field_simp; ring,
+          field_simp
+          ring,
         mul_zero]
   simp only [heq, finsum_zero]
 
@@ -1009,7 +1032,10 @@ theorem norm_riemannXiCanonicalCorrectionSum_le {R : ℝ} (hR : 2 < R) {s : ℂ}
     intro ρ hρ
     rw [Function.mem_support] at hρ
     rw [Set.Finite.coe_toFinset, Function.mem_support]
-    intro hDρ0; apply hρ; rw [hDρ0]; simp only [Int.cast_zero, zero_mul]
+    intro hDρ0
+    apply hρ
+    rw [hDρ0]
+    simp only [Int.cast_zero, zero_mul]
   rw [heq1]
   have hterm_le :
     ∀ ρ ∈ hfin.toFinset,
@@ -1025,7 +1051,8 @@ theorem norm_riemannXiCanonicalCorrectionSum_le {R : ℝ} (hR : 2 < R) {s : ℂ}
     have hDvnn : (0 : ℤ) ≤ Dv ρ := MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalyticBall ρ
     rw [norm_mul,
       show ‖((Dv ρ : ℤ) : ℂ)‖ = (Dv ρ : ℝ) from by
-        rw [Complex.norm_intCast]; exact_mod_cast abs_of_nonneg hDvnn]
+        rw [Complex.norm_intCast]
+        exact_mod_cast abs_of_nonneg hDvnn]
     exact mul_le_mul_of_nonneg_left hcorr (by exact_mod_cast hDvnn)
   calc
     ‖∑ ρ ∈ hfin.toFinset,
@@ -1065,7 +1092,8 @@ theorem norm_riemannXiCanonicalCorrectionSum_one_le {R : ℝ} (hR : 2 < R) :
       2 / R ^ 2 * riemannXiTruncatedMultiplicitySum R := by
   have hR0 : (0 : ℝ) < R := by linarith
   have hs1 : ‖(1 : ℂ)‖ ≤ R / 2 := by
-    rw [norm_one]; linarith
+    rw [norm_one]
+    linarith
   have hanalyticBall : AnalyticOnNhd ℂ riemannXi (Metric.ball (0 : ℂ) R) := fun z _ =>
     differentiable_riemannXi.analyticAt z
   have hanalyticClosed : AnalyticOnNhd ℂ riemannXi (Metric.closedBall (0 : ℂ) R) := fun z _ =>
@@ -1086,7 +1114,10 @@ theorem norm_riemannXiCanonicalCorrectionSum_one_le {R : ℝ} (hR : 2 < R) :
     intro ρ hρ
     rw [Function.mem_support] at hρ
     rw [Set.Finite.coe_toFinset, Function.mem_support]
-    intro hDρ0; apply hρ; rw [hDρ0]; simp only [Int.cast_zero, zero_mul]
+    intro hDρ0
+    apply hρ
+    rw [hDρ0]
+    simp only [Int.cast_zero, zero_mul]
   rw [heq1]
   have hterm_le :
     ∀ ρ ∈ hfin.toFinset,
@@ -1102,7 +1133,8 @@ theorem norm_riemannXiCanonicalCorrectionSum_one_le {R : ℝ} (hR : 2 < R) :
     have hDvnn : (0 : ℤ) ≤ Dv ρ := MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalyticBall ρ
     rw [norm_mul,
       show ‖((Dv ρ : ℤ) : ℂ)‖ = (Dv ρ : ℝ) from by
-        rw [Complex.norm_intCast]; exact_mod_cast abs_of_nonneg hDvnn]
+        rw [Complex.norm_intCast]
+        exact_mod_cast abs_of_nonneg hDvnn]
     calc
       (Dv ρ : ℝ) *
             ‖(starRingEnd ℂ) ρ / ((R : ℂ) ^ 2 - (starRingEnd ℂ) ρ * 1) -
@@ -1110,7 +1142,8 @@ theorem norm_riemannXiCanonicalCorrectionSum_one_le {R : ℝ} (hR : 2 < R) :
           (Dv ρ : ℝ) * (2 * ‖(1 : ℂ)‖ / R ^ 2) :=
         mul_le_mul_of_nonneg_left hcorr (by exact_mod_cast hDvnn)
       _ = (Dv ρ : ℝ) * (2 / R ^ 2) := by
-        rw [norm_one]; ring
+        rw [norm_one]
+        ring
   calc
     ‖∑ ρ ∈ hfin.toFinset,
             ((Dv ρ : ℤ) : ℂ) *
@@ -1153,7 +1186,8 @@ theorem norm_riemannXi_centeredLogDeriv_sub_truncatedGenus_le {R : ℝ} (hR : 2 
   have hR0 : (0 : ℝ) < R := by linarith
   obtain ⟨g, D⟩ := exists_ecanonicalDecomp_riemannXi R
   have hsclosed : s ∈ Metric.closedBall (0 : ℂ) R := by
-    rw [Metric.mem_closedBall, dist_zero_right]; linarith
+    rw [Metric.mem_closedBall, dist_zero_right]
+    linarith
   have heq := ecanonicalDecomp_riemannXi_centered_logDeriv_eq hR0 D hzf hsclosed hsne
   have hanalyticClosed : AnalyticOnNhd ℂ riemannXi (Metric.closedBall (0 : ℂ) R) := fun z _ =>
     differentiable_riemannXi.analyticAt z
@@ -1161,7 +1195,8 @@ theorem norm_riemannXi_centeredLogDeriv_sub_truncatedGenus_le {R : ℝ} (hR : 2 
   have hfin : (Function.support Dv).Finite :=
     hanalyticClosed.meromorphicOn.divisor_ball_support_finite
   have h0ne : riemannXi (0 : ℂ) ≠ 0 := by
-    rw [riemannXi_zero]; norm_num only
+    rw [riemannXi_zero]
+    norm_num only
   have hkey : ∀ u ∈ hfin.toFinset, u ∈ Metric.ball (0 : ℂ) R ∧ u ≠ 0 ∧ s ≠ u := by
     intro u hu
     rw [Set.Finite.mem_toFinset] at hu
@@ -1174,7 +1209,10 @@ theorem norm_riemannXi_centeredLogDeriv_sub_truncatedGenus_le {R : ℝ} (hR : 2 
     intro u hu
     rw [Function.mem_support] at hu
     rw [Set.Finite.coe_toFinset, Function.mem_support]
-    intro hDu0; apply hu; rw [hDu0]; simp only [Int.cast_zero, neg_zero, zero_mul]
+    intro hDu0
+    apply hu
+    rw [hDu0]
+    simp only [Int.cast_zero, neg_zero, zero_mul]
   have hsub2 :
     Function.support
         (fun u : ℂ => ((-Dv u : ℤ) : ℂ) * logDeriv (Complex.canonicalFactor R u) (0 : ℂ)) ⊆
@@ -1182,7 +1220,10 @@ theorem norm_riemannXi_centeredLogDeriv_sub_truncatedGenus_le {R : ℝ} (hR : 2 
     intro u hu
     rw [Function.mem_support] at hu
     rw [Set.Finite.coe_toFinset, Function.mem_support]
-    intro hDu0; apply hu; rw [hDu0]; simp only [Int.cast_zero, neg_zero, zero_mul]
+    intro hDu0
+    apply hu
+    rw [hDu0]
+    simp only [Int.cast_zero, neg_zero, zero_mul]
   have hcombine :
     (∑ᶠ u : ℂ, ((-Dv u : ℤ) : ℂ) * logDeriv (Complex.canonicalFactor R u) s) -
         (∑ᶠ u : ℂ, ((-Dv u : ℤ) : ℂ) * logDeriv (Complex.canonicalFactor R u) 0) =
@@ -1236,7 +1277,8 @@ theorem norm_riemannXi_centeredLogDeriv_sub_truncatedGenus_le {R : ℝ} (hR : 2 
             ((starRingEnd ℂ) u / ((R : ℂ) ^ 2 - (starRingEnd ℂ) u * s) -
               (starRingEnd ℂ) u / (R : ℂ) ^ 2)) +
         (logDeriv g s - logDeriv g 0) := by
-    rw [heq]; ring
+    rw [heq]
+    ring
   rw [hfinal]
   refine (norm_add_le _ _).trans ?_
   rw [add_comm]
@@ -1257,9 +1299,11 @@ theorem norm_riemannXi_centeredLogDeriv_one_sub_truncatedGenus_le {R : ℝ} (hR 
   have hR0 : (0 : ℝ) < R := by linarith
   obtain ⟨g, D⟩ := exists_ecanonicalDecomp_riemannXi R
   have hsclosed : (1 : ℂ) ∈ Metric.closedBall (0 : ℂ) R := by
-    rw [Metric.mem_closedBall, dist_zero_right, norm_one]; linarith
+    rw [Metric.mem_closedBall, dist_zero_right, norm_one]
+    linarith
   have hsne : riemannXi (1 : ℂ) ≠ 0 := by
-    rw [riemannXi_one]; norm_num only
+    rw [riemannXi_one]
+    norm_num only
   have heq := ecanonicalDecomp_riemannXi_centered_logDeriv_eq hR0 D hzf hsclosed hsne
   have hanalyticClosed : AnalyticOnNhd ℂ riemannXi (Metric.closedBall (0 : ℂ) R) := fun z _ =>
     differentiable_riemannXi.analyticAt z
@@ -1267,7 +1311,8 @@ theorem norm_riemannXi_centeredLogDeriv_one_sub_truncatedGenus_le {R : ℝ} (hR 
   have hfin : (Function.support Dv).Finite :=
     hanalyticClosed.meromorphicOn.divisor_ball_support_finite
   have h0ne : riemannXi (0 : ℂ) ≠ 0 := by
-    rw [riemannXi_zero]; norm_num only
+    rw [riemannXi_zero]
+    norm_num only
   have hkey : ∀ u ∈ hfin.toFinset, u ∈ Metric.ball (0 : ℂ) R ∧ u ≠ 0 ∧ (1 : ℂ) ≠ u := by
     intro u hu
     rw [Set.Finite.mem_toFinset] at hu
@@ -1280,7 +1325,10 @@ theorem norm_riemannXi_centeredLogDeriv_one_sub_truncatedGenus_le {R : ℝ} (hR 
     intro u hu
     rw [Function.mem_support] at hu
     rw [Set.Finite.coe_toFinset, Function.mem_support]
-    intro hDu0; apply hu; rw [hDu0]; simp only [Int.cast_zero, neg_zero, zero_mul]
+    intro hDu0
+    apply hu
+    rw [hDu0]
+    simp only [Int.cast_zero, neg_zero, zero_mul]
   have hsub2 :
     Function.support
         (fun u : ℂ => ((-Dv u : ℤ) : ℂ) * logDeriv (Complex.canonicalFactor R u) (0 : ℂ)) ⊆
@@ -1288,7 +1336,10 @@ theorem norm_riemannXi_centeredLogDeriv_one_sub_truncatedGenus_le {R : ℝ} (hR 
     intro u hu
     rw [Function.mem_support] at hu
     rw [Set.Finite.coe_toFinset, Function.mem_support]
-    intro hDu0; apply hu; rw [hDu0]; simp only [Int.cast_zero, neg_zero, zero_mul]
+    intro hDu0
+    apply hu
+    rw [hDu0]
+    simp only [Int.cast_zero, neg_zero, zero_mul]
   have hcombine :
     (∑ᶠ u : ℂ, ((-Dv u : ℤ) : ℂ) * logDeriv (Complex.canonicalFactor R u) 1) -
         (∑ᶠ u : ℂ, ((-Dv u : ℤ) : ℂ) * logDeriv (Complex.canonicalFactor R u) 0) =
@@ -1320,14 +1371,20 @@ theorem norm_riemannXi_centeredLogDeriv_one_sub_truncatedGenus_le {R : ℝ} (hR 
               intro u hu
               rw [Function.mem_support] at hu
               rw [Set.Finite.coe_toFinset, Function.mem_support]
-              intro hDu0; apply hu; rw [hDu0]; simp only [Int.cast_zero, one_div, zero_mul])).symm
+              intro hDu0
+              apply hu
+              rw [hDu0]
+              simp only [Int.cast_zero, one_div, zero_mul])).symm
     · exact
         (finsum_eq_sum_of_support_subset _
             (by
               intro u hu
               rw [Function.mem_support] at hu
               rw [Set.Finite.coe_toFinset, Function.mem_support]
-              intro hDu0; apply hu; rw [hDu0]; simp only [Int.cast_zero, mul_one, zero_mul])).symm
+              intro hDu0
+              apply hu
+              rw [hDu0]
+              simp only [Int.cast_zero, mul_one, zero_mul])).symm
   rw [hcombine] at heq
   have hfinal :
     (logDeriv riemannXi 1 - logDeriv riemannXi 0) - riemannXiTruncatedGenusSumOne R =
@@ -1336,7 +1393,8 @@ theorem norm_riemannXi_centeredLogDeriv_one_sub_truncatedGenus_le {R : ℝ} (hR 
             ((starRingEnd ℂ) u / ((R : ℂ) ^ 2 - (starRingEnd ℂ) u * 1) -
               (starRingEnd ℂ) u / (R : ℂ) ^ 2)) +
         (logDeriv g 1 - logDeriv g 0) := by
-    rw [heq]; ring
+    rw [heq]
+    ring
   rw [hfinal]
   refine (norm_add_le _ _).trans ?_
   rw [add_comm]
@@ -1371,7 +1429,8 @@ theorem riemannXiTruncatedMultiplicitySum_eq_tsum_indicator {R : ℝ} :
       rw [Finset.mem_coe, mem_riemannXiZerosInClosedBall_iff]
       exact
         ⟨hzero, by
-          rw [Metric.mem_closedBall, dist_zero_right]; linarith⟩
+          rw [Metric.mem_closedBall, dist_zero_right]
+          linarith⟩
     · exact absurd (ite_eq_right hρnorm) hρ
   rw [finsum_eq_sum_of_support_subset _ hsub,
     tsum_eq_sum (s := riemannXiZerosInClosedBall R)
@@ -1600,7 +1659,9 @@ inverse-norm-square term. `ρ ≠ 0` follows immediately from `ξ(0) = 1/2 ≠ 0
 theorem riemannXi_genusOneTerm_eq_inv_normSq_of_riemannHypothesis (hRH : RiemannHypothesis) {ρ : ℂ}
     (hρ : riemannXi ρ = 0) : 1 / (1 - ρ) + 1 / ρ = ((Complex.normSq ρ)⁻¹ : ℝ) := by
   have hρ0 : ρ ≠ 0 := by
-    intro h; rw [h, riemannXi_zero] at hρ; norm_num only at hρ
+    intro h
+    rw [h, riemannXi_zero] at hρ
+    norm_num only at hρ
   have hre : ρ.re = 1 / 2 := riemannXi_zero_re_eq_half_of_riemannHypothesis hRH hρ
   have hone : (1 : ℂ) - ρ = starRingEnd ℂ ρ := by
     apply Complex.ext
@@ -1609,7 +1670,8 @@ theorem riemannXi_genusOneTerm_eq_inv_normSq_of_riemannHypothesis (hRH : Riemann
     · simp only [Complex.sub_im, Complex.one_im, zero_sub, Complex.conj_im]
   have hρne : (starRingEnd ℂ) ρ ≠ 0 := by simpa only [ne_eq, map_eq_zero] using hρ0
   have hmul : (starRingEnd ℂ) ρ * ρ = (Complex.normSq ρ : ℂ) := by
-    rw [mul_comm]; exact Complex.mul_conj ρ
+    rw [mul_comm]
+    exact Complex.mul_conj ρ
   have hadd : ρ + (starRingEnd ℂ) ρ = 1 := by
     rw [Complex.add_conj, hre]
     push_cast
@@ -1644,7 +1706,8 @@ theorem riemannXiTruncatedGenusSumOne_eq_invNormSq_of_riemannHypothesis (hRH : R
       have hmne : riemannXiZeroMultiplicity ρ ≠ 0 := fun h =>
         hρ
           (by
-            rw [h]; simp only [CharP.cast_eq_zero, zero_div])
+            rw [h]
+            simp only [CharP.cast_eq_zero, zero_div])
       have hzero : riemannXi ρ = 0 := by
         by_contra hcon
         apply hmne
@@ -1654,7 +1717,8 @@ theorem riemannXiTruncatedGenusSumOne_eq_invNormSq_of_riemannHypothesis (hRH : R
       rw [Finset.mem_coe, mem_riemannXiZerosInClosedBall_iff]
       exact
         ⟨hzero, by
-          rw [Metric.mem_closedBall, dist_zero_right]; linarith⟩
+          rw [Metric.mem_closedBall, dist_zero_right]
+          linarith⟩
     · exact absurd (ite_eq_right hρnorm) hρ
   rw [show
       ((∑ᶠ ρ : ℂ, if ‖ρ‖ < R then (riemannXiZeroMultiplicity ρ : ℝ) / Complex.normSq ρ else 0 : ℝ) :
@@ -1714,7 +1778,8 @@ theorem summable_riemannXiZeroMultiplicityInvNormSq_of_riemannHypothesis (hRH : 
           from by ring,
         div_le_div_iff₀ (by positivity) (by positivity)]
       nlinarith [mul_le_mul_of_nonneg_left h1 hmnn]
-    · rw [ite_eq_right hρ, ite_eq_right hρ]; norm_num only
+    · rw [ite_eq_right hρ, ite_eq_right hρ]
+      norm_num only
 
 /-- The truncated inverse-norm-square sum tends to the global `tsum` as `R → ∞`, via Tannery's
 theorem with the RH summability above as majorant. -/
@@ -1805,7 +1870,10 @@ theorem tendsto_riemannXiTruncatedInvNormSqSum_atTop (hRH : RiemannHypothesis) :
         by_cases hρnorm : ‖ρ‖ < R
         · rw [ite_eq_left hρnorm] at hρ
           have hmne : riemannXiZeroMultiplicity ρ ≠ 0 := by
-            intro h; apply hρ; rw [h]; simp only [Nat.cast_zero, zero_div]
+            intro h
+            apply hρ
+            rw [h]
+            simp only [Nat.cast_zero, zero_div]
           have hzero : riemannXi ρ = 0 := by
             by_contra hcon
             apply hmne
@@ -1815,7 +1883,8 @@ theorem tendsto_riemannXiTruncatedInvNormSqSum_atTop (hRH : RiemannHypothesis) :
           rw [Finset.mem_coe, mem_riemannXiZerosInClosedBall_iff]
           exact
             ⟨hzero, by
-              rw [Metric.mem_closedBall, dist_zero_right]; linarith⟩
+              rw [Metric.mem_closedBall, dist_zero_right]
+              linarith⟩
         · exact absurd (ite_eq_right hρnorm) hρ))]
   apply tsum_eq_sum
   intro ρ hρ
@@ -1827,7 +1896,8 @@ theorem tendsto_riemannXiTruncatedInvNormSqSum_atTop (hRH : RiemannHypothesis) :
       rw [mem_riemannXiZerosInClosedBall_iff]
       exact
         ⟨hz, by
-          rw [Metric.mem_closedBall, dist_zero_right]; linarith⟩
+          rw [Metric.mem_closedBall, dist_zero_right]
+          linarith⟩
     · have hmz : riemannXiZeroMultiplicity ρ = 0 := by
         unfold riemannXiZeroMultiplicity analyticOrderNatAt
         rw [analyticOrderAt_eq_zero.mpr (Or.inr hz)]
@@ -1915,7 +1985,8 @@ is entire and `PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi 0 ≠ 0`. -/
 theorem analyticAt_logDeriv_riemannXi_zero : AnalyticAt ℂ (logDeriv riemannXi) 0 := by
   rw [logDeriv]
   have h0ne : riemannXi 0 ≠ 0 := by
-    rw [riemannXi_zero]; norm_num only
+    rw [riemannXi_zero]
+    norm_num only
   exact
     (differentiable_riemannXi.analyticAt 0).deriv.div (differentiable_riemannXi.analyticAt 0) h0ne
 
@@ -1996,7 +2067,8 @@ theorem norm_deriv_logDeriv_riemannXi_zero_sub_le {R : ℝ} (hR : 2 < R)
     (hD : HasDerivAt (riemannXiTruncatedGenusSum R) D 0) :
     ‖deriv (logDeriv riemannXi) 0 - D‖ ≤ riemannXiH9eSlopeError R := by
   have h0ne : riemannXi (0 : ℂ) ≠ 0 := by
-    rw [riemannXi_zero]; norm_num only
+    rw [riemannXi_zero]
+    norm_num only
   have hLogHasDeriv : HasDerivAt (logDeriv riemannXi) (deriv (logDeriv riemannXi) 0) 0 :=
     differentiableAt_logDeriv_riemannXi_zero.hasDerivAt
   have hQ :
@@ -2029,7 +2101,8 @@ theorem norm_deriv_logDeriv_riemannXi_zero_sub_le {R : ℝ} (hR : 2 < R)
             R ^ 2 +
           2 * ‖s‖ / R ^ 2 * riemannXiTruncatedMultiplicitySum R =
         riemannXiH9eSlopeError R * ‖s‖ := by
-      unfold riemannXiH9eSlopeError; ring
+      unfold riemannXiH9eSlopeError
+      ring
     rwa [hfactor] at h9e
   exact norm_deriv_le_of_eventually_norm_le_mul_norm hQ hQ0 hbound
 
@@ -2066,7 +2139,8 @@ there. -/
 theorem analyticAt_logDeriv_riemannZeta_zero : AnalyticAt ℂ (logDeriv riemannZeta) 0 := by
   rw [logDeriv]
   have hne : riemannZeta 0 ≠ 0 := by
-    rw [riemannZeta_zero]; norm_num only
+    rw [riemannZeta_zero]
+    norm_num only
   exact analyticAt_riemannZeta_zero.deriv.div analyticAt_riemannZeta_zero hne
 
 theorem differentiableAt_logDeriv_riemannZeta_zero : DifferentiableAt ℂ (logDeriv riemannZeta) 0 :=

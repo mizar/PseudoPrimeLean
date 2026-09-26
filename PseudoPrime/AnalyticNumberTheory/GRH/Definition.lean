@@ -65,8 +65,10 @@ theorem dirichletRiemannHypothesis_one_iff :
     dirichletTrivialZeros, RiemannHypothesis, ite_eq_left]
   simp only [htriv]
   constructor
-  · intro h s hs ht _; exact h s hs ht
-  · intro h s hs ht; exact h s hs ht (fun he => riemannZeta_one_ne_zero (he ▸ hs))
+  · intro h s hs ht _
+    exact h s hs ht
+  · intro h s hs ht
+    exact h s hs ht (fun he => riemannZeta_one_ne_zero (he ▸ hs))
 
 /-- GRH implies RH by applying the modulus-one equivalence to the primitive trivial character.
 Supplies the RH input of existing zeta estimates without an independent assumption. -/

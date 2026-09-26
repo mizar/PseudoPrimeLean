@@ -55,7 +55,8 @@ theorem jensen_analyticOnNhd_of_abs {T : ℝ} (hT : 4 ≤ |T|) :
   have hge : |T| ≤ ‖jensenCenter T - 1‖ := norm_jensenCenter_sub_one_ge T
   have hle : ‖jensenCenter T - 1‖ ≤ 39 / 10 := by
     rw [show jensenCenter T - 1 = -(w - jensenCenter T) from by
-        rw [hw1]; ring,
+        rw [hw1]
+        ring,
       norm_neg]
     exact hw
   linarith
@@ -99,7 +100,8 @@ theorem finsum_divisor_riemannZeta_le_neg {T : ℝ} (hT : T ≤ -4) :
     exact
       jensen_analyticOnNhd_of_abs
         (by
-          rw [abs_of_neg (by linarith : T < 0)]; linarith)
+          rw [abs_of_neg (by linarith : T < 0)]
+          linarith)
   have fbound :
     ∀ z ∈ Metric.sphere (jensenCenter T) |(39 / 10 : ℝ)|, ‖riemannZeta z‖ ≤ jensenM (-T) := by
     rw [abs_of_pos (by norm_num only : (0 : ℝ) < 39 / 10)]

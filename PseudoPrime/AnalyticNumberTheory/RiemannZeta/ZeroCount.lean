@@ -37,7 +37,8 @@ theorem norm_riemannZeta_one_sub_le {s : ℂ} (hs : 1 < s.re) :
   have h2 : ‖(2 : ℂ)‖ = 2 := Complex.norm_two
   have hcpow : ‖(2 * (Real.pi : ℂ)) ^ (-s)‖ = (2 * Real.pi) ^ (-s.re) := by
     rw [show (2 * (Real.pi : ℂ)) = ((2 * Real.pi : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.norm_cpow_eq_rpow_re_of_pos h2pipos]
     congr 1
   have hgamma := norm_Gamma_le_Gamma_re (by linarith : (0 : ℝ) < s.re)
@@ -58,11 +59,14 @@ theorem riemannZeta_ne_zero_of_re_neg {w : ℂ} (hw : w.re < 0) (hnt : ∀ n : �
     riemannZeta w ≠ 0 := by
   set s : ℂ := 1 - w with hs_def
   have hs_re : 1 < s.re := by
-    rw [hs_def]; simp only [Complex.sub_re, Complex.one_re]; linarith
+    rw [hs_def]
+    simp only [Complex.sub_re, Complex.one_re]
+    linarith
   obtain ⟨hs1, hs2⟩ := side_conditions_of_one_lt_re hs_re
   have heq := riemannZeta_one_sub hs1 hs2
   rw [show (1 : ℂ) - s = w from by
-      rw [hs_def]; ring] at heq
+      rw [hs_def]
+      ring] at heq
   intro hzero
   rw [hzero] at heq
   have h2ne : (2 : ℂ) ≠ 0 := two_ne_zero
@@ -92,7 +96,8 @@ theorem riemannZeta_ne_zero_of_re_neg {w : ℂ} (hw : w.re < 0) (hnt : ∀ n : �
     field_simp at hk
     linear_combination hk
   have hcomb : (1 : ℂ) - w = 2 * (k : ℂ) + 1 := by
-    rw [← hs_def]; exact hseq
+    rw [← hs_def]
+    exact hseq
   have hw_eq : w = -2 * (k : ℂ) := by linear_combination -hcomb
   have hwre : w.re = -2 * (k : ℝ) := by
     rw [hw_eq]
@@ -106,7 +111,9 @@ theorem riemannZeta_ne_zero_of_re_neg {w : ℂ} (hw : w.re < 0) (hnt : ∀ n : �
   obtain ⟨n, hn⟩ := Int.eq_ofNat_of_zero_le (by omega : (0 : ℤ) ≤ k - 1)
   have hkn : k = (n : ℤ) + 1 := by omega
   have hwval : w = -2 * ((n : ℕ) + 1 : ℂ) := by
-    rw [hw_eq, hkn]; push_cast; ring
+    rw [hw_eq, hkn]
+    push_cast
+    ring
   exact hnt n hwval
 
 /-- `(s-1)ζ(s)`, updated to its removable-singularity value `1` at `s=1`, is entire. This
@@ -129,7 +136,8 @@ theorem normSq_cosh_add_mul_I (x y : ℝ) :
       ((Real.cosh x * Real.cos y : ℝ) : ℂ) + ((Real.sinh x * Real.sin y : ℝ) : ℂ) * Complex.I := by
     rw [Complex.cosh_add, Complex.cosh_mul_I, Complex.sinh_mul_I, ← Complex.ofReal_cosh, ←
       Complex.ofReal_cos, ← Complex.ofReal_sinh, ← Complex.ofReal_sin]
-    push_cast; ring
+    push_cast
+    ring
   rw [heq, Complex.normSq_add_mul_I]
   nlinarith only [Real.cosh_sq_sub_sinh_sq x, Real.sin_sq_add_cos_sq y]
 
@@ -191,20 +199,22 @@ theorem norm_riemannZeta_left_edge_le (t : ℝ) :
       leftEdgeConst * Real.cosh (Real.pi * t / 2) := by
   set s : ℂ := (11 / 10 : ℝ) - (t : ℂ) * Complex.I with hs_def
   have hs_re : 1 < s.re := by
-    rw [hs_def];
+    rw [hs_def]
     simp only [Complex.sub_re, Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_zero]
     norm_num only
   have hws : (1 : ℂ) - s = (-(1 : ℝ) / 10 : ℂ) + (t : ℂ) * Complex.I := by
-    rw [hs_def]; push_cast; ring
+    rw [hs_def]
+    push_cast
+    ring
   have hbound := norm_riemannZeta_one_sub_le hs_re
   rw [hws] at hbound
   have hsre : s.re = 11 / 10 := by
-    rw [hs_def];
+    rw [hs_def]
     simp only [Complex.sub_re, Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_zero]
   have hsim : s.im = -t := by
-    rw [hs_def];
+    rw [hs_def]
     simp only [Complex.sub_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im, mul_one,
       Complex.ofReal_im, Complex.I_re, mul_zero, add_zero, zero_sub]
   rw [hsre, hsim] at hbound
@@ -214,12 +224,14 @@ theorem norm_riemannZeta_left_edge_le (t : ℝ) :
         (2 * Real.cosh (Real.pi * t / 2)) *
         ∑' n : ℕ, (n : ℝ) ^ (-(11 / 10 : ℝ)) =
       leftEdgeConst * Real.cosh (Real.pi * t / 2) := by
-    rw [leftEdgeConst]; ring
+    rw [leftEdgeConst]
+    ring
   rwa [heq] at hbound
 
 theorem norm_sub_one_le (σ t : ℝ) : ‖(σ : ℂ) + (t : ℂ) * Complex.I - 1‖ ≤ |σ - 1| + |t| := by
   have heq : (σ : ℂ) + (t : ℂ) * Complex.I - 1 = ((σ - 1 : ℝ) : ℂ) + (t : ℂ) * Complex.I := by
-    push_cast; ring
+    push_cast
+    ring
   rw [heq]
   calc
     ‖((σ - 1 : ℝ) : ℂ) + (t : ℂ) * Complex.I‖ ≤ ‖((σ - 1 : ℝ) : ℂ)‖ + ‖(t : ℂ) * Complex.I‖ :=
@@ -259,7 +271,8 @@ theorem zetaEntire_le_mul_zetaAux_left (t : ℝ) :
       leftEdgeRatioConst * ‖zetaAux ((-(1 : ℝ) / 10 : ℂ) + (t : ℂ) * Complex.I)‖ := by
   set w : ℂ := (-(1 : ℝ) / 10 : ℂ) + (t : ℂ) * Complex.I with hw_def
   have hcast : ((-(1 : ℝ) / 10 : ℝ) : ℂ) = (-(1 : ℝ) / 10 : ℂ) := by
-    push_cast; ring
+    push_cast
+    ring
   have hw1 : w ≠ 1 := by
     intro h
     have hre := congrArg Complex.re h
@@ -288,7 +301,8 @@ theorem zetaEntire_le_mul_zetaAux_left (t : ℝ) :
     rw [hy,
       abs_of_pos
         (by
-          rw [Real.cos_neg]; exact cos_six_fifths_pos)] at hcos_lb
+          rw [Real.cos_neg]
+          exact cos_six_fifths_pos)] at hcos_lb
     rw [Real.cos_neg] at hcos_lb
     have hcosh_le : Real.cosh (Real.pi * t / 2) ≤ Real.cosh (Real.pi / 2) := by
       apply Real.cosh_le_cosh.mpr
@@ -307,7 +321,8 @@ theorem zetaEntire_le_mul_zetaAux_left (t : ℝ) :
           · norm_num only
     have hC1eq :
       leftEdgeC1 * Real.cos (6 / 5) = 21 / 10 * (leftEdgeConst * Real.cosh (Real.pi / 2)) := by
-      rw [leftEdgeC1, div_mul_cancel₀ _ cos_six_fifths_pos.ne']; ring
+      rw [leftEdgeC1, div_mul_cancel₀ _ cos_six_fifths_pos.ne']
+      ring
     have hC1_nonneg : 0 ≤ leftEdgeC1 := by
       rw [leftEdgeC1]
       apply div_nonneg _ cos_six_fifths_pos.le
@@ -333,7 +348,8 @@ theorem zetaEntire_le_mul_zetaAux_left (t : ℝ) :
     have hcosh_exp : Real.cosh (Real.pi * t / 2) ≤ Real.exp (Real.pi * |t| / 2) := by
       rw [Real.cosh_eq]
       have h1 : |Real.pi * t / 2| = Real.pi * |t| / 2 := by
-        rw [abs_div, abs_mul, abs_of_pos Real.pi_pos]; norm_num only
+        rw [abs_div, abs_mul, abs_of_pos Real.pi_pos]
+        norm_num only
       have h2 : Real.exp (-(Real.pi * t / 2)) ≤ Real.exp (Real.pi * |t| / 2) := by
         apply Real.exp_le_exp.mpr
         nlinarith [neg_abs_le (Real.pi * t / 2), h1]
@@ -347,7 +363,8 @@ theorem zetaEntire_le_mul_zetaAux_left (t : ℝ) :
         have := Real.add_one_le_exp (2 * (2 * |t|))
         nlinarith [ht, abs_nonneg t, le_abs_self t]
       have hexpsq : Real.exp (2 * |t|) * Real.exp (2 * |t|) = Real.exp (2 * (2 * |t|)) := by
-        rw [← Real.exp_add]; ring_nf
+        rw [← Real.exp_add]
+        ring_nf
       have hexppos : 0 < Real.exp (2 * |t|) := Real.exp_pos _
       have hexpge2 : (2 : ℝ) ≤ Real.exp (2 * |t|) := by nlinarith [hexpsq, hexp2x, hexppos]
       have hmulinv : Real.exp (2 * |t|) * Real.exp (-(2 * |t|)) = 1 := by
@@ -367,8 +384,10 @@ theorem zetaEntire_le_mul_zetaAux_left (t : ℝ) :
           (11 / 10 + |t|) * Real.exp (-(c * |t|)) := by
         rw [div_eq_iff (Real.exp_pos _).ne', mul_assoc, ← Real.exp_add,
           show -(c * |t|) + 2 * |t| = Real.pi * |t| / 2 from by
-            rw [hc_def]; ring]
-      rw [hsplit]; exact hpoly_bound
+            rw [hc_def]
+            ring]
+      rw [hsplit]
+      exact hpoly_bound
     have hbig_le :
       (11 / 10 + |t|) * Real.exp (Real.pi * |t| / 2) ≤ (11 / 10 + 1 / c) * Real.exp (2 * |t|) := by
       have := mul_le_mul_of_nonneg_right hratio (Real.exp_pos (2 * |t|)).le
@@ -404,7 +423,8 @@ theorem zetaEntire_le_mul_zetaAux_left (t : ℝ) :
         have hLnn : 0 ≤ leftEdgeConst := leftEdgeConst_nonneg
         positivity
       _ = leftEdgeC2 * ‖zetaAux w‖ := by
-        rw [leftEdgeC2, hc_def]; ring
+        rw [leftEdgeC2, hc_def]
+        ring
       _ ≤ leftEdgeRatioConst * ‖zetaAux w‖ :=
         mul_le_mul_of_nonneg_right (le_max_right _ _) (norm_nonneg _)
 
@@ -415,7 +435,8 @@ noncomputable def rightEdgeConst : ℝ :=
   ∑' n : ℕ, (n : ℝ) ^ (-(11 / 10 : ℝ))
 
 theorem rightEdgeConst_nonneg : 0 ≤ rightEdgeConst := by
-  rw [rightEdgeConst]; exact tsum_nonneg (fun n => by positivity)
+  rw [rightEdgeConst]
+  exact tsum_nonneg (fun n => by positivity)
 
 theorem norm_riemannZeta_right_edge_le (t : ℝ) :
     ‖riemannZeta ((11 / 10 : ℝ) + (t : ℂ) * Complex.I)‖ ≤ rightEdgeConst := by
@@ -476,7 +497,8 @@ theorem norm_Gamma_ge_of_re_lt_one {s : ℂ} (hs : s.re < 1)
     (hsin : Complex.sin ((Real.pi : ℂ) * s) ≠ 0) :
     Real.pi / (2 * Real.cosh (Real.pi * s.im) * Real.Gamma (1 - s.re)) ≤ ‖Complex.Gamma s‖ := by
   have h1mspos : (0 : ℝ) < (1 - s).re := by
-    rw [Complex.sub_re, Complex.one_re]; linarith
+    rw [Complex.sub_re, Complex.one_re]
+    linarith
   have hGamma1s_ne : Complex.Gamma (1 - s) ≠ 0 := Complex.Gamma_ne_zero_of_re_pos h1mspos
   have hrefl := Complex.Gamma_mul_Gamma_one_sub s
   have hpine : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
@@ -600,7 +622,8 @@ theorem norm_Gammaℝ_ge {s : ℂ} (hs : s.re < 2) (hsin : Complex.sin ((Real.pi
       sub_zero]
     ring
   have hs2 : (s / 2).re < 1 := by
-    rw [hre]; linarith [hs]
+    rw [hre]
+    linarith [hs]
   have hlow := norm_Gamma_ge_of_re_lt_one hs2 hsin
   rw [him, hre] at hlow
   rw [Complex.Gammaℝ_def, norm_mul]
@@ -678,7 +701,8 @@ theorem sigmaFactor_le {σ : ℝ} (hσ1 : -1 / 10 ≤ σ) (hσ2 : σ ≤ 11 / 10
   have hmem : (1 - σ / 2) ∈ Set.Icc (9 / 20 : ℝ) (21 / 20) := ⟨by linarith, by linarith⟩
   have hgam_le : Real.Gamma (1 - σ / 2) ≤ max (Real.Gamma (9 / 20)) (Real.Gamma (21 / 20)) := by
     have hseg : (1 - σ / 2) ∈ segment ℝ (9 / 20 : ℝ) (21 / 20) := by
-      rw [segment_eq_Icc (by norm_num only : (9 / 20 : ℝ) ≤ 21 / 20)]; exact hmem
+      rw [segment_eq_Icc (by norm_num only : (9 / 20 : ℝ) ≤ 21 / 20)]
+      exact hmem
     exact
       Real.convexOn_Gamma.le_on_segment
         (show (9 / 20 : ℝ) ∈ Set.Ioi (0 : ℝ)
@@ -721,11 +745,13 @@ theorem side_conditions_of_four_le_abs_im {w : ℂ} (hw4 : 4 ≤ |w.im|) :
     ⟨fun h =>
       himne
         (by
-          rw [h]; simp only [Complex.zero_im]),
+          rw [h]
+          simp only [Complex.zero_im]),
       fun h =>
       himne
         (by
-          rw [h]; simp only [Complex.one_im]),
+          rw [h]
+          simp only [Complex.one_im]),
       ?_, ?_, ?_⟩
   · calc
       (1 : ℝ) ≤ ‖w‖ / 2 := by
@@ -738,7 +764,8 @@ theorem side_conditions_of_four_le_abs_im {w : ℂ} (hw4 : 4 ≤ |w.im|) :
     calc
       (1 : ℝ) ≤ |w.im| / 2 := by linarith [hw4]
       _ = |((1 / 2 : ℂ) - w / 2).im| := by
-        rw [himsub, abs_neg, abs_div]; norm_num only
+        rw [himsub, abs_neg, abs_div]
+        norm_num only
       _ ≤ ‖(1 / 2 : ℂ) - w / 2‖ := Complex.abs_im_le_norm _
   · intro h
     rw [Complex.sin_eq_zero_iff] at h
@@ -853,9 +880,11 @@ theorem norm_riemannZeta_interior_le_uniform {w : ℂ} (hσ1 : -1 / 10 ≤ w.re)
     rw [show (2 : ℂ) = ((2 : ℝ) : ℂ) from by simp only [Complex.ofReal_ofNat],
       Complex.div_ofReal_re]
   have ha : (-1 / 20 : ℝ) ≤ (w / 2).re := by
-    rw [hdiv2]; linarith
+    rw [hdiv2]
+    linarith
   have hb : (w / 2).re ≤ (11 / 20 : ℝ) := by
-    rw [hdiv2]; linarith
+    rw [hdiv2]
+    linarith
   have hmell := mellinBoundConst_le_add ha hb
   have hsig := sigmaFactor_le hσ1 hσ2
   have hGpos : 0 < Real.Gamma (1 - w.re / 2) := Real.Gamma_pos_of_pos (by linarith)
@@ -865,7 +894,8 @@ theorem norm_riemannZeta_interior_le_uniform {w : ℂ} (hσ1 : -1 / 10 ≤ w.re)
       (mellinBoundConst (-1 / 20) + mellinBoundConst (11 / 20) + 2) / 2 := by
     linarith
   have hf1nn : (0 : ℝ) ≤ (mellinBoundConst (w / 2).re + 2) / 2 := by
-    have := mellinBoundConst_nonneg (w / 2).re; linarith
+    have := mellinBoundConst_nonneg (w / 2).re
+    linarith
   have hf2eq :
     2 * Real.cosh (Real.pi * w.im / 2) * Real.Gamma (1 - w.re / 2) / Real.pi ^ (1 - w.re / 2) =
       2 * Real.cosh (Real.pi * w.im / 2) *

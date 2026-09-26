@@ -29,7 +29,8 @@ theorem PrimeNegOneWitnessSet.subset_primeNeOneWitnessSet (n : ℕ) :
   intro p hp
   exact
     ⟨hp.1, hp.2.1, by
-      rw [hp.2.2]; omega⟩
+      rw [hp.2.2]
+      omega⟩
 
 /-- Nonemptiness of the pure `-1` witness set implies nonemptiness of the `≠1` set. -/
 theorem primeNeOneWitnessSet_nonempty_of_negOne {n : ℕ} (h : (PrimeNegOneWitnessSet n).Nonempty) :

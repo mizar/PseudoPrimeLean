@@ -34,9 +34,12 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
         ∫ y : ℝ, dirichletReciprocalContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
   set σ : ℝ := τ - 1 with hσ_def
   have hσ0 : (0 : ℝ) < σ := by
-    rw [hσ_def]; linarith
+    rw [hσ_def]
+    linarith
   have hσ1 : σ ≠ -1 := by
-    rw [hσ_def]; intro h; linarith
+    rw [hσ_def]
+    intro h
+    linarith
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ (((τ : ℂ) + y * Complex.I) * ((τ : ℂ) + y * Complex.I - 1))⁻¹ with hK_def
   have hK_int : MeasureTheory.Integrable K := by
@@ -121,12 +124,18 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
     simp only [hG_def, hH_def, hK_def]
     rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div, Complex.ofReal_natCast]
     have hshift : ((τ : ℂ) + y * Complex.I - 1) = (σ : ℂ) + y * Complex.I := by
-      rw [hσ_def]; push_cast; ring
+      rw [hσ_def]
+      push_cast
+      ring
     have hshift' : ((σ : ℂ) + y * Complex.I + 1) = (τ : ℂ) + y * Complex.I := by
-      rw [hσ_def]; push_cast; ring
+      rw [hσ_def]
+      push_cast
+      ring
     rw [hshift, hshift']
     rw [show (-((σ : ℂ) + y * Complex.I)) = 1 + -((τ : ℂ) + y * Complex.I) by
-        rw [hσ_def]; push_cast; ring,
+        rw [hσ_def]
+        push_cast
+        ring,
       Complex.cpow_add _ _ hnC, Complex.cpow_one]
     field_simp [hnC]
   -- (2) each `G n` is integrable, dominated by a constant multiple of `K`

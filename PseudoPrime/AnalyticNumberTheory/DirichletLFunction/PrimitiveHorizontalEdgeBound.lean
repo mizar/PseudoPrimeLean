@@ -56,7 +56,8 @@ theorem norm_dirichletReciprocalContourKernel_horizontal_le {N : ℕ} [NeZero N]
     have h1 : x ^ (σ - 1) ≤ x ^ (1 : ℝ) :=
       Real.rpow_le_rpow_of_exponent_le hx
         (by
-          have := abs_le.mp hσ; linarith)
+          have := abs_le.mp hσ
+          linarith)
     rwa [Real.rpow_one] at h1
   have htabs_pos : (0 : ℝ) < |T| := abs_pos.mpr hT
   have hsnorm_ge : |T| ≤ ‖s‖ := by
@@ -138,11 +139,13 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_bound {N : ℕ} [Ne
   have hTk_ge1 : 1 ≤ T k := by
     have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
     have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-    rw [hT_def]; linarith
+    rw [hT_def]
+    linarith
   have hTk_ne : T k ≠ 0 := by linarith
   refine ⟨norm_dirichletReciprocalContourKernel_horizontal_le hx hσ hTk_ne (hη k σ hσ).1, ?_⟩
   have hform : (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I := by
-    push_cast; ring
+    push_cast
+    ring
   rw [hform]
   have hL2 := (hη k σ hσ).2
   rw [hform, ← neg_sq] at hL2
@@ -184,11 +187,13 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_bound_of_grh {N : �
   have hTk_ge1 : 1 ≤ T k := by
     have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
     have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-    rw [hT_def]; linarith
+    rw [hT_def]
+    linarith
   have hTk_ne : T k ≠ 0 := by linarith
   refine ⟨norm_dirichletReciprocalContourKernel_horizontal_le hx hσ hTk_ne (hη k σ hσ).1, ?_⟩
   have hform : (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I := by
-    push_cast; ring
+    push_cast
+    ring
   rw [hform]
   have hL2 := (hη k σ hσ).2
   rw [hform, ← neg_sq] at hL2

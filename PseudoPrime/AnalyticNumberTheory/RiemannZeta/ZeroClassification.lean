@@ -25,7 +25,9 @@ theorem riemannZeta_zero_re_eq_half_of_riemannHypothesis (hRH : RiemannHypothesi
   have hntrivial : ¬∃ n : ℕ, ρ = -2 * ((n : ℂ) + 1) := by
     rintro ⟨n, hn⟩
     have hn' : ρ = ((-(2 * ((n : ℝ) + 1)) : ℝ) : ℂ) := by
-      rw [hn]; push_cast; ring
+      rw [hn]
+      push_cast
+      ring
     rw [hn', Complex.ofReal_re] at hre
     nlinarith [Nat.cast_nonneg (α := ℝ) n]
   exact hRH ρ hρ hntrivial hne1

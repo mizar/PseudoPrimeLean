@@ -11,8 +11,6 @@ self-duality.  It is separated from the pointwise bound so the generic central a
 consumers can share the same interval-integrability interface.
 -/
 
-set_option linter.style.longLine false
-
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
 theorem continuous_dirichletReciprocalContourKernel_horizontalHeightSeq_of_grh {N : ℕ} [NeZero N]
@@ -47,11 +45,13 @@ theorem continuous_dirichletReciprocalContourKernel_horizontalHeightSeq_of_grh {
     have hs0 : s ≠ 0 := fun h =>
       hsne
         (by
-          rw [h]; simp only [Complex.zero_im])
+          rw [h]
+          simp only [Complex.zero_im])
     have hs1 : s ≠ 1 := fun h =>
       hsne
         (by
-          rw [h]; simp only [Complex.one_im])
+          rw [h]
+          simp only [Complex.one_im])
     have hL :=
       dirichletLFunction_ne_zero_of_im_eq_primitiveHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k
         hs

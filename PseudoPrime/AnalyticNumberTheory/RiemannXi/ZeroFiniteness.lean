@@ -32,7 +32,9 @@ theorem riemannXi_eq_zero_of_riemannZeta_zero_re_nonneg {ρ : ℂ} (hz : riemann
   have hnt : ∀ n : ℕ, ρ ≠ -2 * ((n : ℂ) + 1) := by
     intro n h
     have hn' : ρ = ((-(2 * ((n : ℝ) + 1)) : ℝ) : ℂ) := by
-      rw [h]; push_cast; ring
+      rw [h]
+      push_cast
+      ring
     rw [hn', Complex.ofReal_re] at hre
     nlinarith only [hre, Nat.cast_nonneg (α := ℝ) n]
   exact (riemannXi_eq_zero_iff_of_denom_ne_zero hne1 (riemannZetaDenom_ne_zero hnt)).mpr hz

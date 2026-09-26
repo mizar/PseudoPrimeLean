@@ -171,7 +171,8 @@ theorem integral_inv_add_mul_I_neg_radius_radius {r : ℝ} (hr : 0 < r) :
     (∫ x : ℝ in (-r)..r, ((x : ℂ) + r * Complex.I)⁻¹) = -((Real.pi / 2 : ℂ) * Complex.I) := by
   have hpoint (x : ℝ) : ((x : ℂ) + r * Complex.I)⁻¹ = -((((-x : ℝ) : ℂ) - r * Complex.I)⁻¹) := by
     rw [show (x : ℂ) + r * Complex.I = -((((-x : ℝ) : ℂ) - r * Complex.I)) by
-        push_cast; ring]
+        push_cast
+        ring]
     exact inv_neg
   rw [intervalIntegral.integral_congr fun x _ ↦ hpoint x]
   rw [intervalIntegral.integral_neg]
@@ -1914,7 +1915,8 @@ theorem rectangleGridSubdivision_eq_sum_toFinset (f : ℂ → ℂ) (z w : ℂ) (
   revert hnodup
   induction cells with
   | nil =>
-    intro; simp only [List.map_nil, List.sum_nil, List.toFinset_nil, Finset.sum_empty]
+    intro
+    simp only [List.map_nil, List.sum_nil, List.toFinset_nil, Finset.sum_empty]
   | cons cell cells ih =>
     intro hnodup
     rw [List.nodup_cons] at hnodup

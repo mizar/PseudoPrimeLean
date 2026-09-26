@@ -37,7 +37,8 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
     have hVI := General.verticalIntegrable_mellinLogKernel hτ0.ne'
     unfold Complex.VerticalIntegrable at hVI
     have heq : (fun y : ℝ ↦ (((τ : ℂ) + y * Complex.I)⁻¹) ^ 2) = K := by
-      funext y; rw [hK_def, inv_pow]
+      funext y
+      rw [hK_def, inv_pow]
     rwa [heq] at hVI
   set H : ℕ → ℝ → ℂ := fun n y ↦
     (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *

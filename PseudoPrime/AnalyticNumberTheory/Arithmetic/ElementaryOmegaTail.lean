@@ -81,7 +81,9 @@ theorem hasDerivAt_elementaryA {t : ℝ} (ht : 0 < t) : HasDerivAt elementaryA (
   have hne : (2 * t : ℝ) ≠ 0 := by positivity
   have hlog := hlin.log hne
   have hsub : HasDerivAt (fun s : ℝ => Real.log (2 * s) - 1) (2 / (2 * t)) t := hlog.sub_const 1
-  have heq : (2 : ℝ) / (2 * t) = 1 / t := by field_simp
+  have heq : (2 : ℝ) / (2 * t) = 1 / t := by
+    field_simp (discharger := first | exact hne | exact ht.ne' |
+      exact (by norm_num only : (2 : ℝ) ≠ 0))
   rwa [heq] at hsub
 
 theorem hasDerivAt_elementaryU {t : ℝ} (ht : 0 < t) :
@@ -89,7 +91,8 @@ theorem hasDerivAt_elementaryU {t : ℝ} (ht : 0 < t) :
   have hid : HasDerivAt (fun s : ℝ => s) (1 : ℝ) t := hasDerivAt_id t
   have ha := hasDerivAt_elementaryA ht
   have hmul := hid.mul ha
-  have heq : 1 * elementaryA t + t * (1 / t) = elementaryA t + 1 := by field_simp
+  have heq : 1 * elementaryA t + t * (1 / t) = elementaryA t + 1 := by
+    field_simp (discharger := exact ht.ne')
   rwa [heq] at hmul
 
 /-- `a(t) ≥ 2` for `t ≥ 11`, using `e³ < 22 ≤ 2t`. -/
@@ -122,7 +125,8 @@ theorem hasDerivAt_elementaryH {t : ℝ} (ht : 11 ≤ t) : ∃ d, HasDerivAt ele
   have hapos := elementaryA_pos ht
   have huval : elementaryU t = t * elementaryA t := rfl
   have hupos : (0 : ℝ) < elementaryU t := by
-    rw [huval]; positivity
+    rw [huval]
+    positivity
   have hlogu := hu.log hupos.ne'
   have hdiv := hlogu.div ha hapos.ne'
   refine ⟨_, hdiv, ?_⟩
@@ -192,7 +196,6 @@ theorem elementaryF_antitoneOn : AntitoneOn elementaryF (Set.Ici (11 : ℝ)) := 
     _ ≤ (1 + 1 / t1) * elementaryH t1 := mul_le_mul_of_nonneg_left hh1 hc1pos
 
 -- The single numeric certificate closing the tail: `F(163) ≤ 7/5`.
-set_option exponentiation.threshold 2000 in
 theorem elementaryF_163_le : elementaryF 163 ≤ (7 / 5 : ℝ) := by
   have hx1 : |(1 - (326 : ℝ) / 2 ^ 9)| < 1 := by norm_num only [abs_of_nonneg]
   obtain ⟨hlo1, hhi1⟩ := Analysis.log_bounds_of_taylor (N := 326) (by norm_num only) 9 30 rfl hx1
@@ -201,17 +204,22 @@ theorem elementaryF_163_le : elementaryF 163 ≤ (7 / 5 : ℝ) := by
   have hlog326_hi : Real.log 326 ≤ (723362173 / 125000000 : ℝ) := by
     nlinarith only [hhi1, Real.log_two_lt_d9]
   have hA163eq : elementaryA 163 = Real.log 326 - 1 := by
-    unfold elementaryA; norm_num only
+    unfold elementaryA
+    norm_num only
   have hA_lo : (4786897379 / 1000000000 : ℝ) ≤ elementaryA 163 := by
-    rw [hA163eq]; linarith only [hlog326_lo]
+    rw [hA163eq]
+    linarith only [hlog326_lo]
   have hA_hi : elementaryA 163 ≤ (598362173 / 125000000 : ℝ) := by
-    rw [hA163eq]; linarith only [hlog326_hi]
+    rw [hA163eq]
+    linarith only [hlog326_hi]
   have hA_pos : (0 : ℝ) < elementaryA 163 := by linarith only [hA_lo]
   have hU163eq : elementaryU 163 = 163 * elementaryA 163 := rfl
   have hU_hi : elementaryU 163 ≤ (780264273592 / 1000000000 : ℝ) := by
-    rw [hU163eq]; nlinarith only [hA_hi]
+    rw [hU163eq]
+    nlinarith only [hA_hi]
   have hU_pos : (0 : ℝ) < elementaryU 163 := by
-    rw [hU163eq]; nlinarith only [hA_lo]
+    rw [hU163eq]
+    nlinarith only [hA_lo]
   have hx2 : |(1 - (780264273592 / 1000000000 : ℝ) / 2 ^ 10)| < 1 := by norm_num only
   obtain ⟨_, hhi2⟩ :=
     Analysis.log_bounds_of_taylor_real (N := (780264273592 / 1000000000 : ℝ)) (by norm_num only) 10
@@ -222,7 +230,9 @@ theorem elementaryF_163_le : elementaryF 163 ≤ (7 / 5 : ℝ) := by
     nlinarith only [hhi2, Real.log_two_lt_d9, hmono]
   have hHeq : elementaryH 163 = Real.log (elementaryU 163) / elementaryA 163 := rfl
   have hgoal_eq : elementaryF 163 = (164 / 163 * Real.log (elementaryU 163)) / elementaryA 163 := by
-    unfold elementaryF; rw [hHeq]; ring
+    unfold elementaryF
+    rw [hHeq]
+    ring
   rw [hgoal_eq, div_le_iff₀ hA_pos]
   nlinarith only [hlogU_hi, hA_lo]
 
@@ -290,7 +300,9 @@ theorem elementaryOmegaStatement_tail {n : ℕ} (hn : Odd n) (hm163 : 163 ≤ n.
   have hlogn_ge : elementaryU (m : ℝ) ≤ Real.log n :=
     log_ge_elementaryU_of_pow_mul_factorial_le hm1 hnpowfact
   have hcastq : (NumberTheory.characterModulus n : ℝ) = 4 * n := by
-    unfold NumberTheory.characterModulus; push_cast; ring
+    unfold NumberTheory.characterModulus
+    push_cast
+    ring
   have hqpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn0
   have hlogq_ge : elementaryU (m : ℝ) ≤ Real.log (NumberTheory.characterModulus n) := by
     rw [hcastq]

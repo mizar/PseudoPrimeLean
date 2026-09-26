@@ -52,7 +52,8 @@ theorem llsPart1PrimitiveWeightedUpperAt_of_grh_quadratic {q : ℕ} [NeZero q]
     simp only [DirichletCharacter.changeLevel_one] at hchange
     exact hne hchange.symm
   have hinv : χ.primitiveCharacter⁻¹ ≠ 1 := by
-    rw [hquad.inv]; exact hprimne
+    rw [hquad.inv]
+    exact hprimne
   have hN2 : 2 ≤ χ.conductor := by
     have hN1 : χ.conductor ≠ 1 :=
       AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
@@ -139,7 +140,8 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_quadratic {q : ℕ} [NeZe
     exact add_nonneg hfirst hlogxnn
   have hinv2pos : (0 : ℝ) < (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 := by
     have : (0 : ℝ) < 1 - 1 / llsTheorem11S1RadiusRoot q := by
-      rw [sub_pos, div_lt_one hypos]; linarith
+      rw [sub_pos, div_lt_one hypos]
+      linarith
     positivity
   have hlogdconddiv :
     Real.log ((χ.conductor : ℝ) / Real.pi) = Real.log χ.conductor - Real.log Real.pi :=

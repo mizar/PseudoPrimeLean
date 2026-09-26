@@ -70,19 +70,19 @@ theorem lucasCompanion_pow_succ (n : ℕ) (P Q : ℤ) :
     fin_cases i <;> fin_cases j
     · simp only [neg_mul, lucasCompanion, Fin.zero_eta, Fin.isValue, Matrix.mul_apply,
         Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero,
-        Fin.sum_univ_two, Matrix.cons_val_one, mul_one];
+        Fin.sum_univ_two, Matrix.cons_val_one, mul_one]
       ring
     · simp only [neg_mul, lucasCompanion, Fin.zero_eta, Fin.isValue, Fin.mk_one, Matrix.mul_apply,
         Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero,
-        Matrix.cons_val_one, Fin.sum_univ_two, mul_neg, mul_zero, add_zero, neg_inj];
+        Matrix.cons_val_one, Fin.sum_univ_two, mul_neg, mul_zero, add_zero, neg_inj]
       ring
     · simp only [neg_mul, lucasCompanion, Fin.mk_one, Fin.isValue, Fin.zero_eta, Matrix.mul_apply,
         Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_one,
-        Matrix.cons_val_zero, Fin.sum_univ_two, mul_one];
+        Matrix.cons_val_zero, Fin.sum_univ_two, mul_one]
       ring
     · simp only [neg_mul, lucasCompanion, Fin.mk_one, Fin.isValue, Matrix.mul_apply,
         Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_one,
-        Fin.sum_univ_two, Matrix.cons_val_zero, mul_neg, mul_zero, add_zero, neg_inj];
+        Fin.sum_univ_two, Matrix.cons_val_zero, mul_neg, mul_zero, add_zero, neg_inj]
       ring
 
 /-- Four scalar entries of a `2 × 2` matrix used by the executable path. -/
@@ -161,19 +161,19 @@ theorem lucasScalarStateMatrix_mul [CommSemiring R] (x y : LucasScalarState R) :
   fin_cases i <;> fin_cases j
   · simp only [lucasScalarStateMatrix, Fin.zero_eta, Fin.isValue, Matrix.of_apply, Matrix.cons_val',
       Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.mul_apply, Fin.sum_univ_two,
-      Matrix.cons_val_one];
+      Matrix.cons_val_one]
     rfl
   · simp only [lucasScalarStateMatrix, Fin.zero_eta, Fin.isValue, Fin.mk_one, Matrix.of_apply,
       Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val_zero,
-      Matrix.mul_apply, Fin.sum_univ_two];
+      Matrix.mul_apply, Fin.sum_univ_two]
     rfl
   · simp only [lucasScalarStateMatrix, Fin.mk_one, Fin.isValue, Fin.zero_eta, Matrix.of_apply,
       Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.cons_val_one,
-      Matrix.mul_apply, Fin.sum_univ_two];
+      Matrix.mul_apply, Fin.sum_univ_two]
     rfl
   · simp only [lucasScalarStateMatrix, Fin.mk_one, Fin.isValue, Matrix.of_apply, Matrix.cons_val',
       Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.mul_apply, Fin.sum_univ_two,
-      Matrix.cons_val_zero];
+      Matrix.cons_val_zero]
     rfl
 
 /-- Scalar-state one is the identity matrix. -/
@@ -182,18 +182,18 @@ theorem lucasScalarStateMatrix_one [CommSemiring R] :
   ext i j
   fin_cases i <;> fin_cases j
   · simp only [lucasScalarStateMatrix, Fin.zero_eta, Fin.isValue, Matrix.of_apply, Matrix.cons_val',
-      Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.one_apply_eq];
+      Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.one_apply_eq]
     rfl
   · simp only [lucasScalarStateMatrix, Fin.zero_eta, Fin.isValue, Fin.mk_one, Matrix.of_apply,
       Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val_zero, ne_eq,
-      zero_ne_one, not_false_eq_true, Matrix.one_apply_ne];
+      zero_ne_one, not_false_eq_true, Matrix.one_apply_ne]
     rfl
   · simp only [lucasScalarStateMatrix, Fin.mk_one, Fin.isValue, Fin.zero_eta, Matrix.of_apply,
       Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.cons_val_one, ne_eq,
-      one_ne_zero, not_false_eq_true, Matrix.one_apply_ne];
+      one_ne_zero, not_false_eq_true, Matrix.one_apply_ne]
     rfl
   · simp only [lucasScalarStateMatrix, Fin.mk_one, Fin.isValue, Matrix.of_apply, Matrix.cons_val',
-      Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.one_apply_eq];
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.one_apply_eq]
     rfl
 
 /-- Binary powering of the scalar state maps to binary matrix powering. -/

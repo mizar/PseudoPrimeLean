@@ -112,7 +112,8 @@ theorem not_dvd_primeNeOneWitness_of_three_lt {n : ℕ} (hns : ¬IsSquare n)
     have hqmem : q ∈ PrimeNeOneWitnessSet n := by
       exact
         ⟨hqprime, hqodd, by
-          rw [hnp, hqvalue]; norm_num only⟩
+          rw [hnp, hqvalue]
+          norm_num only⟩
     exact (Nat.not_le_of_lt hqlt) (primeNeOneWitness_le n hw hqmem)
 
 /--
@@ -271,7 +272,8 @@ theorem primeNeOneWitness_lt_of_odd_nonsquare_of_three_lt {n : ℕ} (hn : Odd n)
   have hqmem : q ∈ PrimeNeOneWitnessSet n := by
     exact
       ⟨hqprime, hqodd, by
-        rw [hqvalue]; norm_num only⟩
+        rw [hqvalue]
+        norm_num only⟩
   exact (primeNeOneWitness_le n hw hqmem).trans_lt hq_lt
 
 /--

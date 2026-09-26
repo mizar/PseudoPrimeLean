@@ -39,6 +39,10 @@ theorem exists_prime_odd_factorization_of_not_square {r : ℕ} (hr0 : r ≠ 0) (
   obtain ⟨k, hk⟩ := heven
   rw [← pow_add]
   congr 1
-  omega
+  have hdiv : (k + k) / 2 = k := by
+    rw [← two_mul k]
+    exact Nat.mul_div_right k (m := 2) (by decide)
+  rw [hk]
+  rw [hdiv]
 
 end PseudoPrime.NumberTheory

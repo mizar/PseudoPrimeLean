@@ -57,9 +57,11 @@ theorem exists_circle_of_eventuallyEq_mul_sub {f g : ℂ → ℂ} {c : ℂ} (hg 
   let R := min rg re / 2
   have hR : 0 < R := div_pos (lt_min hrg hre) (by norm_num only)
   have hRrg : R < rg := by
-    dsimp only [R]; linarith only [hrg, min_le_left rg re]
+    dsimp only [R]
+    linarith only [hrg, min_le_left rg re]
   have hRre : R < re := by
-    dsimp only [R]; linarith only [hre, min_le_right rg re]
+    dsimp only [R]
+    linarith only [hre, min_le_right rg re]
   refine ⟨R, hR, hganalytic.differentiableOn.mono (Metric.closedBall_subset_ball hRrg), ?_⟩
   intro z hz
   have hzball : z ∈ Metric.ball c re :=
@@ -90,9 +92,11 @@ theorem exists_radius_forall_circleIntegral_eq_two_pi_I_mul {f g : ℂ → ℂ} 
   let R := min rg re / 2
   have hR : 0 < R := div_pos (lt_min hrg hre) (by norm_num only)
   have hRrg : R < rg := by
-    dsimp only [R]; linarith only [hrg, min_le_left rg re]
+    dsimp only [R]
+    linarith only [hrg, min_le_left rg re]
   have hRre : R < re := by
-    dsimp only [R]; linarith only [hre, min_le_right rg re]
+    dsimp only [R]
+    linarith only [hre, min_le_right rg re]
   refine ⟨R, hR, ?_⟩
   intro r hr hrR
   have hrg' : r < rg := hrR.trans_lt hRrg
@@ -137,9 +141,11 @@ theorem exists_circleIntegral_eq_two_pi_I_mul_deriv {f g : ℂ → ℂ} {c : ℂ
   let R := min rg re / 2
   have hR : 0 < R := div_pos (lt_min hrg hre) (by norm_num only)
   have hRrg : R < rg := by
-    dsimp only [R]; linarith only [hrg, min_le_left rg re]
+    dsimp only [R]
+    linarith only [hrg, min_le_left rg re]
   have hRre : R < re := by
-    dsimp only [R]; linarith only [hre, min_le_right rg re]
+    dsimp only [R]
+    linarith only [hre, min_le_right rg re]
   have hgdifferentiable : DifferentiableOn ℂ g (Metric.closedBall c R) :=
     hganalytic.differentiableOn.mono (Metric.closedBall_subset_ball hRrg)
   have heqsphere : ∀ z ∈ Metric.sphere c R, (z - c) ^ 2 * f z = g z := by
@@ -214,9 +220,11 @@ theorem exists_radius_forall_circleIntegral_eq_two_pi_I_mul_deriv {f g : ℂ →
   let R := min rg re / 2
   have hR : 0 < R := div_pos (lt_min hrg hre) (by norm_num only)
   have hRrg : R < rg := by
-    dsimp only [R]; linarith only [hrg, min_le_left rg re]
+    dsimp only [R]
+    linarith only [hrg, min_le_left rg re]
   have hRre : R < re := by
-    dsimp only [R]; linarith only [hre, min_le_right rg re]
+    dsimp only [R]
+    linarith only [hre, min_le_right rg re]
   refine ⟨R, hR, ?_⟩
   intro r hr hrR
   have hrg' : r < rg := hrR.trans_lt hRrg

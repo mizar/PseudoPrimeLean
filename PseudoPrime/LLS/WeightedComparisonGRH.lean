@@ -39,11 +39,11 @@ theorem weightedComparisonCore_generic_of_grh {f : ℕ} [NeZero f] (hf2 : 2 ≤ 
   zeroMass_le := by
     have h := primitiveReciprocalRaw_of_grh hf2 hGRH hprimitive hne hinv hX
     rw [Real.log_div (by exact_mod_cast NeZero.ne f) Real.pi_ne_zero]
-    linarith
+    linarith only [h]
   logWeighted_le := by
     have h := primitiveGenericLogWeightedUpper_of_grh_generic hf2 hGRH hprimitive hne hinv hX
     rw [Real.log_div (by exact_mod_cast NeZero.ne f) Real.pi_ne_zero]
-    linarith
+    exact h
 
 /-- The paper branch constructs the common core for the primitive inducing character.
 The original character need not be primitive: its strict-cutoff triviality transfers,

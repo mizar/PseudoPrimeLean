@@ -407,7 +407,9 @@ theorem continuous_dirichletLogContourKernel_line {N : ℕ} [NeZero N] {x : ℝ}
     intro s hs
     simp only [Set.mem_ofPred_eq] at hs
     have hs0 : s ≠ 0 := by
-      intro h; rw [h, Complex.zero_re] at hs; linarith
+      intro h
+      rw [h, Complex.zero_re] at hs
+      linarith
     have hL : DirichletCharacter.LFunction χ s ≠ 0 :=
       DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ) hs.le
     exact
@@ -434,9 +436,13 @@ theorem continuous_dirichletReciprocalContourKernel_line {N : ℕ} [NeZero N] {x
     intro s hs
     simp only [Set.mem_ofPred_eq] at hs
     have hs0 : s ≠ 0 := by
-      intro h; rw [h, Complex.zero_re] at hs; linarith
+      intro h
+      rw [h, Complex.zero_re] at hs
+      linarith
     have hs1 : s ≠ 1 := by
-      intro h; rw [h, Complex.one_re] at hs; linarith
+      intro h
+      rw [h, Complex.one_re] at hs
+      linarith
     have hL : DirichletCharacter.LFunction χ s ≠ 0 :=
       DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ) hs.le
     exact
@@ -502,9 +508,13 @@ theorem integrable_dirichletReciprocalContourKernel {N : ℕ} [NeZero N] {x : �
   set σ : ℝ := τ - 1 with hσ_def
   have hxσ : (0 : ℝ) < x ^ σ := Real.rpow_pos_of_pos hx σ
   have hσ0 : σ ≠ 0 := by
-    rw [hσ_def]; intro h; linarith [sub_eq_zero.mp h]
+    rw [hσ_def]
+    intro h
+    linarith [sub_eq_zero.mp h]
   have hσ1 : σ ≠ -1 := by
-    rw [hσ_def]; intro h; linarith
+    rw [hσ_def]
+    intro h
+    linarith
   apply
     MeasureTheory.Integrable.mono'
       (((General.verticalIntegrable_mellinReciprocalKernel hσ0 hσ1).norm).const_mul (C * x ^ σ))

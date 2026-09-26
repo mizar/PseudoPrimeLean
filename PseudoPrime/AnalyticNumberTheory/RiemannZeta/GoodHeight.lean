@@ -36,12 +36,16 @@ theorem exists_avoiding_point {S : Finset ℝ} {c a : ℝ} (hc : 0 < c) (hlen : 
     ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) * S.card := by
     have hterm : ∀ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) :=
       fun y _ => by
-      rw [Real.volume_Ioo]; congr 1; ring
+      rw [Real.volume_Ioo]
+      congr 1
+      ring
     rw [Finset.sum_congr rfl hterm, Finset.sum_const, nsmul_eq_mul, mul_comm]
   have hfinal : ENNReal.ofReal 1 ≤ ENNReal.ofReal (2 * c) * (S.card : ENNReal) := by
     calc
       ENNReal.ofReal (1 : ℝ) = MeasureTheory.volume (Set.Icc a (a + 1)) := by
-        rw [Real.volume_Icc]; congr 1; ring
+        rw [Real.volume_Icc]
+        congr 1
+        ring
       _ ≤ MeasureTheory.volume (⋃ y ∈ S, Set.Ioo (y - c) (y + c)) := MeasureTheory.measure_mono hsub
       _ ≤ ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) :=
         MeasureTheory.measure_biUnion_finset_le S _
@@ -74,7 +78,9 @@ theorem exists_avoiding_point_length {S : Finset ℝ} {c a L : ℝ} (hc : 0 < c)
   have hfinal : ENNReal.ofReal L ≤ ENNReal.ofReal (2 * c) * (S.card : ENNReal) := by
     calc
       ENNReal.ofReal L = MeasureTheory.volume (Set.Icc a (a + L)) := by
-        rw [Real.volume_Icc]; congr 1; ring
+        rw [Real.volume_Icc]
+        congr 1
+        ring
       _ ≤ MeasureTheory.volume (⋃ y ∈ S, Set.Ioo (y - c) (y + c)) := MeasureTheory.measure_mono hsub
       _ ≤ ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) :=
         MeasureTheory.measure_biUnion_finset_le S _
@@ -236,7 +242,9 @@ theorem exists_good_height {H : ℝ} (hH : 8 ≤ H) :
       2 * c * (zeroOrdinatesNear H).card ≤ 2 * c * (jensenLogConst * Real.log (H + 2)) :=
         mul_le_mul_of_nonneg_left hcard_le' (by positivity)
       _ = 1 / 2 := by
-        rw [hc_def]; field_simp; norm_num only
+        rw [hc_def]
+        field_simp
+        norm_num only
       _ < 1 := by norm_num only
   obtain ⟨T, hT, hTgood⟩ := exists_avoiding_point hc_pos hlenbound
   refine ⟨T, hT, fun ρ hζ him => ?_⟩

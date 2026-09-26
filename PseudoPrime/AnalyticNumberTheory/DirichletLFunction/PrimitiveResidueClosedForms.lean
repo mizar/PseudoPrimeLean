@@ -159,7 +159,8 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_odd_raw {N : ℕ} [NeZero
     ((1 / x : ℂ) * logDeriv (DirichletCharacter.LFunction χ) 0).re =
       (1 / x) * (logDeriv (DirichletCharacter.LFunction χ) 0).re := by
     rw [show (1 / x : ℂ) = ((1 / x : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.re_ofReal_mul]
   rw [hmulre, hL0final, hL1final]
   ring

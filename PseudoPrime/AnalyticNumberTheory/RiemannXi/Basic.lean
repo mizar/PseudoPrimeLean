@@ -55,7 +55,7 @@ theorem riemannXi_eq {s : ℂ} (hs : s ≠ 1) :
     riemannXi s = (1 / 2 : ℂ) * (s - 1) * (s * completedRiemannZeta₀ s - 1 - s / (1 - s)) := by
   unfold riemannXi
   have h1s : (1 - s) ≠ 0 := sub_ne_zero.mpr (Ne.symm hs)
-  field_simp [h1s]
+  field_simp (discharger := first | exact h1s | exact (by norm_num only : (2 : ℂ) ≠ 0))
   ring
 
 /-- The denominator from `riemannZeta_eq_mul_completedRiemannZeta₀` is nonzero away from the
@@ -165,7 +165,8 @@ theorem riemannXi_eq_zero_iff_of_denom_ne_zero {s : ℂ} (hs1 : s ≠ 1)
     · rcases mul_eq_zero.mp h1 with h2 | h2
       · norm_num only at h2
       · exact absurd h2 hs1'
-    · left; exact h1
+    · left
+      exact h1
   · rintro (h | h)
     · rw [h, mul_zero]
     · exact absurd h hd
@@ -262,9 +263,10 @@ theorem riemannXi_ne_zero_of_re_neg {s : ℂ} (hs : s.re < 0) : riemannXi s ≠ 
     rw [hn, ← riemannXi_one_sub]
     apply riemannXi_ne_zero_of_one_lt_re
     rw [show (1 : ℂ) - -2 * ((n : ℂ) + 1) = ((2 * n + 3 : ℕ) : ℂ) from by
-        push_cast; ring]
+        push_cast
+        ring]
     rw [Complex.natCast_re]
     push_cast
-    linarith [Nat.cast_nonneg (α := ℝ) n]
+    linarith only [Nat.cast_nonneg (α := ℝ) n]
 
 end PseudoPrime.AnalyticNumberTheory.RiemannXi

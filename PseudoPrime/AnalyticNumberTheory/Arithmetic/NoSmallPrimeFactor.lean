@@ -61,7 +61,8 @@ theorem commonFactorLogWeightedSum_eq_zero_of_noSmallPrimeFactor {m : ℕ} {X : 
   have hpk_eq : (p : ℝ) ^ k = X := le_antisymm hpk_le (hpXeq ▸ hpk_ge)
   unfold logWeightedMangoldtTerm
   rw [show ((p ^ k : ℕ) : ℝ) = X from by
-      push_cast; exact hpk_eq,
+      push_cast
+      exact hpk_eq,
     div_self hX.ne', Real.log_one, mul_zero]
 
 /--

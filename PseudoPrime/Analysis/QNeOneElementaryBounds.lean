@@ -75,7 +75,8 @@ lemma reciprocal_log_numerator_mul_sq {y L A B C : ℝ} (hy : y ≠ 0) :
     _ = ((1 - 1 / y ^ 2) * y ^ 2) * (y + A - B) / 2 - (4 / 5 + (2 * L - 8 / 5 - C)) * y ^ 2 := by
       ring
     _ = _ := by
-      rw [hc]; ring
+      rw [hc]
+      ring
 
 /-- Multiplication by `y²` turns the affine product into the matching polynomial. -/
 lemma affine_reciprocal_factor_mul_sq {y L : ℝ} (hy : y ≠ 0) :
@@ -120,7 +121,7 @@ lemma reciprocal_square_coefficient_nonneg {y l q : ℝ} (hy : 8 ≤ y) (hl : l 
   have hP : 0 ≤ 8 * l - 11 / 4 - 1.4 / 2 := by linarith
   have hR : -5 * (y / 8 + 3 * q - 1) + 5 / 2 ≤ -5 * l + 5 / 2 := by
     have hmul := mul_le_mul_of_nonpos_left hl (show (-5 : ℝ) ≤ 0 by norm_num only)
-    linarith
+    linarith only [hmul]
   have hC : 0.299 ≤ 0.45 - q + 1.098 / 2 := by linarith
   have hC0 : 0 ≤ 0.45 - q + 1.098 / 2 := by linarith
   have hq2y2 : q * y ^ 2 ≤ 0.7 * y ^ 2 := mul_le_mul_of_nonneg_right hq2 (le_of_lt hy2)
@@ -149,7 +150,8 @@ lemma reciprocal_square_coefficient_nonneg_explicit {y l q : ℝ} (hy : 8 ≤ y)
   have hq2y2 : q * y ^ 2 ≤ 0.7 * y ^ 2 := mul_le_mul_of_nonneg_right hq2 (le_of_lt hy2)
   have hq2y3 : q * y ^ 3 ≤ 0.7 * y ^ 3 := mul_le_mul_of_nonneg_right hq2 (le_of_lt hy3)
   field_simp
-  nlinarith [mul_nonneg hC0 (le_of_lt hy3), mul_nonneg hP (le_of_lt hy2)]
+  nlinarith only [hy, hl, hlower, hq1, hq2, hpy, hy2, hy3, hP, hR, hC, hC0, hq2y2,
+    hq2y3, mul_nonneg hC0 (le_of_lt hy3), mul_nonneg hP (le_of_lt hy2)]
 
 /-- For a natural number `B ≥ 10`, `5 < (log B)^2`.
 Logarithmic monotonicity and explicit lower bounds for `log 2` and `log 5` prove the claim.

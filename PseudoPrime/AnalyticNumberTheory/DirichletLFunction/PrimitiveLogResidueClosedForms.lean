@@ -108,7 +108,7 @@ theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw {N : ℕ} [Ne
         simp only [zero_add] at him
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
-          div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him;
+          div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
         linarith)
   have hdΓ0 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 0 :=
     differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
@@ -118,7 +118,7 @@ theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw {N : ℕ} [Ne
         simp only [zero_add] at him
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
-          div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him;
+          div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
         linarith)
   have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have hbridge0 :=
@@ -171,7 +171,8 @@ theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw {N : ℕ} 
     rw [hlogxC, mul_comm, Complex.re_ofReal_mul, Complex.sub_re, mul_comm]
   have hpi8re : ((Real.pi : ℂ) ^ 2 / 8).re = (Real.pi : ℝ) ^ 2 / 8 := by
     rw [show ((Real.pi : ℂ) ^ 2 / 8) = (((Real.pi : ℝ) ^ 2 / 8 : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.ofReal_re]
   rw [Complex.sub_re, Complex.add_re, Complex.neg_re, hpi8re, hAre, hF0re, hG0re]
   ring
@@ -265,7 +266,8 @@ theorem hasDerivAt_dirichletLogEvenZeroRegularization {N : ℕ} [NeZero N]
     have hfun2 :
       (fun _ : ℂ => (1 : ℂ)) + id * logDeriv (dirichletEvenZeroLocalFactor χ) = fun t : ℂ =>
         1 + t * logDeriv (dirichletEvenZeroLocalFactor χ) t := by
-      funext t; rfl
+      funext t
+      rfl
     rw [hfun2] at hadd
     simpa only [hasDerivAt_const_add_iff, one_mul, id_eq, zero_add] using hadd
   have hxne : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
@@ -299,7 +301,8 @@ theorem iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq {N : ℕ} [
           Complex.log x ^ 2) := by
   obtain ⟨hganalytic0, hg0ne⟩ := analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor hprimitive hne
   have hqanalytic0 : AnalyticAt ℂ (logDeriv (dirichletEvenZeroLocalFactor χ)) 0 := by
-    rw [logDeriv]; exact hganalytic0.deriv.div hganalytic0 hg0ne
+    rw [logDeriv]
+    exact hganalytic0.deriv.div hganalytic0 hg0ne
   have hqHasDerivAt0 :
     HasDerivAt (logDeriv (dirichletEvenZeroLocalFactor χ))
       (deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) 0) 0 :=
@@ -349,7 +352,8 @@ theorem iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq {N : ℕ} [
         fun t : ℂ =>
         logDeriv (dirichletEvenZeroLocalFactor χ) t +
           t * deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) t := by
-      funext t; rfl
+      funext t
+      rfl
     rw [hfun2] at hadd
     simpa only [one_mul, id_eq, zero_mul, add_zero] using hadd
   have hA0 :
@@ -360,7 +364,8 @@ theorem iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq {N : ℕ} [
     have hfun2 :
       (fun _ : ℂ => (1 : ℂ)) + id * logDeriv (dirichletEvenZeroLocalFactor χ) = fun t : ℂ =>
         1 + t * logDeriv (dirichletEvenZeroLocalFactor χ) t := by
-      funext t; rfl
+      funext t
+      rfl
     rw [hfun2] at hadd
     simpa only [hasDerivAt_const_add_iff, one_mul, id_eq, zero_mul, add_zero, zero_add] using hadd
   have hraw := ((hC0.mul hB0).add (hA0.mul hBdash0)).neg
@@ -372,7 +377,9 @@ theorem iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq {N : ℕ} [
           (fun t : ℂ => (1 : ℂ) + t * logDeriv (dirichletEvenZeroLocalFactor χ) t) * fun t : ℂ =>
             (x : ℂ) ^ t * Complex.log x) =
       H1 := by
-    rw [hH1_def]; funext s; simp only [Pi.add_apply, Pi.neg_apply, Pi.mul_apply]
+    rw [hH1_def]
+    funext s
+    simp only [Pi.add_apply, Pi.neg_apply, Pi.mul_apply]
   have hH1deriv := hfunH1 ▸ hraw
   have hderiv2 :
     deriv (deriv (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ))) 0 =
@@ -443,12 +450,14 @@ theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_raw
   simp only [Complex.sub_re, Complex.add_re, Complex.neg_re]
   have hpi24re : ((Real.pi : ℂ) ^ 2 / 24).re = (Real.pi : ℝ) ^ 2 / 24 := by
     rw [show ((Real.pi : ℂ) ^ 2 / 24) = (((Real.pi : ℝ) ^ 2 / 24 : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.ofReal_re]
   have hAre :
     (logDeriv (DirichletCharacter.completedLFunction χ) 0 * ((Real.log x : ℝ) : ℂ)).re =
       (logDeriv (DirichletCharacter.completedLFunction χ) 0).re * Real.log x := by
-    rw [mul_comm, Complex.re_ofReal_mul]; ring
+    rw [mul_comm, Complex.re_ofReal_mul]
+    ring
   have hBre :
     ((Complex.log (Real.pi : ℂ) + (Real.eulerMascheroniConstant : ℂ)) / 2 *
           ((Real.log x : ℝ) : ℂ)).re =
@@ -456,11 +465,15 @@ theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_raw
     have heq :
       (Complex.log (Real.pi : ℂ) + (Real.eulerMascheroniConstant : ℂ)) / 2 =
         (((Real.log Real.pi + Real.eulerMascheroniConstant) / 2 : ℝ) : ℂ) := by
-      rw [← Complex.ofReal_log Real.pi_nonneg]; push_cast; ring
-    rw [heq, mul_comm, Complex.re_ofReal_mul, Complex.ofReal_re]; ring
+      rw [← Complex.ofReal_log Real.pi_nonneg]
+      push_cast
+      ring
+    rw [heq, mul_comm, Complex.re_ofReal_mul, Complex.ofReal_re]
+    ring
   have hSqre : (((Real.log x : ℝ) : ℂ) ^ 2 / 2).re = Real.log x ^ 2 / 2 := by
     rw [show (((Real.log x : ℝ) : ℂ) ^ 2 / 2) = (((Real.log x ^ 2 / 2 : ℝ)) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.ofReal_re]
   rw [hpi24re, hAre, hBre, hSqre, hF0re]
   ring

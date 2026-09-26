@@ -176,7 +176,8 @@ theorem exists_radius_forall_dirichletRectangleBoundaryIntegral_log_residueAt_on
       Real.sqrt 2 * r ≤ Real.sqrt 2 * R := mul_le_mul_of_nonneg_left hrR (Real.sqrt_nonneg 2)
       _ < 2 * R := by nlinarith
       _ = R0 := by
-        rw [hR_def]; ring
+        rw [hR_def]
+        ring
   unfold RectangleGeometry.rectangleBoundaryIntegral
   apply Complex.integral_boundary_rect_eq_zero_of_differentiableOn
   intro s hs

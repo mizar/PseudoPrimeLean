@@ -44,7 +44,8 @@ theorem norm_digamma_le_of_logGamma_ball_bound {c : ℂ} {R U : ℝ} (hR : 0 < R
   have hccenter : c ∈ Metric.ball c R := Metric.mem_ball_self hR
   set M : ℝ := U - (g c).re with hM_def
   have hMpos' : 0 < M := by
-    rw [hM_def, hgRe c hccenter]; linarith only [hMpos]
+    rw [hM_def, hgRe c hccenter]
+    linarith only [hMpos]
   set h : ℂ → ℂ := fun z => g (c + z) - g c with hh_def
   have hgc_shift_diffOn : DifferentiableOn ℂ h (Metric.ball (0 : ℂ) R) := by
     intro z hz
@@ -68,7 +69,8 @@ theorem norm_digamma_le_of_logGamma_ball_bound {c : ℂ} {R U : ℝ} (hR : 0 < R
       Complex.borelCaratheodory_zero hMpos' hgc_shift_diffOn (fun w hw => hh_bound w hw) hR hz hh0
   set f : ℂ → ℂ := fun w => g w - g c with hf_def
   have hfh : ∀ w : ℂ, f w = h (w - c) := by
-    intro w; simp only [hf_def, hh_def, add_sub_cancel]
+    intro w
+    simp only [hf_def, hh_def, add_sub_cancel]
   have hR2 : (0 : ℝ) < R / 2 := by linarith only [hR]
   have hf_diffOn : DifferentiableOn ℂ f (Metric.ball c (R / 2)) := by
     intro w hw
@@ -93,7 +95,8 @@ theorem norm_digamma_le_of_logGamma_ball_bound {c : ℂ} {R U : ℝ} (hR : 0 < R
       have := Metric.mem_sphere.mp hw
       rwa [Complex.dist_eq] at this
     have hw_mem : w - c ∈ Metric.ball (0 : ℂ) R := by
-      rw [Metric.mem_ball, dist_zero_right, hw_norm]; linarith only [hR]
+      rw [Metric.mem_ball, dist_zero_right, hw_norm]
+      linarith only [hR]
     have hbc := hBC (w - c) hw_mem
     rw [hw_norm] at hbc
     rw [hfh w]
@@ -108,7 +111,8 @@ theorem norm_digamma_le_of_logGamma_ball_bound {c : ℂ} {R U : ℝ} (hR : 0 < R
   have hderivf : deriv f c = Complex.digamma c := by
     have hderivg : deriv g c = Complex.digamma c := (hg' c hccenter).deriv
     have heq : deriv f c = deriv g c := by
-      simp only [hf_def]; rw [deriv_sub_const]
+      simp only [hf_def]
+      rw [deriv_sub_const]
     rw [heq, hderivg]
   rw [hderivf] at hcauchy
   have hfactorial : (Nat.factorial 1 : ℝ) * (2 * M) / (R / 2) ^ 1 = 4 * M / R := by
@@ -155,7 +159,8 @@ theorem norm_digamma_sub_shift_nat_le {z : ℂ} (n : ℕ) (hz : z.im ≠ 0) :
       Complex.digamma (z + (n : ℂ) + 1) = Complex.digamma (z + (n : ℂ)) + (z + (n : ℂ))⁻¹ :=
       Complex.digamma_apply_add_one (z + (n : ℂ)) hzn_ne
     have heq : z + ((n : ℕ) + 1 : ℕ) = z + (n : ℂ) + 1 := by
-      push_cast; ring
+      push_cast
+      ring
     have hnorm_ge : |z.im| ≤ ‖z + (n : ℂ)‖ := by
       have h := Complex.abs_im_le_norm (z + (n : ℂ))
       rwa [hzn_im] at h
@@ -173,7 +178,8 @@ theorem norm_digamma_sub_shift_nat_le {z : ℂ} (n : ℕ) (hz : z.im ≠ 0) :
       _ ≤ ‖Complex.digamma (z + (n : ℂ)) - Complex.digamma z‖ + ‖(z + (n : ℂ))⁻¹‖ := norm_add_le _ _
       _ ≤ (n : ℝ) / |z.im| + 1 / |z.im| := by linarith [ih, hinv_le]
       _ = ((n : ℕ) + 1 : ℕ) / |z.im| := by
-        push_cast; ring
+        push_cast
+        ring
 
 /-! ### the left-vertical step: a real-part-separated digamma shift bound (covers `Im z = 0`) -/
 
@@ -197,7 +203,8 @@ theorem norm_digamma_sub_shift_nat_le_of_re_sep {z : ℂ} (n : ℕ) {δ : ℝ} (
     intro j
     induction j with
     | zero =>
-      intro _; simp only [CharP.cast_eq_zero, add_zero, sub_self, norm_zero, zero_div, Std.le_refl]
+      intro _
+      simp only [CharP.cast_eq_zero, add_zero, sub_self, norm_zero, zero_div, Std.le_refl]
     | succ j ih =>
       intro hjn
       have ihbound := ih (by omega)
@@ -206,7 +213,8 @@ theorem norm_digamma_sub_shift_nat_le_of_re_sep {z : ℂ} (n : ℕ) {δ : ℝ} (
         Complex.digamma (z + (j : ℂ) + 1) = Complex.digamma (z + (j : ℂ)) + (z + (j : ℂ))⁻¹ :=
         Complex.digamma_apply_add_one (z + (j : ℂ)) hzj_ne
       have heq : z + ((j : ℕ) + 1 : ℕ) = z + (j : ℂ) + 1 := by
-        push_cast; ring
+        push_cast
+        ring
       have hre_sep_j : δ ≤ |(z + (j : ℂ)).re| := hsep j (by omega)
       have hnorm_ge : δ ≤ ‖z + (j : ℂ)‖ := le_trans hre_sep_j (Complex.abs_re_le_norm _)
       have hinv_le : ‖(z + (j : ℂ))⁻¹‖ ≤ 1 / δ := by
@@ -224,7 +232,8 @@ theorem norm_digamma_sub_shift_nat_le_of_re_sep {z : ℂ} (n : ℕ) {δ : ℝ} (
           norm_add_le _ _
         _ ≤ (j : ℝ) / δ + 1 / δ := by linarith [ihbound, hinv_le]
         _ = ((j : ℕ) + 1 : ℕ) / δ := by
-          push_cast; ring
+          push_cast
+          ring
   exact main n le_rfl
 
 /-- Absorb the large-imaginary-part constants with only real inequalities in context. -/
@@ -296,12 +305,15 @@ theorem exists_C_forall_norm_digamma_large_im_le :
   have ha_ge : -B ≤ a := neg_abs_le a
   have ha_le : a ≤ B := le_abs_self a
   have hcre_ge : |t| ≤ c.re := by
-    rw [hcre]; linarith only [hm_ge, ha_ge]
+    rw [hcre]
+    linarith only [hm_ge, ha_ge]
   have hcre_le : c.re ≤ 2 * B + |t| + 1 := by
-    rw [hcre]; linarith only [hm_lt, ha_le]
+    rw [hcre]
+    linarith only [hm_lt, ha_le]
   set R : ℝ := |t| / 8 with hR_def
   have hR_pos : 0 < R := by
-    rw [hR_def]; linarith only [htabs_pos]
+    rw [hR_def]
+    linarith only [htabs_pos]
   have hball_re_lower : ∀ w ∈ Metric.ball c R, 7 * |t| / 8 < w.re := by
     intro w hw
     have hd : ‖w - c‖ < R := by simpa only [Metric.mem_ball, Complex.dist_eq] using hw
@@ -312,16 +324,21 @@ theorem exists_C_forall_norm_digamma_large_im_le :
     rw [hR_def] at h3
     linarith only [h3, hcre_ge]
   have hball : ∀ w ∈ Metric.ball c R, 0 < w.re := fun w hw => by
-    have := hball_re_lower w hw; linarith only [this, htabs_pos]
+    have := hball_re_lower w hw
+    linarith only [this, htabs_pos]
   have hball_re1 : ∀ w ∈ Metric.ball c R, 1 ≤ w.re := fun w hw => by
-    have := hball_re_lower w hw; linarith only [this, ht12]
+    have := hball_re_lower w hw
+    linarith only [this, ht12]
   set X : ℝ := 2 * B + 2 + (9 / 8) * |t| with hX_def
   have hX1 : (1 : ℝ) ≤ X := by
-    rw [hX_def]; linarith only [hBnn, htabs_pos]
+    rw [hX_def]
+    linarith only [hBnn, htabs_pos]
   have hX2 : (2 : ℝ) ≤ X := by
-    rw [hX_def]; linarith only [hBnn, htabs_pos]
+    rw [hX_def]
+    linarith only [hBnn, htabs_pos]
   have hXub : X ≤ 2 * |t| := by
-    rw [hX_def]; nlinarith only [h4B3, hBnn]
+    rw [hX_def]
+    nlinarith only [h4B3, hBnn]
   have hupper1 : ∀ w ∈ Metric.ball c R, w.re ≤ X := by
     intro w hw
     have hd : ‖w - c‖ < R := by simpa only [Metric.mem_ball, Complex.dist_eq] using hw
@@ -330,7 +347,8 @@ theorem exists_C_forall_norm_digamma_large_im_le :
     have h2 : |w.re - c.re| < R := lt_of_le_of_lt h1 hd
     have h3 := (abs_lt.mp h2).2
     rw [hR_def] at h3
-    rw [hX_def]; linarith only [h3, hcre_le]
+    rw [hX_def]
+    linarith only [h3, hcre_le]
   have hΓX_ge1 : (1 : ℝ) ≤ Real.Gamma X := by
     rw [← Real.Gamma_two]
     exact Real.Gamma_strictMonoOn_Ici.monotoneOn (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr hX2) hX2
@@ -342,7 +360,8 @@ theorem exists_C_forall_norm_digamma_large_im_le :
     have h1 : Real.Gamma w.re ≤ max (Real.Gamma 1) (Real.Gamma X) :=
       RiemannZeta.Real.Gamma_le_max_of_mem_Icc' (by norm_num only) hX1 ⟨hwre_ge1, hwre_le⟩
     have hmax_eq : max (Real.Gamma 1) (Real.Gamma X) = Real.Gamma X := by
-      rw [Real.Gamma_one]; exact max_eq_right hΓX_ge1
+      rw [Real.Gamma_one]
+      exact max_eq_right hΓX_ge1
     rw [hmax_eq] at h1
     calc
       Real.log ‖Complex.Gamma w‖ ≤ Real.log (Real.Gamma w.re) :=
@@ -354,13 +373,18 @@ theorem exists_C_forall_norm_digamma_large_im_le :
   set U : ℝ := X * Real.log X + 1 with hU_def
   have hccenter : c ∈ Metric.ball c R := Metric.mem_ball_self hR_pos
   have hMpos : Real.log ‖Complex.Gamma c‖ < U := by
-    have := hupper_logGamma c hccenter; rw [hU_def]; linarith only [this]
+    have := hupper_logGamma c hccenter
+    rw [hU_def]
+    linarith only [this]
   have hupper : ∀ w ∈ Metric.ball c R, Real.log ‖Complex.Gamma w‖ ≤ U := fun w hw => by
-    have := hupper_logGamma w hw; rw [hU_def]; linarith only [this]
+    have := hupper_logGamma w hw
+    rw [hU_def]
+    linarith only [this]
   have hdigamma_c := norm_digamma_le_of_logGamma_ball_bound hR_pos hball hMpos hupper
   set r : ℝ := c.re - 1 with hr_def
   have hr0 : 0 ≤ r := by
-    rw [hr_def]; linarith only [hcre_ge, ht12]
+    rw [hr_def]
+    linarith only [hcre_ge, ht12]
   have hcform : c = (1 : ℂ) + (r : ℂ) + (t : ℂ) * Complex.I := by
     apply Complex.ext
     · simp only [hr_def, Complex.ofReal_sub, Complex.ofReal_one, add_sub_cancel, Complex.add_re,
@@ -373,14 +397,16 @@ theorem exists_C_forall_norm_digamma_large_im_le :
   have hlogΓc_ge : -(C₁ + 5 * Real.pi * |t| / 2) ≤ Real.log ‖Complex.Gamma c‖ := by
     linarith only [hneg_log_le]
   have hUmc : U - Real.log ‖Complex.Gamma c‖ ≤ X * Real.log X + 1 + C₁ + 5 * Real.pi * |t| / 2 := by
-    rw [hU_def]; linarith only [hlogΓc_ge]
+    rw [hU_def]
+    linarith only [hlogΓc_ge]
   have hXlogX_le : X * Real.log X ≤ (2 * |t|) * Real.log (2 * |t|) :=
     Gamma.mul_log_mono_of_one_le hX1 hXub
   have h2t_ge1 : (1 : ℝ) ≤ 2 * |t| := by linarith only [ht12]
   have hlog2t : Real.log (2 * |t|) = Real.log 2 + Real.log |t| := by
     rw [Real.log_mul (by norm_num only) (by linarith only [htabs_pos])]
   have hlog2_le1 : Real.log 2 ≤ 1 := by
-    have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 2 by norm_num only); linarith only [this]
+    have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 2 by norm_num only)
+    linarith only [this]
   have hlogt_nonneg : 0 ≤ Real.log |t| := Real.log_nonneg (by linarith only [ht12])
   have hXlogXfinal : X * Real.log X ≤ 2 * |t| + 2 * |t| * Real.log |t| := by
     calc
@@ -393,7 +419,9 @@ theorem exists_C_forall_norm_digamma_large_im_le :
   have hReq :
     (4 : ℝ) * (U - Real.log ‖Complex.Gamma c‖) / R =
       32 * (U - Real.log ‖Complex.Gamma c‖) / |t| := by
-    rw [hR_def]; field_simp; ring
+    rw [hR_def]
+    field_simp
+    ring
   rw [hReq] at hdigamma_c
   have hC1nn : C₁ ≤ max C₁ 0 := le_max_left _ _
   have hfinal_c : ‖Complex.digamma c‖ ≤ 67 + 32 * max C₁ 0 + 80 * Real.pi + 64 * Real.log |t| := by
@@ -411,7 +439,8 @@ theorem exists_C_forall_norm_digamma_large_im_le :
     simp only [hz_def, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
       Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
   have hzim_ne : z.im ≠ 0 := by
-    rw [hzim]; exact abs_pos.mp htabs_pos
+    rw [hzim]
+    exact abs_pos.mp htabs_pos
   have hshift : ‖Complex.digamma c - Complex.digamma z‖ ≤ (m : ℝ) / |t| := by
     have hb := norm_digamma_sub_shift_nat_le m hzim_ne
     rw [hzim] at hb

@@ -37,8 +37,8 @@ private theorem lucasV_four_step (P Q : ℤ) (k : ℕ) :
 /-- Appendix `S:Astar`, the unlabeled even-index U identity in the first theorem. -/
 theorem lucasU_methodAStar_even (m : ℕ) : lucasU 5 5 (2 * m) = 5 ^ m * lucasU 1 (-1) (2 * m) := by
   induction m using Nat.twoStepInduction with
-  | zero => simp [lucasU]
-  | one => simp [lucasU]
+  | zero => simp only [lucasU, mul_zero]
+  | one => simp only [lucasU, mul_one, mul_zero, sub_zero, pow_one, Int.reduceNeg]
   | more m hm hm1 =>
     have hs := lucasU_four_step 5 5 (2 * m)
     have ho := lucasU_four_step 1 (-1) (2 * m)
@@ -52,8 +52,8 @@ theorem lucasU_methodAStar_even (m : ℕ) : lucasU 5 5 (2 * m) = 5 ^ m * lucasU 
 /-- Appendix `S:Astar`, equation (13): even-index V values. -/
 theorem lucasV_methodAStar_even (m : ℕ) : lucasV 5 5 (2 * m) = 5 ^ m * lucasV 1 (-1) (2 * m) := by
   induction m using Nat.twoStepInduction with
-  | zero => simp [lucasV]
-  | one => simp [lucasV]
+  | zero => simp only [lucasV, pow_zero, one_mul]
+  | one => norm_num only [lucasV]
   | more m hm hm1 =>
     have hs := lucasV_four_step 5 5 (2 * m)
     have ho := lucasV_four_step 1 (-1) (2 * m)
@@ -68,8 +68,8 @@ theorem lucasV_methodAStar_even (m : ℕ) : lucasV 5 5 (2 * m) = 5 ^ m * lucasV 
 theorem lucasU_methodAStar_odd (m : ℕ) :
     lucasU 5 5 (2 * m + 1) = 5 ^ m * lucasV 1 (-1) (2 * m + 1) := by
   induction m using Nat.twoStepInduction with
-  | zero => simp [lucasU, lucasV]
-  | one => simp [lucasU, lucasV]
+  | zero => simp only [lucasU, pow_zero, lucasV, mul_one]
+  | one => norm_num only [lucasU, lucasV]
   | more m hm hm1 =>
     have hs := lucasU_four_step 5 5 (2 * m + 1)
     have ho := lucasV_four_step 1 (-1) (2 * m + 1)
@@ -86,8 +86,8 @@ theorem lucasU_methodAStar_odd (m : ℕ) :
 theorem lucasV_methodAStar_odd (m : ℕ) :
     lucasV 5 5 (2 * m + 1) = 5 ^ (m + 1) * lucasU 1 (-1) (2 * m + 1) := by
   induction m using Nat.twoStepInduction with
-  | zero => simp [lucasU, lucasV]
-  | one => simp [lucasU, lucasV]
+  | zero => simp only [lucasV, zero_add, pow_one, lucasU, mul_one]
+  | one => norm_num only [lucasU, lucasV]
   | more m hm hm1 =>
     have hs := lucasV_four_step 5 5 (2 * m + 1)
     have ho := lucasU_four_step 1 (-1) (2 * m + 1)

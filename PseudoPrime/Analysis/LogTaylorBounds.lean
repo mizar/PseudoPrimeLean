@@ -28,7 +28,8 @@ theorem log_bounds_of_taylor {N : ℕ} (hN : 0 < N) (j n : ℕ) {x : ℝ} (hx : 
         (j : ℝ) * Real.log 2 - (∑ i ∈ Finset.range n, x ^ (i + 1) / (i + 1)) +
           |x| ^ (n + 1) / (1 - |x|) := by
   have h1x : (1 : ℝ) - x = N / 2 ^ j := by
-    rw [hx]; ring
+    rw [hx]
+    ring
   have hlogeq : Real.log (1 - x) = Real.log N - Real.log ((2 : ℝ) ^ j) := by
     rw [h1x, Real.log_div (by exact_mod_cast hN.ne') (by positivity)]
   have hlog2j : Real.log ((2 : ℝ) ^ j) = (j : ℝ) * Real.log 2 := Real.log_pow 2 j
@@ -54,7 +55,8 @@ theorem log_bounds_of_taylor_real {N : ℝ} (hN : 0 < N) (j n : ℕ) {x : ℝ} (
         (j : ℝ) * Real.log 2 - (∑ i ∈ Finset.range n, x ^ (i + 1) / (i + 1)) +
           |x| ^ (n + 1) / (1 - |x|) := by
   have h1x : (1 : ℝ) - x = N / 2 ^ j := by
-    rw [hx]; ring
+    rw [hx]
+    ring
   have hlogeq : Real.log (1 - x) = Real.log N - Real.log ((2 : ℝ) ^ j) := by
     rw [h1x, Real.log_div hN.ne' (by positivity)]
   have hlog2j : Real.log ((2 : ℝ) ^ j) = (j : ℝ) * Real.log 2 := Real.log_pow 2 j

@@ -110,8 +110,10 @@ theorem dirichletLFunction_ne_zero_of_im_eq_primitiveHeightSeq_of_grh {N : ℕ} 
     linarith
   have himne : s.im ≠ 0 := by
     rcases him with h | h
-    · rw [h]; exact hTpos.ne'
-    · rw [h]; exact (neg_lt_zero.mpr hTpos).ne
+    · rw [h]
+      exact hTpos.ne'
+    · rw [h]
+      exact (neg_lt_zero.mpr hTpos).ne
   have hΓne : DirichletCharacter.gammaFactor χ s ≠ 0 := gammaFactor_ne_zero_of_im_ne_zero himne
   have hFeq :=
     dirichletLFunction_eq_completed_div_gammaFactor χ s
@@ -214,7 +216,8 @@ theorem primitiveHeightSeq_singularities_mem_open_of_grh {N : ℕ} [NeZero N] (h
       exact
         DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hne)
           (by
-            rw [heq]; norm_num only)
+            rw [heq]
+            norm_num only)
           hLzero
   · rcases hcase with hs0 | hs1 | hLzero
     · rw [hs0, hzim]
@@ -275,8 +278,10 @@ theorem dirichletLFunction_ne_zero_of_im_eq_primitiveHorizontalHeightSeq {N : �
     linarith
   have himne : s.im ≠ 0 := by
     rcases him with h | h
-    · rw [h]; exact hTpos.ne'
-    · rw [h]; exact (neg_lt_zero.mpr hTpos).ne
+    · rw [h]
+      exact hTpos.ne'
+    · rw [h]
+      exact (neg_lt_zero.mpr hTpos).ne
   have hΓne : DirichletCharacter.gammaFactor χ s ≠ 0 := gammaFactor_ne_zero_of_im_ne_zero himne
   have hFeq :=
     dirichletLFunction_eq_completed_div_gammaFactor χ s
@@ -393,9 +398,11 @@ theorem primitiveHorizontalHeightSeq_singularities_mem_open {N : ℕ} [NeZero N]
     linarith
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
   have hre_lt : z.re < w.re := by
-    rw [hzre, hwre, primitiveReciprocalLeftRe]; linarith
+    rw [hzre, hwre, primitiveReciprocalLeftRe]
+    linarith
   have him_lt : z.im < w.im := by
-    rw [hzim, hwim]; linarith
+    rw [hzim, hwim]
+    linarith
   apply RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne hre_lt him_lt hrect
   · rcases hcase with hs0 | hs1 | hLzero
     · rw [hs0, hzre, primitiveReciprocalLeftRe]
@@ -426,7 +433,8 @@ theorem primitiveHorizontalHeightSeq_singularities_mem_open {N : ℕ} [NeZero N]
       exact
         DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hne)
           (by
-            rw [heq]; norm_num only)
+            rw [heq]
+            norm_num only)
           hLzero
   · rcases hcase with hs0 | hs1 | hLzero
     · rw [hs0, hzim]
@@ -498,8 +506,10 @@ theorem primitiveReciprocalCorners_facts {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     linarith
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
   refine ⟨hzre, hzim, hwre, hwim, ?_, ?_⟩
-  · rw [hzre, hwre, primitiveReciprocalLeftRe]; linarith
-  · rw [hzim, hwim]; linarith
+  · rw [hzre, hwre, primitiveReciprocalLeftRe]
+    linarith
+  · rw [hzim, hwim]
+    linarith
 
 /--
 Input/assumptions: `N ≥ 2`, `χ` primitive nontrivial quadratic mod `N`, GRH, `χ⁻¹ ≠ 1`, `A ≥ 2`.

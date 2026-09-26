@@ -76,10 +76,10 @@ theorem adjoinRoot_lucasQuadratic_roots {K : Type*} [Field K] (P Q : K)
     AdjoinRoot.root (lucasQuadraticPolynomial P Q)
   let β : AdjoinRoot (lucasQuadraticPolynomial P Q) := P - α
   refine ⟨α, β, ?_, ?_⟩
-  · dsimp [β]
+  · dsimp only [β]
     ring
   · have hroot := adjoinRoot_lucasQuadratic_root_eq_zero P Q
-    dsimp [α, β]
+    dsimp only [α, β]
     calc
       AdjoinRoot.root (lucasQuadraticPolynomial P Q) *
             ((AdjoinRoot.of (lucasQuadraticPolynomial P Q)) P -
@@ -374,11 +374,11 @@ theorem lucasU_add_one_eq_zero_of_adjoinRoot_frobenius_swap (p : ℕ) [Fact p.Pr
   have hα : α ^ p = β := by simpa only [α, β] using hswap.1
   have hβ : β ^ p = α := by simpa only [α, β] using hswap.2
   have hsum : α + β = (P : E) := by
-    dsimp [β]
+    dsimp only [β]
     rw [hcast P]
     ring
   have hprod : α * β = (Q : E) := by
-    dsimp [α, β]
+    dsimp only [α, β]
     have hroot := adjoinRoot_lucasQuadratic_root_eq_zero (P : ZMod p) (Q : ZMod p)
     have hrootE : α ^ 2 - (P : E) * α + (Q : E) = 0 := by
       simpa only [α, hcast P, hcast Q] using hroot
@@ -390,7 +390,8 @@ theorem lucasU_add_one_eq_zero_of_adjoinRoot_frobenius_swap (p : ℕ) [Fact p.Pr
                 (P : E) * AdjoinRoot.root (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p)) +
               (Q : E)) :=
         by
-        rw [hcast P]; ring
+        rw [hcast P]
+        ring
       _ = (Q : E) := by rw [hrootE, sub_zero]
   have hne : α ^ p - α ≠ 0 := by
     simpa only [α] using
@@ -442,11 +443,11 @@ theorem lucasV_add_one_eq_two_mul_of_adjoinRoot_frobenius_swap (p : ℕ) [Fact p
   have hα : α ^ p = β := by simpa only [α, β] using hswap.1
   have hβ : β ^ p = α := by simpa only [α, β] using hswap.2
   have hsum : α + β = (P : E) := by
-    dsimp [β]
+    dsimp only [β]
     rw [hcast P]
     ring
   have hprod : α * β = (Q : E) := by
-    dsimp [α, β]
+    dsimp only [α, β]
     have hroot := adjoinRoot_lucasQuadratic_root_eq_zero (P : ZMod p) (Q : ZMod p)
     have hrootE : α ^ 2 - (P : E) * α + (Q : E) = 0 := by
       simpa only [α, hcast P, hcast Q] using hroot
@@ -458,7 +459,8 @@ theorem lucasV_add_one_eq_two_mul_of_adjoinRoot_frobenius_swap (p : ℕ) [Fact p
                 (P : E) * AdjoinRoot.root (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p)) +
               (Q : E)) :=
         by
-        rw [hcast P]; ring
+        rw [hcast P]
+        ring
       _ = (Q : E) := by rw [hrootE, sub_zero]
   exact lucasV_add_one_eq_two_mul_of_root_frobenius_swap p P Q α β hsum hprod hα hβ
 

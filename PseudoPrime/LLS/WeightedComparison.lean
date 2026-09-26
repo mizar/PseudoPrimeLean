@@ -168,6 +168,6 @@ theorem re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le_S2
           (1 / 2) * Real.log ((q : ℝ) / Real.pi) * Real.log ((Real.log q) ^ 2) +
           eS := by
   have h := re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le h21 h24 hq1 hq2 hcore
-  simpa using h
+  simpa only [Real.log_pow, Nat.cast_ofNat, tsub_le_iff_right, one_div, sub_zero] using h
 
 end PseudoPrime.LLS

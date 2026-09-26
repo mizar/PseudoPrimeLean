@@ -200,9 +200,15 @@ private theorem baseTwoClassifyBelow3000 :
   intro k
   let b := k.val / 128
   let i := k.val % 128
-  have hb : b < 12 := by dsimp [b]; omega
-  have hi : i < 128 := by dsimp [i]; omega
-  have hk : k.val = 128 * b + i := by dsimp [b, i]; omega
+  have hb : b < 12 := by
+    dsimp only [b]
+    omega
+  have hi : i < 128 := by
+    dsimp only [i]
+    omega
+  have hk : k.val = 128 * b + i := by
+    dsimp only [b, i]
+    omega
   have hblock :
       let n := 2 * (128 * b + i) + 1
       n = 1 ∨ baseTwoRejectCheck n = true ∨ Nat.Prime n ∨ n = 2047 := by
@@ -218,7 +224,9 @@ private theorem baseTwoClassifyBelow3000 :
     · exact baseTwoClassifyBelow3000_block_8 ⟨i, hi⟩
     · exact baseTwoClassifyBelow3000_block_9 ⟨i, hi⟩
     · exact baseTwoClassifyBelow3000_block_10 ⟨i, hi⟩
-    · have hiLast : i < 92 := by dsimp [b, i] at *; omega
+    · have hiLast : i < 92 := by
+        dsimp only [b, i] at *
+        omega
       exact baseTwoClassifyBelow3000_block_11 ⟨i, hiLast⟩
   simpa only [hk] using hblock
 -- END GENERATED baseTwoClassifyBelow3000
@@ -243,6 +251,8 @@ theorem base_two_or_three_rejects_of_lt_3000 {n : ℕ}
   · omega
   · exact Or.inl (baseTwoRejectCheck_sound (by omega) hreject)
   · exact False.elim (hnNotPrime hprime)
-  · exact Or.inr (by rw [hexception]; exact baseThreeRejects_2047)
+  · exact Or.inr (by
+      rw [hexception]
+      exact baseThreeRejects_2047)
 
 end PseudoPrime.PrimeTest

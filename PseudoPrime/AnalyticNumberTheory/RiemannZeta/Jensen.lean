@@ -64,13 +64,18 @@ theorem norm_riemannZeta_sub_one_le {s : ℂ} (hs : 3 ≤ s.re) : ‖riemannZeta
       (∑' n : ℕ, (1 : ℂ) / (((n + 1 : ℕ) : ℂ) + 1) ^ s) =
         ∑' n : ℕ, (1 : ℂ) / ((n : ℂ) + 2) ^ s := by
       apply tsum_congr
-      intro n; push_cast; ring_nf
-    rw [hcongr]; ring
+      intro n
+      push_cast
+      ring_nf
+    rw [hcongr]
+    ring
   have hsummR : Summable (fun n : ℕ => ‖(1 : ℂ) / ((n : ℂ) + 2) ^ s‖) := by
     have h := (summable_nat_add_iff 1).mpr hsumm1
     have h2 : Summable (fun n : ℕ => (1 : ℂ) / ((n : ℂ) + 2) ^ s) := by
       apply h.congr
-      intro n; push_cast; ring_nf
+      intro n
+      push_cast
+      ring_nf
     exact h2.norm
   have hsummHalf : Summable (fun n : ℕ => (1 : ℝ) / 2 * (1 / ((n + 1) * (n + 2)))) :=
     hasSum_inv_succ_mul_succ_succ.summable.mul_left (1 / 2)
@@ -81,7 +86,8 @@ theorem norm_riemannZeta_sub_one_le {s : ℂ} (hs : 3 ≤ s.re) : ‖riemannZeta
     intro n
     rw [norm_div, norm_one]
     have hcast : ((n : ℂ) + 2) = (((n : ℝ) + 2 : ℝ) : ℂ) := by
-      push_cast; ring
+      push_cast
+      ring
     have hn2 : (0 : ℝ) < (n : ℝ) + 2 := by positivity
     rw [hcast, Complex.norm_cpow_eq_rpow_re_of_pos hn2]
     have hpow : ((n : ℝ) + 2) ^ (3 : ℝ) ≤ ((n : ℝ) + 2) ^ s.re :=
@@ -169,7 +175,8 @@ theorem jensenBall_subset {T : ℝ} (hT : 4 ≤ T) :
     have hge : |T| ≤ ‖jensenCenter T - 1‖ := norm_jensenCenter_sub_one_ge T
     have hle : ‖jensenCenter T - 1‖ ≤ 39 / 10 := by
       rw [show jensenCenter T - 1 = -(w - jensenCenter T) from by
-          rw [hw1]; ring,
+          rw [hw1]
+          ring,
         norm_neg]
       exact hw
     have : T ≤ 39 / 10 := (le_abs_self T).trans (hge.trans hle)
@@ -182,7 +189,8 @@ theorem jensen_analyticOnNhd {T : ℝ} (hT : 4 ≤ T) :
 theorem jensen_center_ne_zero (T : ℝ) : riemannZeta (jensenCenter T) ≠ 0 :=
   riemannZeta_ne_zero_of_one_lt_re
     (by
-      rw [jensenCenter_re]; norm_num only)
+      rw [jensenCenter_re]
+      norm_num only)
 
 theorem jensen_center_norm_ge (T : ℝ) : (1 : ℝ) / 2 ≤ ‖riemannZeta (jensenCenter T)‖ :=
   norm_riemannZeta_ge (by rw [jensenCenter_re])
@@ -203,7 +211,8 @@ theorem jensen_f_bound {T : ℝ} (hT : 4 ≤ T) :
   have hzmem : z ∈ ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) :=
     jensenBall_subset hT
       (by
-        simp only [Metric.mem_closedBall, dist_eq_norm]; rw [hz])
+        simp only [Metric.mem_closedBall, dist_eq_norm]
+        rw [hz])
   have hb := norm_riemannZeta_le_of_reGt_neg_one_diff_one hzmem
   have hTabs : |T| = T := abs_of_nonneg (by linarith only [hT])
   have hnz : ‖z‖ ≤ T + 69 / 10 := by
@@ -267,7 +276,8 @@ theorem jensen_f_bound_ball {T : ℝ} (hT : 4 ≤ T) :
   have hzmem : z ∈ ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) :=
     jensenBall_subset hT
       (by
-        simp only [Metric.mem_closedBall, dist_eq_norm]; exact hz)
+        simp only [Metric.mem_closedBall, dist_eq_norm]
+        exact hz)
   have hb := norm_riemannZeta_le_of_reGt_neg_one_diff_one hzmem
   have hTabs : |T| = T := abs_of_nonneg (by linarith)
   have hnz : ‖z‖ ≤ T + 69 / 10 := by

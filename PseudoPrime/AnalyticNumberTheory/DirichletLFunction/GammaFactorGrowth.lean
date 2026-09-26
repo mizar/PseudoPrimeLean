@@ -46,7 +46,8 @@ theorem norm_digamma_le_shift_two_add_four {z : ℂ} (hz : (1 : ℝ) / 2 ≤ |z.
   have hz2eq : z + 1 + 1 = z + 2 := by ring
   rw [hz2eq] at hrec2
   have hz_eq : Complex.digamma z = Complex.digamma (z + 2) - z⁻¹ - (z + 1)⁻¹ := by
-    rw [hrec2, hrec1]; ring
+    rw [hrec2, hrec1]
+    ring
   have hznorm : (1 : ℝ) / 2 ≤ ‖z‖ := hz.trans (Complex.abs_im_le_norm z)
   have hz1norm : (1 : ℝ) / 2 ≤ ‖z + 1‖ := by
     have h1 : |(z + 1).im| ≤ ‖z + 1‖ := Complex.abs_im_le_norm (z + 1)
@@ -133,7 +134,8 @@ theorem exists_norm_digamma_central_strip_le :
     apply Real.log_le_log (by positivity)
     linarith [max_le hΓ12 hΓ32]
   have hcast : (1 + r : ℝ) + (t' : ℂ) * Complex.I = 1 + (r : ℂ) + (t' : ℂ) * Complex.I := by
-    push_cast; ring
+    push_cast
+    ring
   have hneg_log_le := hC₁ r t' hr0
   rw [← hcast] at hneg_log_le
   have hdigamma_shift_le' :
@@ -148,7 +150,8 @@ theorem exists_norm_digamma_central_strip_le :
     exact hshift.trans h1
   have hdigamma_shift_le :
     ‖Complex.digamma (z + 2)‖ ≤ 8 * Real.log (MΓ + 1) + 8 * C₁ + 20 * Real.pi * |t'| := by
-    rw [← hzr]; exact hdigamma_shift_le'
+    rw [← hzr]
+    exact hdigamma_shift_le'
   have hshift4 : ‖Complex.digamma z‖ ≤ ‖Complex.digamma (z + 2)‖ + 4 :=
     norm_digamma_le_shift_two_add_four hzim
   have hlogMΓ1_nonneg : 0 ≤ Real.log (MΓ + 1) := Real.log_nonneg (by linarith)
@@ -190,17 +193,23 @@ theorem exists_norm_logDeriv_gammaFactor_horizontal_le :
   set C : ℝ := |Real.log Real.pi| / 2 + C₀ / 2 with hC_def
   have hCnonneg : 0 ≤ C := by
     have h1 : (0 : ℝ) ≤ |Real.log Real.pi| := abs_nonneg _
-    rw [hC_def]; linarith
+    rw [hC_def]
+    linarith
   refine ⟨C, hCnonneg, fun χ σ T hσ hT => ?_⟩
   set s : ℂ := (σ : ℂ) + (T : ℂ) * Complex.I with hs_def
   have hsim : s.im = T := by
     simp only [hs_def, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
       Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
   have hsim_ne : s.im ≠ 0 := by
-    rw [hsim]; intro h; rw [h] at hT; norm_num only at hT
+    rw [hsim]
+    intro h
+    rw [h] at hT
+    norm_num only at hT
   have hlogpi_norm : ‖(-(Complex.log (Real.pi : ℂ)) / 2 : ℂ)‖ = |Real.log Real.pi| / 2 := by
     have h1 : (-(Complex.log (Real.pi : ℂ)) / 2 : ℂ) = ((-(Real.log Real.pi) / 2 : ℝ) : ℂ) := by
-      rw [← Complex.ofReal_log Real.pi_pos.le]; push_cast; ring
+      rw [← Complex.ofReal_log Real.pi_pos.le]
+      push_cast
+      ring
     rw [h1, Complex.norm_real, Real.norm_eq_abs, abs_div]
     rw [abs_neg]
     norm_num only
@@ -223,17 +232,21 @@ theorem exists_norm_logDeriv_gammaFactor_horizontal_le :
     have hzim_abs : (1 : ℝ) / 2 ≤ |z.im| := by
       rw [hzim, hb, abs_div]
       have h2 : |(2 : ℝ)| = 2 := by norm_num only
-      rw [h2]; linarith [hT]
+      rw [h2]
+      linarith [hT]
     have hdb :=
       hC₀ z
         (by
-          rw [hzre]; exact ha1)
+          rw [hzre]
+          exact ha1)
         (by
-          rw [hzre]; exact ha2)
+          rw [hzre]
+          exact ha2)
         hzim_abs
     rw [hzim, hb] at hdb
     have habs2 : |T / 2| = |T| / 2 := by
-      rw [abs_div]; norm_num only
+      rw [abs_div]
+      norm_num only
     rw [habs2] at hdb
     calc
       ‖(-(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma z / 2 : ℂ)‖ ≤
@@ -249,11 +262,15 @@ theorem exists_norm_logDeriv_gammaFactor_horizontal_le :
           mul_nonneg hC₀nonneg (abs_nonneg T)]
   rcases χ.even_or_odd with heven | hodd
   · have hform : s / 2 = ((σ / 2 : ℝ) : ℂ) + ((T / 2 : ℝ) : ℂ) * Complex.I := by
-      rw [hs_def]; push_cast; ring
+      rw [hs_def]
+      push_cast
+      ring
     rw [logDeriv_gammaFactor_eq_of_even heven hsim_ne, hform]
     exact hmain (σ / 2) (T / 2) (by linarith [abs_le.mp hσ]) (by linarith [abs_le.mp hσ]) rfl
   · have hform : (s + 1) / 2 = (((σ + 1) / 2 : ℝ) : ℂ) + ((T / 2 : ℝ) : ℂ) * Complex.I := by
-      rw [hs_def]; push_cast; ring
+      rw [hs_def]
+      push_cast
+      ring
     rw [logDeriv_gammaFactor_eq_of_odd hodd hsim_ne, hform]
     exact hmain ((σ + 1) / 2) (T / 2) (by linarith [abs_le.mp hσ]) (by linarith [abs_le.mp hσ]) rfl
 
@@ -275,7 +292,8 @@ theorem norm_digamma_le_shift_one_add_two {z : ℂ} (hz : (1 : ℝ) / 2 ≤ |z.i
   have hrec : Complex.digamma (z + 1) = Complex.digamma z + z⁻¹ :=
     Complex.digamma_apply_add_one z hzm
   have hz_eq : Complex.digamma z = Complex.digamma (z + 1) - z⁻¹ := by
-    rw [hrec]; ring
+    rw [hrec]
+    ring
   have hznorm : (1 : ℝ) / 2 ≤ ‖z‖ := hz.trans (Complex.abs_im_le_norm z)
   have hzinv_le : ‖z⁻¹‖ ≤ 2 := by
     rw [norm_inv]
@@ -308,15 +326,19 @@ theorem norm_digamma_le_shift_nat_add {z : ℂ} (hz : (1 : ℝ) / 2 ≤ |z.im|) 
     have hzm_im : (z + (m : ℂ)).im = z.im := by
       simp only [Complex.add_im, Complex.natCast_im, add_zero]
     have hzm_bound : (1 : ℝ) / 2 ≤ |(z + (m : ℂ)).im| := by
-      rw [hzm_im]; exact hz
+      rw [hzm_im]
+      exact hz
     have hstep := norm_digamma_le_shift_one_add_two hzm_bound
     have heq : z + ((m : ℕ) + 1 : ℕ) = (z + (m : ℂ)) + 1 := by
-      push_cast; ring
+      push_cast
+      ring
     calc
       ‖Complex.digamma z‖ ≤ ‖Complex.digamma (z + (m : ℂ))‖ + 2 * m := ih
       _ ≤ (‖Complex.digamma ((z + (m : ℂ)) + 1)‖ + 2) + 2 * m := by linarith [hstep]
       _ = ‖Complex.digamma (z + ((m : ℕ) + 1 : ℕ))‖ + 2 * ((m : ℕ) + 1 : ℕ) := by
-        rw [← heq]; push_cast; ring
+        rw [← heq]
+        push_cast
+        ring
 
 /--
 Input/assumptions: `a b : ℝ` with `a ≤ b`, `m : ℕ` with `1 ≤ a + m`.
@@ -357,9 +379,11 @@ theorem exists_norm_digamma_strip_le (a b : ℝ) (hab : a ≤ b) (m : ℕ) (hm :
   have ht'pos : (0 : ℝ) < |t'| := by linarith
   set r := z.re + m - 1 with hr_def
   have hr0 : (0 : ℝ) ≤ r := by
-    rw [hr_def]; linarith
+    rw [hr_def]
+    linarith
   have hrmax : r ≤ b - 1 + m := by
-    rw [hr_def]; linarith
+    rw [hr_def]
+    linarith
   have hzr : (1 + r : ℝ) + (t' : ℂ) * Complex.I = z + m := by
     apply Complex.ext
     · simp only [hr_def, add_sub_cancel, Complex.ofReal_add, Complex.ofReal_natCast, Complex.add_re,
@@ -380,7 +404,8 @@ theorem exists_norm_digamma_strip_le (a b : ℝ) (hab : a ≤ b) (m : ℕ) (hm :
     apply Real.log_le_log (by positivity)
     linarith [max_le hΓ12 hΓ32]
   have hcast : (1 + r : ℝ) + (t' : ℂ) * Complex.I = 1 + (r : ℂ) + (t' : ℂ) * Complex.I := by
-    push_cast; ring
+    push_cast
+    ring
   have hneg_log_le := hC₁ r t' hr0
   rw [← hcast] at hneg_log_le
   have hdigamma_shift_le' :
@@ -395,7 +420,8 @@ theorem exists_norm_digamma_strip_le (a b : ℝ) (hab : a ≤ b) (m : ℕ) (hm :
     exact hshift.trans h1
   have hdigamma_shift_le :
     ‖Complex.digamma (z + m)‖ ≤ 8 * Real.log (MΓ + 1) + 8 * C₁ + 20 * Real.pi * |t'| := by
-    rw [← hzr]; exact hdigamma_shift_le'
+    rw [← hzr]
+    exact hdigamma_shift_le'
   have hshiftm : ‖Complex.digamma z‖ ≤ ‖Complex.digamma (z + m)‖ + 2 * m :=
     norm_digamma_le_shift_nat_add hzim m
   have hlogMΓ1_nonneg : 0 ≤ Real.log (MΓ + 1) := Real.log_nonneg (by linarith)
@@ -440,21 +466,28 @@ theorem exists_norm_logDeriv_gammaFactor_fixed_strip_le (A : ℕ) :
   obtain ⟨C₀, hC₀nonneg, hC₀⟩ :=
     exists_norm_digamma_strip_le (-(A : ℝ) - 1) ((A : ℝ) + 2) (by linarith) (A + 2)
       (by
-        push_cast; linarith)
+        push_cast
+        linarith)
   set C : ℝ := |Real.log Real.pi| / 2 + C₀ / 2 with hC_def
   have hCnonneg : 0 ≤ C := by
     have h1 : (0 : ℝ) ≤ |Real.log Real.pi| := abs_nonneg _
-    rw [hC_def]; linarith
+    rw [hC_def]
+    linarith
   refine ⟨C, hCnonneg, fun χ σ T hσ1 hσ2 hT => ?_⟩
   set s : ℂ := (σ : ℂ) + (T : ℂ) * Complex.I with hs_def
   have hsim : s.im = T := by
     simp only [hs_def, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
       Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
   have hsim_ne : s.im ≠ 0 := by
-    rw [hsim]; intro h; rw [h] at hT; norm_num only at hT
+    rw [hsim]
+    intro h
+    rw [h] at hT
+    norm_num only at hT
   have hlogpi_norm : ‖(-(Complex.log (Real.pi : ℂ)) / 2 : ℂ)‖ = |Real.log Real.pi| / 2 := by
     have h1 : (-(Complex.log (Real.pi : ℂ)) / 2 : ℂ) = ((-(Real.log Real.pi) / 2 : ℝ) : ℂ) := by
-      rw [← Complex.ofReal_log Real.pi_pos.le]; push_cast; ring
+      rw [← Complex.ofReal_log Real.pi_pos.le]
+      push_cast
+      ring
     rw [h1, Complex.norm_real, Real.norm_eq_abs, abs_div]
     rw [abs_neg]
     norm_num only
@@ -477,17 +510,21 @@ theorem exists_norm_logDeriv_gammaFactor_fixed_strip_le (A : ℕ) :
     have hzim_abs : (1 : ℝ) / 2 ≤ |z.im| := by
       rw [hzim, hb, abs_div]
       have h2 : |(2 : ℝ)| = 2 := by norm_num only
-      rw [h2]; linarith [hT]
+      rw [h2]
+      linarith [hT]
     have hdb :=
       hC₀ z
         (by
-          rw [hzre]; exact ha1)
+          rw [hzre]
+          exact ha1)
         (by
-          rw [hzre]; exact ha2)
+          rw [hzre]
+          exact ha2)
         hzim_abs
     rw [hzim, hb] at hdb
     have habs2 : |T / 2| = |T| / 2 := by
-      rw [abs_div]; norm_num only
+      rw [abs_div]
+      norm_num only
     rw [habs2] at hdb
     calc
       ‖(-(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma z / 2 : ℂ)‖ ≤
@@ -503,11 +540,15 @@ theorem exists_norm_logDeriv_gammaFactor_fixed_strip_le (A : ℕ) :
           mul_nonneg hC₀nonneg (abs_nonneg T)]
   rcases χ.even_or_odd with heven | hodd
   · have hform : s / 2 = ((σ / 2 : ℝ) : ℂ) + ((T / 2 : ℝ) : ℂ) * Complex.I := by
-      rw [hs_def]; push_cast; ring
+      rw [hs_def]
+      push_cast
+      ring
     rw [logDeriv_gammaFactor_eq_of_even heven hsim_ne, hform]
     exact hmain (σ / 2) (T / 2) (by linarith) (by linarith) rfl
   · have hform : (s + 1) / 2 = (((σ + 1) / 2 : ℝ) : ℂ) + ((T / 2 : ℝ) : ℂ) * Complex.I := by
-      rw [hs_def]; push_cast; ring
+      rw [hs_def]
+      push_cast
+      ring
     rw [logDeriv_gammaFactor_eq_of_odd hodd hsim_ne, hform]
     exact hmain ((σ + 1) / 2) (T / 2) (by linarith) (by linarith) rfl
 

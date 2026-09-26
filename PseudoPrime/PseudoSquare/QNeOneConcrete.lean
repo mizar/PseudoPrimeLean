@@ -301,7 +301,7 @@ theorem qNeOneAnalyticFalse_of_bridge_of_explicit_cutoff {n : ℕ} {hn : Odd n} 
     have hlog10 : (207 / 100 : ℝ) < Real.log 10 := by linarith
     rw [Nat.cast_pow, Real.log_pow]
     norm_num only
-    nlinarith
+    nlinarith only [hlog10]
   exact qNeOneAnalyticFalse_of_bridge_of_cutoff bridge hGRH hNpos (by linarith) hNd hno
 
 end PseudoPrime.PseudoSquare

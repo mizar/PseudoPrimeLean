@@ -19,6 +19,6 @@ theorem tendsto_neg_atTop_atBot' : Filter.Tendsto (fun T : ℝ ↦ -T) Filter.at
   rw [Filter.tendsto_atBot]
   intro b
   filter_upwards [Filter.eventually_ge_atTop (-b)] with T hT
-  linarith
+  simpa only [neg_neg] using neg_le_neg_iff.mpr hT
 
 end PseudoPrime.Analysis

@@ -40,7 +40,8 @@ theorem analyticAt_evenZeroLocalFactor_denom :
       (2 * (Real.pi : ℂ) * Complex.Gammaℝ ((0 : ℂ) + 2)) ≠ 0 := by
   have hΓ2ne : Complex.Gammaℝ (2 : ℂ) ≠ 0 := Gammaℝ_two_ne_zero
   have hΓanalytic : AnalyticAt ℂ Complex.Gammaℝ ((0 : ℂ) + 2) := by
-    rw [zero_add]; exact analyticAt_Gammaℝ_of_ne_zero hΓ2ne
+    rw [zero_add]
+    exact analyticAt_Gammaℝ_of_ne_zero hΓ2ne
   have hshift : AnalyticAt ℂ (fun s : ℂ => s + 2) 0 := by fun_prop
   have hcomp : AnalyticAt ℂ (fun s : ℂ => Complex.Gammaℝ (s + 2)) 0 :=
     AnalyticAt.comp (g := Complex.Gammaℝ) (f := fun s : ℂ => s + 2) hΓanalytic hshift
@@ -90,7 +91,8 @@ theorem eventuallyEq_dirichletLFunction_evenZeroLocalFactor {N : ℕ} [NeZero N]
   have hΓ2ne : Complex.Gammaℝ (2 : ℂ) ≠ 0 := Gammaℝ_two_ne_zero
   have hcont : ContinuousAt (fun s : ℂ => Complex.Gammaℝ (s + 2)) 0 := by
     have hΓanalytic : AnalyticAt ℂ Complex.Gammaℝ ((0 : ℂ) + 2) := by
-      rw [zero_add]; exact analyticAt_Gammaℝ_of_ne_zero hΓ2ne
+      rw [zero_add]
+      exact analyticAt_Gammaℝ_of_ne_zero hΓ2ne
     have hshift : AnalyticAt ℂ (fun s : ℂ => s + 2) 0 := by fun_prop
     exact
       (AnalyticAt.comp (g := Complex.Gammaℝ) (f := fun s : ℂ => s + 2) hΓanalytic
@@ -110,9 +112,11 @@ theorem eventuallyEq_dirichletLFunction_evenZeroLocalFactor {N : ℕ} [NeZero N]
     have hΓsne' : Complex.Gammaℝ s ≠ 0 := by
       intro h
       apply hΓsne
-      rw [hGE, h]; ring
+      rw [hGE, h]
+      ring
     have hdenomEq : 2 * (Real.pi : ℂ) * Complex.Gammaℝ (s + 2) = Complex.Gammaℝ s * s := by
-      rw [hGE]; field_simp
+      rw [hGE]
+      field_simp
     rw [hdenomEq]
     have hπne : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
     field_simp
@@ -177,7 +181,8 @@ theorem logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N] {χ : Di
     exact
       DifferentiableAt.comp 0
         (by
-          rw [zero_add]; exact hΓdiff)
+          rw [zero_add]
+          exact hΓdiff)
         hshiftDeriv.differentiableAt
   have hFanalytic : AnalyticAt ℂ (DirichletCharacter.completedLFunction χ) 0 :=
     (DirichletCharacter.differentiable_completedLFunction hne).analyticAt 0
@@ -188,7 +193,8 @@ theorem logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N] {χ : Di
   have hπne : (2 : ℂ) * (Real.pi : ℂ) ≠ 0 :=
     mul_ne_zero two_ne_zero (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero)
   have hD0ne : 2 * (Real.pi : ℂ) * Complex.Gammaℝ ((0 : ℂ) + 2) ≠ 0 := by
-    rw [zero_add]; exact mul_ne_zero hπne hΓ2ne
+    rw [zero_add]
+    exact mul_ne_zero hπne hΓ2ne
   have hdiv := logDeriv_div (0 : ℂ) hF0ne hD0ne hFanalytic.differentiableAt hDdiff
   have hGeq :
     dirichletEvenZeroLocalFactor χ = fun s =>
@@ -213,7 +219,8 @@ theorem logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N] {χ : Di
   have hcomp :=
     logDeriv_comp (f := Complex.Gammaℝ) (g := fun s : ℂ => s + 2) (x := (0 : ℂ))
       (by
-        rw [zero_add]; exact hΓdiff)
+        rw [zero_add]
+        exact hΓdiff)
       hshiftDeriv.differentiableAt
   have heqfun : (fun s : ℂ => Complex.Gammaℝ (s + 2)) = Complex.Gammaℝ ∘ fun s : ℂ => s + 2 := rfl
   rw [heqfun, hcomp, hshiftDeriv.deriv, mul_one, zero_add]
@@ -250,7 +257,8 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
     rw [Metric.mem_ball, dist_zero_right] at hs
     have hre_bound : |s.re| ≤ ‖s‖ := Complex.abs_re_le_norm s
     have hre_gt : (-1 : ℝ) < s.re := by
-      have := abs_lt.mp (hre_bound.trans_lt hs); linarith [this.1]
+      have := abs_lt.mp (hre_bound.trans_lt hs)
+      linarith [this.1]
     have him := congrArg Complex.re hm
     simp only [Complex.add_re, Complex.div_ofNat_re, Complex.neg_re, Complex.natCast_re] at him
     have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
@@ -327,16 +335,18 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
       have him := congrArg Complex.re hm
       have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
       simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, div_self, Complex.one_re,
-        Complex.neg_re, Complex.natCast_re] at him;
+        Complex.neg_re, Complex.natCast_re] at him
       linarith
     have hΓanalytic2 : AnalyticAt ℂ Complex.Gammaℝ (2 : ℂ) := analyticAt_Gammaℝ_of_ne_zero hΓ2ne
     have hshiftAnalytic : AnalyticAt ℂ (fun t : ℂ => t + 2) 0 := by fun_prop
     have hcompAnalytic : AnalyticAt ℂ (fun t : ℂ => Complex.Gammaℝ (t + 2)) 0 := by
       have : AnalyticAt ℂ Complex.Gammaℝ ((0 : ℂ) + 2) := by
-        rw [zero_add]; exact hΓanalytic2
+        rw [zero_add]
+        exact hΓanalytic2
       exact AnalyticAt.comp (g := Complex.Gammaℝ) (f := fun t : ℂ => t + 2) this hshiftAnalytic
     have hDshiftne : Complex.Gammaℝ ((0 : ℂ) + 2) ≠ 0 := by
-      rw [zero_add]; exact hΓ2ne
+      rw [zero_add]
+      exact hΓ2ne
     have hlogGamma : AnalyticAt ℂ (logDeriv (fun t : ℂ => Complex.Gammaℝ (t + 2))) 0 := by
       rw [logDeriv]
       exact hcompAnalytic.deriv.div hcompAnalytic hDshiftne
@@ -354,7 +364,8 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
       fun s =>
       logDeriv (DirichletCharacter.completedLFunction χ) s -
         logDeriv (fun t : ℂ => 2 * (Real.pi : ℂ) * Complex.Gammaℝ (t + 2)) s := by
-    funext s; rfl
+    funext s
+    rfl
   rw [hfunSub] at hraw2
   rw [hraw2, hDlogDeriv_ev.deriv_eq]
   have hshiftDeriv2 : HasDerivAt (fun t : ℂ => t + 2) 1 0 := by
@@ -362,7 +373,8 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
   have hpoint2 : ((0 : ℂ) + 2) / 2 = (1 : ℂ) := by norm_num only
   have h2 :
     HasDerivAt Complex.digamma (deriv Complex.digamma (((0 : ℂ) + 2) / 2)) (((0 : ℂ) + 2) / 2) := by
-    rw [hpoint2]; exact Gamma.differentiableAt_digamma_one.hasDerivAt
+    rw [hpoint2]
+    exact Gamma.differentiableAt_digamma_one.hasDerivAt
   have hhalf_deriv : HasDerivAt (fun t : ℂ => t / 2) (1 / 2 : ℂ) ((0 : ℂ) + 2) := by
     simpa only [one_div, zero_add, id_eq] using (hasDerivAt_id ((0 : ℂ) + 2)).div_const (2 : ℂ)
   have h3 :=
@@ -404,7 +416,8 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
     (fun _ : ℂ => -(Complex.log (Real.pi : ℂ)) / 2) +
         (fun t : ℂ => Complex.digamma ((t + 2) / 2) / 2) =
       fun s : ℂ => -(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma ((s + 2) / 2) / 2 := by
-    funext s; rfl
+    funext s
+    rfl
   rw [hfunFinal] at hfinal
   rw [hfinal.deriv]
   ring

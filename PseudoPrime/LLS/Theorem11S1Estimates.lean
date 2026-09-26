@@ -103,7 +103,7 @@ theorem llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_generic {q : ℕ}
   have hlogd : Real.log ((χ.conductor : ℝ) / Real.pi) = Real.log χ.conductor - Real.log Real.pi :=
     Real.log_div hd_ne Real.pi_ne_zero
   unfold LLSPart1PrimitiveReciprocalExplicitFormulaRawAt
-  dsimp
+  dsimp only
   rw [hlogd]
   have hstep :=
     add_le_add_left hraw
@@ -468,7 +468,7 @@ theorem llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit {q : ℕ} [N
   rw [← hbase] at hlower'
   unfold LLSPart1PrimitiveZeroMassRawUpperWithQuotientAt
     llsPart1PrimitiveReciprocalQuotientCorrection
-  dsimp
+  dsimp only
   apply le_of_mul_le_mul_right ?_ ha2
   have hprod_inv :
     (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 * (1 - 1 / llsTheorem11S1RadiusRoot q)⁻¹ ^ 2 = 1 := by
@@ -494,7 +494,8 @@ theorem llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit {q : ℕ} [N
               AnalyticNumberTheory.Arithmetic.primeFactorLogSum (q / χ.conductor) :=
         by ring
       _ = _ := by
-        rw [hprod_inv]; ring
+        rw [hprod_inv]
+        ring
   have hfactor : 0 ≤ (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 := sq_nonneg _
   have hfactor_le : (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 ≤ 1 := by
     have hale : 1 - 1 / llsTheorem11S1RadiusRoot q ≤ 1 := by
@@ -640,7 +641,8 @@ theorem llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit {q : ℕ} [N
       by ring
     _ ≤ _ := hbound
     _ = _ := by
-      rw [← hmul]; ring
+      rw [← hmul]
+      ring
 
 /-!
 Conductor-specialized wrapper for the generic quotient raw bridge.  It removes the conductor-log

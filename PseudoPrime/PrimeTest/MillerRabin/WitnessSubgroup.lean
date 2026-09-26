@@ -19,7 +19,7 @@ its image; a prime-square divisor makes it proper, providing one branch of the c
 -/
 def fermatSubgroup (n : ℕ) : Subgroup (ZMod n)ˣ where
   carrier := {u | u ^ (n - 1) = 1}
-  one_mem' := by simp
+  one_mem' := by simp only [Set.mem_ofPred_eq, one_pow]
   mul_mem' := by
     intro u v hu hv
     change (u * v) ^ (n - 1) = 1
@@ -170,7 +170,7 @@ def signSubgroup (n E : ℕ) : Subgroup (ZMod n)ˣ where
       rw [mul_pow, hu, hv, mul_one]
     · left
       rw [mul_pow, hu, hv]
-      norm_num
+      simp only [neg_mul_neg, one_mul]
   inv_mem' := by
     intro u hu
     rcases hu with hu | hu
@@ -178,7 +178,7 @@ def signSubgroup (n E : ℕ) : Subgroup (ZMod n)ˣ where
       rw [inv_pow, hu, inv_one]
     · right
       rw [inv_pow, hu]
-      simp
+      simp only [inv_neg, inv_one]
 
 /-- Halving an element's even order produces an element of order two. -/
 private theorem order_two_of_prime_field_unit {q t : ℕ} (b : (ZMod q)ˣ)
@@ -222,7 +222,7 @@ private theorem exists_prime_field_unit_order_two_power {q t c : ℕ}
     rw [Nat.mul_comm]
   let b : (ZMod q)ˣ := g ^ c
   have hbOrd : orderOf b = 2 ^ t := by
-    dsimp [b]
+    dsimp only [b]
     rw [orderOf_pow, hg, hqdecomp, Nat.gcd_eq_right hcdiv, Nat.mul_comm]
     exact Nat.mul_div_cancel_left (2 ^ t) hcpos
   exact ⟨b, hbOrd⟩
@@ -354,13 +354,13 @@ private theorem crt_residue_power_ne_sign {q r E : ℕ} (hq : 2 < q) (hr : 2 < r
     let e : ZMod (q * r) ≃+* ZMod q × ZMod r := ZMod.chineseRemainder hcop
     let z : ZMod (q * r) := e.symm ((b : ZMod q), 1)
     z ^ E ≠ 1 ∧ z ^ E ≠ -1 := by
-  dsimp
+  dsimp only [ne_eq]
   let e : ZMod (q * r) ≃+* ZMod q × ZMod r := ZMod.chineseRemainder hcop
   let z : ZMod (q * r) := e.symm ((b : ZMod q), 1)
   have hez : e z = ((b : ZMod q), (1 : ZMod r)) := e.apply_symm_apply _
   have hcrtPow : e (z ^ E) = (((b ^ E : (ZMod q)ˣ) : ZMod q), (1 : ZMod r)) := by
     rw [map_pow, hez]
-    simp
+    simp only [Prod.pow_mk, one_pow, Units.val_pow_eq_pow_val]
   constructor
   · intro hpow
     have hpair := (hcrtPow.symm.trans (congrArg e hpow)).trans (map_one e)
@@ -371,7 +371,8 @@ private theorem crt_residue_power_ne_sign {q r E : ℕ} (hq : 2 < q) (hr : 2 < r
   · intro hpow
     have hpair := (hcrtPow.symm.trans (congrArg e hpow)).trans
       (map_neg e (1 : ZMod (q * r)))
-    have hsecond : (1 : ZMod r) = -1 := by simpa using congrArg Prod.snd hpair
+    have hsecond : (1 : ZMod r) = -1 := by
+      simpa only [map_one, Prod.snd_neg, Prod.snd_one] using congrArg Prod.snd hpair
     exact (@ZMod.neg_one_ne_one r ⟨hr⟩).symm hsecond
 
 /-- The inverse CRT image of `(b, 1)` is represented by a unit. -/
@@ -387,7 +388,7 @@ private theorem crt_residue_isUnit {q r : ℕ} (hcop : Nat.Coprime q r) (b : (ZM
   have hzw : z * w = 1 := by
     apply e.injective
     rw [map_mul, hez, hew, map_one]
-    ext <;> simp
+    ext <;> simp only [Prod.mk_mul_mk, Units.mul_inv, mul_one, Prod.fst_one, Prod.snd_one]
   have hwz : w * z = 1 := by
     calc
       w * z = z * w := mul_comm _ _

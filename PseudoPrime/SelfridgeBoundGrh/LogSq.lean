@@ -149,7 +149,7 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_49_le
   have hlog : (15 : ℝ) ≤ Real.log (n : ℝ) ^ 2 := (fifteen_lt_log_sq_of_forty_nine_le hn49).le
   have hmaxlog :
     ((max 15 (NumberTheory.primeNeOneWitness n hw) : ℕ) : ℝ) ≤ Real.log (n : ℝ) ^ 2 := by
-    simpa using (max_le hlog hqR)
+    simpa only [Nat.cast_max, Nat.cast_ofNat] using (max_le hlog hqR)
   exact hmaxR.trans hmaxlog
 
 theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_49_le

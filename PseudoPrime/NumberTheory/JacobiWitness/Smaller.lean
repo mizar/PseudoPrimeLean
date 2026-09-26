@@ -177,15 +177,19 @@ theorem exists_smaller_neg_one_witness_of_mod_four_three {r : ℕ} (hr4 : r % 4 
   · let m := r - 8
     have hr11 : 11 ≤ r := by omega
     have hmpos : 0 < m := by
-      simp only [m]; omega
+      simp only [m]
+      omega
     have hmlt : m < r := by
-      simp only [m]; omega
+      simp only [m]
+      omega
     have hm8 : m % 8 = 3 := by
-      simp only [m]; omega
+      simp only [m]
+      omega
     have hmodd : Odd m := Nat.odd_iff.mpr (by omega)
     have hrem : (r : ℤ) % m = (8 : ℤ) % m := by
       have hrsub : r = m + 8 := by
-        simp only [m]; omega
+        simp only [m]
+        omega
       rw [hrsub, Nat.cast_add, Int.add_emod, Int.emod_self, zero_add, Int.emod_emod]
       norm_num only
     have hvalue : jacobiSym r m = -1 := by
@@ -196,15 +200,19 @@ theorem exists_smaller_neg_one_witness_of_mod_four_three {r : ℕ} (hr4 : r % 4 
     exact Internal.exists_smaller_odd_prime_of_jacobi_eq_neg_one hmpos hmlt hmodd hvalue
   · let m := r - 2
     have hmpos : 0 < m := by
-      simp only [m]; omega
+      simp only [m]
+      omega
     have hmlt : m < r := by
-      simp only [m]; omega
+      simp only [m]
+      omega
     have hm8 : m % 8 = 5 := by
-      simp only [m]; omega
+      simp only [m]
+      omega
     have hmodd : Odd m := Nat.odd_iff.mpr (by omega)
     have hrem : (r : ℤ) % m = (2 : ℤ) % m := by
       have hrsub : r = m + 2 := by
-        simp only [m]; omega
+        simp only [m]
+        omega
       rw [hrsub, Nat.cast_add, Int.add_emod, Int.emod_self, zero_add, Int.emod_emod]
       norm_num only
     have hvalue : jacobiSym r m = -1 := by

@@ -220,7 +220,8 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_goodHeightSeq {x : 
     ∀ T : ℝ,
       qMinusOneZetaLogDerivConst * Real.log (T + 2) ^ 2 * M / T ^ 2 * (tau - lam) =
         (qMinusOneZetaLogDerivConst * M * (tau - lam)) * (Real.log (T + 2) ^ 2 / T ^ 2) := by
-    intro T; ring
+    intro T
+    ring
   have hatend :
     Filter.Tendsto
       (fun j : ℕ =>
@@ -255,7 +256,8 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_goodHeightSe
     ∀ T : ℝ,
       qMinusOneZetaLogDerivConst * Real.log (T + 2) ^ 2 * M / T ^ 2 * (tau - lam) =
         (qMinusOneZetaLogDerivConst * M * (tau - lam)) * (Real.log (T + 2) ^ 2 / T ^ 2) := by
-    intro T; ring
+    intro T
+    ring
   have hatend :
     Filter.Tendsto
       (fun j : ℕ =>

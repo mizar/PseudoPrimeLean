@@ -22,6 +22,6 @@ theorem distinctPrimeFactorCount_characterModulus {n : ℕ} (hn : Odd n) :
   rw [distinctPrimeFactorCount_eq_cardDistinctFactors,
     distinctPrimeFactorCount_eq_cardDistinctFactors, NumberTheory.characterModulus,
     ArithmeticFunction.cardDistinctFactors_mul (NumberTheory.four_coprime_of_odd hn), hfour]
-  omega
+  exact Nat.add_comm 1 (ArithmeticFunction.cardDistinctFactors n)
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

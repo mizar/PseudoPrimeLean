@@ -69,7 +69,8 @@ theorem logDeriv_riemannXi_zero_eq :
     simpa only [one_div, mul_one] using h1.const_mul (1 / 2 : ℂ)
   have hU := hUfac1.mul hD
   have hζne : riemannZeta 0 ≠ 0 := by
-    rw [riemannZeta_zero]; norm_num only
+    rw [riemannZeta_zero]
+    norm_num only
   have hζderiv :=
     (analyticOn_riemannZeta 0
         (by norm_num only [Set.mem_compl_iff, Set.mem_singleton_iff])).differentiableAt.hasDerivAt
@@ -92,7 +93,8 @@ theorem logDeriv_riemannXi_zero_eq :
       fun z : ℂ =>
       ((1 / 2 : ℂ) * (z - 1) * (2 * (Real.pi : ℂ) ^ (-z / 2) * Complex.Gamma (z / 2 + 1))) *
         riemannZeta z := by
-    funext z; rfl
+    funext z
+    rfl
   rw [hUDeq] at hUD
   have hXideriv := hUD.congr_of_eventuallyEq heqf
   have hderivXi0 := hXideriv.deriv
@@ -113,22 +115,26 @@ theorem logDeriv_riemannXi_zero_eq :
   have hargpi : Complex.arg (Real.pi : ℂ) = 0 := harg_pos Real.pi Real.pi_pos.le
   have hargtwopi : Complex.arg (2 * (Real.pi : ℂ)) = 0 := by
     rw [show (2 : ℂ) * (Real.pi : ℂ) = ((2 * Real.pi : ℝ) : ℂ) from by
-        push_cast; ring]
+        push_cast
+        ring]
     exact harg_pos (2 * Real.pi) (by positivity)
   have hpi4 : Complex.log (4 * Real.pi) = Complex.log 2 * 2 + Complex.log (Real.pi : ℂ) := by
     have h1 : (4 : ℂ) * (Real.pi : ℂ) = 2 * (2 * (Real.pi : ℂ)) := by ring
     rw [h1,
       Complex.log_mul (by norm_num only) (mul_ne_zero (by norm_num only) hpiC)
         (by
-          rw [harg2, hargtwopi]; constructor <;> nlinarith [Real.pi_pos]),
+          rw [harg2, hargtwopi]
+          constructor <;> nlinarith [Real.pi_pos]),
       Complex.log_mul (by norm_num only) hpiC
         (by
-          rw [harg2, hargpi]; constructor <;> nlinarith [Real.pi_pos])]
+          rw [harg2, hargpi]
+          constructor <;> nlinarith [Real.pi_pos])]
     ring_nf
   rw [show Complex.log (2 * Real.pi) = Complex.log 2 + Complex.log (Real.pi : ℂ) from by
       rw [Complex.log_mul (by norm_num only) hpiC
           (by
-            rw [harg2, hargpi]; constructor <;> nlinarith [Real.pi_pos])]]
+            rw [harg2, hargpi]
+            constructor <;> nlinarith [Real.pi_pos])]]
   rw [hpi4]
   have hpi0 : (Real.pi : ℂ) ^ (0 : ℂ) = 1 := Complex.cpow_zero _
   simp only [hpi0, Pi.mul_apply, Complex.Gamma_one, neg_zero, zero_div, one_mul, mul_one, zero_sub,
@@ -146,12 +152,14 @@ theorem tsum_riemannXiZeroMultiplicity_invNormSq_eq_two_mul_riemannZeroMass_of_r
       2 * RiemannXi.riemannZeroMass := by
   have hH := riemannXi_centeredLogDeriv_one_eq_tsum_invNormSq_of_riemannHypothesis hRH
   have hcomb : logDeriv riemannXi 1 - logDeriv riemannXi 0 = -2 * logDeriv riemannXi 0 := by
-    rw [logDeriv_riemannXi_one_eq_neg_zero]; ring
+    rw [logDeriv_riemannXi_one_eq_neg_zero]
+    ring
   rw [hcomb, logDeriv_riemannXi_zero_eq] at hH
   have hpiC : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
   have hlog4pi : Complex.log (4 * (Real.pi : ℂ)) = ((Real.log (4 * Real.pi) : ℝ) : ℂ) := by
     rw [show (4 : ℂ) * (Real.pi : ℂ) = ((4 * Real.pi : ℝ) : ℂ) from by
-        push_cast; ring]
+        push_cast
+        ring]
     exact (Complex.ofReal_log (by positivity)).symm
   rw [hlog4pi] at hH
   have hHreal :
@@ -164,7 +172,9 @@ theorem tsum_riemannXiZeroMultiplicity_invNormSq_eq_two_mul_riemannZeroMass_of_r
             ℝ) :
           ℂ) =
         ((2 + Real.eulerMascheroniConstant - Real.log (4 * Real.pi) : ℝ) : ℂ) := by
-      rw [← hH]; push_cast; ring
+      rw [← hH]
+      push_cast
+      ring
     exact_mod_cast hcast
   have hnonneg :
     (0 : ℝ) ≤
@@ -199,7 +209,8 @@ theorem exists_hasDerivAt_riemannXiTruncatedGenusSum_zero_norm_le (hRH : Riemann
   have hfin : (Function.support Dv).Finite :=
     hanalyticClosed.meromorphicOn.divisor_ball_support_finite
   have h0ne : riemannXi (0 : ℂ) ≠ 0 := by
-    rw [riemannXi_zero]; norm_num only
+    rw [riemannXi_zero]
+    norm_num only
   have hkey : ∀ u ∈ hfin.toFinset, u ∈ Metric.ball (0 : ℂ) R ∧ u ≠ 0 := by
     intro u hu
     rw [Set.Finite.mem_toFinset] at hu
@@ -226,23 +237,28 @@ theorem exists_hasDerivAt_riemannXiTruncatedGenusSum_zero_norm_le (hRH : Riemann
     intro ρ hρ
     obtain ⟨_, hρne0⟩ := hkey ρ hρ
     have hne' : (0 : ℂ) - ρ ≠ 0 := by
-      rw [zero_sub, neg_ne_zero]; exact hρne0
+      rw [zero_sub, neg_ne_zero]
+      exact hρne0
     have hc : HasDerivAt (fun s : ℂ => s - ρ) 1 0 := (hasDerivAt_id (0 : ℂ)).sub_const ρ
     have hinvderiv := hc.inv hne'
     have hval : -(1 : ℂ) / ((0 : ℂ) - ρ) ^ 2 = -(1 / ρ ^ 2) := by
-      rw [zero_sub, neg_sq]; ring
+      rw [zero_sub, neg_sq]
+      ring
     rw [hval] at hinvderiv
     have h2 : HasDerivAt (fun s : ℂ => (1 : ℂ) / (s - ρ)) (-(1 / ρ ^ 2)) 0 := by
       have heq2 : (fun s : ℂ => (1 : ℂ) / (s - ρ)) = (fun s : ℂ => s - ρ)⁻¹ := by
-        funext s; rw [Pi.inv_apply, one_div]
-      rw [heq2]; exact hinvderiv
+        funext s
+        rw [Pi.inv_apply, one_div]
+      rw [heq2]
+      exact hinvderiv
     have h3 : HasDerivAt (fun _ : ℂ => (1 : ℂ) / ρ) 0 0 := hasDerivAt_const 0 (1 / ρ)
     have h4 : HasDerivAt (fun s : ℂ => (1 : ℂ) / (s - ρ) + 1 / ρ) (-(1 / ρ ^ 2)) 0 := by
       have hadd := h2.add h3
       have hfun :
         (fun s : ℂ => (1 : ℂ) / (s - ρ)) + (fun _ : ℂ => (1 : ℂ) / ρ) = fun s : ℂ =>
           (1 : ℂ) / (s - ρ) + 1 / ρ := by
-        funext s; rfl
+        funext s
+        rfl
       rw [hfun, add_zero] at hadd
       exact hadd
     exact h4.const_mul ((Dv ρ : ℤ) : ℂ)
@@ -276,7 +292,8 @@ theorem exists_hasDerivAt_riemannXiTruncatedGenusSum_zero_norm_le (hRH : Riemann
       norm_cast
     calc
       ‖D‖ ≤ ∑ ρ ∈ hfin.toFinset, ‖((Dv ρ : ℤ) : ℂ) * (-(1 / ρ ^ 2))‖ := by
-        rw [hD_def]; exact norm_sum_le _ _
+        rw [hD_def]
+        exact norm_sum_le _ _
       _ =
           ∑ ρ ∈ hfin.toFinset,
             if riemannXi ρ = 0 then (riemannXiZeroMultiplicity ρ : ℝ) / Complex.normSq ρ else 0 :=
@@ -351,7 +368,8 @@ theorem deriv_logDeriv_riemannXi_zero_eq :
   have heqf := riemannXi_eventuallyEq_mul_riemannZeta hs1 hsavoid
   have hloc_all := heqf.eventuallyEq_nhds
   have hζne : riemannZeta 0 ≠ 0 := by
-    rw [riemannZeta_zero]; norm_num only
+    rw [riemannZeta_zero]
+    norm_num only
   have hζeventually : ∀ᶠ z : ℂ in nhds (0 : ℂ), riemannZeta z ≠ 0 :=
     (analyticAt_riemannZeta_zero.continuousAt).eventually_ne hζne
   have hzone : ∀ᶠ z : ℂ in nhds (0 : ℂ), z ≠ 1 :=
@@ -362,7 +380,8 @@ theorem deriv_logDeriv_riemannXi_zero_eq :
     have hmem :=
       hcont.eventually_mem
         (show Metric.ball (1 : ℂ) (1 / 2) ∈ nhds ((fun z : ℂ => z / 2 + 1) (0 : ℂ)) from by
-          rw [hval]; exact Metric.ball_mem_nhds (1 : ℂ) (by norm_num only))
+          rw [hval]
+          exact Metric.ball_mem_nhds (1 : ℂ) (by norm_num only))
     filter_upwards [hmem] with z hz
     have hball :=
       Gamma.ball_avoids_nonpos_int (c := 1) (r := 1 / 2) (by norm_num only) (by norm_num only)
@@ -415,7 +434,8 @@ theorem deriv_logDeriv_riemannXi_zero_eq :
         fun w : ℂ =>
         (1 / 2 : ℂ) * (w - 1) * (2 * (Real.pi : ℂ) ^ (-w / 2) * Complex.Gamma (w / 2 + 1)) *
           riemannZeta w := by
-      funext w; rfl
+      funext w
+      rfl
     rw [hUDeq] at hUD
     have hxideriv :
       HasDerivAt RiemannXi.riemannXi
@@ -436,7 +456,8 @@ theorem deriv_logDeriv_riemannXi_zero_eq :
       refine mul_ne_zero (mul_ne_zero (by norm_num only) hz1') ?_
       exact mul_ne_zero (mul_ne_zero two_ne_zero hpowne) hΓne
     have hxival : RiemannXi.riemannXi z ≠ 0 := by
-      rw [hzval]; exact mul_ne_zero hFval hζval
+      rw [hzval]
+      exact mul_ne_zero hFval hζval
     unfold logDeriv
     change
       deriv RiemannXi.riemannXi z / RiemannXi.riemannXi z =
@@ -446,7 +467,8 @@ theorem deriv_logDeriv_riemannXi_zero_eq :
     field_simp [hxival, hz1', hζval, hpowne, hΓne]
     rw [hzval]
     have hGamma : Complex.Gamma (1 + z * (1 / 2 : ℂ)) ≠ 0 := by
-      convert hΓne using 1; ring_nf
+      convert hΓne using 1
+      ring_nf
     field_simp [hxival, hFval, hζval, hpowne, hGamma]
     ring_nf
   have hderiv_eq := hclosedform.deriv_eq
@@ -507,7 +529,8 @@ theorem deriv_logDeriv_riemannXi_zero_eq :
             logDeriv riemannZeta)
           0 =
         _
-    convert hval using 1; ring
+    convert hval using 1
+    ring
   rw [hgoal_eq]
   unfold RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero
   ring

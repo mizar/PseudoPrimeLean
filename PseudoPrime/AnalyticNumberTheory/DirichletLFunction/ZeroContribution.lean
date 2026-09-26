@@ -62,7 +62,9 @@ theorem dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero {N :
         simp only [CharP.cast_eq_zero, mul_zero, neg_zero]
       have hm1 : (1 : ℝ) ≤ (m : ℝ) := by exact_mod_cast Nat.one_le_iff_ne_zero.mpr hm0
       have hρre : ρ = ((-(2 * (m : ℝ)) : ℝ) : ℂ) := by
-        rw [hm]; push_cast; ring
+        rw [hm]
+        push_cast
+        ring
       rw [hρre, Complex.ofReal_im, Complex.ofReal_re]
       exact ⟨rfl, by linarith⟩
     · rw [hodd.gammaFactor_def, Complex.Gammaℝ_eq_zero_iff] at hΓ
@@ -70,7 +72,9 @@ theorem dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero {N :
       have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
       have hρre : ρ = ((-(2 * (m : ℝ)) - 1 : ℝ) : ℂ) := by
         have : ρ = -(2 * (m : ℂ)) - 1 := by linear_combination hm
-        rw [this]; push_cast; ring
+        rw [this]
+        push_cast
+        ring
       rw [hρre, Complex.ofReal_im, Complex.ofReal_re]
       exact ⟨rfl, by linarith⟩
   obtain ⟨him, hre⟩ := hreim
@@ -85,7 +89,8 @@ theorem dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero {N :
   have hxpow_pos : (0 : ℝ) < x ^ σ := Real.rpow_pos_of_pos hx _
   have hdenom : ρ ^ 2 = ((σ ^ 2 : ℝ) : ℂ) := by
     conv_lhs => rw [hρeq_real]
-    push_cast; ring
+    push_cast
+    ring
   have hdenom_pos : (0 : ℝ) < σ ^ 2 := by nlinarith [hre]
   set m : ℕ := dirichletLFunctionZeroMultiplicity χ ρ with hm_def
   have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
@@ -93,7 +98,8 @@ theorem dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero {N :
   rw [← hm_def, hxpow, hdenom,
     show -(m : ℂ) * ((x ^ σ : ℝ) : ℂ) / ((σ ^ 2 : ℝ) : ℂ) = ((-(m : ℝ) * x ^ σ / σ ^ 2 : ℝ) : ℂ)
       from by
-      push_cast; ring,
+      push_cast
+      ring,
     Complex.ofReal_re]
   apply div_nonpos_of_nonpos_of_nonneg
   · nlinarith [mul_nonneg hmnn hxpow_pos.le]
@@ -412,7 +418,8 @@ theorem dirichletLFunctionReciprocalZeroContribution_re_nonpos_of_gammaFactor_ze
   have hxpow_pos : (0 : ℝ) < x ^ (σ - 1) := Real.rpow_pos_of_pos hx _
   have hdenom : ρ * (ρ - 1) = ((σ * (σ - 1) : ℝ) : ℂ) := by
     conv_lhs => rw [hρeq_real]
-    push_cast; ring
+    push_cast
+    ring
   have hdenom_pos : (0 : ℝ) < σ * (σ - 1) := by nlinarith [hre]
   set m : ℕ := dirichletLFunctionZeroMultiplicity χ ρ with hm_def
   have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
@@ -422,7 +429,8 @@ theorem dirichletLFunctionReciprocalZeroContribution_re_nonpos_of_gammaFactor_ze
       -(m : ℂ) * ((x ^ (σ - 1) : ℝ) : ℂ) / ((σ * (σ - 1) : ℝ) : ℂ) =
         ((-(m : ℝ) * x ^ (σ - 1) / (σ * (σ - 1)) : ℝ) : ℂ)
       from by
-      push_cast; ring,
+      push_cast
+      ring,
     Complex.ofReal_re]
   apply div_nonpos_of_nonpos_of_nonneg
   · nlinarith [mul_nonneg hmnn hxpow_pos.le]

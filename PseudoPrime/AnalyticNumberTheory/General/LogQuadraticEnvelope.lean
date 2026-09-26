@@ -51,7 +51,8 @@ theorem integrable_logQuadraticEnvelope : MeasureTheory.Integrable logQuadraticE
     have hbase : MeasureTheory.Integrable (fun t : ℝ => ((1 : ℝ) + ‖t‖ ^ 2) ^ (-(3 / 2 : ℝ) / 2)) :=
       integrable_rpow_neg_one_add_norm_sq (E := ℝ) (r := 3 / 2)
         (by
-          simp only [Module.finrank_self, Nat.cast_one]; norm_num only)
+          simp only [Module.finrank_self, Nat.cast_one]
+          norm_num only)
     have heq :
       (fun t : ℝ => ((1 : ℝ) + ‖t‖ ^ 2) ^ (-(3 / 2 : ℝ) / 2)) = fun t : ℝ =>
         (1 + t ^ 2) ^ (-(3 : ℝ) / 4) := by
@@ -80,7 +81,8 @@ theorem integrable_logQuadraticEnvelope : MeasureTheory.Integrable logQuadraticE
   rw [div_le_iff₀ htsq_pos]
   simp only [hh_def]
   rw [add_mul]
-  have hterm1 : (1 + Real.log 3) * (1 + t ^ 2)⁻¹ * (1 + t ^ 2) = 1 + Real.log 3 := by field_simp
+  have hterm1 : (1 + Real.log 3) * (1 + t ^ 2)⁻¹ * (1 + t ^ 2) = 1 + Real.log 3 := by
+    field_simp (discharger := exact htsq_pos.ne')
   have hterm2 : 4 * (1 + t ^ 2) ^ (-(3 : ℝ) / 4) * (1 + t ^ 2) = 4 * (1 + t ^ 2) ^ (1 / 4 : ℝ) := by
     have h : (1 + t ^ 2) ^ (-(3 : ℝ) / 4) * (1 + t ^ 2) = (1 + t ^ 2) ^ (1 / 4 : ℝ) := by
       nth_rewrite 2 [← Real.rpow_one (1 + t ^ 2)]

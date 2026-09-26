@@ -25,7 +25,7 @@ theorem norm_deriv_riemannZeta_div_le {τ : ℝ} (hτ : 1 < τ) (y : ℝ) :
       ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ τ := by
   set s : ℂ := (τ : ℂ) + y * Complex.I with hs_def
   have hs : (1 : ℝ) < s.re := by
-    rw [hs_def];
+    rw [hs_def]
     simpa only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] using hτ
   have heq := ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div hs

@@ -28,10 +28,10 @@ def classicalCandidateMagnitude (k : ℕ) : ℕ :=
 theorem classicalCandidateMagnitude_isCandidate (k : ℕ) :
     isClassicalCandidate (classicalCandidateMagnitude k) := by
   refine ⟨?_, ?_⟩
-  · dsimp [classicalCandidateMagnitude]
+  · dsimp only [classicalCandidateMagnitude]
     omega
   · refine ⟨k + 2, ?_⟩
-    dsimp [classicalCandidateMagnitude]
+    dsimp only [classicalCandidateMagnitude]
     omega
 
 /-- Ascending search from candidate index `k` over a half-open fuel range. -/
@@ -216,7 +216,7 @@ theorem exists_classicalCandidateMagnitude_eq {i : ℕ} (hi : isClassicalCandida
   refine ⟨(i - 5) / 2, ?_⟩
   have hi2 : i % 2 = 1 := Nat.odd_iff.mp hodd
   have hparity : (i - 5) % 2 = 0 := by omega
-  dsimp [classicalCandidateMagnitude]
+  dsimp only [classicalCandidateMagnitude]
   calc
     5 + 2 * ((i - 5) / 2) = 5 + ((i - 5) / 2) * 2 := by rw [Nat.mul_comm]
     _ = 5 + ((i - 5) / 2) * 2 + (i - 5) % 2 := by rw [hparity, Nat.add_zero]
@@ -406,7 +406,7 @@ theorem selfridgeClassicalSearchAscending_some_of_firstStopNegOne {n : ℕ}
       hjacobi
   intro j h0 hjk hsuccess
   have hji : classicalCandidateMagnitude j < i := by
-    dsimp [classicalCandidateMagnitude] at hk ⊢
+    dsimp only [classicalCandidateMagnitude] at hk ⊢
     omega
   exact
     (not_mem_firstStopNegOneSet_of_lt isClassicalCandidate n hs hji)
@@ -440,9 +440,9 @@ theorem selfridgeClassicalSearchAscending_seventeen :
     rw [h5, selfridgeD_of_mod_four_eq_one (i := 5) (by decide)]
     change some (5 : ℤ) = some 5
     rfl
-  simpa [selfridgeClassicalSearchAscending] using
+  simpa only [selfridgeClassicalSearchAscending] using
     (selfridgeClassicalSearchAscendingFrom_some_of_le_fuel (extra := 14)
-      (by simpa [selfridgeClassicalSearchAscending] using hsearch))
+      (by simpa only [selfridgeClassicalSearchAscending] using hsearch))
 
 /-- The remaining prime below `27` with second candidate `D = -7`. -/
 theorem selfridgeClassicalSearchAscending_nineteen :
@@ -461,9 +461,9 @@ theorem selfridgeClassicalSearchAscending_nineteen :
     rw [ite_eq_right h5, h7, show selfridgeD 7 = -7 by norm_num [selfridgeD]]
     change some (-7 : ℤ) = some (-7)
     rfl
-  simpa [selfridgeClassicalSearchAscending] using
+  simpa only [selfridgeClassicalSearchAscending] using
     (selfridgeClassicalSearchAscendingFrom_some_of_le_fuel (extra := 15)
-      (by simpa [selfridgeClassicalSearchAscending] using hsearch))
+      (by simpa only [selfridgeClassicalSearchAscending] using hsearch))
 
 /-- The last prime below `27` again stops at the initial positive candidate. -/
 theorem selfridgeClassicalSearchAscending_twenty_three :
@@ -476,9 +476,9 @@ theorem selfridgeClassicalSearchAscending_twenty_three :
     rw [h5, selfridgeD_of_mod_four_eq_one (i := 5) (by decide)]
     change some (5 : ℤ) = some 5
     rfl
-  simpa [selfridgeClassicalSearchAscending] using
+  simpa only [selfridgeClassicalSearchAscending] using
     (selfridgeClassicalSearchAscendingFrom_some_of_le_fuel (extra := 20)
-      (by simpa [selfridgeClassicalSearchAscending] using hsearch))
+      (by simpa only [selfridgeClassicalSearchAscending] using hsearch))
 
 /-- A first-stop below `n` is found by the elementary `n - 2` fuel budget. -/
 theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_firstStop_lt {n : ℕ} (hn : 3 ≤ n)
@@ -487,7 +487,7 @@ theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_firstStop_lt {n : 
     ∃ D, selfridgeClassicalSearchAscending n (n - 2) = some D := by
   obtain ⟨k, hk, hsearch⟩ := selfridgeClassicalSearchAscending_some_of_firstStopNegOne hs
   have hkfuel : k + 1 ≤ n - 2 := by
-    dsimp [classicalCandidateMagnitude] at hk
+    dsimp only [classicalCandidateMagnitude] at hk
     omega
   refine ⟨selfridgeD (firstStopNegOne isClassicalCandidate n hs), ?_⟩
   have hextra : (k + 1) + (n - 2 - (k + 1)) = n - 2 := by omega

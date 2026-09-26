@@ -43,7 +43,8 @@ theorem exists_riemannZeta_zero_ledger_of_compact {D : Set ℂ} (hD : IsCompact 
   set S : Finset ℂ := hfin.toFinset with hS_def
   set m : ℂ → ℕ := fun u => (MeromorphicOn.divisor riemannZeta D u).toNat with hm_def
   have hmeq : ∀ u ∈ S, (m u : ℤ) = MeromorphicOn.divisor riemannZeta D u := fun u _ => by
-    rw [hm_def]; exact Int.toNat_of_nonneg (hdivnn u)
+    rw [hm_def]
+    exact Int.toNat_of_nonneg (hdivnn u)
   have hSsupp : ∀ u, u ∈ S ↔ u ∈ D ∧ riemannZeta u = 0 := by
     intro u
     rw [hS_def, Set.Finite.mem_toFinset]
@@ -52,7 +53,8 @@ theorem exists_riemannZeta_zero_ledger_of_compact {D : Set ℂ} (hD : IsCompact 
   have hmpos : ∀ u ∈ S, 0 < m u := by
     intro u hu
     have hune : u ∈ Function.support (MeromorphicOn.divisor riemannZeta D) := by
-      rw [hS_def, Set.Finite.mem_toFinset] at hu; exact hu
+      rw [hS_def, Set.Finite.mem_toFinset] at hu
+      exact hu
     rw [Function.mem_support] at hune
     rw [hm_def]
     simp only
@@ -108,7 +110,8 @@ theorem exists_jensenBall_zero_ledger {T : ℝ} (hT : 8 ≤ T) :
     (Finset.sum_congr rfl hmeq).trans (finsum_eq_sum_of_support_subset _ hSsub).symm
   have hbound := finsum_divisor_riemannZeta_le_explicit hT
   have hcast : ((∑ u ∈ S, (m u : ℤ) : ℤ) : ℝ) ≤ jensenLogConst * Real.log (T + 2) := by
-    rw [heq1]; exact hbound
+    rw [heq1]
+    exact hbound
   exact_mod_cast hcast
 
 /-- The Jensen-ball ledger may use the global analytic zero multiplicity directly. Its total
@@ -188,7 +191,8 @@ theorem exists_jensenBall_zero_ledger_neg {T : ℝ} (hT : T ≤ -8) :
   have hAn : AnalyticOnNhd ℂ riemannZeta D :=
     jensen_analyticOnNhd_of_abs (T := T)
         (by
-          rw [abs_of_neg (by linarith : T < 0)]; linarith) |>.mono
+          rw [abs_of_neg (by linarith : T < 0)]
+          linarith) |>.mono
       (Metric.closedBall_subset_closedBall (by norm_num only))
   obtain ⟨S, m, hmpos, hSD, hSzero, hDzero, hsupp_eq, hmeq⟩ :=
     exists_riemannZeta_zero_ledger_of_compact (isCompact_closedBall _ _) hAn
@@ -199,7 +203,8 @@ theorem exists_jensenBall_zero_ledger_neg {T : ℝ} (hT : T ≤ -8) :
     (Finset.sum_congr rfl hmeq).trans (finsum_eq_sum_of_support_subset _ hSsub).symm
   have hbound := finsum_divisor_riemannZeta_le_explicit_neg hT
   have hcast : ((∑ u ∈ S, (m u : ℤ) : ℤ) : ℝ) ≤ jensenLogConst * Real.log (-T + 2) := by
-    rw [heq1]; exact hbound
+    rw [heq1]
+    exact hbound
   exact_mod_cast hcast
 
 /-- The negative-height Jensen ledger also carries global analytic zeta multiplicities with the
@@ -216,7 +221,8 @@ theorem exists_jensenBall_zero_ledger_neg_with_analyticMultiplicity {T : ℝ} (h
   have hAn : AnalyticOnNhd ℂ riemannZeta D :=
     jensen_analyticOnNhd_of_abs (T := T)
         (by
-          rw [abs_of_neg (by linarith : T < 0)]; linarith) |>.mono
+          rw [abs_of_neg (by linarith : T < 0)]
+          linarith) |>.mono
       (Metric.closedBall_subset_closedBall (by norm_num only))
   obtain ⟨S, m, hmpos, hSD, hSzero, hDzero, hsupp_eq, hmeq⟩ :=
     exists_riemannZeta_zero_ledger_of_compact (isCompact_closedBall _ _) hAn
@@ -304,7 +310,8 @@ theorem summable_jensenLogConst_mul_log_div_sq :
         ((n : ℝ) + 2) ^ (1 / 2 : ℝ) * ((n : ℝ) + 2) ^ (3 / 2 : ℝ) :=
       mul_le_mul_of_nonneg_right hn hrpow32pos.le
     have hkey : Real.log ((n : ℝ) + 2) * ((n : ℝ) + 2) ^ (3 / 2 : ℝ) ≤ 4 * (1 + (n : ℝ) ^ 2) := by
-      rw [hrpow_eq] at hstep; linarith
+      rw [hrpow_eq] at hstep
+      linarith
     have hmain : Real.log ((n : ℝ) + 2) / (1 + (n : ℝ) ^ 2) ≤ 4 / ((n : ℝ) + 2) ^ (3 / 2 : ℝ) := by
       rw [div_le_div_iff₀ (by positivity) hrpow32pos]
       linarith [hkey]
@@ -507,7 +514,8 @@ theorem summable_nontrivialZetaZeroWeight : Summable nontrivialZetaZeroWeight :=
     have h2 : (0 : ℝ) ≤ Real.log ((n : ℝ) + 2) :=
       Real.log_nonneg
         (by
-          have := Nat.cast_nonneg (α := ℝ) n; linarith)
+          have := Nat.cast_nonneg (α := ℝ) n
+          linarith)
     simp only [hg_def]
     positivity
   refine summable_of_sum_le nontrivialZetaZeroWeight_nonneg (c := L + ∑' n, g n) fun u => ?_
@@ -529,7 +537,8 @@ theorem summable_nontrivialZetaZeroWeight : Summable nontrivialZetaZeroWeight :=
             exact ⟨hcond.1, hcond.2.1, hcond.2.2.1, hcond.2.2.2, hs.2⟩
           rw [ite_eq_left hmemLow, div_le_one (by positivity)]
           nlinarith [sq_nonneg s.im]
-        · rw [ite_eq_right hcond]; split_ifs <;> norm_num only
+        · rw [ite_eq_right hcond]
+          split_ifs <;> norm_num only
       _ =
           ((u.filter (fun s => s.im < 8)).filter
               (fun s => s ∈ lowBand_zeros_finite.toFinset)).card :=
@@ -570,7 +579,8 @@ theorem summable_nontrivialZetaZeroWeight : Summable nontrivialZetaZeroWeight :=
         by_cases hcond : riemannZeta s = 0 ∧ 0 ≤ s.re ∧ s.re ≤ 1 ∧ 0 ≤ s.im
         · rw [ite_eq_left hcond]
           have him2 : |s.im - (j : ℝ)| ≤ 2 := by
-            rw [abs_le]; constructor <;> linarith
+            rw [abs_le]
+            constructor <;> linarith
           have hmemD : s ∈ Metric.closedBall (jensenCenter (j : ℝ)) (37 / 10) :=
             riemannZeta_zero_mem_jensenBall hj8R hcond.1 him2
           have hmemS : s ∈ S := hDzero s hmemD hcond.1
@@ -610,7 +620,8 @@ theorem summable_nontrivialZetaZeroWeight : Summable nontrivialZetaZeroWeight :=
         _ ≤ (1 / (1 + (j : ℝ) ^ 2)) * (jensenLogConst * Real.log ((j : ℝ) + 2)) := by
           apply mul_le_mul_of_nonneg_left hmeq (by positivity)
         _ = g j := by
-          simp only [hg_def]; ring
+          simp only [hg_def]
+          ring
     calc
       ∑ s ∈ uh, nontrivialZetaZeroWeight s =
           ∑ j ∈ t, ∑ s ∈ uh.filter (fun s => ⌊s.im⌋₊ = j), nontrivialZetaZeroWeight s :=
@@ -643,7 +654,8 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
     have h2 : (0 : ℝ) ≤ Real.log ((n : ℝ) + 2) :=
       Real.log_nonneg
         (by
-          have := Nat.cast_nonneg (α := ℝ) n; linarith)
+          have := Nat.cast_nonneg (α := ℝ) n
+          linarith)
     simp only [hg_def]
     positivity
   refine summable_of_sum_le nontrivialZetaZeroWeightNeg_nonneg (c := L + ∑' n, g n) fun u => ?_
@@ -665,7 +677,8 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
             exact ⟨hcond.1, hcond.2.1, hcond.2.2.1, hs.2, hcond.2.2.2⟩
           rw [ite_eq_left hmemLow, div_le_one (by positivity)]
           nlinarith [sq_nonneg s.im]
-        · rw [ite_eq_right hcond]; split_ifs <;> norm_num only
+        · rw [ite_eq_right hcond]
+          split_ifs <;> norm_num only
       _ =
           ((u.filter (fun s => -8 < s.im)).filter
               (fun s => s ∈ lowBand_zeros_finite_neg.toFinset)).card :=
@@ -710,7 +723,8 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
         by_cases hcond : riemannZeta s = 0 ∧ 0 ≤ s.re ∧ s.re ≤ 1 ∧ s.im < 0
         · rw [ite_eq_left hcond]
           have him2 : |s.im - (-(j : ℝ))| ≤ 2 := by
-            rw [abs_le]; constructor <;> linarith
+            rw [abs_le]
+            constructor <;> linarith
           have hmemD : s ∈ Metric.closedBall (jensenCenter (-(j : ℝ))) (37 / 10) :=
             riemannZeta_zero_mem_jensenBall_neg (by linarith) hcond.1 him2
           have hmemS : s ∈ S := hDzero s hmemD hcond.1
@@ -751,7 +765,8 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
           apply mul_le_mul_of_nonneg_left _ (by positivity)
           simpa only [Nat.cast_sum, neg_neg] using hmeq
         _ = g j := by
-          simp only [hg_def]; ring
+          simp only [hg_def]
+          ring
     calc
       ∑ s ∈ uh, nontrivialZetaZeroWeightNeg s =
           ∑ j ∈ t, ∑ s ∈ uh.filter (fun s => ⌊-s.im⌋₊ = j), nontrivialZetaZeroWeightNeg s :=
@@ -801,7 +816,8 @@ theorem summable_nontrivialZetaZeroMultiplicityWeight :
     have h2 : (0 : ℝ) ≤ Real.log ((n : ℝ) + 2) :=
       Real.log_nonneg
         (by
-          have := Nat.cast_nonneg (α := ℝ) n; linarith)
+          have := Nat.cast_nonneg (α := ℝ) n
+          linarith)
     simp only [hg_def]
     positivity
   refine
@@ -926,7 +942,8 @@ theorem summable_nontrivialZetaZeroMultiplicityWeightNeg :
     have h2 : (0 : ℝ) ≤ Real.log ((n : ℝ) + 2) :=
       Real.log_nonneg
         (by
-          have := Nat.cast_nonneg (α := ℝ) n; linarith)
+          have := Nat.cast_nonneg (α := ℝ) n
+          linarith)
     simp only [hg_def]
     positivity
   refine

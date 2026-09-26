@@ -63,7 +63,8 @@ theorem riemannZeta_eq_mul_sin_eventually (n : ℕ) :
     rw [show (Real.pi : ℂ) * (1 - w) / 2 = Real.pi / 2 - (Real.pi : ℂ) * w / 2 from by ring,
       Complex.cos_pi_div_two_sub]
   rw [hcos_eq] at hs
-  rw [hs]; ring
+  rw [hs]
+  ring
 
 /-- Every trivial zero `-2(n+1)` of `ζ` is a *simple* zero. -/
 theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
@@ -81,7 +82,8 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
     intro w hw
     have hdist : ‖w - w₀‖ < 1 := by simpa only [Metric.mem_ball, Complex.dist_eq] using hw
     have hre_le : |w.re - w₀.re| ≤ ‖w - w₀‖ := by
-      have h := Complex.abs_re_le_norm (w - w₀); rwa [Complex.sub_re] at h
+      have h := Complex.abs_re_le_norm (w - w₀)
+      rwa [Complex.sub_re] at h
     have hre_lt : |w.re - w₀.re| < 1 := lt_of_le_of_lt hre_le hdist
     rw [hw₀re] at hre_lt
     have hlt := (abs_lt.mp hre_lt).2
@@ -106,7 +108,8 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
       linarith
     have hc_ne : (2 * (Real.pi : ℂ)) ≠ 0 := by
       rw [show (2 * (Real.pi : ℂ)) = ((2 * Real.pi : ℝ) : ℂ) from by
-          push_cast; ring]
+          push_cast
+          ring]
       exact Complex.ofReal_ne_zero.mpr (by positivity)
     have hexp_diff : DifferentiableAt ℂ (fun w : ℂ => -(1 - w)) w := by fun_prop
     have h1 : DifferentiableAt ℂ (fun w : ℂ => (2 * (Real.pi : ℂ)) ^ (-(1 - w))) w :=
@@ -131,7 +134,8 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
     Complex.analyticAt_iff_eventually_differentiableAt.mpr
       (Filter.Eventually.of_forall
         (fun w => by
-          rw [hB_def]; fun_prop))
+          rw [hB_def]
+          fun_prop))
   have h1msub : (1 - w₀) = ((2 * (n : ℝ) + 3 : ℝ) : ℂ) := by
     rw [hw₀_def]
     push_cast
@@ -144,14 +148,17 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
   have hζ_ne : riemannZeta (1 - w₀) ≠ 0 :=
     riemannZeta_ne_zero_of_one_lt_re
       (by
-        rw [h1msub_re]; linarith [Nat.cast_nonneg (α := ℝ) n])
+        rw [h1msub_re]
+        linarith [Nat.cast_nonneg (α := ℝ) n])
   have hΓ_ne : Complex.Gamma (1 - w₀) ≠ 0 :=
     Complex.Gamma_ne_zero_of_re_pos
       (by
-        rw [h1msub_re]; linarith [Nat.cast_nonneg (α := ℝ) n])
+        rw [h1msub_re]
+        linarith [Nat.cast_nonneg (α := ℝ) n])
   have hc_ne : (2 * (Real.pi : ℂ)) ≠ 0 := by
     rw [show (2 * (Real.pi : ℂ)) = ((2 * Real.pi : ℝ) : ℂ) from by
-        push_cast; ring]
+        push_cast
+        ring]
     exact Complex.ofReal_ne_zero.mpr (by positivity)
   have hpow_ne : (2 * (Real.pi : ℂ)) ^ (-(1 - w₀)) ≠ 0 :=
     Complex.cpow_ne_zero_iff.mpr (Or.inl hc_ne)
@@ -164,14 +171,16 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
       Complex.sin_neg, neg_eq_zero, Complex.sin_eq_zero_iff]
     exact
       ⟨(n : ℤ) + 1, by
-        push_cast; ring⟩
+        push_cast
+        ring⟩
   have hcos_ne : Complex.cos ((Real.pi : ℂ) * ((n : ℂ) + 1)) ≠ 0 := by
     intro hcos0
     rw [Complex.cos_eq_zero_iff] at hcos0
     obtain ⟨k, hk⟩ := hcos0
     have hpi_ne : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
     have h2 : (2 * ((n : ℤ) + 1) : ℂ) * (Real.pi : ℂ) = ((2 * k + 1 : ℤ) : ℂ) * (Real.pi : ℂ) := by
-      push_cast; linear_combination 2 * hk
+      push_cast
+      linear_combination 2 * hk
     have heq : (2 * ((n : ℤ) + 1) : ℂ) = ((2 * k + 1 : ℤ) : ℂ) := mul_right_cancel₀ hpi_ne h2
     have : 2 * ((n : ℤ) + 1) = 2 * k + 1 := by exact_mod_cast heq
     omega
@@ -179,13 +188,15 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
     have hf : HasDerivAt (fun w : ℂ => (Real.pi : ℂ) * w / 2) ((Real.pi : ℂ) / 2) w₀ := by
       simpa only [id_eq, mul_one] using ((hasDerivAt_id w₀).const_mul (Real.pi : ℂ)).div_const 2
     have hderiv : HasDerivAt B (Complex.cos ((Real.pi : ℂ) * w₀ / 2) * ((Real.pi : ℂ) / 2)) w₀ := by
-      rw [hB_def]; exact hf.csin
+      rw [hB_def]
+      exact hf.csin
     rw [hderiv.deriv, hw₀_def,
       show (Real.pi : ℂ) * (-2 * ((n : ℂ) + 1)) / 2 = -(Real.pi * ((n : ℂ) + 1)) from by ring,
       Complex.cos_neg]
     have hpi2_ne : (Real.pi : ℂ) / 2 ≠ 0 := by
       rw [show (Real.pi : ℂ) / 2 = ((Real.pi / 2 : ℝ) : ℂ) from by
-          push_cast; ring]
+          push_cast
+          ring]
       exact Complex.ofReal_ne_zero.mpr (by positivity)
     exact mul_ne_zero hcos_ne hpi2_ne
   have hBorder : analyticOrderAt B w₀ = 1 :=
@@ -208,15 +219,20 @@ theorem riemannZetaReciprocalZeroContribution_neg_two_mul_nat_add_one {x : ℝ} 
   rw [riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one]
   set ρ : ℂ := -2 * ((k : ℂ) + 1) with hρ_def
   have hρ1_eq : ρ - 1 = ((-(2 * (k + 1) + 1 : ℕ) : ℝ) : ℂ) := by
-    rw [hρ_def]; push_cast; ring
+    rw [hρ_def]
+    push_cast
+    ring
   have hxcpow : (x : ℂ) ^ (ρ - 1) = ((x⁻¹ ^ (2 * (k + 1) + 1) : ℝ) : ℂ) := by
     rw [hρ1_eq,
       show ((-(2 * (k + 1) + 1 : ℕ) : ℝ) : ℂ) = -(((2 * (k + 1) + 1 : ℕ) : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.cpow_neg, ← Complex.ofReal_cpow hx.le, Real.rpow_natCast, ← Complex.ofReal_inv,
       inv_pow]
   have hρprod : ρ * (ρ - 1) = (((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1) : ℝ) : ℂ) := by
-    rw [hρ1_eq, hρ_def]; push_cast; ring
+    rw [hρ1_eq, hρ_def]
+    push_cast
+    ring
   rw [hxcpow, hρprod, Nat.cast_one]
   push_cast
   ring
@@ -270,15 +286,20 @@ theorem riemannZetaLogZeroContribution_neg_two_mul_nat_add_one {x : ℝ} (hx : 0
   rw [riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one]
   set ρ : ℂ := -2 * ((k : ℂ) + 1) with hρ_def
   have hρ_eq : ρ = ((-(2 * (k + 1) : ℕ) : ℝ) : ℂ) := by
-    rw [hρ_def]; push_cast; ring
+    rw [hρ_def]
+    push_cast
+    ring
   have hxcpow : (x : ℂ) ^ ρ = ((x⁻¹ ^ (2 * (k + 1)) : ℝ) : ℂ) := by
     rw [hρ_eq,
       show ((-(2 * (k + 1) : ℕ) : ℝ) : ℂ) = -(((2 * (k + 1) : ℕ) : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.cpow_neg, ← Complex.ofReal_cpow hx.le, Real.rpow_natCast, ← Complex.ofReal_inv,
       inv_pow]
   have hρsq : ρ ^ 2 = (((4 : ℝ) * ((k : ℝ) + 1) ^ 2 : ℝ) : ℂ) := by
-    rw [hρ_eq]; push_cast; ring
+    rw [hρ_eq]
+    push_cast
+    ring
   rw [hxcpow, hρsq, Nat.cast_one]
   push_cast
   ring

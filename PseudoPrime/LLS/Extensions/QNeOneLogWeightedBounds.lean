@@ -113,7 +113,8 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le_of_grh {N : ℕ} [NeZero 
             dirichletLogContourKernel x χ
               (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re := by
     rw [show ((↑(2 * Real.pi))⁻¹ : ℂ) = (((2 * Real.pi)⁻¹ : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.re_ofReal_mul]
   rw [hmulre] at hlimit
   exact hlimit
@@ -1110,7 +1111,8 @@ theorem qNeOneUpperBoundZeroStar_lt_of_affine_B {y C : ℝ} (hy : 12 ≤ y)
     unfold qNeOneUpperBoundZeroStar
     rw [Analysis.primitiveLogEvenMainError]
     rw [show Real.log (y ^ 2) = 2 * Real.log y by
-        rw [Real.log_pow]; norm_num only]
+        rw [Real.log_pow]
+        norm_num only]
     have hcondscaled :
       (1 / 2 : ℝ) * (y + Real.log 4 - Real.log Real.pi) * (2 * Real.log y) ≤
         (y + 2 / 5) * Real.log y := by
@@ -1121,7 +1123,8 @@ theorem qNeOneUpperBoundZeroStar_lt_of_affine_B {y C : ℝ} (hy : 12 ≤ y)
         _ ≤ (y + 2 / 5) * Real.log y := hcondupper
     have hE' := hE
     rw [show Real.log (y ^ 2) = 2 * Real.log y by
-        rw [Real.log_pow]; norm_num only] at hE'
+        rw [Real.log_pow]
+        norm_num only] at hE'
     have hsum := add_le_add (add_le_add hprod hcondscaled) hE'
     simpa only [add_sub_assoc] using hsum
   exact hU.trans_lt hsep
@@ -1385,7 +1388,8 @@ lemma zeroStar_affine_lt_lower {y : ℝ} (hy : 48 ≤ y) :
   exact
     (div_pos hcert (by norm_num only : (0 : ℝ) < 300)).trans_eq
       (by
-        unfold qNeOneAnalyticLowerBound; ring)
+        unfold qNeOneAnalyticLowerBound
+        ring)
 
 end QNeOneZeroStar
 

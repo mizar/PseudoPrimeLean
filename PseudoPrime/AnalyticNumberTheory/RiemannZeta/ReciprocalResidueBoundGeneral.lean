@@ -132,7 +132,8 @@ theorem re_riemannZetaReciprocalContourResidueLedger_unifiedTau_ge_of_riemannHyp
     riemannZetaReciprocalResidueAtZero_eq, riemannZetaReciprocalResidueAtOne_eq hxpos]
   have hre0 : (Complex.log (2 * (Real.pi : ℂ)) * (x : ℂ)⁻¹).re = Real.log (2 * Real.pi) / x := by
     rw [show (2 : ℂ) * (Real.pi : ℂ) = ((2 * Real.pi : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       ← Complex.ofReal_log (by positivity),
       show (x : ℂ)⁻¹ = ((x⁻¹ : ℝ) : ℂ) from by rw [Complex.ofReal_inv], ← Complex.ofReal_mul,
       Complex.ofReal_re]

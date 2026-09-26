@@ -136,7 +136,9 @@ theorem re_sum_llsPrimitiveReciprocalResidueAt_le {N : ℕ} [NeZero N] (hN2 : 2 
           (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) -
             (1 + 1 / x) * |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| -
             1 / 4 := by
-        rw [add_comm]; rw [← Complex.add_re]; exact h01
+        rw [add_comm]
+        rw [← Complex.add_re]
+        exact h01
       exact add_le_add h01' herased_re
     _ =
         (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 1 / 4 -
@@ -198,7 +200,8 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_le_of_grh {N : ℕ} [
             dirichletReciprocalContourKernel x χ
               (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re := by
     rw [show ((↑(2 * Real.pi))⁻¹ : ℂ) = (((2 * Real.pi)⁻¹ : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.re_ofReal_mul]
   rw [hmulre] at hlimit
   exact hlimit

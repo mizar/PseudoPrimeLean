@@ -663,13 +663,17 @@ theorem qNeOneLowerBound_gt_upperBound {y : ℝ} (hy : 8 ≤ y) :
         let a : ℝ := (20 - y) / 12
         let b : ℝ := (y - 8) / 12
         have ha : 0 ≤ a := by
-          dsimp [a]; positivity
+          dsimp only [a]
+          positivity
         have hb : 0 ≤ b := by
-          dsimp [b]; positivity
+          dsimp only [b]
+          positivity
         have hab : a + b = 1 := by
-          dsimp [a, b]; ring
+          dsimp only [a, b]
+          ring
         have hcomb : a * 8 + b * 20 = y := by
-          dsimp [a, b]; ring
+          dsimp only [a, b]
+          ring
         have hconc :=
           strictConcaveOn_log_Ioi.concaveOn.2 (show 0 < (8 : ℝ) by norm_num only)
             (show 0 < (20 : ℝ) by norm_num only) ha hb hab
@@ -692,7 +696,8 @@ theorem qNeOneLowerBound_gt_upperBound {y : ℝ} (hy : 8 ≤ y) :
           simpa only [smul_eq_mul, hcomb] using hconc
         calc
           2 + (y - 8) / 18 = a * 2 + b * (8 / 3) := by
-            dsimp [a, b]; ring
+            dsimp only [a, b]
+            ring
           _ ≤ a * Real.log 8 + b * Real.log 20 := by gcongr
           _ ≤ Real.log y := hconc'
       have hc1 : 0 ≤ 2 + 10 / y := by positivity
@@ -815,7 +820,7 @@ theorem qNeOneLowerBound_gt_upperBound {y : ℝ} (hy : 8 ≤ y) :
       (2 + 10 / y) * (Real.log y) ^ 2 + (2 * y + 13 / 2 + 5 / y) * Real.log y - 29 / 5 * y -
         54 / 5 -
         5 / y := by
-    dsimp [qNeOneLowerBound, qNeOneUpperBound]
+    dsimp only [qNeOneLowerBound, qNeOneUpperBound]
     field_simp
     ring
   have hdiff : 0 < qNeOneLowerBound y - qNeOneUpperBound y := by
@@ -849,9 +854,11 @@ theorem llsPrimitiveReciprocalEvenMainError_lt_neg_four_fifths {x : ℝ} (hx : 6
   have hratio_anti : Analysis.logLinearRatio x ≤ Analysis.logLinearRatio 64 :=
     Analysis.strictAntiOn_logLinearRatio.antitoneOn
       (by
-        simp only [Set.mem_Ici]; norm_num only)
+        simp only [Set.mem_Ici]
+        norm_num only)
       (by
-        simp only [Set.mem_Ici]; linarith)
+        simp only [Set.mem_Ici]
+        linarith)
       hx
   have hratio64 : Analysis.logLinearRatio 64 = (12 * Real.log 2 + 1) / 64 := by
     unfold Analysis.logLinearRatio

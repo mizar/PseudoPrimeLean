@@ -78,10 +78,11 @@ theorem llsPart1PrimitiveFullLevelUpperBound_le_fullLevel {q : ℕ} (hq : 3000 �
           change (0 : ℝ) < 3
           norm_num only)
         Real.pi_pos Real.pi_gt_three
-    linarith [Real.log_three_gt_d9]
+    linarith only [hlogThreePi, Real.log_three_gt_d9]
   have hinv2pos : (0 : ℝ) < (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 := by
     have : (0 : ℝ) < 1 - 1 / llsTheorem11S1RadiusRoot q := by
-      rw [sub_pos, div_lt_one hypos]; linarith
+      rw [sub_pos, div_lt_one hypos]
+      linarith
     positivity
   have hxpos : (0 : ℝ) < (llsTheorem11S1RadiusRoot q) ^ 2 := by positivity
   have hkey_cleared :
@@ -179,6 +180,6 @@ theorem llsPart1PrimitiveFullLevelUpperBound_le_fullLevel {q : ℕ} (hq : 3000 �
     ring
   rw [hmuleq] at hmul
   unfold llsPart1PrimitiveFullLevelUpperBound llsPart1FullLevelUpperBound
-  linarith [hmul]
+  linarith only [hmul]
 
 end PseudoPrime.LLS

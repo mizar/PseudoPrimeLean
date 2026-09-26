@@ -106,7 +106,8 @@ theorem exists_primitiveHorizontalLogDerivBound {N : ℕ} [NeZero N] (hN2 : 2 �
       (card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv
         (show (0 : ℝ) < 16 * n by linarith))
   have hδ_pos : 0 < δ := by
-    rw [hδ_def]; positivity
+    rw [hδ_def]
+    positivity
   refine ⟨T, hT, R, hR, δ, hδ_pos, ?_⟩
   set s : ℂ := (σ : ℂ) + T * Complex.I with hs_def
   have hTle : T ≤ 2 * n := hT.2
@@ -119,7 +120,8 @@ theorem exists_primitiveHorizontalLogDerivBound {N : ℕ} [NeZero N] (hN2 : 2 �
       Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
   have hsnorm_le : ‖s‖ ≤ |σ| + T := by
     have h1 : ‖s‖ ≤ ‖(σ : ℂ)‖ + ‖(T : ℂ) * Complex.I‖ := by
-      rw [hs_def]; exact norm_add_le _ _
+      rw [hs_def]
+      exact norm_add_le _ _
     simp only [Complex.norm_real, Real.norm_eq_abs, norm_mul, Complex.norm_I, mul_one] at h1
     rwa [abs_of_nonneg (show (0 : ℝ) ≤ T by linarith)] at h1
   have hs_le : ‖s‖ ≤ R / 2 := by linarith [hsnorm_le, hσ, hTle, hRge]
@@ -235,7 +237,8 @@ theorem exists_primitiveHorizontalLogDerivBound_of_grh {N : ℕ} [NeZero N] (hN2
       (card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv
         (show (0 : ℝ) < 16 * n by linarith))
   have hδ_pos : 0 < δ := by
-    rw [hδ_def]; positivity
+    rw [hδ_def]
+    positivity
   refine ⟨T, hT, R, hR, δ, hδ_pos, ?_⟩
   set s : ℂ := (σ : ℂ) + T * Complex.I with hs_def
   have hTle : T ≤ 2 * n := hT.2
@@ -248,7 +251,8 @@ theorem exists_primitiveHorizontalLogDerivBound_of_grh {N : ℕ} [NeZero N] (hN2
       Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
   have hsnorm_le : ‖s‖ ≤ |σ| + T := by
     have h1 : ‖s‖ ≤ ‖(σ : ℂ)‖ + ‖(T : ℂ) * Complex.I‖ := by
-      rw [hs_def]; exact norm_add_le _ _
+      rw [hs_def]
+      exact norm_add_le _ _
     simp only [Complex.norm_real, Real.norm_eq_abs, norm_mul, Complex.norm_I, mul_one] at h1
     rwa [abs_of_nonneg (show (0 : ℝ) ≤ T by linarith)] at h1
   have hs_le : ‖s‖ ≤ R / 2 := by linarith [hsnorm_le, hσ, hTle, hRge]
@@ -407,7 +411,8 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZ
       (card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv
         (show (0 : ℝ) < 16 * n by linarith))
   have hδ_pos : 0 < δ := by
-    rw [hδ_def]; positivity
+    rw [hδ_def]
+    positivity
   refine ⟨T, hT, R, hR, δ, hδ_pos, hδ_def, ?_⟩
   have hTle : T ≤ 2 * n := hT.2
   have hTge : n ≤ T := hT.1
@@ -606,7 +611,8 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh {N : �
       (card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv
         (show (0 : ℝ) < 16 * n by linarith))
   have hδ_pos : 0 < δ := by
-    rw [hδ_def]; positivity
+    rw [hδ_def]
+    positivity
   refine ⟨T, hT, R, hR, δ, hδ_pos, hδ_def, ?_⟩
   have hTle : T ≤ 2 * n := hT.2
   have hTge : n ≤ T := hT.1
@@ -928,7 +934,8 @@ noncomputable def primitiveHorizontalStripDataSeq {N : ℕ} [NeZero N] (hN2 : 2 
     PrimitiveHorizontalStripData χ ((k : ℝ) + 1) :=
   primitiveHorizontalStripData hN2 hGRH hprimitive hne hinv hquad
     (by
-      have := Nat.cast_nonneg (α := ℝ) k; linarith)
+      have := Nat.cast_nonneg (α := ℝ) k
+      linarith)
 
 /-- Constructs `PrimitiveHorizontalStripData` via `choose` on
 `exists_primitiveHorizontalStripLogDerivBound_with_nonzero_of_grh` (no quadratic hypothesis). -/
@@ -950,7 +957,8 @@ noncomputable def primitiveHorizontalStripDataSeq_of_grh {N : ℕ} [NeZero N] (h
     PrimitiveHorizontalStripData χ ((k : ℝ) + 1) :=
   primitiveHorizontalStripData_of_grh hN2 hGRH hprimitive hne hinv
     (by
-      have := Nat.cast_nonneg (α := ℝ) k; linarith)
+      have := Nat.cast_nonneg (α := ℝ) k
+      linarith)
 
 /-! ### the horizontal pointwise bound: an explicit `O(X log X)` envelope for the intermediate
 bound's log-bound -/
@@ -1040,19 +1048,23 @@ theorem exists_K_forall_H2LogBound_thirtyTwo_le {N : ℕ} [NeZero N] (hN2 : 2 �
   set C₁ : ℝ := Real.log 35 + 1 with hC1_def
   have hC1pos : 0 < C₁ := by
     have := Real.log_nonneg (show (1 : ℝ) ≤ 35 by norm_num only)
-    rw [hC1_def]; linarith
+    rw [hC1_def]
+    linarith
   set K : ℝ := 2 * (4 * (N : ℝ) + 3) * 35 * C₁ / Real.log 2 with hK_def
   have hKpos : 0 < K := by
-    rw [hK_def]; positivity
+    rw [hK_def]
+    positivity
   have hlog35pos : 0 < Real.log 35 := Real.log_pos (by norm_num only)
   have hC1gt1 : 1 < C₁ := by
-    rw [hC1_def]; linarith
+    rw [hC1_def]
+    linarith
   refine ⟨K, hKpos, ?_⟩
   filter_upwards [Filter.eventually_ge_atTop (Real.exp 1), Filter.eventually_ge_atTop (1 : ℝ),
     Filter.eventually_ge_atTop (|Real.log ‖DirichletCharacter.completedLFunction χ 0‖|)] with n hnE
     hn1 hnF0
   have hn0 : (0 : ℝ) < n := by
-    have := Real.exp_pos (1 : ℝ); linarith
+    have := Real.exp_pos (1 : ℝ)
+    linarith
   have hlogn_ge1 : (1 : ℝ) ≤ Real.log n := by
     rw [show (1 : ℝ) = Real.log (Real.exp 1) from (Real.log_exp 1).symm]
     exact Real.log_le_log (Real.exp_pos 1) hnE
@@ -1091,7 +1103,8 @@ theorem exists_K_forall_H2LogBound_thirtyTwo_le {N : ℕ} [NeZero N] (hN2 : 2 �
   rw [div_le_iff₀ hlog2pos]
   have hKcancel :
     K * n * Real.log n * Real.log 2 = 2 * (4 * (N : ℝ) + 3) * 35 * C₁ * n * Real.log n := by
-    rw [hK_def]; field_simp
+    rw [hK_def]
+    field_simp
   rw [hKcancel]
   nlinarith only [hsum_le]
 
@@ -1112,7 +1125,8 @@ theorem hadamardHorizontalErrorCoeff_pos {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
   have hF0pos : (0 : ℝ) < ‖DirichletCharacter.completedLFunction χ 0‖ :=
     norm_pos_iff.mpr (dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne)
   have h0R : ‖(0 : ℂ)‖ ≤ R := by
-    rw [norm_zero]; linarith
+    rw [norm_zero]
+    linarith
   have hboundge : ‖DirichletCharacter.completedLFunction χ 0‖ ≤ completedLFunctionBallBound N R :=
     norm_completedLFunction_le_completedLFunctionBallBound hN1 hprimitive hne hinv (by linarith) h0R
   have hboundpos : (0 : ℝ) < completedLFunctionBallBound N R := hF0pos.trans_le hboundge
@@ -1212,7 +1226,9 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
   set n : ℝ := (k : ℝ) + 1 with hn_def
   set d := primitiveHorizontalStripDataSeq hN2 hGRH hprimitive hne hinv hquad k with hd_def
   have hnge1 : (1 : ℝ) ≤ n := by
-    rw [hn_def]; have := Nat.cast_nonneg (α := ℝ) k; linarith
+    rw [hn_def]
+    have := Nat.cast_nonneg (α := ℝ) k
+    linarith
   have hTge : n ≤ d.T := d.T_mem.1
   have hTle : d.T ≤ 2 * n := d.T_mem.2
   have hRge : 8 * n ≤ d.R := d.R_mem.1
@@ -1336,7 +1352,8 @@ theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) *
             (d.R ^ 2)⁻¹ := by
-        rw [div_eq_mul_inv]; ring
+        rw [div_eq_mul_inv]
+        ring
       rw [heq, div_eq_mul_inv]
       exact mul_le_mul_of_nonneg_right hE2num (inv_nonneg.mpr hRsq_pos.le)
     have hE3 :
@@ -1560,7 +1577,9 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
   set n : ℝ := (k : ℝ) + 1 with hn_def
   set d := primitiveHorizontalStripDataSeq_of_grh hN2 hGRH hprimitive hne hinv k with hd_def
   have hnge1 : (1 : ℝ) ≤ n := by
-    rw [hn_def]; have := Nat.cast_nonneg (α := ℝ) k; linarith
+    rw [hn_def]
+    have := Nat.cast_nonneg (α := ℝ) k
+    linarith
   have hTge : n ≤ d.T := d.T_mem.1
   have hTle : d.T ≤ 2 * n := d.T_mem.2
   have hRge : 8 * n ≤ d.R := d.R_mem.1
@@ -1684,7 +1703,8 @@ theorem primitiveHorizontalStripEpsilon_bound_of_grh {N : ℕ} [NeZero N] (hN2 :
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) *
             (d.R ^ 2)⁻¹ := by
-        rw [div_eq_mul_inv]; ring
+        rw [div_eq_mul_inv]
+        ring
       rw [heq, div_eq_mul_inv]
       exact mul_le_mul_of_nonneg_right hE2num (inv_nonneg.mpr hRsq_pos.le)
     have hE3 :
@@ -1935,7 +1955,9 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
   set n : ℝ := (k : ℝ) + 1 with hn_def
   set d := primitiveHorizontalStripDataSeq hN2 hGRH hprimitive hne hinv hquad k with hd_def
   have hnge1 : (1 : ℝ) ≤ n := by
-    rw [hn_def]; have := Nat.cast_nonneg (α := ℝ) k; linarith
+    rw [hn_def]
+    have := Nat.cast_nonneg (α := ℝ) k
+    linarith
   have hTge : n ≤ d.T := d.T_mem.1
   have hRge : 8 * n ≤ d.R := d.R_mem.1
   have hRle : d.R ≤ 16 * n := d.R_mem.2
@@ -2099,7 +2121,8 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
     have hstep1 : 768 * n * AR / d.R ^ 2 / d.T ^ 2 ≤ 768 * n * AR / (64 * n ^ 4) :=
       hdenom_swap (768 * n * AR) (mul_nonneg (mul_nonneg (by norm_num only) hnpos.le) hARnonneg)
     have heq1 : 768 * n * AR / (64 * n ^ 4) = 12 * AR / n ^ 3 := by
-      field_simp; ring
+      field_simp
+      ring
     have hstep2 : 12 * AR / n ^ 3 ≤ 12 * (Real.log 2 * (K * n * Real.log n) + 1) / n ^ 3 := by
       have hnum : 12 * AR ≤ 12 * (Real.log 2 * (K * n * Real.log n) + 1) := by linarith [hAR_le]
       gcongr
@@ -2116,7 +2139,8 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
     have hstep1 : 8 * n * BR / d.R ^ 2 / d.T ^ 2 ≤ 8 * n * BR / (64 * n ^ 4) :=
       hdenom_swap (8 * n * BR) (mul_nonneg (mul_nonneg (by norm_num only) hnpos.le) hBRnonneg)
     have heq1 : 8 * n * BR / (64 * n ^ 4) = BR / (8 * n ^ 3) := by
-      field_simp; ring
+      field_simp
+      ring
     have hstep2 : BR / (8 * n ^ 3) ≤ K * n * Real.log n / (8 * n ^ 3) := by gcongr
     have heq2 : K * n * Real.log n / (8 * n ^ 3) = K / 8 * Real.log n / n ^ 2 := by field_simp
     calc
@@ -2168,7 +2192,8 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
           (8 * (K * n * Real.log n + 1) / n) =
         32 * Real.sqrt (2 * |primitiveBRe χ|) *
           (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) := by
-      field_simp; ring
+      field_simp
+      ring
     have hcombine :
       4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ ≤
         32 * Real.sqrt (2 * |primitiveBRe χ|) *
@@ -2226,7 +2251,8 @@ theorem primitiveHorizontalStripEpsilon_nonneg {N : ℕ} [NeZero N] (hN2 : 2 ≤
   have hN1 : 1 < N := by omega
   set d := primitiveHorizontalStripDataSeq hN2 hGRH hprimitive hne hinv hquad k with hd_def
   have hnge1 : (1 : ℝ) ≤ (k : ℝ) + 1 := by
-    have := Nat.cast_nonneg (α := ℝ) k; linarith
+    have := Nat.cast_nonneg (α := ℝ) k
+    linarith
   have hRge : 8 * ((k : ℝ) + 1) ≤ d.R := d.R_mem.1
   have hTge : (k : ℝ) + 1 ≤ d.T := d.T_mem.1
   have hRpos : 0 < d.R := by linarith
@@ -2449,7 +2475,9 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : 
   set n : ℝ := (k : ℝ) + 1 with hn_def
   set d := primitiveHorizontalStripDataSeq_of_grh hN2 hGRH hprimitive hne hinv k with hd_def
   have hnge1 : (1 : ℝ) ≤ n := by
-    rw [hn_def]; have := Nat.cast_nonneg (α := ℝ) k; linarith
+    rw [hn_def]
+    have := Nat.cast_nonneg (α := ℝ) k
+    linarith
   have hTge : n ≤ d.T := d.T_mem.1
   have hRge : 8 * n ≤ d.R := d.R_mem.1
   have hRle : d.R ≤ 16 * n := d.R_mem.2
@@ -2613,7 +2641,8 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : 
     have hstep1 : 768 * n * AR / d.R ^ 2 / d.T ^ 2 ≤ 768 * n * AR / (64 * n ^ 4) :=
       hdenom_swap (768 * n * AR) (mul_nonneg (mul_nonneg (by norm_num only) hnpos.le) hARnonneg)
     have heq1 : 768 * n * AR / (64 * n ^ 4) = 12 * AR / n ^ 3 := by
-      field_simp; ring
+      field_simp
+      ring
     have hstep2 : 12 * AR / n ^ 3 ≤ 12 * (Real.log 2 * (K * n * Real.log n) + 1) / n ^ 3 := by
       have hnum : 12 * AR ≤ 12 * (Real.log 2 * (K * n * Real.log n) + 1) := by linarith [hAR_le]
       gcongr
@@ -2630,7 +2659,8 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : 
     have hstep1 : 8 * n * BR / d.R ^ 2 / d.T ^ 2 ≤ 8 * n * BR / (64 * n ^ 4) :=
       hdenom_swap (8 * n * BR) (mul_nonneg (mul_nonneg (by norm_num only) hnpos.le) hBRnonneg)
     have heq1 : 8 * n * BR / (64 * n ^ 4) = BR / (8 * n ^ 3) := by
-      field_simp; ring
+      field_simp
+      ring
     have hstep2 : BR / (8 * n ^ 3) ≤ K * n * Real.log n / (8 * n ^ 3) := by gcongr
     have heq2 : K * n * Real.log n / (8 * n ^ 3) = K / 8 * Real.log n / n ^ 2 := by field_simp
     calc
@@ -2682,7 +2712,8 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope_of_grh {N : 
           (8 * (K * n * Real.log n + 1) / n) =
         32 * Real.sqrt (2 * |primitiveBRe χ|) *
           (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) := by
-      field_simp; ring
+      field_simp
+      ring
     have hcombine :
       4 * n * Real.sqrt (2 * |primitiveBRe χ|) * Real.sqrt BR / d.δ ≤
         32 * Real.sqrt (2 * |primitiveBRe χ|) *
@@ -2740,7 +2771,8 @@ theorem primitiveHorizontalStripEpsilon_nonneg_of_grh {N : ℕ} [NeZero N] (hN2 
   have hN1 : 1 < N := by omega
   set d := primitiveHorizontalStripDataSeq_of_grh hN2 hGRH hprimitive hne hinv k with hd_def
   have hnge1 : (1 : ℝ) ≤ (k : ℝ) + 1 := by
-    have := Nat.cast_nonneg (α := ℝ) k; linarith
+    have := Nat.cast_nonneg (α := ℝ) k
+    linarith
   have hRge : 8 * ((k : ℝ) + 1) ≤ d.R := d.R_mem.1
   have hTge : (k : ℝ) + 1 ≤ d.T := d.T_mem.1
   have hRpos : 0 < d.R := by linarith

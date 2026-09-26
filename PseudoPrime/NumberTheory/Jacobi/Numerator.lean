@@ -38,7 +38,9 @@ theorem exists_crt_residue_for_odd_factorization {r : ℕ} (hrodd : Odd r) (hns 
         a < ∏ p ∈ r.primeFactors, p := by
   have hr0 : r ≠ 0 := by
     have hrmod : r % 2 = 1 := Nat.odd_iff.mp hrodd
-    omega
+    intro h
+    subst r
+    norm_num only [Nat.zero_mod] at hrmod
   obtain ⟨p₀, hp₀mem, hp₀odd⟩ := exists_prime_odd_factorization_of_not_square hr0 hns
   have hp₀prime : p₀.Prime := Nat.prime_of_mem_primeFactors hp₀mem
   have hp₀dvd : p₀ ∣ r := (Nat.mem_primeFactors.mp hp₀mem).2.1
@@ -90,7 +92,9 @@ theorem exists_nat_neg_one_numerator {r : ℕ} (hrodd : Odd r) (hns : ¬IsSquare
     ∃ a : ℕ, jacobiSym a r = -1 := by
   have hr0 : r ≠ 0 := by
     have hrmod : r % 2 = 1 := Nat.odd_iff.mp hrodd
-    omega
+    intro h
+    subst r
+    norm_num only [Nat.zero_mod] at hrmod
   obtain ⟨p₀, u, a, hp₀mem, hp₀odd, huvalue, hacong, _⟩ :=
     exists_crt_residue_for_odd_factorization hrodd hns
   have hlocal : ∀ p ∈ r.primeFactors, jacobiSym a p = if p = p₀ then -1 else 1 := by

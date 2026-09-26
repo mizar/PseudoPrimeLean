@@ -111,7 +111,8 @@ theorem classicalNeOneMaximum_le_classicalNegOneMaximum (B : ℕ) :
     intro h
     exact hn.not_isSquare (h ▸ ⟨1, rfl⟩)
   have hn1 : 1 < n.val := by
-    have := hn.pos; omega
+    have := hn.pos
+    omega
   exact
     PrimeTest.firstStopNeOne_le_firstStopNegOne_same_candidates hn1
       (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)

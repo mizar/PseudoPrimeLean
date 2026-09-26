@@ -115,7 +115,8 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero N] (hN2
               (((AnalyticNumberTheory.DirichletLFunction.primitiveReciprocalLeftRe A : ℝ) : ℂ) +
                 (t : ℂ) * Complex.I)).re := by
     rw [show ((↑(2 * Real.pi))⁻¹ : ℂ) = (((2 * Real.pi)⁻¹ : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.re_ofReal_mul]
   rw [hmulre] at hlimit
   exact hlimit

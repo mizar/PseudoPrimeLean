@@ -28,11 +28,7 @@ local hypotheses. Regenerate marked blocks with `python tools/generate_omega_cer
 Each `(e, k)` pair is verified here through the power comparison and the natural inequality
 `(m+1) * (3470*k*2^k + 3470*e) ≤ 4851*e*2^k + 5000*(m+1)*2^k`.
 These checks prove the certificate without trusting the choice procedure for `(e, k)`.
-
-The long-line linter is disabled for the generated certificate applications in this file.
 -/
-
-set_option linter.style.longLine false
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
@@ -56,7 +52,6 @@ private theorem certificate_rational_of_nat {m e k : ℕ}
   field_simp
   nlinarith only [hR]
 
-set_option exponentiation.threshold 3000 in
 theorem elementaryCertificate_at_1 :
     ((1 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 1) := by
   have hOP : oddPrimorial 1 = 3 := by rw [oddPrimorial_succ, oddPrimorial_zero, oddPrime_zero]
@@ -67,7 +62,6 @@ theorem elementaryCertificate_at_1 :
     norm_num only
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 theorem elementaryCertificate_at_2 :
     ((2 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 2) := by
   have hOP : oddPrimorial 2 = 15 := by
@@ -80,7 +74,6 @@ theorem elementaryCertificate_at_2 :
     norm_num only
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 theorem elementaryCertificate_at_3 :
     ((3 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 3) := by
   have hOP : oddPrimorial 3 = 105 := by
@@ -94,7 +87,6 @@ theorem elementaryCertificate_at_3 :
     norm_num only
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 theorem elementaryCertificate_at_4 :
     ((4 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 4) := by
   have hOP : oddPrimorial 4 = 1155 := by
@@ -110,7 +102,6 @@ theorem elementaryCertificate_at_4 :
   · exact certificate_rational_of_nat (by decide)
 
 -- BEGIN GENERATED OMEGA CERTIFICATES
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 5, from a generated integer certificate. -/
 theorem elementaryCertificate_at_5 :
     ((5 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 5) := by
@@ -119,7 +110,6 @@ theorem elementaryCertificate_at_5 :
       (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 6, from a generated integer certificate. -/
 theorem elementaryCertificate_at_6 :
     ((6 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 6) := by
@@ -128,7 +118,6 @@ theorem elementaryCertificate_at_6 :
       4) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 7, from a generated integer certificate. -/
 theorem elementaryCertificate_at_7 :
     ((7 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 7) := by
@@ -137,7 +126,6 @@ theorem elementaryCertificate_at_7 :
       4) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 8, from a generated integer certificate. -/
 theorem elementaryCertificate_at_8 :
     ((8 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 8) := by
@@ -146,7 +134,6 @@ theorem elementaryCertificate_at_8 :
       4) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 9, from a generated integer certificate. -/
 theorem elementaryCertificate_at_9 :
     ((9 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 9) := by
@@ -155,7 +142,6 @@ theorem elementaryCertificate_at_9 :
       5) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 10, from a generated integer certificate. -/
 theorem elementaryCertificate_at_10 :
     ((10 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 10) := by
@@ -164,7 +150,6 @@ theorem elementaryCertificate_at_10 :
       5) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 11, from a generated integer certificate. -/
 theorem elementaryCertificate_at_11 :
     ((11 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 11) := by
@@ -173,7 +158,6 @@ theorem elementaryCertificate_at_11 :
       5) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 12, from a generated integer certificate. -/
 theorem elementaryCertificate_at_12 :
     ((12 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 12) := by
@@ -182,7 +166,6 @@ theorem elementaryCertificate_at_12 :
       5) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 13, from a generated integer certificate. -/
 theorem elementaryCertificate_at_13 :
     ((13 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 13) := by
@@ -191,7 +174,6 @@ theorem elementaryCertificate_at_13 :
       5) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 14, from a generated integer certificate. -/
 theorem elementaryCertificate_at_14 :
     ((14 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 14) := by
@@ -200,7 +182,6 @@ theorem elementaryCertificate_at_14 :
       5) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 15, from a generated integer certificate. -/
 theorem elementaryCertificate_at_15 :
     ((15 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 15) := by
@@ -209,7 +190,6 @@ theorem elementaryCertificate_at_15 :
       6) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 16, from a generated integer certificate. -/
 theorem elementaryCertificate_at_16 :
     ((16 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 16) := by
@@ -218,7 +198,6 @@ theorem elementaryCertificate_at_16 :
       6) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 17, from a generated integer certificate. -/
 theorem elementaryCertificate_at_17 :
     ((17 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 17) := by
@@ -227,7 +206,6 @@ theorem elementaryCertificate_at_17 :
       6) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 18, from a generated integer certificate. -/
 theorem elementaryCertificate_at_18 :
     ((18 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 18) := by
@@ -236,7 +214,6 @@ theorem elementaryCertificate_at_18 :
       6) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 19, from a generated integer certificate. -/
 theorem elementaryCertificate_at_19 :
     ((19 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 19) := by
@@ -245,7 +222,6 @@ theorem elementaryCertificate_at_19 :
       6) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 20, from a generated integer certificate. -/
 theorem elementaryCertificate_at_20 :
     ((20 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 20) := by
@@ -254,7 +230,6 @@ theorem elementaryCertificate_at_20 :
       6) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 21, from a generated integer certificate. -/
 theorem elementaryCertificate_at_21 :
     ((21 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 21) := by
@@ -263,7 +238,6 @@ theorem elementaryCertificate_at_21 :
       6) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 22, from a generated integer certificate. -/
 theorem elementaryCertificate_at_22 :
     ((22 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 22) := by
@@ -272,7 +246,6 @@ theorem elementaryCertificate_at_22 :
       6) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 23, from a generated integer certificate. -/
 theorem elementaryCertificate_at_23 :
     ((23 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 23) := by
@@ -281,7 +254,6 @@ theorem elementaryCertificate_at_23 :
       6) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 24, from a generated integer certificate. -/
 theorem elementaryCertificate_at_24 :
     ((24 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 24) := by
@@ -290,7 +262,6 @@ theorem elementaryCertificate_at_24 :
       6) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 25, from a generated integer certificate. -/
 theorem elementaryCertificate_at_25 :
     ((25 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 25) := by
@@ -299,7 +270,6 @@ theorem elementaryCertificate_at_25 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 26, from a generated integer certificate. -/
 theorem elementaryCertificate_at_26 :
     ((26 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 26) := by
@@ -308,7 +278,6 @@ theorem elementaryCertificate_at_26 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 27, from a generated integer certificate. -/
 theorem elementaryCertificate_at_27 :
     ((27 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 27) := by
@@ -317,7 +286,6 @@ theorem elementaryCertificate_at_27 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 28, from a generated integer certificate. -/
 theorem elementaryCertificate_at_28 :
     ((28 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 28) := by
@@ -326,7 +294,6 @@ theorem elementaryCertificate_at_28 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 29, from a generated integer certificate. -/
 theorem elementaryCertificate_at_29 :
     ((29 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 29) := by
@@ -335,7 +302,6 @@ theorem elementaryCertificate_at_29 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 30, from a generated integer certificate. -/
 theorem elementaryCertificate_at_30 :
     ((30 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 30) := by
@@ -344,7 +310,6 @@ theorem elementaryCertificate_at_30 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 31, from a generated integer certificate. -/
 theorem elementaryCertificate_at_31 :
     ((31 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 31) := by
@@ -353,7 +318,6 @@ theorem elementaryCertificate_at_31 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 32, from a generated integer certificate. -/
 theorem elementaryCertificate_at_32 :
     ((32 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 32) := by
@@ -362,7 +326,6 @@ theorem elementaryCertificate_at_32 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 33, from a generated integer certificate. -/
 theorem elementaryCertificate_at_33 :
     ((33 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 33) := by
@@ -371,7 +334,6 @@ theorem elementaryCertificate_at_33 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 34, from a generated integer certificate. -/
 theorem elementaryCertificate_at_34 :
     ((34 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 34) := by
@@ -380,7 +342,6 @@ theorem elementaryCertificate_at_34 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 35, from a generated integer certificate. -/
 theorem elementaryCertificate_at_35 :
     ((35 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 35) := by
@@ -389,7 +350,6 @@ theorem elementaryCertificate_at_35 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 36, from a generated integer certificate. -/
 theorem elementaryCertificate_at_36 :
     ((36 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 36) := by
@@ -398,7 +358,6 @@ theorem elementaryCertificate_at_36 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 37, from a generated integer certificate. -/
 theorem elementaryCertificate_at_37 :
     ((37 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 37) := by
@@ -407,7 +366,6 @@ theorem elementaryCertificate_at_37 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 38, from a generated integer certificate. -/
 theorem elementaryCertificate_at_38 :
     ((38 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 38) := by
@@ -416,7 +374,6 @@ theorem elementaryCertificate_at_38 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 39, from a generated integer certificate. -/
 theorem elementaryCertificate_at_39 :
     ((39 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 39) := by
@@ -425,7 +382,6 @@ theorem elementaryCertificate_at_39 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 40, from a generated integer certificate. -/
 theorem elementaryCertificate_at_40 :
     ((40 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 40) := by
@@ -434,7 +390,6 @@ theorem elementaryCertificate_at_40 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 41, from a generated integer certificate. -/
 theorem elementaryCertificate_at_41 :
     ((41 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 41) := by
@@ -443,7 +398,6 @@ theorem elementaryCertificate_at_41 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
 /-- The finite omega bound at index 42, from a generated integer certificate. -/
 theorem elementaryCertificate_at_42 :
     ((42 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 42) := by
@@ -452,7 +406,7 @@ theorem elementaryCertificate_at_42 :
       7) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 257 in
 /-- The finite omega bound at index 43, from a generated integer certificate. -/
 theorem elementaryCertificate_at_43 :
     ((43 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 43) := by
@@ -461,7 +415,7 @@ theorem elementaryCertificate_at_43 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 265 in
 /-- The finite omega bound at index 44, from a generated integer certificate. -/
 theorem elementaryCertificate_at_44 :
     ((44 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 44) := by
@@ -470,7 +424,7 @@ theorem elementaryCertificate_at_44 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 273 in
 /-- The finite omega bound at index 45, from a generated integer certificate. -/
 theorem elementaryCertificate_at_45 :
     ((45 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 45) := by
@@ -479,7 +433,7 @@ theorem elementaryCertificate_at_45 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 280 in
 /-- The finite omega bound at index 46, from a generated integer certificate. -/
 theorem elementaryCertificate_at_46 :
     ((46 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 46) := by
@@ -488,7 +442,7 @@ theorem elementaryCertificate_at_46 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 288 in
 /-- The finite omega bound at index 47, from a generated integer certificate. -/
 theorem elementaryCertificate_at_47 :
     ((47 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 47) := by
@@ -497,7 +451,7 @@ theorem elementaryCertificate_at_47 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 296 in
 /-- The finite omega bound at index 48, from a generated integer certificate. -/
 theorem elementaryCertificate_at_48 :
     ((48 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 48) := by
@@ -506,7 +460,7 @@ theorem elementaryCertificate_at_48 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 304 in
 /-- The finite omega bound at index 49, from a generated integer certificate. -/
 theorem elementaryCertificate_at_49 :
     ((49 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 49) := by
@@ -515,7 +469,7 @@ theorem elementaryCertificate_at_49 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 312 in
 /-- The finite omega bound at index 50, from a generated integer certificate. -/
 theorem elementaryCertificate_at_50 :
     ((50 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 50) := by
@@ -524,7 +478,7 @@ theorem elementaryCertificate_at_50 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 319 in
 /-- The finite omega bound at index 51, from a generated integer certificate. -/
 theorem elementaryCertificate_at_51 :
     ((51 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 51) := by
@@ -533,7 +487,7 @@ theorem elementaryCertificate_at_51 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 327 in
 /-- The finite omega bound at index 52, from a generated integer certificate. -/
 theorem elementaryCertificate_at_52 :
     ((52 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 52) := by
@@ -542,7 +496,7 @@ theorem elementaryCertificate_at_52 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 335 in
 /-- The finite omega bound at index 53, from a generated integer certificate. -/
 theorem elementaryCertificate_at_53 :
     ((53 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 53) := by
@@ -551,7 +505,7 @@ theorem elementaryCertificate_at_53 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 343 in
 /-- The finite omega bound at index 54, from a generated integer certificate. -/
 theorem elementaryCertificate_at_54 :
     ((54 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 54) := by
@@ -560,7 +514,7 @@ theorem elementaryCertificate_at_54 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 351 in
 /-- The finite omega bound at index 55, from a generated integer certificate. -/
 theorem elementaryCertificate_at_55 :
     ((55 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 55) := by
@@ -569,7 +523,7 @@ theorem elementaryCertificate_at_55 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 359 in
 /-- The finite omega bound at index 56, from a generated integer certificate. -/
 theorem elementaryCertificate_at_56 :
     ((56 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 56) := by
@@ -578,7 +532,7 @@ theorem elementaryCertificate_at_56 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 368 in
 /-- The finite omega bound at index 57, from a generated integer certificate. -/
 theorem elementaryCertificate_at_57 :
     ((57 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 57) := by
@@ -587,7 +541,7 @@ theorem elementaryCertificate_at_57 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 376 in
 /-- The finite omega bound at index 58, from a generated integer certificate. -/
 theorem elementaryCertificate_at_58 :
     ((58 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 58) := by
@@ -596,7 +550,7 @@ theorem elementaryCertificate_at_58 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 384 in
 /-- The finite omega bound at index 59, from a generated integer certificate. -/
 theorem elementaryCertificate_at_59 :
     ((59 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 59) := by
@@ -605,7 +559,7 @@ theorem elementaryCertificate_at_59 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 392 in
 /-- The finite omega bound at index 60, from a generated integer certificate. -/
 theorem elementaryCertificate_at_60 :
     ((60 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 60) := by
@@ -614,7 +568,7 @@ theorem elementaryCertificate_at_60 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 400 in
 /-- The finite omega bound at index 61, from a generated integer certificate. -/
 theorem elementaryCertificate_at_61 :
     ((61 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 61) := by
@@ -623,7 +577,7 @@ theorem elementaryCertificate_at_61 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 408 in
 /-- The finite omega bound at index 62, from a generated integer certificate. -/
 theorem elementaryCertificate_at_62 :
     ((62 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 62) := by
@@ -632,7 +586,7 @@ theorem elementaryCertificate_at_62 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 417 in
 /-- The finite omega bound at index 63, from a generated integer certificate. -/
 theorem elementaryCertificate_at_63 :
     ((63 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 63) := by
@@ -641,7 +595,7 @@ theorem elementaryCertificate_at_63 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 425 in
 /-- The finite omega bound at index 64, from a generated integer certificate. -/
 theorem elementaryCertificate_at_64 :
     ((64 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 64) := by
@@ -650,7 +604,7 @@ theorem elementaryCertificate_at_64 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 433 in
 /-- The finite omega bound at index 65, from a generated integer certificate. -/
 theorem elementaryCertificate_at_65 :
     ((65 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 65) := by
@@ -659,7 +613,7 @@ theorem elementaryCertificate_at_65 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 442 in
 /-- The finite omega bound at index 66, from a generated integer certificate. -/
 theorem elementaryCertificate_at_66 :
     ((66 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 66) := by
@@ -668,7 +622,7 @@ theorem elementaryCertificate_at_66 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 450 in
 /-- The finite omega bound at index 67, from a generated integer certificate. -/
 theorem elementaryCertificate_at_67 :
     ((67 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 67) := by
@@ -677,7 +631,7 @@ theorem elementaryCertificate_at_67 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 459 in
 /-- The finite omega bound at index 68, from a generated integer certificate. -/
 theorem elementaryCertificate_at_68 :
     ((68 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 68) := by
@@ -686,7 +640,7 @@ theorem elementaryCertificate_at_68 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 467 in
 /-- The finite omega bound at index 69, from a generated integer certificate. -/
 theorem elementaryCertificate_at_69 :
     ((69 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 69) := by
@@ -695,7 +649,7 @@ theorem elementaryCertificate_at_69 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 475 in
 /-- The finite omega bound at index 70, from a generated integer certificate. -/
 theorem elementaryCertificate_at_70 :
     ((70 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 70) := by
@@ -704,7 +658,7 @@ theorem elementaryCertificate_at_70 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 484 in
 /-- The finite omega bound at index 71, from a generated integer certificate. -/
 theorem elementaryCertificate_at_71 :
     ((71 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 71) := by
@@ -713,7 +667,7 @@ theorem elementaryCertificate_at_71 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 492 in
 /-- The finite omega bound at index 72, from a generated integer certificate. -/
 theorem elementaryCertificate_at_72 :
     ((72 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 72) := by
@@ -722,7 +676,7 @@ theorem elementaryCertificate_at_72 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 501 in
 /-- The finite omega bound at index 73, from a generated integer certificate. -/
 theorem elementaryCertificate_at_73 :
     ((73 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 73) := by
@@ -731,7 +685,7 @@ theorem elementaryCertificate_at_73 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 510 in
 /-- The finite omega bound at index 74, from a generated integer certificate. -/
 theorem elementaryCertificate_at_74 :
     ((74 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 74) := by
@@ -740,7 +694,7 @@ theorem elementaryCertificate_at_74 :
       8) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 518 in
 /-- The finite omega bound at index 75, from a generated integer certificate. -/
 theorem elementaryCertificate_at_75 :
     ((75 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 75) := by
@@ -749,7 +703,7 @@ theorem elementaryCertificate_at_75 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 527 in
 /-- The finite omega bound at index 76, from a generated integer certificate. -/
 theorem elementaryCertificate_at_76 :
     ((76 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 76) := by
@@ -758,7 +712,7 @@ theorem elementaryCertificate_at_76 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 535 in
 /-- The finite omega bound at index 77, from a generated integer certificate. -/
 theorem elementaryCertificate_at_77 :
     ((77 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 77) := by
@@ -767,7 +721,7 @@ theorem elementaryCertificate_at_77 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 544 in
 /-- The finite omega bound at index 78, from a generated integer certificate. -/
 theorem elementaryCertificate_at_78 :
     ((78 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 78) := by
@@ -776,7 +730,7 @@ theorem elementaryCertificate_at_78 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 553 in
 /-- The finite omega bound at index 79, from a generated integer certificate. -/
 theorem elementaryCertificate_at_79 :
     ((79 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 79) := by
@@ -785,7 +739,7 @@ theorem elementaryCertificate_at_79 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 561 in
 /-- The finite omega bound at index 80, from a generated integer certificate. -/
 theorem elementaryCertificate_at_80 :
     ((80 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 80) := by
@@ -794,7 +748,7 @@ theorem elementaryCertificate_at_80 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 570 in
 /-- The finite omega bound at index 81, from a generated integer certificate. -/
 theorem elementaryCertificate_at_81 :
     ((81 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 81) := by
@@ -803,7 +757,7 @@ theorem elementaryCertificate_at_81 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 579 in
 /-- The finite omega bound at index 82, from a generated integer certificate. -/
 theorem elementaryCertificate_at_82 :
     ((82 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 82) := by
@@ -812,7 +766,7 @@ theorem elementaryCertificate_at_82 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 588 in
 /-- The finite omega bound at index 83, from a generated integer certificate. -/
 theorem elementaryCertificate_at_83 :
     ((83 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 83) := by
@@ -821,7 +775,7 @@ theorem elementaryCertificate_at_83 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 596 in
 /-- The finite omega bound at index 84, from a generated integer certificate. -/
 theorem elementaryCertificate_at_84 :
     ((84 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 84) := by
@@ -830,7 +784,7 @@ theorem elementaryCertificate_at_84 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 605 in
 /-- The finite omega bound at index 85, from a generated integer certificate. -/
 theorem elementaryCertificate_at_85 :
     ((85 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 85) := by
@@ -839,7 +793,7 @@ theorem elementaryCertificate_at_85 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 614 in
 /-- The finite omega bound at index 86, from a generated integer certificate. -/
 theorem elementaryCertificate_at_86 :
     ((86 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 86) := by
@@ -848,7 +802,7 @@ theorem elementaryCertificate_at_86 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 623 in
 /-- The finite omega bound at index 87, from a generated integer certificate. -/
 theorem elementaryCertificate_at_87 :
     ((87 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 87) := by
@@ -857,7 +811,7 @@ theorem elementaryCertificate_at_87 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 632 in
 /-- The finite omega bound at index 88, from a generated integer certificate. -/
 theorem elementaryCertificate_at_88 :
     ((88 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 88) := by
@@ -866,7 +820,7 @@ theorem elementaryCertificate_at_88 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 641 in
 /-- The finite omega bound at index 89, from a generated integer certificate. -/
 theorem elementaryCertificate_at_89 :
     ((89 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 89) := by
@@ -875,7 +829,7 @@ theorem elementaryCertificate_at_89 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 649 in
 /-- The finite omega bound at index 90, from a generated integer certificate. -/
 theorem elementaryCertificate_at_90 :
     ((90 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 90) := by
@@ -884,7 +838,7 @@ theorem elementaryCertificate_at_90 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 658 in
 /-- The finite omega bound at index 91, from a generated integer certificate. -/
 theorem elementaryCertificate_at_91 :
     ((91 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 91) := by
@@ -893,7 +847,7 @@ theorem elementaryCertificate_at_91 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 667 in
 /-- The finite omega bound at index 92, from a generated integer certificate. -/
 theorem elementaryCertificate_at_92 :
     ((92 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 92) := by
@@ -902,7 +856,7 @@ theorem elementaryCertificate_at_92 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 676 in
 /-- The finite omega bound at index 93, from a generated integer certificate. -/
 theorem elementaryCertificate_at_93 :
     ((93 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 93) := by
@@ -911,7 +865,7 @@ theorem elementaryCertificate_at_93 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 685 in
 /-- The finite omega bound at index 94, from a generated integer certificate. -/
 theorem elementaryCertificate_at_94 :
     ((94 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 94) := by
@@ -920,7 +874,7 @@ theorem elementaryCertificate_at_94 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 694 in
 /-- The finite omega bound at index 95, from a generated integer certificate. -/
 theorem elementaryCertificate_at_95 :
     ((95 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 95) := by
@@ -929,7 +883,7 @@ theorem elementaryCertificate_at_95 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 703 in
 /-- The finite omega bound at index 96, from a generated integer certificate. -/
 theorem elementaryCertificate_at_96 :
     ((96 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 96) := by
@@ -938,7 +892,7 @@ theorem elementaryCertificate_at_96 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 712 in
 /-- The finite omega bound at index 97, from a generated integer certificate. -/
 theorem elementaryCertificate_at_97 :
     ((97 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 97) := by
@@ -947,7 +901,7 @@ theorem elementaryCertificate_at_97 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 721 in
 /-- The finite omega bound at index 98, from a generated integer certificate. -/
 theorem elementaryCertificate_at_98 :
     ((98 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 98) := by
@@ -956,7 +910,7 @@ theorem elementaryCertificate_at_98 :
       9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 730 in
 /-- The finite omega bound at index 99, from a generated integer certificate. -/
 theorem elementaryCertificate_at_99 :
     ((99 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 99) := by
@@ -965,7 +919,7 @@ theorem elementaryCertificate_at_99 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 739 in
 /-- The finite omega bound at index 100, from a generated integer certificate. -/
 theorem elementaryCertificate_at_100 :
     ((100 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 100) := by
@@ -974,7 +928,7 @@ theorem elementaryCertificate_at_100 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 748 in
 /-- The finite omega bound at index 101, from a generated integer certificate. -/
 theorem elementaryCertificate_at_101 :
     ((101 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 101) := by
@@ -983,7 +937,7 @@ theorem elementaryCertificate_at_101 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 758 in
 /-- The finite omega bound at index 102, from a generated integer certificate. -/
 theorem elementaryCertificate_at_102 :
     ((102 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 102) := by
@@ -992,7 +946,7 @@ theorem elementaryCertificate_at_102 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 767 in
 /-- The finite omega bound at index 103, from a generated integer certificate. -/
 theorem elementaryCertificate_at_103 :
     ((103 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 103) := by
@@ -1001,7 +955,7 @@ theorem elementaryCertificate_at_103 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 776 in
 /-- The finite omega bound at index 104, from a generated integer certificate. -/
 theorem elementaryCertificate_at_104 :
     ((104 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 104) := by
@@ -1010,7 +964,7 @@ theorem elementaryCertificate_at_104 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 785 in
 /-- The finite omega bound at index 105, from a generated integer certificate. -/
 theorem elementaryCertificate_at_105 :
     ((105 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 105) := by
@@ -1019,7 +973,7 @@ theorem elementaryCertificate_at_105 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 794 in
 /-- The finite omega bound at index 106, from a generated integer certificate. -/
 theorem elementaryCertificate_at_106 :
     ((106 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 106) := by
@@ -1028,7 +982,7 @@ theorem elementaryCertificate_at_106 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 803 in
 /-- The finite omega bound at index 107, from a generated integer certificate. -/
 theorem elementaryCertificate_at_107 :
     ((107 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 107) := by
@@ -1037,7 +991,7 @@ theorem elementaryCertificate_at_107 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 813 in
 /-- The finite omega bound at index 108, from a generated integer certificate. -/
 theorem elementaryCertificate_at_108 :
     ((108 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 108) := by
@@ -1046,7 +1000,7 @@ theorem elementaryCertificate_at_108 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 822 in
 /-- The finite omega bound at index 109, from a generated integer certificate. -/
 theorem elementaryCertificate_at_109 :
     ((109 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 109) := by
@@ -1055,7 +1009,7 @@ theorem elementaryCertificate_at_109 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 831 in
 /-- The finite omega bound at index 110, from a generated integer certificate. -/
 theorem elementaryCertificate_at_110 :
     ((110 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 110) := by
@@ -1064,7 +1018,7 @@ theorem elementaryCertificate_at_110 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 840 in
 /-- The finite omega bound at index 111, from a generated integer certificate. -/
 theorem elementaryCertificate_at_111 :
     ((111 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 111) := by
@@ -1073,7 +1027,7 @@ theorem elementaryCertificate_at_111 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 850 in
 /-- The finite omega bound at index 112, from a generated integer certificate. -/
 theorem elementaryCertificate_at_112 :
     ((112 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 112) := by
@@ -1082,7 +1036,7 @@ theorem elementaryCertificate_at_112 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 859 in
 /-- The finite omega bound at index 113, from a generated integer certificate. -/
 theorem elementaryCertificate_at_113 :
     ((113 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 113) := by
@@ -1091,7 +1045,7 @@ theorem elementaryCertificate_at_113 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 868 in
 /-- The finite omega bound at index 114, from a generated integer certificate. -/
 theorem elementaryCertificate_at_114 :
     ((114 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 114) := by
@@ -1100,7 +1054,7 @@ theorem elementaryCertificate_at_114 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 878 in
 /-- The finite omega bound at index 115, from a generated integer certificate. -/
 theorem elementaryCertificate_at_115 :
     ((115 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 115) := by
@@ -1109,7 +1063,7 @@ theorem elementaryCertificate_at_115 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 887 in
 /-- The finite omega bound at index 116, from a generated integer certificate. -/
 theorem elementaryCertificate_at_116 :
     ((116 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 116) := by
@@ -1118,7 +1072,7 @@ theorem elementaryCertificate_at_116 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 896 in
 /-- The finite omega bound at index 117, from a generated integer certificate. -/
 theorem elementaryCertificate_at_117 :
     ((117 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 117) := by
@@ -1127,7 +1081,7 @@ theorem elementaryCertificate_at_117 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 906 in
 /-- The finite omega bound at index 118, from a generated integer certificate. -/
 theorem elementaryCertificate_at_118 :
     ((118 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 118) := by
@@ -1136,7 +1090,7 @@ theorem elementaryCertificate_at_118 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 915 in
 /-- The finite omega bound at index 119, from a generated integer certificate. -/
 theorem elementaryCertificate_at_119 :
     ((119 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 119) := by
@@ -1145,7 +1099,7 @@ theorem elementaryCertificate_at_119 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 924 in
 /-- The finite omega bound at index 120, from a generated integer certificate. -/
 theorem elementaryCertificate_at_120 :
     ((120 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 120) := by
@@ -1154,7 +1108,7 @@ theorem elementaryCertificate_at_120 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 934 in
 /-- The finite omega bound at index 121, from a generated integer certificate. -/
 theorem elementaryCertificate_at_121 :
     ((121 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 121) := by
@@ -1163,7 +1117,7 @@ theorem elementaryCertificate_at_121 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 943 in
 /-- The finite omega bound at index 122, from a generated integer certificate. -/
 theorem elementaryCertificate_at_122 :
     ((122 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 122) := by
@@ -1172,7 +1126,7 @@ theorem elementaryCertificate_at_122 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 953 in
 /-- The finite omega bound at index 123, from a generated integer certificate. -/
 theorem elementaryCertificate_at_123 :
     ((123 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 123) := by
@@ -1181,7 +1135,7 @@ theorem elementaryCertificate_at_123 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 962 in
 /-- The finite omega bound at index 124, from a generated integer certificate. -/
 theorem elementaryCertificate_at_124 :
     ((124 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 124) := by
@@ -1190,7 +1144,7 @@ theorem elementaryCertificate_at_124 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 971 in
 /-- The finite omega bound at index 125, from a generated integer certificate. -/
 theorem elementaryCertificate_at_125 :
     ((125 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 125) := by
@@ -1199,7 +1153,7 @@ theorem elementaryCertificate_at_125 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 981 in
 /-- The finite omega bound at index 126, from a generated integer certificate. -/
 theorem elementaryCertificate_at_126 :
     ((126 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 126) := by
@@ -1208,7 +1162,7 @@ theorem elementaryCertificate_at_126 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 990 in
 /-- The finite omega bound at index 127, from a generated integer certificate. -/
 theorem elementaryCertificate_at_127 :
     ((127 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 127) := by
@@ -1217,7 +1171,7 @@ theorem elementaryCertificate_at_127 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1000 in
 /-- The finite omega bound at index 128, from a generated integer certificate. -/
 theorem elementaryCertificate_at_128 :
     ((128 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 128) := by
@@ -1226,7 +1180,7 @@ theorem elementaryCertificate_at_128 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1009 in
 /-- The finite omega bound at index 129, from a generated integer certificate. -/
 theorem elementaryCertificate_at_129 :
     ((129 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 129) := by
@@ -1235,7 +1189,7 @@ theorem elementaryCertificate_at_129 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1019 in
 /-- The finite omega bound at index 130, from a generated integer certificate. -/
 theorem elementaryCertificate_at_130 :
     ((130 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 130) := by
@@ -1244,7 +1198,7 @@ theorem elementaryCertificate_at_130 :
       (k := 9) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1029 in
 /-- The finite omega bound at index 131, from a generated integer certificate. -/
 theorem elementaryCertificate_at_131 :
     ((131 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 131) := by
@@ -1253,7 +1207,7 @@ theorem elementaryCertificate_at_131 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1038 in
 /-- The finite omega bound at index 132, from a generated integer certificate. -/
 theorem elementaryCertificate_at_132 :
     ((132 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 132) := by
@@ -1262,7 +1216,7 @@ theorem elementaryCertificate_at_132 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1048 in
 /-- The finite omega bound at index 133, from a generated integer certificate. -/
 theorem elementaryCertificate_at_133 :
     ((133 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 133) := by
@@ -1271,7 +1225,7 @@ theorem elementaryCertificate_at_133 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1057 in
 /-- The finite omega bound at index 134, from a generated integer certificate. -/
 theorem elementaryCertificate_at_134 :
     ((134 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 134) := by
@@ -1280,7 +1234,7 @@ theorem elementaryCertificate_at_134 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1067 in
 /-- The finite omega bound at index 135, from a generated integer certificate. -/
 theorem elementaryCertificate_at_135 :
     ((135 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 135) := by
@@ -1289,7 +1243,7 @@ theorem elementaryCertificate_at_135 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1076 in
 /-- The finite omega bound at index 136, from a generated integer certificate. -/
 theorem elementaryCertificate_at_136 :
     ((136 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 136) := by
@@ -1298,7 +1252,7 @@ theorem elementaryCertificate_at_136 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1086 in
 /-- The finite omega bound at index 137, from a generated integer certificate. -/
 theorem elementaryCertificate_at_137 :
     ((137 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 137) := by
@@ -1307,7 +1261,7 @@ theorem elementaryCertificate_at_137 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1096 in
 /-- The finite omega bound at index 138, from a generated integer certificate. -/
 theorem elementaryCertificate_at_138 :
     ((138 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 138) := by
@@ -1316,7 +1270,7 @@ theorem elementaryCertificate_at_138 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1105 in
 /-- The finite omega bound at index 139, from a generated integer certificate. -/
 theorem elementaryCertificate_at_139 :
     ((139 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 139) := by
@@ -1325,7 +1279,7 @@ theorem elementaryCertificate_at_139 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1115 in
 /-- The finite omega bound at index 140, from a generated integer certificate. -/
 theorem elementaryCertificate_at_140 :
     ((140 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 140) := by
@@ -1334,7 +1288,7 @@ theorem elementaryCertificate_at_140 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1125 in
 /-- The finite omega bound at index 141, from a generated integer certificate. -/
 theorem elementaryCertificate_at_141 :
     ((141 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 141) := by
@@ -1343,7 +1297,7 @@ theorem elementaryCertificate_at_141 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1134 in
 /-- The finite omega bound at index 142, from a generated integer certificate. -/
 theorem elementaryCertificate_at_142 :
     ((142 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 142) := by
@@ -1352,7 +1306,7 @@ theorem elementaryCertificate_at_142 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1144 in
 /-- The finite omega bound at index 143, from a generated integer certificate. -/
 theorem elementaryCertificate_at_143 :
     ((143 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 143) := by
@@ -1361,7 +1315,7 @@ theorem elementaryCertificate_at_143 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1154 in
 /-- The finite omega bound at index 144, from a generated integer certificate. -/
 theorem elementaryCertificate_at_144 :
     ((144 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 144) := by
@@ -1370,7 +1324,7 @@ theorem elementaryCertificate_at_144 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1163 in
 /-- The finite omega bound at index 145, from a generated integer certificate. -/
 theorem elementaryCertificate_at_145 :
     ((145 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 145) := by
@@ -1379,7 +1333,7 @@ theorem elementaryCertificate_at_145 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1173 in
 /-- The finite omega bound at index 146, from a generated integer certificate. -/
 theorem elementaryCertificate_at_146 :
     ((146 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 146) := by
@@ -1388,7 +1342,7 @@ theorem elementaryCertificate_at_146 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1183 in
 /-- The finite omega bound at index 147, from a generated integer certificate. -/
 theorem elementaryCertificate_at_147 :
     ((147 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 147) := by
@@ -1397,7 +1351,7 @@ theorem elementaryCertificate_at_147 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1193 in
 /-- The finite omega bound at index 148, from a generated integer certificate. -/
 theorem elementaryCertificate_at_148 :
     ((148 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 148) := by
@@ -1406,7 +1360,7 @@ theorem elementaryCertificate_at_148 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1202 in
 /-- The finite omega bound at index 149, from a generated integer certificate. -/
 theorem elementaryCertificate_at_149 :
     ((149 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 149) := by
@@ -1415,7 +1369,7 @@ theorem elementaryCertificate_at_149 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1212 in
 /-- The finite omega bound at index 150, from a generated integer certificate. -/
 theorem elementaryCertificate_at_150 :
     ((150 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 150) := by
@@ -1424,7 +1378,7 @@ theorem elementaryCertificate_at_150 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1222 in
 /-- The finite omega bound at index 151, from a generated integer certificate. -/
 theorem elementaryCertificate_at_151 :
     ((151 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 151) := by
@@ -1433,7 +1387,7 @@ theorem elementaryCertificate_at_151 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1232 in
 /-- The finite omega bound at index 152, from a generated integer certificate. -/
 theorem elementaryCertificate_at_152 :
     ((152 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 152) := by
@@ -1442,7 +1396,7 @@ theorem elementaryCertificate_at_152 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1242 in
 /-- The finite omega bound at index 153, from a generated integer certificate. -/
 theorem elementaryCertificate_at_153 :
     ((153 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 153) := by
@@ -1451,7 +1405,7 @@ theorem elementaryCertificate_at_153 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1251 in
 /-- The finite omega bound at index 154, from a generated integer certificate. -/
 theorem elementaryCertificate_at_154 :
     ((154 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 154) := by
@@ -1460,7 +1414,7 @@ theorem elementaryCertificate_at_154 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1261 in
 /-- The finite omega bound at index 155, from a generated integer certificate. -/
 theorem elementaryCertificate_at_155 :
     ((155 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 155) := by
@@ -1469,7 +1423,7 @@ theorem elementaryCertificate_at_155 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1271 in
 /-- The finite omega bound at index 156, from a generated integer certificate. -/
 theorem elementaryCertificate_at_156 :
     ((156 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 156) := by
@@ -1478,7 +1432,7 @@ theorem elementaryCertificate_at_156 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1281 in
 /-- The finite omega bound at index 157, from a generated integer certificate. -/
 theorem elementaryCertificate_at_157 :
     ((157 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 157) := by
@@ -1487,7 +1441,7 @@ theorem elementaryCertificate_at_157 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1291 in
 /-- The finite omega bound at index 158, from a generated integer certificate. -/
 theorem elementaryCertificate_at_158 :
     ((158 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 158) := by
@@ -1496,7 +1450,7 @@ theorem elementaryCertificate_at_158 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1301 in
 /-- The finite omega bound at index 159, from a generated integer certificate. -/
 theorem elementaryCertificate_at_159 :
     ((159 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 159) := by
@@ -1505,7 +1459,7 @@ theorem elementaryCertificate_at_159 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1311 in
 /-- The finite omega bound at index 160, from a generated integer certificate. -/
 theorem elementaryCertificate_at_160 :
     ((160 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 160) := by
@@ -1514,7 +1468,7 @@ theorem elementaryCertificate_at_160 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1320 in
 /-- The finite omega bound at index 161, from a generated integer certificate. -/
 theorem elementaryCertificate_at_161 :
     ((161 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 161) := by
@@ -1523,7 +1477,7 @@ theorem elementaryCertificate_at_161 :
       (k := 10) (by norm_num only) (by norm_num only)
   · exact certificate_rational_of_nat (by decide)
 
-set_option exponentiation.threshold 3000 in
+set_option exponentiation.threshold 1330 in
 /-- The finite omega bound at index 162, from a generated integer certificate. -/
 theorem elementaryCertificate_at_162 :
     ((162 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 162) := by

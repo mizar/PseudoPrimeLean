@@ -29,7 +29,7 @@ private theorem lucasUZMod_methodAStar_odd_zero_iff {n m : ℕ} (hunit : IsUnit 
   change (lucasU 5 5 (2 * m + 1) : ZMod n) = 0 ↔ (lucasV 1 (-1) (2 * m + 1) : ZMod n) = 0
   have h := congrArg (fun z : ℤ => (z : ZMod n)) (lucasU_methodAStar_odd m)
   simp only [Int.cast_mul, Int.cast_pow] at h
-  norm_num at h ⊢
+  norm_num only at h ⊢
   rw [h]
   exact unit_mul_zero_iff (hunit.pow m)
 
@@ -38,7 +38,7 @@ private theorem lucasVZMod_methodAStar_odd_zero_iff {n m : ℕ} (hunit : IsUnit 
   change (lucasV 5 5 (2 * m + 1) : ZMod n) = 0 ↔ (lucasU 1 (-1) (2 * m + 1) : ZMod n) = 0
   have h := congrArg (fun z : ℤ => (z : ZMod n)) (lucasV_methodAStar_odd m)
   simp only [Int.cast_mul, Int.cast_pow] at h
-  norm_num at h ⊢
+  norm_num only at h ⊢
   rw [h]
   exact unit_mul_zero_iff (hunit.pow (m + 1))
 
@@ -47,7 +47,7 @@ private theorem lucasVZMod_methodAStar_even_zero_iff {n k : ℕ} (hunit : IsUnit
   change (lucasV 5 5 (2 * k) : ZMod n) = 0 ↔ (lucasV 1 (-1) (2 * k) : ZMod n) = 0
   have h := congrArg (fun z : ℤ => (z : ZMod n)) (lucasV_methodAStar_even k)
   simp only [Int.cast_mul, Int.cast_pow] at h
-  norm_num at h ⊢
+  norm_num only at h ⊢
   rw [h]
   exact unit_mul_zero_iff (hunit.pow k)
 
@@ -96,8 +96,8 @@ private theorem strongLucas_condition_methodAStar_iff {n m s : ℕ} (hs : 0 < s)
 private theorem isStrongLucas_methodAStar_params_iff {n : ℕ}
     (hindex : lucasProbablePrimeIndex n 5 = n + 1) (hd : Odd (oddPart (n + 1)))
     (hs : 0 < twoAdicExponent (n + 1)) (hunit : IsUnit (5 : ZMod n)) :
-    IsStrongLucasProbablePrime n ⟨5, 1, -1, by norm_num⟩ ↔
-      IsStrongLucasProbablePrime n ⟨5, 5, 5, by norm_num⟩ := by
+    IsStrongLucasProbablePrime n ⟨5, 1, -1, by norm_num only⟩ ↔
+      IsStrongLucasProbablePrime n ⟨5, 5, 5, by norm_num only⟩ := by
   change
     (lucasUZMod n 1 (-1) (oddPart (lucasProbablePrimeIndex n 5)) = 0 ∨
         ∃ r ∈ List.range (twoAdicExponent (lucasProbablePrimeIndex n 5)),
@@ -131,8 +131,8 @@ theorem strongLucasMethodAStar_eq_methodA_of_five {n : ℕ} (hmod : (1 - (5 : �
     (hindex : lucasProbablePrimeIndex n 5 = n + 1) (hd : Odd (oddPart (n + 1)))
     (hs : 0 < twoAdicExponent (n + 1)) (hunit : IsUnit (5 : ZMod n)) :
     strongLucasMethodAStar n 5 hmod = strongLucasMethodA n 5 hmod := by
-  have hspecA := strongLucasWithParams_eq_true_iff n 5 1 (-1) (by norm_num)
-  have hspecAStar := strongLucasWithParams_eq_true_iff n 5 5 5 (by norm_num)
+  have hspecA := strongLucasWithParams_eq_true_iff n 5 1 (-1) (by norm_num only)
+  have hspecAStar := strongLucasWithParams_eq_true_iff n 5 5 5 (by norm_num only)
   have hprop := isStrongLucas_methodAStar_params_iff hindex hd hs hunit
   have htrue : strongLucasWithParams n 5 5 5 = true ↔ strongLucasWithParams n 5 1 (-1) = true := by
     rw [hspecAStar, hspecA]
@@ -164,7 +164,7 @@ theorem strongLucasMethodAStar_eq_methodA {n : ℕ} (hn : Odd n) {D : ℤ} (hmod
   · subst D
     have hunit : IsUnit (5 : ZMod n) := by
       have h := lucasDiscriminant_isUnit_of_jacobi_neg_one hjacobi
-      norm_num at h ⊢
+      norm_num only at h ⊢
       exact h
     exact
       strongLucasMethodAStar_eq_methodA_of_five hmod
@@ -182,7 +182,7 @@ theorem strongLucasMethodA_eq_methodAStar {n : ℕ} (hn : Odd n) {D : ℤ} (hmod
 theorem bailliePSWWithParams_methodAStar_eq_methodA_of_five {n : ℕ} (hn : Odd n)
     (hjacobi : jacobiSym 5 n = -1) :
     bailliePSWWithParams n 5 5 5 = bailliePSWWithParams n 5 1 (-1) := by
-  have hsl := strongLucasMethodAStar_eq_methodA hn (by norm_num) hjacobi
+  have hsl := strongLucasMethodAStar_eq_methodA hn (by norm_num only [Int.reduceMod]) hjacobi
   change strongLucasWithParams n 5 5 5 = strongLucasWithParams n 5 1 (-1) at hsl
   change
     (strongMillerRabinBase2WithPrecheck n && strongLucasWithParams n 5 5 5) =

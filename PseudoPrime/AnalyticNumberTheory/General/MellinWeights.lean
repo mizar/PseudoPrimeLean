@@ -43,7 +43,8 @@ theorem hasMellin_mellinWeightOne {s : ℂ} (hs : 0 < s.re) :
   have h2 :=
     hasMellin_cpow_Ioc (1 : ℂ)
       (show (0 : ℝ) < s.re + (1 : ℂ).re by
-        simp only [Complex.one_re]; linarith)
+        simp only [Complex.one_re]
+        linarith)
   have hsub := hasMellin_sub h1.1 h2.1
   rw [h1.2, h2.2] at hsub
   have hs0 : s ≠ 0 := by
@@ -56,7 +57,7 @@ theorem hasMellin_mellinWeightOne {s : ℂ} (hs : 0 < s.re) :
       simpa only [Complex.add_re, Complex.one_re, Complex.zero_re] using congrArg Complex.re h
     linarith
   have hval : (1 : ℂ) / s - 1 / (s + 1) = 1 / (s * (s + 1)) := by
-    field_simp
+    field_simp (discharger := first | exact hs0 | exact hs1)
     ring
   rw [hval] at hsub
   rwa [mellinWeightOne_eq_sub]
@@ -149,7 +150,7 @@ theorem hasMellin_mellinWeightTwo {s : ℂ} (hs : 0 < s.re) :
     unfold mellin
     rw [hpoint, MeasureTheory.integral_neg]
   rw [hmellin_eq, hval]
-  field_simp
+  rw [neg_neg, one_div]
 
 /-- A vertical line's imaginary displacement never returns to `0` once the real part is nonzero. -/
 theorem ne_zero_add_mul_I_of_re_ne_zero {σ : ℝ} (hσ0 : σ ≠ 0) (y : ℝ) :
@@ -204,7 +205,8 @@ theorem verticalIntegrable_mellinReciprocalKernel {σ : ℝ} (hσ0 : σ ≠ 0) (
   have hne (y : ℝ) : (σ : ℂ) + y * Complex.I ≠ 0 ∧ (σ : ℂ) + y * Complex.I + 1 ≠ 0 := by
     refine ⟨ne_zero_add_mul_I_of_re_ne_zero hσ0 y, ?_⟩
     have : (σ : ℂ) + y * Complex.I + 1 = ((σ + 1 : ℝ) : ℂ) + y * Complex.I := by
-      push_cast; ring
+      push_cast
+      ring
     rw [this]
     exact ne_zero_add_mul_I_of_re_ne_zero hσ1' y
   apply MeasureTheory.Integrable.mono' (integrable_inv_one_add_sq.const_mul c⁻¹)
@@ -217,7 +219,9 @@ theorem verticalIntegrable_mellinReciprocalKernel {σ : ℝ} (hσ0 : σ ≠ 0) (
   · filter_upwards with y
     set s : ℂ := (σ : ℂ) + y * Complex.I with hs_def
     have hs1 : s + 1 = ((σ + 1 : ℝ) : ℂ) + y * Complex.I := by
-      rw [hs_def]; push_cast; ring
+      rw [hs_def]
+      push_cast
+      ring
     have hnorm : ‖(s * (s + 1))⁻¹‖ = (‖s‖ * ‖s + 1‖)⁻¹ := by rw [norm_inv, norm_mul]
     have e1 := min_sq_one_mul_le_norm_add_mul_I_sq σ y
     have e2 := min_sq_one_mul_le_norm_add_mul_I_sq (σ + 1) y
@@ -302,13 +306,16 @@ theorem mellinInv_mellinWeightOne_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
     have hEq :
       (fun y : ℝ ↦ mellin mellinWeightOne ((σ : ℂ) + y * Complex.I)) = fun y : ℝ ↦
         (((σ : ℂ) + y * Complex.I) * ((σ : ℂ) + y * Complex.I + 1))⁻¹ := by
-      funext y; rw [hpoint y, one_div]
+      funext y
+      rw [hpoint y, one_div]
     unfold Complex.VerticalIntegrable
     rw [hEq]
     exact
       verticalIntegrable_mellinReciprocalKernel hσ.ne'
         (by
-          intro h; rw [h] at hσ; linarith)
+          intro h
+          rw [h] at hσ
+          linarith)
   have hmellinInv :=
     mellinInv_mellin_eq σ mellinWeightOne hx hconv hVI (continuousAt_mellinWeightOne hx)
   have hfun_eq :
@@ -318,7 +325,8 @@ theorem mellinInv_mellinWeightOne_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
       fun y : ℝ ↦
       (x : ℂ) ^ (-((σ : ℂ) + y * Complex.I)) •
         mellin mellinWeightOne ((σ : ℂ) + y * Complex.I) := by
-    funext y; rw [hpoint y]
+    funext y
+    rw [hpoint y]
   rw [← hmellinInv]
   unfold mellinInv
   rw [hfun_eq]
@@ -339,7 +347,8 @@ theorem mellinInv_mellinWeightTwo_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
     have hEq :
       (fun y : ℝ ↦ mellin mellinWeightTwo ((σ : ℂ) + y * Complex.I)) = fun y : ℝ ↦
         (((σ : ℂ) + y * Complex.I)⁻¹) ^ 2 := by
-      funext y; rw [hpoint y, one_div, inv_pow]
+      funext y
+      rw [hpoint y, one_div, inv_pow]
     unfold Complex.VerticalIntegrable
     rw [hEq]
     exact verticalIntegrable_mellinLogKernel hσ.ne'
@@ -350,7 +359,8 @@ theorem mellinInv_mellinWeightTwo_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
       fun y : ℝ ↦
       (x : ℂ) ^ (-((σ : ℂ) + y * Complex.I)) •
         mellin mellinWeightTwo ((σ : ℂ) + y * Complex.I) := by
-    funext y; rw [hpoint y]
+    funext y
+    rw [hpoint y]
   rw [← hmellinInv]
   unfold mellinInv
   rw [hfun_eq]

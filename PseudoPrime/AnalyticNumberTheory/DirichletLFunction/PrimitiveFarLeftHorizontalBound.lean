@@ -159,7 +159,8 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-      rw [hT_def]; linarith
+      rw [hT_def]
+      linarith
     have hTk_pos : (0 : ℝ) < T k := by linarith
     have hTksq_pos : (0 : ℝ) < (T k) ^ 2 := by positivity
     have hTk_ne : T k ≠ 0 := by linarith
@@ -173,25 +174,29 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
           have hLbase :=
             hD σ (T k) hσ1.le hσ2
               (by
-                rw [abs_of_nonneg hTk_pos.le]; exact hTk_ge1)
+                rw [abs_of_nonneg hTk_pos.le]
+                exact hTk_ge1)
           rw [abs_of_nonneg hTk_pos.le] at hLbase
           have hL' :
             ‖logDeriv (DirichletCharacter.LFunction χ) ((σ : ℂ) + T k * Complex.I)‖ / (T k) ^ 2 ≤
               η k := by
-            rw [hη_def]; exact div_le_div_of_nonneg_right hLbase hTksq_pos.le
+            rw [hη_def]
+            exact div_le_div_of_nonneg_right hLbase hTksq_pos.le
           exact norm_dirichletReciprocalContourKernel_farLeft_le hx hσ2 hTk_ne hL')
     rwa [hμ_def, hL_def]
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-      rw [hT_def]; linarith
+      rw [hT_def]
+      linarith
     have hTk_pos : (0 : ℝ) < T k := by linarith
     have hTksq_pos : (0 : ℝ) < (T k) ^ 2 := by positivity
     have hTk_ne : T k ≠ 0 := by linarith
     have hform :
       ∀ σ : ℝ, (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I :=
       fun σ => by
-      push_cast; ring
+      push_cast
+      ring
     have hbound :=
       intervalIntegral.norm_integral_le_of_norm_le_const (a := (-(A : ℝ) - 1 / 2)) (b := -2) (f :=
         fun σ : ℝ => dirichletReciprocalContourKernel x χ ((σ : ℂ) - T k * Complex.I)) (C := η k)
@@ -201,7 +206,8 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
           obtain ⟨hσ1, hσ2⟩ := hσ
           rw [hform σ]
           have hTk_abs : (1 : ℝ) ≤ |-(T k)| := by
-            rw [abs_neg, abs_of_nonneg hTk_pos.le]; exact hTk_ge1
+            rw [abs_neg, abs_of_nonneg hTk_pos.le]
+            exact hTk_ge1
           have hLbase := hD σ (-(T k)) hσ1.le hσ2 hTk_abs
           rw [abs_neg, abs_of_nonneg hTk_pos.le] at hLbase
           have hL2' :
@@ -307,7 +313,8 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-      rw [hT_def]; linarith
+      rw [hT_def]
+      linarith
     have hTk_pos : (0 : ℝ) < T k := by linarith
     have hTksq_pos : (0 : ℝ) < (T k) ^ 2 := by positivity
     have hTk_ne : T k ≠ 0 := by linarith
@@ -321,25 +328,29 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
           have hLbase :=
             hD σ (T k) hσ1.le hσ2
               (by
-                rw [abs_of_nonneg hTk_pos.le]; exact hTk_ge1)
+                rw [abs_of_nonneg hTk_pos.le]
+                exact hTk_ge1)
           rw [abs_of_nonneg hTk_pos.le] at hLbase
           have hL' :
             ‖logDeriv (DirichletCharacter.LFunction χ) ((σ : ℂ) + T k * Complex.I)‖ / (T k) ^ 2 ≤
               η k := by
-            rw [hη_def]; exact div_le_div_of_nonneg_right hLbase hTksq_pos.le
+            rw [hη_def]
+            exact div_le_div_of_nonneg_right hLbase hTksq_pos.le
           exact norm_dirichletReciprocalContourKernel_farLeft_le hx hσ2 hTk_ne hL')
     rwa [hμ_def, hL_def]
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-      rw [hT_def]; linarith
+      rw [hT_def]
+      linarith
     have hTk_pos : (0 : ℝ) < T k := by linarith
     have hTksq_pos : (0 : ℝ) < (T k) ^ 2 := by positivity
     have hTk_ne : T k ≠ 0 := by linarith
     have hform :
       ∀ σ : ℝ, (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I :=
       fun σ => by
-      push_cast; ring
+      push_cast
+      ring
     have hbound :=
       intervalIntegral.norm_integral_le_of_norm_le_const (a := (-(A : ℝ) - 1 / 2)) (b := -2) (f :=
         fun σ : ℝ => dirichletReciprocalContourKernel x χ ((σ : ℂ) - T k * Complex.I)) (C := η k)
@@ -349,7 +360,8 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
           obtain ⟨hσ1, hσ2⟩ := hσ
           rw [hform σ]
           have hTk_abs : (1 : ℝ) ≤ |-(T k)| := by
-            rw [abs_neg, abs_of_nonneg hTk_pos.le]; exact hTk_ge1
+            rw [abs_neg, abs_of_nonneg hTk_pos.le]
+            exact hTk_ge1
           have hLbase := hD σ (-(T k)) hσ1.le hσ2 hTk_abs
           rw [abs_neg, abs_of_nonneg hTk_pos.le] at hLbase
           have hL2' :

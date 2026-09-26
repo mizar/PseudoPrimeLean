@@ -21,7 +21,7 @@ def LucasParams.methodA (D : ℤ) (hmod : (1 - D) % 4 = 0) : LucasParams :=
   have hdiv : (4 : ℤ) ∣ 1 - D := Int.dvd_iff_emod_eq_zero.mpr hmod
   have hquot : Q * 4 = 1 - D := Int.ediv_mul_cancel hdiv
   ⟨D, 1, Q, by
-    dsimp [Q]
+    dsimp only [Q]
     calc
       D = 1 - (1 - D) := by ring
       _ = 1 - ((1 - D) / 4 * 4) := by rw [hquot]
@@ -43,7 +43,8 @@ theorem LucasParams.methodA_Q (D : ℤ) (hmod : (1 - D) % 4 = 0) :
 def LucasParams.methodAStar (D : ℤ) (hmod : (1 - D) % 4 = 0) : LucasParams :=
   if hD : D = 5 then
     ⟨D, 5, 5, by
-      subst D; ring⟩
+      subst D
+      ring⟩
   else LucasParams.methodA D hmod
 
 /-- The Method A* discriminant invariant is preserved in both parameter branches. -/

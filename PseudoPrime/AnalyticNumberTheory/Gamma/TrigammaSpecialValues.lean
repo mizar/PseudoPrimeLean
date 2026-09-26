@@ -24,7 +24,8 @@ theorem ball_avoids_nonpos_int {c r : ℝ} (hr : 0 < r) (hrc : r ≤ c) :
   intro w hw m hcontra
   rw [Metric.mem_ball, hcontra] at hw
   have heq : (-(m : ℂ) - (c : ℂ)) = ((-(m : ℝ) - c : ℝ) : ℂ) := by
-    push_cast; ring
+    push_cast
+    ring
   rw [dist_eq_norm, heq, Complex.norm_real, Real.norm_eq_abs] at hw
   have hle : (-(m : ℝ) - c) ≤ 0 := by linarith [Nat.cast_nonneg (α := ℝ) m]
   rw [abs_of_nonpos hle] at hw
@@ -85,15 +86,18 @@ theorem ball_half_avoids_int : ∀ w ∈ Metric.ball (1 / 2 : ℂ) (1 / 4), ∀ 
   intro w hw k hcontra
   rw [Metric.mem_ball, hcontra] at hw
   have heq : ((k : ℂ) - 1 / 2) = (((k : ℝ) - 1 / 2 : ℝ) : ℂ) := by
-    push_cast; ring
+    push_cast
+    ring
   rw [dist_eq_norm, heq, Complex.norm_real, Real.norm_eq_abs] at hw
   have hbound : (1 : ℝ) / 2 ≤ |(k : ℝ) - 1 / 2| := by
     by_cases hk : k ≤ 0
     · have hkR : (k : ℝ) ≤ 0 := by exact_mod_cast hk
-      rw [abs_of_nonpos (by linarith)]; linarith
+      rw [abs_of_nonpos (by linarith)]
+      linarith
     · have hk1 : 1 ≤ k := by omega
       have hkR : (1 : ℝ) ≤ k := by exact_mod_cast hk1
-      rw [abs_of_nonneg (by linarith)]; linarith
+      rw [abs_of_nonneg (by linarith)]
+      linarith
   linarith
 
 theorem sin_pi_mul_ne_zero_of_ball {z : ℂ} (hz : z ∈ Metric.ball (1 / 2 : ℂ) (1 / 4)) :
@@ -105,7 +109,8 @@ theorem sin_pi_mul_ne_zero_of_ball {z : ℂ} (hz : z ∈ Metric.ball (1 / 2 : �
   have hzk : z = (k : ℂ) :=
     mul_left_cancel₀ hpi
       (by
-        rw [hk]; ring)
+        rw [hk]
+        ring)
   exact ball_half_avoids_int z hz k hzk
 
 theorem one_sub_mem_ball_half {z : ℂ} (hz : z ∈ Metric.ball (1 / 2 : ℂ) (1 / 4)) :
@@ -140,14 +145,18 @@ theorem digamma_sub_digamma_one_sub_eq {z : ℂ} (hz : z ∈ Metric.ball (1 / 2 
   have hd1 : HasDerivAt Complex.Gamma (Complex.Gamma z * Complex.digamma z) z := by
     have hdiff := Complex.differentiableAt_Gamma z hz1
     have heq : Complex.Gamma z * Complex.digamma z = deriv Complex.Gamma z := by
-      rw [Complex.digamma_def, logDeriv_apply]; field_simp [hGz]
-    rw [heq]; exact hdiff.hasDerivAt
+      rw [Complex.digamma_def, logDeriv_apply]
+      field_simp [hGz]
+    rw [heq]
+    exact hdiff.hasDerivAt
   have hd2 :
     HasDerivAt Complex.Gamma (Complex.Gamma (1 - z) * Complex.digamma (1 - z)) (1 - z) := by
     have hdiff := Complex.differentiableAt_Gamma (1 - z) hz2
     have heq : Complex.Gamma (1 - z) * Complex.digamma (1 - z) = deriv Complex.Gamma (1 - z) := by
-      rw [Complex.digamma_def, logDeriv_apply]; field_simp [hG1z]
-    rw [heq]; exact hdiff.hasDerivAt
+      rw [Complex.digamma_def, logDeriv_apply]
+      field_simp [hG1z]
+    rw [heq]
+    exact hdiff.hasDerivAt
   have hd2' :
     HasDerivAt (fun w : ℂ => Complex.Gamma (1 - w))
       (-(Complex.Gamma (1 - z) * Complex.digamma (1 - z))) z :=
@@ -193,7 +202,8 @@ theorem digamma_sub_digamma_one_sub_eq {z : ℂ} (hz : z ∈ Metric.ball (1 / 2 
   rw [hfactor] at hEq
   have hpiC : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
   have hGnezero : Complex.Gamma z * Complex.Gamma (1 - z) ≠ 0 := by
-    rw [hGprod]; exact div_ne_zero hpiC hsin
+    rw [hGprod]
+    exact div_ne_zero hpiC hsin
   have key :
     Complex.Gamma z * Complex.Gamma (1 - z) * (Complex.digamma z - Complex.digamma (1 - z)) =
       Complex.Gamma z * Complex.Gamma (1 - z) *
@@ -212,7 +222,8 @@ theorem hasDerivAt_reflection_rhs_half :
       ((Real.pi : ℂ) ^ 2) (1 / 2 : ℂ) := by
   have hsin_half : Complex.sin ((Real.pi : ℂ) * (1 / 2 : ℂ)) ≠ 0 := by
     have hcast : (Real.pi : ℂ) * (1 / 2 : ℂ) = ((Real.pi / 2 : ℝ) : ℂ) := by
-      push_cast; ring
+      push_cast
+      ring
     rw [hcast, ← Complex.ofReal_sin]
     have hval : Real.sin (Real.pi / 2) = 1 := Real.sin_pi_div_two
     rw [hval]
@@ -242,7 +253,8 @@ theorem hasDerivAt_reflection_rhs_half :
     Complex.sin ((Real.pi : ℂ) * (1 / 2 : ℂ)) = 1 ∧
       Complex.cos ((Real.pi : ℂ) * (1 / 2 : ℂ)) = 0 := by
     have heq : (Real.pi : ℂ) * (1 / 2 : ℂ) = ((Real.pi / 2 : ℝ) : ℂ) := by
-      push_cast; ring
+      push_cast
+      ring
     rw [heq, ← Complex.ofReal_sin, ← Complex.ofReal_cos, Real.sin_pi_div_two, Real.cos_pi_div_two]
     constructor <;> trivial
   have hquot' :
@@ -257,7 +269,8 @@ theorem hasDerivAt_reflection_rhs_half :
         -(Real.pi : ℂ) * (Complex.cos ((Real.pi : ℂ) * y) / Complex.sin ((Real.pi : ℂ) * y))) =
       (fun z : ℂ =>
         -(Real.pi : ℂ) * Complex.cos ((Real.pi : ℂ) * z) / Complex.sin ((Real.pi : ℂ) * z)) := by
-    funext y; rw [mul_div_assoc]
+    funext y
+    rw [mul_div_assoc]
   rw [heq] at hfinal
   have hval2 : -(Real.pi : ℂ) * -(Real.pi : ℂ) = (Real.pi : ℂ) ^ 2 := by ring
   rw [hval2] at hfinal
@@ -321,20 +334,24 @@ theorem digamma_duplication_eq {s : ℂ} (hs : s ∈ Metric.ball (1 / 2 : ℂ) (
   have hcastone : ((1 : ℝ) : ℂ) = (1 : ℂ) := by norm_num only [Complex.ofReal_one]
   have hz1 : ∀ m : ℕ, s ≠ -m := by
     have h := ball_avoids_nonpos_int (c := 1 / 2) (r := 1 / 4) (by norm_num only) (by norm_num only)
-    rw [hcasthalf] at h; exact h s hs
+    rw [hcasthalf] at h
+    exact h s hs
   have hz2 : ∀ m : ℕ, (s + 1 / 2) ≠ -m := by
     have h := ball_avoids_nonpos_int (c := 1) (r := 1 / 2) (by norm_num only) (by norm_num only)
-    rw [hcastone] at h; exact h (s + 1 / 2) (s_add_half_mem_ball_one hs)
+    rw [hcastone] at h
+    exact h (s + 1 / 2) (s_add_half_mem_ball_one hs)
   have hz3 : ∀ m : ℕ, (2 * s) ≠ -m := by
     have h := ball_avoids_nonpos_int (c := 1) (r := 1 / 2) (by norm_num only) (by norm_num only)
-    rw [hcastone] at h; exact h (2 * s) (two_s_mem_ball_one hs)
+    rw [hcastone] at h
+    exact h (2 * s) (two_s_mem_ball_one hs)
   have hGs : Complex.Gamma s ≠ 0 := Complex.Gamma_ne_zero hz1
   have hGs' : Complex.Gamma (s + 1 / 2) ≠ 0 := Complex.Gamma_ne_zero hz2
   have hG2s : Complex.Gamma (2 * s) ≠ 0 := Complex.Gamma_ne_zero hz3
   have hd1 : HasDerivAt Complex.Gamma (Complex.Gamma s * Complex.digamma s) s := by
     have heq : Complex.Gamma s * Complex.digamma s = deriv Complex.Gamma s := by
       rw [Complex.digamma_def, logDeriv_apply, mul_comm, div_mul_cancel₀ _ hGs]
-    rw [heq]; exact (Complex.differentiableAt_Gamma s hz1).hasDerivAt
+    rw [heq]
+    exact (Complex.differentiableAt_Gamma s hz1).hasDerivAt
   have hd2 :
     HasDerivAt Complex.Gamma (Complex.Gamma (s + 1 / 2) * Complex.digamma (s + 1 / 2))
       (s + 1 / 2) := by
@@ -342,12 +359,14 @@ theorem digamma_duplication_eq {s : ℂ} (hs : s ∈ Metric.ball (1 / 2 : ℂ) (
       Complex.Gamma (s + 1 / 2) * Complex.digamma (s + 1 / 2) =
         deriv Complex.Gamma (s + 1 / 2) := by
       rw [Complex.digamma_def, logDeriv_apply, mul_comm, div_mul_cancel₀ _ hGs']
-    rw [heq]; exact (Complex.differentiableAt_Gamma (s + 1 / 2) hz2).hasDerivAt
+    rw [heq]
+    exact (Complex.differentiableAt_Gamma (s + 1 / 2) hz2).hasDerivAt
   have hd3 :
     HasDerivAt Complex.Gamma (Complex.Gamma (2 * s) * Complex.digamma (2 * s)) (2 * s) := by
     have heq : Complex.Gamma (2 * s) * Complex.digamma (2 * s) = deriv Complex.Gamma (2 * s) := by
       rw [Complex.digamma_def, logDeriv_apply, mul_comm, div_mul_cancel₀ _ hG2s]
-    rw [heq]; exact (Complex.differentiableAt_Gamma (2 * s) hz3).hasDerivAt
+    rw [heq]
+    exact (Complex.differentiableAt_Gamma (2 * s) hz3).hasDerivAt
   have hd2' :
     HasDerivAt (fun w : ℂ => Complex.Gamma (w + 1 / 2))
       (Complex.Gamma (s + 1 / 2) * Complex.digamma (s + 1 / 2)) s :=
@@ -421,7 +440,8 @@ theorem deriv_digamma_one_eq : deriv Complex.digamma (1 : ℂ) = (Real.pi : ℂ)
     HasDerivAt (fun s : ℂ => Complex.digamma (s + 1 / 2)) (deriv Complex.digamma 1)
       (1 / 2 : ℂ) := by
     have hdiff' : DifferentiableAt ℂ Complex.digamma (1 / 2 + 1 / 2 : ℂ) := by
-      rw [h1half1]; exact differentiableAt_digamma_one
+      rw [h1half1]
+      exact differentiableAt_digamma_one
     have hcomp := hdiff'.hasDerivAt.comp_add_const (1 / 2 : ℂ) (1 / 2 : ℂ)
     have hval : deriv Complex.digamma (1 / 2 + 1 / 2 : ℂ) = deriv Complex.digamma 1 := by
       rw [h1half1]
@@ -434,7 +454,8 @@ theorem deriv_digamma_one_eq : deriv Complex.digamma (1 : ℂ) = (Real.pi : ℂ)
     HasDerivAt (fun s : ℂ => Complex.digamma (2 * s)) (deriv Complex.digamma 1 * 2)
       (1 / 2 : ℂ) := by
     have hdiff' : DifferentiableAt ℂ Complex.digamma (2 * (1 / 2 : ℂ)) := by
-      rw [h2half1]; exact differentiableAt_digamma_one
+      rw [h2half1]
+      exact differentiableAt_digamma_one
     have h1 : HasDerivAt (fun s : ℂ => (2 : ℂ) * s) (2 : ℂ) (1 / 2 : ℂ) := by
       simpa only [one_div, id_eq, mul_one] using (hasDerivAt_id (1 / 2 : ℂ)).const_mul (2 : ℂ)
     have hcomp := hdiff'.hasDerivAt.comp (1 / 2 : ℂ) h1

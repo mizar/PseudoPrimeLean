@@ -36,7 +36,7 @@ theorem positiveFundamentalDiscriminant_le_of_square_mul {b d : ℕ} (hb : 0 < b
 /-- The positive representative is a Mathlib fundamental discriminant. -/
 theorem positiveFundamentalDiscriminant_isFundamentalDiscr {d : ℕ} (hdodd : Odd d)
     (hdsq : Squarefree d) : (positiveFundamentalDiscriminant d : ℤ).IsFundamentalDiscr := by
-  dsimp [positiveFundamentalDiscriminant]
+  dsimp only [positiveFundamentalDiscriminant]
   split_ifs with hdmod
   · rw [Int.isFundamentalDiscr_iff_squarefree]
     left
@@ -69,7 +69,7 @@ theorem exists_nat_one_modEq_and_jacobiSym_eq_neg_one {d c : ℕ} (hdodd : Odd d
     exact hd0 (Nat.eq_zero_of_zero_dvd hc)
   let r := d / c
   have hprod : r * c = d := by
-    dsimp [r]
+    dsimp only [r]
     exact Nat.div_mul_cancel hc
   have hcop : r.Coprime c := by
     have h := Nat.coprime_div_gcd_of_squarefree hdsq hc0
@@ -122,18 +122,18 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one {d c : ℕ} (hdodd : O
   obtain ⟨k, hk, hj⟩ := exists_nat_one_modEq_and_jacobiSym_eq_neg_one hdodd hdsq hc hnot
   let a := if Even k then k + d else k
   have haodd : Odd a := by
-    dsimp [a]
+    dsimp only [a]
     split_ifs with hke
     · exact hke.add_odd hdodd
     · exact Nat.not_even_iff_odd.mp hke
   have hamodc : a ≡ k [MOD c] := by
-    dsimp [a]
+    dsimp only [a]
     split_ifs with hke
     · have hz : d ≡ 0 [MOD c] := Dvd.dvd.modEq_zero_nat hc
       simpa only [Nat.add_zero] using Nat.ModEq.add_left k hz
     · exact Nat.ModEq.refl k
   have hamodd : a ≡ k [MOD d] := by
-    dsimp [a]
+    dsimp only [a]
     split_ifs with hke
     · have hz : d ≡ 0 [MOD d] := Nat.modulus_modEq_zero
       simpa only [Nat.add_zero] using Nat.ModEq.add_left k hz
@@ -251,11 +251,11 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul {d c s 
     let r := 1 + 2 * d
     have hr4 : r ≡ 3 [MOD 4] := by
       change r % 4 = 3 % 4
-      dsimp [r]
+      dsimp only [r, Nat.reduceMod]
       omega
     have hrd : r ≡ 1 [MOD d] := by
       have hz : 2 * d ≡ 0 [MOD d] := Dvd.dvd.modEq_zero_nat ⟨2, by ring⟩
-      dsimp [r]
+      dsimp only [r]
       simpa only [Nat.add_zero] using Nat.ModEq.add_left 1 hz
     have hcopr4 : Nat.Coprime r 4 := by
       rw [Nat.coprime_iff_gcd_eq_one, hr4.gcd_eq]
@@ -285,11 +285,11 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul {d c s 
     let r := 1 + 2 * d
     have hr4 : r ≡ 3 [MOD 4] := by
       change r % 4 = 3 % 4
-      dsimp [r]
+      dsimp only [r, Nat.reduceMod]
       omega
     have hr2d : r ≡ 1 [MOD 2 * d] := by
       have hz : 2 * d ≡ 0 [MOD 2 * d] := Nat.modulus_modEq_zero
-      dsimp [r]
+      dsimp only [r]
       simpa only [Nat.add_zero] using Nat.ModEq.add_left 1 hz
     have hrd : r ≡ 1 [MOD d] :=
       (Nat.ModEq.of_dvd (⟨2, by ring⟩ : d ∣ 2 * d) hr2d).trans (Nat.ModEq.refl 1)

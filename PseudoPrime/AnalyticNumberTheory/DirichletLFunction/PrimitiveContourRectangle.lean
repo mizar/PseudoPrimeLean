@@ -192,7 +192,8 @@ theorem dirichletReciprocalFiniteContourIdentity_heightSeq_normalized {N : ℕ} 
   have hcoeff : (-Complex.I / (2 * (Real.pi : ℂ))) * (2 * (Real.pi : ℂ) * Complex.I) = 1 := by
     rw [div_mul_eq_mul_div, mul_comm (2 * (Real.pi : ℂ)) Complex.I, ← mul_assoc,
       show (-Complex.I) * Complex.I = 1 from by
-        rw [neg_mul, Complex.I_mul_I]; ring,
+        rw [neg_mul, Complex.I_mul_I]
+        ring,
       one_mul, div_self h2pi]
   calc
     (-Complex.I / (2 * (Real.pi : ℂ))) *

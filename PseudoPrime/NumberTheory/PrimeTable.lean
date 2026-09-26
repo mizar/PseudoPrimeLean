@@ -22,8 +22,6 @@ The 100-character line-length convention is waived in this file, matching the nu
 needed to state each prime value directly.
 -/
 
-set_option linter.style.longLine false
-
 namespace PseudoPrime.NumberTheory
 
 theorem count_eq_of_all_not_prime_of_lt {a b : ℕ} (hab : a ≤ b)
@@ -51,1172 +49,1172 @@ theorem count_prime_at_0 : Nat.count Nat.Prime 2 = 0 := by decide
 -- BEGIN GENERATED PRIME COUNTS
 /-- The number of primes below 3, extending the previous certified prime. -/
 theorem count_prime_at_1 : Nat.count Nat.Prime 3 = 1 := by
-  apply count_prime_step count_prime_at_0 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_0 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  omega
+  exact False.elim (Nat.not_lt_of_ge hlo hhi)
 
 /-- The number of primes below 5, extending the previous certified prime. -/
 theorem count_prime_at_2 : Nat.count Nat.Prime 5 = 2 := by
-  apply count_prime_step count_prime_at_1 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_1 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 7, extending the previous certified prime. -/
 theorem count_prime_at_3 : Nat.count Nat.Prime 7 = 3 := by
-  apply count_prime_step count_prime_at_2 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_2 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 11, extending the previous certified prime. -/
 theorem count_prime_at_4 : Nat.count Nat.Prime 11 = 4 := by
-  apply count_prime_step count_prime_at_3 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_3 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 13, extending the previous certified prime. -/
 theorem count_prime_at_5 : Nat.count Nat.Prime 13 = 5 := by
-  apply count_prime_step count_prime_at_4 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_4 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 17, extending the previous certified prime. -/
 theorem count_prime_at_6 : Nat.count Nat.Prime 17 = 6 := by
-  apply count_prime_step count_prime_at_5 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_5 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 19, extending the previous certified prime. -/
 theorem count_prime_at_7 : Nat.count Nat.Prime 19 = 7 := by
-  apply count_prime_step count_prime_at_6 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_6 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 23, extending the previous certified prime. -/
 theorem count_prime_at_8 : Nat.count Nat.Prime 23 = 8 := by
-  apply count_prime_step count_prime_at_7 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_7 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 29, extending the previous certified prime. -/
 theorem count_prime_at_9 : Nat.count Nat.Prime 29 = 9 := by
-  apply count_prime_step count_prime_at_8 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_8 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 31, extending the previous certified prime. -/
 theorem count_prime_at_10 : Nat.count Nat.Prime 31 = 10 := by
-  apply count_prime_step count_prime_at_9 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_9 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 37, extending the previous certified prime. -/
 theorem count_prime_at_11 : Nat.count Nat.Prime 37 = 11 := by
-  apply count_prime_step count_prime_at_10 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_10 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 41, extending the previous certified prime. -/
 theorem count_prime_at_12 : Nat.count Nat.Prime 41 = 12 := by
-  apply count_prime_step count_prime_at_11 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_11 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 43, extending the previous certified prime. -/
 theorem count_prime_at_13 : Nat.count Nat.Prime 43 = 13 := by
-  apply count_prime_step count_prime_at_12 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_12 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 47, extending the previous certified prime. -/
 theorem count_prime_at_14 : Nat.count Nat.Prime 47 = 14 := by
-  apply count_prime_step count_prime_at_13 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_13 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 53, extending the previous certified prime. -/
 theorem count_prime_at_15 : Nat.count Nat.Prime 53 = 15 := by
-  apply count_prime_step count_prime_at_14 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_14 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 59, extending the previous certified prime. -/
 theorem count_prime_at_16 : Nat.count Nat.Prime 59 = 16 := by
-  apply count_prime_step count_prime_at_15 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_15 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 61, extending the previous certified prime. -/
 theorem count_prime_at_17 : Nat.count Nat.Prime 61 = 17 := by
-  apply count_prime_step count_prime_at_16 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_16 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 67, extending the previous certified prime. -/
 theorem count_prime_at_18 : Nat.count Nat.Prime 67 = 18 := by
-  apply count_prime_step count_prime_at_17 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_17 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 71, extending the previous certified prime. -/
 theorem count_prime_at_19 : Nat.count Nat.Prime 71 = 19 := by
-  apply count_prime_step count_prime_at_18 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_18 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 73, extending the previous certified prime. -/
 theorem count_prime_at_20 : Nat.count Nat.Prime 73 = 20 := by
-  apply count_prime_step count_prime_at_19 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_19 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 79, extending the previous certified prime. -/
 theorem count_prime_at_21 : Nat.count Nat.Prime 79 = 21 := by
-  apply count_prime_step count_prime_at_20 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_20 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 83, extending the previous certified prime. -/
 theorem count_prime_at_22 : Nat.count Nat.Prime 83 = 22 := by
-  apply count_prime_step count_prime_at_21 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_21 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 89, extending the previous certified prime. -/
 theorem count_prime_at_23 : Nat.count Nat.Prime 89 = 23 := by
-  apply count_prime_step count_prime_at_22 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_22 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 97, extending the previous certified prime. -/
 theorem count_prime_at_24 : Nat.count Nat.Prime 97 = 24 := by
-  apply count_prime_step count_prime_at_23 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_23 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 101, extending the previous certified prime. -/
 theorem count_prime_at_25 : Nat.count Nat.Prime 101 = 25 := by
-  apply count_prime_step count_prime_at_24 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_24 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 103, extending the previous certified prime. -/
 theorem count_prime_at_26 : Nat.count Nat.Prime 103 = 26 := by
-  apply count_prime_step count_prime_at_25 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_25 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 107, extending the previous certified prime. -/
 theorem count_prime_at_27 : Nat.count Nat.Prime 107 = 27 := by
-  apply count_prime_step count_prime_at_26 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_26 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 109, extending the previous certified prime. -/
 theorem count_prime_at_28 : Nat.count Nat.Prime 109 = 28 := by
-  apply count_prime_step count_prime_at_27 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_27 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 113, extending the previous certified prime. -/
 theorem count_prime_at_29 : Nat.count Nat.Prime 113 = 29 := by
-  apply count_prime_step count_prime_at_28 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_28 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 127, extending the previous certified prime. -/
 theorem count_prime_at_30 : Nat.count Nat.Prime 127 = 30 := by
-  apply count_prime_step count_prime_at_29 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_29 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 131, extending the previous certified prime. -/
 theorem count_prime_at_31 : Nat.count Nat.Prime 131 = 31 := by
-  apply count_prime_step count_prime_at_30 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_30 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 137, extending the previous certified prime. -/
 theorem count_prime_at_32 : Nat.count Nat.Prime 137 = 32 := by
-  apply count_prime_step count_prime_at_31 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_31 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 139, extending the previous certified prime. -/
 theorem count_prime_at_33 : Nat.count Nat.Prime 139 = 33 := by
-  apply count_prime_step count_prime_at_32 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_32 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 149, extending the previous certified prime. -/
 theorem count_prime_at_34 : Nat.count Nat.Prime 149 = 34 := by
-  apply count_prime_step count_prime_at_33 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_33 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 151, extending the previous certified prime. -/
 theorem count_prime_at_35 : Nat.count Nat.Prime 151 = 35 := by
-  apply count_prime_step count_prime_at_34 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_34 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 157, extending the previous certified prime. -/
 theorem count_prime_at_36 : Nat.count Nat.Prime 157 = 36 := by
-  apply count_prime_step count_prime_at_35 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_35 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 163, extending the previous certified prime. -/
 theorem count_prime_at_37 : Nat.count Nat.Prime 163 = 37 := by
-  apply count_prime_step count_prime_at_36 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_36 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 167, extending the previous certified prime. -/
 theorem count_prime_at_38 : Nat.count Nat.Prime 167 = 38 := by
-  apply count_prime_step count_prime_at_37 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_37 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 173, extending the previous certified prime. -/
 theorem count_prime_at_39 : Nat.count Nat.Prime 173 = 39 := by
-  apply count_prime_step count_prime_at_38 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_38 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 179, extending the previous certified prime. -/
 theorem count_prime_at_40 : Nat.count Nat.Prime 179 = 40 := by
-  apply count_prime_step count_prime_at_39 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_39 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 181, extending the previous certified prime. -/
 theorem count_prime_at_41 : Nat.count Nat.Prime 181 = 41 := by
-  apply count_prime_step count_prime_at_40 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_40 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 191, extending the previous certified prime. -/
 theorem count_prime_at_42 : Nat.count Nat.Prime 191 = 42 := by
-  apply count_prime_step count_prime_at_41 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_41 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 193, extending the previous certified prime. -/
 theorem count_prime_at_43 : Nat.count Nat.Prime 193 = 43 := by
-  apply count_prime_step count_prime_at_42 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_42 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 197, extending the previous certified prime. -/
 theorem count_prime_at_44 : Nat.count Nat.Prime 197 = 44 := by
-  apply count_prime_step count_prime_at_43 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_43 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 199, extending the previous certified prime. -/
 theorem count_prime_at_45 : Nat.count Nat.Prime 199 = 45 := by
-  apply count_prime_step count_prime_at_44 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_44 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 211, extending the previous certified prime. -/
 theorem count_prime_at_46 : Nat.count Nat.Prime 211 = 46 := by
-  apply count_prime_step count_prime_at_45 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_45 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 223, extending the previous certified prime. -/
 theorem count_prime_at_47 : Nat.count Nat.Prime 223 = 47 := by
-  apply count_prime_step count_prime_at_46 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_46 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 227, extending the previous certified prime. -/
 theorem count_prime_at_48 : Nat.count Nat.Prime 227 = 48 := by
-  apply count_prime_step count_prime_at_47 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_47 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 229, extending the previous certified prime. -/
 theorem count_prime_at_49 : Nat.count Nat.Prime 229 = 49 := by
-  apply count_prime_step count_prime_at_48 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_48 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 233, extending the previous certified prime. -/
 theorem count_prime_at_50 : Nat.count Nat.Prime 233 = 50 := by
-  apply count_prime_step count_prime_at_49 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_49 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 239, extending the previous certified prime. -/
 theorem count_prime_at_51 : Nat.count Nat.Prime 239 = 51 := by
-  apply count_prime_step count_prime_at_50 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_50 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 241, extending the previous certified prime. -/
 theorem count_prime_at_52 : Nat.count Nat.Prime 241 = 52 := by
-  apply count_prime_step count_prime_at_51 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_51 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 251, extending the previous certified prime. -/
 theorem count_prime_at_53 : Nat.count Nat.Prime 251 = 53 := by
-  apply count_prime_step count_prime_at_52 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_52 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 257, extending the previous certified prime. -/
 theorem count_prime_at_54 : Nat.count Nat.Prime 257 = 54 := by
-  apply count_prime_step count_prime_at_53 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_53 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 263, extending the previous certified prime. -/
 theorem count_prime_at_55 : Nat.count Nat.Prime 263 = 55 := by
-  apply count_prime_step count_prime_at_54 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_54 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 269, extending the previous certified prime. -/
 theorem count_prime_at_56 : Nat.count Nat.Prime 269 = 56 := by
-  apply count_prime_step count_prime_at_55 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_55 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 271, extending the previous certified prime. -/
 theorem count_prime_at_57 : Nat.count Nat.Prime 271 = 57 := by
-  apply count_prime_step count_prime_at_56 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_56 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 277, extending the previous certified prime. -/
 theorem count_prime_at_58 : Nat.count Nat.Prime 277 = 58 := by
-  apply count_prime_step count_prime_at_57 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_57 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 281, extending the previous certified prime. -/
 theorem count_prime_at_59 : Nat.count Nat.Prime 281 = 59 := by
-  apply count_prime_step count_prime_at_58 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_58 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 283, extending the previous certified prime. -/
 theorem count_prime_at_60 : Nat.count Nat.Prime 283 = 60 := by
-  apply count_prime_step count_prime_at_59 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_59 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 293, extending the previous certified prime. -/
 theorem count_prime_at_61 : Nat.count Nat.Prime 293 = 61 := by
-  apply count_prime_step count_prime_at_60 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_60 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 307, extending the previous certified prime. -/
 theorem count_prime_at_62 : Nat.count Nat.Prime 307 = 62 := by
-  apply count_prime_step count_prime_at_61 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_61 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 311, extending the previous certified prime. -/
 theorem count_prime_at_63 : Nat.count Nat.Prime 311 = 63 := by
-  apply count_prime_step count_prime_at_62 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_62 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 313, extending the previous certified prime. -/
 theorem count_prime_at_64 : Nat.count Nat.Prime 313 = 64 := by
-  apply count_prime_step count_prime_at_63 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_63 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 317, extending the previous certified prime. -/
 theorem count_prime_at_65 : Nat.count Nat.Prime 317 = 65 := by
-  apply count_prime_step count_prime_at_64 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_64 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 331, extending the previous certified prime. -/
 theorem count_prime_at_66 : Nat.count Nat.Prime 331 = 66 := by
-  apply count_prime_step count_prime_at_65 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_65 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 337, extending the previous certified prime. -/
 theorem count_prime_at_67 : Nat.count Nat.Prime 337 = 67 := by
-  apply count_prime_step count_prime_at_66 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_66 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 347, extending the previous certified prime. -/
 theorem count_prime_at_68 : Nat.count Nat.Prime 347 = 68 := by
-  apply count_prime_step count_prime_at_67 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_67 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 349, extending the previous certified prime. -/
 theorem count_prime_at_69 : Nat.count Nat.Prime 349 = 69 := by
-  apply count_prime_step count_prime_at_68 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_68 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 353, extending the previous certified prime. -/
 theorem count_prime_at_70 : Nat.count Nat.Prime 353 = 70 := by
-  apply count_prime_step count_prime_at_69 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_69 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 359, extending the previous certified prime. -/
 theorem count_prime_at_71 : Nat.count Nat.Prime 359 = 71 := by
-  apply count_prime_step count_prime_at_70 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_70 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 367, extending the previous certified prime. -/
 theorem count_prime_at_72 : Nat.count Nat.Prime 367 = 72 := by
-  apply count_prime_step count_prime_at_71 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_71 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 373, extending the previous certified prime. -/
 theorem count_prime_at_73 : Nat.count Nat.Prime 373 = 73 := by
-  apply count_prime_step count_prime_at_72 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_72 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 379, extending the previous certified prime. -/
 theorem count_prime_at_74 : Nat.count Nat.Prime 379 = 74 := by
-  apply count_prime_step count_prime_at_73 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_73 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 383, extending the previous certified prime. -/
 theorem count_prime_at_75 : Nat.count Nat.Prime 383 = 75 := by
-  apply count_prime_step count_prime_at_74 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_74 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 389, extending the previous certified prime. -/
 theorem count_prime_at_76 : Nat.count Nat.Prime 389 = 76 := by
-  apply count_prime_step count_prime_at_75 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_75 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 397, extending the previous certified prime. -/
 theorem count_prime_at_77 : Nat.count Nat.Prime 397 = 77 := by
-  apply count_prime_step count_prime_at_76 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_76 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 401, extending the previous certified prime. -/
 theorem count_prime_at_78 : Nat.count Nat.Prime 401 = 78 := by
-  apply count_prime_step count_prime_at_77 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_77 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 409, extending the previous certified prime. -/
 theorem count_prime_at_79 : Nat.count Nat.Prime 409 = 79 := by
-  apply count_prime_step count_prime_at_78 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_78 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 419, extending the previous certified prime. -/
 theorem count_prime_at_80 : Nat.count Nat.Prime 419 = 80 := by
-  apply count_prime_step count_prime_at_79 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_79 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 421, extending the previous certified prime. -/
 theorem count_prime_at_81 : Nat.count Nat.Prime 421 = 81 := by
-  apply count_prime_step count_prime_at_80 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_80 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 431, extending the previous certified prime. -/
 theorem count_prime_at_82 : Nat.count Nat.Prime 431 = 82 := by
-  apply count_prime_step count_prime_at_81 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_81 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 433, extending the previous certified prime. -/
 theorem count_prime_at_83 : Nat.count Nat.Prime 433 = 83 := by
-  apply count_prime_step count_prime_at_82 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_82 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 439, extending the previous certified prime. -/
 theorem count_prime_at_84 : Nat.count Nat.Prime 439 = 84 := by
-  apply count_prime_step count_prime_at_83 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_83 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 443, extending the previous certified prime. -/
 theorem count_prime_at_85 : Nat.count Nat.Prime 443 = 85 := by
-  apply count_prime_step count_prime_at_84 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_84 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 449, extending the previous certified prime. -/
 theorem count_prime_at_86 : Nat.count Nat.Prime 449 = 86 := by
-  apply count_prime_step count_prime_at_85 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_85 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 457, extending the previous certified prime. -/
 theorem count_prime_at_87 : Nat.count Nat.Prime 457 = 87 := by
-  apply count_prime_step count_prime_at_86 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_86 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 461, extending the previous certified prime. -/
 theorem count_prime_at_88 : Nat.count Nat.Prime 461 = 88 := by
-  apply count_prime_step count_prime_at_87 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_87 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 463, extending the previous certified prime. -/
 theorem count_prime_at_89 : Nat.count Nat.Prime 463 = 89 := by
-  apply count_prime_step count_prime_at_88 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_88 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 467, extending the previous certified prime. -/
 theorem count_prime_at_90 : Nat.count Nat.Prime 467 = 90 := by
-  apply count_prime_step count_prime_at_89 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_89 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 479, extending the previous certified prime. -/
 theorem count_prime_at_91 : Nat.count Nat.Prime 479 = 91 := by
-  apply count_prime_step count_prime_at_90 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_90 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 487, extending the previous certified prime. -/
 theorem count_prime_at_92 : Nat.count Nat.Prime 487 = 92 := by
-  apply count_prime_step count_prime_at_91 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_91 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 491, extending the previous certified prime. -/
 theorem count_prime_at_93 : Nat.count Nat.Prime 491 = 93 := by
-  apply count_prime_step count_prime_at_92 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_92 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 499, extending the previous certified prime. -/
 theorem count_prime_at_94 : Nat.count Nat.Prime 499 = 94 := by
-  apply count_prime_step count_prime_at_93 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_93 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 503, extending the previous certified prime. -/
 theorem count_prime_at_95 : Nat.count Nat.Prime 503 = 95 := by
-  apply count_prime_step count_prime_at_94 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_94 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 509, extending the previous certified prime. -/
 theorem count_prime_at_96 : Nat.count Nat.Prime 509 = 96 := by
-  apply count_prime_step count_prime_at_95 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_95 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 521, extending the previous certified prime. -/
 theorem count_prime_at_97 : Nat.count Nat.Prime 521 = 97 := by
-  apply count_prime_step count_prime_at_96 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_96 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 523, extending the previous certified prime. -/
 theorem count_prime_at_98 : Nat.count Nat.Prime 523 = 98 := by
-  apply count_prime_step count_prime_at_97 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_97 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 541, extending the previous certified prime. -/
 theorem count_prime_at_99 : Nat.count Nat.Prime 541 = 99 := by
-  apply count_prime_step count_prime_at_98 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_98 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 547, extending the previous certified prime. -/
 theorem count_prime_at_100 : Nat.count Nat.Prime 547 = 100 := by
-  apply count_prime_step count_prime_at_99 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_99 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 557, extending the previous certified prime. -/
 theorem count_prime_at_101 : Nat.count Nat.Prime 557 = 101 := by
-  apply count_prime_step count_prime_at_100 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_100 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 563, extending the previous certified prime. -/
 theorem count_prime_at_102 : Nat.count Nat.Prime 563 = 102 := by
-  apply count_prime_step count_prime_at_101 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_101 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 569, extending the previous certified prime. -/
 theorem count_prime_at_103 : Nat.count Nat.Prime 569 = 103 := by
-  apply count_prime_step count_prime_at_102 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_102 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 571, extending the previous certified prime. -/
 theorem count_prime_at_104 : Nat.count Nat.Prime 571 = 104 := by
-  apply count_prime_step count_prime_at_103 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_103 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 577, extending the previous certified prime. -/
 theorem count_prime_at_105 : Nat.count Nat.Prime 577 = 105 := by
-  apply count_prime_step count_prime_at_104 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_104 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 587, extending the previous certified prime. -/
 theorem count_prime_at_106 : Nat.count Nat.Prime 587 = 106 := by
-  apply count_prime_step count_prime_at_105 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_105 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 593, extending the previous certified prime. -/
 theorem count_prime_at_107 : Nat.count Nat.Prime 593 = 107 := by
-  apply count_prime_step count_prime_at_106 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_106 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 599, extending the previous certified prime. -/
 theorem count_prime_at_108 : Nat.count Nat.Prime 599 = 108 := by
-  apply count_prime_step count_prime_at_107 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_107 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 601, extending the previous certified prime. -/
 theorem count_prime_at_109 : Nat.count Nat.Prime 601 = 109 := by
-  apply count_prime_step count_prime_at_108 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_108 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 607, extending the previous certified prime. -/
 theorem count_prime_at_110 : Nat.count Nat.Prime 607 = 110 := by
-  apply count_prime_step count_prime_at_109 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_109 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 613, extending the previous certified prime. -/
 theorem count_prime_at_111 : Nat.count Nat.Prime 613 = 111 := by
-  apply count_prime_step count_prime_at_110 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_110 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 617, extending the previous certified prime. -/
 theorem count_prime_at_112 : Nat.count Nat.Prime 617 = 112 := by
-  apply count_prime_step count_prime_at_111 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_111 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 619, extending the previous certified prime. -/
 theorem count_prime_at_113 : Nat.count Nat.Prime 619 = 113 := by
-  apply count_prime_step count_prime_at_112 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_112 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 631, extending the previous certified prime. -/
 theorem count_prime_at_114 : Nat.count Nat.Prime 631 = 114 := by
-  apply count_prime_step count_prime_at_113 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_113 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 641, extending the previous certified prime. -/
 theorem count_prime_at_115 : Nat.count Nat.Prime 641 = 115 := by
-  apply count_prime_step count_prime_at_114 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_114 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 643, extending the previous certified prime. -/
 theorem count_prime_at_116 : Nat.count Nat.Prime 643 = 116 := by
-  apply count_prime_step count_prime_at_115 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_115 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 647, extending the previous certified prime. -/
 theorem count_prime_at_117 : Nat.count Nat.Prime 647 = 117 := by
-  apply count_prime_step count_prime_at_116 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_116 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 653, extending the previous certified prime. -/
 theorem count_prime_at_118 : Nat.count Nat.Prime 653 = 118 := by
-  apply count_prime_step count_prime_at_117 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_117 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 659, extending the previous certified prime. -/
 theorem count_prime_at_119 : Nat.count Nat.Prime 659 = 119 := by
-  apply count_prime_step count_prime_at_118 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_118 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 661, extending the previous certified prime. -/
 theorem count_prime_at_120 : Nat.count Nat.Prime 661 = 120 := by
-  apply count_prime_step count_prime_at_119 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_119 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 673, extending the previous certified prime. -/
 theorem count_prime_at_121 : Nat.count Nat.Prime 673 = 121 := by
-  apply count_prime_step count_prime_at_120 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_120 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 677, extending the previous certified prime. -/
 theorem count_prime_at_122 : Nat.count Nat.Prime 677 = 122 := by
-  apply count_prime_step count_prime_at_121 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_121 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 683, extending the previous certified prime. -/
 theorem count_prime_at_123 : Nat.count Nat.Prime 683 = 123 := by
-  apply count_prime_step count_prime_at_122 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_122 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 691, extending the previous certified prime. -/
 theorem count_prime_at_124 : Nat.count Nat.Prime 691 = 124 := by
-  apply count_prime_step count_prime_at_123 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_123 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 701, extending the previous certified prime. -/
 theorem count_prime_at_125 : Nat.count Nat.Prime 701 = 125 := by
-  apply count_prime_step count_prime_at_124 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_124 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 709, extending the previous certified prime. -/
 theorem count_prime_at_126 : Nat.count Nat.Prime 709 = 126 := by
-  apply count_prime_step count_prime_at_125 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_125 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 719, extending the previous certified prime. -/
 theorem count_prime_at_127 : Nat.count Nat.Prime 719 = 127 := by
-  apply count_prime_step count_prime_at_126 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_126 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 727, extending the previous certified prime. -/
 theorem count_prime_at_128 : Nat.count Nat.Prime 727 = 128 := by
-  apply count_prime_step count_prime_at_127 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_127 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 733, extending the previous certified prime. -/
 theorem count_prime_at_129 : Nat.count Nat.Prime 733 = 129 := by
-  apply count_prime_step count_prime_at_128 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_128 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 739, extending the previous certified prime. -/
 theorem count_prime_at_130 : Nat.count Nat.Prime 739 = 130 := by
-  apply count_prime_step count_prime_at_129 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_129 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 743, extending the previous certified prime. -/
 theorem count_prime_at_131 : Nat.count Nat.Prime 743 = 131 := by
-  apply count_prime_step count_prime_at_130 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_130 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 751, extending the previous certified prime. -/
 theorem count_prime_at_132 : Nat.count Nat.Prime 751 = 132 := by
-  apply count_prime_step count_prime_at_131 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_131 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 757, extending the previous certified prime. -/
 theorem count_prime_at_133 : Nat.count Nat.Prime 757 = 133 := by
-  apply count_prime_step count_prime_at_132 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_132 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 761, extending the previous certified prime. -/
 theorem count_prime_at_134 : Nat.count Nat.Prime 761 = 134 := by
-  apply count_prime_step count_prime_at_133 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_133 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 769, extending the previous certified prime. -/
 theorem count_prime_at_135 : Nat.count Nat.Prime 769 = 135 := by
-  apply count_prime_step count_prime_at_134 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_134 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 773, extending the previous certified prime. -/
 theorem count_prime_at_136 : Nat.count Nat.Prime 773 = 136 := by
-  apply count_prime_step count_prime_at_135 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_135 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 787, extending the previous certified prime. -/
 theorem count_prime_at_137 : Nat.count Nat.Prime 787 = 137 := by
-  apply count_prime_step count_prime_at_136 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_136 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 797, extending the previous certified prime. -/
 theorem count_prime_at_138 : Nat.count Nat.Prime 797 = 138 := by
-  apply count_prime_step count_prime_at_137 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_137 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 809, extending the previous certified prime. -/
 theorem count_prime_at_139 : Nat.count Nat.Prime 809 = 139 := by
-  apply count_prime_step count_prime_at_138 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_138 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 811, extending the previous certified prime. -/
 theorem count_prime_at_140 : Nat.count Nat.Prime 811 = 140 := by
-  apply count_prime_step count_prime_at_139 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_139 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 821, extending the previous certified prime. -/
 theorem count_prime_at_141 : Nat.count Nat.Prime 821 = 141 := by
-  apply count_prime_step count_prime_at_140 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_140 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 823, extending the previous certified prime. -/
 theorem count_prime_at_142 : Nat.count Nat.Prime 823 = 142 := by
-  apply count_prime_step count_prime_at_141 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_141 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 827, extending the previous certified prime. -/
 theorem count_prime_at_143 : Nat.count Nat.Prime 827 = 143 := by
-  apply count_prime_step count_prime_at_142 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_142 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 829, extending the previous certified prime. -/
 theorem count_prime_at_144 : Nat.count Nat.Prime 829 = 144 := by
-  apply count_prime_step count_prime_at_143 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_143 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 839, extending the previous certified prime. -/
 theorem count_prime_at_145 : Nat.count Nat.Prime 839 = 145 := by
-  apply count_prime_step count_prime_at_144 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_144 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 853, extending the previous certified prime. -/
 theorem count_prime_at_146 : Nat.count Nat.Prime 853 = 146 := by
-  apply count_prime_step count_prime_at_145 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_145 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 857, extending the previous certified prime. -/
 theorem count_prime_at_147 : Nat.count Nat.Prime 857 = 147 := by
-  apply count_prime_step count_prime_at_146 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_146 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 859, extending the previous certified prime. -/
 theorem count_prime_at_148 : Nat.count Nat.Prime 859 = 148 := by
-  apply count_prime_step count_prime_at_147 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_147 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 863, extending the previous certified prime. -/
 theorem count_prime_at_149 : Nat.count Nat.Prime 863 = 149 := by
-  apply count_prime_step count_prime_at_148 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_148 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 877, extending the previous certified prime. -/
 theorem count_prime_at_150 : Nat.count Nat.Prime 877 = 150 := by
-  apply count_prime_step count_prime_at_149 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_149 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 881, extending the previous certified prime. -/
 theorem count_prime_at_151 : Nat.count Nat.Prime 881 = 151 := by
-  apply count_prime_step count_prime_at_150 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_150 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 883, extending the previous certified prime. -/
 theorem count_prime_at_152 : Nat.count Nat.Prime 883 = 152 := by
-  apply count_prime_step count_prime_at_151 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_151 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
   interval_cases m
-  norm_num
+  norm_num only
 
 /-- The number of primes below 887, extending the previous certified prime. -/
 theorem count_prime_at_153 : Nat.count Nat.Prime 887 = 153 := by
-  apply count_prime_step count_prime_at_152 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_152 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 907, extending the previous certified prime. -/
 theorem count_prime_at_154 : Nat.count Nat.Prime 907 = 154 := by
-  apply count_prime_step count_prime_at_153 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_153 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 911, extending the previous certified prime. -/
 theorem count_prime_at_155 : Nat.count Nat.Prime 911 = 155 := by
-  apply count_prime_step count_prime_at_154 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_154 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 919, extending the previous certified prime. -/
 theorem count_prime_at_156 : Nat.count Nat.Prime 919 = 156 := by
-  apply count_prime_step count_prime_at_155 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_155 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 929, extending the previous certified prime. -/
 theorem count_prime_at_157 : Nat.count Nat.Prime 929 = 157 := by
-  apply count_prime_step count_prime_at_156 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_156 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 937, extending the previous certified prime. -/
 theorem count_prime_at_158 : Nat.count Nat.Prime 937 = 158 := by
-  apply count_prime_step count_prime_at_157 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_157 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 941, extending the previous certified prime. -/
 theorem count_prime_at_159 : Nat.count Nat.Prime 941 = 159 := by
-  apply count_prime_step count_prime_at_158 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_158 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 947, extending the previous certified prime. -/
 theorem count_prime_at_160 : Nat.count Nat.Prime 947 = 160 := by
-  apply count_prime_step count_prime_at_159 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_159 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 953, extending the previous certified prime. -/
 theorem count_prime_at_161 : Nat.count Nat.Prime 953 = 161 := by
-  apply count_prime_step count_prime_at_160 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_160 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 /-- The number of primes below 967, extending the previous certified prime. -/
 theorem count_prime_at_162 : Nat.count Nat.Prime 967 = 162 := by
-  apply count_prime_step count_prime_at_161 (by norm_num) (by norm_num)
+  apply count_prime_step count_prime_at_161 (by norm_num only) (by norm_num only)
   intro m hm
   obtain ⟨hlo, hhi⟩ := Finset.mem_Ico.mp hm
-  interval_cases m <;> norm_num
+  interval_cases m <;> norm_num only
 
 -- END GENERATED PRIME COUNTS
 

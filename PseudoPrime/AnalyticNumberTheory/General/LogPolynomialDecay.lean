@@ -35,7 +35,7 @@ theorem tendsto_log_div_sq_atTop :
   rw [mul_zero] at hmul
   refine hmul.congr' ?_
   filter_upwards [Filter.eventually_ne_atTop (0 : ℝ)] with n hn
-  field_simp
+  field_simp (discharger := exact hn)
 
 /--
 Input/assumptions: a positive constant `K`.
@@ -90,7 +90,7 @@ theorem tendsto_sqrt_mul_add_one_div_sq_atTop (K : ℝ) (hK : 0 < K) :
     rw [hf_def]
     dsimp only
     rw [div_pow, mul_pow, Real.sq_sqrt hKn]
-    field_simp
+    field_simp (discharger := exact hne)
     ring
   have hnonneg : ∀ᶠ n in Filter.atTop, 0 ≤ f n := by
     filter_upwards [Filter.eventually_ge_atTop (1 : ℝ)] with n hn1

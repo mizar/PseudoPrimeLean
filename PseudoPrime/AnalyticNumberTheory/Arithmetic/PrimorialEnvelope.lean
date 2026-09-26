@@ -61,7 +61,8 @@ theorem oddPrimorial_succ (k : ℕ) : oddPrimorial (k + 1) = oddPrimorial k * od
 theorem oddPrimorial_pos (k : ℕ) : 0 < oddPrimorial k := by
   induction k with
   | zero =>
-    rw [oddPrimorial_zero]; norm_num only
+    rw [oddPrimorial_zero]
+    norm_num only
   | succ k hk =>
     rw [oddPrimorial_succ]
     exact Nat.mul_pos hk (oddPrime_prime k).pos

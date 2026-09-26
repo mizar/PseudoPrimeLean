@@ -819,7 +819,7 @@ theorem twoAdicLogCorrection_le_half_log_sq_add_log_two_mul_log_half_of_apply_tw
   have hquot_nonneg : 0 ≤ Real.log x / Real.log 2 :=
     div_nonneg (Real.log_nonneg (by linarith)) hlog2.le
   have hfloor : (K : ℝ) ≤ Real.log x / Real.log 2 := by
-    dsimp [K]
+    dsimp only [K]
     exact Nat.floor_le hquot_nonneg
   have hK : (K : ℝ) * Real.log 2 ≤ Real.log x := (le_div_iff₀ hlog2).mp hfloor
   have hbase := sum_log_weight_le_half_sq (Real.log 2) (Real.log x) K

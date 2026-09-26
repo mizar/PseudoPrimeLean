@@ -87,7 +87,7 @@ theorem bailliePSWClassicalWithinTwoMul_of_prime {n : ℕ} (hn : Nat.Prime n) (h
   let hmod := selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch
   let param := LucasParams.methodAStar D hmod
   have hD : param.D = D := by
-    dsimp [param, LucasParams.methodAStar]
+    dsimp only [param, LucasParams.methodAStar]
     split <;> rfl
   have hjacobi : jacobiSym param.D n = -1 := by
     simpa only [hD] using selfridgeClassicalSearchAscending_some_spec hsearch
@@ -102,7 +102,7 @@ theorem strengthenedBPSWClassicalWithinTwoMul_of_prime {n : ℕ} (hn : Nat.Prime
   let hmod := selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch
   let param := LucasParams.methodAStar D hmod
   have hD : param.D = D := by
-    dsimp [param, LucasParams.methodAStar]
+    dsimp only [param, LucasParams.methodAStar]
     split <;> rfl
   have hjacobi : jacobiSym param.D n = -1 := by
     simpa only [hD] using selfridgeClassicalSearchAscending_some_spec hsearch
@@ -141,7 +141,7 @@ theorem bailliePSWWheel30Ascending_of_prime_of_search {n fuel : ℕ} (hn : n.Pri
       (by simpa only [selfridgeWheel30SearchAscending] using hsearch)
   let param := LucasParams.methodAStar D hmod
   have hD : param.D = D := by
-    dsimp [param, LucasParams.methodAStar]
+    dsimp only [param, LucasParams.methodAStar]
     split <;> rfl
   have hjacobi : jacobiSym param.D n = -1 := by
     simpa only [hD] using
@@ -182,7 +182,7 @@ theorem bailliePSWPrimeAscending_of_prime_of_search {n fuel : ℕ} (hn : n.Prime
       (by simpa only [selfridgePrimeSearchAscending] using hsearch)
   let param := LucasParams.methodAStar D hmod
   have hD : param.D = D := by
-    dsimp [param, LucasParams.methodAStar]
+    dsimp only [param, LucasParams.methodAStar]
     split <;> rfl
   have hjacobi : jacobiSym param.D n = -1 := by
     simpa only [hD] using

@@ -33,7 +33,8 @@ theorem re_riemannZetaLogContourResidueLedger_unifiedTau_ge_of_riemannHypothesis
     rw [Complex.sub_re, Complex.neg_re]
     congr 1
     rw [show (2 : ℂ) * (Real.pi : ℂ) = ((2 * Real.pi : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       ← Complex.ofReal_log (by positivity), ← Complex.ofReal_log hxpos.le, ← Complex.ofReal_mul,
       Complex.ofReal_re]
   have hre1 : (x : ℂ).re = x := Complex.ofReal_re x

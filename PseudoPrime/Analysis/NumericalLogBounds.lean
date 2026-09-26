@@ -23,7 +23,7 @@ Role: produces affine logarithmic lower bounds on compact positive intervals.
 theorem log_gt_affine_of_anchor {a b y L : ℝ} (ha : 0 < a) (hab : a ≤ b) (hay : a ≤ y) (hyb : y ≤ b)
     (hL : L < Real.log a) : L + 2 / (a + b) * (y - a) < Real.log y := by
   have hy0 : 0 < y := by linarith only [ha, hay]
-  have hfactor : a * (y / a) = y := by field_simp
+  have hfactor : a * (y / a) = y := by field_simp (discharger := exact ha.ne')
   rw [← hfactor]
   have hlogmul : Real.log (a * (y / a)) = Real.log a + Real.log (y / a) := by
     rw [Real.log_mul (ne_of_gt ha) (by positivity)]
@@ -37,9 +37,9 @@ theorem log_gt_affine_of_anchor {a b y L : ℝ} (ha : 0 < a) (hab : a ≤ b) (ha
   have hden : 0 < (y / a - 1) + 2 := by linarith only [hx]
   have hfrac : 2 / (a + b) * (y - a) ≤ 2 * (y / a - 1) / ((y / a - 1) + 2) := by
     apply (le_div_iff₀ hden).2
-    have haab : 0 < a + b := by linarith
+    have haab : 0 < a + b := by exact add_pos ha (lt_of_lt_of_le ha hab)
     field_simp [ne_of_gt ha, ne_of_gt haab]
-    nlinarith only [mul_nonneg (by linarith : 0 ≤ y - a) (by linarith : 0 ≤ b - y)]
+    nlinarith only [mul_nonneg (sub_nonneg.mpr hay) (sub_nonneg.mpr hyb)]
   rw [hfactor]
   linarith only [hL, hla', hfrac]
 
@@ -47,7 +47,7 @@ theorem log_gt_affine_of_anchor {a b y L : ℝ} (ha : 0 < a) (hab : a ≤ b) (ha
 theorem log_four_sub_log_pi_pos : 0 < Real.log 4 - Real.log Real.pi := by
   have h := Real.strictMonoOn_log Real.pi_pos (by norm_num only [Set.mem_Ioi]) Real.pi_lt_four
   rw [Real.log_four_eq] at h ⊢
-  linarith
+  linarith only [h]
 
 /-- A strict lower bound `24/100 < log 4 - log π`, obtained from rational bounds for `π`
 and logarithms of `2` and `3`. -/
@@ -60,7 +60,10 @@ theorem log_four_sub_log_pi_gt_twenty_four : (24 : ℝ) / 100 < Real.log 4 - Rea
     norm_num only at h ⊢
     exact h
   have hxpos : 0 < Real.pi / 3 - 1 := by linarith only [Real.pi_gt_three]
-  have hlogadd := Real.log_le_sub_one_of_pos (x := 1 + (Real.pi / 3 - 1)) (by linarith)
+  have hlogarg : 0 < 1 + (Real.pi / 3 - 1) := by
+    rw [show 1 + (Real.pi / 3 - 1) = Real.pi / 3 by ring]
+    exact div_pos Real.pi_pos (by norm_num only)
+  have hlogadd := Real.log_le_sub_one_of_pos (x := 1 + (Real.pi / 3 - 1)) hlogarg
   have hlogdiv : Real.log (Real.pi / 3) = Real.log Real.pi - Real.log 3 := by
     rw [Real.log_div (by positivity) (by norm_num only)]
   have hlogone : Real.log (1 + (Real.pi / 3 - 1)) = Real.log (Real.pi / 3) := by
@@ -83,9 +86,11 @@ theorem eight_lt_log_level {q : ℕ} (hq : 3000 ≤ q) : (8 : ℝ) < Real.log q 
 
 /-- On `[12, ∞)`, `log 2` is at most twice `log y`. -/
 theorem log_two_le_two_mul_log {y : ℝ} (hy : 12 ≤ y) : Real.log 2 ≤ 2 * Real.log y := by
-  have hlog : Real.log 2 ≤ Real.log y := by exact Real.log_le_log (by norm_num only) (by linarith)
-  have hnonneg : 0 ≤ Real.log y := Real.log_nonneg (by linarith)
-  linarith
+  have hlog : Real.log 2 ≤ Real.log y :=
+    Real.log_le_log (by norm_num only) (le_trans (by norm_num only : (2 : ℝ) ≤ 12) hy)
+  have hnonneg : 0 ≤ Real.log y :=
+    Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 12) hy)
+  linarith only [hlog, hnonneg]
 
 /-- A rational upper certificate for `log 12`, obtained from the bounds for `log 2` and `log 3`. -/
 theorem log_twelve_le : Real.log 12 ≤ (248491 : ℝ) / 100000 := by
@@ -94,7 +99,7 @@ theorem log_twelve_le : Real.log 12 ≤ (248491 : ℝ) / 100000 := by
   rw [show (12 : ℝ) = 3 * 4 by norm_num only, Real.log_mul (by norm_num only) (by norm_num only),
     Real.log_four_eq]
   norm_num only at hlogTwo hlogThree ⊢
-  linarith
+  linarith only [hlogTwo, hlogThree]
 
 /-- The rational lower bound `247/100 < log 12`, from `12 = 3 * 4`. -/
 theorem log_twelve_gt : (247 : ℝ) / 100 < Real.log 12 := by
@@ -103,12 +108,13 @@ theorem log_twelve_gt : (247 : ℝ) / 100 < Real.log 12 := by
   have h2 := Real.log_two_gt_d9
   have h3 := Real.log_three_gt_d9
   norm_num only at h2 h3 ⊢
-  linarith
+  linarith only [h2, h3]
 
 /-- The bound `247/100 < log y` for every `y ≥ 12`, by monotonicity of `log`. -/
 theorem log_ge_twelve_lower {y : ℝ} (hy : 12 ≤ y) : (247 : ℝ) / 100 < Real.log y := by
   have hlog :=
-    Real.strictMonoOn_log.monotoneOn (by norm_num only : (0 : ℝ) < 12) (by linarith : (0 : ℝ) < y)
+    Real.strictMonoOn_log.monotoneOn (by norm_num only : (0 : ℝ) < 12)
+      (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 12) hy)
       hy
   exact log_twelve_gt.trans_le hlog
 

@@ -162,7 +162,8 @@ theorem quadraticLogPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : 
         Real.log p * (Real.log x - k * Real.log p) * (χ.primitiveCharacter p ^ k).re := by
     intro k hk
     have hk0 : k ≠ 0 := by
-      have := (Finset.mem_Icc.mp hk).1; omega
+      have := (Finset.mem_Icc.mp hk).1
+      omega
     exact characterLogWeightedTerm_primitive_re_prime_pow x χ hxpos.ne' hp hk0
   rw [Finset.sum_congr rfl heach]
   rcases hχ (p : ZMod χ.conductor) with h0 | h1 | hm1
@@ -171,7 +172,8 @@ theorem quadraticLogPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : 
         Real.log p * (Real.log x - k * Real.log p) * (χ.primitiveCharacter p ^ k).re = 0 := by
       intro k hk
       have hk0 : k ≠ 0 := by
-        have := (Finset.mem_Icc.mp hk).1; omega
+        have := (Finset.mem_Icc.mp hk).1
+        omega
       rw [h0, zero_pow hk0]
       simp only [Complex.zero_re, mul_zero]
     rw [Finset.sum_congr rfl hzero, Finset.sum_const_zero]
@@ -247,7 +249,9 @@ theorem re_sum_logPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : �
   set z : ℂ := χ.primitiveCharacter p with hzdef
   set θ : ℝ := Real.log x / Real.log p - (K : ℝ) with hθdef
   have hlogX : Real.log x = ((K : ℝ) + θ) * Real.log p := by
-    rw [hθdef]; field_simp; ring
+    rw [hθdef]
+    field_simp
+    ring
   have hθ0 : 0 ≤ θ := by
     rw [hθdef, sub_nonneg, le_div_iff₀ hlogp]
     linarith [hKle]
@@ -260,7 +264,8 @@ theorem re_sum_logPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : �
         Real.log p * ((Real.log x - (k : ℝ) * Real.log p) * (z ^ k).re) := by
     intro k hk
     have hk0 : k ≠ 0 := by
-      have := (Finset.mem_Icc.mp hk).1; omega
+      have := (Finset.mem_Icc.mp hk).1
+      omega
     rw [characterLogWeightedTerm_primitive_re_prime_pow x χ hxpos.ne' hp hk0, mul_assoc]
   have hfejer :=
     re_sum_logWeight_ge_neg_half (logX := Real.log x) (logP := Real.log p) (θ := θ) (K := K) (z :=
@@ -274,7 +279,8 @@ theorem re_sum_logPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : �
     (Finset.sum (Finset.Icc 1 K) fun k =>
           ((Real.log x - (k : ℝ) * Real.log p : ℝ) : ℂ) * z ^ k).re =
       Finset.sum (Finset.Icc 1 K) fun k => (Real.log x - (k : ℝ) * Real.log p) * (z ^ k).re := by
-    rw [Complex.re_sum]; exact Finset.sum_congr rfl hstep2
+    rw [Complex.re_sum]
+    exact Finset.sum_congr rfl hstep2
   rw [hsum_eq] at hfejer
   rw [Finset.sum_congr rfl heach, ← Finset.mul_sum]
   have hlogp0 : 0 ≤ Real.log p := hlogp.le
@@ -484,7 +490,8 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log {q : 
           (characterLogWeightedTerm x χ.primitiveCharacter (p ^ k)).re = 0 := by
         intro k hk
         have hk0 : k ≠ 0 := by
-          have := (Finset.mem_Icc.mp hk).1; omega
+          have := (Finset.mem_Icc.mp hk).1
+          omega
         rw [characterLogWeightedTerm_primitive_re_prime_pow x χ hxpos.ne' hpprime hk0, hz0,
           zero_pow hk0]
         simp only [Complex.zero_re, mul_zero]

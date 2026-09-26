@@ -46,7 +46,8 @@ theorem primePrimorialCount_succ (k : ℕ) :
 theorem primePrimorialCount_pos (k : ℕ) : 0 < primePrimorialCount k := by
   induction k with
   | zero =>
-    rw [primePrimorialCount_zero]; norm_num only
+    rw [primePrimorialCount_zero]
+    norm_num only
   | succ k hk =>
     rw [primePrimorialCount_succ]
     exact Nat.mul_pos hk (primeByIndex_prime k).pos
@@ -60,14 +61,15 @@ theorem primeByIndex_le_orderEmbOfFin {s : Finset ℕ} (hprime : ∀ p ∈ s, p.
     intro j
     induction j with
     | zero =>
-      intro hj; exact Nat.zero_le _
+      intro hj
+      exact Nat.zero_le _
     | succ j ih =>
       intro hj
       have hj' : j < s.card := (Nat.lt_succ_self j).trans hj
       have hlt : Nat.count Nat.Prime (f ⟨j, hj'⟩) < Nat.count Nat.Prime (f ⟨j + 1, hj⟩) :=
         Nat.count_strict_mono (hfprime ⟨j, hj'⟩) (f.strictMono (by exact Nat.lt_succ_self j))
       have hind := ih hj'
-      omega
+      exact Nat.succ_le_of_lt (lt_of_le_of_lt hind hlt)
   rw [primeByIndex, ← Nat.nth_count (hfprime i)]
   exact Nat.nth_monotone Nat.infinite_setOfPred_prime (hcountNat i.val i.isLt)
 

@@ -80,7 +80,8 @@ theorem norm_riemannZetaReciprocalContourKernel_leftVertical_le {x : ℝ} (hx : 
       sub_zero, Complex.ofReal_re, Complex.I_re, Complex.ofReal_im, Complex.I_im, mul_one, sub_self,
       add_zero]
   have hz1re : (z - 1).re = -(2 * (m : ℝ) + 2) := by
-    rw [Complex.sub_re, hzre, Complex.one_re]; ring
+    rw [Complex.sub_re, hzre, Complex.one_re]
+    ring
   have hderiv_bound := norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le_uniform m t
   have hlogDeriv_eq : ‖deriv riemannZeta z / riemannZeta z‖ = ‖logDeriv riemannZeta z‖ := by
     rw [logDeriv_apply]
@@ -204,7 +205,8 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_leftVertical_atTop 
   set C : ℝ := qMinusOneLeftVerticalConst with hC_def
   set K1 : ℝ := |C| + 4 * Real.pi + 2 with hK1_def
   have hK1nn : (0 : ℝ) ≤ K1 := by
-    rw [hK1_def]; positivity
+    rw [hK1_def]
+    positivity
   have hbound :
     ∀ m : ℕ,
       ‖∫ t in (-((m : ℝ) + 1))..((m : ℝ) + 1),
@@ -264,7 +266,8 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_leftVertical_atTop 
         hbase
       _ ≤ 2 * K1 * ((m : ℝ) + 1) ^ 2 * x ^ (-(2 * (m : ℝ) + 1)) := hstep1
       _ = 2 * K1 * x ^ (-(1 : ℝ)) * (((m : ℝ) + 1) ^ 2 * (x ^ (-(2 : ℝ))) ^ m) := by
-        rw [hxeq]; ring
+        rw [hxeq]
+        ring
   have hrpos : (0 : ℝ) ≤ x ^ (-(2 : ℝ)) := by positivity
   have hrlt1 : x ^ (-(2 : ℝ)) < 1 := by
     rw [show (-(2 : ℝ)) = -(2 : ℕ) from by norm_num only, Real.rpow_neg (by linarith),
@@ -295,7 +298,8 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_leftVertical_farLef
   set C : ℝ := qMinusOneLeftVerticalConst with hC_def
   set K1 : ℝ := |C| + 4 * Real.pi + 2 with hK1_def
   have hK1nn : (0 : ℝ) ≤ K1 := by
-    rw [hK1_def]; positivity
+    rw [hK1_def]
+    positivity
   have hbound :
     ∀ m : ℕ,
       ‖∫ t in (-(farLeftHeightSeq m))..(farLeftHeightSeq m),
@@ -348,7 +352,8 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_leftVertical_farLef
         hbase
       _ ≤ 2 * K1 * T ^ 2 * x ^ (-(2 * (m : ℝ) + 1)) := hstep1
       _ = 2 * K1 * x ^ (-(1 : ℝ)) * (T ^ 2 * (x ^ (-(2 : ℝ))) ^ m) := by
-        rw [hxeq]; ring
+        rw [hxeq]
+        ring
   have hrpos : (0 : ℝ) ≤ x ^ (-(2 : ℝ)) := by positivity
   have hrlt1 : x ^ (-(2 : ℝ)) < 1 := by
     rw [show (-(2 : ℝ)) = -(2 : ℕ) from by norm_num only, Real.rpow_neg (by linarith),
@@ -380,7 +385,8 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical
   set C : ℝ := qMinusOneLeftVerticalConst with hC_def
   set K1 : ℝ := |C| + 4 * Real.pi + 2 with hK1_def
   have hK1nn : (0 : ℝ) ≤ K1 := by
-    rw [hK1_def]; positivity
+    rw [hK1_def]
+    positivity
   have hbound :
     ∀ m : ℕ,
       ‖∫ t in (-(farLeftHeightSeq m))..(farLeftHeightSeq m),
@@ -439,7 +445,8 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical
         hbase
       _ ≤ 2 * K1 * T ^ 2 * x ^ (-(2 * (m : ℝ) + 2)) := hstep1
       _ = 2 * K1 * x ^ (-(2 : ℝ)) * (T ^ 2 * (x ^ (-(2 : ℝ))) ^ m) := by
-        rw [hxeq]; ring
+        rw [hxeq]
+        ring
   have hrpos : (0 : ℝ) ≤ x ^ (-(2 : ℝ)) := by positivity
   have hrlt1 : x ^ (-(2 : ℝ)) < 1 := by
     rw [show (-(2 : ℝ)) = -(2 : ℕ) from by norm_num only, Real.rpow_neg (by linarith),

@@ -107,7 +107,8 @@ theorem norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 
       have hstep1 : ‖Complex.Gamma (s / 2 + 1)‖ ≤ Real.Gamma ((s / 2 + 1).re) :=
         RiemannZeta.norm_Gamma_le_Gamma_re
           (by
-            rw [hre2_eq]; exact hre_half_pos)
+            rw [hre2_eq]
+            exact hre_half_pos)
       rw [hre2_eq] at hstep1
       have hlog : Real.log (Real.Gamma (s.re / 2 + 1)) ≤ (s.re / 2 + 1) * Real.log (s.re / 2 + 1) :=
         Gamma.log_Gamma_le_of_one_le (by linarith)

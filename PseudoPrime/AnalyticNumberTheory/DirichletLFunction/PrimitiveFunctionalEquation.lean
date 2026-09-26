@@ -460,7 +460,8 @@ theorem primitiveBRe_add_inv_eq_neg_two_mul_zeroMass_of_grh {N : ℕ} [NeZero N]
   have hG5 := completedLFunction_logDeriv_functionalEquation_at_zero hprimitive hne hinv
   have hlogNre : (Complex.log (N : ℂ)).re = Real.log N := by
     rw [show ((N : ℂ)) = ((N : ℝ) : ℂ) from by
-        push_cast; ring]
+        push_cast
+        ring]
     exact Complex.log_ofReal_re _
   have hre9g :
     (logDeriv (DirichletCharacter.completedLFunction χ) 1).re -

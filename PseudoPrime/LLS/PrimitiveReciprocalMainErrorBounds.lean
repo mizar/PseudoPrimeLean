@@ -68,13 +68,15 @@ theorem llsPrimitiveReciprocalEvenMainError_le_neg_quarter {x : ℝ} (hx : 64 �
   have hratio_le : (Real.log x + 1) / x ≤ Analysis.logLinearRatio x := by
     unfold Analysis.logLinearRatio
     apply div_le_div_of_nonneg_right _ hxpos.le
-    linarith
+    linarith only [hlogx_nn]
   have hratio_anti : Analysis.logLinearRatio x ≤ Analysis.logLinearRatio 64 :=
     Analysis.strictAntiOn_logLinearRatio.antitoneOn
       (by
-        simp only [Set.mem_Ici]; norm_num only)
+        simp only [Set.mem_Ici]
+        norm_num only)
       (by
-        simp only [Set.mem_Ici]; linarith)
+        simp only [Set.mem_Ici]
+        linarith)
       hx
   have hratio64 : Analysis.logLinearRatio 64 = (12 * Real.log 2 + 1) / 64 := by
     unfold Analysis.logLinearRatio
@@ -92,10 +94,11 @@ theorem llsPrimitiveReciprocalEvenMainError_le_neg_quarter {x : ℝ} (hx : 64 �
       mul_le_mul_of_nonneg_right hγ.le h1mx_nn
     have hstep2 : (1 / 4 : ℝ) * (63 / 64) ≤ (1 / 4 : ℝ) * (1 - 1 / x) :=
       mul_le_mul_of_nonneg_left h1mx_ge (by norm_num only)
-    linarith
+    linarith only [hstep1, hstep2]
   have hratio_full : (Real.log x + 1) / x ≤ (12 * Real.log 2 + 1) / 64 := by
-    rw [← hratio64]; exact hratio_le.trans hratio_anti
+    rw [← hratio64]
+    exact hratio_le.trans hratio_anti
   unfold Analysis.primitiveReciprocalEvenMainError
-  nlinarith [hterm1, hratio_full, hlog2]
+  nlinarith only [hterm1, hratio_full, hlog2]
 
 end PseudoPrime.LLS

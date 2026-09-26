@@ -215,7 +215,8 @@ theorem fejerNormSqShift_secondDiff {z : ℂ} (hz : ‖z‖ = 1) (K : ℕ) :
       norm_fejerPartialPowerSum_one_sq hz];
     ring_nf
   | succ n =>
-    rw [fejerNormSqShift_succ]; exact norm_sq_fejerPartialPowerSum_secondDiff hz n
+    rw [fejerNormSqShift_succ]
+    exact norm_sq_fejerPartialPowerSum_secondDiff hz n
 
 /--
 The general Fejér SOS (sum-of-squares) decomposition, without assuming any vanishing tail
@@ -311,20 +312,26 @@ theorem re_sum_logWeight_ge_neg_half {logX logP : ℝ} {θ : ℝ} {K : ℕ} {z :
       a (K + 1) * (2 * ‖fejerPartialPowerSum z K‖ ^ 2 - fejerNormSqShift z K) -
         a (K + 2) * ‖fejerPartialPowerSum z K‖ ^ 2 := by
     have haK1 : a (K + 1) = (θ - 1) * logP := by
-      simp only [ha]; push_cast; linarith only [hlogX]
+      simp only [ha]
+      push_cast
+      linarith only [hlogX]
     have haK2 : a (K + 2) = (θ - 2) * logP := by
-      simp only [ha]; push_cast; linarith only [hlogX]
+      simp only [ha]
+      push_cast
+      linarith only [hlogX]
     have hcombine :
       a (K + 1) * (2 * ‖fejerPartialPowerSum z K‖ ^ 2 - fejerNormSqShift z K) -
           a (K + 2) * ‖fejerPartialPowerSum z K‖ ^ 2 =
         logP * ((1 - θ) * fejerNormSqShift z K + θ * ‖fejerPartialPowerSum z K‖ ^ 2) := by
-      rw [haK1, haK2]; ring
+      rw [haK1, haK2]
+      ring
     rw [hcombine]
     have hshift_nonneg : 0 ≤ fejerNormSqShift z K := by
       cases K with
       | zero => rw [fejerNormSqShift_zero]
       | succ n =>
-        rw [fejerNormSqShift_succ]; positivity
+        rw [fejerNormSqShift_succ]
+        positivity
     positivity
   have hbound := re_sum_ge_neg_half_head_of_fejer_general (a := a) hz hconv htail
   simpa only [zero_mul, sub_zero, Complex.ofReal_sub, Complex.ofReal_mul, Complex.ofReal_natCast,
@@ -378,7 +385,8 @@ theorem re_sum_reciprocalWeight_ge_neg_half {r c : ℝ} {K : ℕ} {z : ℂ} (hz 
     cases K with
     | zero => rw [fejerNormSqShift_zero]
     | succ n =>
-      rw [fejerNormSqShift_succ]; positivity
+      rw [fejerNormSqShift_succ]
+      positivity
   have htail_nonneg :
     0 ≤
       (r ^ K - c) * ‖fejerPartialPowerSum z K‖ ^ 2 + (c - r ^ (K + 1)) * fejerNormSqShift z K := by
@@ -397,7 +405,8 @@ theorem re_sum_reciprocalWeight_ge_neg_half {r c : ℝ} {K : ℕ} {z : ℂ} (hz 
   have ha0 : a 0 = 1 - c := by simp only [ha, pow_zero]
   rw [ha0] at hid
   have : 0 ≤ (1 - c) + 2 * (Finset.sum (Finset.Icc 1 K) fun k => (a k : ℂ) * z ^ k).re := by
-    rw [hid]; exact hRHS_nonneg
+    rw [hid]
+    exact hRHS_nonneg
   have hgoal : -((1 - c) / 2) ≤ (Finset.sum (Finset.Icc 1 K) fun k => (a k : ℂ) * z ^ k).re := by
     linarith
   simpa only [Complex.ofReal_sub, Complex.ofReal_pow, Complex.re_sum, Complex.mul_re,

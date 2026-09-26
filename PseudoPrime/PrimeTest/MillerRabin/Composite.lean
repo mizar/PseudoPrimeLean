@@ -56,7 +56,7 @@ private theorem prime_sub_two_adic_decomposition {q : ℕ}
   let t := twoAdicExponent (q - 1)
   let c := oddPart (q - 1)
   have hqdecomp : q - 1 = 2 ^ t * c := by
-    dsimp [t, c]
+    dsimp only [t, c]
     exact (twoAdicPart_mul_oddPart (q - 1)).symm
   have hcOdd : Odd c := oddPart_odd (Nat.sub_ne_zero_of_lt hq.one_lt)
   have ht : 0 < t := by
@@ -69,7 +69,7 @@ private theorem prime_sub_two_adic_decomposition {q : ℕ}
     have htzero : t = 0 := Nat.eq_zero_of_not_pos htn
     have hceq : c = q - 1 := by
       rw [htzero] at hqdecomp
-      simp at hqdecomp
+      simp only [pow_zero, Nat.one_mul] at hqdecomp
       exact hqdecomp.symm
     apply (Nat.not_even_iff_odd.mpr hcOdd)
     rw [hceq]

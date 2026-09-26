@@ -80,10 +80,11 @@ theorem re_characterLogWeightedTerm_eq_of_trivialBelow {q n : ℕ} [NeZero q]
       have hzeroterm : AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm X (p ^ k) = 0 := by
         rw [AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm,
           show ((p ^ k : ℕ) : ℝ) = X from by
-            push_cast; exact hpk_eq,
+            push_cast
+            exact hpk_eq,
           div_self hX.ne', Real.log_one, mul_zero]
       rw [AnalyticNumberTheory.Arithmetic.characterLogWeightedTerm, hzeroterm]
-      simp
+      simp only [Complex.ofReal_zero, zero_mul, Complex.zero_re]
 
 /--
 Input/assumptions: a level-`q` character trivial on every prime residue below `X > 0`.
@@ -130,13 +131,14 @@ theorem re_characterReciprocalWeightedTerm_eq_of_trivialBelow {q n : ℕ} [NeZer
       have hpk_ge : (p : ℝ) ≤ (p : ℝ) ^ k := le_self_pow₀ (by exact_mod_cast hp.one_lt.le) hk.ne'
       have hpk_eq : (p : ℝ) ^ k = X := le_antisymm (by exact_mod_cast hpk_le) (hpeq ▸ hpk_ge)
       have hnX : ((p ^ k : ℕ) : ℝ) = X := by
-        push_cast; exact hpk_eq
+        push_cast
+        exact hpk_eq
       have hzeroterm :
         AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm X (p ^ k) = 0 := by
         rw [AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm, hnX, div_self hX.ne',
           sub_self, mul_zero]
       rw [AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedTerm, hzeroterm]
-      simp
+      simp only [Complex.ofReal_zero, zero_mul, Complex.zero_re]
 
 /--
 Input/assumptions: a level-`q` character trivial on every prime residue below `X > 0`.

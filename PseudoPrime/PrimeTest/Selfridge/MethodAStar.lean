@@ -35,7 +35,7 @@ theorem strongLucasMethodAStar_of_prime {n : ℕ} (hn : n.Prime) (D : ℤ) (hmod
   rw [strongLucasMethodAStar_eq_parameterized]
   let hparam := LucasParams.methodAStar D hmod
   have hD : hparam.D = D := by
-    dsimp [hparam, LucasParams.methodAStar]
+    dsimp only [hparam, LucasParams.methodAStar]
     split <;> rfl
   have hjacobi' : jacobiSym hparam.D n = -1 := by simpa only [hD] using hjacobi
   simpa only [hparam] using

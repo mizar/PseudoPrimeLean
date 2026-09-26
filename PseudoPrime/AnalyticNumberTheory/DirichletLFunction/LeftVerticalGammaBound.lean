@@ -189,12 +189,15 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
   obtain ⟨Cψ, hCψnn, hψ⟩ := exists_C_forall_norm_digamma_explicit_le
   set C : ℝ := Cψ + |Real.log Real.pi| + 10 with hC_def
   have hCnn : 0 ≤ C := by
-    have := abs_nonneg (Real.log Real.pi); linarith
+    have := abs_nonneg (Real.log Real.pi)
+    linarith
   refine ⟨C, hCnn, fun A hA N χ t => ?_⟩
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
   have hlogpi_norm : ‖(-(Complex.log (Real.pi : ℂ)) / 2 : ℂ)‖ = |Real.log Real.pi| / 2 := by
     have h1 : (-(Complex.log (Real.pi : ℂ)) / 2 : ℂ) = ((-(Real.log Real.pi) / 2 : ℝ) : ℂ) := by
-      rw [← Complex.ofReal_log Real.pi_pos.le]; push_cast; ring
+      rw [← Complex.ofReal_log Real.pi_pos.le]
+      push_cast
+      ring
     rw [h1, Complex.norm_real, Real.norm_eq_abs, abs_div, abs_neg]
     norm_num only
   have htnn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith [abs_nonneg t])
@@ -269,9 +272,11 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
     have ha1 : |(-(A : ℝ) / 2 - 1 / 4)| ≤ (A : ℝ) + 2 := abs_le.mpr ⟨by linarith, by linarith⟩
     have ha2 : |((A : ℝ) / 2 + 3 / 4)| ≤ (A : ℝ) + 2 := abs_le.mpr ⟨by linarith, by linarith⟩
     have hb1 : (2 : ℝ) * |t / 2| = |t| := by
-      rw [abs_div, show |(2 : ℝ)| = 2 from by norm_num only]; ring
+      rw [abs_div, show |(2 : ℝ)| = 2 from by norm_num only]
+      ring
     have hb2 : (2 : ℝ) * |-(t / 2)| = |t| := by
-      rw [abs_neg]; exact hb1
+      rw [abs_neg]
+      exact hb1
     have hsep2 : ∀ q : ℕ, (1 : ℝ) / 4 ≤ |((A : ℝ) / 2 + 3 / 4) + (q : ℝ)| := fun q =>
       quarterSep_of_pos (by linarith) q
     have h1 := hmain (-(A : ℝ) / 2 - 1 / 4) (t / 2) ha1 (leftEven_quarterSep A) hb1
@@ -323,9 +328,11 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
     have ha1 : |(-(A : ℝ) / 2 + 1 / 4)| ≤ (A : ℝ) + 2 := abs_le.mpr ⟨by linarith, by linarith⟩
     have ha2 : |((A : ℝ) / 2 + 5 / 4)| ≤ (A : ℝ) + 2 := abs_le.mpr ⟨by linarith, by linarith⟩
     have hb1 : (2 : ℝ) * |t / 2| = |t| := by
-      rw [abs_div, show |(2 : ℝ)| = 2 from by norm_num only]; ring
+      rw [abs_div, show |(2 : ℝ)| = 2 from by norm_num only]
+      ring
     have hb2 : (2 : ℝ) * |-(t / 2)| = |t| := by
-      rw [abs_neg]; exact hb1
+      rw [abs_neg]
+      exact hb1
     have hsep2 : ∀ q : ℕ, (1 : ℝ) / 4 ≤ |((A : ℝ) / 2 + 5 / 4) + (q : ℝ)| := fun q =>
       quarterSep_of_pos (by linarith) q
     have h1 := hmain (-(A : ℝ) / 2 + 1 / 4) (t / 2) ha1 (leftOdd_quarterSep A) hb1

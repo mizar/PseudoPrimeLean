@@ -48,7 +48,8 @@ theorem oddPrimorial_ge_pow_mul_factorial (m : ℕ) : 2 ^ m * Nat.factorial m �
   | succ m ih =>
     rw [oddPrimorial_succ, Nat.factorial_succ, pow_succ]
     have hle : 2 * (m + 1) ≤ oddPrime m := by
-      have := oddPrime_ge m; omega
+      have := oddPrime_ge m
+      omega
     have h3 : (2 ^ m * Nat.factorial m) * (2 * (m + 1)) ≤ oddPrimorial m * oddPrime m :=
       Nat.mul_le_mul ih hle
     calc

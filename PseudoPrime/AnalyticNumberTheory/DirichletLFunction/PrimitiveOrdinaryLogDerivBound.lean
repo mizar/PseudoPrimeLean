@@ -110,7 +110,8 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small {N : ℕ} [
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-      rw [hT_def]; linarith
+      rw [hT_def]
+      linarith
     have hTk_pos : 0 < T k := by linarith
     have hTksq_pos : 0 < (T k) ^ 2 := by positivity
     have hmain :
@@ -126,7 +127,8 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small {N : ℕ} [
             η k := by
       intro Treal habs hFne hdiff_le
       have hTreal_ge1 : 1 ≤ |Treal| := by
-        rw [habs]; exact hTk_ge1
+        rw [habs]
+        exact hTk_ge1
       have hsim_eq : ((σ : ℂ) + (Treal : ℂ) * Complex.I).im = Treal := by
         simp only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
           Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
@@ -195,7 +197,8 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small {N : ℕ} [
           (primitiveHorizontalHeightSeq_completedLogDeriv_bound hN2 hGRH hprimitive hne hinv hquad k
               hσ).1
     · have hform : (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I := by
-        push_cast; ring
+        push_cast
+        ring
       rw [hform]
       have hFne :=
         (primitiveHorizontalHeightSeq_completedLFunction_ne_zero hN2 hGRH hprimitive hne hinv hquad
@@ -208,7 +211,8 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small {N : ℕ} [
       exact
         hmain (-(T k))
           (by
-            rw [abs_neg]; exact abs_of_nonneg hTk_pos.le)
+            rw [abs_neg]
+            exact abs_of_nonneg hTk_pos.le)
           hFne hdiff
 
 /--
@@ -305,7 +309,8 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh {N :
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-      rw [hT_def]; linarith
+      rw [hT_def]
+      linarith
     have hTk_pos : 0 < T k := by linarith
     have hTksq_pos : 0 < (T k) ^ 2 := by positivity
     have hmain :
@@ -321,7 +326,8 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh {N :
             η k := by
       intro Treal habs hFne hdiff_le
       have hTreal_ge1 : 1 ≤ |Treal| := by
-        rw [habs]; exact hTk_ge1
+        rw [habs]
+        exact hTk_ge1
       have hsim_eq : ((σ : ℂ) + (Treal : ℂ) * Complex.I).im = Treal := by
         simp only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
           Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
@@ -390,7 +396,8 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh {N :
           (primitiveHorizontalHeightSeq_completedLogDeriv_bound_of_grh hN2 hGRH hprimitive hne hinv
               k hσ).1
     · have hform : (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I := by
-        push_cast; ring
+        push_cast
+        ring
       rw [hform]
       have hFne :=
         (primitiveHorizontalHeightSeq_completedLFunction_ne_zero_of_grh hN2 hGRH hprimitive hne hinv
@@ -403,7 +410,8 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh {N :
       exact
         hmain (-(T k))
           (by
-            rw [abs_neg]; exact abs_of_nonneg hTk_pos.le)
+            rw [abs_neg]
+            exact abs_of_nonneg hTk_pos.le)
           hFne hdiff
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

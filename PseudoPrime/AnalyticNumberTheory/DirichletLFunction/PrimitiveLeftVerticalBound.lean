@@ -112,11 +112,16 @@ private theorem quadraticContinuousReciprocalKernel_leftVertical_line {N : ℕ} 
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
     have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
     have hsre_neg : (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I).re < 0 := by
-      rw [hsre]; linarith
+      rw [hsre]
+      linarith
     have hs0 : ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ 0 := by
-      intro h; rw [h, Complex.zero_re] at hsre_neg; linarith
+      intro h
+      rw [h, Complex.zero_re] at hsre_neg
+      linarith
     have hs1 : ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ 1 := by
-      intro h; rw [h, Complex.one_re] at hsre_neg; linarith
+      intro h
+      rw [h, Complex.one_re] at hsre_neg
+      linarith
     have hL := quadraticDirichletLFunction_ne_zero_leftVertical hprimitive hne hquad A hA t
     exact
       (differentiableAt_dirichletReciprocalContourKernel hx hne hs0 hs1
@@ -147,7 +152,8 @@ theorem norm_dirichletReciprocalContourKernel_leftVertical_envelope_le {N : ℕ}
   have hK := norm_dirichletReciprocalContourKernel_leftVertical_le hx hA (hLbound t)
   set BA : ℝ := ((A : ℝ) + 5) ^ 2 + 1 with hBA_def
   have hBA1 : (1 : ℝ) ≤ BA := by
-    rw [hBA_def]; nlinarith [sq_nonneg ((A : ℝ) + 5)]
+    rw [hBA_def]
+    nlinarith [sq_nonneg ((A : ℝ) + 5)]
   have htlog_nn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith [abs_nonneg t])
   have htsq_pos : (0 : ℝ) < 1 + t ^ 2 := by positivity
   have hxpow_nn : (0 : ℝ) ≤ x ^ (-(A : ℝ) - 3 / 2) := (Real.rpow_pos_of_pos hx _).le
@@ -431,9 +437,11 @@ theorem tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N 
     exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general hprimitive hne hinv
   set r : ℝ := x⁻¹ with hr_def
   have hr0 : (0 : ℝ) ≤ r := by
-    rw [hr_def]; positivity
+    rw [hr_def]
+    positivity
   have hr1 : r < 1 := by
-    rw [hr_def]; exact inv_lt_one_of_one_lt₀ hx
+    rw [hr_def]
+    exact inv_lt_one_of_one_lt₀ hx
   have hxpow_split : ∀ A : ℕ, x ^ (-(A : ℝ) - 3 / 2) = x ^ (-(3 : ℝ) / 2) * r ^ A := by
     intro A
     rw [hr_def, show -(A : ℝ) - 3 / 2 = -(3 : ℝ) / 2 + -(A : ℝ) from by ring, Real.rpow_add hxpos,
@@ -478,7 +486,8 @@ theorem tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N 
               (mul_nonneg hDnn (mul_nonneg hxpow_nn hrpow_nn)))
             hMassnn
       _ = K * (((A : ℝ) + 1) ^ 2 * r ^ A) := by
-        rw [hK_def]; ring
+        rw [hK_def]
+        ring
   have hgeom :
     Filter.Tendsto (fun A : ℕ ↦ K * (((A : ℝ) + 1) ^ 2 * r ^ A)) Filter.atTop (nhds 0) := by
     have h1 : Filter.Tendsto (fun A : ℕ ↦ ((A : ℝ) + 1) ^ 2 * r ^ A) Filter.atTop (nhds 0) :=
@@ -519,9 +528,11 @@ theorem quadraticTendsto_dirichletReciprocalContourKernel_leftVertical_integral_
     General.logQuadraticEnvelopeMass_nonneg
   set r : ℝ := x⁻¹ with hr_def
   have hr0 : (0 : ℝ) ≤ r := by
-    rw [hr_def]; positivity
+    rw [hr_def]
+    positivity
   have hr1 : r < 1 := by
-    rw [hr_def]; exact inv_lt_one_of_one_lt₀ hx
+    rw [hr_def]
+    exact inv_lt_one_of_one_lt₀ hx
   have hxpow_split : ∀ A : ℕ, x ^ (-(A : ℝ) - 3 / 2) = x ^ (-(3 : ℝ) / 2) * r ^ A := by
     intro A
     rw [hr_def, show -(A : ℝ) - 3 / 2 = -(3 : ℝ) / 2 + -(A : ℝ) from by ring, Real.rpow_add hxpos,
@@ -532,7 +543,8 @@ theorem quadraticTendsto_dirichletReciprocalContourKernel_leftVertical_integral_
     nlinarith [sq_nonneg (A : ℝ)]
   set K : ℝ := D * x ^ (-(3 : ℝ) / 2) * General.logQuadraticEnvelopeMass * 26 with hK_def
   have hKnn : (0 : ℝ) ≤ K := by
-    rw [hK_def]; positivity
+    rw [hK_def]
+    positivity
   have hbound :
     ∀ A : ℕ,
       2 ≤ A →
@@ -561,7 +573,8 @@ theorem quadraticTendsto_dirichletReciprocalContourKernel_leftVertical_integral_
             General.logQuadraticEnvelopeMass :=
         mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (hpoly_le A) (by positivity)) hMassnn
       _ = K * (((A : ℝ) + 1) ^ 2 * r ^ A) := by
-        rw [hK_def]; ring
+        rw [hK_def]
+        ring
   have hgeom :
     Filter.Tendsto (fun A : ℕ ↦ K * (((A : ℝ) + 1) ^ 2 * r ^ A)) Filter.atTop (nhds 0) := by
     have h1 : Filter.Tendsto (fun A : ℕ ↦ ((A : ℝ) + 1) ^ 2 * r ^ A) Filter.atTop (nhds 0) :=

@@ -52,9 +52,11 @@ theorem one_add_sq_le_norm_mul_norm_leftVertical (A : ℕ) (hA : 2 ≤ A) (t : �
   have hA1sq : (1 : ℝ) ≤ (-(A : ℝ) - 1 / 2) ^ 2 := by nlinarith [hA']
   have hA3sq : (1 : ℝ) ≤ (-(A : ℝ) - 3 / 2) ^ 2 := by nlinarith [hA']
   have h1 : Real.sqrt (1 + t ^ 2) ≤ ‖s‖ := by
-    rw [hs_eq]; exact Real.sqrt_le_sqrt (by linarith [hA1sq])
+    rw [hs_eq]
+    exact Real.sqrt_le_sqrt (by linarith [hA1sq])
   have h2 : Real.sqrt (1 + t ^ 2) ≤ ‖s - 1‖ := by
-    rw [hs1_eq]; exact Real.sqrt_le_sqrt (by linarith [hA3sq])
+    rw [hs1_eq]
+    exact Real.sqrt_le_sqrt (by linarith [hA3sq])
   have h3 : Real.sqrt (1 + t ^ 2) * Real.sqrt (1 + t ^ 2) = 1 + t ^ 2 :=
     Real.mul_self_sqrt (by positivity)
   calc
@@ -109,7 +111,8 @@ theorem one_add_sq_le_normSq_leftVertical (A : ℕ) (hA : 2 ≤ A) (t : ℝ) :
   have hs_eq : ‖s‖ ^ 2 = (-(A : ℝ) - 1 / 2) ^ 2 + t ^ 2 := by
     rw [Complex.norm_eq_sqrt_sq_add_sq, hsre, hsim, Real.sq_sqrt (by positivity)]
   have hA1sq : (1 : ℝ) ≤ (-(A : ℝ) - 1 / 2) ^ 2 := by nlinarith [hA']
-  rw [hs_eq]; linarith [hA1sq]
+  rw [hs_eq]
+  linarith [hA1sq]
 
 /--
 Input/assumptions: `x > 0`, `A : ℕ`, `t : ℝ`.

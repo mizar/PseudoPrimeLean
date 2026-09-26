@@ -73,7 +73,8 @@ theorem elementaryOmegaRhsReal_mono {a b : ℝ} (ha : Real.exp (Real.exp 1) ≤ 
     rw [div_le_div_iff₀ hvpos hupos] at hsub
     linarith only [hsub]
   have hCnonneg : 0 ≤ elementaryOmegaConstant := by
-    unfold elementaryOmegaConstant; norm_num only
+    unfold elementaryOmegaConstant
+    norm_num only
   have hscaled := mul_le_mul_of_nonneg_left hfinal hCnonneg
   unfold elementaryOmegaRhsReal
   rw [← hu_def, ← hv_def]
@@ -98,7 +99,8 @@ theorem exp_exp_one_lt_three_thousand : Real.exp (Real.exp 1) < 3000 := by
       have h8 : Real.exp (8 : ℝ) < (2981 : ℝ) := by
         have h1 : Real.exp (1 : ℝ) < 2.7182818286 := Real.exp_one_lt_d9
         have h8eq : Real.exp (8 : ℝ) = Real.exp 1 ^ 8 := by
-          rw [← Real.exp_nat_mul]; norm_num only
+          rw [← Real.exp_nat_mul]
+          norm_num only
         rw [h8eq]
         calc
           Real.exp 1 ^ 8 < (2.7182818286 : ℝ) ^ 8 :=
@@ -125,11 +127,13 @@ theorem elementaryAnchor_le_characterModulus {n : ℕ} (hn : Odd n) (hn750 : 750
   have hprimR :
     (4 : ℝ) * (oddPrimorial n.primeFactors.card : ℝ) ≤ (NumberTheory.characterModulus n : ℝ) := by
     have hnat : 4 * oddPrimorial n.primeFactors.card ≤ NumberTheory.characterModulus n := by
-      unfold NumberTheory.characterModulus; omega
+      unfold NumberTheory.characterModulus
+      omega
     exact_mod_cast hnat
   have hqle : (3000 : ℝ) ≤ (NumberTheory.characterModulus n : ℝ) := by
     have hnat : (3000 : ℕ) ≤ NumberTheory.characterModulus n := by
-      unfold NumberTheory.characterModulus; omega
+      unfold NumberTheory.characterModulus
+      omega
     exact_mod_cast hnat
   exact max_le hprimR hqle
 

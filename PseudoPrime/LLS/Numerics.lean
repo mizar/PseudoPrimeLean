@@ -139,9 +139,11 @@ theorem llsPart1IntermediateUpperBound_le_upper {q : ℕ} (hq : 3000 ≤ q) :
   have hratio :=
     Analysis.strictAntiOn_logLinearRatio.antitoneOn
       (by
-        simp only [Set.mem_Ici]; exact hlogQ.le)
+        simp only [Set.mem_Ici]
+        exact hlogQ.le)
       (by
-        simp only [Set.mem_Ici]; exact hlogQ.le.trans hroot)
+        simp only [Set.mem_Ici]
+        exact hlogQ.le.trans hroot)
       hroot
   have hmul := mul_le_mul_of_nonneg_right hratio (show 0 ≤ Real.log (q : ℝ) by linarith)
   have hratioQ :
@@ -288,9 +290,11 @@ theorem strictAntiOn_llsTradeoffMargin_Icc : StrictAntiOn llsTradeoffMargin (Set
     have hnum : llsTradeoffDerivNumerator y < 0 :=
       (strictMonoOn_llsTradeoffDerivNumerator
             (by
-              simp only [Set.mem_Ici]; linarith)
+              simp only [Set.mem_Ici]
+              linarith)
             (by
-              simp only [Set.mem_Ici]; norm_num only)
+              simp only [Set.mem_Ici]
+              norm_num only)
             hy.2).trans
         llsTradeoffDerivNumerator_twelve_neg
     exact div_neg_of_neg_of_pos hnum (by linarith)
@@ -308,9 +312,11 @@ theorem strictMonoOn_llsTradeoffMargin_Ici : StrictMonoOn llsTradeoffMargin (Set
       llsTradeoffDerivNumerator_sixteen_pos.trans
         (strictMonoOn_llsTradeoffDerivNumerator
           (by
-            simp only [Set.mem_Ici]; norm_num only)
+            simp only [Set.mem_Ici]
+            norm_num only)
           (by
-            simp only [Set.mem_Ici]; linarith)
+            simp only [Set.mem_Ici]
+            linarith)
           hy)
     exact div_pos hnum (by linarith)
 
@@ -327,27 +333,34 @@ theorem tradeoffRadiusInequality_of_coreInterval (hcore : LLSTradeoffCoreInterva
   · exact
       (hcore 12
             (by
-              simp only [Set.mem_Icc]; constructor <;> norm_num only)).trans
+              simp only [Set.mem_Icc]
+              constructor <;> norm_num only)).trans
         (strictAntiOn_llsTradeoffMargin_Icc.antitoneOn
           (by
-            simp only [Set.mem_Icc]; exact ⟨hy, hy12⟩)
+            simp only [Set.mem_Icc]
+            exact ⟨hy, hy12⟩)
           (by
-            simp only [Set.mem_Icc]; constructor <;> norm_num only)
+            simp only [Set.mem_Icc]
+            constructor <;> norm_num only)
           hy12)
   by_cases hy16 : y ≤ 16
   · exact
       hcore y
         (by
-          simp only [Set.mem_Icc]; constructor <;> linarith)
+          simp only [Set.mem_Icc]
+          constructor <;> linarith)
   · exact
       (hcore 16
             (by
-              simp only [Set.mem_Icc]; constructor <;> norm_num only)).trans
+              simp only [Set.mem_Icc]
+              constructor <;> norm_num only)).trans
         (strictMonoOn_llsTradeoffMargin_Ici.monotoneOn
           (by
-            simp only [Set.mem_Ici]; norm_num only)
+            simp only [Set.mem_Ici]
+            norm_num only)
           (by
-            simp only [Set.mem_Ici]; linarith)
+            simp only [Set.mem_Ici]
+            linarith)
           (by linarith))
 
 /--
@@ -538,9 +551,11 @@ theorem llsPart1SeparationMargin_pos {y : ℝ} (hy : 8 ≤ y) : 0 < llsPart1Sepa
   llsPart1SeparationMargin_eight_pos.trans_le
     (strictMonoOn_llsPart1SeparationMargin.monotoneOn
       (by
-        simp only [Set.mem_Ici]; norm_num only)
+        simp only [Set.mem_Ici]
+        norm_num only)
       (by
-        simp only [Set.mem_Ici]; exact hy)
+        simp only [Set.mem_Ici]
+        exact hy)
       hy)
 
 /-- The explicit Part 1 upper bound is strictly below its lower bound for every `q ≥ 3000`. -/
@@ -561,9 +576,11 @@ theorem llsPart1CommonFactorError_le {q : ℕ} (hq : 3000 ≤ q) :
   have hratio :=
     Analysis.strictAntiOn_logSquareRatio.antitoneOn
       (by
-        simp only [Set.mem_Ici]; exact hlogQ.le)
+        simp only [Set.mem_Ici]
+        exact hlogQ.le)
       (by
-        simp only [Set.mem_Ici]; exact hlogQ.le.trans hroot)
+        simp only [Set.mem_Ici]
+        exact hlogQ.le.trans hroot)
       hroot
   rw [Analysis.logSquareRatio, Analysis.logSquareRatio] at hratio
   have hscaled := (div_le_iff₀ (by linarith [hlogQ, hroot])).mp hratio

@@ -30,7 +30,8 @@ theorem odd_add_four_mul_nat (j : ℤ) (hj : Odd j) (k : ℕ) : Odd (j + 4 * (k 
 value. -/
 theorem abs_odd_div_four_ge_quarter {j : ℤ} (hj : Odd j) : (1 : ℝ) / 4 ≤ |(j : ℝ) / 4| := by
   have hjne : j ≠ 0 := by
-    obtain ⟨m, hm⟩ := hj; omega
+    obtain ⟨m, hm⟩ := hj
+    omega
   have h1 : (1 : ℤ) ≤ |j| := Int.one_le_abs hjne
   have h1' : (1 : ℝ) ≤ |(j : ℝ)| := by exact_mod_cast h1
   rw [abs_div]
@@ -106,17 +107,23 @@ theorem exists_C_forall_norm_digamma_small_im_le :
   set z : ℂ := (a : ℂ) + (u : ℂ) * Complex.I with hz_def
   set n : ℕ := A + 5 with hn_def
   have hA5pos : (5 : ℝ) ≤ (A : ℝ) + 5 := by
-    have := Nat.cast_nonneg (α := ℝ) A; linarith
+    have := Nat.cast_nonneg (α := ℝ) A
+    linarith
   have ha_ge : -(A : ℝ) - 2 ≤ a := by linarith [abs_le.mp ha]
   have ha_le : a ≤ (A : ℝ) + 2 := by linarith [abs_le.mp ha]
   have han : (3 : ℝ) ≤ a + n := by
-    rw [hn_def]; push_cast; linarith [ha_ge]
+    rw [hn_def]
+    push_cast
+    linarith [ha_ge]
   set r : ℝ := a + n - 1 with hr_def
   have hr2 : (2 : ℝ) ≤ r := by linarith [han]
   have hrle : r ≤ 2 * (A : ℝ) + 6 := by
-    rw [hr_def, hn_def]; push_cast; linarith [ha_le]
+    rw [hr_def, hn_def]
+    push_cast
+    linarith [ha_le]
   have hzn_eq : z + (n : ℂ) = (1 + r : ℝ) + (u : ℂ) * Complex.I := by
-    rw [hz_def]; apply Complex.ext
+    rw [hz_def]
+    apply Complex.ext
     · simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero, Complex.natCast_re, hr_def,
         add_sub_cancel, Complex.ofReal_add, Complex.ofReal_natCast]
@@ -126,13 +133,17 @@ theorem exists_C_forall_norm_digamma_small_im_le :
   have hshift_bound := RiemannZeta.norm_digamma_shift_add_mul_I_le r (by linarith [hr2]) u
   set X : ℝ := 2 * (A : ℝ) + 10 with hX_def
   have hX2 : (2 : ℝ) ≤ X := by
-    rw [hX_def]; have := Nat.cast_nonneg (α := ℝ) A; linarith
+    rw [hX_def]
+    have := Nat.cast_nonneg (α := ℝ) A
+    linarith
   have hr12ge2 : (2 : ℝ) ≤ r + 1 / 2 := by linarith [hr2]
   have hr32ge2 : (2 : ℝ) ≤ r + 3 / 2 := by linarith [hr2]
   have hr12leX : r + 1 / 2 ≤ X := by
-    rw [hX_def]; linarith [hrle]
+    rw [hX_def]
+    linarith [hrle]
   have hr32leX : r + 3 / 2 ≤ X := by
-    rw [hX_def]; linarith [hrle]
+    rw [hX_def]
+    linarith [hrle]
   have hΓr12 : Real.Gamma (r + 1 / 2) ≤ Real.Gamma X :=
     Real.Gamma_strictMonoOn_Ici.monotoneOn (Set.mem_Ici.mpr hr12ge2) (Set.mem_Ici.mpr hX2) hr12leX
   have hΓr32 : Real.Gamma (r + 3 / 2) ≤ Real.Gamma X :=
@@ -141,18 +152,21 @@ theorem exists_C_forall_norm_digamma_small_im_le :
     rw [← Real.Gamma_two]
     exact Real.Gamma_strictMonoOn_Ici.monotoneOn (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr hX2) hX2
   have hmax_le : max (Real.Gamma (r + 1 / 2)) (Real.Gamma (r + 3 / 2)) + 1 ≤ 2 * Real.Gamma X := by
-    have := max_le hΓr12 hΓr32; linarith [hΓX_ge1]
+    have := max_le hΓr12 hΓr32
+    linarith [hΓX_ge1]
   have hrrpos : (0 : ℝ) < max (Real.Gamma (r + 1 / 2)) (Real.Gamma (r + 3 / 2)) + 1 := by
     have hΓr12pos : (0 : ℝ) < Real.Gamma (r + 1 / 2) := Real.Gamma_pos_of_pos (by linarith)
     have := le_max_left (Real.Gamma (r + 1 / 2)) (Real.Gamma (r + 3 / 2))
     linarith [hΓr12pos]
   have hlogX : Real.log X ≤ X := by
-    have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < X by linarith); linarith
+    have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < X by linarith)
+    linarith
   have hXlogX_le : X * Real.log X ≤ X ^ 2 := by nlinarith only [hlogX, hX2]
   have hlogΓX_le : Real.log (Real.Gamma X) ≤ X ^ 2 :=
     le_trans (Gamma.log_Gamma_le_of_one_le (by linarith)) hXlogX_le
   have hlog2 : Real.log 2 ≤ 1 := by
-    have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 2 by norm_num only); linarith
+    have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 2 by norm_num only)
+    linarith
   have hlog_rr_le :
     Real.log (max (Real.Gamma (r + 1 / 2)) (Real.Gamma (r + 3 / 2)) + 1) ≤ 1 + X ^ 2 := by
     calc
@@ -164,16 +178,19 @@ theorem exists_C_forall_norm_digamma_small_im_le :
       _ ≤ 1 + X ^ 2 := by linarith [hlog2, hlogΓX_le]
   have hneg_log_le := hC₁ r u (by linarith [hr2])
   have hcast_eq : (1 : ℂ) + (r : ℂ) + (u : ℂ) * Complex.I = (1 + r : ℝ) + (u : ℂ) * Complex.I := by
-    push_cast; ring
+    push_cast
+    ring
   rw [hcast_eq] at hneg_log_le
   have hC1_le : C₁ ≤ max C₁ 0 := le_max_left _ _
   have hXsq_le : X ^ 2 = 4 * ((A : ℝ) + 5) ^ 2 := by
-    rw [hX_def]; ring
+    rw [hX_def]
+    ring
   have hdigamma_zn_le :
     ‖Complex.digamma (z + (n : ℂ))‖ ≤
       32 * ((A : ℝ) + 5) ^ 2 + 8 * max C₁ 0 + 80 * Real.pi * ((A : ℝ) + 5) + 8 := by
     have hπu : 20 * Real.pi * |u| ≤ 20 * Real.pi * (4 * ((A : ℝ) + 5)) := by
-      apply mul_le_mul_of_nonneg_left hu; linarith [Real.pi_pos]
+      apply mul_le_mul_of_nonneg_left hu
+      linarith [Real.pi_pos]
     calc
       ‖Complex.digamma (z + (n : ℂ))‖ = ‖Complex.digamma ((1 + r : ℝ) + (u : ℂ) * Complex.I)‖ := by
         rw [hzn_eq]
@@ -202,11 +219,14 @@ theorem exists_C_forall_norm_digamma_small_im_le :
     have hre_eq : (z + (k : ℂ)).re = a + (k : ℝ) := by
       simp only [hz_def, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero, Complex.natCast_re]
-    rw [hre_eq]; exact hsepQ k
+    rw [hre_eq]
+    exact hsepQ k
   have hshiftback :=
     norm_digamma_sub_shift_nat_le_of_re_sep n (by norm_num only : (0 : ℝ) < 1 / 4) hpole hsep
   have hshiftback_le : (n : ℝ) / (1 / 4) ≤ 4 * ((A : ℝ) + 5) := by
-    rw [hn_def]; push_cast; linarith
+    rw [hn_def]
+    push_cast
+    linarith
   have htri :
     ‖Complex.digamma z‖ ≤
       ‖Complex.digamma (z + (n : ℂ))‖ + ‖Complex.digamma (z + (n : ℂ)) - Complex.digamma z‖ := by
@@ -241,8 +261,10 @@ theorem leftEven_quarterSep (A q : ℕ) : (1 : ℝ) / 4 ≤ |(-(A : ℝ) / 2 - 1
   have hoddq : Odd (-(2 * (A : ℤ) + 1) + 4 * (q : ℤ)) := odd_add_four_mul_nat _ hodd q
   have heq :
     (-(A : ℝ) / 2 - 1 / 4) + (q : ℝ) = ((-(2 * (A : ℤ) + 1) + 4 * (q : ℤ) : ℤ) : ℝ) / 4 := by
-    push_cast; ring
-  rw [heq]; exact abs_odd_div_four_ge_quarter hoddq
+    push_cast
+    ring
+  rw [heq]
+  exact abs_odd_div_four_ge_quarter hoddq
 
 /-- The odd-parity left digamma real part `-A/2 + 1/4`, shifted by any `q : ℕ`, is `≥ 1/4` in
 absolute value. -/
@@ -250,14 +272,17 @@ theorem leftOdd_quarterSep (A q : ℕ) : (1 : ℝ) / 4 ≤ |(-(A : ℝ) / 2 + 1 
   have hodd : Odd (1 - 2 * (A : ℤ)) := ⟨-(A : ℤ), by ring⟩
   have hoddq : Odd (1 - 2 * (A : ℤ) + 4 * (q : ℤ)) := odd_add_four_mul_nat _ hodd q
   have heq : (-(A : ℝ) / 2 + 1 / 4) + (q : ℝ) = ((1 - 2 * (A : ℤ) + 4 * (q : ℤ) : ℤ) : ℝ) / 4 := by
-    push_cast; ring
-  rw [heq]; exact abs_odd_div_four_ge_quarter hoddq
+    push_cast
+    ring
+  rw [heq]
+  exact abs_odd_div_four_ge_quarter hoddq
 
 /-- A real number `≥ 1/4` stays `≥ 1/4` in absolute value after adding any `q : ℕ` — the trivial
 separation fact for the (positive) reflected-point real parts. -/
 theorem quarterSep_of_pos {a : ℝ} (ha : (1 : ℝ) / 4 ≤ a) (q : ℕ) : (1 : ℝ) / 4 ≤ |a + (q : ℝ)| := by
   have hqnn : (0 : ℝ) ≤ (q : ℝ) := Nat.cast_nonneg q
-  rw [abs_of_pos (by linarith)]; linarith
+  rw [abs_of_pos (by linarith)]
+  linarith
 
 /--
 Input/assumptions: none (existence statement, `A`-uniform).

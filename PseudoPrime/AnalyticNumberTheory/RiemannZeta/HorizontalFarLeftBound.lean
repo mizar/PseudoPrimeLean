@@ -55,7 +55,8 @@ theorem norm_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : 
     mul_le_mul hderiv_bound hxσ_le hxσpos.le (le_trans (norm_nonneg _) hderiv_bound)
   have h2 : (0 : ℝ) ≤ ‖logDeriv riemannZeta z‖ * x ^ σ := by positivity
   have h3 : t ^ 2 ≤ ‖z‖ ^ 2 := by
-    rw [← sq_abs t]; exact pow_le_pow_left₀ (abs_nonneg t) hznorm_ge 2
+    rw [← sq_abs t]
+    exact pow_le_pow_left₀ (abs_nonneg t) hznorm_ge 2
   have htsq_pos : (0 : ℝ) < t ^ 2 := by positivity
   calc
     ‖logDeriv riemannZeta z‖ * x ^ σ / ‖z‖ ^ 2 ≤ ‖logDeriv riemannZeta z‖ * x ^ σ / t ^ 2 := by
@@ -132,7 +133,8 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (
       farLeftZetaLogDerivBound m t * x ^ (-(1 : ℝ) / 2) / t ^ 2 *
         (-1 / 2 - (-(2 * (m : ℝ) + 1))) := by
   have hlamtau : (-(2 * (m : ℝ) + 1)) ≤ -1 / 2 := by
-    have hm := Nat.cast_nonneg (α := ℝ) m; linarith only [hm]
+    have hm := Nat.cast_nonneg (α := ℝ) m
+    linarith only [hm]
   have hbound :=
     intervalIntegral.norm_integral_le_of_norm_le_const (a := -(2 * (m : ℝ) + 1)) (b := -1 / 2) (f :=
       fun σ : ℝ => riemannZetaLogContourKernel x ((σ : ℂ) + (t : ℂ) * Complex.I)) (C :=
@@ -154,7 +156,8 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_farLeft_le {x :
       farLeftZetaLogDerivBound m t * x ^ (-(3 : ℝ) / 2) / t ^ 2 *
         (-1 / 2 - (-(2 * (m : ℝ) + 1))) := by
   have hlamtau : (-(2 * (m : ℝ) + 1)) ≤ -1 / 2 := by
-    have hm := Nat.cast_nonneg (α := ℝ) m; linarith only [hm]
+    have hm := Nat.cast_nonneg (α := ℝ) m
+    linarith only [hm]
   have hbound :=
     intervalIntegral.norm_integral_le_of_norm_le_const (a := -(2 * (m : ℝ) + 1)) (b := -1 / 2) (f :=
       fun σ : ℝ => riemannZetaReciprocalContourKernel x ((σ : ℂ) + (t : ℂ) * Complex.I)) (C :=
@@ -177,10 +180,12 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_farLeftHeightSeq {x
   set A : ℝ := qMinusOneHorizontalFarLeftConst with hA_def
   set D0 : ℝ := Real.pi / 2 * Real.sqrt (1 + 1 / Real.sinh (Real.pi / 2) ^ 2) with hD0_def
   have hD0nn : (0 : ℝ) ≤ D0 := by
-    rw [hD0_def]; positivity
+    rw [hD0_def]
+    positivity
   set K : ℝ := (|A| + D0) + (1 + 20 * Real.pi) with hK_def
   have hKnn : (0 : ℝ) ≤ K := by
-    rw [hK_def]; positivity
+    rw [hK_def]
+    positivity
   have hbound :
     ∀ m : ℕ,
       ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
@@ -288,10 +293,12 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_farLeftHeigh
   set A : ℝ := qMinusOneHorizontalFarLeftConst with hA_def
   set D0 : ℝ := Real.pi / 2 * Real.sqrt (1 + 1 / Real.sinh (Real.pi / 2) ^ 2) with hD0_def
   have hD0nn : (0 : ℝ) ≤ D0 := by
-    rw [hD0_def]; positivity
+    rw [hD0_def]
+    positivity
   set K : ℝ := (|A| + D0) + (1 + 20 * Real.pi) with hK_def
   have hKnn : (0 : ℝ) ≤ K := by
-    rw [hK_def]; positivity
+    rw [hK_def]
+    positivity
   have hbound :
     ∀ m : ℕ,
       ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),

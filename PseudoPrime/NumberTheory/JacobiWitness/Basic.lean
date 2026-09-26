@@ -36,7 +36,8 @@ theorem PrimeNegOneWitnessSet.subset_primeNeOneWitnessSet (n : ℕ) :
   intro p hp
   exact
     ⟨hp.1, hp.2.1, by
-      rw [hp.2.2]; norm_num only⟩
+      rw [hp.2.2]
+      norm_num only⟩
 
 /-- Nonemptiness of the `-1` witness set implies nonemptiness of the `≠ 1` witness set. -/
 theorem primeNeOneWitnessSet_nonempty_of_negOne {n : ℕ} (h : (PrimeNegOneWitnessSet n).Nonempty) :

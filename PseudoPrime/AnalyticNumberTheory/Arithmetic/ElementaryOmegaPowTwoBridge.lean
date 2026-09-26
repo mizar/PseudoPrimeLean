@@ -29,7 +29,8 @@ noncomputable def logTwoUpper : ℝ :=
   347 / 500
 
 theorem logTwoLower_pos : (0 : ℝ) < logTwoLower := by
-  unfold logTwoLower; norm_num only
+  unfold logTwoLower
+  norm_num only
 
 theorem logTwoLower_lt_logTwo : logTwoLower < Real.log 2 := by
   unfold logTwoLower
@@ -48,7 +49,9 @@ theorem exp_exp_one_lt_sixteen : Real.exp (Real.exp 1) < 16 := by
   have h3 : Real.exp (Real.exp 1) < Real.exp (4 * Real.log 2) := Real.exp_lt_exp.mpr (h1.trans h2)
   have h4 : Real.exp ((4 : ℝ) * Real.log 2) = 16 := by
     have hpow : (4 : ℝ) * Real.log 2 = Real.log (2 ^ 4) := by
-      rw [Real.log_pow]; push_cast; ring
+      rw [Real.log_pow]
+      push_cast
+      ring
     rw [hpow, Real.exp_log (by norm_num only)]
     norm_num only
   rwa [h4] at h3
@@ -67,7 +70,8 @@ theorem exp_exp_one_le_two_pow {e : ℕ} (he : 4 ≤ e) : Real.exp (Real.exp 1) 
 This bound is rational when `u` is rational. -/
 theorem log_le_powTwo_tangent {u : ℝ} (hu : 0 < u) (k : ℕ) :
     Real.log u ≤ (k : ℝ) * logTwoUpper + u / 2 ^ k - 1 := by
-  have hueq : u = (2 : ℝ) ^ k * (u / 2 ^ k) := by field_simp
+  have hueq : u = (2 : ℝ) ^ k * (u / 2 ^ k) := by
+    field_simp (discharger := exact pow_ne_zero k (by norm_num only : (2 : ℝ) ≠ 0))
   have hlogu : Real.log u = (k : ℝ) * Real.log 2 + Real.log (u / 2 ^ k) := by
     conv_lhs => rw [hueq]
     rw [Real.log_mul (by positivity) (by positivity), Real.log_pow]
@@ -107,7 +111,8 @@ theorem certificate_of_powTwo_le_anchor {m e k : ℕ} (he4 : 4 ≤ e)
         elementaryOmegaConstant * ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower)) :
     (m : ℝ) + 1 ≤ elementaryOmegaRhsReal (elementaryAnchor m) := by
   rw [show (m : ℝ) + 1 = ((m + 1 : ℕ) : ℝ) by
-      push_cast; ring]
+      push_cast
+      ring]
   have hdom : Real.exp (Real.exp 1) ≤ (2 : ℝ) ^ e :=
     ElementaryOmegaPowTwoBridgeInternal.exp_exp_one_le_two_pow he4
   have hmono := elementaryOmegaRhsReal_mono hdom he
@@ -138,7 +143,8 @@ theorem certificate_of_powTwo_le_anchor {m e k : ℕ} (he4 : 4 ≤ e)
       Real.log ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper) :=
     Real.log_le_log hstep1pos hstep1
   have hUpos : (0 : ℝ) < ElementaryOmegaPowTwoBridgeInternal.logTwoUpper := by
-    unfold ElementaryOmegaPowTwoBridgeInternal.logTwoUpper; norm_num only
+    unfold ElementaryOmegaPowTwoBridgeInternal.logTwoUpper
+    norm_num only
   have hstep3 :=
     ElementaryOmegaPowTwoBridgeInternal.log_le_powTwo_tangent (u :=
       (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper) (mul_pos hepos hUpos) k
@@ -207,7 +213,8 @@ theorem certificate_of_primorial {m e k P : ℕ} (hP : NumberTheory.primePrimori
   calc
     (2 : ℝ) ^ e ≤ 2 * (P : ℝ) := heP
     _ = 4 * (oddPrimorial m : ℝ) := by
-      rw [hR]; ring
+      rw [hR]
+      ring
     _ ≤ max ((4 : ℝ) * (oddPrimorial m : ℝ)) 3000 := le_max_left _ _
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

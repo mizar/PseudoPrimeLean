@@ -76,7 +76,7 @@ theorem bailliePSW_of_prime_of_search {n : ℕ} (hn : n.Prime) {D : ℤ}
     let hmod := selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch
     let param := LucasParams.methodAStar D hmod
     have hD : param.D = D := by
-      dsimp [param, LucasParams.methodAStar]
+      dsimp only [param, LucasParams.methodAStar]
       split <;> rfl
     have hjacobi : jacobiSym param.D n = -1 := by
       simpa only [hD] using selfridgeClassicalSearchAscending_some_spec hsearch
@@ -96,7 +96,7 @@ theorem strengthenedBPSW_of_prime_of_search {n : ℕ} (hn : n.Prime) {D : ℤ}
     let hmod := selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch
     let param := LucasParams.methodAStar D hmod
     have hD : param.D = D := by
-      dsimp [param, LucasParams.methodAStar]
+      dsimp only [param, LucasParams.methodAStar]
       split <;> rfl
     have hjacobi : jacobiSym param.D n = -1 := by
       simpa only [hD] using selfridgeClassicalSearchAscending_some_spec hsearch

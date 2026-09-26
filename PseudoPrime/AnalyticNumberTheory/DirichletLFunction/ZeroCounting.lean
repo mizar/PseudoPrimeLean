@@ -64,7 +64,7 @@ theorem meromorphicOrderAt_dirichletLFunction_ne_top {N : ℕ} [NeZero N] (χ : 
   apply (hmero.exists_meromorphicOrderAt_ne_top_iff_forall.mp ?_) s
   exact
     ⟨2, by
-      rw [horder];
+      rw [horder]
       simp only [ne_eq, LinearOrderedAddCommGroupWithTop.zero_ne_top, not_false_eq_true]⟩
 
 /--
@@ -164,7 +164,7 @@ theorem meromorphicOrderAt_dirichletCompletedLFunction_ne_top {N : ℕ} [NeZero 
   apply (hmero.exists_meromorphicOrderAt_ne_top_iff_forall.mp ?_) s
   exact
     ⟨2, by
-      rw [horder];
+      rw [horder]
       simp only [ne_eq, LinearOrderedAddCommGroupWithTop.zero_ne_top, not_false_eq_true]⟩
 
 /--

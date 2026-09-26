@@ -54,7 +54,9 @@ theorem completedLFunction_zero_re_eq_half_of_grh_quadratic {N : ℕ} [NeZero N]
   have hstep1 : ∀ s : ℂ, DirichletCharacter.completedLFunction χ s = 0 → 1 ≤ s.re → False := by
     intro s hs0 hs1
     have hsne0 : s ≠ 0 := by
-      intro h; rw [h, Complex.zero_re] at hs1; linarith
+      intro h
+      rw [h, Complex.zero_re] at hs1
+      linarith
     have heq := dirichletLFunction_eq_completed_div_gammaFactor χ s (Or.inl hsne0)
     rw [hs0, zero_div] at heq
     exact DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hne) hs1 heq
@@ -67,7 +69,8 @@ theorem completedLFunction_zero_re_eq_half_of_grh_quadratic {N : ℕ} [NeZero N]
     push Not at h
     set s := 1 - ρ with hs_def
     have hs_eq : (1 : ℂ) - s = ρ := by
-      rw [hs_def]; ring
+      rw [hs_def]
+      ring
     have hcompleted_one_sub : DirichletCharacter.completedLFunction χ (1 - s) = 0 := by
       rw [hs_eq]
       exact hzero
@@ -126,7 +129,8 @@ theorem dirichletCompletedLFunctionQuadraticZeroMass_eq_tsum_re_inv {N : ℕ} [N
         completedLFunction_zero_re_eq_half_of_grh_quadratic hGRH hprimitive hne hquad hzero
       have hterm := genusOneTerm_re_eq_of_re_eq_half hre_half
       have hcast : ((D : ℤ) : ℂ) = (((D : ℤ) : ℝ) : ℂ) := by
-        push_cast; ring
+        push_cast
+        ring
       rw [hcast, Complex.re_ofReal_mul, hterm]
       ring
   rw [Complex.re_tsum hsummable, tsum_congr hpt, tsum_mul_left]
@@ -194,7 +198,8 @@ theorem completedLFunction_logDeriv_zero_re_add_half_log_eq_neg_zeroMass_isQuadr
   have hH10d := completedLFunction_logDeriv_functionalEquation_isQuadratic hprimitive hne hquad
   have hlogNre : (Complex.log (N : ℂ)).re = Real.log N := by
     rw [show ((N : ℂ)) = ((N : ℝ) : ℂ) from by
-        push_cast; ring]
+        push_cast
+        ring]
     exact Complex.log_ofReal_re _
   have hre9g :
     (logDeriv (DirichletCharacter.completedLFunction χ) 1).re -
@@ -347,7 +352,8 @@ theorem summable_divisor_div_normSq_of_grh_quadratic {N : ℕ} [NeZero N] (hN2 :
     have hInvRe : (1 / ρ).re = (1 : ℝ) / 2 / Complex.normSq ρ := by
       rw [one_div, Complex.inv_re, hre_half]
     have hcast : ((D : ℤ) : ℂ) = (((D : ℤ) : ℝ) : ℂ) := by
-      push_cast; ring
+      push_cast
+      ring
     change Complex.reCLM (((D : ℤ) : ℂ) * (1 / (1 - ρ) + 1 / ρ)) = ((D : ℤ) : ℝ) / Complex.normSq ρ
     rw [Complex.reCLM_apply, hcast, Complex.re_ofReal_mul, hterm, hInvRe]
     ring
@@ -389,13 +395,15 @@ theorem norm_completedReciprocalZeroTerm_eq {N : ℕ} [NeZero N] {χ : Dirichlet
       completedLFunction_zero_re_eq_half_of_grh_quadratic hGRH hprimitive hne hquad hzero
     have hconj : (1 : ℂ) - ρ = starRingEnd ℂ ρ := by
       have h1 : (1 - ρ).re = (starRingEnd ℂ ρ).re := by
-        simp only [Complex.sub_re, Complex.one_re, Complex.conj_re]; linarith [hre_half]
+        simp only [Complex.sub_re, Complex.one_re, Complex.conj_re]
+        linarith [hre_half]
       have h2 : (1 - ρ).im = (starRingEnd ℂ ρ).im := by
         simp only [Complex.sub_im, Complex.one_im, zero_sub, Complex.conj_im]
       exact Complex.ext h1 h2
     have hprod : ρ * (ρ - 1) = -(Complex.normSq ρ : ℂ) := by
       have : ρ - 1 = -starRingEnd ℂ ρ := by
-        rw [← hconj]; ring
+        rw [← hconj]
+        ring
       rw [this, mul_neg, Complex.mul_conj]
     have hnormprod : ‖ρ * (ρ - 1)‖ = Complex.normSq ρ := by
       rw [hprod, norm_neg, Complex.norm_real, Real.norm_of_nonneg (Complex.normSq_nonneg ρ)]
@@ -683,7 +691,8 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
       have hρmem := hρ_ball ρ hρS
       have hFzero := hDv_zero ρ hρmem hρS
       have hρnorm : ‖ρ‖ < R := by
-        rw [Metric.mem_ball, dist_zero_right] at hρmem; exact hρmem
+        rw [Metric.mem_ball, dist_zero_right] at hρmem
+        exact hρmem
       have hsep' : δ ≤ ‖s - ρ‖ := hsep ρ hFzero hρnorm
       have hδsq : δ ^ 2 ≤ ‖s - ρ‖ ^ 2 := pow_le_pow_left₀ hδ.le hsep' 2
       have hDvρnonneg : (0 : ℝ) ≤ (Dv ρ : ℝ) := by exact_mod_cast hDv_nonneg ρ
@@ -699,7 +708,8 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
         apply finsum_eq_finsetSum_of_support_subset
         rw [hS_def, Set.Finite.coe_toFinset]
       have : ((∑ ρ ∈ S, Dv ρ : ℤ) : ℝ) = ∑ ρ ∈ S, (Dv ρ : ℝ) := by
-        push_cast; ring
+        push_cast
+        ring
       rw [← this, hSsumZ]
       exact finsum_divisor_ball_completedLFunction_le hN1 hprimitive hne hinv hR
     calc
@@ -924,23 +934,28 @@ theorem exists_hasDerivAt_completedLFunctionTruncatedGenusSum_zero_norm_le {N : 
     intro ρ hρ
     obtain ⟨_, hρne0⟩ := hkey ρ hρ
     have hne' : (0 : ℂ) - ρ ≠ 0 := by
-      rw [zero_sub, neg_ne_zero]; exact hρne0
+      rw [zero_sub, neg_ne_zero]
+      exact hρne0
     have hc : HasDerivAt (fun s : ℂ => s - ρ) 1 0 := (hasDerivAt_id (0 : ℂ)).sub_const ρ
     have hinvderiv := hc.inv hne'
     have hval : -(1 : ℂ) / ((0 : ℂ) - ρ) ^ 2 = -(1 / ρ ^ 2) := by
-      rw [zero_sub, neg_sq]; ring
+      rw [zero_sub, neg_sq]
+      ring
     rw [hval] at hinvderiv
     have h2 : HasDerivAt (fun s : ℂ => (1 : ℂ) / (s - ρ)) (-(1 / ρ ^ 2)) 0 := by
       have heq2 : (fun s : ℂ => (1 : ℂ) / (s - ρ)) = (fun s : ℂ => s - ρ)⁻¹ := by
-        funext s; rw [Pi.inv_apply, one_div]
-      rw [heq2]; exact hinvderiv
+        funext s
+        rw [Pi.inv_apply, one_div]
+      rw [heq2]
+      exact hinvderiv
     have h3 : HasDerivAt (fun _ : ℂ => (1 : ℂ) / ρ) 0 0 := hasDerivAt_const 0 (1 / ρ)
     have h4 : HasDerivAt (fun s : ℂ => (1 : ℂ) / (s - ρ) + 1 / ρ) (-(1 / ρ ^ 2)) 0 := by
       have hadd := h2.add h3
       have hfun :
         (fun s : ℂ => (1 : ℂ) / (s - ρ)) + (fun _ : ℂ => (1 : ℂ) / ρ) = fun s : ℂ =>
           (1 : ℂ) / (s - ρ) + 1 / ρ := by
-        funext s; rfl
+        funext s
+        rfl
       rw [hfun, add_zero] at hadd
       exact hadd
     exact h4.const_mul ((Dv ρ : ℤ) : ℂ)
@@ -970,7 +985,8 @@ theorem exists_hasDerivAt_completedLFunctionTruncatedGenusSum_zero_norm_le {N : 
         norm_one, hnormsq, mul_one_div]
     calc
       ‖D‖ ≤ ∑ ρ ∈ hfin.toFinset, ‖((Dv ρ : ℤ) : ℂ) * (-(1 / ρ ^ 2))‖ := by
-        rw [hD_def]; exact norm_sum_le _ _
+        rw [hD_def]
+        exact norm_sum_le _ _
       _ =
           ∑ ρ ∈ hfin.toFinset,
             ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) /
@@ -1140,7 +1156,8 @@ theorem completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log {N : ℕ} [Ne
       Real.log N + (logDeriv (DirichletCharacter.completedLFunction χ) 0).re := by
     have hlogNre : (Complex.log (N : ℂ)).re = Real.log N := by
       rw [show ((N : ℕ) : ℂ) = ((N : ℝ) : ℂ) from by
-          push_cast; ring,
+          push_cast
+          ring,
         Complex.log_ofReal_re]
     have := congrArg Complex.re hFE
     simpa only [Complex.neg_re, Complex.add_re, hlogNre] using this

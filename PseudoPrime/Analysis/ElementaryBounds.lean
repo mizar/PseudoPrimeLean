@@ -31,7 +31,7 @@ theorem twenty_seven_fiftieths_lt_eulerMascheroniConstant :
   have hH16 : (harmonic 16 : ℝ) = 2436559 / 720720 := by
     norm_num only [harmonic, Finset.sum_range_succ]
   rw [hseq16, hH16] at hseq
-  nlinarith [hseq, hlog17, Real.log_two_lt_d9]
+  nlinarith only [hseq, hlog17, Real.log_two_lt_d9]
 
 /--
 Input/assumptions: `x ≥ 64`.

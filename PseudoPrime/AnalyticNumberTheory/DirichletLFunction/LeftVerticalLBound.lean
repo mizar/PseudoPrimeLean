@@ -64,7 +64,8 @@ theorem logDeriv_dirichletLFunction_reflection_leftVertical_isQuadratic {N : ℕ
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
   have hs1re : (1 : ℝ) ≤ (1 - s).re := by
     have h1 : (1 - s).re = 1 - s.re := by simp only [Complex.sub_re, Complex.one_re]
-    rw [h1, hsre]; linarith
+    rw [h1, hsre]
+    linarith
   have hFsne := completedLFunction_ne_zero_farLeft_of_isQuadratic hprimitive hne hquad hs1re
   have hF1sne := completedLFunction_ne_zero_of_one_le_re hne hs1re
   have hFE :=
@@ -89,7 +90,8 @@ theorem logDeriv_dirichletLFunction_reflection_leftVertical_isQuadratic {N : ℕ
       logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hFsne hΓs hdΓs
     have hbridge_1s :=
       logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF1sne hΓ1s hdΓ1s
-    rw [hbridge_s, hFeq, hbridge_1s]; ring
+    rw [hbridge_s, hFeq, hbridge_1s]
+    ring
   · have hΓs :=
       gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd (leftVertical_odd_half_ne_neg_nat A t)
     have hdΓs :=
@@ -105,7 +107,8 @@ theorem logDeriv_dirichletLFunction_reflection_leftVertical_isQuadratic {N : ℕ
       logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hFsne hΓs hdΓs
     have hbridge_1s :=
       logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF1sne hΓ1s hdΓ1s
-    rw [hbridge_s, hFeq, hbridge_1s]; ring
+    rw [hbridge_s, hFeq, hbridge_1s]
+    ring
 
 /-! ### The left-vertical ordinary `L'/L` bound -/
 
@@ -141,7 +144,8 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le {N : ℕ} [NeZ
     tsum_nonneg fun n => div_nonneg ArithmeticFunction.vonMangoldt_nonneg (by positivity)
   set D : ℝ := ‖Complex.log (N : ℂ)‖ + M3 + CΓ + 5 with hD_def
   have hDnn : 0 ≤ D := by
-    have h1 := norm_nonneg (Complex.log (N : ℂ)); linarith
+    have h1 := norm_nonneg (Complex.log (N : ℂ))
+    linarith
   refine ⟨D, hDnn, fun A hA t => ?_⟩
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
   set s : ℂ := ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I with hs_def
@@ -156,7 +160,8 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le {N : ℕ} [NeZ
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
   have hs1re3 : (3 : ℝ) ≤ (1 - s).re := by
     have h1 : (1 - s).re = 1 - s.re := by simp only [Complex.sub_re, Complex.one_re]
-    rw [h1, hsre]; linarith
+    rw [h1, hsre]
+    linarith
   have hLone := norm_logDeriv_dirichletLFunction_le_of_three_le_re χ hs1re3
   have hgam := hCΓ A hA χ t
   rw [← hs_def] at hgam
@@ -192,13 +197,15 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le {N : ℕ} [NeZ
               ‖logDeriv (DirichletCharacter.gammaFactor χ) (1 - s)‖) +
             ‖logDeriv (DirichletCharacter.gammaFactor χ) s‖ :=
         by
-        gcongr; exact norm_sub_le _ _
+        gcongr
+        exact norm_sub_le _ _
       _ ≤
           ((‖(-Complex.log (N : ℂ))‖ + ‖logDeriv (DirichletCharacter.LFunction χ) (1 - s)‖) +
               ‖logDeriv (DirichletCharacter.gammaFactor χ) (1 - s)‖) +
             ‖logDeriv (DirichletCharacter.gammaFactor χ) s‖ :=
         by
-        gcongr; exact norm_sub_le _ _
+        gcongr
+        exact norm_sub_le _ _
       _ =
           ‖Complex.log (N : ℂ)‖ + ‖logDeriv (DirichletCharacter.LFunction χ) (1 - s)‖ +
             ‖logDeriv (DirichletCharacter.gammaFactor χ) (1 - s)‖ +
@@ -262,7 +269,8 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
     tsum_nonneg fun n => div_nonneg ArithmeticFunction.vonMangoldt_nonneg (by positivity)
   set D : ℝ := ‖Complex.log (N : ℂ)‖ + M3 + CΓ + 5
   have hDnn : 0 ≤ D := by
-    have h1 := norm_nonneg (Complex.log (N : ℂ)); linarith
+    have h1 := norm_nonneg (Complex.log (N : ℂ))
+    linarith
   refine ⟨D, hDnn, fun A hA t => ?_⟩
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
   set s : ℂ := ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I

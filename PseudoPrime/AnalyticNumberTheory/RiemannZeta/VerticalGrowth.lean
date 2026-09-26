@@ -157,7 +157,8 @@ theorem integral_fract_sub_half_mul_cpow_eq {s : ℂ} (hs : s ≠ -1) (n : ℤ) 
     intro t ht
     rw [Set.uIcc_of_le (by linarith)] at ht
     have ht0 : t ≠ 0 := by
-      simp only [Set.mem_Icc] at ht; linarith
+      simp only [Set.mem_Icc] at ht
+      linarith
     exact hasDerivAt_sawtoothIBP hs n ht0
   have hcont : ContinuousOn D (Set.Icc (n : ℝ) (n + 1)) := continuousOn_sawtoothIBP_deriv n hn1
   have hint : IntervalIntegrable D MeasureTheory.volume (n : ℝ) (n + 1) :=
@@ -339,7 +340,8 @@ theorem integral_fract_sub_half_mul_cpow_eq_Icc {s : ℂ} (hs : s ≠ -1) (N : �
       rw [intervalIntegral.integral_add_adjacent_intervals
           (intervalIntegrable_cpow_mul_sawtooth_Icc k hk s) hintS]
     rw [show ((k : ℝ) + 1) = ((k + 1 : ℕ) : ℝ) from by
-        push_cast; ring] at hadd1 hadd2 hstep
+        push_cast
+        ring] at hadd1 hadd2 hstep
     rw [hadd1, hadd2, ih, hstep]
     ring
 
@@ -429,10 +431,17 @@ theorem not_mem_segment_offLine {a b : ℂ} (hab : a ≠ b) {c : ℂ} (hc : c.im
   simp only [Complex.real_smul] at hps
   have hps' : p = a + (s : ℂ) * w := hps.symm
   have hs0 : s ≠ 0 := by
-    rintro rfl; apply hpa; rw [hps']; push_cast; ring
+    rintro rfl
+    apply hpa
+    rw [hps']
+    push_cast
+    ring
   have hs1 : s ≠ 1 := by
-    rintro rfl; apply hpb
-    rw [hps', hw_def]; push_cast; ring
+    rintro rfl
+    apply hpb
+    rw [hps', hw_def]
+    push_cast
+    ring
   constructor
   · rw [segment_eq_image']
     rintro ⟨t, ht01, hqt⟩
@@ -481,7 +490,9 @@ theorem not_mem_segment_offLine {a b : ℂ} (hab : a ≠ b) {c : ℂ} (hc : c.im
       · linarith
     apply hs1
     have hso : (s : ℂ) = 1 := by
-      rw [← heq3, ht1]; push_cast; ring
+      rw [← heq3, ht1]
+      push_cast
+      ring
     exact_mod_cast hso
 
 /-- The half-plane `{Re s > -1}` is convex: any point on a segment between two points with
@@ -501,8 +512,10 @@ theorem re_gt_neg_one_of_mem_segment {a b : ℂ} (ha : -1 < a.re) (hb : -1 < b.r
   · rcases hu01.2.lt_or_eq with hu1 | hu1
     · nlinarith only [ha, hb, hqre, hu0, hu1, mul_pos hu0 (by linarith : (0 : ℝ) < b.re + 1),
         mul_pos (by linarith : (0 : ℝ) < 1 - u) (by linarith : (0 : ℝ) < a.re + 1)]
-    · rw [hu1] at hqre; nlinarith
-  · rw [← hu0] at hqre; nlinarith
+    · rw [hu1] at hqre
+      nlinarith
+  · rw [← hu0] at hqre
+    nlinarith
 
 /-- The real part of `a+(1/2+ε*I)*(b-a)` is
 `(a.re+b.re)/2-ε*(b.im-a.im)` for arbitrary `a`, `b`, and real `ε`.
@@ -519,17 +532,21 @@ theorem re_detourPoint_gt {a b : ℂ} (ε : ℝ) :
 theorem joinedIn_reGt_neg_one_diff_one {a b : ℂ} (ha : -1 < a.re) (ha1 : a ≠ 1) (hb : -1 < b.re)
     (hb1 : b ≠ 1) : JoinedIn ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) a b := by
   by_cases hab : a = b
-  · subst hab; exact JoinedIn.refl ⟨ha, ha1⟩
+  · subst hab
+    exact JoinedIn.refl ⟨ha, ha1⟩
   by_cases hmem : (1 : ℂ) ∈ segment ℝ a b
   · set δ : ℝ := (a.re + b.re) / 2 + 1 with hδ_def
     have hδ_pos : 0 < δ := by
-      rw [hδ_def]; linarith
+      rw [hδ_def]
+      linarith
     set d : ℝ := |b.im - a.im| + 1 with hd_def
     have hd_pos : 0 < d := by
-      rw [hd_def]; positivity
+      rw [hd_def]
+      positivity
     set ε₀ : ℝ := δ / (2 * d) with hε₀_def
     have hε₀_pos : 0 < ε₀ := by
-      rw [hε₀_def]; positivity
+      rw [hε₀_def]
+      positivity
     have hbound : ∀ ε : ℝ, |ε| ≤ ε₀ → |ε * (b.im - a.im)| < δ := by
       intro ε hε
       rw [abs_mul]
@@ -537,9 +554,11 @@ theorem joinedIn_reGt_neg_one_diff_one {a b : ℂ} (ha : -1 < a.re) (ha1 : a ≠
         |ε| * |b.im - a.im| ≤ ε₀ * |b.im - a.im| := mul_le_mul_of_nonneg_right hε (abs_nonneg _)
         _ < ε₀ * d := by
           apply mul_lt_mul_of_pos_left _ hε₀_pos
-          rw [hd_def]; linarith
+          rw [hd_def]
+          linarith
         _ = δ / 2 := by
-          rw [hε₀_def]; field_simp
+          rw [hε₀_def]
+          field_simp
         _ < δ := by linarith
     have hre : ∀ ε : ℝ, |ε| ≤ ε₀ → -1 < (a + ((1 : ℂ) / 2 + (ε : ℝ) * Complex.I) * (b - a)).re := by
       intro ε hε
@@ -553,7 +572,8 @@ theorem joinedIn_reGt_neg_one_diff_one {a b : ℂ} (ha : -1 < a.re) (ha1 : a ≠
     have hz2re : -1 < z₂.re :=
       hre (ε₀ / 2)
         (by
-          rw [abs_of_pos (by linarith)]; linarith)
+          rw [abs_of_pos (by linarith)]
+          linarith)
     have hne : z₁ ≠ z₂ := by
       rw [hz1_def, hz2_def]
       intro heq
@@ -591,29 +611,34 @@ theorem joinedIn_reGt_neg_one_diff_one {a b : ℂ} (ha : -1 < a.re) (ha1 : a ≠
         apply JoinedIn.of_segment_subset
         intro (q : ℂ) (hq : q ∈ segment ℝ a z₁)
         refine ⟨re_gt_neg_one_of_mem_segment ha hz1re hq, fun hq1 => hsplit.1 ?_⟩
-        rw [hq1] at hq; exact hq
+        rw [hq1] at hq
+        exact hq
       have hJ2 : JoinedIn ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) z₁ b := by
         apply JoinedIn.of_segment_subset
         intro (q : ℂ) (hq : q ∈ segment ℝ z₁ b)
         refine ⟨re_gt_neg_one_of_mem_segment hz1re hb hq, fun hq1 => hsplit.2 ?_⟩
-        rw [hq1] at hq; exact hq
+        rw [hq1] at hq
+        exact hq
       exact hJ1.trans hJ2
     · have hsplit := not_mem_segment_offLine hab hc2 hmem hp1 hp2
       have hJ1 : JoinedIn ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) a z₂ := by
         apply JoinedIn.of_segment_subset
         intro (q : ℂ) (hq : q ∈ segment ℝ a z₂)
         refine ⟨re_gt_neg_one_of_mem_segment ha hz2re hq, fun hq1 => hsplit.1 ?_⟩
-        rw [hq1] at hq; exact hq
+        rw [hq1] at hq
+        exact hq
       have hJ2 : JoinedIn ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) z₂ b := by
         apply JoinedIn.of_segment_subset
         intro (q : ℂ) (hq : q ∈ segment ℝ z₂ b)
         refine ⟨re_gt_neg_one_of_mem_segment hz2re hb hq, fun hq1 => hsplit.2 ?_⟩
-        rw [hq1] at hq; exact hq
+        rw [hq1] at hq
+        exact hq
       exact hJ1.trans hJ2
   · apply JoinedIn.of_segment_subset
     intro (q : ℂ) (hq : q ∈ segment ℝ a b)
     refine ⟨re_gt_neg_one_of_mem_segment ha hb hq, fun hq1 => hmem ?_⟩
-    rw [hq1] at hq; exact hq
+    rw [hq1] at hq
+    exact hq
 
 /-- The half-plane `{Re s > -1}` with the pole of `ζ` at `s = 1` removed is preconnected — the
 domain on which we will apply the identity theorem to establish the classical remainder-integral
@@ -623,7 +648,8 @@ theorem isPreconnected_reGt_neg_one_diff_one :
   have hpc : IsPathConnected ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) :=
     ⟨2,
       ⟨by
-        change (-1 : ℝ) < 2; norm_num only, by
+        change (-1 : ℝ) < 2
+        norm_num only, by
         simp only [Set.mem_singleton_iff]
         intro h
         have h' := congrArg Complex.re h
@@ -632,7 +658,8 @@ theorem isPreconnected_reGt_neg_one_diff_one :
       fun b hb =>
       joinedIn_reGt_neg_one_diff_one
         (by
-          change (-1 : ℝ) < 2; norm_num only)
+          change (-1 : ℝ) < 2
+          norm_num only)
         (by
           intro h
           have h' := congrArg Complex.re h
@@ -665,15 +692,18 @@ theorem norm_zetaSawtoothIndicator_le (t : ℝ) : ‖zetaSawtoothIndicator t‖ 
   unfold zetaSawtoothIndicator
   split_ifs with h
   · simp only [norm_zero, one_div, inv_nonneg, Nat.ofNat_nonneg]
-  · rw [Complex.norm_real, Real.norm_eq_abs]; exact abs_zetaSawtooth_le t
+  · rw [Complex.norm_real, Real.norm_eq_abs]
+    exact abs_zetaSawtooth_le t
 
 theorem zetaSawtoothIndicator_eq_zero_of_le_one {t : ℝ} (ht : t ≤ 1) :
     zetaSawtoothIndicator t = 0 := by
-  unfold zetaSawtoothIndicator; rw [ite_eq_left ht]
+  unfold zetaSawtoothIndicator
+  rw [ite_eq_left ht]
 
 theorem zetaSawtoothIndicator_eq_of_lt {t : ℝ} (ht : 1 < t) :
     zetaSawtoothIndicator t = ((zetaSawtooth t : ℝ) : ℂ) := by
-  unfold zetaSawtoothIndicator; rw [ite_eq_right (not_le.mpr ht)]
+  unfold zetaSawtoothIndicator
+  rw [ite_eq_right (not_le.mpr ht)]
 
 theorem locallyIntegrableOn_zetaSawtoothIndicator :
     MeasureTheory.LocallyIntegrableOn zetaSawtoothIndicator (Set.Ioi (0 : ℝ)) := by
@@ -740,9 +770,11 @@ theorem mellin_zetaSawtoothIndicator_eq {s : ℂ} (hs : -1 < s.re) :
     exact integrableOn_cpow_mul_sawtooth_Ioi hs
   rw [mellin,
     show Set.Ioi (0 : ℝ) = Set.Ioc (0 : ℝ) 1 ∪ Set.Ioi (1 : ℝ) from by
-      ext t; simp only [Set.mem_Ioi, Set.mem_union, Set.mem_Ioc]
+      ext t
+      simp only [Set.mem_Ioi, Set.mem_union, Set.mem_Ioc]
       constructor
-      · intro ht; by_cases h : t ≤ 1
+      · intro ht
+        by_cases h : t ≤ 1
         · exact Or.inl ⟨ht, h⟩
         · exact Or.inr (not_le.mp h)
       · rintro (⟨ht, _⟩ | ht)
@@ -769,7 +801,8 @@ theorem differentiableAt_sawtoothRemainder {s : ℂ} (hs1 : -1 < s.re) :
   have hcomp : DifferentiableAt ℂ (fun s : ℂ => -s - 1) s := by fun_prop
   have hd : DifferentiableAt ℂ (mellin zetaSawtoothIndicator) (-s - 1) := by
     apply differentiableAt_mellin_zetaSawtoothIndicator
-    simp only [Complex.sub_re, Complex.neg_re, Complex.one_re]; linarith
+    simp only [Complex.sub_re, Complex.neg_re, Complex.one_re]
+    linarith
   have hcd := hd.comp s hcomp
   have heq :
     (mellin zetaSawtoothIndicator ∘ fun s : ℂ => -s - 1) =ᶠ[nhds s]
@@ -829,7 +862,9 @@ theorem oneFromOne_zero : oneFromOne 0 = 0 :=
 
 theorem sum_oneFromOne (n : ℕ) : ∑ k ∈ Finset.Icc 0 n, oneFromOne k = (n : ℂ) := by
   have heq : ∀ k, oneFromOne k = 1 - (if k = 0 then (1 : ℂ) else 0) := by
-    intro k; unfold oneFromOne; split_ifs <;> ring
+    intro k
+    unfold oneFromOne
+    split_ifs <;> ring
   simp_rw [heq]
   rw [Finset.sum_sub_distrib, Finset.sum_const,
     Finset.sum_ite_eq' (Finset.Icc 0 n) 0 (fun _ => (1 : ℂ))]
@@ -975,7 +1010,8 @@ theorem sum_cpow_eq_sawtoothFormula_finite {s : ℂ} (hs0 : s ≠ 0) (hs1 : s �
     have ht0 : (0 : ℝ) < t := by linarith
     have hcast_ne : (t : ℂ) ≠ 0 := by exact_mod_cast ht0.ne'
     have hfloor_real : ((⌊t⌋₊ : ℕ) : ℝ) = t - Int.fract t := by
-      rw [natCast_floor_eq_intCast_floor ht0.le, ← Int.self_sub_floor]; ring
+      rw [natCast_floor_eq_intCast_floor ht0.le, ← Int.self_sub_floor]
+      ring
     have hfloor_cast : ((⌊t⌋₊ : ℕ) : ℂ) = (t : ℂ) - ((Int.fract t : ℝ) : ℂ) := by
       rw [← Complex.ofReal_natCast, hfloor_real]
       push_cast
@@ -984,7 +1020,8 @@ theorem sum_cpow_eq_sawtoothFormula_finite {s : ℂ} (hs0 : s ≠ 0) (hs1 : s �
       have h := (Complex.cpow_add (-s - 1) 1 hcast_ne).symm
       rw [Complex.cpow_one] at h
       rw [h]
-      congr 1; ring
+      congr 1
+      ring
     rw [hfloor_cast, mul_sub, hcpow_add]
     push_cast
     ring
@@ -1030,7 +1067,8 @@ theorem sum_cpow_eq_sawtoothFormula_finite {s : ℂ} (hs0 : s ≠ 0) (hs1 : s �
     have h := (Complex.cpow_add (-s) 1 hNcast_ne).symm
     rw [Complex.cpow_one] at h
     rw [h]
-    congr 1; ring
+    congr 1
+    ring
   rw [hNpow] at hraw
   rw [hraw]
   have h1s : (1 : ℂ) - s ≠ 0 := sub_ne_zero.mpr (Ne.symm hs1)
@@ -1061,17 +1099,21 @@ theorem riemannZeta_eq_sawtoothFormula_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
       s / (s - 1) - 1 / 2 -
         s * (s + 1) * ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ) := by
   have hs0 : s ≠ 0 := fun h => by
-    simp only [h, Complex.zero_re] at hs; linarith
+    simp only [h, Complex.zero_re] at hs
+    linarith
   have hs1 : s ≠ 1 := fun h => by
-    simp only [h, Complex.one_re] at hs; linarith
+    simp only [h, Complex.one_re] at hs
+    linarith
   have hsm1 : s ≠ -1 := fun h => by
-    simp only [h, Complex.neg_re, Complex.one_re] at hs; linarith
+    simp only [h, Complex.neg_re, Complex.one_re] at hs
+    linarith
   have hsumtail :
     Filter.Tendsto (fun N : ℕ => ∑ k ∈ Finset.Icc 1 N, (k : ℂ) ^ (-s)) Filter.atTop
       (nhds (riemannZeta s)) := by
     have hsumm : Summable (fun n : ℕ => 1 / (n : ℂ) ^ s) := Complex.summable_one_div_nat_cpow.mpr hs
     have hhasSum : HasSum (fun n : ℕ => 1 / (n : ℂ) ^ s) (riemannZeta s) := by
-      rw [zeta_eq_tsum_one_div_nat_cpow hs]; exact hsumm.hasSum
+      rw [zeta_eq_tsum_one_div_nat_cpow hs]
+      exact hsumm.hasSum
     have hcongr :
       ∀ N : ℕ,
         ∑ k ∈ Finset.Icc 1 N, (k : ℂ) ^ (-s) = ∑ n ∈ Finset.range (N + 1), 1 / (n : ℂ) ^ s := by
@@ -1091,14 +1133,16 @@ theorem riemannZeta_eq_sawtoothFormula_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
     have h :=
       (tendsto_natCast_cpow_atTop_zero (z := 1 - s)
             (by
-              simp only [Complex.sub_re, Complex.one_re]; linarith)).div_const
+              simp only [Complex.sub_re, Complex.one_re]
+              linarith)).div_const
         (1 - s)
     rwa [zero_div] at h
   have h2 : Filter.Tendsto (fun N : ℕ => (N : ℂ) ^ (-s) / 2) Filter.atTop (nhds 0) := by
     have h :=
       (tendsto_natCast_cpow_atTop_zero (z := -s)
             (by
-              simp only [Complex.neg_re]; linarith)).div_const
+              simp only [Complex.neg_re]
+              linarith)).div_const
         (2 : ℂ)
     rwa [zero_div] at h
   have h3 :
@@ -1147,7 +1191,8 @@ theorem riemannZeta_eq_sawtoothFormula_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
         exact sum_cpow_eq_sawtoothFormula_finite hs0 hs1 N hN)
       hsumtail
   have heq := tendsto_nhds_unique hAB hL
-  rw [heq]; ring
+  rw [heq]
+  ring
 
 /-- The classical formula extends, via the identity theorem, from `Re s > 1` to the whole
 punctured half-plane `{Re s > -1} \ {1}`. -/
@@ -1158,7 +1203,8 @@ theorem riemannZeta_eq_sawtoothFormula_reGt_neg_one_diff_one {s : ℂ}
         s * (s + 1) * ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ) := by
   have h2mem : (2 : ℂ) ∈ ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) :=
     ⟨by
-      change (-1 : ℝ) < 2; norm_num only, by
+      change (-1 : ℝ) < 2
+      norm_num only, by
       simp only [Set.mem_singleton_iff]
       intro h
       have h' := congrArg Complex.re h
@@ -1258,7 +1304,8 @@ theorem norm_riemannZeta_le_of_reGt_neg_one_diff_one {s : ℂ}
         ‖s + 1‖ ≤ ‖s‖ + ‖(1 : ℂ)‖ := norm_add_le _ _
         _ = ‖s‖ + 1 := by rw [norm_one]
     have hc : ‖J‖ ≤ sawtoothRemainderBound s.re := by
-      rw [hJ_def]; exact norm_sawtoothRemainder_le hs.1
+      rw [hJ_def]
+      exact norm_sawtoothRemainder_le hs.1
     exact
       mul_le_mul (mul_le_mul_of_nonneg_left hb (norm_nonneg s)) hc (norm_nonneg _) (by positivity)
   have h1 : ‖s / (s - 1)‖ = ‖s‖ / ‖s - 1‖ := norm_div _ _
@@ -1269,6 +1316,7 @@ theorem norm_riemannZeta_le_of_reGt_neg_one_diff_one {s : ℂ}
     ‖s / (s - 1) - 1 / 2 - s * (s + 1) * J‖ ≤ ‖s / (s - 1) - 1 / 2‖ + ‖s * (s + 1) * J‖ := hstep1
     _ ≤ (‖s / (s - 1)‖ + ‖(1 : ℂ) / 2‖) + ‖s * (s + 1) * J‖ := add_le_add hstep2 (le_refl _)
     _ ≤ ‖s‖ / ‖s - 1‖ + 1 / 2 + ‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re := by
-      rw [h1, h2]; exact add_le_add (le_refl _) hstep3
+      rw [h1, h2]
+      exact add_le_add (le_refl _) hstep3
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

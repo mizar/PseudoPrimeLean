@@ -46,7 +46,8 @@ theorem tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh {N : ℕ} [NeZe
   have hcoeffI : (-Complex.I / (2 * (Real.pi : ℂ))) * Complex.I = ((2 * Real.pi : ℝ)⁻¹ : ℂ) := by
     rw [div_mul_eq_mul_div,
       show (-Complex.I) * Complex.I = 1 from by
-        rw [neg_mul, Complex.I_mul_I]; ring]
+        rw [neg_mul, Complex.I_mul_I]
+        ring]
     push_cast
     ring
   have heq :
@@ -192,7 +193,8 @@ theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_of_
   simp only [Complex.sub_re, Complex.add_re, Complex.neg_re]
   have hpi24re : ((Real.pi : ℂ) ^ 2 / 24).re = (Real.pi : ℝ) ^ 2 / 24 := by
     rw [show ((Real.pi : ℂ) ^ 2 / 24) = (((Real.pi : ℝ) ^ 2 / 24 : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.ofReal_re]
   have hAre :
     (logDeriv (DirichletCharacter.completedLFunction χ) 0 * ((Real.log x : ℝ) : ℂ)).re =
@@ -213,7 +215,8 @@ theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_of_
     ring
   have hSqre : (((Real.log x : ℝ) : ℂ) ^ 2 / 2).re = Real.log x ^ 2 / 2 := by
     rw [show (((Real.log x : ℝ) : ℂ) ^ 2 / 2) = (((Real.log x ^ 2 / 2 : ℝ)) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.ofReal_re]
   rw [hpi24re, hAre, hBre, hSqre, hF0re]
   ring
@@ -282,7 +285,8 @@ theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_of_grh {N : �
     rw [hlogxC, mul_comm, Complex.re_ofReal_mul, Complex.sub_re, mul_comm]
   have hpi8re : ((Real.pi : ℂ) ^ 2 / 8).re = (Real.pi : ℝ) ^ 2 / 8 := by
     rw [show ((Real.pi : ℂ) ^ 2 / 8) = (((Real.pi : ℝ) ^ 2 / 8 : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.ofReal_re]
   simp only [Complex.sub_re, Complex.neg_re]
   rw [hpi8re, hAre, hF0re, hG0re]

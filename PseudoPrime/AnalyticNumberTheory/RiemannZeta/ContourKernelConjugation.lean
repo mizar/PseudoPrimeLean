@@ -311,7 +311,8 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_unified_leftVertical_l
           gcongr
           simpa only [div_one] using mul_le_mul_of_nonneg_right hlog hxpow.le
     _ = 2 * unifiedLeftVerticalLinearConst * x ^ (-(1 : ℝ)) * (T ^ 2 * (x ^ (-(2 : ℝ))) ^ m) := by
-      rw [hxeq]; ring
+      rw [hxeq]
+      ring
 
 /-- The reciprocal left-vertical integral has the analogous geometric majorant. -/
 theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_unified_leftVertical_le {x : ℝ}
@@ -351,7 +352,8 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_unified_leftVer
           gcongr
           simpa only [div_one] using mul_le_mul_of_nonneg_right hlog hxpow.le
     _ = 2 * unifiedLeftVerticalLinearConst * x ^ (-(2 : ℝ)) * (T ^ 2 * (x ^ (-(2 : ℝ))) ^ m) := by
-      rw [hxeq]; ring
+      rw [hxeq]
+      ring
 
 /-- The logarithmic left-vertical edge vanishes on the unified contour sequence. -/
 theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_unified_leftVertical {x : ℝ}

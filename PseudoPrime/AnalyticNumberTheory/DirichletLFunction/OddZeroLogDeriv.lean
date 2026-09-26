@@ -75,7 +75,8 @@ theorem deriv_logDeriv_gammaFactor_zero_of_odd {N : ℕ} {χ : DirichletCharacte
       (fun _ : ℂ => -(Complex.log (Real.pi : ℂ)) / 2) +
           (fun s : ℂ => Complex.digamma ((s + 1) / 2) / 2) =
         fun s : ℂ => -(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma ((s + 1) / 2) / 2 := by
-      funext s; rfl
+      funext s
+      rfl
     rw [hfun, zero_add] at hadd
     exact hadd
   rw [hpoint, Gamma.deriv_digamma_half_eq] at h4

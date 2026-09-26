@@ -33,7 +33,7 @@ theorem hasDerivAt_logLinearRatio {y : ℝ} (hy : 0 < y) :
   have hraw := (((Real.hasDerivAt_log hy.ne').const_mul 2).add_const 1).div (hasDerivAt_id y) hy.ne'
   apply (hraw.congr_of_eventuallyEq ?_).congr_deriv
   · simp only [id_eq]
-    field_simp [hy.ne']
+    field_simp (discharger := exact hy.ne')
     ring
   · filter_upwards with z
     simp only [Pi.div_apply, id_eq]
@@ -51,7 +51,8 @@ theorem strictAntiOn_logLinearRatio : StrictAntiOn logLinearRatio (Set.Ici 8) :=
       have hlogTwoY : Real.log 2 < Real.log y :=
         Real.strictMonoOn_log (show (2 : ℝ) ∈ Set.Ioi 0 by norm_num only [Set.mem_Ioi])
           (show y ∈ Set.Ioi 0 by
-            simp only [Set.mem_Ioi]; linarith)
+            simp only [Set.mem_Ioi]
+            linarith)
           (by linarith)
       exact (show (1 / 2 : ℝ) < Real.log 2 by linarith [Real.log_two_gt_d9]).trans hlogTwoY
     exact div_neg_of_neg_of_pos (by linarith) (sq_pos_of_pos (by linarith))
@@ -63,7 +64,7 @@ theorem hasDerivAt_logSquareRatio {y : ℝ} (hy : 0 < y) :
   have hraw := ((Real.hasDerivAt_log hy.ne').pow 2).div (hasDerivAt_id y) hy.ne'
   apply (hraw.congr_of_eventuallyEq ?_).congr_deriv
   · simp only [Pi.pow_apply, id_eq]
-    field_simp [hy.ne']
+    field_simp (discharger := exact hy.ne')
     ring
   · filter_upwards with z
     simp only [Pi.div_apply, Pi.pow_apply, id_eq]
@@ -81,7 +82,8 @@ theorem strictAntiOn_logSquareRatio : StrictAntiOn logSquareRatio (Set.Ici 8) :=
     have hlogEightY : Real.log 8 < Real.log y :=
       Real.strictMonoOn_log (show (8 : ℝ) ∈ Set.Ioi 0 by norm_num only [Set.mem_Ioi])
         (show y ∈ Set.Ioi 0 by
-          simp only [Set.mem_Ioi]; linarith)
+          simp only [Set.mem_Ioi]
+          linarith)
         hy
     rw [show (8 : ℝ) = 2 ^ 3 by norm_num only, Real.log_pow] at hlogEightY
     norm_num only [Nat.cast_ofNat] at hlogEightY

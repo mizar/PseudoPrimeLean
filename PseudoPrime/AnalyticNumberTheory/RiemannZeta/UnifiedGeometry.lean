@@ -318,13 +318,17 @@ theorem zero_mem_unifiedTauRectangle {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
   exact
     mem_unifiedTauRectangle τ m (p := 0)
       (by
-        simp only [neg_add_rev, Complex.zero_re, add_neg_le_iff_le_add, zero_add]; linarith)
+        simp only [neg_add_rev, Complex.zero_re, add_neg_le_iff_le_add, zero_add]
+        linarith)
       (by
-        simp only [Complex.zero_re]; linarith)
+        simp only [Complex.zero_re]
+        linarith)
       (by
-        simp only [Complex.zero_im, Left.neg_nonpos_iff]; linarith)
+        simp only [Complex.zero_im, Left.neg_nonpos_iff]
+        linarith)
       (by
-        simp only [Complex.zero_im]; linarith)
+        simp only [Complex.zero_im]
+        linarith)
 
 /-- The point `1` lies in every unified `τ`-rectangle with `τ > 1`. -/
 theorem one_mem_unifiedTauRectangle {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
@@ -336,12 +340,16 @@ theorem one_mem_unifiedTauRectangle {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
   exact
     mem_unifiedTauRectangle τ m (p := 1)
       (by
-        simp only [neg_add_rev, Complex.one_re, add_neg_le_iff_le_add]; linarith)
+        simp only [neg_add_rev, Complex.one_re, add_neg_le_iff_le_add]
+        linarith)
       (by
-        simp only [Complex.one_re]; linarith)
+        simp only [Complex.one_re]
+        linarith)
       (by
-        simp only [Complex.one_im, Left.neg_nonpos_iff]; linarith)
+        simp only [Complex.one_im, Left.neg_nonpos_iff]
+        linarith)
       (by
-        simp only [Complex.one_im]; linarith)
+        simp only [Complex.one_im]
+        linarith)
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

@@ -79,12 +79,14 @@ theorem analyticAt_gammaFactor_of_ne_zero {N : ℕ} {χ : DirichletCharacter ℂ
     AnalyticAt ℂ (DirichletCharacter.gammaFactor χ) ρ := by
   rcases χ.even_or_odd with heven | hodd
   · have heq : DirichletCharacter.gammaFactor χ = Complex.Gammaℝ := by
-      funext z; exact heven.gammaFactor_def z
+      funext z
+      exact heven.gammaFactor_def z
     rw [heq]
     rw [heq] at hΓ
     exact analyticAt_Gammaℝ_of_ne_zero hΓ
   · have heq : DirichletCharacter.gammaFactor χ = fun z => Complex.Gammaℝ (z + 1) := by
-      funext z; exact hodd.gammaFactor_def z
+      funext z
+      exact hodd.gammaFactor_def z
     rw [heq]
     rw [heq] at hΓ
     have hcomp : AnalyticAt ℂ (fun z : ℂ => z + 1) ρ := by fun_prop

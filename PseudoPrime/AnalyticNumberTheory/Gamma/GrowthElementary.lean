@@ -41,17 +41,21 @@ theorem log_Gamma_le_of_one_le {x : ℝ} (hx : 1 ≤ x) : Real.log (Real.Gamma x
   have hxub : x < (m : ℝ) + 2 := by linarith
   set θ : ℝ := x - ((m : ℝ) + 1) with hθ_def
   have hθ0 : 0 ≤ θ := by
-    rw [hθ_def]; linarith
+    rw [hθ_def]
+    linarith
   have hθ1 : θ < 1 := by
-    rw [hθ_def]; linarith
+    rw [hθ_def]
+    linarith
   have hxeq : x = θ * ((m : ℝ) + 2) + (1 - θ) * ((m : ℝ) + 1) := by
-    rw [hθ_def]; ring
+    rw [hθ_def]
+    ring
   have hmem1 : (m : ℝ) + 1 ∈ Set.Ioi (0 : ℝ) := Set.mem_Ioi.mpr (by positivity)
   have hmem2 : (m : ℝ) + 2 ∈ Set.Ioi (0 : ℝ) := Set.mem_Ioi.mpr (by positivity)
   rcases eq_or_lt_of_le hθ0 with hθ0' | hθ0'
   · -- θ = 0, x = m+1
     have hxeq' : x = (m : ℝ) + 1 := by
-      rw [hxeq, ← hθ0']; ring
+      rw [hxeq, ← hθ0']
+      ring
     rw [hxeq']
     rw [Real.Gamma_nat_eq_factorial]
     have h1 : Nat.factorial m ≤ m ^ m := Nat.factorial_le_pow m
@@ -79,11 +83,14 @@ theorem log_Gamma_le_of_one_le {x : ℝ} (hx : 1 ≤ x) : Real.log (Real.Gamma x
           apply Real.log_le_log (by positivity)
           exact_mod_cast h1
         _ = ((m : ℕ) + 1) * Real.log ((m : ℝ) + 1) := by
-          rw [Real.log_pow]; push_cast; ring
+          rw [Real.log_pow]
+          push_cast
+          ring
     have hlogGamma_m2 :
       Real.log (Real.Gamma ((m : ℝ) + 2)) ≤ ((m : ℝ) + 1) * Real.log ((m : ℝ) + 1) := by
       rw [show ((m : ℝ) + 2) = ((m + 1 : ℕ) : ℝ) + 1 from by
-          push_cast; ring,
+          push_cast
+          ring,
         Real.Gamma_nat_eq_factorial]
       have h1 : Nat.factorial (m + 1) ≤ (m + 1) ^ (m + 1) := Nat.factorial_le_pow (m + 1)
       calc
@@ -91,7 +98,9 @@ theorem log_Gamma_le_of_one_le {x : ℝ} (hx : 1 ≤ x) : Real.log (Real.Gamma x
           apply Real.log_le_log (by positivity)
           exact_mod_cast h1
         _ = ((m : ℕ) + 1) * Real.log ((m : ℝ) + 1) := by
-          rw [Real.log_pow]; push_cast; ring
+          rw [Real.log_pow]
+          push_cast
+          ring
     have hsum : θ + (1 - θ) = 1 := by ring
     have hconv := Real.convexOn_log_Gamma.2 hmem2 hmem1 hθ0'.le (by linarith) hsum
     simp only [Function.comp_apply, smul_eq_mul] at hconv
@@ -121,7 +130,8 @@ theorem Gamma_three_half_add_nat_ge (n : ℕ) :
     have hne : (3 / 2 + (n : ℝ)) ≠ 0 := by positivity
     have heq : (3 / 2 + ((n : ℝ) + 1) : ℝ) = (3 / 2 + n) + 1 := by ring
     rw [show ((n + 1 : ℕ) : ℝ) = (n : ℝ) + 1 from by
-        push_cast; ring,
+        push_cast
+        ring,
       heq, Real.Gamma_add_one hne]
     have h32le : (3 / 2 : ℝ) ≤ 3 / 2 + n := le_add_of_nonneg_right (Nat.cast_nonneg n)
     have hGamma32pos : (0 : ℝ) < Real.Gamma (3 / 2) := Real.Gamma_pos_of_pos (by norm_num only)
@@ -145,7 +155,8 @@ theorem Gamma_three_half_add_nat_le (n : ℕ) :
     have hne : (3 / 2 + (n : ℝ)) ≠ 0 := by positivity
     have heq : (3 / 2 + ((n : ℝ) + 1) : ℝ) = (3 / 2 + n) + 1 := by ring
     rw [show ((n + 1 : ℕ) : ℝ) = (n : ℝ) + 1 from by
-        push_cast; ring,
+        push_cast
+        ring,
       heq, Real.Gamma_add_one hne]
     have h32le : (3 / 2 + (n : ℝ)) ≤ (n : ℝ) + 2 := by linarith
     have hGamma32pos : (0 : ℝ) < Real.Gamma (3 / 2) := Real.Gamma_pos_of_pos (by norm_num only)
@@ -184,13 +195,15 @@ theorem tendsto_max_Gamma_halfInteger_atTop :
     have hn : Filter.Tendsto (fun m : ℕ => 2 * m + 1) Filter.atTop Filter.atTop :=
       Filter.tendsto_atTop_mono
         (fun m => by
-          simp only [id_eq]; omega)
+          simp only [id_eq]
+          omega)
         Filter.tendsto_id
     have := tendsto_Real_Gamma_three_half_add_atTop.comp hn
     refine this.congr (fun m => ?_)
     simp only [Function.comp_apply]
     have heq : (3 / 2 + ((2 * m + 1 : ℕ) : ℝ)) = 2 * (m : ℝ) + 5 / 2 := by
-      push_cast; ring
+      push_cast
+      ring
     rw [heq]
   refine Filter.tendsto_atTop_mono (fun m => ?_) hcomp
   exact le_trans (le_max_right _ _) (le_max_right _ _)
@@ -202,9 +215,11 @@ theorem Gamma_two_mul_add_three_half_le (m : ℕ) :
     Real.Gamma (2 * (m : ℝ) + 3 / 2) ≤ (2 * (m : ℝ) + 2) ^ (2 * m) * Real.Gamma (3 / 2) := by
   have h := Gamma_three_half_add_nat_le (2 * m)
   rwa [show (3 / 2 + ((2 * m : ℕ) : ℝ)) = 2 * (m : ℝ) + 3 / 2 from by
-      push_cast; ring,
+      push_cast
+      ring,
     show (((2 * m : ℕ) : ℝ) + 2) = 2 * (m : ℝ) + 2 from by
-      push_cast; ring] at h
+      push_cast
+      ring] at h
 
 /-- `Γ(2m + 5/2) ≤ (2m + 3)^{2m+1} · Γ(3/2)`, a corollary of
 `PseudoPrime.AnalyticNumberTheory.Gamma.Gamma_three_half_add_nat_le` at
@@ -213,8 +228,10 @@ theorem Gamma_two_mul_add_five_half_le (m : ℕ) :
     Real.Gamma (2 * (m : ℝ) + 5 / 2) ≤ (2 * (m : ℝ) + 3) ^ (2 * m + 1) * Real.Gamma (3 / 2) := by
   have h := Gamma_three_half_add_nat_le (2 * m + 1)
   rwa [show (3 / 2 + ((2 * m + 1 : ℕ) : ℝ)) = 2 * (m : ℝ) + 5 / 2 from by
-      push_cast; ring,
+      push_cast
+      ring,
     show (((2 * m + 1 : ℕ) : ℝ) + 2) = 2 * (m : ℝ) + 3 from by
-      push_cast; ring] at h
+      push_cast
+      ring] at h
 
 end PseudoPrime.AnalyticNumberTheory.Gamma

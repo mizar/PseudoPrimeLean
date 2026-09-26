@@ -46,8 +46,10 @@ theorem tendsto_normalized_dirichletLogBoundary_heightSeq {N : ℕ} [NeZero N] (
   have hcoeffI : (-Complex.I / (2 * (Real.pi : ℂ))) * Complex.I = ((2 * Real.pi : ℝ)⁻¹ : ℂ) := by
     rw [div_mul_eq_mul_div,
       show (-Complex.I) * Complex.I = 1 from by
-        rw [neg_mul, Complex.I_mul_I]; ring]
-    push_cast; ring
+        rw [neg_mul, Complex.I_mul_I]
+        ring]
+    push_cast
+    ring
   have heq :
     ∀ k : ℕ,
       (-Complex.I / (2 * (Real.pi : ℂ))) *
@@ -178,6 +180,7 @@ theorem tendsto_normalized_dirichletLogBoundary_heightSeq {N : ℕ} [NeZero N] (
   simp only [sub_zero, mul_zero, zero_add] at htarget
   rw [hweighted, Complex.real_smul]
   convert htarget using 2
-  push_cast; ring
+  push_cast
+  ring
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

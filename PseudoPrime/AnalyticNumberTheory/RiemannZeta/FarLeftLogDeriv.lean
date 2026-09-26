@@ -64,7 +64,8 @@ theorem exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc :
   have heqB :
     (1 : ℂ) + ((-σ : ℝ) : ℂ) + ((-t : ℝ) : ℂ) * Complex.I =
       ((1 - σ : ℝ) : ℂ) - (t : ℂ) * Complex.I := by
-    push_cast; ring
+    push_cast
+    ring
   rw [heqB] at hGammaB
   have habsB : |(-t : ℝ)| = |t| := abs_neg t
   rw [habsB] at hGammaB
@@ -220,7 +221,8 @@ theorem farLeftBTerm_le_poly (m : ℕ) :
         _ ≤ (2 * (m : ℝ) + 3) ^ (2 * m + 1) * (Real.Gamma (3 / 2) + 1) :=
           mul_le_mul_of_nonneg_left (by linarith only []) (by positivity)
     have hpart1 : max (Real.Gamma 1) (Real.Gamma 2) ≤ CQ + 2 * R := by
-      rw [hCQ_def]; linarith only [hRpos]
+      rw [hCQ_def]
+      linarith only [hRpos]
     have hpart2 :
       max (Real.Gamma (2 * (m : ℝ) + 3 / 2)) (Real.Gamma (2 * (m : ℝ) + 5 / 2)) ≤ CQ + 2 * R :=
       max_le (by linarith [hΓ3]) (by linarith [hΓ4])
@@ -268,7 +270,8 @@ theorem farLeftBTerm_le_poly (m : ℕ) :
       Real.log R =
         (2 * (m : ℝ) + 1) * Real.log (2 * (m : ℝ) + 3) + Real.log (Real.Gamma (3 / 2) + 1) := by
       rw [hR_def, Real.log_mul (by positivity) (by positivity), Real.log_pow]
-      push_cast; ring
+      push_cast
+      ring
     simp only [hCQ_def] at hlog1
     linarith only [hlog1, hlog2, hlogR]
   have hlog2m3_le : Real.log (2 * (m : ℝ) + 3) ≤ 2 * (m : ℝ) + 2 := by
@@ -327,7 +330,8 @@ theorem tendsto_farLeftHeightSeq_sq_mul_pow_of_lt_one {r : ℝ} (hr : 0 ≤ r) (
     have h2 :
       (fun m : ℕ => G ^ 2 * (((m : ℝ) + 1) ^ 3) ^ 2 * r ^ m) = fun m : ℕ =>
         G ^ 2 * (((m : ℝ) + 1) ^ 6 * r ^ m) := by
-      funext m; ring
+      funext m
+      ring
     rw [h2]
     simpa only [mul_zero] using h1.const_mul (G ^ 2)
   exact squeeze_zero (fun m => by positivity) hbound htend

@@ -59,7 +59,7 @@ theorem mem_dirichletLFunctionSingularitiesInRectangle_iff {N : ℕ} [NeZero N]
   by_cases hzero : (0 : ℂ) ∈ dirichletCompletedLFunctionRectangleBox z w <;>
     by_cases hone : (1 : ℂ) ∈ dirichletCompletedLFunctionRectangleBox z w <;>
     simp only [hzero, ↓reduceIte, Finset.mem_singleton, hone] <;>
-    aesop
+    grind only [Finset.notMem_empty]
 
 /--
 Input/assumptions: a point of the outer rectangle not listed in its singularity ledger.

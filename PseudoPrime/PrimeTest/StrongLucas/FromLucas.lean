@@ -48,14 +48,14 @@ theorem isStrongLucasProbablePrime_of_lucasUZMod_index_zero {n : ℕ} [Fact n.Pr
   let d := oddPart m
   let s := twoAdicExponent m
   have hdecomp : d * 2 ^ s = m := by
-    dsimp [d, s]
+    dsimp only [d, s]
     rw [mul_comm]
     exact twoAdicPart_mul_oddPart m
   have hzero' : (lucasU param.P param.Q (d * 2 ^ s) : ZMod n) = 0 := by
     rw [hdecomp]
     exact hzero
   have hstrong := lucasU_twoAdic_zero_implies_strong param.P param.Q d s hzero'
-  dsimp [IsStrongLucasProbablePrime, strongLucasOddPart, strongLucasTwoAdicExponent]
+  dsimp only [IsStrongLucasProbablePrime, strongLucasOddPart, strongLucasTwoAdicExponent]
   simpa only [lucasUZMod, lucasVZMod] using hstrong
 
 end PseudoPrime.PrimeTest

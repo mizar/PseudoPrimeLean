@@ -70,7 +70,7 @@ theorem mem_riemannZetaSingularitiesInRectangle_iff {z w s : ℂ} :
     by_cases hone : (1 : ℂ) ∈ Rectangle.rectangleClosedBox z w <;>
     simp only [hzero, reduceIte, Finset.mem_singleton, hone, Finset.notMem_empty, or_false,
       and_congr_right_iff] <;>
-    aesop
+    grind only
 
 /-- A point inside the contour rectangle but outside its finite ledger is kernel-regular. -/
 theorem mem_riemannZetaRegularSet_of_not_mem_singularities {z w s : ℂ}
@@ -169,7 +169,7 @@ theorem sum_riemannZetaSingularitiesInRectangle {M : Type*} [AddCommMonoid M] (z
       honeRect, Finset.sum_insert hzero, Finset.sum_insert honeInsert,
       riemannZetaSplitSingularitySum, add_assoc, Finset.union_empty, Finset.union_singleton,
       add_comm, add_left_comm, zero_add, add_zero]
-  all_goals aesop
+  exact Finset.sum_insert hone
 
 /--
 A subrectangle disjoint from the enclosing rectangle's singularity ledger is regular.

@@ -330,7 +330,8 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le_of_grh
           have hLbase :=
             hD σ (T k) hσ1.le hσ2
               (by
-                rw [abs_of_nonneg hTk_pos.le]; exact hTk_ge1)
+                rw [abs_of_nonneg hTk_pos.le]
+                exact hTk_ge1)
           rw [abs_of_nonneg hTk_pos.le] at hLbase
           have hL' :
             ‖logDeriv (DirichletCharacter.LFunction χ) ((σ : ℂ) + T k * Complex.I)‖ / (T k) ^ 2 ≤
@@ -433,7 +434,8 @@ theorem continuous_dirichletLogContourKernel_horizontalHeightSeq_of_grh {N : ℕ
     have hs0 : s ≠ 0 := fun h =>
       hsimne
         (by
-          rw [h]; simp only [Complex.zero_im])
+          rw [h]
+          simp only [Complex.zero_im])
     have hLne :=
       dirichletLFunction_ne_zero_of_im_eq_primitiveHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k
         hsim

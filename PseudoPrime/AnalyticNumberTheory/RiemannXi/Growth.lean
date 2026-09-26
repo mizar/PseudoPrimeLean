@@ -33,14 +33,16 @@ theorem norm_riemannXi_le_of_forall_one_half_le_re {bound : ℝ → ℝ}
           (by linarith [norm_nonneg s]))
   · rw [not_le] at hs
     have hs' : 1 / 2 ≤ (1 - s).re := by
-      simp only [Complex.sub_re, Complex.one_re]; linarith
+      simp only [Complex.sub_re, Complex.one_re]
+      linarith
     have h1 : ‖riemannXi (1 - s)‖ ≤ bound ‖1 - s‖ := h (1 - s) hs'
     rw [riemannXi_one_sub] at h1
     have habs : ‖(1 : ℂ) - s‖ ≤ ‖s‖ + 1 := by
       calc
         ‖(1 : ℂ) - s‖ ≤ ‖(1 : ℂ)‖ + ‖s‖ := norm_sub_le _ _
         _ = ‖s‖ + 1 := by
-          rw [norm_one]; ring
+          rw [norm_one]
+          ring
     exact h1.trans (hbound_mono (norm_nonneg _) (Set.mem_Ici.mpr (by positivity)) habs)
 
 /-- For `s ≠ 1` and `Γ(s/2+1) ≠ 0`, xi equals

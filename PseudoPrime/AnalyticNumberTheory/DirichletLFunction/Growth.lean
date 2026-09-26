@@ -47,7 +47,8 @@ theorem bijOn_natCast_add_one_add (a : ℕ) :
       have hcast :
         ((a + 1 + (c - (a + 1 : ZMod N)).val : ℕ) : ZMod N) =
           (a + 1 : ZMod N) + (((c - (a + 1 : ZMod N)).val : ℕ) : ZMod N) := by
-        push_cast; ring
+        push_cast
+        ring
       rw [hcast, ZMod.natCast_rightInverse (c - (a + 1 : ZMod N))]
       ring
 
@@ -69,12 +70,14 @@ theorem sum_Icc_add_one_add_eq_zero {ψ : DirichletCharacter ℂ N} (hψ : ψ �
   have hreindex :
     ∑ j ∈ Finset.range N, ψ ((a + 1 + j : ℕ)) = ∑ c ∈ (Finset.univ : Finset (ZMod N)), ψ c := by
     apply Finset.sum_nbij (fun j : ℕ => ((a + 1 + j : ℕ) : ZMod N))
-    · intro j _; exact Finset.mem_univ _
+    · intro j _
+      exact Finset.mem_univ _
     · exact hbij.injOn
     · intro c hc
       simpa only [Nat.cast_add, Nat.cast_one, Finset.coe_range, Set.mem_image, Set.mem_Iio] using
         hbij.surjOn (Set.mem_univ c)
-    · intro j _; rfl
+    · intro j _
+      rfl
   rw [hreindex]
   exact MulChar.sum_eq_zero_of_ne_one hψ
 
@@ -176,8 +179,11 @@ theorem sum_charCpow_eq_sub_integral {N : ℕ} [NeZero N] (hN1 : 1 < N) {ψ : Di
   rw [Nat.floor_natCast] at hraw
   push_cast at hraw
   have h4 : ∀ n : ℕ, ∑ k ∈ Finset.Icc 0 n, ψ k = ∑ k ∈ Finset.Icc 1 n, ψ k := fun n ↦ by
-    rw [← Finset.insert_Icc_add_one_left_eq_Icc n.zero_le, Finset.sum_insert (by aesop), hψ0,
-      zero_add, zero_add]
+    rw [← Finset.insert_Icc_add_one_left_eq_Icc n.zero_le,
+      Finset.sum_insert (by
+        intro h
+        exact (Nat.not_succ_le_zero 0) (Finset.mem_Icc.mp h).1),
+      hψ0, zero_add, zero_add]
   have hlhs :
     ∑ k ∈ Finset.Icc 0 M, (k : ℂ) ^ (-s) * ψ k = ∑ k ∈ Finset.Icc 1 M, ψ k * (k : ℂ) ^ (-s) := by
     rw [←
@@ -287,16 +293,19 @@ theorem norm_charPartialSumIndicator_le {N : ℕ} [NeZero N] {ψ : DirichletChar
     (t : ℝ) : ‖charPartialSumIndicator ψ t‖ ≤ N := by
   unfold charPartialSumIndicator
   split_ifs with h
-  · simp only [norm_zero]; exact Nat.cast_nonneg N
+  · simp only [norm_zero]
+    exact Nat.cast_nonneg N
   · exact norm_sum_Icc_one_le hψ ⌊t⌋₊
 
 theorem charPartialSumIndicator_eq_zero_of_le_one {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
     {t : ℝ} (ht : t ≤ 1) : charPartialSumIndicator ψ t = 0 := by
-  unfold charPartialSumIndicator; rw [ite_eq_left ht]
+  unfold charPartialSumIndicator
+  rw [ite_eq_left ht]
 
 theorem charPartialSumIndicator_eq_of_lt {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N} {t : ℝ}
     (ht : 1 < t) : charPartialSumIndicator ψ t = ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, ψ k := by
-  unfold charPartialSumIndicator; rw [ite_eq_right (not_le.mpr ht)]
+  unfold charPartialSumIndicator
+  rw [ite_eq_right (not_le.mpr ht)]
 
 theorem locallyIntegrableOn_charPartialSumIndicator {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
     (hψ : ψ ≠ 1) :
@@ -365,9 +374,11 @@ theorem mellin_charPartialSumIndicator_eq {N : ℕ} [NeZero N] {ψ : DirichletCh
     exact integrableOn_charCpow_mul_partialSum_Ioi hψ hs
   rw [mellin,
     show Set.Ioi (0 : ℝ) = Set.Ioc (0 : ℝ) 1 ∪ Set.Ioi (1 : ℝ) from by
-      ext t; simp only [Set.mem_Ioi, Set.mem_union, Set.mem_Ioc]
+      ext t
+      simp only [Set.mem_Ioi, Set.mem_union, Set.mem_Ioc]
       constructor
-      · intro ht; by_cases h : t ≤ 1
+      · intro ht
+        by_cases h : t ≤ 1
         · exact Or.inl ⟨ht, h⟩
         · exact Or.inr (not_le.mp h)
       · rintro (⟨ht, _⟩ | ht)
@@ -395,7 +406,8 @@ theorem differentiableAt_charAbelIntegral {N : ℕ} [NeZero N] {ψ : DirichletCh
   have hd : DifferentiableAt ℂ (mellin (charPartialSumIndicator ψ)) (-s) :=
     differentiableAt_mellin_charPartialSumIndicator hψ
       (by
-        simp only [Complex.neg_re]; linarith)
+        simp only [Complex.neg_re]
+        linarith)
   have hcd := hd.comp s hcomp
   have heq :
     (mellin (charPartialSumIndicator ψ) ∘ fun s : ℂ => -s) =ᶠ[nhds s]
@@ -415,7 +427,8 @@ theorem lFunction_eq_mul_charAbelIntegral {N : ℕ} [NeZero N] (hN1 : 1 < N)
     DirichletCharacter.LFunction ψ s =
       s * ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 1) * ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, ψ k := by
   have hs0 : s ≠ 0 := fun h => by
-    simp only [h, Complex.zero_re] at hs; linarith
+    simp only [h, Complex.zero_re] at hs
+    linarith
   have hsumtail :
     Filter.Tendsto (fun M : ℕ => ∑ k ∈ Finset.Icc 1 M, ψ k * (k : ℂ) ^ (-s)) Filter.atTop
       (nhds (DirichletCharacter.LFunction ψ s)) := by
@@ -432,7 +445,8 @@ theorem lFunction_eq_mul_charAbelIntegral {N : ℕ} [NeZero N] (hN1 : 1 < N)
           (fun k hk hk1 => by
             simp only [Finset.mem_Icc] at hk hk1
             have hk0 : k = 0 := by omega
-            rw [hk0]; simp only [LSeries.term, ↓reduceIte])]
+            rw [hk0]
+            simp only [LSeries.term, ↓reduceIte])]
       exact
         Finset.sum_congr rfl fun k hk => by
           simp only [Finset.mem_Icc] at hk
@@ -443,7 +457,8 @@ theorem lFunction_eq_mul_charAbelIntegral {N : ℕ} [NeZero N] (hN1 : 1 < N)
     tendsto_zero_iff_norm_tendsto_zero.mp
       (RiemannZeta.tendsto_natCast_cpow_atTop_zero (z := -s)
         (by
-          simp only [Complex.neg_re]; linarith))
+          simp only [Complex.neg_re]
+          linarith))
   have hAM :
     Filter.Tendsto (fun M : ℕ => (∑ k ∈ Finset.Icc 1 M, ψ k) * (M : ℂ) ^ (-s)) Filter.atTop
       (nhds 0) := by
@@ -577,15 +592,19 @@ theorem norm_Gamma_le_of_one_quarter_le_re {z : ℂ} (hz : 1 / 4 ≤ z.re) :
     ‖Complex.Gamma z‖ ≤ 4 * Real.exp ((‖z‖ + 1) * Real.log (‖z‖ + 1)) := by
   have hzre_le_norm : z.re ≤ ‖z‖ := (le_abs_self z.re).trans (Complex.abs_re_le_norm z)
   have hzne : z ≠ 0 := fun h => by
-    rw [h, Complex.zero_re] at hz; linarith
+    rw [h, Complex.zero_re] at hz
+    linarith
   have hznorm_pos : (0 : ℝ) < ‖z‖ := norm_pos_iff.mpr hzne
   have hz1re : (z + 1).re = z.re + 1 := by simp only [Complex.add_re, Complex.one_re]
   have hz1pos : (0 : ℝ) < (z + 1).re := by
-    rw [hz1re]; linarith
+    rw [hz1re]
+    linarith
   have hz1ge1 : (1 : ℝ) ≤ (z + 1).re := by
-    rw [hz1re]; linarith
+    rw [hz1re]
+    linarith
   have hzinv : (1 : ℝ) / ‖z‖ ≤ 4 := by
-    rw [div_le_iff₀ hznorm_pos]; linarith
+    rw [div_le_iff₀ hznorm_pos]
+    linarith
   have hb : ‖Complex.Gamma (z + 1)‖ ≤ Real.exp ((‖z‖ + 1) * Real.log (‖z‖ + 1)) := by
     have hstep1 : ‖Complex.Gamma (z + 1)‖ ≤ Real.Gamma (z + 1).re :=
       RiemannZeta.norm_Gamma_le_Gamma_re hz1pos
@@ -597,7 +616,8 @@ theorem norm_Gamma_le_of_one_quarter_le_re {z : ℂ} (hz : 1 / 4 ≤ z.re) :
         _ ≤ Real.exp ((z + 1).re * Real.log (z + 1).re) :=
           Real.exp_le_exp.mpr (Gamma.log_Gamma_le_of_one_le hz1ge1)
     have hstep3 : (z + 1).re ≤ ‖z‖ + 1 := by
-      rw [hz1re]; linarith
+      rw [hz1re]
+      linarith
     have hstep4 :
       Real.exp ((z + 1).re * Real.log (z + 1).re) ≤ Real.exp ((‖z‖ + 1) * Real.log (‖z‖ + 1)) :=
       Real.exp_le_exp.mpr (Gamma.mul_log_mono_of_one_le hz1ge1 hstep3)
@@ -639,7 +659,8 @@ theorem norm_Gammaℝ_le {w : ℂ} (hw : 1 / 2 ≤ w.re) :
       Real.exp ((‖w‖ + 1) * Real.log (‖w‖ + 1)) := by
     apply Real.exp_le_exp.mpr
     apply Gamma.mul_log_mono_of_one_le (by linarith [norm_nonneg (w / 2)])
-    rw [hnormhalf]; linarith [norm_nonneg w]
+    rw [hnormhalf]
+    linarith [norm_nonneg w]
   calc
     ‖(Real.pi : ℂ) ^ (-w / 2)‖ * ‖Complex.Gamma (w / 2)‖ ≤
         Real.pi ^ (-(1 : ℝ) / 4) * (4 * Real.exp ((‖w / 2‖ + 1) * Real.log (‖w / 2‖ + 1))) :=
@@ -696,7 +717,8 @@ theorem norm_completedLFunction_le {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : Diri
         (Real.pi ^ (-(1 : ℝ) / 4) * (4 * Real.exp ((‖s‖ + 2) * Real.log (‖s‖ + 2)))) := by
   have hgamma_ne : DirichletCharacter.gammaFactor χ s ≠ 0 := by
     rcases χ.even_or_odd with hχ | hχ
-    · rw [hχ.gammaFactor_def]; exact Complex.Gammaℝ_ne_zero_of_re_pos (by linarith)
+    · rw [hχ.gammaFactor_def]
+      exact Complex.Gammaℝ_ne_zero_of_re_pos (by linarith)
     · rw [hχ.gammaFactor_def]
       apply Complex.Gammaℝ_ne_zero_of_re_pos
       rw [Complex.add_re, Complex.one_re]

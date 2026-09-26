@@ -31,7 +31,7 @@ def selfridgeClassicalMethodAStarParamsWithinTwoMul (n : ℕ) : Option LucasPara
 theorem selfridgeD_natAbs_lt_two_mul_of_candidate_index {n k : ℕ} (hn : 3 ≤ n) (hk : k < n - 2) :
     (selfridgeD (classicalCandidateMagnitude k)).natAbs < 2 * n := by
   rw [selfridgeD_natAbs]
-  dsimp [classicalCandidateMagnitude]
+  dsimp only [classicalCandidateMagnitude]
   omega
 
 /-- A successful elementary classical search returns a discriminant with `|D| < 2*n`. -/
@@ -39,7 +39,7 @@ theorem selfridgeClassicalSearchWithinTwoMul_some_bound {n : ℕ} (hn : 3 ≤ n)
     (hsearch : selfridgeClassicalSearchWithinTwoMul n = some D) : D.natAbs < 2 * n := by
   obtain ⟨k, hk, _, hD⟩ := selfridgeClassicalSearchAscending_some_index hsearch
   rw [← hD]
-  exact selfridgeD_natAbs_lt_two_mul_of_candidate_index hn (by simpa using hk)
+  exact selfridgeD_natAbs_lt_two_mul_of_candidate_index hn (by simpa only [zero_add] using hk)
 
 /-- A successful elementary search is admissible for Method A. -/
 theorem selfridgeClassicalSearchWithinTwoMul_some_methodA_mod {n : ℕ} {D : ℤ}
@@ -67,7 +67,7 @@ theorem selfridgeClassicalMethodAStarParamsWithinTwoMul_some_bound {n : ℕ} (hn
     (hsearch : selfridgeClassicalSearchWithinTwoMul n = some D) (hmod : (1 - D) % 4 = 0) :
     (LucasParams.methodAStar D hmod).D.natAbs < 2 * n := by
   have hparamD : (LucasParams.methodAStar D hmod).D = D := by
-    dsimp [LucasParams.methodAStar]
+    dsimp only [LucasParams.methodAStar]
     split <;> rfl
   rw [hparamD]
   exact selfridgeClassicalSearchWithinTwoMul_some_bound hn hsearch

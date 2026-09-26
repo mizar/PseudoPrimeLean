@@ -79,9 +79,11 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZer
             logDeriv (DirichletCharacter.completedLFunction χ) 0 +
               (((Real.log Real.pi + Real.eulerMascheroniConstant) / 2 + Real.log x + 1 : ℝ) : ℂ)
           from by
-          rw [← hconst_eq]; ring,
+          rw [← hconst_eq]
+          ring,
         show (1 / x : ℂ) = ((1 / x : ℝ) : ℂ) from by
-          push_cast; ring,
+          push_cast
+          ring,
         Complex.re_ofReal_mul, Complex.add_re, Complex.ofReal_re]
       ring
     rw [hmulre]
@@ -93,7 +95,7 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZer
         have him := congrArg Complex.re hm
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
-          div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him;
+          div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
         linarith)
   have hdΓ1 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 1 :=
     differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat heven
@@ -102,7 +104,7 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZer
         have him := congrArg Complex.re hm
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
-          div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him;
+          div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
         linarith)
   have hF1ne : DirichletCharacter.completedLFunction χ 1 ≠ 0 :=
     completedLFunction_ne_zero_of_one_le_re hne (le_refl 1)

@@ -40,12 +40,14 @@ theorem llsCorrectionTerm_le_elementary
     LLS.llsCorrectionTerm (NumberTheory.characterModulus n) ≤
       (24 / 5 : ℝ) * Real.log (Real.log (NumberTheory.characterModulus n)) + 3 := by
   have hq : 3000 ≤ NumberTheory.characterModulus n := by
-    unfold NumberTheory.characterModulus; omega
+    unfold NumberTheory.characterModulus
+    omega
   have hy := (AnalyticNumberTheory.Arithmetic.log_log_pos_of_le hq).2
   have hcount := AnalyticNumberTheory.Arithmetic.elementary_prime_count_term_le hElem hn hn750
   have haux := LLS.llsAuxiliaryTerm_nonneg (NumberTheory.characterModulus n)
   have hCeq : (2 : ℝ) * AnalyticNumberTheory.Arithmetic.elementaryOmegaConstant = 14 / 5 := by
-    unfold AnalyticNumberTheory.Arithmetic.elementaryOmegaConstant; norm_num only
+    unfold AnalyticNumberTheory.Arithmetic.elementaryOmegaConstant
+    norm_num only
   unfold LLS.llsCorrectionTerm
   apply max_le
   · nlinarith [hCeq, hy]
@@ -68,7 +70,8 @@ theorem thirtyOne_lt_elementaryRadius {B : ℕ} (hB : 3 ≤ B) : (31 : ℝ) < el
     have h1 := Real.exp_one_lt_d9
     have h1pos := Real.exp_pos 1
     have h2 : Real.exp 2 = Real.exp 1 * Real.exp 1 := by
-      rw [← Real.exp_add]; norm_num only
+      rw [← Real.exp_add]
+      norm_num only
     rw [h2]
     nlinarith only [h1, h1pos, h2]
   have hlog12 : (2 : ℝ) < Real.log 12 := (Real.lt_log_iff_exp_lt (by norm_num only)).mpr hexp2
@@ -124,7 +127,8 @@ theorem elementary_sq_le_radius (hElem : AnalyticNumberTheory.Arithmetic.Element
         2 ≤
       elementaryRadius B := by
   have hq : 3000 ≤ NumberTheory.characterModulus n := by
-    unfold NumberTheory.characterModulus; omega
+    unfold NumberTheory.characterModulus
+    omega
   have hB750 : 750 ≤ B := hn750.trans hnB
   have hqpos : 0 < NumberTheory.characterModulus n := (by norm_num only : 0 < 3000).trans_le hq
   have hmod := NumberTheory.characterModulus_le hnB
@@ -137,9 +141,13 @@ theorem elementary_sq_le_radius (hElem : AnalyticNumberTheory.Arithmetic.Element
   have hloglog := Real.log_le_log hx hlog
   have hcorr := llsCorrectionTerm_le_elementary hElem hn hn750
   have hcast : (NumberTheory.characterModulus n : ℝ) = 4 * n := by
-    unfold NumberTheory.characterModulus; push_cast; ring
+    unfold NumberTheory.characterModulus
+    push_cast
+    ring
   have hcastB : (NumberTheory.characterModulus B : ℝ) = 4 * B := by
-    unfold NumberTheory.characterModulus; push_cast; ring
+    unfold NumberTheory.characterModulus
+    push_cast
+    ring
   rw [hcastB] at hlog hloglog
   have hbase :
     Real.log (NumberTheory.characterModulus n : ℝ) +
@@ -171,7 +179,8 @@ theorem primeNegOneWitness_cast_le_elementaryRadius (hLLS : LLS.llsTheorem11S1Ch
     (hw : (NumberTheory.PrimeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ elementaryRadius B := by
   have hq : 3000 ≤ NumberTheory.characterModulus n := by
-    unfold NumberTheory.characterModulus; omega
+    unfold NumberTheory.characterModulus
+    omega
   exact
     (primeNegOneWitness_le_of_LLS hLLS n hn hns hq hw).trans
       (elementary_sq_le_radius hElem hn hnB hn750)

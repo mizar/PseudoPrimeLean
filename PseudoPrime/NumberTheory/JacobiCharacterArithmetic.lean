@@ -149,11 +149,11 @@ theorem exists_jacobiCharacterArithmeticData {n : ℕ} (hnpos : 0 < n) (hn : Odd
   have hDpos : 0 < D := by
     by_cases hdmod : d % 4 = 1
     · rw [show D = d by
-          dsimp [D]
+          dsimp only [D]
           exact positiveFundamentalDiscriminant_eq_self hdmod]
       exact hdpos
     · rw [show D = 4 * d by
-          dsimp [D]
+          dsimp only [D]
           exact positiveFundamentalDiscriminant_eq_four_mul hdmod]
       positivity
   have hdl : d ≤ n := by
@@ -164,11 +164,11 @@ theorem exists_jacobiCharacterArithmeticData {n : ℕ} (hnpos : 0 < n) (hn : Odd
   have hDle : D ≤ 4 * n := by
     by_cases hdmod : d % 4 = 1
     · rw [show D = d by
-          dsimp [D]
+          dsimp only [D]
           exact positiveFundamentalDiscriminant_eq_self hdmod]
       omega
     · rw [show D = 4 * d by
-          dsimp [D]
+          dsimp only [D]
           exact positiveFundamentalDiscriminant_eq_four_mul hdmod]
       exact Nat.mul_le_mul_left 4 hdl
   let χ := primitiveQuadraticCharacter n hn
@@ -187,7 +187,7 @@ theorem exists_jacobiCharacterArithmeticData {n : ℕ} (hnpos : 0 < n) (hn : Odd
         discriminant := D
         discriminant_eq := rfl
         discriminant_isFundamentalDiscr := by
-          dsimp [D]
+          dsimp only [D]
           exact positiveFundamentalDiscriminant_isFundamentalDiscr hdodd hdsquarefree
         discriminant_pos := hDpos
         discriminant_le := hDle
@@ -1105,7 +1105,8 @@ theorem JacobiCharacterArithmeticData.squarefreePart_ge_eleven_of_not_small {n :
     | exact h5 rfl
     | exact h7 rfl
     | exact h9 rfl
-    | obtain ⟨k, hk⟩ := hodd; omega
+    | obtain ⟨k, hk⟩ := hodd
+      omega
 
 /-- For an odd nonsquare arithmetic bridge with squarefree part `d`, define the real parameter
 `y = log d`. The cutoff and conductor inequalities below use this same parameter. -/
@@ -1128,7 +1129,7 @@ theorem JacobiCharacterArithmeticData.y_ge_of_nat_cutoff {n : ℕ} {hn : Odd n} 
   have hdposR : (0 : ℝ) < bridge.squarefreePart := by exact_mod_cast bridge.squarefreePart_pos
   have hleR : (N : ℝ) ≤ bridge.squarefreePart := by exact_mod_cast hNd
   have hlog := Real.strictMonoOn_log.monotoneOn hNposR hdposR hleR
-  dsimp [JacobiCharacterArithmeticData.y]
+  dsimp only [JacobiCharacterArithmeticData.y]
   exact hN.trans hlog
 
 /--
@@ -1144,7 +1145,7 @@ theorem JacobiCharacterArithmeticData.y_ge_of_nat_cutoff_of_twelve {n : ℕ} {hn
   have hdposR : (0 : ℝ) < bridge.squarefreePart := by exact_mod_cast bridge.squarefreePart_pos
   have hleR : (N : ℝ) ≤ bridge.squarefreePart := by exact_mod_cast hNd
   have hlog := Real.strictMonoOn_log.monotoneOn hNposR hdposR hleR
-  dsimp [JacobiCharacterArithmeticData.y]
+  dsimp only [JacobiCharacterArithmeticData.y]
   exact hN.trans hlog
 
 /-- The positive fundamental discriminant of the squarefree part `d` is at most `4*d`. -/

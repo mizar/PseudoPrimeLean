@@ -30,9 +30,13 @@ theorem continuous_riemannZetaLogContourKernel_line {x : ℝ} (hx : 0 < x) {τ :
     intro s hs
     simp only [Set.mem_ofPred_eq] at hs
     have hs0 : s ≠ 0 := by
-      intro h; rw [h, Complex.zero_re] at hs; linarith
+      intro h
+      rw [h, Complex.zero_re] at hs
+      linarith
     have hs1 : s ≠ 1 := by
-      intro h; rw [h, Complex.one_re] at hs; linarith
+      intro h
+      rw [h, Complex.one_re] at hs
+      linarith
     have hszeta : riemannZeta s ≠ 0 := riemannZeta_ne_zero_of_one_lt_re hs
     exact
       ContinuousAt.continuousWithinAt
@@ -53,9 +57,13 @@ theorem continuous_riemannZetaReciprocalContourKernel_line {x : ℝ} (hx : 0 < x
     intro s hs
     simp only [Set.mem_ofPred_eq] at hs
     have hs0 : s ≠ 0 := by
-      intro h; rw [h, Complex.zero_re] at hs; linarith
+      intro h
+      rw [h, Complex.zero_re] at hs
+      linarith
     have hs1 : s ≠ 1 := by
-      intro h; rw [h, Complex.one_re] at hs; linarith
+      intro h
+      rw [h, Complex.one_re] at hs
+      linarith
     have hszeta : riemannZeta s ≠ 0 := riemannZeta_ne_zero_of_one_lt_re hs
     exact
       ContinuousAt.continuousWithinAt
@@ -104,9 +112,13 @@ theorem integrable_riemannZetaReciprocalContourKernel {x : ℝ} (hx : 0 < x) {τ
   set σ : ℝ := τ - 1 with hσ_def
   have hxσ : (0 : ℝ) < x ^ σ := Real.rpow_pos_of_pos hx σ
   have hσ0 : σ ≠ 0 := by
-    rw [hσ_def]; intro h; linarith [sub_eq_zero.mp h]
+    rw [hσ_def]
+    intro h
+    linarith [sub_eq_zero.mp h]
   have hσ1 : σ ≠ -1 := by
-    rw [hσ_def]; intro h; linarith
+    rw [hσ_def]
+    intro h
+    linarith
   apply
     MeasureTheory.Integrable.mono'
       (((General.verticalIntegrable_mellinReciprocalKernel hσ0 hσ1).norm).const_mul (C * x ^ σ))
@@ -122,7 +134,9 @@ theorem integrable_riemannZetaReciprocalContourKernel {x : ℝ} (hx : 0 < x) {τ
       simp only [Complex.sub_re, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
         mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero, Complex.one_re]
     have hDenomEq : s * (s - 1) = s' * (s' + 1) := by
-      rw [hs_def, hs'_def, hσ_def]; push_cast; ring
+      rw [hs_def, hs'_def, hσ_def]
+      push_cast
+      ring
     change ‖riemannZetaReciprocalContourKernel x s‖ ≤ C * x ^ σ * ‖(s' * (s' + 1))⁻¹‖
     unfold riemannZetaReciprocalContourKernel
     rw [norm_div, norm_mul, norm_neg, hBnorm, div_eq_mul_inv, ← hDenomEq, ← norm_inv]

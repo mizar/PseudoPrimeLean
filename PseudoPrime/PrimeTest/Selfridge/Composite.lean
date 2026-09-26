@@ -223,7 +223,8 @@ theorem composite_minimal_classical_neOne_eq_nine_or_fifteen_of_not_dvd {n i : �
             False.elim <|
               hmin 5 h5lt
                 ⟨⟨by norm_num only, by decide⟩, hndvd5, by
-                  rw [jacobi_selfridgeD (by decide) hn, h50]; norm_num only⟩
+                  rw [jacobi_selfridgeD (by decide) hn, h50]
+                  norm_num only⟩
         · exact h51
         · exact
             False.elim <|

@@ -47,7 +47,7 @@ theorem pullbackCharacter_apply {H : Subgroup (ZMod q)ˣ} (χ' : MulChar ((ZMod 
   have : H.Normal := H.normal_of_isMulCommutative
   unfold pullbackCharacter
   rw [MulChar.ofUnitHom_coe]
-  simp [val_toUnits_apply]
+  rfl
 
 omit [NeZero q] in
 /-- The pullback character in `pullbackCharacter` is trivial on `H`. -/

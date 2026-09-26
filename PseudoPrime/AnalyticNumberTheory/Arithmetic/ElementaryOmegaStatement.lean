@@ -47,7 +47,8 @@ theorem elementary_prime_count_term_le (hElem : ElementaryOmegaStatement) {n : �
         Real.log (NumberTheory.characterModulus n) ≤
       2 * elementaryOmegaConstant * Real.log (Real.log (NumberTheory.characterModulus n)) := by
   have hq : 3000 ≤ NumberTheory.characterModulus n := by
-    unfold NumberTheory.characterModulus; omega
+    unfold NumberTheory.characterModulus
+    omega
   have hpos := log_log_pos_of_le hq
   set x : ℝ := Real.log (NumberTheory.characterModulus n) with hx_def
   set y : ℝ := Real.log x with hy_def

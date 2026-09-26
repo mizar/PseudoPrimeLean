@@ -238,7 +238,8 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le_generic_of_grh {N : ℕ} 
             dirichletLogContourKernel x χ
               (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re := by
     rw [show ((↑(2 * Real.pi))⁻¹ : ℂ) = (((2 * Real.pi)⁻¹ : ℝ) : ℂ) from by
-        push_cast; ring,
+        push_cast
+        ring,
       Complex.re_ofReal_mul]
   rw [hmulre] at hlimit
   exact hlimit

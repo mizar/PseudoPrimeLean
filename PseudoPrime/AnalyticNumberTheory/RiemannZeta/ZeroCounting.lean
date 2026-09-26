@@ -43,13 +43,14 @@ theorem meromorphic_riemannZeta : Meromorphic riemannZeta := by
 theorem meromorphicOrderAt_riemannZeta_ne_top (s : ℂ) : meromorphicOrderAt riemannZeta s ≠ ⊤ := by
   have hanalyticZero : AnalyticAt ℂ riemannZeta 0 := analyticOn_riemannZeta 0 zero_ne_one
   have hzetaZero : riemannZeta 0 ≠ 0 := by
-    rw [riemannZeta_zero]; norm_num only
+    rw [riemannZeta_zero]
+    norm_num only
   have horderZero : meromorphicOrderAt riemannZeta 0 = 0 :=
     hanalyticZero.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff.mpr hzetaZero
   apply (meromorphic_riemannZeta.exists_meromorphicOrderAt_ne_top_iff_forall.mp ?_) s
   exact
     ⟨0, by
-      rw [horderZero];
+      rw [horderZero]
       simp only [ne_eq, LinearOrderedAddCommGroupWithTop.zero_ne_top, not_false_eq_true]⟩
 
 /-- The multiplicity of a zeta zero, expressed as its finite analytic vanishing order. -/
@@ -230,7 +231,8 @@ theorem ne_zero_of_mem_riemannZetaZerosInAnyRectangle {z w ρ : ℂ}
   intro hρzero
   rw [hρzero, mem_riemannZetaZerosInAnyRectangle_iff] at hρ
   have hzetaZero : riemannZeta 0 ≠ 0 := by
-    rw [riemannZeta_zero]; norm_num only
+    rw [riemannZeta_zero]
+    norm_num only
   exact hzetaZero hρ.2
 
 /-- Every zero in the unrestricted rectangular ledger differs from one. -/
