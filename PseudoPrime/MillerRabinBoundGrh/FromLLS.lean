@@ -204,6 +204,48 @@ theorem exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
     exact exists_prime_millerRabin_witness_le_log_sq hGRH
       (n := n) (s := s) (d := d) hn hnOdd hnNotPrime hdecomp hdOdd
 
+/--
+Under GRH and a fixed odd decomposition of `n - 1`, `n` is prime exactly when every prime base
+below `(log n)^2` passes the strong Miller–Rabin congruence conditions. The forward direction
+excludes a rejected witness using primality; the reverse direction contradicts the GRH witness
+bound for a composite modulus.
+-/
+theorem prime_iff_millerRabin_for_all_primes_le_log_sq
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {n s d : ℕ}
+    (hn : 1 < n)
+    (hnOdd : Odd n)
+    (hdecomp : n - 1 = 2 ^ s * d)
+    (hdOdd : Odd d) :
+    (∀ p : ℕ,
+      Nat.Prime p →
+      (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 →
+      (p : ZMod n) ^ d = (1 : ZMod n) ∨
+        ∃ j : ℕ, j < s ∧
+          (p : ZMod n) ^ (2 ^ j * d) = (-1 : ZMod n)) ↔
+      Nat.Prime n := by
+  classical
+  constructor
+  · intro hpass
+    by_contra hnNotPrime
+    obtain ⟨p, hp, hpBound, hpBase, hpSteps⟩ :=
+      exists_prime_millerRabin_witness_le_log_sq hGRH hn hnOdd hnNotPrime
+        hdecomp hdOdd
+    rcases hpass p hp hpBound with hpow | ⟨j, hj, hminus⟩
+    · exact hpBase hpow
+    · exact hpSteps j hj hminus
+  · intro hnPrime p hp hpBound
+    by_cases hbase : (p : ZMod n) ^ d = (1 : ZMod n)
+    · exact Or.inl hbase
+    · by_cases hminus : ∃ j : ℕ, j < s ∧
+          (p : ZMod n) ^ (2 ^ j * d) = (-1 : ZMod n)
+      · exact Or.inr hminus
+      · exfalso
+        apply no_prime_millerRabin_witness_le_log_sq_of_prime hnOdd hnPrime
+          hdecomp hdOdd
+        exact ⟨p, hp, hpBound, hbase,
+          fun j hj hpow => hminus ⟨j, hj, hpow⟩⟩
+
 /-- The pointwise GRH theorem proves the target witness-bound property. -/
 theorem primeMillerRabinWitnessBound_of_grh
     : PrimeMillerRabinWitnessBound := by
@@ -229,10 +271,10 @@ theorem exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
   let d := PrimeTest.oddPart (n - 1)
   have hnsub : n - 1 ≠ 0 := Nat.sub_ne_zero_of_lt hn
   have hdecomp : n - 1 = 2 ^ s * d := by
-    dsimp [s, d]
+    dsimp only [s, d]
     exact (PrimeTest.twoAdicPart_mul_oddPart (n - 1)).symm
   have hdOdd : Odd d := by
-    dsimp [d]
+    dsimp only [d]
     exact PrimeTest.oddPart_odd hnsub
   obtain ⟨p, hp, hpBound, hbase, hsteps⟩ :=
     exists_prime_millerRabin_witness_le_log_sq
