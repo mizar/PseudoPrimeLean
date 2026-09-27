@@ -1,6 +1,6 @@
-# SelfridgeBoundGrh — Selfridge停止値へのGRH上界の接続
+# PrimeTestBounds.Selfridge — Selfridge停止値へのGRH上界の接続
 
-対象: [`PseudoPrime/SelfridgeBoundGrh`](../PseudoPrime/SelfridgeBoundGrh)。公開入口は [`PseudoPrime/SelfridgeBoundGrh.lean`](../PseudoPrime/SelfridgeBoundGrh.lean)、名前空間は `PseudoPrime.SelfridgeBoundGrh`。
+対象: [`PseudoPrime/PrimeTestBounds/Selfridge`](../PseudoPrime/PrimeTestBounds/Selfridge)。公開入口は [`PseudoPrime/PrimeTestBounds.lean`](../PseudoPrime/PrimeTestBounds.lean)、上界の名前空間は `PseudoPrime.PrimeTestBounds.Selfridge`。離散的な候補列・試行回数・証人比較は `PseudoPrime.PrimeTest` に属する。
 
 この領域は [PrimeTest](PrimeTest.md) の数学的なSelfridge停止値と、[PseudoSquare](PseudoSquare.md) のJacobi目撃者上界を接続する。入口はルートの `import PseudoPrime` からも到達できる。
 
@@ -8,12 +8,16 @@
 
 | モジュール | 内容 |
 |---|---|
-| [WitnessBridge.lean](../PseudoPrime/SelfridgeBoundGrh/WitnessBridge.lean) | 共通数論の素数目撃者とSelfridge停止値の比較 |
-| [MaximumBridge.lean](../PseudoPrime/SelfridgeBoundGrh/MaximumBridge.lean) | 古典候補・Wheel30の停止値最大と `QNeOne`／`QNegOne` の接続 |
-| [ElementaryRadius.lean](../PseudoPrime/SelfridgeBoundGrh/ElementaryRadius.lean) | 因子検出停止、純粋-1停止、明示的半径の点ごとの比較 |
-| [LogSqMaximum.lean](../PseudoPrime/SelfridgeBoundGrh/LogSqMaximum.lean) | 停止値の有限最大に対する対数二乗上界 |
-| [LogSq.lean](../PseudoPrime/SelfridgeBoundGrh/LogSq.lean) | 小区間と一般区間を合わせた点ごとの上界 |
-| [TrialCount.lean](../PseudoPrime/SelfridgeBoundGrh/TrialCount.lean) | 停止候補をJacobi試行回数へ変換した上界 |
+| [WitnessBridge.lean](../PseudoPrime/PrimeTest/Selfridge/WitnessBridge.lean) | 共通数論の素数目撃者とSelfridge停止値の比較 |
+| [MaximumBridge.lean](../PseudoPrime/PrimeTestBounds/Selfridge/MaximumBridge.lean) | 古典候補・Wheel30の停止値最大と `QNeOne`／`QNegOne` の接続 |
+| [ElementaryRadius.lean](../PseudoPrime/PrimeTestBounds/Selfridge/ElementaryRadius.lean) | 因子検出停止、純粋-1停止、明示的半径の点ごとの比較 |
+| [LogSqMaximum.lean](../PseudoPrime/PrimeTestBounds/Selfridge/LogSqMaximum.lean) | 停止値の有限最大に対する対数二乗上界 |
+| [LogGRH.lean](../PseudoPrime/PrimeTestBounds/Selfridge/LogGRH.lean) | GRHを仮定する点ごとの上界 |
+| [TrialCount.lean](../PseudoPrime/PrimeTestBounds/Selfridge/TrialCount.lean) | 無条件の最大試行回数と実数への比較 |
+| [Selfridge/TrialCount.lean](../PseudoPrime/PrimeTest/Selfridge/TrialCount.lean) | 離散的な候補列と試行回数（PrimeTest） |
+| [LogBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/LogBounds.lean) | 無条件の数値対数評価・小区間評価 |
+| [Comparison.lean](../PseudoPrime/PrimeTestBounds/Selfridge/Comparison.lean) | 無条件の実数への停止値比較 |
+| [TrialCountGRH.lean](../PseudoPrime/PrimeTestBounds/Selfridge/TrialCountGRH.lean) | GRH付き試行回数上界 |
 
 ## 停止値の意味
 
@@ -46,7 +50,7 @@ $$
 
 因子検出停止は最小の `≠1` 素数目撃者との比較を経て、PseudoSquareの対数二乗評価へ接続する。
 純粋−1停止は `max 27 (最小の−1素数目撃者)` 以下という比較を経て、一般S1由来の `R(n)` へ接続する。
-この接続が [ElementaryRadius.lean](../PseudoPrime/SelfridgeBoundGrh/ElementaryRadius.lean) の
+この接続が [ElementaryRadius.lean](../PseudoPrime/PrimeTestBounds/Selfridge/ElementaryRadius.lean) の
 点ごとの明示的上界を供給する。
 
 有限最大では、`B ≥ 399` で古典的な純粋−1停止最大と `QNegOne B` が等しく、
@@ -57,7 +61,7 @@ $$
 
 ## 試行回数と計算量
 
-`classicalCandidateAt` は候補列、`classicalTrialCountThrough` は指定候補までの試行回数を定義する。古典候補 `i` までの回数は `(i - 3) / 2`。`classicalTrialMaximum_elementary_bound_explicit` は停止値最大の上界を、試行回数最大の明示上界に変換する。
+`PseudoPrime.PrimeTest.classicalCandidateAt` は候補列、`PseudoPrime.PrimeTest.classicalTrialCountThrough` は指定候補までの試行回数を定義する。古典候補 `i` までの回数は `(i - 3) / 2`。`classicalTrialMaximum_elementary_bound_explicit` は停止値最大の上界を、試行回数最大の明示上界に変換する。
 
 具体的にはGRHと `B ≥ 751` のもとで、因子検出の試行回数最大は純粋−1の試行回数最大以下、
 後者は `R(B)/2 + 1` 以下となる。
@@ -67,11 +71,11 @@ $$
 ## 利用方法
 
 ```lean
-import PseudoPrime.SelfridgeBoundGrh
+import PseudoPrime.PrimeTestBounds
 
-#check PseudoPrime.SelfridgeBoundGrh.classicalSelfridgeD_elementary_bound_explicit
-#check PseudoPrime.SelfridgeBoundGrh.classicalNeOneMaximum_cast_le_log_sq_of_751_le
-#check PseudoPrime.SelfridgeBoundGrh.classicalTrialMaximum_elementary_bound_explicit
+#check PseudoPrime.PrimeTestBounds.Selfridge.classicalSelfridgeD_elementary_bound_explicit
+#check PseudoPrime.PrimeTestBounds.Selfridge.classicalNeOneMaximum_cast_le_log_sq_of_751_le
+#check PseudoPrime.PrimeTestBounds.Selfridge.classicalTrialMaximum_elementary_bound_explicit
 ```
 
 全体を検証する場合は、`lakefile.toml` のある `PseudoPrime` ディレクトリで `lake build` を実行する。

@@ -22,18 +22,21 @@ GRH は明示的な仮定として受け取る。証明は、合格底を含む�
 $1 < n < 3000$ のカーネル検証による有限証明、LLS Theorem 1.1(2) の GRH 定理を組み合わせる。
 
 公開定理は
-[`MillerRabinBoundGrh/FromLLS.lean`](PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) にある。
+[`PrimeTestBounds/MillerRabin/FromLLS.lean`](PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) にある。
 
 ```lean
 import PseudoPrime
 
-#check PseudoPrime.MillerRabinBoundGrh.primeMillerRabinWitnessBound_of_grh
-#check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq
-#check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
-#check PseudoPrime.MillerRabinBoundGrh.exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
+namespace PseudoPrime.PrimeTestBounds.MillerRabin
+
+#check exists_prime_millerRabin_witness_le_log_sq
+#check exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
+#check exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
+
+end PseudoPrime.PrimeTestBounds.MillerRabin
 ```
 
-順に、命題 `PrimeMillerRabinWitnessBound` の証明、`n` とその分解 `s,d` に対する証人定理、
+順に、`n` とその分解 `s,d` に対する証人定理、
 奇数入力に対する「証人が存在すること」と「`n` が素数でないこと」の同値、および
 実行用判定 `PseudoPrime.PrimeTest.strongMillerRabinWithBase n p = false` を与える系である。
 前提・宣言の対応と証明の流れは [Miller–Rabin 証人上界の解説](doc/MillerRabinBoundGrh.md) を参照。
@@ -288,11 +291,11 @@ Method A と Method A* の Strong Lucas 判定結果も、例外的な $D=5$ の
 
 Method A と A* が用いる共通の古典的 D 選択走査については、 $B\ge751$ に対する
 対応する集約境界が、
-[`SelfridgeBoundGrh/LogSqMaximum.lean`](PseudoPrime/SelfridgeBoundGrh/LogSqMaximum.lean)
+[`SelfridgeBoundGrh/LogSqMaximum.lean`](PseudoPrime/PrimeTestBounds/Selfridge/LogSqMaximum.lean)
 の `classicalNeOneMaximum_cast_le_log_sq_of_751_le` として証明されている。
 
 点ごとの初等半径境界は GRH の下で、
-[`SelfridgeBoundGrh/ElementaryRadius.lean`](PseudoPrime/SelfridgeBoundGrh/ElementaryRadius.lean)
+[`SelfridgeBoundGrh/ElementaryRadius.lean`](PseudoPrime/PrimeTestBounds/Selfridge/ElementaryRadius.lean)
 で証明される。
 
 ```lean
@@ -357,7 +360,7 @@ Lean では、 $g_{-1}(n)$ の絶対値を、符号付き `selfridgeD` に
 ### Selfridge 停止に対する対数境界
 
 因子検出停止の対数境界は
-[`SelfridgeBoundGrh/LogSq.lean`](PseudoPrime/SelfridgeBoundGrh/LogSq.lean)
+[`PrimeTestBounds/Selfridge/LogGRH.lean`](PseudoPrime/PrimeTestBounds/Selfridge/LogGRH.lean)
 で証明される。
 
 ```lean

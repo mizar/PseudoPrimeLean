@@ -5,7 +5,7 @@ Authors: Mizar
 -/
 import PseudoPrime.PseudoSquare.Computation.QThresholds
 import PseudoPrime.PseudoSquare.Computation.MillionWitnessBridge
-import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaFinal
+import PseudoPrime.Analysis.LogarithmicConstants
 
 /-!
 # Finite logarithmic bounds for Q witnesses

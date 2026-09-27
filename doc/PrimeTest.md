@@ -19,6 +19,33 @@
 | [BPSW](../PseudoPrime/PrimeTest/BPSW) | 通常版・強化版の組合せとトップレベル仕様 |
 | [Regression.lean](../PseudoPrime/PrimeTest/Regression.lean) | 擬素数、大整数、平方数などの実行回帰 |
 
+## 証明付き判定・証明書・解析境界
+
+`Result.lean` の `Decision` は素数・非素数の証明と `unknown` を区別する。
+[Execution.lean](../PseudoPrime/PrimeTest/Execution.lean) が方式別の判定を接続し、
+APR-CLの局所数論核が未証明の証明書はpendingのまま保持する。
+底2・3の有限確定は [MillerRabin/Finite.lean](../PseudoPrime/PrimeTest/MillerRabin/Finite.lean)
+にあり、保証範囲は3000未満。一般のMiller–Rabin・Lucas・BPSWの通過だけで素数とは確定しない。
+
+BLSの入口は責務別に分かれる。
+
+| 入口 | 役割 |
+|---|---|
+| [Certificate.lean](../PseudoPrime/PrimeTest/BLS/Certificate.lean) | square・cube・BLS5の外部証明書検証と健全性 |
+| [CertificateJson.lean](../PseudoPrime/PrimeTest/BLS/CertificateJson.lean) | JSON復号・符号化・検証（生成器に非依存） |
+| [Search.lean](../PseudoPrime/PrimeTest/BLS/Search.lean) | 予算付き探索、証人生成、素数・合成数の結果 |
+| [CertificateGenerate.lean](../PseudoPrime/PrimeTest/BLS/CertificateGenerate.lean) | 検証済み外部証明書の生成 |
+| [CertificateGenerateJson.lean](../PseudoPrime/PrimeTest/BLS/CertificateGenerateJson.lean) | JSON生成 |
+
+因数分解器は `NumberTheory.Factorization`、葉の素数確認方針との接続は `FactorizationPolicy` にある。
+`PrimeTest` のimport閉包にはプロジェクト固有の解析・GRH層を含めない。
+解析的上界の総合入口は [PrimeTestBounds.lean](../PseudoPrime/PrimeTestBounds.lean)。
+Selfridgeの無条件の評価とGRH付き評価は[上界ガイド](SelfridgeBoundGrh.md)を参照する。
+
+JSONの自然数は共通の `CertificateJson.readNat` で十進文字列から復号する。
+CLIの `Tools.CertificateIO.readFileBounded` は上限超過を復号前に拒否する。
+入力バイト制限は、数学的検証の時間・総メモリ上限を保証するものではない。
+
 ## 実行順序
 
 `bailliePSW` と `strengthenedBPSW` は共通の `primalityPrecheck` を呼ぶ。`n < 2` はfalse、2はtrue、その他の偶数と平方数はfalseになる。平方数チェックは `Nat.sqrt n ^ 2 == n` であり、Selfridge探索より前に実行する。
@@ -40,7 +67,7 @@ Method Aは `P = 1, Q = (1-D)/4`。Method A*は `D = 5` の場合に `P = Q = 5`
 GRHの下で、任意の奇合成数 $n>1$ に対して $p\le(\log n)^2$ を満たす素数底が存在し、
 `strongMillerRabinWithBase n p = false` となることも証明されている。
 詳しい主張と利用例は [MillerRabinBoundGrh](MillerRabinBoundGrh.md) を参照する。
-この上界の入口は `PseudoPrime.MillerRabinBoundGrh.FromLLS` である。
+この上界の入口は `PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS` である。
 
 無条件の基盤は [MillerRabin/Composite.lean](../PseudoPrime/PrimeTest/MillerRabin/Composite.lean)
 の真部分群存在定理と、

@@ -16,6 +16,16 @@ import PseudoPrime.NumberTheory.PrimitiveJacobiCharacter
 import PseudoPrime.NumberTheory.Jacobi.Basic
 import PseudoPrime.NumberTheory.Jacobi.Prime
 import PseudoPrime.NumberTheory.Factorization
+import PseudoPrime.NumberTheory.Factorization.Basic
+import PseudoPrime.NumberTheory.Factorization.PrimeLeafPolicy
+import PseudoPrime.NumberTheory.Factorization.PollardRho.FactorSupply
+import PseudoPrime.NumberTheory.Factorization.Partial
+import PseudoPrime.NumberTheory.Factorization.PrimePowers
+import PseudoPrime.NumberTheory.Factorization.PollardRho.Budget
+import PseudoPrime.NumberTheory.Factorization.SmallInput
+import PseudoPrime.NumberTheory.Factorization.PollardRho.Basic
+import PseudoPrime.NumberTheory.Factorization.PollardRho.Orbit
+import PseudoPrime.NumberTheory.Factorization.PollardRho.Search
 import PseudoPrime.NumberTheory.JacobiCongruence
 import PseudoPrime.NumberTheory.DirichletCharacter
 import PseudoPrime.NumberTheory.Jacobi.Numerator

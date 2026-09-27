@@ -28,5 +28,5 @@ in their focused submodules, where they can be built and checked independently.
 General foundations have their own `PseudoPrime.Analysis`,
 `PseudoPrime.AnalyticNumberTheory`, and `PseudoPrime.NumberTheory` umbrellas.
 Executable primality tests and Selfridge bounds are exposed by
-`PseudoPrime.PrimeTest` and `PseudoPrime.SelfridgeBoundGrh`, respectively.
+`PseudoPrime.PrimeTest` and `PseudoPrime.PrimeTestBounds.Selfridge`, respectively.
 -/

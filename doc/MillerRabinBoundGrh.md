@@ -1,7 +1,7 @@
-# MillerRabinBoundGrh — GRH 下の素数底 Miller–Rabin 証人上界
+# PrimeTestBounds.MillerRabin — GRH 下の素数底 Miller–Rabin 証人上界
 
-公開入口は [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean)。
-名前空間は `PseudoPrime.MillerRabinBoundGrh` で、`import PseudoPrime` からも利用できる。
+公開入口は [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean)。
+名前空間は `PseudoPrime.PrimeTestBounds.MillerRabin` で、`import PseudoPrime` からも利用できる。
 
 ## 証明した主張
 
@@ -28,22 +28,22 @@ GRH 自体を証明したという主張ではない。
 
 ## 公開定理と利用方法
 
-以下の名前は `PseudoPrime.MillerRabinBoundGrh` 名前空間に属する。
+以下の名前は `PseudoPrime.PrimeTestBounds.MillerRabin` 名前空間に属する。
 
 | 宣言 | 内容 | ソース |
 |---|---|---|
-| `PrimeMillerRabinWitnessBound` | GRHからすべての奇合成数とその分解に対する証人存在を述べる `Prop` | [Definition.lean](../PseudoPrime/MillerRabinBoundGrh/Definition.lean) |
-| `primeMillerRabinWitnessBound_of_grh` | 上記の `Prop` の証明 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
-| `exists_prime_millerRabin_witness_le_log_sq` | 指定した `n,s,d` に対する主定理 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
-| `exists_prime_millerRabin_witness_le_log_sq_iff_not_prime` | GRHの下で、奇数 `n > 1` の証人存在と `¬ Nat.Prime n` の同値 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
-| `exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq` | 計算済み分解を使うBoolean判定の不合格という形の系 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
-| `exists_prime_millerRabin_witness_le_log_sq_of_s2` | S2を仮定した $n\ge3000$ の接続定理 | [FromLLS.lean](../PseudoPrime/MillerRabinBoundGrh/FromLLS.lean) |
-| `exists_prime_millerRabin_witness_le_log_sq_of_lt_3000` | GRHを仮定しない $1 < n < 3000$ の定理 | [Small.lean](../PseudoPrime/MillerRabinBoundGrh/Small.lean) |
+| `exists_prime_millerRabin_witness_le_log_sq` | 指定した `n,s,d` に対する主定理 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
+| `exists_prime_millerRabin_witness_le_log_sq_iff_not_prime` | GRHの下で、奇数 `n > 1` の証人存在と `¬ Nat.Prime n` の同値 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
+| `exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq` | 計算済み分解を使うBoolean判定の不合格という形の系 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
+| `exists_prime_millerRabin_witness_le_log_sq_of_s2` | S2を仮定した $n\ge3000$ の接続定理 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
+| `exists_prime_millerRabin_witness_le_log_sq_of_lt_3000` | GRHを仮定しない $1 < n < 3000$ の定理 | [SmallLogBound.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallLogBound.lean) |
 
 次の例は主定理の前提と結論をそのまま示す。
 
 ```lean
-import PseudoPrime.MillerRabinBoundGrh.FromLLS
+import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
+
+namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 example
     (hGRH : PseudoPrime.AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -53,13 +53,13 @@ example
       Nat.Prime p ∧ (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 ∧
       (p : ZMod n) ^ d ≠ (1 : ZMod n) ∧
       ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ (-1 : ZMod n) := by
-  exact PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq
+  exact PseudoPrime.PrimeTestBounds.MillerRabin.exists_prime_millerRabin_witness_le_log_sq
     hGRH hn hnOdd hnNotPrime hdecomp hdOdd
 
-#check PseudoPrime.MillerRabinBoundGrh.PrimeMillerRabinWitnessBound
-#check PseudoPrime.MillerRabinBoundGrh.primeMillerRabinWitnessBound_of_grh
-#check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
-#check PseudoPrime.MillerRabinBoundGrh.exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
+#check exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
+#check exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
+
+end PseudoPrime.PrimeTestBounds.MillerRabin
 ```
 
 同値定理は `1 < n`、`Odd n`、`n - 1 = 2 ^ s * d`、`Odd d` を前提とする。
@@ -130,10 +130,10 @@ $1 < n < 3000$ の奇合成数について、底2または底3で不合格にな
 既存のStrong Miller–Rabin判定へ移す。外部の整数探索結果を証明根拠には使わない。
 
 奇合成数 $n>1$ なら $n\ge9$ なので $3\le(\log n)^2$ が成立する。
-[Computation/SmallLogBound.lean](../PseudoPrime/PrimeTest/MillerRabin/Computation/SmallLogBound.lean)
+[SmallLogBound.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallLogBound.lean)
 は対数評価を有限分類へ接続し、小範囲の素数証人定理を与える。
 有限分類だけを使う場合は `PseudoPrime.PrimeTest.MillerRabin.Computation.Small`、
-対数上界も使う場合は `PseudoPrime.PrimeTest.MillerRabin.Computation.SmallLogBound` をimportする。
+対数上界も使う場合は `PseudoPrime.PrimeTestBounds.MillerRabin.SmallLogBound` をimportする。
 
 ## 証明依存
 
@@ -145,8 +145,12 @@ $1 < n < 3000$ の奇合成数について、底2または底3で不合格にな
 ```lean
 import PseudoPrime
 
-#print axioms PseudoPrime.MillerRabinBoundGrh.primeMillerRabinWitnessBound_of_grh
+namespace PseudoPrime.PrimeTestBounds.MillerRabin
+
+#print axioms exists_prime_millerRabin_witness_le_log_sq
 #print axioms PseudoPrime.PrimeTest.base_two_or_three_rejects_of_lt_3000
+
+end PseudoPrime.PrimeTestBounds.MillerRabin
 ```
 
 [構成全体へ](README.md) · [PrimeTest](PrimeTest.md) · [LLS](LLS.md)

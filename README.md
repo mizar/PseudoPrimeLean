@@ -23,20 +23,22 @@ The proof combines an unconditional proper-subgroup construction, a kernel-check
 finite proof for $1 < n < 3000$, and the GRH theorem for LLS Theorem 1.1(2).
 
 The public results are in
-[`MillerRabinBoundGrh/FromLLS.lean`](PseudoPrime/MillerRabinBoundGrh/FromLLS.lean):
+[`PrimeTestBounds/MillerRabin/FromLLS.lean`](PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean):
 
 ```lean
 import PseudoPrime
 
-#check PseudoPrime.MillerRabinBoundGrh.primeMillerRabinWitnessBound_of_grh
-#check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq
-#check PseudoPrime.MillerRabinBoundGrh.exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
-#check PseudoPrime.MillerRabinBoundGrh.exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
+namespace PseudoPrime.PrimeTestBounds.MillerRabin
+
+#check exists_prime_millerRabin_witness_le_log_sq
+#check exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
+#check exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
+
+end PseudoPrime.PrimeTestBounds.MillerRabin
 ```
 
-The first theorem proves `PrimeMillerRabinWitnessBound`; the second gives the witness for `n`
-and its decomposition `s,d`; the third states that, for odd `n > 1`, this witness exists exactly
-when `n` is not prime; and the fourth gives
+The first theorem gives the witness for `n` and its decomposition `s,d`; the second states
+that, for odd `n > 1`, this witness exists exactly when `n` is not prime; and the third gives
 `PseudoPrime.PrimeTest.strongMillerRabinWithBase n p = false` for the executable test.
 See the [theorem and proof guide (Japanese)](doc/MillerRabinBoundGrh.md) for the assumptions,
 source mapping, and finite-range argument.
@@ -288,10 +290,10 @@ exceptional $D=5$ branch.  The proof is provided by
 For the common classical D-selection scan used by Methods A and A*, the corresponding
 aggregate bound for $B\ge751$ is proved as
 `classicalNeOneMaximum_cast_le_log_sq_of_751_le` in
-[`SelfridgeBoundGrh/LogSqMaximum.lean`](PseudoPrime/SelfridgeBoundGrh/LogSqMaximum.lean).
+[`SelfridgeBoundGrh/LogSqMaximum.lean`](PseudoPrime/PrimeTestBounds/Selfridge/LogSqMaximum.lean).
 
 The pointwise elementary-radius bound is proved under GRH in
-[`SelfridgeBoundGrh/ElementaryRadius.lean`](PseudoPrime/SelfridgeBoundGrh/ElementaryRadius.lean):
+[`SelfridgeBoundGrh/ElementaryRadius.lean`](PseudoPrime/PrimeTestBounds/Selfridge/ElementaryRadius.lean):
 
 ```lean
 theorem classicalSelfridgeD_elementary_bound_explicit
@@ -349,7 +351,7 @@ the signed `selfridgeD` at `firstStopNegOne`.
 ### Logarithmic bound for the Selfridge stop
 
 The logarithmic bound for the factor-detection stop is proved in
-[`SelfridgeBoundGrh/LogSq.lean`](PseudoPrime/SelfridgeBoundGrh/LogSq.lean):
+[`PrimeTestBounds/Selfridge/LogGRH.lean`](PseudoPrime/PrimeTestBounds/Selfridge/LogGRH.lean):
 
 ```lean
 theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le

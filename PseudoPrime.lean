@@ -10,5 +10,5 @@ import PseudoPrime.LLS
 import PseudoPrime.LLS.Extensions
 import PseudoPrime.PseudoSquare
 import PseudoPrime.PrimeTest
-import PseudoPrime.SelfridgeBoundGrh
-import PseudoPrime.MillerRabinBoundGrh.FromLLS
+import PseudoPrime.PrimeTestBounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS

@@ -13,8 +13,8 @@
 | [NumberTheory](NumberTheory.md) | Jacobi指標、原始化、奇素数目撃者の無条件存在 | RH・GRH不要 |
 | [PrimeTest](PrimeTest.md) | 実行可能なBPSW等のテスト、素数を受理する証明 | トップレベルの素数完全性は無条件 |
 | [PseudoSquare](PseudoSquare.md) | Jacobi目撃者の点ごと・有限最大の明示上界 | 有限証明は無条件、解析的上界はGRH下 |
-| [SelfridgeBoundGrh](SelfridgeBoundGrh.md) | Selfridge停止値・最大値・Jacobi試行回数の上界 | 解析的上界はGRH下 |
-| [MillerRabinBoundGrh.FromLLS](MillerRabinBoundGrh.md) | 任意の奇合成数に対する $(\log n)^2$ 以下の素数底Miller–Rabin証人 | 全範囲の上界はGRH下、真部分群と有限区間は無条件 |
+| [PrimeTestBounds.Selfridge](SelfridgeBoundGrh.md) | Selfridge停止値・最大値・Jacobi試行回数の上界 | 解析的上界はGRH下 |
+| [PrimeTestBounds.MillerRabin.FromLLS](MillerRabinBoundGrh.md) | 任意の奇合成数に対する $(\log n)^2$ 以下の素数底Miller–Rabin証人 | 全範囲の上界はGRH下、真部分群と有限区間は無条件 |
 
 ## 成果の接続
 
@@ -30,9 +30,9 @@ flowchart TD
   LLS --> PS
   EXT[LLS.Extensions: 二次・偶指標の精密評価] --> PS
   NT --> PT[PrimeTest: 実行用テストと探索]
-  PS --> SB[SelfridgeBoundGrh: 停止値と試行回数]
+  PS --> SB[PrimeTestBounds.Selfridge: 停止値と試行回数]
   PT --> SB
-  PT --> MR[MillerRabinBoundGrh: 素数底の証人上界]
+  PT --> MR[PrimeTestBounds.MillerRabin: 素数底の証人上界]
   LLS --> MR
 ```
 
@@ -44,8 +44,8 @@ PrimeTestの有限探索証明にはPseudoSquareの有限証明書を利用す�
 ## 読み方と利用方法
 
 最終的な数学的上界は [PseudoSquare](PseudoSquare.md) と
-[SelfridgeBoundGrh](SelfridgeBoundGrh.md)、
-[MillerRabinBoundGrh](MillerRabinBoundGrh.md)、その解析的な根拠は [LLS](LLS.md) を参照する。
+[PrimeTestBounds.Selfridge](SelfridgeBoundGrh.md)、
+[PrimeTestBounds.MillerRabin](MillerRabinBoundGrh.md)、その解析的な根拠は [LLS](LLS.md) を参照する。
 実行用の素数性テストを利用する場合は [PrimeTest](PrimeTest.md) から読む。
 [C++・Pythonの参考実装](BPSWImplementations.md)には実行方法とLean版との相違をまとめている。
 
@@ -55,7 +55,7 @@ import PseudoPrime
 
 これにより表の8領域と `PseudoPrime.LLS.Extensions` が読み込まれる。
 必要な領域だけなら、例えば `import PseudoPrime.LLS` のように選択できる。
-Miller–Rabin証人上界の個別入口は `import PseudoPrime.MillerRabinBoundGrh.FromLLS`。
+Miller–Rabin証人上界の個別入口は `import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS`。
 各ページ末尾の `#check` は公開APIを確認する例である。
 
 GRHは明示的に受け取る仮定であり、プロジェクトがGRHを証明したという意味ではない。
