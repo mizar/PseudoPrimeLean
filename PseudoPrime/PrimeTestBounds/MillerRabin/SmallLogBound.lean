@@ -12,6 +12,16 @@ import PseudoPrime.Analysis.LogarithmicConstants
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
+/-- A prime base at most `(log n)^2` that fails the strong test using the canonical
+two-adic decomposition of `n - 1`. This predicate is the conclusion of the witness bounds. -/
+def PrimeMillerRabinWitness (n : ℕ) : Prop :=
+  let s := padicValNat 2 (n - 1)
+  let d := Nat.divMaxPow (n - 1) 2
+  ∃ p : ℕ, Nat.Prime p ∧
+    (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 ∧
+    (p : ZMod n) ^ d ≠ 1 ∧
+    ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1
+
 /-- Odd composites above one are at least nine, giving a uniform lower bound for the log square. -/
 private theorem log_sq_ge_three_of_odd_composite {n : ℕ}
     (hn : 1 < n)
@@ -20,7 +30,7 @@ private theorem log_sq_ge_three_of_odd_composite {n : ℕ}
     (3 : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 := by
   have hn9 : 9 ≤ n := by
     by_contra hlt9
-    have hnlt9 : n < 9 := by omega
+    have hnlt9 : n < 9 := Nat.lt_of_not_ge hlt9
     interval_cases n <;> first
     | (norm_num only at hn; done)
     | (norm_num only at hnOdd; done)
@@ -47,33 +57,20 @@ private theorem log_sq_ge_three_of_odd_composite {n : ℕ}
         (sq_le_sq₀ (by norm_num only) hlognonneg).mpr hlogn.le
   exact le_trans (by norm_num only) hlogsquare
 
-/--
-The finite interval supplies a base-`2` or base-`3` witness and the odd-composite logarithmic
-estimate supplies its bound. This theorem is independent of GRH and accepts any odd exponent
-decomposition, which makes it the small-input branch of the logarithmic witness argument.
--/
-theorem exists_prime_millerRabin_witness_le_log_sq_of_lt_3000 {n s d : ℕ}
-    (hn : 1 < n)
-    (hnOdd : Odd n)
-    (hnNotPrime : ¬ Nat.Prime n)
-    (hdecomp : n - 1 = 2 ^ s * d)
-    (hdOdd : Odd d)
-    (hlt : n < 3000) :
-    ∃ p : ℕ,
-      Nat.Prime p ∧
-      (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 ∧
-      (p : ZMod n) ^ d ≠ 1 ∧
-      ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
+/-- A small odd composite has a prime strong Miller–Rabin witness below the log-square
+bound. The predecessor decomposition is computed by the test itself. -/
+theorem exists_prime_millerRabin_witness_le_log_sq_of_lt_3000 {n : ℕ}
+    (hn : 1 < n) (hnOdd : Odd n) (hnNotPrime : ¬ Nat.Prime n)
+    (hlt : n < 3000) : PrimeMillerRabinWitness n := by
   have hlog := log_sq_ge_three_of_odd_composite hn hnOdd hnNotPrime
-  rcases PrimeTest.base_two_or_three_rejects_of_lt_3000 hn hnOdd hnNotPrime hlt with hbase2 | hbase3
+  rcases PrimeTest.base_two_or_three_rejects_of_lt_3000 hn hnOdd hnNotPrime hlt with
+    hbase2 | hbase3
   · refine ⟨2, Nat.prime_two, ?_, ?_⟩
     · exact le_trans (by norm_num only) hlog
     · exact PrimeTest.not_strongMillerRabinPass_iff.mp
-        ((PrimeTest.strongMillerRabinWithBase_eq_false_iff_not_pass_decomp
-          (n := n) (s := s) (d := d) (a := 2) hn hdecomp hdOdd).1 hbase2)
+        (PrimeTest.strongMillerRabinWithBase_eq_false_iff_not_pass.mp hbase2)
   · refine ⟨3, by norm_num only, hlog, ?_⟩
     exact PrimeTest.not_strongMillerRabinPass_iff.mp
-      ((PrimeTest.strongMillerRabinWithBase_eq_false_iff_not_pass_decomp
-        (n := n) (s := s) (d := d) (a := 3) hn hdecomp hdOdd).1 hbase3)
+      (PrimeTest.strongMillerRabinWithBase_eq_false_iff_not_pass.mp hbase3)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

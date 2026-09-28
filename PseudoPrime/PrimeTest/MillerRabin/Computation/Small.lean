@@ -48,17 +48,39 @@ private theorem baseTwoRejectCheckData_sound {n s d : ℕ} (hn : 1 < n)
   have hbase := of_decide_eq_true hbase
   have hsteps := List.all_eq_true.mp hsteps
   obtain ⟨hdecomp, hdOdd, hodd⟩ := hbase
-  apply (strongMillerRabinWithBase_eq_false_iff_not_pass_decomp
-    (n := n) (s := s) (d := d) hn hdecomp hdOdd).2
-  rw [not_strongMillerRabinPass_iff]
-  constructor
-  · rw [← zmodPow_eq_pow]
-    exact hodd
-  · intro j hj
-    have hjmem : j ∈ List.range s := List.mem_range.mpr hj
-    have hstep := of_decide_eq_true (hsteps j hjmem)
-    rw [← zmodPow_eq_pow]
-    exact hstep
+  have hdvd : ¬ 2 ∣ d := by
+    intro hdiv
+    exact (Nat.not_even_iff_odd.mpr hdOdd) (even_iff_two_dvd.mpr hdiv)
+  have hmax := Nat.maxPowDvdDiv_of_pow_mul_eq
+    (Nat.sub_ne_zero_of_lt hn) hdecomp.symm hdvd
+  have hs : padicValNat 2 (n - 1) = s := by
+    calc
+      padicValNat 2 (n - 1) = (Nat.maxPowDvdDiv 2 (n - 1)).1 :=
+        (Nat.fst_maxPowDvdDiv 2 (n - 1)).symm
+      _ = s := congrArg Prod.fst hmax
+  have hd : Nat.divMaxPow (n - 1) 2 = d := by
+    calc
+      Nat.divMaxPow (n - 1) 2 = (Nat.maxPowDvdDiv 2 (n - 1)).2 :=
+        (Nat.snd_maxPowDvdDiv 2 (n - 1)).symm
+      _ = d := congrArg Prod.snd hmax
+  apply (strongMillerRabinWithBase_eq_false_iff_not_pass).2
+  intro hpass
+  have hpass' : (2 : ZMod n) ^ d = 1 ∨
+      ∃ j : ℕ, j < s ∧ (2 : ZMod n) ^ (2 ^ j * d) = -1 := by
+    simpa only [StrongMillerRabinPass, hs, hd, Nat.cast_ofNat] using hpass
+  have hnot : ¬ ((2 : ZMod n) ^ d = 1 ∨
+      ∃ j : ℕ, j < s ∧ (2 : ZMod n) ^ (2 ^ j * d) = -1) := by
+    intro h
+    rcases h with hone | ⟨j, hj, hminus⟩
+    · have hodd' : (2 : ZMod n) ^ d ≠ 1 := by
+        simpa only [zmodPow_eq_pow, Nat.cast_ofNat] using hodd
+      exact hodd' hone
+    · have hjmem : j ∈ List.range s := List.mem_range.mpr hj
+      have hstep := of_decide_eq_true (hsteps j hjmem)
+      have hstep' : (2 : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
+        simpa only [zmodPow_eq_pow, Nat.cast_ofNat] using hstep
+      exact hstep' hminus
+  exact hnot hpass'
 
 /-- The bounded checker inherits soundness from its verified decomposition and power checks. -/
 private theorem baseTwoRejectCheck_sound {n : ℕ} (hn : 1 < n)
@@ -69,13 +91,24 @@ private theorem baseTwoRejectCheck_sound {n : ℕ} (hn : 1 < n)
 
 /-- The sole base-`2` composite exception below `3000` fails the base-`3` test. -/
 private theorem baseThreeRejects_2047 : strongMillerRabinWithBase 2047 3 = false := by
-  apply (strongMillerRabinWithBase_eq_false_iff_not_pass_decomp
-    (n := 2047) (s := 1) (d := 1023) (by decide) (by decide) (by decide)).2
+  apply (strongMillerRabinWithBase_eq_false_iff_not_pass).2
+  have hoddPart : padicValNat 2 1023 = 0 :=
+    padicValNat.eq_zero_of_not_dvd (by norm_num)
+  have hs : padicValNat 2 (2047 - 1) = 1 := by
+    calc
+      padicValNat 2 (2047 - 1) = padicValNat 2 (2 * 1023) := by norm_num
+      _ = padicValNat 2 1023 + 1 := padicValNat_base_mul (by norm_num) (by norm_num)
+      _ = 1 := by rw [hoddPart]
+  have hd : Nat.divMaxPow (2047 - 1) 2 = 1023 := by
+    have hmul := Nat.pow_padicValNat_mul_divMaxPow 2 (2047 - 1)
+    rw [hs] at hmul
+    norm_num at hmul ⊢
+    omega
+  rw [not_strongMillerRabinPass_iff, hs, hd]
   have hpow : ((3 : ℕ) : ZMod 2047) ^ 1023 ≠ 1 ∧
       ((3 : ℕ) : ZMod 2047) ^ 1023 ≠ -1 := by
     rw [← zmodPow_eq_pow 2047 3 1023]
     decide
-  rw [not_strongMillerRabinPass_iff]
   constructor
   · exact hpow.1
   · intro j hj

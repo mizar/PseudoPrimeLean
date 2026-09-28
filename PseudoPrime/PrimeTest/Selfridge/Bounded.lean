@@ -28,11 +28,11 @@ def selfridgeClassicalMethodAStarParamsWithinTwoMul (n : ℕ) : Option LucasPara
   selfridgeClassicalMethodAStarParamsAscending n (n - 2)
 
 /-- A classical candidate scanned below `n - 2` has signed magnitude less than `2*n`. -/
-theorem selfridgeD_natAbs_lt_two_mul_of_candidate_index {n k : ℕ} (hn : 3 ≤ n) (hk : k < n - 2) :
+theorem selfridgeD_natAbs_lt_two_mul_of_candidate_index {n k : ℕ} (_hn : 3 ≤ n) (hk : k < n - 2) :
     (selfridgeD (classicalCandidateMagnitude k)).natAbs < 2 * n := by
   rw [selfridgeD_natAbs]
   dsimp only [classicalCandidateMagnitude]
-  omega
+  linarith only [Nat.add_lt_of_lt_sub hk]
 
 /-- A successful elementary classical search returns a discriminant with `|D| < 2*n`. -/
 theorem selfridgeClassicalSearchWithinTwoMul_some_bound {n : ℕ} (hn : 3 ≤ n) {D : ℤ}

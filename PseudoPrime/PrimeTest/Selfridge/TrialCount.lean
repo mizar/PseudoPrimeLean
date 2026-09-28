@@ -29,7 +29,10 @@ theorem classicalTrialCountThrough_eq_sub_three_div_two {i : ℕ}
     (hi : isClassicalCandidate i) : classicalTrialCountThrough i = (i - 3) / 2 := by
   obtain ⟨h5, k, hk⟩ := hi
   unfold classicalTrialCountThrough
-  omega
+  obtain ⟨t, rfl⟩ := Nat.exists_eq_add_of_le h5
+  rw [Nat.add_sub_cancel_left, Nat.sub_add_comm (by decide : 3 ≤ 5)]
+  norm_num only
+  rw [Nat.add_comm 2 t, Nat.add_div_right t (by decide : 0 < 2)]
 
 /-- If `a ≤ b`, then `classicalTrialCountThrough a ≤ classicalTrialCountThrough b`.
 Monotonicity of natural subtraction and division proves this for all naturals, allowing

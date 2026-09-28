@@ -45,8 +45,8 @@ theorem isStrongLucasProbablePrime_of_lucasUZMod_index_zero {n : ℕ} [Fact n.Pr
     (hzero : lucasUZMod n param.P param.Q (lucasProbablePrimeIndex n param.D) = 0) :
     IsStrongLucasProbablePrime n param := by
   let m := lucasProbablePrimeIndex n param.D
-  let d := oddPart m
-  let s := twoAdicExponent m
+  let d := Nat.divMaxPow m 2
+  let s := padicValNat 2 m
   have hdecomp : d * 2 ^ s = m := by
     dsimp only [d, s]
     rw [mul_comm]

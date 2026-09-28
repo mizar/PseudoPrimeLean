@@ -18,12 +18,17 @@ prime: the factor `5` is cancelled only after proving that it is a unit.
 
 namespace PseudoPrime.PrimeTest
 
+/-- Multiplication by a unit preserves the zero condition in a commutative monoid with zero.
+The Lucas parameter comparison uses this to cancel powers of `5`. -/
 private theorem unit_mul_zero_iff {R : Type} [CommMonoidWithZero R] {a b : R} (h : IsUnit a) :
     a * b = 0 ↔ b = 0 := by
   obtain ⟨u, hu⟩ := h
   rw [← hu, mul_comm]
   exact Units.mul_left_eq_zero u
 
+/-- At an odd index, the Method A* `U` zero condition matches the Method A `V`
+condition when `5` is a unit modulo `n`. The integer identity differs by `5^m`,
+which is cancelled using `unit_mul_zero_iff`. -/
 private theorem lucasUZMod_methodAStar_odd_zero_iff {n m : ℕ} (hunit : IsUnit (5 : ZMod n)) :
     lucasUZMod n 5 5 (2 * m + 1) = 0 ↔ lucasVZMod n 1 (-1) (2 * m + 1) = 0 := by
   change (lucasU 5 5 (2 * m + 1) : ZMod n) = 0 ↔ (lucasV 1 (-1) (2 * m + 1) : ZMod n) = 0
@@ -33,6 +38,8 @@ private theorem lucasUZMod_methodAStar_odd_zero_iff {n m : ℕ} (hunit : IsUnit 
   rw [h]
   exact unit_mul_zero_iff (hunit.pow m)
 
+/-- At an odd index, the Method A* `V` zero condition matches the Method A `U`
+condition. The factor `5^(m+1)` is a unit, so the integer identity preserves zero. -/
 private theorem lucasVZMod_methodAStar_odd_zero_iff {n m : ℕ} (hunit : IsUnit (5 : ZMod n)) :
     lucasVZMod n 5 5 (2 * m + 1) = 0 ↔ lucasUZMod n 1 (-1) (2 * m + 1) = 0 := by
   change (lucasV 5 5 (2 * m + 1) : ZMod n) = 0 ↔ (lucasU 1 (-1) (2 * m + 1) : ZMod n) = 0
@@ -42,6 +49,8 @@ private theorem lucasVZMod_methodAStar_odd_zero_iff {n m : ℕ} (hunit : IsUnit 
   rw [h]
   exact unit_mul_zero_iff (hunit.pow (m + 1))
 
+/-- At an even index, the Method A and Method A* `V` zero conditions agree when
+`5` is a unit modulo `n`. Their integer identity differs by a unit power of `5`. -/
 private theorem lucasVZMod_methodAStar_even_zero_iff {n k : ℕ} (hunit : IsUnit (5 : ZMod n)) :
     lucasVZMod n 5 5 (2 * k) = 0 ↔ lucasVZMod n 1 (-1) (2 * k) = 0 := by
   change (lucasV 5 5 (2 * k) : ZMod n) = 0 ↔ (lucasV 1 (-1) (2 * k) : ZMod n) = 0
@@ -51,6 +60,9 @@ private theorem lucasVZMod_methodAStar_even_zero_iff {n k : ℕ} (hunit : IsUnit
   rw [h]
   exact unit_mul_zero_iff (hunit.pow k)
 
+/-- For a positive two-adic stage count and unit `5`, the finite Strong Lucas
+disjunction is equivalent for Method A and Method A*. The odd-index identities
+exchange the initial `U` and first `V` branches; later `V` branches use the even identity. -/
 private theorem strongLucas_condition_methodAStar_iff {n m s : ℕ} (hs : 0 < s)
     (hunit : IsUnit (5 : ZMod n)) :
     (lucasUZMod n 1 (-1) (2 * m + 1) = 0 ∨
@@ -93,43 +105,48 @@ private theorem strongLucas_condition_methodAStar_iff {n m s : ℕ} (hs : 0 < s)
           simpa only [pow_succ, Nat.mul_assoc, Nat.mul_left_comm, Nat.mul_comm] using hv
         simpa only [pow_succ, Nat.mul_assoc, Nat.mul_left_comm, Nat.mul_comm] using heven.mp hv'
 
+/-- When the Lucas index is `n + 1` with odd part and positive two-adic exponent,
+the proof-side Strong Lucas conditions for the two parameter sets agree. This
+specializes `strongLucas_condition_methodAStar_iff` at the computed index. -/
 private theorem isStrongLucas_methodAStar_params_iff {n : ℕ}
-    (hindex : lucasProbablePrimeIndex n 5 = n + 1) (hd : Odd (oddPart (n + 1)))
-    (hs : 0 < twoAdicExponent (n + 1)) (hunit : IsUnit (5 : ZMod n)) :
+    (hindex : lucasProbablePrimeIndex n 5 = n + 1) (hd : Odd (Nat.divMaxPow (n + 1) 2))
+    (hs : 0 < padicValNat 2 (n + 1)) (hunit : IsUnit (5 : ZMod n)) :
     IsStrongLucasProbablePrime n ⟨5, 1, -1, by norm_num only⟩ ↔
       IsStrongLucasProbablePrime n ⟨5, 5, 5, by norm_num only⟩ := by
   change
-    (lucasUZMod n 1 (-1) (oddPart (lucasProbablePrimeIndex n 5)) = 0 ∨
-        ∃ r ∈ List.range (twoAdicExponent (lucasProbablePrimeIndex n 5)),
-          lucasVZMod n 1 (-1) (oddPart (lucasProbablePrimeIndex n 5) * 2 ^ r) = 0) ↔
-      (lucasUZMod n 5 5 (oddPart (lucasProbablePrimeIndex n 5)) = 0 ∨
-        ∃ r ∈ List.range (twoAdicExponent (lucasProbablePrimeIndex n 5)),
-          lucasVZMod n 5 5 (oddPart (lucasProbablePrimeIndex n 5) * 2 ^ r) = 0)
+    (lucasUZMod n 1 (-1) (Nat.divMaxPow (lucasProbablePrimeIndex n 5) 2) = 0 ∨
+        ∃ r ∈ List.range (padicValNat 2 (lucasProbablePrimeIndex n 5)),
+          lucasVZMod n 1 (-1) (Nat.divMaxPow (lucasProbablePrimeIndex n 5) 2 * 2 ^ r) = 0) ↔
+      (lucasUZMod n 5 5 (Nat.divMaxPow (lucasProbablePrimeIndex n 5) 2) = 0 ∨
+        ∃ r ∈ List.range (padicValNat 2 (lucasProbablePrimeIndex n 5)),
+          lucasVZMod n 5 5 (Nat.divMaxPow (lucasProbablePrimeIndex n 5) 2 * 2 ^ r) = 0)
   simp only [hindex]
   rcases hd with ⟨m, hm⟩
   rw [hm]
   exact strongLucas_condition_methodAStar_iff hs hunit
 
-private theorem oddPart_succ_odd_of_odd {n : ℕ} (_hn : Odd n) : Odd (oddPart (n + 1)) := by
+/-- For odd `n`, the odd part of `n + 1` is odd. The Method A* index comparison
+uses this canonical odd-part property. -/
+private theorem oddPart_succ_odd_of_odd {n : ℕ} (_hn : Odd n) : Odd (Nat.divMaxPow (n + 1) 2) := by
   apply oddPart_odd
-  omega
+  exact Nat.succ_ne_zero n
 
+/-- For odd `n`, the canonical two-adic exponent of `n + 1` is positive.
+Otherwise the factorization of `n + 1` would make it odd. -/
 private theorem twoAdicExponent_succ_pos_of_odd {n : ℕ} (hn : Odd n) :
-    0 < twoAdicExponent (n + 1) := by
+    0 < padicValNat 2 (n + 1) := by
   by_contra hs
-  have hs0 : twoAdicExponent (n + 1) = 0 := Nat.eq_zero_of_not_pos hs
+  have hs0 : padicValNat 2 (n + 1) = 0 := Nat.eq_zero_of_not_pos hs
   have hfac := twoAdicPart_mul_oddPart (n + 1)
   rw [hs0, pow_zero, one_mul] at hfac
-  have hd := oddPart_odd (show n + 1 ≠ 0 by omega)
+  have hd := oddPart_odd (Nat.succ_ne_zero n)
   rw [hfac] at hd
-  rcases hn with ⟨k, hk⟩
-  rcases hd with ⟨l, hl⟩
-  omega
+  exact (Nat.not_even_iff_odd.mpr hd) hn.add_one
 
 /-- The two parameterized Strong Lucas tests agree in the exceptional D = 5 branch. -/
 theorem strongLucasMethodAStar_eq_methodA_of_five {n : ℕ} (hmod : (1 - (5 : ℤ)) % 4 = 0)
-    (hindex : lucasProbablePrimeIndex n 5 = n + 1) (hd : Odd (oddPart (n + 1)))
-    (hs : 0 < twoAdicExponent (n + 1)) (hunit : IsUnit (5 : ZMod n)) :
+    (hindex : lucasProbablePrimeIndex n 5 = n + 1) (hd : Odd (Nat.divMaxPow (n + 1) 2))
+    (hs : 0 < padicValNat 2 (n + 1)) (hunit : IsUnit (5 : ZMod n)) :
     strongLucasMethodAStar n 5 hmod = strongLucasMethodA n 5 hmod := by
   have hspecA := strongLucasWithParams_eq_true_iff n 5 1 (-1) (by norm_num only)
   have hspecAStar := strongLucasWithParams_eq_true_iff n 5 5 5 (by norm_num only)

@@ -22,11 +22,11 @@ namespace PseudoPrime.PrimeTest
 
 /-- The odd exponent and two-adic exponent used by the Strong Lucas test. -/
 def strongLucasOddPart (n : ℕ) (D : ℤ) : ℕ :=
-  oddPart (lucasProbablePrimeIndex n D)
+  Nat.divMaxPow (lucasProbablePrimeIndex n D) 2
 
 /-- The power-of-two exponent used by the Strong Lucas test. -/
 def strongLucasTwoAdicExponent (n : ℕ) (D : ℤ) : ℕ :=
-  twoAdicExponent (lucasProbablePrimeIndex n D)
+  padicValNat 2 (lucasProbablePrimeIndex n D)
 
 /-- The finite Strong Lucas probable-prime condition for proof-carrying parameters. -/
 def IsStrongLucasProbablePrime (n : ℕ) (param : LucasParams) : Prop :=

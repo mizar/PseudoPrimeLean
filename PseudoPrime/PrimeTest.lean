@@ -68,8 +68,8 @@ import PseudoPrime.PrimeTest.Selfridge.Finite
 import PseudoPrime.PrimeTest.Selfridge.Wheel30
 import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
 import PseudoPrime.PrimeTest.Selfridge.Bounded
-
 import PseudoPrime.PrimeTest.MillerRabin.WitnessBound
+import PseudoPrime.PrimeTest.MillerRabin.Construction
 import PseudoPrime.PrimeTest.Selfridge.TrialCount
 import PseudoPrime.PrimeTest.Selfridge.WitnessBridge
 

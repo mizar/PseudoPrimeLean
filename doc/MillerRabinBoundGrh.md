@@ -5,85 +5,81 @@
 
 ## 証明した主張
 
-GRH の下で、任意の奇合成数 $n>1$ に対し、 $n-1=2^s d$
-（ $s,d\in\mathbb N$、 $d$ は奇数）と一意に分解すると、
-次の条件をすべて満たす素数 $p$ が存在する。ここで $\log$ は自然対数である。
+奇数 $n>1$ に対して $n-1=2^s d$（ $d$ は奇数）と分解する。 $s$ は $n-1$ の 2 進付値、つまり $n-1$ を割り切る 2 の最大の指数である。 $d$ は $n-1$ から 2 の因子を可能な限り取り除いた奇数である。
+
+$p\not\equiv 0\pmod{n}$ である底 $p$ について、Miller–Rabin テストの通過条件は次の通りである。
+
+* $p^d\equiv 1\pmod n$ または $0\le j<s$ のいずれかで $p^{2^j d}\equiv -1\pmod n$ なら通過する。
+* $p^d\not\equiv 1\pmod n$ かつ、すべての $0\le j<s$ で $p^{2^j d}\not\equiv -1\pmod n$ なら通過しない。
+
+$n>1$ において $p\le(\log n)^2$ を満たす素数 $p\in\mathbb P$ は $0 < p < n$ であり、 $p\not\equiv 0\pmod{n}$ を満たす。
+
+GRH の下では、 $p\le(\log n)^2$ を満たすすべての素数底 $p\in\mathbb P$ が Miller–Rabin テストに通過すれば、 $n$ は素数である。一方、 Miller–Rabin テストを通過しない $p\le(\log n)^2$ の素数底 $p\in\mathbb P$ が存在すれば、$n$ は合成数である。
+
+ここで $\mathbb P$ は素数全体の集合、 $\log$ は自然対数である。以上を同値式で表すと次のようになる。
 
 $$
-p\le(\log n)^2,\qquad p^d\not\equiv1\pmod n,
+\begin{gathered}
+\left(
+\begin{aligned}
+  &\forall p\in\mathbb P,\quad p\le(\log n)^2\Longrightarrow\\
+  &\qquad\Bigl[\bigl(p^d\equiv1\pmod n\bigr)\\
+  &\qquad\quad\lor\
+    \bigl(\exists j\in\mathbb N,\ j<s\ \land\
+      p^{2^j d}\equiv-1\pmod n\bigr)\Bigr]
+\end{aligned}
+\right)\\
+\Longleftrightarrow\quad n\in\mathbb P.
+\end{gathered}
 $$
 
-$$
-\forall j\in\mathbb N,\quad j < s\Longrightarrow p^{2^j d}\not\equiv-1\pmod n.
-$$
+Lean では、 $n-1$ の 2 進付値 $s$ と奇数部分 $d$ をそれぞれ `padicValNat 2 (n - 1)` と `Nat.divMaxPow (n - 1) 2` として定義し、合同式を `ZMod n` の等式・不等式として表す。 GRH は [既存の定義](../PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) `PseudoPrime.AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis` を仮定する。 GRH 自体を証明したという主張ではない。
 
-これは底 $p$ で Strong Miller–Rabin の合格条件がすべて失敗することを表す。
-証人は $p=2$ でも $p\mid n$ でもよく、平方合成数・他の完全冪も含めて全範囲を扱う。
-Lean の定理では、この一意な分解を `s,d` と分解式・奇数性の仮定として受け取る。
+`prime_iff_millerRabin_for_all_primes_le_log_sq` の宣言部は次のとおり（証明本体は省略）。
 
-Lean では合同式を `ZMod n` の等式・不等式として表す。
-GRH は [既存の定義](../PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean)
-`PseudoPrime.AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis` を仮定する。
-GRH 自体を証明したという主張ではない。
+```lean
+namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
-## 公開定理と利用方法
+theorem prime_iff_millerRabin_for_all_primes_le_log_sq
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {n : ℕ} (hn : 1 < n) (hnOdd : Odd n) :
+    let s := padicValNat 2 (n - 1)
+    let d := Nat.divMaxPow (n - 1) 2
+    (∀ p : ℕ, Nat.Prime p →
+      (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 →
+      ((p : ZMod n) ^ d = 1 ∨
+        ∃ j : ℕ, j < s ∧
+          (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
+      Nat.Prime n := by
+
+end PseudoPrime.PrimeTestBounds.MillerRabin
+```
+
+## 公開定理
 
 以下の名前は `PseudoPrime.PrimeTestBounds.MillerRabin` 名前空間に属する。
 
 | 宣言 | 内容 | ソース |
 |---|---|---|
-| `exists_prime_millerRabin_witness_le_log_sq` | 指定した `n,s,d` に対する主定理 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
-| `exists_prime_millerRabin_witness_le_log_sq_iff_not_prime` | GRHの下で、奇数 `n > 1` の証人存在と `¬ Nat.Prime n` の同値 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
-| `exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq` | 計算済み分解を使うBoolean判定の不合格という形の系 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
+| `exists_prime_millerRabin_witness_le_log_sq` | 奇合成数に対する素数底の証人定理 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
+| `prime_iff_millerRabin_for_all_primes_le_log_sq` | GRH の下で、上界内の全素数底の明示的な冪条件と素数性の同値 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
+| `exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq` | 標準分解の冪不等式を明示する証人系 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
 | `exists_prime_millerRabin_witness_le_log_sq_of_s2` | S2を仮定した $n\ge3000$ の接続定理 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
 | `exists_prime_millerRabin_witness_le_log_sq_of_lt_3000` | GRHを仮定しない $1 < n < 3000$ の定理 | [SmallLogBound.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallLogBound.lean) |
-
-次の例は主定理の前提と結論をそのまま示す。
-
-```lean
-import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
-
-namespace PseudoPrime.PrimeTestBounds.MillerRabin
-
-example
-    (hGRH : PseudoPrime.AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {n s d : ℕ} (hn : 1 < n) (hnOdd : Odd n) (hnNotPrime : ¬ Nat.Prime n)
-    (hdecomp : n - 1 = 2 ^ s * d) (hdOdd : Odd d) :
-    ∃ p : ℕ,
-      Nat.Prime p ∧ (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 ∧
-      (p : ZMod n) ^ d ≠ (1 : ZMod n) ∧
-      ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ (-1 : ZMod n) := by
-  exact PseudoPrime.PrimeTestBounds.MillerRabin.exists_prime_millerRabin_witness_le_log_sq
-    hGRH hn hnOdd hnNotPrime hdecomp hdOdd
-
-#check exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
-#check exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
-
-end PseudoPrime.PrimeTestBounds.MillerRabin
-```
-
-同値定理は `1 < n`、`Odd n`、`n - 1 = 2 ^ s * d`、`Odd d` を前提とする。
-奇素数なら対数二乗上界以下の素数底は法 `n` と互いに素なので Strong Miller–Rabin に合格し、
-そのような不合格底は存在しない。奇合成数側は主定理から従う。
-
-Boolean系の結論は、同じ素数性・実数上界と
-`PseudoPrime.PrimeTest.strongMillerRabinWithBase n p = false` である。
-この系は素数底の存在を証明するものであり、新たな全底走査アルゴリズムを定義するものではない。
-また、BPSW全体の「受理なら素数」という主張ではない。
 
 ## 証明の流れ
 
 ### 1. 合格条件、単元性、素因数底
 
-`PseudoPrime.PrimeTest.StrongMillerRabinPass n s d x` は
+`PseudoPrime.PrimeTest.StrongMillerRabinPass n x` は、標準分解の奇数部分 $d$ と指数 $s$ を用いて
 $x^d=1$ または、ある $j < s$ に対して $x^{2^j d}=-1$ という条件を定義する。
 合格すれば $x^{n-1}=1$ となり、 $n>1$ のもとでは $x$ は単元となる。
 したがって素因数 $p\mid n$ を底にすると不合格になる。
 
 [Decomposition.lean](../PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) の
 `strongMillerRabinPass_isUnit`、`strongMillerRabinPass_not_of_prime_dvd` がこの性質を示す。
-同ファイルの `strongMillerRabinWithBase_eq_false_iff_not_pass_decomp` は、
-この分解での合格条件の否定を既存のBoolean判定へ接続する。
+同ファイルの `strongMillerRabinWithBase_eq_false_iff_not_pass` は、
+この合格条件の否定を既存の Boolean 判定へ接続する。
 素数入力側では、対数上界から底の互いに素性を示し、素数法の受理定理と
 指定分解の接続を組み合わせて不合格条件と矛盾させる。
 この節の宣言は `PseudoPrime.PrimeTest` 名前空間に属する。
@@ -137,7 +133,7 @@ $1 < n < 3000$ の奇合成数について、底2または底3で不合格にな
 
 ## 証明依存
 
-主定理、Boolean系、有限分類、小範囲の上界、真部分群の中心定理、利用したS2定理の
+主定理、証人系、有限分類、小範囲の上界、真部分群の中心定理、利用したS2定理の
 推移的公理依存は `propext`、`Classical.choice`、`Quot.sound` のみである。
 有限証明を含め、これらの定理に `sorry` や `native_decide` 由来の公理依存はない。
 確認例は次のとおり。

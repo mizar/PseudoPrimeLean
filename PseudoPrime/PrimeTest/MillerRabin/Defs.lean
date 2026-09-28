@@ -18,14 +18,6 @@ natural input; input prechecking is supplied by the surrounding interface.
 
 namespace PseudoPrime.PrimeTest
 
-/-- The exponent of `2` in the factorization of a natural number. -/
-def twoAdicExponent (m : ℕ) : ℕ :=
-  padicValNat 2 m
-
-/-- The odd part obtained after removing the computed power of `2`. -/
-def oddPart (m : ℕ) : ℕ :=
-  Nat.divMaxPow m 2
-
 /-- Binary exponentiation in `ZMod`. -/
 def zmodPowFast (n a : ℕ) (r : ℕ) : ZMod n :=
   npowBinRec r (a : ZMod n)
@@ -56,31 +48,31 @@ theorem zmodPow_eq_zmodPowProof (n a r : ℕ) : zmodPow n a r = zmodPowProof n a
   rw [zmodPow_eq_pow, zmodPowProof_eq_pow]
 
 /-- The computed two-adic part and odd part reconstruct the input. -/
-theorem twoAdicPart_mul_oddPart (m : ℕ) : 2 ^ twoAdicExponent m * oddPart m = m := by
-  simpa only [twoAdicExponent, oddPart, Nat.mul_comm] using Nat.divMaxPow_mul_pow_padicValNat 2 m
+theorem twoAdicPart_mul_oddPart (m : ℕ) : 2 ^ padicValNat 2 m * Nat.divMaxPow m 2 = m := by
+  exact Nat.pow_padicValNat_mul_divMaxPow 2 m
 
 /- The quotient really is odd for a nonzero input. -/
-theorem oddPart_odd {m : ℕ} (hm : m ≠ 0) : Odd (oddPart m) := by
+theorem oddPart_odd {m : ℕ} (hm : m ≠ 0) : Odd (Nat.divMaxPow m 2) := by
   apply Nat.coprime_two_left.mp
   apply Nat.prime_two.coprime_iff_not_dvd.mpr
-  simpa only [oddPart] using (Nat.not_dvd_divMaxPow (by decide) hm)
+  exact Nat.not_dvd_divMaxPow (by decide) hm
 
 /-- The proof-side finite Strong Miller–Rabin condition for a base. -/
 def IsStrongMillerRabinProbablePrime (n a : ℕ) : Prop :=
-  let s := twoAdicExponent (n - 1)
-  let d := oddPart (n - 1)
+  let s := padicValNat 2 (n - 1)
+  let d := Nat.divMaxPow (n - 1) 2
   zmodPowProof n a d = 1 ∨ ∃ r ∈ List.range s, zmodPowProof n a (d * 2 ^ r) = n - 1
 
 /-- The executable finite Strong Miller–Rabin condition. -/
 def IsStrongMillerRabinProbablePrimeFast (n a : ℕ) : Prop :=
-  let s := twoAdicExponent (n - 1)
-  let d := oddPart (n - 1)
+  let s := padicValNat 2 (n - 1)
+  let d := Nat.divMaxPow (n - 1) 2
   zmodPow n a d = 1 ∨ ∃ r ∈ List.range s, zmodPow n a (d * 2 ^ r) = n - 1
 
 /-- Executable Strong Miller–Rabin test for an explicit natural base. -/
 def strongMillerRabinWithBase (n a : ℕ) : Bool :=
-  let s := twoAdicExponent (n - 1)
-  let d := oddPart (n - 1)
+  let s := padicValNat 2 (n - 1)
+  let d := Nat.divMaxPow (n - 1) 2
   decide (zmodPow n a d = 1 ∨ ∃ r ∈ List.range s, zmodPow n a (d * 2 ^ r) = n - 1)
 
 /-- The fast and proof-side Strong Miller–Rabin conditions are equivalent. -/

@@ -31,15 +31,16 @@ import PseudoPrime
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 #check exists_prime_millerRabin_witness_le_log_sq
-#check exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
+#check prime_iff_millerRabin_for_all_primes_le_log_sq
 #check exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
 
 end PseudoPrime.PrimeTestBounds.MillerRabin
 ```
 
-The first theorem gives the witness for `n` and its decomposition `s,d`; the second states
-that, for odd `n > 1`, this witness exists exactly when `n` is not prime; and the third gives
-`PseudoPrime.PrimeTest.strongMillerRabinWithBase n p = false` for the executable test.
+The first theorem gives a prime witness for odd composite `n`. The second states that,
+under GRH, odd `n > 1` is prime exactly when every prime base up to `(log n)^2` passes
+the explicit strong-test power condition. The third states the witness inequalities
+directly and follows from the first theorem.
 See the [theorem and proof guide (Japanese)](doc/MillerRabinBoundGrh.md) for the assumptions,
 source mapping, and finite-range argument.
 

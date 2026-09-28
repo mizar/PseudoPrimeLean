@@ -29,20 +29,18 @@ def fermatSubgroup (n : ℕ) : Subgroup (ZMod n)ˣ where
     change u⁻¹ ^ (n - 1) = 1
     rw [inv_pow, hu, inv_one]
 
-/--
-Under an admissible decomposition, a passing residue is a unit and its unit representative lies in
-the Fermat subgroup. This is the inclusion used by the prime-square and central subgroup results.
--/
-theorem strongMillerRabinPass_mem_fermatSubgroup {n s d : ℕ} {x : ZMod n}
-    (hn : 1 < n)
-    (hdecomp : n - 1 = 2 ^ s * d)
-    (hpass : StrongMillerRabinPass n s d x) :
+/-- For odd `n > 1`, a passing residue has a unit representative in `fermatSubgroup n`.
+The pass gives both unit status and the `(n - 1)`st-power equation. This inclusion is used
+with the proper Fermat subgroup when a prime square divides `n`. -/
+theorem strongMillerRabinPass_mem_fermatSubgroup {n : ℕ} {x : ZMod n}
+    (hn : 1 < n) (hnOdd : Odd n)
+    (hpass : StrongMillerRabinPass n x) :
     ∃ u : (ZMod n)ˣ, u ∈ fermatSubgroup n ∧ (u : ZMod n) = x := by
-  have hxUnit := strongMillerRabinPass_isUnit hn hdecomp hpass
+  have hxUnit := strongMillerRabinPass_isUnit hn hnOdd hpass
   refine ⟨hxUnit.unit, ?_, hxUnit.unit_spec⟩
   apply Units.ext
   rw [Units.val_pow_eq_pow_val]
-  exact strongMillerRabinPass_pow_decomp hdecomp hpass
+  exact strongMillerRabinPass_pow hn hnOdd hpass
 
 /-- The order of `1 + q` modulo `q²` prevents its `(n - 1)`st power from being one. -/
 private theorem one_add_prime_pow_ne_one {n q : ℕ}
@@ -112,19 +110,23 @@ theorem fermatSubgroup_ne_top_of_prime_square_dvd {n q : ℕ}
   rw [htop]
   trivial
 
-/-- In a prime field, a negative strong-test power must occur before the two-adic
-exponent of `q - 1`. -/
-theorem neg_power_index_lt_twoAdicExponent {q t c j d : ℕ} {y : ZMod q}
-    (hq : Nat.Prime q)
-    (hq2 : q ≠ 2)
-    (hdecomp : q - 1 = 2 ^ t * c)
-    (hcOdd : Odd c)
-    (htj : t ≤ j)
+/-- For an odd prime `q`, a Fermat residue cannot have `y^(2^j d) = -1` at or after
+`padicValNat 2 (q - 1)`. Raising the negative power to the odd part of `q - 1`
+would give `1 = -1` in `ZMod q`. The sign-subgroup inclusion uses this index bound. -/
+theorem neg_power_index_lt_twoAdicExponent {q j d : ℕ} {y : ZMod q}
+    (hq : Nat.Prime q) (hqOdd : Odd q)
+    (htj : padicValNat 2 (q - 1) ≤ j)
     (hfermat : y ^ (q - 1) = 1)
     (hneg : y ^ (2 ^ j * d) = -1) :
     False := by
-  have hqle : 2 ≤ q := hq.two_le
-  have hqgt : 2 < q := by omega
+  let t := padicValNat 2 (q - 1)
+  let c := Nat.divMaxPow (q - 1) 2
+  obtain ⟨_, hcOdd, hdecomp⟩ := odd_sub_canonical_decomp hq.one_lt hqOdd
+  have hq2 : q ≠ 2 := by
+    intro h
+    subst q
+    exact (Nat.not_even_iff_odd.mpr hqOdd) ⟨1, by rfl⟩
+  have hqgt : 2 < q := lt_of_le_of_ne hq.two_le (Ne.symm hq2)
   have hexpPow : 2 ^ j = 2 ^ t * 2 ^ (j - t) := by
     calc
       2 ^ j = 2 ^ (t + (j - t)) :=
@@ -203,20 +205,27 @@ private theorem order_two_of_prime_field_unit {q t : ℕ} (b : (ZMod q)ˣ)
     exact h
   exact hzord
 
-/-- Cyclicity of the prime-field unit group gives a unit of order `2^t`. -/
-private theorem exists_prime_field_unit_order_two_power {q t c : ℕ}
-    (hq : Nat.Prime q) (hq2 : q ≠ 2) (hqdecomp : q - 1 = 2 ^ t * c) :
-    ∃ b : (ZMod q)ˣ, orderOf b = 2 ^ t := by
+/--
+Cyclicity of the prime-field unit group yields the canonical decomposition `q - 1 = 2^t * c`
+and a unit of order `2^t`, where `t` is the two-adic valuation and `c` is the odd part.
+-/
+private theorem exists_prime_field_unit_order_two_power {q : ℕ}
+    (hq : Nat.Prime q) (hqOdd : Odd q) :
+    let t := padicValNat 2 (q - 1)
+    let c := Nat.divMaxPow (q - 1) 2
+    q - 1 = 2 ^ t * c ∧ ∃ b : (ZMod q)ˣ, orderOf b = 2 ^ t := by
+  intro t c
+  obtain ⟨_, _, hqdecomp⟩ := odd_sub_canonical_decomp hq.one_lt hqOdd
   have : Fact (Nat.Prime q) := ⟨hq⟩
   obtain ⟨g, hg⟩ :=
     (isCyclic_iff_exists_orderOf_eq_natCard).mp (ZMod.isCyclic_units_prime hq)
   rw [Nat.card_eq_fintype_card, @ZMod.card_units q ⟨hq⟩] at hg
   have hcpos : 0 < c := by
-    have hqge : 2 ≤ q := hq.two_le
-    have hqgt : 2 < q := by omega
+    have hqminus : 0 < q - 1 := Nat.sub_pos_of_lt hq.one_lt
     by_contra hcnot
-    rw [Nat.eq_zero_of_not_pos hcnot] at hqdecomp
-    omega
+    have hc0 : Nat.divMaxPow (q - 1) 2 = 0 := Nat.eq_zero_of_not_pos hcnot
+    rw [hc0, Nat.mul_zero] at hqdecomp
+    exact (Nat.ne_of_gt hqminus) hqdecomp
   have hcdiv : c ∣ 2 ^ t * c := by
     refine ⟨2 ^ t, ?_⟩
     rw [Nat.mul_comm]
@@ -225,7 +234,7 @@ private theorem exists_prime_field_unit_order_two_power {q t c : ℕ}
     dsimp only [b]
     rw [orderOf_pow, hg, hqdecomp, Nat.gcd_eq_right hcdiv, Nat.mul_comm]
     exact Nat.mul_div_cancel_left (2 ^ t) hcpos
-  exact ⟨b, hbOrd⟩
+  exact ⟨hqdecomp, ⟨b, hbOrd⟩⟩
 
 /-- A negative power before level `t` is negative at the last level and positive below it. -/
 private theorem negative_power_before_t_gives_sign {n t d j : ℕ} {x : ZMod n}
@@ -252,19 +261,20 @@ private theorem negative_power_before_t_gives_sign {n t d j : ℕ} {x : ZMod n}
       _ = 1 := heven.neg_one_pow
 
 /--
-A prime residue field has a unit whose `2^(t-1) * d` power is negative one. Cyclicity gives an
-element of order `2^t`; its half-order power has order two, hence equals `-1`. Oddness of `d`
-preserves that sign. The distinct-prime subgroup proof uses this construction.
+For an odd prime `q` and odd multiplier `d`, there is a unit whose power at exponent
+`2^(padicValNat 2 (q - 1) - 1) * d` is `-1`. The decomposition of `q - 1` into its two-part
+and odd part is derived internally. Cyclicity gives a unit of order equal to the two-part;
+its half-order power has order two and hence equals `-1`. Oddness of `d` preserves that sign.
+This construction is used by the distinct-prime subgroup proof.
 -/
-theorem exists_prime_field_unit_pow_eq_neg_one {q t c d : ℕ}
-    (hq : Nat.Prime q)
-    (hq2 : q ≠ 2)
-    (hqdecomp : q - 1 = 2 ^ t * c)
-    (hdOdd : Odd d)
-    (ht : 0 < t) :
-    ∃ b : (ZMod q)ˣ, b ^ (2 ^ (t - 1) * d) = -1 := by
+theorem exists_prime_field_unit_pow_eq_neg_one {q d : ℕ}
+    (hq : Nat.Prime q) (hqOdd : Odd q) (hdOdd : Odd d) :
+    ∃ b : (ZMod q)ˣ,
+      b ^ (2 ^ (padicValNat 2 (q - 1) - 1) * d) = -1 := by
+  let t := padicValNat 2 (q - 1)
+  obtain ⟨ht, _, _⟩ := odd_sub_canonical_decomp hq.one_lt hqOdd
   have : Fact (Nat.Prime q) := ⟨hq⟩
-  obtain ⟨b, hbOrd⟩ := exists_prime_field_unit_order_two_power hq hq2 hqdecomp
+  obtain ⟨_, ⟨b, hbOrd⟩⟩ := exists_prime_field_unit_order_two_power hq hqOdd
   have hzord := order_two_of_prime_field_unit b hbOrd ht
   have hzval : orderOf ((b ^ (2 ^ (t - 1)) : (ZMod q)ˣ) : ZMod q) = 2 := by
     change orderOf (Units.coeHom (ZMod q) (b ^ (2 ^ (t - 1))) : ZMod q) = 2
@@ -272,6 +282,10 @@ theorem exists_prime_field_unit_pow_eq_neg_one {q t c d : ℕ}
     exact hzord
   have hzneg : (b ^ (2 ^ (t - 1)) : (ZMod q)ˣ) = -1 := by
     apply Units.ext
+    have hq2 : q ≠ 2 := by
+      intro h
+      subst q
+      exact (Nat.not_even_iff_odd.mpr hqOdd) ⟨1, by rfl⟩
     exact (CharP.orderOf_eq_two_iff q hq2).mp hzval
   have hfinal : b ^ (2 ^ (t - 1) * d) = -1 := by
     calc
@@ -286,17 +300,16 @@ Reduction modulo `q` bounds the negative-power index by `t`; the two possible in
 give the required sign modulo `n`. No comparison between `t` and `s`, or minimum over prime
 factors, is needed. This is the inclusion half of the distinct-prime case.
 -/
-theorem strongMillerRabinPass_mem_signSubgroup {n s d q t c : ℕ} {x : ZMod n}
-    (hn : 1 < n)
-    (hdecomp : n - 1 = 2 ^ s * d)
-    (hpass : StrongMillerRabinPass n s d x)
-    (hq : Nat.Prime q)
-    (hq2 : q ≠ 2)
-    (hqdiv : q ∣ n)
-    (hqdecomp : q - 1 = 2 ^ t * c)
-    (hcOdd : Odd c) :
-    ∃ u : (ZMod n)ˣ, u ∈ signSubgroup n (2 ^ (t - 1) * d) ∧ (u : ZMod n) = x := by
-  have hxunit := strongMillerRabinPass_isUnit hn hdecomp hpass
+theorem strongMillerRabinPass_mem_signSubgroup {n q : ℕ} {x : ZMod n}
+    (hn : 1 < n) (hnOdd : Odd n)
+    (hpass : StrongMillerRabinPass n x)
+    (hq : Nat.Prime q) (hqOdd : Odd q) (hqdiv : q ∣ n) :
+    ∃ u : (ZMod n)ˣ,
+      u ∈ signSubgroup n (2 ^ (padicValNat 2 (q - 1) - 1) * Nat.divMaxPow (n - 1) 2) ∧
+      (u : ZMod n) = x := by
+  let t := padicValNat 2 (q - 1)
+  let d := Nat.divMaxPow (n - 1) 2
+  have hxunit := strongMillerRabinPass_isUnit hn hnOdd hpass
   let u : (ZMod n)ˣ := hxunit.unit
   have huval : (u : ZMod n) = x := hxunit.unit_spec
   let v : (ZMod q)ˣ := ZMod.unitsMap hqdiv u
@@ -323,7 +336,7 @@ theorem strongMillerRabinPass_mem_signSubgroup {n s d q t c : ℕ} {x : ZMod n}
       exact hmap
     have hjt : j < t := by
       by_contra hnot
-      exact neg_power_index_lt_twoAdicExponent hq hq2 hqdecomp hcOdd
+      exact neg_power_index_lt_twoAdicExponent hq hqOdd
         (Nat.le_of_not_gt hnot) hyfermat hyneg
     rcases negative_power_before_t_gives_sign hjt hneg with hpositive | hnegative
     · left
@@ -420,25 +433,36 @@ private theorem exists_lift_unit_with_power_ne_sign {n m E : ℕ}
         exact Units.map_neg_one (ZMod.castHom hdiv (ZMod m))
 
 /--
-Suppose distinct odd primes `q` and `r` divide `n`, and `q - 1 = 2^t * c` with `0 < t` and odd
-`d`. Then the subgroup for `E = 2^(t - 1) * d` is proper. The proof chooses a unit with CRT
-coordinates `(b, 1)`, where `b^E = -1`, then lifts it to modulus `n`; the coordinates rule out
-both signs. This supplies the distinct-prime case of the central subgroup theorem.
+For distinct prime divisors `q, r` of odd `n > 1`, the canonical sign subgroup is proper.
+The proof chooses a unit with CRT coordinates `(b, 1)`, where `b` has the required `-1`
+power in `ZMod q`, then lifts it to modulus `n`; the coordinates rule out both signs.
+This supplies the distinct-prime case of the central subgroup theorem.
 -/
-theorem signSubgroup_ne_top_of_distinct_prime_dvd {n q r t c d : ℕ}
-    (hn : 1 < n)
-    (hq : Nat.Prime q)
-    (hr : Nat.Prime r)
-    (hq2 : q ≠ 2)
-    (hr2 : r ≠ 2)
-    (hqr : q ≠ r)
-    (hdiv : q * r ∣ n)
-    (hqdecomp : q - 1 = 2 ^ t * c)
-    (hdOdd : Odd d)
-    (ht : 0 < t) :
-    signSubgroup n (2 ^ (t - 1) * d) ≠ ⊤ := by
-  obtain ⟨b, hbpow⟩ := exists_prime_field_unit_pow_eq_neg_one hq hq2
-    hqdecomp hdOdd ht
+theorem signSubgroup_ne_top_of_distinct_prime_dvd {n q r : ℕ}
+    (hn : 1 < n) (hnOdd : Odd n)
+    (hq : Nat.Prime q) (hr : Nat.Prime r)
+    (hqr : q ≠ r) (hdiv : q * r ∣ n) :
+    signSubgroup n
+      (2 ^ (padicValNat 2 (q - 1) - 1) * Nat.divMaxPow (n - 1) 2) ≠ ⊤ := by
+  let t := padicValNat 2 (q - 1)
+  let d := Nat.divMaxPow (n - 1) 2
+  have hqdiv : q ∣ n := dvd_trans ⟨r, rfl⟩ hdiv
+  have hrdiv : r ∣ n := dvd_trans ⟨q, by ring⟩ hdiv
+  have hq2 : q ≠ 2 := by
+    intro htwo
+    subst q
+    exact (Nat.not_even_iff_odd.mpr hnOdd) (even_iff_two_dvd.mpr hqdiv)
+  have hr2 : r ≠ 2 := by
+    intro htwo
+    subst r
+    exact (Nat.not_even_iff_odd.mpr hnOdd) (even_iff_two_dvd.mpr hrdiv)
+  obtain ⟨_, hdOdd, _⟩ := odd_sub_canonical_decomp hn hnOdd
+  have hqOdd : Odd q := by
+    by_contra hnot
+    have hqEven : Even q := Nat.not_odd_iff_even.mp hnot
+    have htwoq : 2 ∣ q := even_iff_two_dvd.mp hqEven
+    exact (Nat.not_even_iff_odd.mpr hnOdd) (even_iff_two_dvd.mpr (dvd_trans htwoq hqdiv))
+  obtain ⟨b, hbpow⟩ := exists_prime_field_unit_pow_eq_neg_one hq hqOdd hdOdd
   have hnotdvd : ¬ q ∣ r := by
     intro hqdivr
     rcases hr.eq_one_or_self_of_dvd q hqdivr with hqone | hqeq

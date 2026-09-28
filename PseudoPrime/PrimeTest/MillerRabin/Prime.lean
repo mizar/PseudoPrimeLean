@@ -12,6 +12,9 @@ import Mathlib.FieldTheory.Finite.Basic
 
 namespace PseudoPrime.PrimeTest
 
+/-- In a field, `x^(2^s) = 1` forces either `x = 1` or an earlier repeated-square
+stage to equal `-1`. Induction uses the two roots of `z² = 1`; prime-modulus
+acceptance applies this to the odd-part power. -/
 private theorem pow_two_adic_eq_one_or_neg_one {F : Type*} [Field F] (x : F) :
     ∀ s : ℕ, x ^ (2 ^ s) = 1 → x = 1 ∨ ∃ r ∈ List.range s, x ^ (2 ^ r) = -1
   | 0, h => by
@@ -33,20 +36,23 @@ private theorem pow_two_adic_eq_one_or_neg_one {F : Type*} [Field F] (x : F) :
 
 /-- At a prime modulus, the computed exponent decomposition is `p - 1 = d * 2^s`. -/
 theorem sub_eq_oddPart_mul_twoAdicPart {p : ℕ} :
-    p - 1 = oddPart (p - 1) * 2 ^ twoAdicExponent (p - 1) := by
+    p - 1 = Nat.divMaxPow (p - 1) 2 * 2 ^ padicValNat 2 (p - 1) := by
   rw [Nat.mul_comm]
   exact (twoAdicPart_mul_oddPart (p - 1)).symm
 
 /-- The odd exponent in the prime decomposition is genuinely odd. -/
-theorem prime_oddPart_odd {p : ℕ} (hp : p.Prime) : Odd (oddPart (p - 1)) := by
+theorem prime_oddPart_odd {p : ℕ} (hp : p.Prime) : Odd (Nat.divMaxPow (p - 1) 2) := by
   apply oddPart_odd
   exact Nat.sub_ne_zero_of_lt hp.one_lt
 
+/-- A base coprime to prime `p` satisfies the proof-side strong condition.
+Fermat's power equation and `pow_two_adic_eq_one_or_neg_one` give an accepted stage;
+the executable prime-acceptance theorem consumes this result. -/
 private theorem strong_condition_of_prime {p a : ℕ} (hp : p.Prime) (ha : Nat.Coprime a p) :
     IsStrongMillerRabinProbablePrime p a := by
   let _ : Fact p.Prime := ⟨hp⟩
-  let s := twoAdicExponent (p - 1)
-  let d := oddPart (p - 1)
+  let s := padicValNat 2 (p - 1)
+  let d := Nat.divMaxPow (p - 1) 2
   have hpa : (a : ZMod p) ≠ 0 := by
     intro hzero
     exact (hp.coprime_iff_not_dvd.mp ha.symm) ((ZMod.natCast_eq_zero_iff a p).mp hzero)

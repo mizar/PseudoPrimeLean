@@ -30,15 +30,15 @@ import PseudoPrime
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 #check exists_prime_millerRabin_witness_le_log_sq
-#check exists_prime_millerRabin_witness_le_log_sq_iff_not_prime
+#check prime_iff_millerRabin_for_all_primes_le_log_sq
 #check exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
 
 end PseudoPrime.PrimeTestBounds.MillerRabin
 ```
 
-順に、`n` とその分解 `s,d` に対する証人定理、
-奇数入力に対する「証人が存在すること」と「`n` が素数でないこと」の同値、および
-実行用判定 `PseudoPrime.PrimeTest.strongMillerRabinWithBase n p = false` を与える系である。
+順に、奇合成数に対する素数底の証人定理、
+GRH の下で奇数入力の素数性と上界内の全素数底について明示された冪条件との同値、および
+標準分解の冪不等式を直接述べる証人系である。最後の定理は最初の証人定理から従う。
 前提・宣言の対応と証明の流れは [Miller–Rabin 証人上界の解説](doc/MillerRabinBoundGrh.md) を参照。
 
 ## 非 1 ヤコビ目撃者と Selfridge 境界

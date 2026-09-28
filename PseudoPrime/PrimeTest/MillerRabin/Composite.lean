@@ -49,71 +49,32 @@ private theorem odd_prime_factor_ne_two {n q : ℕ}
   subst q
   exact (Nat.not_even_iff_odd.mpr hnOdd) (even_iff_two_dvd.mpr hqdiv)
 
-/-- The standard factorization of `q - 1` has odd part and a positive two-adic exponent. -/
-private theorem prime_sub_two_adic_decomposition {q : ℕ}
-    (hq : Nat.Prime q) (hq2 : q ≠ 2) :
-    ∃ t c : ℕ, q - 1 = 2 ^ t * c ∧ Odd c ∧ 0 < t := by
-  let t := twoAdicExponent (q - 1)
-  let c := oddPart (q - 1)
-  have hqdecomp : q - 1 = 2 ^ t * c := by
-    dsimp only [t, c]
-    exact (twoAdicPart_mul_oddPart (q - 1)).symm
-  have hcOdd : Odd c := oddPart_odd (Nat.sub_ne_zero_of_lt hq.one_lt)
-  have ht : 0 < t := by
-    have hqOdd : Odd q := hq.odd_of_ne_two hq2
-    have hqminusEven : Even (q - 1) := by
-      rcases hqOdd with ⟨k, hk⟩
-      refine ⟨k, ?_⟩
-      omega
-    by_contra htn
-    have htzero : t = 0 := Nat.eq_zero_of_not_pos htn
-    have hceq : c = q - 1 := by
-      rw [htzero] at hqdecomp
-      simp only [pow_zero, Nat.one_mul] at hqdecomp
-      exact hqdecomp.symm
-    apply (Nat.not_even_iff_odd.mpr hcOdd)
-    rw [hceq]
-    exact hqminusEven
-  exact ⟨t, c, hqdecomp, hcOdd, ht⟩
-
-/--
-Every odd composite modulus has a proper subgroup containing every residue that passes its
-strong Miller–Rabin condition. The prime-factor split selects the Fermat subgroup when a square
-divides `n`, and the sign-power subgroup for two distinct prime divisors. The full residue-to-unit
-image condition is the form consumed by the later LLS argument.
--/
-theorem exists_proper_subgroup_containing_strongMillerRabinPass {n s d : ℕ}
-    (hn : 1 < n)
-    (hnOdd : Odd n)
-    (hnComposite : ¬ Nat.Prime n)
-    (hdecomp : n - 1 = 2 ^ s * d)
-    (hdOdd : Odd d) :
-    ∃ H : Subgroup (ZMod n)ˣ,
-      H ≠ ⊤ ∧
-        ∀ x : ZMod n,
-          StrongMillerRabinPass n s d x →
-            ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = x := by
+/-- For odd composite `n > 1`, some proper subgroup of `(ZMod n)ˣ` contains a unit
+representative of every canonical strong-test pass. If a prime square divides `n`, use
+`fermatSubgroup`; otherwise two distinct prime divisors give a proper `signSubgroup`.
+This is the subgroup interface consumed by witness bounds. -/
+theorem exists_proper_subgroup_containing_strongMillerRabinPass {n : ℕ}
+    (hn : 1 < n) (hnOdd : Odd n) (hnComposite : ¬ Nat.Prime n) :
+    ∃ H : Subgroup (ZMod n)ˣ, H ≠ ⊤ ∧
+      ∀ x : ZMod n, StrongMillerRabinPass n x →
+        ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = x := by
   rcases prime_square_or_distinct_primes_dvd hn hnComposite with hsquare | hdifferent
   · obtain ⟨q, hq, hq2div⟩ := hsquare
     have hqdiv : q ∣ n := dvd_trans (by exact ⟨q, by rw [pow_two]⟩) hq2div
     have hq2 := odd_prime_factor_ne_two hnOdd hq hqdiv
-    refine ⟨fermatSubgroup n, fermatSubgroup_ne_top_of_prime_square_dvd hn hq hq2 hq2div,
-      ?_⟩
+    refine ⟨fermatSubgroup n, fermatSubgroup_ne_top_of_prime_square_dvd
+      hn hq hq2 hq2div, ?_⟩
     intro x hpass
-    exact strongMillerRabinPass_mem_fermatSubgroup hn hdecomp hpass
+    exact strongMillerRabinPass_mem_fermatSubgroup hn hnOdd hpass
   · obtain ⟨q, r, hq, hr, hqr, hdiv⟩ := hdifferent
     have hqdiv : q ∣ n := dvd_trans ⟨r, rfl⟩ hdiv
-    have hrdiv : r ∣ n := dvd_trans ⟨q, by ring⟩ hdiv
     have hq2 := odd_prime_factor_ne_two hnOdd hq hqdiv
-    have hr2 := odd_prime_factor_ne_two hnOdd hr hrdiv
-    obtain ⟨t, c, hqdecomp, hcOdd, ht⟩ := prime_sub_two_adic_decomposition hq hq2
-    let H := signSubgroup n (2 ^ (t - 1) * d)
-    refine ⟨H, ?_, ?_⟩
-    · exact signSubgroup_ne_top_of_distinct_prime_dvd hn hq hr hq2 hr2 hqr hdiv
-        hqdecomp hdOdd ht
-    · intro x hpass
-      exact strongMillerRabinPass_mem_signSubgroup hn hdecomp hpass hq hq2 hqdiv
-        hqdecomp hcOdd
+    let H := signSubgroup n
+      (2 ^ (padicValNat 2 (q - 1) - 1) * Nat.divMaxPow (n - 1) 2)
+    refine ⟨H, signSubgroup_ne_top_of_distinct_prime_dvd
+      hn hnOdd hq hr hqr hdiv, ?_⟩
+    intro x hpass
+    exact strongMillerRabinPass_mem_signSubgroup hn hnOdd hpass hq hq2 hqdiv
 
 example : fermatSubgroup 9 ≠ ⊤ := by
   exact fermatSubgroup_ne_top_of_prime_square_dvd (n := 9) (q := 3)
@@ -135,40 +96,40 @@ example : fermatSubgroup 121 ≠ ⊤ := by
     (by norm_num) (by norm_num)
     (by norm_num) (by norm_num)
 
-example : signSubgroup 15 1 ≠ ⊤ := by
+example : signSubgroup 15
+    (2 ^ (padicValNat 2 (3 - 1) - 1) * Nat.divMaxPow (15 - 1) 2) ≠ ⊤ := by
   exact signSubgroup_ne_top_of_distinct_prime_dvd (n := 15) (q := 3) (r := 5)
-    (t := 1) (c := 1) (d := 1) (by norm_num) (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num)
 
-example : signSubgroup 65 2 ≠ ⊤ := by
+example : signSubgroup 65
+    (2 ^ (padicValNat 2 (5 - 1) - 1) * Nat.divMaxPow (65 - 1) 2) ≠ ⊤ := by
   exact signSubgroup_ne_top_of_distinct_prime_dvd (n := 65) (q := 5) (r := 13)
-    (t := 2) (c := 1) (d := 1) (by norm_num) (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num)
 
-example : signSubgroup 341 1 ≠ ⊤ := by
+example : signSubgroup 341
+    (2 ^ (padicValNat 2 (11 - 1) - 1) * Nat.divMaxPow (341 - 1) 2) ≠ ⊤ := by
   exact signSubgroup_ne_top_of_distinct_prime_dvd (n := 341) (q := 11) (r := 31)
-    (t := 1) (c := 5) (d := 1) (by norm_num) (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num)
 
-example : signSubgroup 561 1 ≠ ⊤ := by
+example : signSubgroup 561
+    (2 ^ (padicValNat 2 (3 - 1) - 1) * Nat.divMaxPow (561 - 1) 2) ≠ ⊤ := by
   exact signSubgroup_ne_top_of_distinct_prime_dvd (n := 561) (q := 3) (r := 11)
-    (t := 1) (c := 1) (d := 1) (by norm_num) (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num)
 
-example : signSubgroup 1729 1 ≠ ⊤ := by
+example : signSubgroup 1729
+    (2 ^ (padicValNat 2 (7 - 1) - 1) * Nat.divMaxPow (1729 - 1) 2) ≠ ⊤ := by
   exact signSubgroup_ne_top_of_distinct_prime_dvd (n := 1729) (q := 7) (r := 13)
-    (t := 1) (c := 3) (d := 1) (by norm_num) (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num)
 
-example : signSubgroup 2047 1 ≠ ⊤ := by
+example : signSubgroup 2047
+    (2 ^ (padicValNat 2 (23 - 1) - 1) * Nat.divMaxPow (2047 - 1) 2) ≠ ⊤ := by
   exact signSubgroup_ne_top_of_distinct_prime_dvd (n := 2047) (q := 23) (r := 89)
-    (t := 1) (c := 11) (d := 1) (by norm_num) (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num)
 
 end PseudoPrime.PrimeTest

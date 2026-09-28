@@ -30,7 +30,7 @@ theorem PrimeNegOneWitnessSet.subset_primeNeOneWitnessSet (n : ℕ) :
   exact
     ⟨hp.1, hp.2.1, by
       rw [hp.2.2]
-      omega⟩
+      decide⟩
 
 /-- Nonemptiness of the pure `-1` witness set implies nonemptiness of the `≠1` set. -/
 theorem primeNeOneWitnessSet_nonempty_of_negOne {n : ℕ} (h : (PrimeNegOneWitnessSet n).Nonempty) :
@@ -73,6 +73,15 @@ theorem primeNeOneWitness_le_primeNegOneWitness (n : ℕ) (h : (PrimeNegOneWitne
 def CandidateOdd (C : ℕ → Prop) : Prop :=
   ∀ ⦃i : ℕ⦄, C i → Odd i
 
+/-- A residue that is odd modulo 30 is odd as a natural number. The wheel candidate
+proofs use this to transfer each listed residue to the parity condition. -/
+private theorem odd_of_mod_thirty_eq {i r : ℕ} (h : i % 30 = r) (hr : r % 2 = 1) : Odd i := by
+  apply Nat.odd_iff.mpr
+  calc
+    i % 2 = (i % 30) % 2 := (Nat.mod_mod_of_dvd i (by decide : 2 ∣ 30)).symm
+    _ = r % 2 := by rw [h]
+    _ = 1 := hr
+
 /-- Classical Selfridge candidates are odd. -/
 theorem isClassicalCandidate_odd : CandidateOdd isClassicalCandidate := by
   intro i hi
@@ -83,16 +92,30 @@ theorem isWheel30NegOneCandidate_odd : CandidateOdd isWheel30NegOneCandidate := 
   intro i hi
   rcases hi with hi | hi
   · rcases hi with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide
-  rcases hi.2 with hi1 | hi7 | hi11 | hi13 | hi17 | hi19 | hi23 | hi29 <;> apply Nat.odd_iff.mpr <;>
-    omega
+  rcases hi.2 with hi1 | hi7 | hi11 | hi13 | hi17 | hi19 | hi23 | hi29
+  · exact odd_of_mod_thirty_eq hi1 (by decide)
+  · exact odd_of_mod_thirty_eq hi7 (by decide)
+  · exact odd_of_mod_thirty_eq hi11 (by decide)
+  · exact odd_of_mod_thirty_eq hi13 (by decide)
+  · exact odd_of_mod_thirty_eq hi17 (by decide)
+  · exact odd_of_mod_thirty_eq hi19 (by decide)
+  · exact odd_of_mod_thirty_eq hi23 (by decide)
+  · exact odd_of_mod_thirty_eq hi29 (by decide)
 
 /-- Factor-detecting Wheel30 candidates are odd. -/
 theorem isWheel30NeOneCandidate_odd : CandidateOdd isWheel30NeOneCandidate := by
   intro i hi
   rcases hi with hi | hi
   · rcases hi with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide
-  rcases hi.2 with hi1 | hi7 | hi11 | hi13 | hi17 | hi19 | hi23 | hi29 <;> apply Nat.odd_iff.mpr <;>
-    omega
+  rcases hi.2 with hi1 | hi7 | hi11 | hi13 | hi17 | hi19 | hi23 | hi29
+  · exact odd_of_mod_thirty_eq hi1 (by decide)
+  · exact odd_of_mod_thirty_eq hi7 (by decide)
+  · exact odd_of_mod_thirty_eq hi11 (by decide)
+  · exact odd_of_mod_thirty_eq hi13 (by decide)
+  · exact odd_of_mod_thirty_eq hi17 (by decide)
+  · exact odd_of_mod_thirty_eq hi19 (by decide)
+  · exact odd_of_mod_thirty_eq hi23 (by decide)
+  · exact odd_of_mod_thirty_eq hi29 (by decide)
 
 /-- A candidate with Jacobi value `-1` makes the pure stopping set nonempty. -/
 theorem firstStopNegOneSet_nonempty_of_witness {C : ℕ → Prop} {n i : ℕ} (hi : C i)

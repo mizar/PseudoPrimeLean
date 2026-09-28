@@ -6,13 +6,12 @@ Authors: Mizar
 import PseudoPrime.PrimeTest.MillerRabin.Composite
 /-! # Discrete witness contracts for Miller–Rabin -/
 namespace PseudoPrime.PrimeTest
-/-- A residue outside a subgroup containing all passing residues is a Miller–Rabin witness.
-This discrete bridge is independent of the source and size of the witness. -/
-theorem not_pass_of_outside_subgroup {n s d : ℕ} {H : Subgroup (ZMod n)ˣ}
-    (hpassImage : ∀ x : ZMod n, StrongMillerRabinPass n s d x →
+/-- A residue outside a subgroup containing every canonical pass is a strong-test witness. -/
+theorem not_pass_of_outside_subgroup {n : ℕ} {H : Subgroup (ZMod n)ˣ}
+    (hpassImage : ∀ x : ZMod n, StrongMillerRabinPass n x →
       ∃ u ∈ H, (u : ZMod n) = x) {x : ZMod n}
     (houtside : ¬ ∃ u ∈ H, (u : ZMod n) = x) :
-    ¬ StrongMillerRabinPass n s d x := by
+    ¬ StrongMillerRabinPass n x := by
   intro hpass
   exact houtside (hpassImage x hpass)
 

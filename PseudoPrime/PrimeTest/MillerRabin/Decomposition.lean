@@ -8,24 +8,46 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic
 
 /-!
-# Arbitrary decompositions for the strong Miller–Rabin condition
+# Canonical decomposition for the strong Miller–Rabin condition
 -/
 
 namespace PseudoPrime.PrimeTest
 
-/--
-The strong-test acceptance condition for an explicit decomposition `n - 1 = 2^s * d` and a
-residue `x`. Acceptance means either the odd-part power is one or an indicated repeated square is
-minus one.
--/
-def StrongMillerRabinPass (n s d : ℕ) (x : ZMod n) : Prop :=
-  x ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ x ^ (2 ^ j * d) = -1
+/-- For `1 < n` and odd `n`, the canonical decomposition of `n - 1` has a positive
+two-adic exponent, an odd residual factor, and product `n - 1`. The proof obtains positivity
+from `2 ∣ n - 1`; later pass and subgroup proofs use all three facts. -/
+theorem odd_sub_canonical_decomp {n : ℕ} (hn : 1 < n) (hnOdd : Odd n) :
+    let s := padicValNat 2 (n - 1)
+    let d := Nat.divMaxPow (n - 1) 2
+    0 < s ∧ Odd d ∧ n - 1 = 2 ^ s * d := by
+  dsimp only
+  have hne : n - 1 ≠ 0 := Nat.sub_ne_zero_of_lt hn
+  have heven : Even (n - 1) := by
+    have ho := Nat.odd_iff.mp hnOdd
+    rw [even_iff_two_dvd]
+    exact even_iff_two_dvd.mp (Nat.Odd.sub_odd hnOdd odd_one)
+  have hs : 0 < padicValNat 2 (n - 1) :=
+    one_le_padicValNat_of_dvd hne (even_iff_two_dvd.mp heven)
+  have hd : Odd (Nat.divMaxPow (n - 1) 2) := oddPart_odd hne
+  exact ⟨hs, hd, (twoAdicPart_mul_oddPart (n - 1)).symm⟩
 
-/-- Every accepted residue satisfies the Fermat power equation for the supplied decomposition. -/
-theorem strongMillerRabinPass_pow_decomp {n s d : ℕ} {x : ZMod n}
-    (hdecomp : n - 1 = 2 ^ s * d)
-    (hpass : StrongMillerRabinPass n s d x) :
+/-- The strong Miller–Rabin pass condition using `s = padicValNat 2 (n - 1)` and
+`d = Nat.divMaxPow (n - 1) 2`. A residue passes when `x^d = 1` or one of the `s`
+repeated-square powers is `-1`. This is the proof-side predicate for the public base test. -/
+def StrongMillerRabinPass (n : ℕ) (x : ZMod n) : Prop :=
+  x ^ Nat.divMaxPow (n - 1) 2 = 1 ∨
+    ∃ j : ℕ, j < padicValNat 2 (n - 1) ∧
+      x ^ (2 ^ j * Nat.divMaxPow (n - 1) 2) = -1
+
+/-- For `1 < n` and odd `n`, a canonical strong-test pass satisfies `x^(n - 1) = 1`.
+The initial-one branch raises to `2^s`; a minus-one branch raises to the remaining even power.
+The unit and subgroup results consume this Fermat equation. -/
+theorem strongMillerRabinPass_pow {n : ℕ} {x : ZMod n}
+    (hn : 1 < n) (hnOdd : Odd n) (hpass : StrongMillerRabinPass n x) :
     x ^ (n - 1) = 1 := by
+  let s := padicValNat 2 (n - 1)
+  let d := Nat.divMaxPow (n - 1) 2
+  obtain ⟨_, _, hdecomp⟩ := odd_sub_canonical_decomp hn hnOdd
   rcases hpass with hodd | ⟨j, hj, hneg⟩
   · calc
       x ^ (n - 1) = x ^ (2 ^ s * d) := by rw [hdecomp]
@@ -46,25 +68,32 @@ theorem strongMillerRabinPass_pow_decomp {n s d : ℕ} {x : ZMod n}
       _ = (-1) ^ (2 ^ (s - j)) := by rw [hneg]
       _ = 1 := heven.neg_one_pow
 
-/-- A residue accepted under a positive exponent decomposition is a unit modulo `n`. -/
-theorem strongMillerRabinPass_isUnit {n s d : ℕ} {x : ZMod n}
-    (hn : 1 < n)
-    (hdecomp : n - 1 = 2 ^ s * d)
-    (hpass : StrongMillerRabinPass n s d x) :
-    IsUnit x := by
-  have hpow := strongMillerRabinPass_pow_decomp hdecomp hpass
+/-- For `1 < n` and odd `n`, a passing residue is a unit modulo `n`.
+Its inverse is witnessed by `x^(n - 2)` using `strongMillerRabinPass_pow`;
+the subgroup and prime-factor results use this unit representative. -/
+theorem strongMillerRabinPass_isUnit {n : ℕ} {x : ZMod n}
+    (hn : 1 < n) (hnOdd : Odd n) (hpass : StrongMillerRabinPass n x) : IsUnit x := by
+  have hpow := strongMillerRabinPass_pow hn hnOdd hpass
+  have hsub : n - 2 + 1 = n - 1 := by
+    have hpos : 0 < n - 1 := Nat.sub_pos_of_lt hn
+    have hle : 1 ≤ n - 1 := Nat.succ_le_iff.mpr hpos
+    calc
+      n - 2 + 1 = (n - 1) - 1 + 1 := by rw [Nat.sub_sub]
+      _ = n - 1 := Nat.sub_add_cancel hle
   rw [isUnit_iff_exists]
   refine ⟨x ^ (n - 2), ?_, ?_⟩
   · rw [mul_comm x (x ^ (n - 2)), ← pow_succ]
-    rw [show n - 2 + 1 = n - 1 by omega, hpow]
-  · rw [← pow_succ, show n - 2 + 1 = n - 1 by omega, hpow]
+    rw [hsub, hpow]
+  · rw [← pow_succ, hsub, hpow]
 
-/--
-Failure of the arbitrary-decomposition pass condition is exactly the two witness inequalities.
--/
-theorem not_strongMillerRabinPass_iff {n s d : ℕ} {x : ZMod n} :
-    ¬ StrongMillerRabinPass n s d x ↔
-      x ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → x ^ (2 ^ j * d) ≠ -1 := by
+/-- Failure of the canonical strong test is the pair of inequalities `x^d ≠ 1` and
+`x^(2^j d) ≠ -1` for every `j < s`, with `s, d` computed from `n - 1`.
+This logical equivalence supplies the proof-side witness condition. -/
+theorem not_strongMillerRabinPass_iff {n : ℕ} {x : ZMod n} :
+    ¬ StrongMillerRabinPass n x ↔
+      x ^ Nat.divMaxPow (n - 1) 2 ≠ 1 ∧
+      ∀ j : ℕ, j < padicValNat 2 (n - 1) →
+        x ^ (2 ^ j * Nat.divMaxPow (n - 1) 2) ≠ -1 := by
   constructor
   · intro hfail
     constructor
@@ -76,19 +105,20 @@ theorem not_strongMillerRabinPass_iff {n s d : ℕ} {x : ZMod n} :
     · exact hone hpass
     · exact hminus j hj hpass
 
-/--
-The existing Miller–Rabin specification is the arbitrary-decomposition pass predicate at the
-computed odd part and two-adic exponent.
--/
+/-- The existing `IsStrongMillerRabinProbablePrime` specification equals the canonical
+pass predicate. The proof converts `List.range` membership into `r < s`, commutes
+`d * 2^r` to `2^r * d`, and identifies the residue of `n - 1` with `-1`. -/
 theorem isStrongMillerRabinProbablePrime_iff_pass {n a : ℕ} :
     IsStrongMillerRabinProbablePrime n a ↔
-      StrongMillerRabinPass n (twoAdicExponent (n - 1)) (oddPart (n - 1)) (a : ZMod n) := by
-  change ((a : ZMod n) ^ oddPart (n - 1) = 1 ∨
-      ∃ r ∈ List.range (twoAdicExponent (n - 1)),
-        (a : ZMod n) ^ (oddPart (n - 1) * 2 ^ r) = (n - 1 : ZMod n)) ↔
-    ((a : ZMod n) ^ oddPart (n - 1) = 1 ∨
-      ∃ r, r < twoAdicExponent (n - 1) ∧
-        (a : ZMod n) ^ (2 ^ r * oddPart (n - 1)) = -1)
+      StrongMillerRabinPass n (a : ZMod n) := by
+  let s := padicValNat 2 (n - 1)
+  let d := Nat.divMaxPow (n - 1) 2
+  change ((a : ZMod n) ^ d = 1 ∨
+      ∃ r ∈ List.range s,
+        (a : ZMod n) ^ (d * 2 ^ r) = (n - 1 : ZMod n)) ↔
+    ((a : ZMod n) ^ d = 1 ∨
+      ∃ r, r < s ∧
+        (a : ZMod n) ^ (2 ^ r * d) = -1)
   constructor
   · rintro (hodd | ⟨r, hr, hpow⟩)
     · exact Or.inl hodd
@@ -103,90 +133,58 @@ theorem isStrongMillerRabinProbablePrime_iff_pass {n a : ℕ} :
       refine ⟨r, List.mem_range.mpr hr, ?_⟩
       rw [Nat.mul_comm, hpow, ZMod.natCast_self, zero_sub]
 
-/-- An odd factorization of `m` by a power of two is its computed maximal-power decomposition. -/
-theorem twoAdicExponent_eq_and_oddPart_eq_of_decomp {m s d : ℕ}
-    (hm : m ≠ 0)
-    (hdecomp : m = 2 ^ s * d)
-    (hdOdd : Odd d) :
-    twoAdicExponent m = s ∧ oddPart m = d := by
-  have hdvd : ¬2 ∣ d := by
-    intro hdiv
-    exact (Nat.not_even_iff_odd.mpr hdOdd) (even_iff_two_dvd.mpr hdiv)
-  have hmax := Nat.maxPowDvdDiv_of_pow_mul_eq hm hdecomp.symm hdvd
-  constructor
-  · change padicValNat 2 m = s
-    calc
-      padicValNat 2 m = (Nat.maxPowDvdDiv 2 m).1 :=
-        (Nat.fst_maxPowDvdDiv 2 m).symm
-      _ = s := congrArg Prod.fst hmax
-  · change Nat.divMaxPow m 2 = d
-    calc
-      Nat.divMaxPow m 2 = (Nat.maxPowDvdDiv 2 m).2 :=
-        (Nat.snd_maxPowDvdDiv 2 m).symm
-      _ = d := congrArg Prod.snd hmax
-
-/-- Any admissible odd decomposition agrees with the computed Miller–Rabin decomposition. -/
-theorem strongMillerRabinPass_iff_computed {n s d : ℕ} {x : ZMod n}
-    (hn : 1 < n)
-    (hdecomp : n - 1 = 2 ^ s * d)
-    (hdOdd : Odd d) :
-    StrongMillerRabinPass n s d x ↔
-      StrongMillerRabinPass n (twoAdicExponent (n - 1)) (oddPart (n - 1)) x := by
-  have hm : n - 1 ≠ 0 := Nat.sub_ne_zero_of_lt hn
-  obtain ⟨hs, hd⟩ := twoAdicExponent_eq_and_oddPart_eq_of_decomp hm hdecomp hdOdd
-  rw [← hs, ← hd]
-
-/-- The executable test accepts exactly the pass predicate for any admissible decomposition. -/
-theorem strongMillerRabinWithBase_eq_true_iff_pass_decomp {n s d a : ℕ}
-    (hn : 1 < n)
-    (hdecomp : n - 1 = 2 ^ s * d)
-    (hdOdd : Odd d) :
+/-- The executable single-base test returns `true` exactly when its residue satisfies the
+canonical proof-side pass predicate. This composes the existing Boolean specification with
+`isStrongMillerRabinProbablePrime_iff_pass`. -/
+theorem strongMillerRabinWithBase_eq_true_iff_pass {n a : ℕ} :
     strongMillerRabinWithBase n a = true ↔
-      StrongMillerRabinPass n s d (a : ZMod n) := by
-  exact (strongMillerRabinWithBase_eq_true_iff).trans
-    (isStrongMillerRabinProbablePrime_iff_pass.trans
-      (strongMillerRabinPass_iff_computed hn hdecomp hdOdd).symm)
+      StrongMillerRabinPass n (a : ZMod n) :=
+  strongMillerRabinWithBase_eq_true_iff.trans
+    isStrongMillerRabinProbablePrime_iff_pass
 
-/-- A prime base dividing `n` cannot satisfy any admissible strong-test pass condition. -/
-theorem strongMillerRabinPass_not_of_prime_dvd {n s d p : ℕ}
-    (hn : 1 < n)
-    (hdecomp : n - 1 = 2 ^ s * d)
-    (hp : Nat.Prime p)
-    (hdiv : p ∣ n) :
-    ¬ StrongMillerRabinPass n s d (p : ZMod n) := by
+/-- If `1 < n` is odd and prime `p` divides `n`, the residue of `p` fails the canonical
+strong test. A pass would make it a unit and hence coprime to `n`, contradicting `p ∣ n`.
+This supplies the small-factor witness branch. -/
+theorem strongMillerRabinPass_not_of_prime_dvd {n p : ℕ}
+    (hn : 1 < n) (hnOdd : Odd n) (hp : Nat.Prime p) (hdiv : p ∣ n) :
+    ¬ StrongMillerRabinPass n (p : ZMod n) := by
   intro hpass
-  have hunit := strongMillerRabinPass_isUnit hn hdecomp hpass
+  have hunit := strongMillerRabinPass_isUnit hn hnOdd hpass
   have hcop : Nat.Coprime p n := (ZMod.isUnit_iff_coprime p n).mp hunit
   exact (hp.coprime_iff_not_dvd.mp hcop) hdiv
 
-/-- Every modulus greater than one has a prime factor that fails the strong-test conditions. -/
-theorem exists_prime_factor_strongMillerRabin_witness {n s d : ℕ}
-    (hn : 1 < n)
-    (hdecomp : n - 1 = 2 ^ s * d) :
+/-- Every odd `n > 1` has a prime divisor whose residue violates both canonical pass
+branches. Choose a prime factor and apply `strongMillerRabinPass_not_of_prime_dvd`, then
+expand the negated pass condition. This is the unbounded factor-witness interface. -/
+theorem exists_prime_factor_strongMillerRabin_witness {n : ℕ}
+    (hn : 1 < n) (hnOdd : Odd n) :
+    let s := padicValNat 2 (n - 1)
+    let d := Nat.divMaxPow (n - 1) 2
     ∃ p : ℕ, Nat.Prime p ∧ p ∣ n ∧
       (p : ZMod n) ^ d ≠ 1 ∧
       ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
   obtain ⟨p, hp, hdiv⟩ := Nat.exists_prime_and_dvd (Nat.ne_of_gt hn)
   refine ⟨p, hp, hdiv, ?_⟩
-  exact (not_strongMillerRabinPass_iff.mp
-    (strongMillerRabinPass_not_of_prime_dvd hn hdecomp hp hdiv))
+  exact not_strongMillerRabinPass_iff.mp
+    (strongMillerRabinPass_not_of_prime_dvd hn hnOdd hp hdiv)
 
-/-- Boolean rejection is equivalent to failure of the arbitrary-decomposition pass predicate. -/
-theorem strongMillerRabinWithBase_eq_false_iff_not_pass_decomp {n s d a : ℕ}
-    (hn : 1 < n)
-    (hdecomp : n - 1 = 2 ^ s * d)
-    (hdOdd : Odd d) :
+/-- The executable single-base test returns `false` exactly when the canonical pass
+predicate fails. The proof uses the accepted-case equivalence and Boolean case analysis;
+finite certificates and explicit witness bounds consume this rejection interface. -/
+theorem strongMillerRabinWithBase_eq_false_iff_not_pass {n a : ℕ} :
     strongMillerRabinWithBase n a = false ↔
-      ¬ StrongMillerRabinPass n s d (a : ZMod n) := by
+      ¬ StrongMillerRabinPass n (a : ZMod n) := by
   constructor
   · intro hfalse hpass
-    have htrue := (strongMillerRabinWithBase_eq_true_iff_pass_decomp hn hdecomp hdOdd).2 hpass
+    have htrue := strongMillerRabinWithBase_eq_true_iff.mpr
+      (isStrongMillerRabinProbablePrime_iff_pass.mpr hpass)
     rw [hfalse] at htrue
     cases htrue
   · intro hnot
     cases htest : strongMillerRabinWithBase n a with
     | false => rfl
-    | true => exact False.elim (hnot
-        ((strongMillerRabinWithBase_eq_true_iff_pass_decomp hn hdecomp hdOdd).1 htest))
+    | true =>
+        exact False.elim (hnot (isStrongMillerRabinProbablePrime_iff_pass.mp
+          (strongMillerRabinWithBase_eq_true_iff.mp htest)))
 
 end PseudoPrime.PrimeTest
