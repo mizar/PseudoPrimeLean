@@ -17,7 +17,7 @@ def qNeOneMillionPrimes : Finset ℕ :=
 theorem qNeOneMillion_reject_19_0 {n : ℕ} (hr : n % 19 = 0)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num only)
         (hpass 19 (by decide))).elim
 
 /-- Coverage of the surviving class 1 modulo 510510, below 1000000. -/
@@ -32,14 +32,14 @@ theorem qNeOneMillion_wheel_510510_1 {n : ℕ} (hn : n < 1000000) (hr : n % 5105
 theorem qNeOneMillion_reject_19_18 {n : ℕ} (hr : n % 19 = 18)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 18) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 18) (hr.trans (by decide)) (by norm_num only)
         (hpass 19 (by decide))).elim
 
 /-- Residue 21 fails stage 23; reused for all integers in this residue class. -/
 theorem qNeOneMillion_reject_23_21 {n : ℕ} (hr : n % 23 = 21)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 21) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 21) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Coverage of the surviving class 450451 modulo 510510, below 1000000. -/
@@ -54,14 +54,14 @@ theorem qNeOneMillion_wheel_510510_450451 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_23_5 {n : ℕ} (hr : n % 23 = 5)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Residue 15 fails stage 19; reused for all integers in this residue class. -/
 theorem qNeOneMillion_reject_19_15 {n : ℕ} (hr : n % 19 = 15)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num only)
         (hpass 19 (by decide))).elim
 
 /-- Coverage of the surviving class 330331 modulo 510510, below 1000000. -/
@@ -76,14 +76,14 @@ theorem qNeOneMillion_wheel_510510_330331 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_19_12 {n : ℕ} (hr : n % 19 = 12)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num only)
         (hpass 19 (by decide))).elim
 
 /-- Residue 11 fails stage 29; reused for all integers in this residue class. -/
 theorem qNeOneMillion_reject_29_11 {n : ℕ} (hr : n % 29 = 11)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 11) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 11) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 90091 modulo 510510, below 1000000. -/
@@ -98,14 +98,14 @@ theorem qNeOneMillion_wheel_510510_90091 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_31_23 {n : ℕ} (hr : n % 31 = 23)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 23) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 23) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Residue 10 fails stage 19; reused for all integers in this residue class. -/
 theorem qNeOneMillion_reject_19_10 {n : ℕ} (hr : n % 19 = 10)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 10) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 10) (hr.trans (by decide)) (by norm_num only)
         (hpass 19 (by decide))).elim
 
 /-- Coverage of the surviving class 30031 modulo 510510, below 1000000. -/
@@ -120,14 +120,14 @@ theorem qNeOneMillion_wheel_510510_30031 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_41_17 {n : ℕ} (hr : n % 41 = 17)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 17) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 17) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Residue 15 fails stage 23; reused for all integers in this residue class. -/
 theorem qNeOneMillion_reject_23_15 {n : ℕ} (hr : n % 23 = 15)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Coverage of the surviving class 300301 modulo 510510, below 1000000. -/
@@ -142,14 +142,14 @@ theorem qNeOneMillion_wheel_510510_300301 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_23_22 {n : ℕ} (hr : n % 23 = 22)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 22) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 22) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Residue 3 fails stage 19; reused for all integers in this residue class. -/
 theorem qNeOneMillion_reject_19_3 {n : ℕ} (hr : n % 19 = 3)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num only)
         (hpass 19 (by decide))).elim
 
 /-- Coverage of the surviving class 180181 modulo 510510, below 1000000. -/
@@ -164,7 +164,7 @@ theorem qNeOneMillion_wheel_510510_180181 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_19_2 {n : ℕ} (hr : n % 19 = 2)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num only)
         (hpass 19 (by decide))).elim
 
 /-- Coverage of the surviving class 120121 modulo 510510, below 1000000. -/
@@ -209,7 +209,7 @@ theorem qNeOneMillion_wheel_30030_1 {n : ℕ} (hn : n < 1000000) (hr : n % 30030
 theorem qNeOneMillion_reject_19_14 {n : ℕ} (hr : n % 19 = 14)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 14) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 14) (hr.trans (by decide)) (by norm_num only)
         (hpass 19 (by decide))).elim
 
 /-- Coverage of the surviving class 314161 modulo 510510, below 1000000. -/
@@ -224,7 +224,7 @@ theorem qNeOneMillion_wheel_510510_314161 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_19_13 {n : ℕ} (hr : n % 19 = 13)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 13) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 13) (hr.trans (by decide)) (by norm_num only)
         (hpass 19 (by decide))).elim
 
 /-- Coverage of the surviving class 254101 modulo 510510, below 1000000. -/
@@ -239,7 +239,7 @@ theorem qNeOneMillion_wheel_510510_254101 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_41_12 {n : ℕ} (hr : n % 41 = 12)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 133981 modulo 510510, below 1000000. -/
@@ -254,7 +254,7 @@ theorem qNeOneMillion_wheel_510510_133981 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_31_11 {n : ℕ} (hr : n % 31 = 11)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 11) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 11) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 404251 modulo 510510, below 1000000. -/
@@ -269,7 +269,7 @@ theorem qNeOneMillion_wheel_510510_404251 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_23_19 {n : ℕ} (hr : n % 23 = 19)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 19) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 19) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Coverage of the surviving class 344191 modulo 510510, below 1000000. -/
@@ -284,7 +284,7 @@ theorem qNeOneMillion_wheel_510510_344191 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_2 {n : ℕ} (hr : n % 37 = 2)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 103951 modulo 510510, below 1000000. -/
@@ -306,7 +306,7 @@ theorem qNeOneMillion_wheel_510510_494341 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_23_20 {n : ℕ} (hr : n % 23 = 20)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 20) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 20) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Coverage of the surviving class 434281 modulo 510510, below 1000000. -/
@@ -359,7 +359,7 @@ theorem qNeOneMillion_wheel_510510_471241 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_31_30 {n : ℕ} (hr : n % 31 = 30)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 30) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 30) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 411181 modulo 510510, below 1000000. -/
@@ -397,14 +397,14 @@ theorem qNeOneMillion_wheel_510510_501271 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_29_2 {n : ℕ} (hr : n % 29 = 2)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Residue 8 fails stage 19; reused for all integers in this residue class. -/
 theorem qNeOneMillion_reject_19_8 {n : ℕ} (hr : n % 19 = 8)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 8) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 8) (hr.trans (by decide)) (by norm_num only)
         (hpass 19 (by decide))).elim
 
 /-- Coverage of the surviving class 261031 modulo 510510, below 1000000. -/
@@ -419,7 +419,7 @@ theorem qNeOneMillion_wheel_510510_261031 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_29_0 {n : ℕ} (hr : n % 29 = 0)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 140911 modulo 510510, below 1000000. -/
@@ -434,7 +434,7 @@ theorem qNeOneMillion_wheel_510510_140911 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_31_3 {n : ℕ} (hr : n % 31 = 3)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 80851 modulo 510510, below 1000000. -/
@@ -479,7 +479,7 @@ theorem qNeOneMillion_wheel_30030_20791 {n : ℕ} (hn : n < 1000000) (hr : n % 3
 theorem qNeOneMillion_reject_23_11 {n : ℕ} (hr : n % 23 = 11)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 11) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 11) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Coverage of the surviving class 235621 modulo 510510, below 1000000. -/
@@ -502,7 +502,7 @@ theorem qNeOneMillion_wheel_510510_175561 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_31_15 {n : ℕ} (hr : n % 31 = 15)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 55441 modulo 510510, below 1000000. -/
@@ -541,14 +541,14 @@ theorem qNeOneMillion_wheel_510510_25411 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_23_7 {n : ℕ} (hr : n % 23 = 7)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 7) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 7) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Residue 0 fails stage 31; reused for all integers in this residue class. -/
 theorem qNeOneMillion_reject_31_0 {n : ℕ} (hr : n % 31 = 0)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 415801 modulo 510510, below 1000000. -/
@@ -563,7 +563,7 @@ theorem qNeOneMillion_wheel_510510_415801 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_23_0 {n : ℕ} (hr : n % 23 = 0)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Coverage of the surviving class 355741 modulo 510510, below 1000000. -/
@@ -616,7 +616,7 @@ theorem qNeOneMillion_wheel_510510_392701 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_23_17 {n : ℕ} (hr : n % 23 = 17)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 17) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 17) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Coverage of the surviving class 332641 modulo 510510, below 1000000. -/
@@ -631,7 +631,7 @@ theorem qNeOneMillion_wheel_510510_332641 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_29_3 {n : ℕ} (hr : n % 29 = 3)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 212521 modulo 510510, below 1000000. -/
@@ -678,7 +678,7 @@ theorem qNeOneMillion_wheel_510510_62371 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_29_14 {n : ℕ} (hr : n % 29 = 14)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 14) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 14) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 2311 modulo 510510, below 1000000. -/
@@ -723,7 +723,7 @@ theorem qNeOneMillion_wheel_30030_2311 {n : ℕ} (hn : n < 1000000) (hr : n % 30
 theorem qNeOneMillion_reject_29_15 {n : ℕ} (hr : n % 29 = 15)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 196351 modulo 510510, below 1000000. -/
@@ -746,7 +746,7 @@ theorem qNeOneMillion_wheel_510510_136291 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_29_12 {n : ℕ} (hr : n % 29 = 12)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 16171 modulo 510510, below 1000000. -/
@@ -792,14 +792,14 @@ theorem qNeOneMillion_wheel_510510_376531 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_23_14 {n : ℕ} (hr : n % 23 = 14)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 14) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 14) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Residue 17 fails stage 29; reused for all integers in this residue class. -/
 theorem qNeOneMillion_reject_29_17 {n : ℕ} (hr : n % 29 = 17)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 17) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 17) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 316471 modulo 510510, below 1000000. -/
@@ -868,7 +868,7 @@ theorem qNeOneMillion_wheel_2310_1 {n : ℕ} (hn : n < 1000000) (hr : n % 2310 =
 theorem qNeOneMillion_reject_29_21 {n : ℕ} (hr : n % 29 = 21)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 21) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 21) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 92821 modulo 510510, below 1000000. -/
@@ -907,7 +907,7 @@ theorem qNeOneMillion_wheel_510510_182911 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_31_29 {n : ℕ} (hr : n % 31 = 29)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 29) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 29) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 122851 modulo 510510, below 1000000. -/
@@ -1015,7 +1015,7 @@ theorem qNeOneMillion_wheel_510510_437011 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_5 {n : ℕ} (hr : n % 37 = 5)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 196771 modulo 510510, below 1000000. -/
@@ -1084,7 +1084,7 @@ theorem qNeOneMillion_wheel_510510_53551 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_29_10 {n : ℕ} (hr : n % 29 = 10)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 10) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 10) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 504001 modulo 510510, below 1000000. -/
@@ -1176,7 +1176,7 @@ theorem qNeOneMillion_wheel_30030_23521 {n : ℕ} (hn : n < 1000000) (hr : n % 3
 theorem qNeOneMillion_reject_31_27 {n : ℕ} (hr : n % 31 = 27)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 27) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 27) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 328441 modulo 510510, below 1000000. -/
@@ -1207,7 +1207,7 @@ theorem qNeOneMillion_wheel_510510_148261 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_29_26 {n : ℕ} (hr : n % 29 = 26)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 26) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 26) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 418531 modulo 510510, below 1000000. -/
@@ -1222,7 +1222,7 @@ theorem qNeOneMillion_wheel_510510_418531 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_41_27 {n : ℕ} (hr : n % 41 = 27)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 27) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 27) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 358471 modulo 510510, below 1000000. -/
@@ -1314,7 +1314,7 @@ theorem qNeOneMillion_wheel_510510_305341 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_29_19 {n : ℕ} (hr : n % 29 = 19)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 19) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 19) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 65101 modulo 510510, below 1000000. -/
@@ -1329,7 +1329,7 @@ theorem qNeOneMillion_wheel_510510_65101 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_29_18 {n : ℕ} (hr : n % 29 = 18)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 18) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 18) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 5041 modulo 510510, below 1000000. -/
@@ -1352,7 +1352,7 @@ theorem qNeOneMillion_wheel_510510_275311 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_43_18 {n : ℕ} (hr : n % 43 = 18)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 18) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 18) (hr.trans (by decide)) (by norm_num only)
         (hpass 43 (by decide))).elim
 
 /-- Coverage of the surviving class 155191 modulo 510510, below 1000000. -/
@@ -1429,7 +1429,7 @@ theorem qNeOneMillion_wheel_510510_108991 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_32 {n : ℕ} (hr : n % 37 = 32)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 32) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 32) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 379261 modulo 510510, below 1000000. -/
@@ -1468,7 +1468,7 @@ theorem qNeOneMillion_wheel_510510_469351 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_29_8 {n : ℕ} (hr : n % 29 = 8)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 8) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 8) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 409291 modulo 510510, below 1000000. -/
@@ -1577,7 +1577,7 @@ theorem qNeOneMillion_wheel_510510_169261 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_31_13 {n : ℕ} (hr : n % 31 = 13)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 13) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 13) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 439531 modulo 510510, below 1000000. -/
@@ -1600,7 +1600,7 @@ theorem qNeOneMillion_wheel_510510_319411 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_18 {n : ℕ} (hr : n % 37 = 18)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 18) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 18) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 259351 modulo 510510, below 1000000. -/
@@ -1653,7 +1653,7 @@ theorem qNeOneMillion_wheel_510510_453391 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_23_10 {n : ℕ} (hr : n % 23 = 10)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 10) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 10) (hr.trans (by decide)) (by norm_num only)
         (hpass 23 (by decide))).elim
 
 /-- Coverage of the surviving class 393331 modulo 510510, below 1000000. -/
@@ -1676,7 +1676,7 @@ theorem qNeOneMillion_wheel_510510_273211 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_29_27 {n : ℕ} (hr : n % 29 = 27)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 27) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 27) (hr.trans (by decide)) (by norm_num only)
         (hpass 29 (by decide))).elim
 
 /-- Coverage of the surviving class 32971 modulo 510510, below 1000000. -/
@@ -1801,7 +1801,7 @@ theorem qNeOneMillion_wheel_510510_400261 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_14 {n : ℕ} (hr : n % 37 = 14)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 14) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 14) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 280141 modulo 510510, below 1000000. -/
@@ -1979,7 +1979,7 @@ theorem qNeOneMillion_wheel_510510_111511 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_31_24 {n : ℕ} (hr : n % 31 = 24)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 24) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 24) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 51451 modulo 510510, below 1000000. -/
@@ -2174,7 +2174,7 @@ theorem qNeOneMillion_wheel_510510_185641 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_24 {n : ℕ} (hr : n % 37 = 24)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 24) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 24) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 125581 modulo 510510, below 1000000. -/
@@ -2298,7 +2298,7 @@ theorem qNeOneMillion_wheel_510510_79381 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_41_29 {n : ℕ} (hr : n % 41 = 29)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 29) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 29) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 19321 modulo 510510, below 1000000. -/
@@ -2461,7 +2461,7 @@ theorem qNeOneMillion_wheel_30030_26251 {n : ℕ} (hn : n < 1000000) (hr : n % 3
 theorem qNeOneMillion_reject_37_0 {n : ℕ} (hr : n % 37 = 0)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 421261 modulo 510510, below 1000000. -/
@@ -2516,7 +2516,7 @@ theorem qNeOneMillion_wheel_510510_211051 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_22 {n : ℕ} (hr : n % 37 = 22)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 22) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 22) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 90931 modulo 510510, below 1000000. -/
@@ -2609,7 +2609,7 @@ theorem qNeOneMillion_wheel_510510_97861 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_31_6 {n : ℕ} (hr : n % 31 = 6)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 368131 modulo 510510, below 1000000. -/
@@ -2795,7 +2795,7 @@ theorem qNeOneMillion_wheel_510510_371281 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_31_12 {n : ℕ} (hr : n % 31 = 12)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 311221 modulo 510510, below 1000000. -/
@@ -2834,7 +2834,7 @@ theorem qNeOneMillion_wheel_510510_401311 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_31 {n : ℕ} (hr : n % 37 = 31)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 31) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 31) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 161071 modulo 510510, below 1000000. -/
@@ -3300,7 +3300,7 @@ theorem qNeOneMillion_wheel_510510_147211 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_41_26 {n : ℕ} (hr : n % 41 = 26)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 26) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 26) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 87151 modulo 510510, below 1000000. -/
@@ -3727,7 +3727,7 @@ theorem qNeOneMillion_wheel_510510_471571 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_31_17 {n : ℕ} (hr : n % 31 = 17)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 17) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 17) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 411511 modulo 510510, below 1000000. -/
@@ -3803,7 +3803,7 @@ theorem qNeOneMillion_wheel_510510_28051 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_37_17 {n : ℕ} (hr : n % 37 = 17)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 17) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 17) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 478501 modulo 510510, below 1000000. -/
@@ -3936,7 +3936,7 @@ theorem qNeOneMillion_wheel_510510_372241 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_6 {n : ℕ} (hr : n % 37 = 6)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 132001 modulo 510510, below 1000000. -/
@@ -3959,7 +3959,7 @@ theorem qNeOneMillion_wheel_510510_11881 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_41_15 {n : ℕ} (hr : n % 41 = 15)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 462331 modulo 510510, below 1000000. -/
@@ -4130,7 +4130,7 @@ theorem qNeOneMillion_wheel_510510_42331 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_37_15 {n : ℕ} (hr : n % 37 = 15)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 15) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 492781 modulo 510510, below 1000000. -/
@@ -4152,7 +4152,7 @@ theorem qNeOneMillion_wheel_510510_372661 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_31_22 {n : ℕ} (hr : n % 31 = 22)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 22) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 22) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 132421 modulo 510510, below 1000000. -/
@@ -4229,7 +4229,7 @@ theorem qNeOneMillion_wheel_30030_12301 {n : ℕ} (hn : n < 1000000) (hr : n % 3
 theorem qNeOneMillion_reject_31_21 {n : ℕ} (hr : n % 31 = 21)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 21) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 21) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 199411 modulo 510510, below 1000000. -/
@@ -4329,7 +4329,7 @@ theorem qNeOneMillion_wheel_30030_19231 {n : ℕ} (hn : n < 1000000) (hr : n % 3
 theorem qNeOneMillion_reject_37_35 {n : ℕ} (hr : n % 37 = 35)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 35) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 35) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 474301 modulo 510510, below 1000000. -/
@@ -4429,7 +4429,7 @@ theorem qNeOneMillion_wheel_30030_23851 {n : ℕ} (hn : n < 1000000) (hr : n % 3
 theorem qNeOneMillion_reject_37_13 {n : ℕ} (hr : n % 37 = 13)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 13) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 13) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 120871 modulo 510510, below 1000000. -/
@@ -4538,7 +4538,7 @@ theorem qNeOneMillion_wheel_510510_435031 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_31_26 {n : ℕ} (hr : n % 31 = 26)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 26) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 26) (hr.trans (by decide)) (by norm_num only)
         (hpass 31 (by decide))).elim
 
 /-- Coverage of the surviving class 374971 modulo 510510, below 1000000. -/
@@ -4757,7 +4757,7 @@ theorem qNeOneMillion_wheel_510510_88741 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_41_0 {n : ℕ} (hr : n % 41 = 0)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 28681 modulo 510510, below 1000000. -/
@@ -5061,7 +5061,7 @@ theorem qNeOneMillion_wheel_510510_497611 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_41_14 {n : ℕ} (hr : n % 41 = 14)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 14) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 14) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 257371 modulo 510510, below 1000000. -/
@@ -5851,7 +5851,7 @@ theorem qNeOneMillion_wheel_510510_6631 {n : ℕ} (hn : n < 1000000) (hr : n % 5
 theorem qNeOneMillion_reject_43_5 {n : ℕ} (hr : n % 43 = 5)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num only)
         (hpass 43 (by decide))).elim
 
 /-- Coverage of the surviving class 457081 modulo 510510, below 1000000. -/
@@ -7379,7 +7379,7 @@ theorem qNeOneMillion_wheel_510510_435691 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_41_30 {n : ℕ} (hr : n % 41 = 30)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 30) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 30) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 375631 modulo 510510, below 1000000. -/
@@ -7870,7 +7870,7 @@ theorem qNeOneMillion_wheel_510510_327331 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_41_38 {n : ℕ} (hr : n % 41 = 38)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 38) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 38) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 207211 modulo 510510, below 1000000. -/
@@ -8371,7 +8371,7 @@ theorem qNeOneMillion_wheel_510510_216661 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_29 {n : ℕ} (hr : n % 37 = 29)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 29) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 29) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 96541 modulo 510510, below 1000000. -/
@@ -8612,7 +8612,7 @@ theorem qNeOneMillion_wheel_30030_18001 {n : ℕ} (hn : n < 1000000) (hr : n % 3
 theorem qNeOneMillion_reject_43_32 {n : ℕ} (hr : n % 43 = 32)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 32) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 32) (hr.trans (by decide)) (by norm_num only)
         (hpass 43 (by decide))).elim
 
 /-- Coverage of the surviving class 505411 modulo 510510, below 1000000. -/
@@ -9970,7 +9970,7 @@ theorem qNeOneMillion_wheel_510510_394549 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_41_35 {n : ℕ} (hr : n % 41 = 35)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 35) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 35) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 274429 modulo 510510, below 1000000. -/
@@ -10102,7 +10102,7 @@ theorem qNeOneMillion_wheel_510510_170899 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_8 {n : ℕ} (hr : n % 37 = 8)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 8) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 8) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 110839 modulo 510510, below 1000000. -/
@@ -11108,7 +11108,7 @@ theorem qNeOneMillion_wheel_30030_9409 {n : ℕ} (hn : n < 1000000) (hr : n % 30
 theorem qNeOneMillion_reject_41_3 {n : ℕ} (hr : n % 41 = 3)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 233479 modulo 510510, below 1000000. -/
@@ -11444,7 +11444,7 @@ theorem qNeOneMillion_wheel_510510_374599 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_47_29 {n : ℕ} (hr : n % 47 = 29)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 29) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 29) (hr.trans (by decide)) (by norm_num only)
         (hpass 47 (by decide))).elim
 
 /-- Coverage of the surviving class 134359 modulo 510510, below 1000000. -/
@@ -11653,7 +11653,7 @@ theorem qNeOneMillion_wheel_510510_506269 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_20 {n : ℕ} (hr : n % 37 = 20)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 20) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 20) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 266029 modulo 510510, below 1000000. -/
@@ -11770,7 +11770,7 @@ theorem qNeOneMillion_wheel_510510_460069 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_37_23 {n : ℕ} (hr : n % 37 = 23)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 23) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 23) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 400009 modulo 510510, below 1000000. -/
@@ -12783,7 +12783,7 @@ theorem qNeOneMillion_wheel_510510_459559 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_43_29 {n : ℕ} (hr : n % 43 = 29)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 29) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 29) (hr.trans (by decide)) (by norm_num only)
         (hpass 43 (by decide))).elim
 
 /-- Coverage of the surviving class 399499 modulo 510510, below 1000000. -/
@@ -14993,7 +14993,7 @@ theorem qNeOneMillion_wheel_510510_375769 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_41_28 {n : ℕ} (hr : n % 41 = 28)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 28) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 28) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 315709 modulo 510510, below 1000000. -/
@@ -17958,7 +17958,7 @@ theorem qNeOneMillion_wheel_510510_96919 {n : ℕ} (hn : n < 1000000) (hr : n % 
 theorem qNeOneMillion_reject_37_19 {n : ℕ} (hr : n % 37 = 19)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 19) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 19) (hr.trans (by decide)) (by norm_num only)
         (hpass 37 (by decide))).elim
 
 /-- Coverage of the surviving class 487309 modulo 510510, below 1000000. -/
@@ -18137,7 +18137,7 @@ theorem qNeOneMillion_wheel_30030_11449 {n : ℕ} (hn : n < 1000000) (hr : n % 3
 theorem qNeOneMillion_reject_41_6 {n : ℕ} (hr : n % 41 = 6)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num only)
         (hpass 41 (by decide))).elim
 
 /-- Coverage of the surviving class 78439 modulo 510510, below 1000000. -/
@@ -18270,7 +18270,7 @@ theorem qNeOneMillion_wheel_510510_482689 {n : ℕ} (hn : n < 1000000) (hr : n %
 theorem qNeOneMillion_reject_43_39 {n : ℕ} (hr : n % 43 = 39)
     (hpass : QNeOneSievePasses qNeOneMillionPrimes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 39) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 39) (hr.trans (by decide)) (by norm_num only)
         (hpass 43 (by decide))).elim
 
 /-- Coverage of the surviving class 422629 modulo 510510, below 1000000. -/
@@ -18425,7 +18425,8 @@ theorem qNeOneMillion_exists {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) (hB : n
 /-- Every wheel stage is an odd prime bounded by 47. -/
 theorem qNeOneMillionPrimes_spec {p : ℕ} (hp : p ∈ qNeOneMillionPrimes) :
     Nat.Prime p ∧ Odd p ∧ p ≤ 47 := by
-  norm_num [qNeOneMillionPrimes] at hp
+  norm_num only [qNeOneMillionPrimes, Finset.mem_insert, Finset.mem_singleton, List.mem_cons,
+    List.not_mem_nil] at hp
   rcases hp with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
   all_goals decide
 

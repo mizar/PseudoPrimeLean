@@ -109,7 +109,7 @@ theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw {N : ℕ} [Ne
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
-        linarith)
+        linarith only [him])
   have hdΓ0 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 0 :=
     differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
       (by
@@ -119,7 +119,7 @@ theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw {N : ℕ} [Ne
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
-        linarith)
+        linarith only [him])
   have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have hbridge0 :=
     logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF0ne hΓ0ne hdΓ0
@@ -225,7 +225,7 @@ theorem eventuallyEq_dirichletLogEvenZeroRegularization_canonical {N : ℕ} [NeZ
   rw [hlogs']
   simp only [sub_zero]
   push_cast
-  field_simp
+  field_simp [hs0']
 
 /--
 Input/assumptions: `N ≥ 1`, `χ`, `x > 0`, `s : ℂ` with `G_χ` analytic and nonzero at `s`.

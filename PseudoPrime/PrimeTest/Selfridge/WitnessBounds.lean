@@ -30,7 +30,7 @@ theorem primeNeOneWitness_le_classicalFirstStop {n : ℕ} (hn : Odd n)
   · have hstop := firstStopNeOne_mem isClassicalCandidate n hs
     have hi : 0 < firstStopNeOne isClassicalCandidate n hs := by
       have hi5 := hstop.1.1
-      omega
+      exact lt_of_lt_of_le (by decide : 0 < 5) hi5
     obtain ⟨p, hprime, hodd, _, hplt, hvalue⟩ :=
       exists_odd_prime_lt_of_composite_mem_firstStopNeOneSet isClassicalCandidate_odd hn hi hp hstop
     exact (primeNeOneWitness_le n hw (p := p) ⟨hprime, hodd, hvalue⟩).trans hplt.le
@@ -48,7 +48,7 @@ theorem primeNegOneWitness_le_classicalFirstStop {n : ℕ} (hn : Odd n)
   · have hstop := firstStopNegOne_mem isClassicalCandidate n hs
     have hi : 0 < firstStopNegOne isClassicalCandidate n hs := by
       have hi5 := hstop.1.1
-      omega
+      exact lt_of_lt_of_le (by decide : 0 < 5) hi5
     obtain ⟨p, hprime, hodd, _, hplt, hvalue⟩ :=
       exists_odd_prime_lt_of_composite_mem_firstStopNegOneSet isClassicalCandidate_odd hn hi hp
         hstop
@@ -78,7 +78,20 @@ theorem classicalFirstStopNegOne_le_max_twenty_seven_primeWitness {n : ℕ} (hn 
   · have hp5 : 5 ≤ primeNegOneWitness n hw := by
       have hp2 := hp.1.two_le
       have hpmod : primeNegOneWitness n hw % 2 = 1 := Nat.odd_iff.mp hp.2.1
-      omega
+      have hpne2 : primeNegOneWitness n hw ≠ 2 := by
+        intro heq
+        rw [heq] at hpmod
+        norm_num only at hpmod
+      have hp3le : 3 ≤ primeNegOneWitness n hw :=
+        Nat.succ_le_of_lt (Nat.lt_of_le_of_ne hp2 (Ne.symm hpne2))
+      have hp3lt := Nat.lt_of_le_of_ne hp3le (Ne.symm hp3)
+      have hp4 : 4 ≤ primeNegOneWitness n hw := Nat.succ_le_of_lt hp3lt
+      have hpne4 : primeNegOneWitness n hw ≠ 4 := by
+        intro heq
+        have hpodd := hp.2.1
+        rw [heq] at hpodd
+        exact (Nat.not_odd_iff_even.mpr ⟨2, rfl⟩) hpodd
+      exact Nat.succ_le_of_lt (Nat.lt_of_le_of_ne hp4 (Ne.symm hpne4))
     have hle : firstStopNegOne isClassicalCandidate n hs ≤ primeNegOneWitness n hw :=
       firstStopNegOne_le_primeNegOneWitness hn hw hs ⟨hp5, hp.2.1⟩
     exact hle.trans (Nat.le_max_right 27 (primeNegOneWitness n hw))
@@ -107,7 +120,7 @@ theorem not_dvd_primeNeOneWitness_of_three_lt {n : ℕ} (hns : ¬IsSquare n)
   intro hdiv
   have hp := primeNeOneWitness_mem n hw
   rcases hp.1.eq_one_or_self_of_dvd n hdiv with hn1 | hnp
-  · exact hns ⟨1, by omega⟩
+  · exact hns ⟨1, by rw [hn1]⟩
   · obtain ⟨q, hqprime, hqodd, hqlt, hqvalue⟩ := NumberTheory.primeHasSmallerNegOneWitness hp.1 hp3
     have hqmem : q ∈ PrimeNeOneWitnessSet n := by
       exact
@@ -128,7 +141,14 @@ theorem classicalFirstStopNeOne_le_primeWitness_of_three_lt {n : ℕ} (hn : Odd 
   have hp := primeNeOneWitness_mem n hw
   apply firstStopNeOne_le_primeNeOneWitness hn hw hs
   · have hpmod : primeNeOneWitness n hw % 2 = 1 := Nat.odd_iff.mp hp.2.1
-    exact ⟨by omega, hp.2.1⟩
+    have hpne4 : primeNeOneWitness n hw ≠ 4 := by
+      intro heq
+      have hpodd := hp.2.1
+      rw [heq] at hpodd
+      exact (Nat.not_odd_iff_even.mpr ⟨2, rfl⟩) hpodd
+    have hp4 : 4 ≤ primeNeOneWitness n hw := Nat.succ_le_of_lt hp3
+    have hp4lt := Nat.lt_of_le_of_ne hp4 (Ne.symm hpne4)
+    exact ⟨Nat.succ_le_of_lt hp4lt, hp.2.1⟩
   · exact not_dvd_primeNeOneWitness_of_three_lt hns hw hp3
 
 /--
@@ -143,7 +163,13 @@ theorem classicalFirstStopNeOne_le_primeWitness_of_ne_three {n : ℕ} (hn : Odd 
   have hp2 := hp.1.two_le
   have hpmod : primeNeOneWitness n hw % 2 = 1 := Nat.odd_iff.mp hp.2.1
   apply classicalFirstStopNeOne_le_primeWitness_of_three_lt hn hns hw hs
-  omega
+  have hpne2 : primeNeOneWitness n hw ≠ 2 := by
+    intro heq
+    rw [heq] at hpmod
+    norm_num only at hpmod
+  have hp3le : 3 ≤ primeNeOneWitness n hw :=
+    Nat.succ_le_of_lt (Nat.lt_of_le_of_ne hp2 (Ne.symm hpne2))
+  exact Nat.lt_of_le_of_ne hp3le (Ne.symm hp3)
 
 /--
 If the least odd-prime `≠ 1` witness is `3`, the classical factor-detecting first-stop is at
@@ -294,21 +320,25 @@ theorem classicalFirstStopNeOne_lt_of_odd_nonsquare_of_fifteen_lt {n : ℕ} (hn 
       (classicalFirstStopNeOne_le_fifteen_of_primeWitness_eq_three (Odd.pos hn) hn hns hw hs
             hp3).trans_lt
         hn15
-  · have hn3 : 3 < n := by
-      by_contra hn3
-      have hnle : n ≤ 3 := by omega
-      have : n = 3 := by
-        obtain ⟨k, hk⟩ := hn
-        omega
-      subst n
-      have hp5 := hp.1.two_le
-      have hpmod := Nat.odd_iff.mp hp.2.1
-      omega
+  · have hn3 : 3 < n := lt_trans (by decide : 3 < 15) hn15
     have hp_lt := primeNeOneWitness_lt_of_odd_nonsquare_of_three_lt hn hns hn3 hw
     have hp5 : 5 ≤ primeNeOneWitness n hw := by
       have hp2 := hp.1.two_le
       have hpmod := Nat.odd_iff.mp hp.2.1
-      omega
+      have hpne2 : primeNeOneWitness n hw ≠ 2 := by
+        intro heq
+        rw [heq] at hpmod
+        norm_num only at hpmod
+      have hp3le : 3 ≤ primeNeOneWitness n hw :=
+        Nat.succ_le_of_lt (Nat.lt_of_le_of_ne hp2 (Ne.symm hpne2))
+      have hp3lt := Nat.lt_of_le_of_ne hp3le (Ne.symm hp3)
+      have hp4 : 4 ≤ primeNeOneWitness n hw := Nat.succ_le_of_lt hp3lt
+      have hpne4 : primeNeOneWitness n hw ≠ 4 := by
+        intro heq
+        have hpodd := hp.2.1
+        rw [heq] at hpodd
+        exact (Nat.not_odd_iff_even.mpr ⟨2, rfl⟩) hpodd
+      exact Nat.succ_le_of_lt (Nat.lt_of_le_of_ne hp4 (Ne.symm hpne4))
     have hndvd : ¬n ∣ primeNeOneWitness n hw := by
       intro hdiv
       have hnle : n ≤ primeNeOneWitness n hw := Nat.le_of_dvd hp.1.pos hdiv

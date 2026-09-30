@@ -60,7 +60,8 @@ theorem norm_logDeriv_dirichletLFunction_le_of_three_le_re {N : ℕ} [NeZero N]
     ‖logDeriv (DirichletCharacter.LFunction χ) s‖ ≤
       ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (3 : ℝ) := by
   have h1 :=
-    norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum χ (τ := s.re) (by linarith) s.im
+    norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum χ (τ := s.re)
+      (lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 3) hs) s.im
   have hseq : (s.re : ℂ) + (s.im : ℂ) * Complex.I = s := by
     apply Complex.ext <;> simp only [Complex.re_add_im]
   rw [hseq] at h1
@@ -191,7 +192,7 @@ theorem logDeriv_dirichletLFunction_reflection_leftVertical {N : ℕ} [NeZero N]
   have hs1re : (1 : ℝ) ≤ (1 - s).re := by
     have h1 : (1 - s).re = 1 - s.re := by simp only [Complex.sub_re, Complex.one_re]
     rw [h1, hsre]
-    linarith
+    linarith only [hA']
   have hFsne := completedLFunction_ne_zero_farLeft hprimitive hne hinv hs1re
   have hF1sne := completedLFunction_ne_zero_of_one_le_re hinv hs1re
   have hFE := completedLFunction_logDeriv_functionalEquation_at hprimitive hne (s := 1 - s) hF1sne
@@ -294,7 +295,7 @@ theorem exists_norm_logDeriv_dirichletLFunction_farLeft_le_general (A : ℕ) {N 
   have hDnonneg : 0 ≤ D := by
     rw [hD_def]
     have := norm_nonneg (Complex.log (N : ℂ))
-    linarith
+    linarith only [this, hM3nonneg, hCΓnonneg]
   refine ⟨D, hDnonneg, fun σ T hσ1 hσ2 hT => ?_⟩
   set s : ℂ := (σ : ℂ) + (T : ℂ) * Complex.I with hs_def
   have hsim : s.im = T := by
@@ -316,15 +317,15 @@ theorem exists_norm_logDeriv_dirichletLFunction_farLeft_le_general (A : ℕ) {N 
       zero_add, zero_sub]
   have h1s_re1 : 1 ≤ (1 - s).re := by
     rw [h1s_re_eq]
-    linarith
+    linarith only [hσ2]
   have hrefl := logDeriv_dirichletLFunction_reflection hprimitive hne hinv h1s_re1 hsim_ne
   have h1s_im_abs : |(1 - s).im| = |T| := by rw [h1s_im_eq, abs_neg]
   have h1s_re_le : (1 - s).re ≤ (A : ℝ) + 3 / 2 := by
     rw [h1s_re_eq]
-    linarith
+    linarith only [hσ1]
   have h1s_re_ge : -(A : ℝ) - 1 / 2 ≤ (1 - s).re := by
     rw [h1s_re_eq]
-    linarith
+    linarith only [hσ2, hAnn]
   have hgam1s : ‖logDeriv (DirichletCharacter.gammaFactor χ⁻¹) (1 - s)‖ ≤ CΓ * (|T| + 1) := by
     have h :=
       hCΓ χ⁻¹ (1 - s).re (1 - s).im h1s_re_ge h1s_re_le
@@ -341,14 +342,14 @@ theorem exists_norm_logDeriv_dirichletLFunction_farLeft_le_general (A : ℕ) {N 
     rw [hform, h1s_im_abs] at h
     exact h
   have hgams : ‖logDeriv (DirichletCharacter.gammaFactor χ) s‖ ≤ CΓ * (|T| + 1) := by
-    have hσ2' : σ ≤ (A : ℝ) + 3 / 2 := by linarith
+    have hσ2' : σ ≤ (A : ℝ) + 3 / 2 := by linarith only [h1s_re_eq, h1s_re_ge]
     have h := hCΓ χ σ T hσ1 hσ2' hT
     rwa [← hs_def] at h
   have hLone : ‖logDeriv (DirichletCharacter.LFunction χ⁻¹) (1 - s)‖ ≤ M3 :=
     norm_logDeriv_dirichletLFunction_le_of_three_le_re χ⁻¹
       (by
         rw [h1s_re_eq]
-        linarith)
+        linarith only [hσ2])
   have htri :
     ‖(-Complex.log (N : ℂ) - logDeriv (DirichletCharacter.LFunction χ⁻¹) (1 - s) -
           logDeriv (DirichletCharacter.gammaFactor χ⁻¹) (1 - s) -
@@ -473,7 +474,7 @@ theorem exists_norm_logDeriv_dirichletLFunction_farLeft_le (A : ℕ) {N : ℕ} [
   have hDnonneg : 0 ≤ D := by
     rw [hD_def]
     have := norm_nonneg (Complex.log (N : ℂ))
-    linarith
+    linarith only [this, hM3nonneg, hCΓnonneg]
   refine ⟨D, hDnonneg, fun σ T hσ1 hσ2 hT => ?_⟩
   set s : ℂ := (σ : ℂ) + (T : ℂ) * Complex.I with hs_def
   have hsim : s.im = T := by
@@ -495,16 +496,16 @@ theorem exists_norm_logDeriv_dirichletLFunction_farLeft_le (A : ℕ) {N : ℕ} [
       zero_add, zero_sub]
   have h1s_re1 : 1 ≤ (1 - s).re := by
     rw [h1s_re_eq]
-    linarith
+    linarith only [hσ2]
   have hrefl :=
     logDeriv_dirichletLFunction_reflection_isQuadratic hprimitive hne hquad h1s_re1 hsim_ne
   have h1s_im_abs : |(1 - s).im| = |T| := by rw [h1s_im_eq, abs_neg]
   have h1s_re_le : (1 - s).re ≤ (A : ℝ) + 3 / 2 := by
     rw [h1s_re_eq]
-    linarith
+    linarith only [hσ1]
   have h1s_re_ge : -(A : ℝ) - 1 / 2 ≤ (1 - s).re := by
     rw [h1s_re_eq]
-    linarith
+    linarith only [hσ2, hAnn]
   have hgam1s : ‖logDeriv (DirichletCharacter.gammaFactor χ) (1 - s)‖ ≤ CΓ * (|T| + 1) := by
     have h :=
       hCΓ χ (1 - s).re (1 - s).im h1s_re_ge h1s_re_le
@@ -521,14 +522,14 @@ theorem exists_norm_logDeriv_dirichletLFunction_farLeft_le (A : ℕ) {N : ℕ} [
     rw [hform, h1s_im_abs] at h
     exact h
   have hgams : ‖logDeriv (DirichletCharacter.gammaFactor χ) s‖ ≤ CΓ * (|T| + 1) := by
-    have hσ2' : σ ≤ (A : ℝ) + 3 / 2 := by linarith
+    have hσ2' : σ ≤ (A : ℝ) + 3 / 2 := by linarith only [h1s_re_eq, h1s_re_ge]
     have h := hCΓ χ σ T hσ1 hσ2' hT
     rwa [← hs_def] at h
   have hLone : ‖logDeriv (DirichletCharacter.LFunction χ) (1 - s)‖ ≤ M3 :=
     norm_logDeriv_dirichletLFunction_le_of_three_le_re χ
       (by
         rw [h1s_re_eq]
-        linarith)
+        linarith only [hσ2])
   have htri :
     ‖(-Complex.log (N : ℂ) - logDeriv (DirichletCharacter.LFunction χ) (1 - s) -
           logDeriv (DirichletCharacter.gammaFactor χ) (1 - s) -

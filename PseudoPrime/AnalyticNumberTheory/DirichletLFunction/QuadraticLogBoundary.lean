@@ -38,7 +38,7 @@ theorem tendsto_normalized_dirichletLogBoundary_heightSeq {N : ℕ} [NeZero N] (
             ∫ t : ℝ,
               dirichletLogContourKernel x χ
                 (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I))) := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := (by norm_num only : (0 : ℝ) < 1).trans_le hx
   have hpi_ne : (2 * (Real.pi : ℂ)) ≠ 0 := by
     have hpine : (Real.pi : ℝ) ≠ 0 := Real.pi_ne_zero
     simp only [ne_eq, mul_eq_zero, OfNat.ofNat_ne_zero, Complex.ofReal_eq_zero, hpine, or_self,

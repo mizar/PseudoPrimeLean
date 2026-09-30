@@ -117,7 +117,7 @@ theorem norm_digamma_le_of_logGamma_ball_bound {c : ℂ} {R U : ℝ} (hR : 0 < R
   rw [hderivf] at hcauchy
   have hfactorial : (Nat.factorial 1 : ℝ) * (2 * M) / (R / 2) ^ 1 = 4 * M / R := by
     simp only [Nat.factorial_one, Nat.cast_one, one_mul, pow_one]
-    field_simp
+    field_simp [ne_of_gt hR]
     ring
   rw [hfactorial] at hcauchy
   have hMeq : M = U - Real.log ‖Complex.Gamma c‖ := by rw [hM_def, hgRe c hccenter]
@@ -176,7 +176,7 @@ theorem norm_digamma_sub_shift_nat_le {z : ℂ} (n : ℕ) (hz : z.im ≠ 0) :
           ‖(Complex.digamma (z + (n : ℂ)) - Complex.digamma z) + (z + (n : ℂ))⁻¹‖ :=
         by rw [heq, hrec, hrearrange]
       _ ≤ ‖Complex.digamma (z + (n : ℂ)) - Complex.digamma z‖ + ‖(z + (n : ℂ))⁻¹‖ := norm_add_le _ _
-      _ ≤ (n : ℝ) / |z.im| + 1 / |z.im| := by linarith [ih, hinv_le]
+      _ ≤ (n : ℝ) / |z.im| + 1 / |z.im| := add_le_add ih hinv_le
       _ = ((n : ℕ) + 1 : ℕ) / |z.im| := by
         push_cast
         ring
@@ -207,15 +207,15 @@ theorem norm_digamma_sub_shift_nat_le_of_re_sep {z : ℂ} (n : ℕ) {δ : ℝ} (
       simp only [CharP.cast_eq_zero, add_zero, sub_self, norm_zero, zero_div, Std.le_refl]
     | succ j ih =>
       intro hjn
-      have ihbound := ih (by omega)
-      have hzj_ne : ∀ m : ℕ, z + (j : ℂ) ≠ -(m : ℂ) := hpole j (by omega)
+      have ihbound := ih (Nat.le_trans (Nat.le_succ j) hjn)
+      have hzj_ne : ∀ m : ℕ, z + (j : ℂ) ≠ -(m : ℂ) := hpole j (Nat.lt_of_succ_le hjn)
       have hrec :
         Complex.digamma (z + (j : ℂ) + 1) = Complex.digamma (z + (j : ℂ)) + (z + (j : ℂ))⁻¹ :=
         Complex.digamma_apply_add_one (z + (j : ℂ)) hzj_ne
       have heq : z + ((j : ℕ) + 1 : ℕ) = z + (j : ℂ) + 1 := by
         push_cast
         ring
-      have hre_sep_j : δ ≤ |(z + (j : ℂ)).re| := hsep j (by omega)
+      have hre_sep_j : δ ≤ |(z + (j : ℂ)).re| := hsep j (Nat.lt_of_succ_le hjn)
       have hnorm_ge : δ ≤ ‖z + (j : ℂ)‖ := le_trans hre_sep_j (Complex.abs_re_le_norm _)
       have hinv_le : ‖(z + (j : ℂ))⁻¹‖ ≤ 1 / δ := by
         rw [norm_inv, inv_eq_one_div]
@@ -230,7 +230,7 @@ theorem norm_digamma_sub_shift_nat_le_of_re_sep {z : ℂ} (n : ℕ) {δ : ℝ} (
           by rw [heq, hrec, hrearrange]
         _ ≤ ‖Complex.digamma (z + (j : ℂ)) - Complex.digamma z‖ + ‖(z + (j : ℂ))⁻¹‖ :=
           norm_add_le _ _
-        _ ≤ (j : ℝ) / δ + 1 / δ := by linarith [ihbound, hinv_le]
+        _ ≤ (j : ℝ) / δ + 1 / δ := add_le_add ihbound hinv_le
         _ = ((j : ℕ) + 1 : ℕ) / δ := by
           push_cast
           ring
@@ -420,7 +420,7 @@ theorem exists_C_forall_norm_digamma_large_im_le :
     (4 : ℝ) * (U - Real.log ‖Complex.Gamma c‖) / R =
       32 * (U - Real.log ‖Complex.Gamma c‖) / |t| := by
     rw [hR_def]
-    field_simp
+    field_simp [hR_pos.ne', htabs_pos.ne']
     ring
   rw [hReq] at hdigamma_c
   have hC1nn : C₁ ≤ max C₁ 0 := le_max_left _ _

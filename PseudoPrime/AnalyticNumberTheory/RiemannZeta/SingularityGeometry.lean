@@ -633,7 +633,7 @@ theorem riemannZetaSingularityBoundaryClearance_lt_dist {z w s y : ℂ}
     RectangleGeometry.rectangleClosedBoxBoundaryClearance s z w <
       Metric.infDist s (RectangleGeometry.rectangleClosedBoxBoundary z w) := by
     unfold RectangleGeometry.rectangleClosedBoxBoundaryClearance at hpos ⊢
-    linarith
+    linarith only [hpos]
   exact hhalf.trans_le (Metric.infDist_le_dist_of_mem hy)
 
 /-- A finite singularity ledger admits one positive clearance shared by all its points. -/
@@ -660,7 +660,7 @@ theorem exists_common_riemannZetaSingularityBoundaryClearance {z w : ℂ}
     have hsvalues : RectangleGeometry.rectangleClosedBoxBoundaryClearance s z w ∈ values :=
       Finset.mem_image.mpr ⟨s, hs, rfl⟩
     have hmle := Finset.min'_le values _ hsvalues
-    linarith
+    linarith only [hmpos, hmle]
   · refine ⟨1, zero_lt_one, ?_⟩
     intro s hs
     exact (hS ⟨s, hs⟩).elim
@@ -703,7 +703,8 @@ theorem exists_pairwise_disjoint_riemannZetaSingularityRadius {z w : ℂ}
     have hmem : RectangleGeometry.rectangleClosedBoxBoundaryClearance s z w ∈ constraints := by
       exact Finset.mem_union_left _ (Finset.mem_union_left _ (Finset.mem_image.mpr ⟨s, hs, rfl⟩))
     have hmle := Finset.min'_le constraints _ hmem
-    have hmhalf : m / 2 < RectangleGeometry.rectangleClosedBoxBoundaryClearance s z w := by linarith
+    have hmhalf : m / 2 < RectangleGeometry.rectangleClosedBoxBoundaryClearance s z w := by
+      linarith only [hmpos, hmle]
     exact hmhalf.trans (riemannZetaSingularityBoundaryClearance_lt_dist hregular hs hy)
   · intro s hs t ht hst
     have hpair : dist s t / 2 ∈ pairValues := by
@@ -713,7 +714,7 @@ theorem exists_pairwise_disjoint_riemannZetaSingularityRadius {z w : ℂ}
       Finset.mem_union_left _ (Finset.mem_union_right _ hpair)
     have hmle := Finset.min'_le constraints _ hmem
     have hdist : 0 < dist s t := dist_pos.mpr hst
-    linarith
+    linarith only [hmpos, hmle]
 
 /-- The closed rectangle with common-radius singularity balls removed. -/
 noncomputable def riemannZetaPuncturedRectangle (z w : ℂ) (ε : ℝ) : Set ℂ :=

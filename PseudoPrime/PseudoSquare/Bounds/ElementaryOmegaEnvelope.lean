@@ -41,7 +41,9 @@ theorem llsCorrectionTerm_le_elementary
       (24 / 5 : ℝ) * Real.log (Real.log (NumberTheory.characterModulus n)) + 3 := by
   have hq : 3000 ≤ NumberTheory.characterModulus n := by
     unfold NumberTheory.characterModulus
-    omega
+    calc
+      3000 = 4 * 750 := by norm_num only
+      _ ≤ 4 * n := Nat.mul_le_mul_left 4 hn750
   have hy := (AnalyticNumberTheory.Arithmetic.log_log_pos_of_le hq).2
   have hcount := AnalyticNumberTheory.Arithmetic.elementary_prime_count_term_le hElem hn hn750
   have haux := LLS.llsAuxiliaryTerm_nonneg (NumberTheory.characterModulus n)
@@ -50,8 +52,8 @@ theorem llsCorrectionTerm_le_elementary
     norm_num only
   unfold LLS.llsCorrectionTerm
   apply max_le
-  · nlinarith [hCeq, hy]
-  · nlinarith [hCeq, hcount]
+  · nlinarith only [hy]
+  · nlinarith only [hCeq, hcount, haux, hy]
 
 /-- The squared real cutoff `(log(4B) + (24/5)·loglog(4B) + 3)^2`. -/
 noncomputable def elementaryRadius (B : ℕ) : ℝ :=
@@ -128,7 +130,9 @@ theorem elementary_sq_le_radius (hElem : AnalyticNumberTheory.Arithmetic.Element
       elementaryRadius B := by
   have hq : 3000 ≤ NumberTheory.characterModulus n := by
     unfold NumberTheory.characterModulus
-    omega
+    calc
+      3000 = 4 * 750 := by norm_num only
+      _ ≤ 4 * n := Nat.mul_le_mul_left 4 hn750
   have hB750 : 750 ≤ B := hn750.trans hnB
   have hqpos : 0 < NumberTheory.characterModulus n := (by norm_num only : 0 < 3000).trans_le hq
   have hmod := NumberTheory.characterModulus_le hnB
@@ -161,13 +165,19 @@ theorem elementary_sq_le_radius (hElem : AnalyticNumberTheory.Arithmetic.Element
     add_nonneg hx.le (LLS.llsCorrectionTerm_nonneg _)
   have hright : 0 ≤ Real.log (4 * B : ℝ) + (24 / 5 : ℝ) * Real.log (Real.log (4 * B : ℝ)) + 3 := by
     have hxB : 0 < Real.log (4 * B : ℝ) := by
-      have h3000 : (3000 : ℕ) ≤ 4 * B := by omega
+      have h3000 : (3000 : ℕ) ≤ 4 * B := by
+        calc
+          3000 = 4 * 750 := by norm_num only
+          _ ≤ 4 * B := Nat.mul_le_mul_left 4 hB750
       have : (1 : ℝ) < 4 * B := by
         have : (3000 : ℝ) ≤ 4 * B := by exact_mod_cast h3000
         linarith only [this]
       exact Real.log_pos this
     have hyB : 0 < Real.log (Real.log (4 * B : ℝ)) := hy.trans_le hloglog
-    positivity
+    exact
+      add_nonneg
+        (add_nonneg (le_of_lt hxB) (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 24 / 5) hyB.le))
+        (by norm_num only)
   unfold elementaryRadius
   exact (sq_le_sq₀ hleft hright).mpr hbase
 
@@ -180,7 +190,9 @@ theorem primeNegOneWitness_cast_le_elementaryRadius (hLLS : LLS.llsTheorem11S1Ch
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ elementaryRadius B := by
   have hq : 3000 ≤ NumberTheory.characterModulus n := by
     unfold NumberTheory.characterModulus
-    omega
+    calc
+      3000 = 4 * 750 := by norm_num only
+      _ ≤ 4 * n := Nat.mul_le_mul_left 4 hn750
   exact
     (primeNegOneWitness_le_of_LLS hLLS n hn hns hq hw).trans
       (elementary_sq_le_radius hElem hn hnB hn750)

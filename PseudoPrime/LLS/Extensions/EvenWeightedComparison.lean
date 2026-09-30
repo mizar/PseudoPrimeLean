@@ -27,7 +27,7 @@ theorem weightedComparisonCore_even_of_grh {q : ℕ} (χ : DirichletCharacter �
   have hf : 2 ≤ χ.conductor := by
     have h0 := NeZero.pos χ.conductor
     have h1 := AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hp
-    omega
+    exact Nat.succ_le_iff.mpr (Nat.lt_of_le_of_ne h0 (Ne.symm h1))
   have hi : χ.primitiveCharacter⁻¹ ≠ 1 := inv_ne_one.mpr hp
   refine ⟨hdS, hdR, ?_, ?_⟩
   · have h :=

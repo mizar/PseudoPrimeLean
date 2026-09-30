@@ -27,7 +27,15 @@ theorem theorem11S2_zeroMass_numerator_le {y : ℝ} (hy : 8 ≤ y) :
   have hypos : 0 < y := lt_of_lt_of_le (by norm_num only) hy
   have hL := theorem11S2_two_le_log hy
   apply le_of_mul_le_mul_right _ (sq_pos_of_pos hypos)
-  field_simp
+  have hfactor : (1 - 1 / y) ^ 2 * y ^ 2 = (y - 1) ^ 2 := by
+    have hlinear : (1 - 1 / y) * y = y - 1 := by
+      calc
+        (1 - 1 / y) * y = y - (1 / y) * y := by ring
+        _ = y - 1 := by rw [one_div, inv_mul_cancel₀ hypos.ne']
+    calc
+      (1 - 1 / y) ^ 2 * y ^ 2 = ((1 - 1 / y) * y) ^ 2 := by ring
+      _ = (y - 1) ^ 2 := by rw [hlinear]
+  rw [mul_assoc, hfactor]
   by_cases hy12 : y ≤ 12
   · nlinarith only [mul_nonneg (sub_nonneg.mpr hL)
         (show 0 ≤ y ^ 2 + 2 * y - 1 by nlinarith only [sq_nonneg y, hy]),
@@ -50,7 +58,8 @@ theorem theorem11S2_zeroMass_le {y F R b : ℝ} (hy : 8 ≤ y) (hF : F ≤ y - 1
   have hmul :=
     mul_le_mul_of_nonneg_left hF (mul_nonneg (show (0 : ℝ) ≤ 1 / 2 by norm_num only) hfac)
   have hdrop :=
-    mul_le_mul_of_nonneg_right (sub_le_self 1 (show 0 ≤ 1 / y ^ 2 by positivity))
+    mul_le_mul_of_nonneg_right
+      (sub_le_self 1 (show 0 ≤ 1 / y ^ 2 by exact div_nonneg (by norm_num only) (sq_nonneg y)))
       (show 0 ≤ y - 1 by linarith only [hy])
   have hnum := theorem11S2_zeroMass_numerator_le hy
   have hden : 0 < (1 - 1 / y) ^ 2 :=

@@ -42,7 +42,7 @@ theorem norm_riemannZetaLogContourKernel_good_height_le {x : ℝ} (hx : 0 < x) {
   have hzre : z.re = σ := by
     simp only [hz_def, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-  have hTpos : (0 : ℝ) < T := by linarith [hT.1]
+  have hTpos : (0 : ℝ) < T := by linarith only [hT.1, hH]
   have hzgood : riemannZeta z ≠ 0 := riemannZeta_ne_zero_of_good_height hH hT hgood σ
   have hderiv_bound := forall_norm_logDeriv_riemannZeta_le hH hT hgood σ hσ1 hσ2 hzgood
   have hlogDeriv_eq : ‖deriv riemannZeta z / riemannZeta z‖ = ‖logDeriv riemannZeta z‖ := by
@@ -51,7 +51,7 @@ theorem norm_riemannZetaLogContourKernel_good_height_le {x : ℝ} (hx : 0 < x) {
   have hxσpos : (0 : ℝ) < x ^ σ := Real.rpow_pos_of_pos hx σ
   have hxσ_le : x ^ σ ≤ max (x ^ (-(1 : ℝ) / 2)) (x ^ (2 : ℝ)) := by
     rcases le_total x 1 with hx1 | hx1
-    · exact le_max_of_le_left (Real.rpow_le_rpow_of_exponent_ge hx hx1 (by linarith))
+    · exact le_max_of_le_left (Real.rpow_le_rpow_of_exponent_ge hx hx1 hσ1)
     · exact le_max_of_le_right (Real.rpow_le_rpow_of_exponent_le hx1 hσ2)
   have hznorm_ge : T ≤ ‖z‖ := by
     have h := Complex.abs_im_le_norm z
@@ -105,7 +105,7 @@ theorem norm_riemannZetaReciprocalContourKernel_good_height_le {x : ℝ} (hx : 0
     simp only [hz_def, Complex.sub_im, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
       Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add,
       Complex.one_im, sub_zero]
-  have hTpos : (0 : ℝ) < T := by linarith [hT.1]
+  have hTpos : (0 : ℝ) < T := by linarith only [hT.1, hH]
   have hzgood : riemannZeta z ≠ 0 := riemannZeta_ne_zero_of_good_height hH hT hgood σ
   have hderiv_bound := forall_norm_logDeriv_riemannZeta_le hH hT hgood σ hσ1 hσ2 hzgood
   have hlogDeriv_eq : ‖deriv riemannZeta z / riemannZeta z‖ = ‖logDeriv riemannZeta z‖ := by
@@ -115,8 +115,8 @@ theorem norm_riemannZetaReciprocalContourKernel_good_height_le {x : ℝ} (hx : 0
   have hxσpos : (0 : ℝ) < x ^ (σ - 1) := Real.rpow_pos_of_pos hx (σ - 1)
   have hxσ_le : x ^ (σ - 1) ≤ max (x ^ (-(3 : ℝ) / 2)) (x ^ (1 : ℝ)) := by
     rcases le_total x 1 with hx1 | hx1
-    · exact le_max_of_le_left (Real.rpow_le_rpow_of_exponent_ge hx hx1 (by linarith))
-    · exact le_max_of_le_right (Real.rpow_le_rpow_of_exponent_le hx1 (by linarith))
+    · exact le_max_of_le_left (Real.rpow_le_rpow_of_exponent_ge hx hx1 (by linarith only [hσ1]))
+    · exact le_max_of_le_right (Real.rpow_le_rpow_of_exponent_le hx1 (by linarith only [hσ2]))
   have hznorm_ge : T ≤ ‖z‖ := by
     have h := Complex.abs_im_le_norm z
     rw [hzim, abs_of_nonneg hTpos.le] at h

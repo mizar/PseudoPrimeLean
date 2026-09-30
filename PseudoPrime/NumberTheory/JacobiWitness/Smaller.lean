@@ -43,12 +43,24 @@ theorem exists_odd_nonsquare_lt_of_prime_mod_four_one {r : ℕ} (hr : r.Prime) (
     ∃ m : ℕ, Odd m ∧ 0 < m ∧ m < r ∧ jacobiSym m r = -1 := by
   let _ : Fact r.Prime := ⟨hr⟩
   obtain ⟨a, ha⟩ :=
-    FiniteField.exists_nonsquare (F := ZMod r) (by exact (ZMod.ringChar_zmod_n r).substr (by omega))
+    FiniteField.exists_nonsquare (F := ZMod r)
+      (by
+        exact
+          (ZMod.ringChar_zmod_n r).substr
+            (by
+              intro htwo
+              subst r
+              norm_num only at hr4))
   have ha0 : a ≠ 0 := by
     intro ha0
     apply ha
     exact ha0.symm ▸ ⟨0, by norm_num only⟩
-  have hnegOne : IsSquare (-1 : ZMod r) := ZMod.exists_sq_eq_neg_one_iff.mpr (by omega)
+  have hnegOne : IsSquare (-1 : ZMod r) :=
+    ZMod.exists_sq_eq_neg_one_iff.mpr
+      (by
+        intro hthree
+        rw [hr4] at hthree
+        norm_num only at hthree)
   let b : ZMod r := if Odd a.val then a else -a
   have hb : ¬IsSquare b := by
     simp only [b]
@@ -63,12 +75,11 @@ theorem exists_odd_nonsquare_lt_of_prime_mod_four_one {r : ℕ} (hr : r.Prime) (
     split
     · assumption
     · rw [ZMod.neg_val, ite_eq_right ha0]
-      have hrodd : Odd r := Nat.odd_iff.mpr (by omega)
+      have hrmod2 : r % 2 = 1 := by rw [← Nat.mod_mod_of_dvd r (by norm_num only : 2 ∣ 4), hr4]
+      have hrodd : Odd r := Nat.odd_iff.mpr hrmod2
       have haeven : Even a.val := Nat.not_odd_iff_even.mp (by assumption)
-      obtain ⟨k, hk⟩ := hrodd
-      obtain ⟨l, hl⟩ := haeven
       have hale : a.val ≤ r := a.val_lt.le
-      exact ⟨k - l, by omega⟩
+      exact Nat.Odd.sub_even hale hrodd haeven
   have hb0 : b.val ≠ 0 := by
     intro hb0
     apply hb
@@ -90,7 +101,9 @@ theorem exists_odd_neg_one_numerator_lt_of_mod_four_one {r : ℕ} (hrodd : Odd r
   let _ : NeZero r :=
     ⟨by
       have hrmod : r % 2 = 1 := Nat.odd_iff.mp hrodd
-      omega⟩
+      intro hrzero
+      rw [hrzero] at hrmod
+      norm_num only at hrmod⟩
   obtain ⟨a, havalue⟩ := ha
   have ha0 : a ≠ 0 := by
     intro ha0
@@ -101,7 +114,9 @@ theorem exists_odd_neg_one_numerator_lt_of_mod_four_one {r : ℕ} (hrodd : Odd r
       norm_num only at havalue
     have hr1 : 1 < r := by
       have hrpos : 0 < r := Odd.pos hrodd
-      omega
+      by_contra hnot
+      have hrle : r ≤ 1 := Nat.le_of_not_gt hnot
+      exact hrne1 (Nat.le_antisymm hrle (Nat.succ_le_of_lt hrpos))
     rw [ha0, ZMod.val_zero] at havalue
     norm_num only [jacobiSym.zero_left hr1] at havalue
   let m : ℕ := if Odd a.val then a.val else r - a.val
@@ -110,10 +125,8 @@ theorem exists_odd_neg_one_numerator_lt_of_mod_four_one {r : ℕ} (hrodd : Odd r
     split
     · assumption
     · have haeven : Even a.val := Nat.not_odd_iff_even.mp (by assumption)
-      obtain ⟨k, hk⟩ := hrodd
-      obtain ⟨l, hl⟩ := haeven
       have hale : a.val ≤ r := a.val_lt.le
-      exact ⟨k - l, by omega⟩
+      exact Nat.Odd.sub_even hale hrodd haeven
   have hmpos : 0 < m := by
     simp only [m]
     split
@@ -130,7 +143,7 @@ theorem exists_odd_neg_one_numerator_lt_of_mod_four_one {r : ℕ} (hrodd : Odd r
     split
     · exact a.val_lt
     · exact
-        Nat.sub_lt (by omega)
+        Nat.sub_lt hrodd.pos
           (Nat.pos_of_ne_zero
             (by
               intro hval
@@ -172,53 +185,82 @@ theorem exists_smaller_neg_one_witness_of_mod_four_three {r : ℕ} (hr4 : r % 4 
     ∃ q : ℕ, q.Prime ∧ Odd q ∧ q < r ∧ jacobiSym r q = -1 := by
   have hr8 : r % 8 = 3 ∨ r % 8 = 7 := by
     have hlt := Nat.mod_lt r (by norm_num only : 0 < 8)
-    omega
+    have hmod4 : (r % 8) % 4 = 3 := by rw [Nat.mod_mod_of_dvd r (by norm_num only : 4 ∣ 8), hr4]
+    interval_cases hres : r % 8
+    all_goals norm_num only [hres] at hmod4
+    all_goals
+      first
+      | exact Or.inl rfl
+      | exact Or.inr rfl
   rcases hr8 with hr8 | hr8
   · let m := r - 8
-    have hr11 : 11 ≤ r := by omega
+    have hr11 : 11 ≤ r := by
+      have hrepr : 3 + 8 * (r / 8) = r := by simpa only [hr8] using Nat.mod_add_div r 8
+      have hquot : 0 < r / 8 := by
+        by_contra hnot
+        have hz : r / 8 = 0 := Nat.eq_zero_of_not_pos hnot
+        have hrEq : r = 3 := by simpa only [hz] using hrepr.symm
+        exact (Nat.ne_of_gt hr3) hrEq
+      calc
+        11 = 3 + 8 * 1 := by norm_num only
+        _ ≤ 3 + 8 * (r / 8) :=
+          Nat.add_le_add_left (Nat.mul_le_mul_left 8 (Nat.succ_le_of_lt hquot)) 3
+        _ = r := hrepr
     have hmpos : 0 < m := by
       simp only [m]
-      omega
+      exact Nat.sub_pos_of_lt (lt_of_lt_of_le (by norm_num only : 8 < 11) hr11)
     have hmlt : m < r := by
       simp only [m]
-      omega
+      exact Nat.sub_lt (lt_of_lt_of_le (by norm_num only : 0 < 11) hr11) (by norm_num only : 0 < 8)
+    have hrsub : r = m + 8 := by
+      dsimp only [m]
+      exact (Nat.sub_add_cancel (Nat.le_trans (by norm_num only : 8 ≤ 11) hr11)).symm
     have hm8 : m % 8 = 3 := by
-      simp only [m]
-      omega
-    have hmodd : Odd m := Nat.odd_iff.mpr (by omega)
+      rw [hrsub, Nat.add_mod, Nat.mod_self, Nat.add_zero] at hr8
+      rw [Nat.mod_mod_of_dvd m (by norm_num only : 8 ∣ 8)] at hr8
+      exact hr8
+    have hmodd : Odd m := by
+      apply Nat.odd_iff.mpr
+      rw [← Nat.mod_mod_of_dvd m (by norm_num only : 2 ∣ 8), hm8]
     have hrem : (r : ℤ) % m = (8 : ℤ) % m := by
-      have hrsub : r = m + 8 := by
-        simp only [m]
-        omega
       rw [hrsub, Nat.cast_add, Int.add_emod, Int.emod_self, zero_add, Int.emod_emod]
       norm_num only
     have hvalue : jacobiSym r m = -1 := by
       rw [jacobiSym.mod_left' hrem, show (8 : ℤ) = 2 ^ 3 by norm_num only, jacobiSym.pow_left,
         jacobiSym.at_two hmodd]
       simp only [ZMod.χ₈_nat_eq_if_mod_eight, hm8]
-      norm_num only [show m % 2 = 1 by omega, ite_false, false_or, or_false]
+      norm_num only [show m % 2 = 1 from Nat.odd_iff.mp hmodd, ite_false, false_or, or_false]
     exact Internal.exists_smaller_odd_prime_of_jacobi_eq_neg_one hmpos hmlt hmodd hvalue
   · let m := r - 2
     have hmpos : 0 < m := by
       simp only [m]
-      omega
+      exact Nat.sub_pos_of_lt (lt_trans (by norm_num only : 2 < 3) hr3)
     have hmlt : m < r := by
       simp only [m]
-      omega
+      exact Nat.sub_lt (lt_trans (by norm_num only : 0 < 3) hr3) (by norm_num only : 0 < 2)
+    have hrsub : r = m + 2 := by
+      dsimp only [m]
+      exact (Nat.sub_add_cancel (Nat.le_of_lt (lt_trans (by norm_num only : 2 < 3) hr3))).symm
     have hm8 : m % 8 = 5 := by
-      simp only [m]
-      omega
-    have hmodd : Odd m := Nat.odd_iff.mpr (by omega)
+      have hmod : (m % 8 + 2) % 8 = 7 := by
+        have hr8' := hr8
+        rw [hrsub, Nat.add_mod] at hr8'
+        norm_num only at hr8'
+        exact hr8'
+      have hlt : m % 8 < 8 := Nat.mod_lt m (by norm_num only : 0 < 8)
+      interval_cases hmres : m % 8
+      all_goals norm_num only [hmres] at hmod
+      all_goals norm_num only [hmres]
+    have hmodd : Odd m := by
+      apply Nat.odd_iff.mpr
+      rw [← Nat.mod_mod_of_dvd m (by norm_num only : 2 ∣ 8), hm8]
     have hrem : (r : ℤ) % m = (2 : ℤ) % m := by
-      have hrsub : r = m + 2 := by
-        simp only [m]
-        omega
       rw [hrsub, Nat.cast_add, Int.add_emod, Int.emod_self, zero_add, Int.emod_emod]
       norm_num only
     have hvalue : jacobiSym r m = -1 := by
       rw [jacobiSym.mod_left' hrem, jacobiSym.at_two hmodd]
       simp only [ZMod.χ₈_nat_eq_if_mod_eight, hm8]
-      norm_num only [show m % 2 = 1 by omega, ite_false, false_or, or_false]
+      norm_num only [show m % 2 = 1 from Nat.odd_iff.mp hmodd, ite_false, false_or, or_false]
     exact Internal.exists_smaller_odd_prime_of_jacobi_eq_neg_one hmpos hmlt hmodd hvalue
 
 /--
@@ -230,9 +272,17 @@ theorem oddNonsquareHasSmallerNegOneWitness {r : ℕ} (hrodd : Odd r) (hr3 : 3 <
     (hns : ¬IsSquare r) : ∃ q : ℕ, q.Prime ∧ Odd q ∧ q < r ∧ jacobiSym r q = -1 := by
   have hr4 : r % 4 = 1 ∨ r % 4 = 3 := by
     have hlt := Nat.mod_lt r (by norm_num only : 0 < 4)
-    have hoddmod : Odd (r % 4) := hrodd.mod_even ⟨2, by omega⟩
+    have hoddmod : Odd (r % 4) := hrodd.mod_even ⟨2, by norm_num only⟩
     rcases hoddmod with ⟨k, hk⟩
-    omega
+    rw [hk] at hlt ⊢
+    have hlt' : 2 * k < 3 := Nat.lt_of_succ_lt_succ hlt
+    have hlt'' : 2 * k < 2 * 2 := lt_of_lt_of_le hlt' (by norm_num only)
+    have hk2 : k < 2 := Nat.lt_of_mul_lt_mul_left hlt''
+    interval_cases k
+    all_goals
+      first
+      | exact Or.inl rfl
+      | exact Or.inr rfl
   rcases hr4 with hr4 | hr4
   · exact
       exists_smaller_neg_one_witness_of_mod_four_one_of_exists_numerator hrodd hr4
@@ -258,12 +308,20 @@ is needed.
 -/
 theorem primeHasSmallerNegOneWitness {r : ℕ} (hr : r.Prime) (hr3 : 3 < r) :
     ∃ q : ℕ, q.Prime ∧ Odd q ∧ q < r ∧ jacobiSym r q = -1 := by
-  have hrodd : Odd r := hr.odd_iff.mpr (by omega)
+  have hrodd : Odd r := hr.odd_iff.mpr (Nat.le_of_lt hr3)
   have hr4 : r % 4 = 1 ∨ r % 4 = 3 := by
     have hlt := Nat.mod_lt r (by norm_num only : 0 < 4)
-    have hoddmod : Odd (r % 4) := hrodd.mod_even ⟨2, by omega⟩
+    have hoddmod : Odd (r % 4) := hrodd.mod_even ⟨2, by norm_num only⟩
     rcases hoddmod with ⟨k, hk⟩
-    omega
+    rw [hk] at hlt ⊢
+    have hlt' : 2 * k < 3 := Nat.lt_of_succ_lt_succ hlt
+    have hlt'' : 2 * k < 2 * 2 := lt_of_lt_of_le hlt' (by norm_num only)
+    have hk2 : k < 2 := Nat.lt_of_mul_lt_mul_left hlt''
+    interval_cases k
+    all_goals
+      first
+      | exact Or.inl rfl
+      | exact Or.inr rfl
   rcases hr4 with hr4 | hr4
   · exact exists_smaller_neg_one_witness_of_prime_mod_four_one hr hr4
   · exact exists_smaller_neg_one_witness_of_mod_four_three hr4 hr3

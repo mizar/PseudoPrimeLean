@@ -24,12 +24,12 @@ theorem eventually_half_ne_neg_nat_of_odd_near_zero :
   have hre_bound : |s.re| ≤ ‖s‖ := Complex.abs_re_le_norm s
   have hre_gt : (-1 : ℝ) < s.re := by
     have := abs_lt.mp (hre_bound.trans_lt hs)
-    linarith [this.1]
+    exact this.1
   have him := congrArg Complex.re hm
   simp only [Complex.add_re, Complex.one_re, Complex.div_ofNat_re, Complex.neg_re,
     Complex.natCast_re] at him
   have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
-  linarith
+  linarith only [hre_gt, him, hmnn]
 
 /--
 Input/assumptions: `χ.Odd`.
@@ -169,7 +169,7 @@ theorem logDeriv_gammaFactor_zero_re_of_odd {N : ℕ} {χ : DirichletCharacter �
     simp only [Complex.one_re, Complex.re_ofNat, one_mul, Complex.normSq_ofNat, div_self_mul_self',
       Complex.one_im, Complex.im_ofNat, mul_zero, zero_div, add_zero, Complex.neg_re,
       Complex.natCast_re] at him
-    linarith
+    linarith only [him, hmnn]
   rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hodd hhalf, zero_add,
     Complex.digamma_one_half]
   have heq :
@@ -200,7 +200,7 @@ theorem logDeriv_gammaFactor_one_re_of_odd {N : ℕ} {χ : DirichletCharacter �
     have him : (((1 : ℂ) + 1) / 2).re = (-(m : ℂ)).re := congrArg Complex.re hm
     have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
     simp only [add_self_div_two, Complex.one_re, Complex.neg_re, Complex.natCast_re] at him
-    linarith
+    linarith only [him, hmnn]
   rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hodd hhalf,
     show ((1 : ℂ) + 1) / 2 = 1 from by norm_num only, Complex.digamma_one]
   have heq :

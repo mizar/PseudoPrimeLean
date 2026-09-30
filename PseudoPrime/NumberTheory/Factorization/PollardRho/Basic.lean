@@ -25,7 +25,8 @@ structure Params where
   deriving Repr, DecidableEq
 
 /-- One executable iteration of the polynomial used by Pollard rho. -/
-def step (n c : ℕ) (x : ZMod n) : ZMod n := x * x + (c : ZMod n)
+def step (n c : ℕ) (x : ZMod n) : ZMod n :=
+  x * x + (c : ZMod n)
 
 /-- Floyd's tortoise and hare search. One fuel unit performs three polynomial steps and one gcd. -/
 def search (n c fuel : ℕ) (x y : ZMod n) : Option ℕ :=
@@ -35,9 +36,7 @@ def search (n c fuel : ℕ) (x y : ZMod n) : Option ℕ :=
     let x' := step n c x
     let y' := step n c (step n c y)
     let d := Nat.gcd (x' - y').val n
-    if d = 1 then search n c fuel x' y'
-    else if 1 < d ∧ d < n then some d
-    else none
+    if d = 1 then search n c fuel x' y' else if 1 < d ∧ d < n then some d else none
 termination_by fuel
 
 /-- Run one bounded Pollard rho attempt. Fuel zero always returns `none`; inputs at most two
@@ -46,16 +45,17 @@ function runs Floyd's search from the supplied seed. `none` means only that this
 find a proper factor. -/
 def findFactor (n : ℕ) (params : Params) (fuel : ℕ) : Option ℕ :=
   if fuel = 0 then none
-  else if n ≤ 2 then none
-  else if n % 2 = 0 then some 2
-  else search n params.c fuel (params.seed : ZMod n) (params.seed : ZMod n)
+  else
+    if n ≤ 2 then none
+    else
+      if n % 2 = 0 then some 2
+      else search n params.c fuel (params.seed : ZMod n) (params.seed : ZMod n)
 
 /-- Any positive-budget attempt on an even input greater than two returns the factor two before
 starting the Floyd trajectory. This exposes the deterministic even-input branch to BLS factor
 supply and other callers without unfolding the executable search. -/
-theorem findFactor_eq_some_two_of_even {n fuel : ℕ} (params : Params)
-    (hfuel : 0 < fuel) (hn : 2 < n) (heven : n % 2 = 0) :
-    findFactor n params fuel = some 2 := by
+theorem findFactor_eq_some_two_of_even {n fuel : ℕ} (params : Params) (hfuel : 0 < fuel)
+    (hn : 2 < n) (heven : n % 2 = 0) : findFactor n params fuel = some 2 := by
   unfold findFactor
   rw [ite_eq_right (Nat.ne_of_gt hfuel), ite_eq_right (Nat.not_le_of_gt hn), ite_eq_left heven]
 
@@ -101,13 +101,13 @@ theorem search_sound {n c fuel : ℕ} {x y : ZMod n} {factor : ℕ}
 
 /-- Once a search finds its first factor, additional fuel preserves that result. -/
 theorem search_mono_fuel {n c fuel extra : ℕ} {x y : ZMod n} {factor : ℕ}
-    (h : search n c fuel x y = some factor) :
-    search n c (fuel + extra) x y = some factor := by
+    (h : search n c fuel x y = some factor) : search n c (fuel + extra) x y = some factor := by
   induction fuel generalizing x y factor with
   | zero =>
     simp only [search] at h
     cases h
-  | succ fuel ih =>
+  | succ fuel
+    ih =>
     have hsum : fuel + 1 + extra = (fuel + extra) + 1 := by
       calc
         fuel + 1 + extra = fuel + (1 + extra) := Nat.add_assoc _ _ _
@@ -142,9 +142,9 @@ theorem findFactor_sound {n : ℕ} {params : Params} {fuel factor : ℕ}
         subst factor
         refine ⟨by decide, ?_, Nat.dvd_of_mod_eq_zero he⟩
         exact Nat.lt_of_not_ge hn
-      · exact search_sound (n := n) (c := params.c) (fuel := fuel)
-          (x := (params.seed : ZMod n)) (y := (params.seed : ZMod n))
-          (by simpa only [findFactor, hf, hn, he, ite_false] using h)
+      · exact
+          search_sound (n := n) (c := params.c) (fuel := fuel) (x := (params.seed : ZMod n)) (y :=
+            (params.seed : ZMod n)) (by simpa only [findFactor, hf, hn, he, ite_false] using h)
 
 /-- Every factor returned by a finite retry schedule is a proper divisor. -/
 theorem findFactorMany_sound {n factor : ℕ} {attempts : List Attempt}

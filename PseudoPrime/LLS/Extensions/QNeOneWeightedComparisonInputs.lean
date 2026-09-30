@@ -98,7 +98,7 @@ theorem weightedLogDefect_le_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ) (χ : D
       (Real.log x) ^ 2 / 2 + Real.log 2 * (Real.log x - Real.log 2) := by
   rw [LLS.weightedLogDefect,
     logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ
-      (by linarith) hodd]
+      ((by norm_num only : (2 : ℝ) ≤ 4).trans hx) hodd]
   exact
     twoAdicLogCorrection_le_half_log_sq_add_log_two_mul_log_half_of_apply_two_eq_neg_one x χ hquad
       hx h2

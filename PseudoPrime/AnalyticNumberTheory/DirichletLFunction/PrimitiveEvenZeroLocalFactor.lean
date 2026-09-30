@@ -21,8 +21,8 @@ DirichletLFunction.dirichletReciprocalEvenZeroRegularization x 1 G_χ`.
 Content: `logDeriv_congr_nhds` on `L =ᶠ[𝓝 0] fun s ↦ s · G_χ(s)`
 (`eventuallyEq_dirichletLFunction_evenZeroLocalFactor`) plus `logDeriv_mul` (for `s ≠ 0`, `G_χ(s) ≠
 0` nearby by continuity) gives `logDeriv L(s) = 1/s + logDeriv G_χ(s)` on a punctured
-neighborhood; substituting into the kernel/regularization definitions and clearing denominators
-(`field_simp`) finishes. The local factor is the canonical `G_χ`, with multiplicity `1`.
+neighborhood; substituting into the kernel/regularization definitions and explicitly canceling
+the nonzero factor `s` finishes. The local factor is the canonical `G_χ`, with multiplicity `1`.
 Role: the canonical-factor regularization identity, letting the even residue be computed directly
 from `G_χ` without inspecting a witness selected by `Classical.choose`.
 -/
@@ -60,7 +60,15 @@ theorem eventuallyEq_dirichletReciprocalEvenZeroRegularization_canonical {N : �
   have hs1' : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
   simp only [sub_zero]
   push_cast
-  field_simp
+  generalize hg : logDeriv (dirichletEvenZeroLocalFactor χ) s = g
+  generalize hz : (x : ℂ) ^ (s - 1) = z
+  have hprod : s * (s⁻¹ + g) = 1 + s * g := by rw [mul_add, mul_inv_cancel₀ hs0']
+  simp only [div_eq_mul_inv, mul_inv_rev, one_mul]
+  calc
+    s ^ 2 * (-(s⁻¹ + g) * z * ((s - 1)⁻¹ * s⁻¹)) = (s * s⁻¹) * (-(s * (s⁻¹ + g)) * z * (s - 1)⁻¹) :=
+      by ring
+    _ = -(s * (s⁻¹ + g)) * z * (s - 1)⁻¹ := by rw [mul_inv_cancel₀ hs0', one_mul]
+    _ = -(1 + s * g) * z * (s - 1)⁻¹ := by rw [hprod]
 
 /--
 Input/assumptions: `N ≥ 1`, `χ` primitive nontrivial even mod `N`, `x : ℝ`.

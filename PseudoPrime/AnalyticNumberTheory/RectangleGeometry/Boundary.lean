@@ -34,7 +34,7 @@ theorem integral_self_mul_inv_one_add_sq_neg_one_one :
     simp only [f, neg_mul, neg_sq]
   rw [hodd, intervalIntegral.integral_neg, neg_neg] at h
   change -(∫ x : ℝ in (-1)..1, x * (1 + x ^ 2)⁻¹) = ∫ x : ℝ in (-1)..1, x * (1 + x ^ 2)⁻¹ at h
-  linarith
+  linarith only [h]
 
 /-- The normalized lower-edge simple-pole integral is one quarter of `2πi`. -/
 theorem integral_inv_sub_I_neg_one_one :
@@ -170,7 +170,8 @@ theorem integral_inv_sub_mul_I_neg_radius_radius {r : ℝ} (hr : 0 < r) :
 theorem integral_inv_add_mul_I_neg_radius_radius {r : ℝ} (hr : 0 < r) :
     (∫ x : ℝ in (-r)..r, ((x : ℂ) + r * Complex.I)⁻¹) = -((Real.pi / 2 : ℂ) * Complex.I) := by
   have hpoint (x : ℝ) : ((x : ℂ) + r * Complex.I)⁻¹ = -((((-x : ℝ) : ℂ) - r * Complex.I)⁻¹) := by
-    rw [show (x : ℂ) + r * Complex.I = -((((-x : ℝ) : ℂ) - r * Complex.I)) by
+    rw [show (x : ℂ) + r * Complex.I = -((((-x : ℝ) : ℂ) - r * Complex.I))
+        by
         push_cast
         ring]
     exact inv_neg
@@ -2333,14 +2334,14 @@ theorem centeredSquare_cuts_inside {z w c : ℂ} {r : ℝ} (hre : z.re < w.re) (
   constructor
   · simpa only [Complex.sub_re, Complex.ofReal_re] using hleft.1.1
   constructor
-  · linarith
+  · linarith only [hr]
   constructor
   · simpa only [Complex.add_re, Complex.ofReal_re] using hright.1.2
   constructor
   · simpa only [Complex.sub_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im, mul_one,
       Complex.ofReal_im, Complex.I_re, mul_zero, add_zero] using hbottom.2.1
   constructor
-  · linarith
+  · linarith only [hr]
   · simpa only [Complex.add_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im, mul_one,
       Complex.ofReal_im, Complex.I_re, mul_zero, add_zero] using htop.2.2
 
@@ -2373,7 +2374,7 @@ theorem centeredSquare_augmented_coordinates_avoid {z w c : ℂ} {r : ℝ} (hre 
     · simp only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
         Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
         Complex.I_im, mul_one, add_zero, ne_eq]
-      linarith
+      exact ne_of_gt (sub_lt_self _ hr)
     · simp only [centeredSquareUpper, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
         Complex.I_re, mul_zero, Complex.add_im, Complex.ofReal_im, add_zero, Complex.I_im, mul_one,
         sub_self, ne_eq, left_eq_add, hr.ne', not_false_eq_true]
@@ -2385,7 +2386,7 @@ theorem centeredSquare_augmented_coordinates_avoid {z w c : ℂ} {r : ℝ} (hre 
     · simp only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self,
         Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
         mul_zero, add_zero, zero_add, ne_eq]
-      linarith
+      exact ne_of_gt (sub_lt_self _ hr)
     · simp only [centeredSquareUpper, Complex.add_im, Complex.ofReal_im, add_zero, Complex.mul_im,
         Complex.add_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add,
         ne_eq, left_eq_add, hr.ne', not_false_eq_true]
@@ -2420,12 +2421,12 @@ theorem center_mem_centeredSquare_openBox (c : ℂ) {r : ℝ} (hr : 0 < r) :
     simp only [centeredSquareLower, Complex.add_re, Complex.sub_re, Complex.ofReal_re,
       Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im, sub_self,
       Complex.I_im, mul_one, add_zero, centeredSquareUpper, Complex.add_im]
-    linarith
+    linarith only [hr]
   have him : (centeredSquareLower c r).im < (centeredSquareUpper c r).im := by
     simp only [centeredSquareLower, Complex.add_im, Complex.sub_im, Complex.ofReal_im, sub_self,
       Complex.mul_im, Complex.sub_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re,
       mul_zero, add_zero, zero_add, centeredSquareUpper, Complex.add_re]
-    linarith
+    linarith only [hr]
   simp only [rectangleOpenBox, min_eq_left hre.le, max_eq_right hre.le, min_eq_left him.le,
     max_eq_right him.le]
   constructor <;> constructor <;>
@@ -2433,7 +2434,7 @@ theorem center_mem_centeredSquare_openBox (c : ℂ) {r : ℝ} (hr : 0 < r) :
       Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero, Complex.sub_im, Complex.ofReal_im,
       sub_self, Complex.I_im, mul_one, add_zero, Complex.add_im, Complex.mul_im, zero_add,
       sub_lt_self_iff, lt_add_iff_pos_right] <;>
-    linarith
+    exact hr
 
 /-- Every strictly smaller closed ball lies in the open centered square. -/
 theorem closedBall_subset_centeredSquare_openBox (c : ℂ) {ρ r : ℝ} (hρ : 0 ≤ ρ) (hρr : ρ < r) :
@@ -2451,11 +2452,13 @@ theorem closedBall_subset_centeredSquare_openBox (c : ℂ) {ρ r : ℝ} (hρ : 0
     Complex.add_im, Complex.sub_re, Complex.sub_im, Complex.mul_re, Complex.mul_im,
     Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero, mul_one, sub_zero,
     add_zero, zero_add]
-  rw [min_eq_left (by linarith : c.re - r ≤ c.re + r),
-    max_eq_right (by linarith : c.re - r ≤ c.re + r),
-    min_eq_left (by linarith : c.im - r ≤ c.im + r),
-    max_eq_right (by linarith : c.im - r ≤ c.im + r)]
-  exact ⟨⟨by linarith, by linarith⟩, ⟨by linarith, by linarith⟩⟩
+  rw [min_eq_left (by linarith only [hr] : c.re - r ≤ c.re + r),
+    max_eq_right (by linarith only [hr] : c.re - r ≤ c.re + r),
+    min_eq_left (by linarith only [hr] : c.im - r ≤ c.im + r),
+    max_eq_right (by linarith only [hr] : c.im - r ≤ c.im + r)]
+  exact
+    ⟨⟨by linarith only [hre.1, hρr], by linarith only [hre.2, hρr]⟩,
+      ⟨by linarith only [him.1, hρr], by linarith only [him.2, hρr]⟩⟩
 
 /--
 A point in the open middle rectangle belongs to no other closed cell of the strict `3 × 3` grid.
@@ -2490,7 +2493,9 @@ theorem not_mem_noncentral_threeByThreeGridCell {z w a b c : ℂ} (hzare : z.re 
       mul_one, add_zero, zero_add, sub_self, Set.uIcc_of_le hzare.le, Set.mem_preimage, Set.mem_Icc,
       Set.uIcc_of_le habre.le, Set.uIcc_of_le hbwre.le, Set.uIcc_of_le hzaim.le,
       Set.uIcc_of_le habim.le, Set.uIcc_of_le hbwim.le] at hclosedre hclosedim
-    try linarith
+    try
+      linarith only [hclosedre.1, hclosedre.2, hclosedim.1, hclosedim.2, hcre.1, hcre.2, hcim.1,
+        hcim.2]
   apply hne
   apply Prod.ext <;> apply Complex.ext <;> simp only [Complex.re_add_im]
 
@@ -2518,7 +2523,7 @@ theorem centeredSquare_closedRectangle_subset_closedBall (c : ℂ) {r : ℝ} (hr
     Rectangle.rectangleClosedBox (centeredSquareLower c r) (centeredSquareUpper c r) ⊆
       Metric.closedBall c (Real.sqrt 2 * r) := by
   intro s hs
-  have hcorners : c.re - r ≤ c.re + r ∧ c.im - r ≤ c.im + r := by constructor <;> linarith
+  have hcorners : c.re - r ≤ c.re + r ∧ c.im - r ≤ c.im + r := by constructor <;> linarith only [hr]
   simp only [Rectangle.rectangleClosedBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm,
     centeredSquareLower, centeredSquareUpper, Complex.add_re, Complex.add_im, Complex.sub_re,
     Complex.sub_im, Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
@@ -2527,11 +2532,11 @@ theorem centeredSquare_closedRectangle_subset_closedBall (c : ℂ) {r : ℝ} (hr
   have hre : |(s - c).re| ≤ r := by
     rw [abs_le]
     simp only [Complex.sub_re]
-    exact ⟨by linarith [hs.1.1], by linarith [hs.1.2]⟩
+    exact ⟨by linarith only [hs.1.1], by linarith only [hs.1.2]⟩
   have him : |(s - c).im| ≤ r := by
     rw [abs_le]
     simp only [Complex.sub_im]
-    exact ⟨by linarith [hs.2.1], by linarith [hs.2.2]⟩
+    exact ⟨by linarith only [hs.2.1], by linarith only [hs.2.2]⟩
   have hnorm : ‖s - c‖ ≤ Real.sqrt 2 * r :=
     (Complex.norm_le_sqrt_two_mul_max (s - c)).trans
       (mul_le_mul_of_nonneg_left (max_le hre him) (Real.sqrt_nonneg 2))
@@ -2672,12 +2677,11 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul {f h : �
     have hsub : z - c ≠ 0 := sub_ne_zero.mpr hne
     have heqz := heqBoundary z hz
     have hfz : f z = h z / (z - c) := by
-      field_simp at heqz ⊢
+      field_simp [hsub] at heqz ⊢
       linear_combination heqz
     have hdslope : dslope h c z = (h z - h c) / (z - c) := by
       rw [dslope_of_ne h hne, slope_def_field]
     simp only [hfz, hdslope]
-    field_simp
     ring
   unfold rectangleBoundaryIntegral
   exact
@@ -2727,9 +2731,9 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv {f 
   have hR : 0 < R := half_pos (lt_min hrg hre)
   have hsqrtlt : Real.sqrt 2 < 2 := by
     have hsq : Real.sqrt 2 ^ 2 = 2 := Real.sq_sqrt (by norm_num only)
-    nlinarith [Real.sqrt_nonneg (2 : ℝ)]
+    nlinarith only [hsq, Real.sqrt_nonneg (2 : ℝ)]
   have hsqrt2R : Real.sqrt 2 * R < min rg re := by
-    have : Real.sqrt 2 * R < 2 * R := by nlinarith
+    have : Real.sqrt 2 * R < 2 * R := by nlinarith only [hR, hsqrtlt]
     rwa [hRdef, show (2 : ℝ) * (min rg re / 2) = min rg re by ring] at this
   refine ⟨R, hR, fun r hr hrR ↦ ?_⟩
   have hsqrt2r : Real.sqrt 2 * r < min rg re :=
@@ -2839,15 +2843,15 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv {f 
     have hsub : z - c ≠ 0 := sub_ne_zero.mpr hne
     have heqz := heqBoundary z hz
     have hfz : f z = h z / (z - c) ^ 2 := by
-      field_simp at heqz ⊢
+      field_simp [hsub] at heqz ⊢
       linear_combination heqz
     have hk : dslope h c z = (h z - h c) / (z - c) := by rw [dslope_of_ne h hne, slope_def_field]
     have hkc : dslope h c c = deriv h c := dslope_same h c
     have hdslope : dslope (dslope h c) c z = (h z - h c - deriv h c * (z - c)) / (z - c) ^ 2 := by
       rw [dslope_of_ne (dslope h c) hne, slope_def_field, hk, hkc]
-      field_simp
+      field_simp [hsub]
     simp only [hfz, hdslope]
-    field_simp
+    field_simp [hsub]
     ring
   unfold rectangleBoundaryIntegral
   exact
@@ -2878,9 +2882,9 @@ theorem exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_cubic {f 
   have hR : 0 < R := half_pos (lt_min hrg hre)
   have hsqrtlt : Real.sqrt 2 < 2 := by
     have hsq : Real.sqrt 2 ^ 2 = 2 := Real.sq_sqrt (by norm_num only)
-    nlinarith [Real.sqrt_nonneg (2 : ℝ)]
+    nlinarith only [hsq, Real.sqrt_nonneg (2 : ℝ)]
   have hsqrt2R : Real.sqrt 2 * R < min rg re := by
-    have : Real.sqrt 2 * R < 2 * R := by nlinarith
+    have : Real.sqrt 2 * R < 2 * R := by nlinarith only [hR, hsqrtlt]
     rwa [hRdef, show (2 : ℝ) * (min rg re / 2) = min rg re by ring] at this
   refine ⟨R, hR, fun r hr hrR ↦ ?_⟩
   have hsqrt2r : Real.sqrt 2 * r < min rg re :=
@@ -3052,6 +3056,6 @@ theorem disjoint_closedBall_rectangleClosedBoxBoundary {z w s : ℂ} {ε : ℝ}
 theorem disjoint_singularity_closedBalls {s t : ℂ} {ε : ℝ} (hsep : 2 * ε < dist s t) :
     Disjoint (Metric.closedBall s ε) (Metric.closedBall t ε) := by
   apply Metric.closedBall_disjoint_closedBall
-  linarith
+  linarith only [hsep]
 
 end PseudoPrime.AnalyticNumberTheory.RectangleGeometry

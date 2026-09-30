@@ -25,8 +25,8 @@ def classicalTrialCountThrough (i : ℕ) : ℕ :=
 
 /-- For a classical candidate `i` (odd and at least `5`), the trial count equals `(i-3)/2`.
 Unfolding the count and using the candidate conditions gives this alternative closed form. -/
-theorem classicalTrialCountThrough_eq_sub_three_div_two {i : ℕ}
-    (hi : isClassicalCandidate i) : classicalTrialCountThrough i = (i - 3) / 2 := by
+theorem classicalTrialCountThrough_eq_sub_three_div_two {i : ℕ} (hi : isClassicalCandidate i) :
+    classicalTrialCountThrough i = (i - 3) / 2 := by
   obtain ⟨h5, k, hk⟩ := hi
   unfold classicalTrialCountThrough
   obtain ⟨t, rfl⟩ := Nat.exists_eq_add_of_le h5

@@ -29,10 +29,10 @@ theorem classicalCandidateMagnitude_isCandidate (k : ℕ) :
     isClassicalCandidate (classicalCandidateMagnitude k) := by
   refine ⟨?_, ?_⟩
   · dsimp only [classicalCandidateMagnitude]
-    omega
+    exact Nat.le_add_right 5 (2 * k)
   · refine ⟨k + 2, ?_⟩
     dsimp only [classicalCandidateMagnitude]
-    omega
+    ring
 
 /-- Ascending search from candidate index `k` over a half-open fuel range. -/
 def selfridgeClassicalSearchAscendingFrom (n k fuel : ℕ) : Option ℤ :=
@@ -93,13 +93,13 @@ theorem selfridgeClassicalSearchAscending_five :
     selfridgeClassicalSearchAscending 5 (5 - 2) = some (-7) := by
   have hzero : jacobiSym (↑(5 : ℕ) : ℤ) 5 = 0 := by
     rw [jacobiSym.eq_zero_iff_not_coprime]
-    norm_num
+    norm_num only
   have h55 : jacobiSym (selfridgeD 5) 5 ≠ -1 := by
     rw [selfridgeD_of_mod_four_eq_one (by decide), hzero]
-    norm_num
+    norm_num only
   have h75 : jacobiSym (selfridgeD 7) 5 = -1 := by
-    rw [show selfridgeD 7 = -7 by norm_num [selfridgeD]]
-    apply (jacobiSym.eq_one_or_neg_one (by norm_num)).resolve_left
+    rw [show selfridgeD 7 = -7 by exact selfridgeD_of_mod_four_eq_three (by decide)]
+    apply (jacobiSym.eq_one_or_neg_one (show (-7 : ℤ).gcd 5 = 1 by decide)).resolve_left
     exact Internal.jacobiSym_neg_seven_five_ne_one
   change
     (if jacobiSym (selfridgeD 5) 5 = -1 then some (selfridgeD 5)
@@ -108,7 +108,7 @@ theorem selfridgeClassicalSearchAscending_five :
         else if jacobiSym (selfridgeD 9) 5 = -1 then some (selfridgeD 9) else none) =
       some (-7)
   rw [ite_eq_right h55, h75]
-  rw [show selfridgeD 7 = -7 by norm_num [selfridgeD]]
+  rw [show selfridgeD 7 = -7 by exact selfridgeD_of_mod_four_eq_three (by decide)]
   change some (-7 : ℤ) = some (-7)
   rfl
 
@@ -117,7 +117,7 @@ theorem selfridgeClassicalSearchAscending_seven :
     selfridgeClassicalSearchAscending 7 (7 - 2) = some 5 := by
   have h5 : jacobiSym (selfridgeD 5) 7 = -1 := by
     rw [selfridgeD_of_mod_four_eq_one (i := 5) (by decide)]
-    norm_num [jacobiSym, legendreSym, quadraticCharFun]
+    norm_num only [jacobiSym, legendreSym, quadraticCharFun]
   change
     (if jacobiSym (selfridgeD 5) 7 = -1 then some (selfridgeD 5)
       else
@@ -138,19 +138,19 @@ theorem selfridgeClassicalSearchAscending_eleven :
     selfridgeClassicalSearchAscending 11 (11 - 2) = some 13 := by
   have h5 : jacobiSym (selfridgeD 5) 11 = 1 := by
     rw [selfridgeD_of_mod_four_eq_one (i := 5) (by decide)]
-    norm_num [jacobiSym, legendreSym, quadraticCharFun]
+    norm_num only [jacobiSym, legendreSym, quadraticCharFun]
   have h7 : jacobiSym (selfridgeD 7) 11 = 1 := by
-    rw [show selfridgeD 7 = -7 by norm_num [selfridgeD]]
-    norm_num [jacobiSym, legendreSym, quadraticCharFun]
+    rw [show selfridgeD 7 = -7 by exact selfridgeD_of_mod_four_eq_three (by decide)]
+    norm_num only [jacobiSym, legendreSym, quadraticCharFun]
   have h9 : jacobiSym (selfridgeD 9) 11 = 1 := by
     rw [selfridgeD_of_mod_four_eq_one (i := 9) (by decide)]
-    norm_num [jacobiSym, legendreSym, quadraticCharFun]
+    norm_num only [jacobiSym, legendreSym, quadraticCharFun]
   have h11 : jacobiSym (selfridgeD 11) 11 = 0 := by
-    rw [show selfridgeD 11 = -11 by norm_num [selfridgeD]]
-    norm_num [jacobiSym, legendreSym, quadraticCharFun]
+    rw [show selfridgeD 11 = -11 by exact selfridgeD_of_mod_four_eq_three (by decide)]
+    norm_num only [jacobiSym, legendreSym, quadraticCharFun]
   have h13 : jacobiSym (selfridgeD 13) 11 = -1 := by
     rw [selfridgeD_of_mod_four_eq_one (i := 13) (by decide)]
-    norm_num [jacobiSym, legendreSym, quadraticCharFun]
+    norm_num only [jacobiSym, legendreSym, quadraticCharFun]
   change
     (if jacobiSym (selfridgeD 5) 11 = -1 then some (selfridgeD 5)
       else
@@ -179,7 +179,7 @@ theorem selfridgeClassicalSearchAscending_thirteen :
     selfridgeClassicalSearchAscending 13 (13 - 2) = some 5 := by
   have h5 : jacobiSym (selfridgeD 5) 13 = -1 := by
     rw [selfridgeD_of_mod_four_eq_one (i := 5) (by decide)]
-    norm_num [jacobiSym, legendreSym, quadraticCharFun]
+    norm_num only [jacobiSym, legendreSym, quadraticCharFun]
   change
     (if jacobiSym (selfridgeD 5) 13 = -1 then some (selfridgeD 5)
       else
@@ -215,14 +215,16 @@ theorem exists_classicalCandidateMagnitude_eq {i : ℕ} (hi : isClassicalCandida
   rcases hi with ⟨hi5, hodd⟩
   refine ⟨(i - 5) / 2, ?_⟩
   have hi2 : i % 2 = 1 := Nat.odd_iff.mp hodd
-  have hparity : (i - 5) % 2 = 0 := by omega
+  have hparity : (i - 5) % 2 = 0 :=
+    Nat.sub_mod_eq_zero_of_mod_eq (by simpa only [Nat.reduceMod] using hi2)
   dsimp only [classicalCandidateMagnitude]
   calc
     5 + 2 * ((i - 5) / 2) = 5 + ((i - 5) / 2) * 2 := by rw [Nat.mul_comm]
     _ = 5 + ((i - 5) / 2) * 2 + (i - 5) % 2 := by rw [hparity, Nat.add_zero]
     _ = 5 + (((i - 5) / 2) * 2 + (i - 5) % 2) := by rw [Nat.add_assoc]
     _ = 5 + (i - 5) := by rw [Nat.div_add_mod']
-    _ = i := by omega
+    _ = i := by
+      rw [Nat.add_comm]; exact Nat.sub_add_cancel hi5
 
 /-- Method A* parameters produced by the ascending search. -/
 def selfridgeClassicalMethodAStarParamsAscending (n fuel : ℕ) : Option LucasParams :=
@@ -336,9 +338,15 @@ theorem selfridgeClassicalSearchAscending_some_index {n k fuel : ℕ} {D : ℤ}
   | succ fuel ih =>
     simp only [selfridgeClassicalSearchAscendingFrom] at hsearch
     split at hsearch <;> rename_i hj
-    · exact ⟨k, by omega, le_rfl, Option.some.inj hsearch⟩
+    · exact
+        ⟨k, by
+          simpa only [Nat.add_assoc, Nat.add_comm 1 fuel] using
+            Nat.lt_of_lt_of_le (Nat.lt_succ_self k) (Nat.le_add_right (k + 1) fuel),
+          le_rfl, Option.some.inj hsearch⟩
     · obtain ⟨j, hjlt, hkj, hD⟩ := ih hsearch
-      exact ⟨j, by omega, by omega, hD⟩
+      exact
+        ⟨j, by simpa only [Nat.add_assoc, Nat.add_comm 1 fuel] using hjlt,
+          Nat.le_trans (Nat.le_succ k) hkj, hD⟩
 
 /-- A failed ascending search has no Jacobi `-1` value in its scanned range. -/
 theorem selfridgeClassicalSearchAscending_none_spec {n k fuel : ℕ}
@@ -348,7 +356,7 @@ theorem selfridgeClassicalSearchAscending_none_spec {n k fuel : ℕ}
   | zero =>
     simp only [selfridgeClassicalSearchAscendingFrom] at hsearch
     intro j hkj hjlt
-    omega
+    exact False.elim ((Nat.not_lt_of_ge hkj) (by simpa only [Nat.add_zero] using hjlt))
   | succ fuel ih =>
     simp only [selfridgeClassicalSearchAscendingFrom] at hsearch
     split at hsearch <;> rename_i hj
@@ -358,8 +366,8 @@ theorem selfridgeClassicalSearchAscending_none_spec {n k fuel : ℕ}
       · subst j
         exact hj
       · apply ih hsearch j
-        · omega
-        · omega
+        · exact Nat.succ_le_iff.mpr (Nat.lt_of_le_of_ne hkj (Ne.symm hEq))
+        · simpa only [Nat.add_assoc, Nat.add_comm 1 fuel] using hjlt
 
 /-- An ascending search returns the first successful candidate in a finite range. -/
 theorem selfridgeClassicalSearchAscendingFrom_some_of_prior_failures {n s k : ℕ} {i : ℕ}
@@ -378,14 +386,16 @@ theorem selfridgeClassicalSearchAscendingFrom_some_of_prior_failures {n s k : �
   | succ k ih =>
     rw [selfridgeClassicalSearchAscendingFrom]
     have hcurrent : jacobiSym (selfridgeD (classicalCandidateMagnitude s)) n ≠ -1 := by
-      exact hfail s le_rfl (by omega)
+      exact
+        hfail s le_rfl
+          (by simpa only [Nat.add_zero] using Nat.add_lt_add_left (Nat.zero_lt_succ k) s)
     rw [ite_eq_right hcurrent]
     apply ih (s := s + 1)
     · simpa only [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hi
     · intro j hsj hjs
       apply hfail j
-      · omega
-      · omega
+      · exact Nat.le_trans (Nat.le_add_right s 1) hsj
+      · simpa only [Nat.add_assoc, Nat.add_comm 1 k] using hjs
 
 /-- The mathematical `-1` first-stop is realized by the ascending search. -/
 theorem selfridgeClassicalSearchAscending_some_of_firstStopNegOne {n : ℕ}
@@ -407,7 +417,12 @@ theorem selfridgeClassicalSearchAscending_some_of_firstStopNegOne {n : ℕ}
   intro j h0 hjk hsuccess
   have hji : classicalCandidateMagnitude j < i := by
     dsimp only [classicalCandidateMagnitude] at hk ⊢
-    omega
+    change 5 + 2 * k = i at hk
+    have hjk' : j < k := by simpa only [Nat.zero_add] using hjk
+    calc
+      5 + 2 * j < 5 + 2 * k :=
+        Nat.add_lt_add_left (Nat.mul_lt_mul_of_pos_left hjk' (by decide : 0 < (2 : ℕ))) 5
+      _ = i := hk
   exact
     (not_mem_firstStopNegOneSet_of_lt isClassicalCandidate n hs hji)
       ⟨classicalCandidateMagnitude_isCandidate j, hsuccess⟩
@@ -434,7 +449,7 @@ theorem selfridgeClassicalSearchAscending_seventeen :
     selfridgeClassicalSearchAscending 17 (17 - 2) = some 5 := by
   have h5 : jacobiSym (selfridgeD 5) 17 = -1 := by
     rw [selfridgeD_of_mod_four_eq_one (i := 5) (by decide)]
-    norm_num [jacobiSym, legendreSym, quadraticCharFun]
+    norm_num only [jacobiSym, legendreSym, quadraticCharFun]
   have hsearch : selfridgeClassicalSearchAscending 17 1 = some 5 := by
     change (if jacobiSym (selfridgeD 5) 17 = -1 then some (selfridgeD 5) else none) = some 5
     rw [h5, selfridgeD_of_mod_four_eq_one (i := 5) (by decide)]
@@ -449,16 +464,17 @@ theorem selfridgeClassicalSearchAscending_nineteen :
     selfridgeClassicalSearchAscending 19 (19 - 2) = some (-7) := by
   have h5 : jacobiSym (selfridgeD 5) 19 ≠ -1 := by
     rw [selfridgeD_of_mod_four_eq_one (i := 5) (by decide)]
-    norm_num [jacobiSym, legendreSym, quadraticCharFun]
+    norm_num only [jacobiSym, legendreSym, quadraticCharFun]
   have h7 : jacobiSym (selfridgeD 7) 19 = -1 := by
-    rw [show selfridgeD 7 = -7 by norm_num [selfridgeD]]
-    norm_num [jacobiSym, legendreSym, quadraticCharFun]
+    rw [show selfridgeD 7 = -7 by exact selfridgeD_of_mod_four_eq_three (by decide)]
+    norm_num only [jacobiSym, legendreSym, quadraticCharFun]
   have hsearch : selfridgeClassicalSearchAscending 19 2 = some (-7) := by
     change
       (if jacobiSym (selfridgeD 5) 19 = -1 then some (selfridgeD 5)
         else if jacobiSym (selfridgeD 7) 19 = -1 then some (selfridgeD 7) else none) =
         some (-7)
-    rw [ite_eq_right h5, h7, show selfridgeD 7 = -7 by norm_num [selfridgeD]]
+    rw [ite_eq_right h5, h7,
+      show selfridgeD 7 = -7 by exact selfridgeD_of_mod_four_eq_three (by decide)]
     change some (-7 : ℤ) = some (-7)
     rfl
   simpa only [selfridgeClassicalSearchAscending] using
@@ -470,7 +486,7 @@ theorem selfridgeClassicalSearchAscending_twenty_three :
     selfridgeClassicalSearchAscending 23 (23 - 2) = some 5 := by
   have h5 : jacobiSym (selfridgeD 5) 23 = -1 := by
     rw [selfridgeD_of_mod_four_eq_one (i := 5) (by decide)]
-    norm_num [jacobiSym, legendreSym, quadraticCharFun]
+    norm_num only [jacobiSym, legendreSym, quadraticCharFun]
   have hsearch : selfridgeClassicalSearchAscending 23 1 = some 5 := by
     change (if jacobiSym (selfridgeD 5) 23 = -1 then some (selfridgeD 5) else none) = some 5
     rw [h5, selfridgeD_of_mod_four_eq_one (i := 5) (by decide)]
@@ -488,9 +504,16 @@ theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_firstStop_lt {n : 
   obtain ⟨k, hk, hsearch⟩ := selfridgeClassicalSearchAscending_some_of_firstStopNegOne hs
   have hkfuel : k + 1 ≤ n - 2 := by
     dsimp only [classicalCandidateMagnitude] at hk
-    omega
+    have hstop' : 5 + 2 * k < n := by
+      rw [← hk] at hstop
+      exact hstop
+    apply (Nat.le_sub_iff_add_le (Nat.le_trans (by decide : 2 ≤ 3) hn)).2
+    calc
+      k + 1 + 2 ≤ (k + 1 + 2) + (k + 2) := Nat.le_add_right _ _
+      _ = 5 + 2 * k := by ring
+      _ ≤ n := Nat.le_of_lt hstop'
   refine ⟨selfridgeD (firstStopNegOne isClassicalCandidate n hs), ?_⟩
-  have hextra : (k + 1) + (n - 2 - (k + 1)) = n - 2 := by omega
+  have hextra : (k + 1) + (n - 2 - (k + 1)) = n - 2 := Nat.add_sub_of_le hkfuel
   rw [← hextra]
   exact selfridgeClassicalSearchAscendingFrom_some_of_le_fuel hsearch
 
@@ -509,10 +532,12 @@ theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime {n : ℕ} (h
     (hn27 : 27 < n) (hw : (PrimeNegOneWitnessSet n).Nonempty)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     ∃ D, selfridgeClassicalSearchAscending n (n - 2) = some D := by
-  have hodd : Odd n := hn.odd_iff.mpr (by omega)
-  obtain ⟨p, hp, hpodd, hplt, hvalue⟩ := NumberTheory.primeHasSmallerNegOneWitness hn (by omega)
+  have hodd : Odd n := hn.odd_iff.mpr (Nat.le_trans (by decide : 3 ≤ 27) (Nat.le_of_lt hn27))
+  obtain ⟨p, hp, hpodd, hplt, hvalue⟩ :=
+    NumberTheory.primeHasSmallerNegOneWitness hn (lt_trans (by decide : 3 < 27) hn27)
   apply
-    selfridgeClassicalSearchAscendingWithinTwoMul_some_of_primeWitness_lt (by omega) hodd hn27 hw hs
+    selfridgeClassicalSearchAscendingWithinTwoMul_some_of_primeWitness_lt
+      (Nat.le_trans (by decide : 3 ≤ 27) (Nat.le_of_lt hn27)) hodd hn27 hw hs
   exact (primeNegOneWitness_le n hw ⟨hp, hpodd, hvalue⟩).trans_lt hplt
 
 /-- Every prime at least `3` has a successful elementary ascending search. -/
@@ -521,11 +546,11 @@ theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime_of_three_le 
   by_cases hn27 : 27 < n
   · exact
       selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime hn hn27
-        (primeNegOneWitnessSet_nonempty_of_odd_nonsquare (hn.odd_of_ne_two (by omega))
-          hn.not_isSquare)
-        (classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare (hn.odd_of_ne_two (by omega))
-          hn.not_isSquare)
-  · have hnle : n ≤ 27 := by omega
+        (primeNegOneWitnessSet_nonempty_of_odd_nonsquare
+          (hn.odd_of_ne_two (ne_of_gt (lt_of_lt_of_le (by decide : 2 < 3) hn3))) hn.not_isSquare)
+        (classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare
+          (hn.odd_of_ne_two (ne_of_gt (lt_of_lt_of_le (by decide : 2 < 3) hn3))) hn.not_isSquare)
+  · have hnle : n ≤ 27 := le_of_not_gt hn27
     interval_cases n <;>
       first
       | exact ⟨5, selfridgeClassicalSearchAscending_three⟩
@@ -536,7 +561,7 @@ theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime_of_three_le 
       | exact ⟨5, selfridgeClassicalSearchAscending_seventeen⟩
       | exact ⟨-7, selfridgeClassicalSearchAscending_nineteen⟩
       | exact ⟨5, selfridgeClassicalSearchAscending_twenty_three⟩
-      | norm_num at hn
+      | norm_num only at hn
 
 /-- A successful ascending search converts to the corresponding Method A* parameters. -/
 theorem selfridgeClassicalMethodAStarParamsAscending_of_search {n fuel : ℕ} {D : ℤ}

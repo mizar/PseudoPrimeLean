@@ -140,7 +140,7 @@ theorem eventuallyEq_dirichletReciprocalMellinZeroRegularization {N : ℕ} [NeZe
   have hs0' : s ≠ 0 := Set.mem_compl_singleton_iff.mp hs0
   have hs1' : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
   simp only [sub_zero]
-  field_simp
+  field_simp [hs0', hs1']
 
 /--
 Input/assumptions: a cutoff and a punctured point near zero.
@@ -157,7 +157,7 @@ theorem eventuallyEq_dirichletLogMellinZeroRegularization {N : ℕ} [NeZero N] (
   unfold dirichletLogContourKernel dirichletLogMellinZeroRegularization
   have hs0' : s ≠ 0 := Set.mem_compl_singleton_iff.mp hs0
   simp only [sub_zero]
-  field_simp
+  field_simp [hs0']
 
 /--
 Input/assumptions: odd nontrivial primitive character and positive cutoff.
@@ -366,7 +366,7 @@ theorem eventuallyEq_dirichletReciprocalOneRegularization {N : ℕ} [NeZero N] (
   filter_upwards [hzeroEventually, eventually_mem_nhdsWithin] with s hs0 hs1
   unfold dirichletReciprocalContourKernel dirichletReciprocalOneRegularization
   have hs1' : s - 1 ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hs1)
-  field_simp
+  field_simp [hs0, hs1']
 
 /--
 Input/assumptions: a nontrivial character and positive Mellin parameter.
@@ -409,7 +409,7 @@ theorem continuous_dirichletLogContourKernel_line {N : ℕ} [NeZero N] {x : ℝ}
     have hs0 : s ≠ 0 := by
       intro h
       rw [h, Complex.zero_re] at hs
-      linarith
+      exact (not_lt_of_ge (show (0 : ℝ) ≤ 1 from by norm_num only)) hs
     have hL : DirichletCharacter.LFunction χ s ≠ 0 :=
       DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ) hs.le
     exact
@@ -438,11 +438,11 @@ theorem continuous_dirichletReciprocalContourKernel_line {N : ℕ} [NeZero N] {x
     have hs0 : s ≠ 0 := by
       intro h
       rw [h, Complex.zero_re] at hs
-      linarith
+      exact (not_lt_of_ge (show (0 : ℝ) ≤ 1 from by norm_num only)) hs
     have hs1 : s ≠ 1 := by
       intro h
       rw [h, Complex.one_re] at hs
-      linarith
+      exact (lt_irrefl 1) hs
     have hL : DirichletCharacter.LFunction χ s ≠ 0 :=
       DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ) hs.le
     exact
@@ -469,7 +469,7 @@ theorem integrable_dirichletLogContourKernel {N : ℕ} [NeZero N] {x : ℝ} (hx 
       (fun y : ℝ ↦ dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I)) := by
   set C : ℝ := ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ τ with hC_def
   have hxτ : (0 : ℝ) < x ^ τ := Real.rpow_pos_of_pos hx τ
-  have hτ0 : τ ≠ 0 := by linarith
+  have hτ0 : τ ≠ 0 := ne_of_gt (lt_trans zero_lt_one hτ)
   apply
     MeasureTheory.Integrable.mono'
       (((General.verticalIntegrable_mellinLogKernel hτ0).norm).const_mul (C * x ^ τ))
@@ -510,11 +510,11 @@ theorem integrable_dirichletReciprocalContourKernel {N : ℕ} [NeZero N] {x : �
   have hσ0 : σ ≠ 0 := by
     rw [hσ_def]
     intro h
-    linarith [sub_eq_zero.mp h]
+    linarith only [hτ, h]
   have hσ1 : σ ≠ -1 := by
     rw [hσ_def]
     intro h
-    linarith
+    linarith only [hτ, h]
   apply
     MeasureTheory.Integrable.mono'
       (((General.verticalIntegrable_mellinReciprocalKernel hσ0 hσ1).norm).const_mul (C * x ^ σ))
@@ -630,7 +630,7 @@ theorem exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization {N : ℕ} 
   have hs0' : s ≠ 0 := Set.mem_compl_singleton_iff.mp hs0
   have hs1' : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
   simp only [sub_zero]
-  field_simp
+  field_simp [hs0', hs1']
 
 /--
 Input/assumptions: a nontrivial even character and any real cutoff.
@@ -661,7 +661,7 @@ theorem exists_eventuallyEq_dirichletLogEvenZeroRegularization {N : ℕ} [NeZero
   rw [hlogs']
   have hs0' : s ≠ 0 := Set.mem_compl_singleton_iff.mp hs0
   simp only [sub_zero]
-  field_simp
+  field_simp [hs0']
 
 /--
 Input/assumptions: an even nontrivial character and positive cutoff.
@@ -788,7 +788,7 @@ theorem exists_eventuallyEq_reciprocalKernel_dirichletLFunctionZeroRegularizatio
     exact hlogs
   rw [dirichletReciprocalContourKernel, dirichletReciprocalZeroRegularization, hlogs']
   have hsρ' : s - ρ ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hsρ)
-  field_simp
+  field_simp [hs0, hs1, hsρ']
 
 /--
 Input/assumptions: a nontrivial character, an ordinary `L`-zero away from `0`,
@@ -822,7 +822,7 @@ theorem exists_eventuallyEq_logKernel_dirichletLFunctionZeroRegularization {N : 
     exact hlogs
   rw [dirichletLogContourKernel, dirichletLogZeroRegularization, hlogs']
   have hsρ' : s - ρ ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hsρ)
-  field_simp
+  field_simp [hs0, hsρ']
 
 /--
 Input/assumptions: `x > 0`, a nontrivial character, and an ordinary `L`-zero away from `0,1`.
@@ -1234,10 +1234,9 @@ theorem dirichletReciprocalFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} 
         hpointHyp
     obtain ⟨ε, hε, hball⟩ := interior.exists_closedBall_pointOfCell_subset_open hcell
     set r := min (ε / 2) (Rc / 2) with hr_def
-    have hr : 0 < r := lt_min (by linarith) (by linarith)
+    have hr : 0 < r := lt_min (half_pos hε) (half_pos hRc)
     have hball' : Metric.closedBall c r ⊆ RectangleGeometry.rectangleOpenBox cell.1 cell.2 :=
-      (Metric.closedBall_subset_closedBall
-            (le_trans (min_le_left _ _) (by linarith : ε / 2 ≤ ε))).trans
+      (Metric.closedBall_subset_closedBall (le_trans (min_le_left _ _) (half_le_self hε.le))).trans
         hball
     have hcuts := RectangleGeometry.centeredSquare_cuts_inside hcellOrder.1 hcellOrder.2 hr hball'
     set a := RectangleGeometry.centeredSquareLower c r with ha_def
@@ -1306,7 +1305,7 @@ theorem dirichletReciprocalFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} 
         hcuts.1 hcuts.2.1 hcuts.2.2.1 hcuts.2.2.2.1 hcuts.2.2.2.2.1 hcuts.2.2.2.2.2 hpoint hdiffCell
         hgrid3
     rw [hshrink]
-    have hrRc : r ≤ Rc := le_trans (min_le_right _ _) (by linarith : Rc / 2 ≤ Rc)
+    have hrRc : r ≤ Rc := le_trans (min_le_right _ _) (half_le_self hRc.le)
     exact hcert r hr hrRc
   exact
     RectangleGeometry.rectangleBoundaryIntegral_eq_sum_res (dirichletReciprocalContourKernel x χ)

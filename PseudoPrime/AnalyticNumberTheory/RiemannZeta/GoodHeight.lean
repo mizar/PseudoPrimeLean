@@ -31,7 +31,7 @@ theorem exists_avoiding_point {S : Finset ℝ} {c a : ℝ} (hc : 0 < c) (hlen : 
     obtain ⟨y, hyS, hy⟩ := hcon T hT
     simp only [Set.mem_iUnion]
     rw [abs_lt] at hy
-    exact ⟨y, hyS, by constructor <;> linarith [hy.1, hy.2]⟩
+    exact ⟨y, hyS, by constructor <;> linarith only [hy.1, hy.2]⟩
   have hsum_eq :
     ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) * S.card := by
     have hterm : ∀ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) :=
@@ -50,9 +50,11 @@ theorem exists_avoiding_point {S : Finset ℝ} {c a : ℝ} (hc : 0 < c) (hlen : 
       _ ≤ ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) :=
         MeasureTheory.measure_biUnion_finset_le S _
       _ = ENNReal.ofReal (2 * c) * S.card := hsum_eq
-  rw [← ENNReal.ofReal_natCast S.card, ← ENNReal.ofReal_mul (by positivity),
-    ENNReal.ofReal_le_ofReal_iff (by positivity)] at hfinal
-  linarith [hfinal]
+  rw [← ENNReal.ofReal_natCast S.card, ←
+    ENNReal.ofReal_mul (le_of_lt (mul_pos (by norm_num only) hc)),
+    ENNReal.ofReal_le_ofReal_iff
+      (mul_nonneg (le_of_lt (mul_pos (by norm_num only) hc)) (Nat.cast_nonneg _))] at hfinal
+  linarith only [hfinal, hlen]
 
 /-- Generalization of `PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_avoiding_point` to
 an interval `[a, a+L]` of arbitrary positive
@@ -66,7 +68,7 @@ theorem exists_avoiding_point_length {S : Finset ℝ} {c a L : ℝ} (hc : 0 < c)
     obtain ⟨y, hyS, hy⟩ := hcon T hT
     simp only [Set.mem_iUnion]
     rw [abs_lt] at hy
-    exact ⟨y, hyS, by constructor <;> linarith [hy.1, hy.2]⟩
+    exact ⟨y, hyS, by constructor <;> linarith only [hy.1, hy.2]⟩
   have hsum_eq :
     ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) * S.card := by
     have hterm : ∀ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) :=
@@ -85,9 +87,11 @@ theorem exists_avoiding_point_length {S : Finset ℝ} {c a L : ℝ} (hc : 0 < c)
       _ ≤ ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) :=
         MeasureTheory.measure_biUnion_finset_le S _
       _ = ENNReal.ofReal (2 * c) * S.card := hsum_eq
-  rw [← ENNReal.ofReal_natCast S.card, ← ENNReal.ofReal_mul (by positivity),
-    ENNReal.ofReal_le_ofReal_iff (by positivity)] at hfinal
-  linarith [hfinal]
+  rw [← ENNReal.ofReal_natCast S.card, ←
+    ENNReal.ofReal_mul (le_of_lt (mul_pos (by norm_num only) hc)),
+    ENNReal.ofReal_le_ofReal_iff
+      (mul_nonneg (le_of_lt (mul_pos (by norm_num only) hc)) (Nat.cast_nonneg _))] at hfinal
+  linarith only [hfinal, hlen]
 
 /-! ### Connecting to `ζ`: zeros near a good height lie in the Jensen disk -/
 
@@ -122,7 +126,7 @@ theorem riemannZeta_zero_mem_jensenBall {H : ℝ} (hH : 8 ≤ H) {ρ : ℂ} (hζ
     (him : |ρ.im - H| ≤ 2) : ρ ∈ Metric.closedBall (jensenCenter H) (37 / 10) := by
   have himpos : (0 : ℝ) < ρ.im := by
     have h1 := (abs_le.mp him).1
-    linarith
+    linarith only [hH, h1]
   have hre0 : 0 ≤ ρ.re := riemannZeta_zero_re_nonneg_of_im_ne_zero hζ himpos.ne'
   have hre1 : ρ.re ≤ 1 := riemannZeta_zero_re_le_one hζ
   simp only [Metric.mem_closedBall, dist_eq_norm]
@@ -132,9 +136,11 @@ theorem riemannZeta_zero_mem_jensenBall {H : ℝ} (hH : 8 ≤ H) {ρ : ℂ} (hζ
   rw [hre_eq, him_eq]
   rw [show (37 / 10 : ℝ) = Real.sqrt ((37 / 10) ^ 2) from (Real.sqrt_sq (by norm_num only)).symm]
   apply Real.sqrt_le_sqrt
-  have h1 : (ρ.re - 3) ^ 2 ≤ 9 := by nlinarith [hre0, hre1]
-  have h2 : (ρ.im - H) ^ 2 ≤ 4 := by nlinarith [abs_le.mp him]
-  nlinarith [h1, h2]
+  have h1 : (ρ.re - 3) ^ 2 ≤ 9 := by nlinarith only [hre0, hre1]
+  have h2 : (ρ.im - H) ^ 2 ≤ 4 := by
+    have him' := abs_le.mp him
+    nlinarith only [him'.1, him'.2]
+  nlinarith only [h1, h2]
 
 /-! ### The finite set of zero ordinates near a height `H`, with a cardinality bound -/
 
@@ -160,7 +166,7 @@ theorem card_zeroOrdinatesNear_le {H : ℝ} (hH : 8 ≤ H) :
     rw [Set.Finite.mem_toFinset, Function.mem_support] at hu
     have hnonneg : (0 : ℤ) ≤ MeromorphicOn.divisor riemannZeta U u :=
       MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAn u
-    omega
+    exact Int.add_one_le_iff.mpr (lt_of_le_of_ne hnonneg (Ne.symm hu))
   have hcard1 : hfin.toFinset.card ≤ ((∑ᶠ u, MeromorphicOn.divisor riemannZeta U u : ℤ) : ℝ) := by
     have hsum_eq :
       (∑ᶠ u, MeromorphicOn.divisor riemannZeta U u) =
@@ -226,24 +232,26 @@ theorem exists_good_height {H : ℝ} (hH : 8 ≤ H) :
   have hLCpos : (0 : ℝ) < jensenLogConst := by
     unfold jensenLogConst
     have h1 : (0 : ℝ) ≤ Real.log (9 + 8 * sawtoothRemainderBound (-9 / 10)) :=
-      Real.log_nonneg (by linarith [sawtoothRemainderBound_nonneg (-9 / 10)])
+      Real.log_nonneg (by linarith only [sawtoothRemainderBound_nonneg (-9 / 10)])
     have h2 : (0 : ℝ) < Real.log 10 := Real.log_pos (by norm_num only)
     have h3 : (0 : ℝ) < Real.log (39 / 37) := Real.log_pos (by norm_num only)
-    positivity
+    exact div_pos (add_pos_of_nonneg_of_pos (div_nonneg h1 (le_of_lt h2)) (by norm_num only)) h3
   set c : ℝ := 1 / (4 * jensenLogConst * Real.log (H + 2)) with hc_def
-  have hc_pos : 0 < c := by positivity
+  have hc_pos : 0 < c := by
+    rw [hc_def]
+    exact one_div_pos.mpr (mul_pos (mul_pos (by norm_num only) hLCpos) hlogpos)
   have hlenbound : 2 * c * (zeroOrdinatesNear H).card < 1 := by
     have hcard_le := card_zeroOrdinatesNear_le hH
     have hexplicit := finsum_divisor_riemannZeta_le_explicit hH
     have hcard_le' : ((zeroOrdinatesNear H).card : ℝ) ≤ jensenLogConst * Real.log (H + 2) :=
       hcard_le.trans hexplicit
-    have hLpos : (0 : ℝ) < jensenLogConst * Real.log (H + 2) := by positivity
+    have hLpos : (0 : ℝ) < jensenLogConst * Real.log (H + 2) := mul_pos hLCpos hlogpos
     calc
       2 * c * (zeroOrdinatesNear H).card ≤ 2 * c * (jensenLogConst * Real.log (H + 2)) :=
-        mul_le_mul_of_nonneg_left hcard_le' (by positivity)
+        mul_le_mul_of_nonneg_left hcard_le' (mul_nonneg (by norm_num only) (le_of_lt hc_pos))
       _ = 1 / 2 := by
         rw [hc_def]
-        field_simp
+        field_simp [hLpos.ne']
         norm_num only
       _ < 1 := by norm_num only
   obtain ⟨T, hT, hTgood⟩ := exists_avoiding_point hc_pos hlenbound

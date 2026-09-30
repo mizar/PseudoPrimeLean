@@ -27,9 +27,9 @@ theorem ball_avoids_nonpos_int {c r : ℝ} (hr : 0 < r) (hrc : r ≤ c) :
     push_cast
     ring
   rw [dist_eq_norm, heq, Complex.norm_real, Real.norm_eq_abs] at hw
-  have hle : (-(m : ℝ) - c) ≤ 0 := by linarith [Nat.cast_nonneg (α := ℝ) m]
+  have hle : (-(m : ℝ) - c) ≤ 0 := by linarith only [Nat.cast_nonneg (α := ℝ) m, hrc, hr]
   rw [abs_of_nonpos hle] at hw
-  linarith [Nat.cast_nonneg (α := ℝ) m]
+  linarith only [hw, hrc, Nat.cast_nonneg (α := ℝ) m]
 
 /-- `Γ` is analytic at the center of any ball avoiding every nonpositive integer. -/
 theorem analyticAt_Gamma_of_ball {s : ℂ} {r : ℝ} (hr : 0 < r)
@@ -92,13 +92,13 @@ theorem ball_half_avoids_int : ∀ w ∈ Metric.ball (1 / 2 : ℂ) (1 / 4), ∀ 
   have hbound : (1 : ℝ) / 2 ≤ |(k : ℝ) - 1 / 2| := by
     by_cases hk : k ≤ 0
     · have hkR : (k : ℝ) ≤ 0 := by exact_mod_cast hk
-      rw [abs_of_nonpos (by linarith)]
-      linarith
-    · have hk1 : 1 ≤ k := by omega
+      rw [abs_of_nonpos (by linarith only [hkR])]
+      linarith only [hkR]
+    · have hk1 : 1 ≤ k := Int.add_one_le_iff.mpr (lt_of_not_ge hk)
       have hkR : (1 : ℝ) ≤ k := by exact_mod_cast hk1
-      rw [abs_of_nonneg (by linarith)]
-      linarith
-  linarith
+      rw [abs_of_nonneg (by linarith only [hkR])]
+      linarith only [hkR]
+  exact (not_le_of_gt hw) (le_trans (by norm_num only) hbound)
 
 theorem sin_pi_mul_ne_zero_of_ball {z : ℂ} (hz : z ∈ Metric.ball (1 / 2 : ℂ) (1 / 4)) :
     Complex.sin ((Real.pi : ℂ) * z) ≠ 0 := by
@@ -209,7 +209,7 @@ theorem digamma_sub_digamma_one_sub_eq {z : ℂ} (hz : z ∈ Metric.ball (1 / 2 
       Complex.Gamma z * Complex.Gamma (1 - z) *
         (-(Real.pi : ℂ) * Complex.cos ((Real.pi : ℂ) * z) / Complex.sin ((Real.pi : ℂ) * z)) := by
     rw [hEq, hGprod]
-    field_simp
+    field_simp [hsin]
     ring
   exact mul_left_cancel₀ hGnezero key
 
@@ -311,7 +311,7 @@ theorem s_add_half_mem_ball_one {s : ℂ} (hs : s ∈ Metric.ball (1 / 2 : ℂ) 
   rw [Metric.mem_ball, dist_eq_norm] at hs ⊢
   have heq : (s + 1 / 2 - 1 : ℂ) = s - 1 / 2 := by ring
   rw [heq]
-  linarith [hs]
+  linarith only [hs]
 
 theorem two_s_mem_ball_one {s : ℂ} (hs : s ∈ Metric.ball (1 / 2 : ℂ) (1 / 4)) :
     (2 * s) ∈ Metric.ball (1 : ℂ) (1 / 2) := by

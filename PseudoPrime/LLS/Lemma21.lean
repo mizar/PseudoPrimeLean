@@ -89,9 +89,11 @@ def LLSPart1CharacterWeightedDecomposition : Prop :=
 /-- The Part 1 finite character decomposition follows from prime-power support. -/
 theorem llsPart1CharacterWeightedDecomposition : LLSPart1CharacterWeightedDecomposition := by
   intro q _ χ hq _ hsmall
+  have hqpos : (0 : ℝ) < q := by
+    exact_mod_cast (lt_of_lt_of_le (by norm_num only : (0 : ℕ) < 3000) hq)
   have hx : 0 < (llsTheorem11S1RadiusRoot q) ^ 2 := by
     have hlog : (8 : ℝ) < Real.log q := by
-      apply (Real.lt_log_iff_exp_lt (by positivity)).mpr
+      apply (Real.lt_log_iff_exp_lt hqpos).mpr
       rw [show (8 : ℝ) = (8 : ℕ) * 1 by norm_num only, Real.exp_nat_mul]
       exact
         (show Real.exp 1 ^ 8 < (3000 : ℝ) by
@@ -136,12 +138,14 @@ theorem llsPart1WeightedRawLower (h21 : LLSRiemannWeightedLowerBound)
         (1 / 2 : ℝ) * q.primeFactors.card * (Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) ^ 2 ≤
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
           χ).re := by
+  have hqpos : (0 : ℝ) < q := by
+    exact_mod_cast (lt_of_lt_of_le (by norm_num only : (0 : ℕ) < 3000) hq)
   have hy : 1 < llsTheorem11S1RadiusRoot q := by
     exact
       (show (1 : ℝ) < 8 by norm_num only).trans
         (by
           exact
-            (Real.lt_log_iff_exp_lt (by positivity)).mpr
+            (Real.lt_log_iff_exp_lt hqpos).mpr
                 ((show Real.exp 8 < (3000 : ℝ)
                       by
                       rw [show (8 : ℝ) = (8 : ℕ) * 1 by norm_num only, Real.exp_nat_mul]
@@ -152,7 +156,7 @@ theorem llsPart1WeightedRawLower (h21 : LLSRiemannWeightedLowerBound)
                         _ < 3000 := by norm_num only).trans_le
                   (by exact_mod_cast hq)) |>.trans_le
               (le_add_of_nonneg_right (llsCorrectionTerm_nonneg q)))
-  have hx : 1 < (llsTheorem11S1RadiusRoot q) ^ 2 := by nlinarith
+  have hx : 1 < (llsTheorem11S1RadiusRoot q) ^ 2 := by nlinarith only [hy]
   have hriemann := h21 ((llsTheorem11S1RadiusRoot q) ^ 2) hx
   have hcommon :=
     AnalyticNumberTheory.Arithmetic.commonFactorLogWeightedSum_le (NeZero.ne q)

@@ -31,8 +31,7 @@ def searchRounds (n c fuel : ℕ) (x y : ZMod n) : ℕ :=
 termination_by fuel
 
 /-- Floyd never uses more rounds than the supplied fuel. -/
-theorem searchRounds_le_fuel (n c fuel : ℕ) (x y : ZMod n) :
-    searchRounds n c fuel x y ≤ fuel := by
+theorem searchRounds_le_fuel (n c fuel : ℕ) (x y : ZMod n) : searchRounds n c fuel x y ≤ fuel := by
   induction fuel generalizing x y with
   | zero => simp only [searchRounds, Nat.zero_le]
   | succ fuel ih =>
@@ -49,8 +48,9 @@ theorem searchRounds_le_fuel (n c fuel : ℕ) (x y : ZMod n) :
 /-- Round count for one public attempt; input prechecks consume no Floyd rounds. -/
 def findFactorRounds (n : ℕ) (params : Params) (fuel : ℕ) : ℕ :=
   if n ≤ 2 then 0
-  else if n % 2 = 0 then 0
-  else searchRounds n params.c fuel (params.seed : ZMod n) (params.seed : ZMod n)
+  else
+    if n % 2 = 0 then 0
+    else searchRounds n params.c fuel (params.seed : ZMod n) (params.seed : ZMod n)
 
 /-- One public attempt stays within its own round budget. -/
 theorem findFactorRounds_le (n : ℕ) (params : Params) (fuel : ℕ) :
@@ -60,8 +60,7 @@ theorem findFactorRounds_le (n : ℕ) (params : Params) (fuel : ℕ) :
   · by_cases he : n % 2 = 0
     · simp only [findFactorRounds, hn, he, ite_false, ite_true, Nat.zero_le]
     · simp only [findFactorRounds, ite_eq_right hn, ite_eq_right he]
-      exact searchRounds_le_fuel n params.c fuel
-        (params.seed : ZMod n) (params.seed : ZMod n)
+      exact searchRounds_le_fuel n params.c fuel (params.seed : ZMod n) (params.seed : ZMod n)
 
 /-- Round count of a retry schedule, including attempts through the first success. -/
 def findFactorManyRounds (n : ℕ) : List Attempt → ℕ

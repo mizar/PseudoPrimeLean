@@ -32,11 +32,11 @@ theorem continuous_riemannZetaLogContourKernel_line {x : ℝ} (hx : 0 < x) {τ :
     have hs0 : s ≠ 0 := by
       intro h
       rw [h, Complex.zero_re] at hs
-      linarith
+      linarith only [hs]
     have hs1 : s ≠ 1 := by
       intro h
       rw [h, Complex.one_re] at hs
-      linarith
+      linarith only [hs]
     have hszeta : riemannZeta s ≠ 0 := riemannZeta_ne_zero_of_one_lt_re hs
     exact
       ContinuousAt.continuousWithinAt
@@ -59,11 +59,11 @@ theorem continuous_riemannZetaReciprocalContourKernel_line {x : ℝ} (hx : 0 < x
     have hs0 : s ≠ 0 := by
       intro h
       rw [h, Complex.zero_re] at hs
-      linarith
+      linarith only [hs]
     have hs1 : s ≠ 1 := by
       intro h
       rw [h, Complex.one_re] at hs
-      linarith
+      linarith only [hs]
     have hszeta : riemannZeta s ≠ 0 := riemannZeta_ne_zero_of_one_lt_re hs
     exact
       ContinuousAt.continuousWithinAt
@@ -83,7 +83,7 @@ theorem integrable_riemannZetaLogContourKernel {x : ℝ} (hx : 0 < x) {τ : ℝ}
       (fun y : ℝ ↦ riemannZetaLogContourKernel x ((τ : ℂ) + y * Complex.I)) := by
   set C : ℝ := ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ τ with hC_def
   have hxτ : (0 : ℝ) < x ^ τ := Real.rpow_pos_of_pos hx τ
-  have hτ0 : τ ≠ 0 := by linarith
+  have hτ0 : τ ≠ 0 := ne_of_gt (lt_trans zero_lt_one hτ)
   apply
     MeasureTheory.Integrable.mono'
       (((General.verticalIntegrable_mellinLogKernel hτ0).norm).const_mul (C * x ^ τ))
@@ -114,11 +114,11 @@ theorem integrable_riemannZetaReciprocalContourKernel {x : ℝ} (hx : 0 < x) {τ
   have hσ0 : σ ≠ 0 := by
     rw [hσ_def]
     intro h
-    linarith [sub_eq_zero.mp h]
+    linarith only [hτ, h]
   have hσ1 : σ ≠ -1 := by
     rw [hσ_def]
     intro h
-    linarith
+    linarith only [hτ, h]
   apply
     MeasureTheory.Integrable.mono'
       (((General.verticalIntegrable_mellinReciprocalKernel hσ0 hσ1).norm).const_mul (C * x ^ σ))

@@ -67,7 +67,7 @@ Role: connects the shared full-level bound to the level-indexed numerical chain.
 theorem llsPart1PrimitiveFullLevelUpperBound_le_fullLevel {q : ℕ} (hq : 3000 ≤ q) :
     llsPart1PrimitiveFullLevelUpperBound q ≤ llsPart1FullLevelUpperBound q := by
   have hy8 : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
-  have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := by linarith
+  have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := by linarith only [hy8]
   have hlevel : Real.log q ≤ llsTheorem11S1RadiusRoot q :=
     le_add_of_nonneg_right (llsCorrectionTerm_nonneg q)
   have haux : (0 : ℝ) ≤ llsAuxiliaryTerm q := llsAuxiliaryTerm_nonneg q
@@ -82,7 +82,7 @@ theorem llsPart1PrimitiveFullLevelUpperBound_le_fullLevel {q : ℕ} (hq : 3000 �
   have hinv2pos : (0 : ℝ) < (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 := by
     have : (0 : ℝ) < 1 - 1 / llsTheorem11S1RadiusRoot q := by
       rw [sub_pos, div_lt_one hypos]
-      linarith
+      linarith only [hy8]
     positivity
   have hxpos : (0 : ℝ) < (llsTheorem11S1RadiusRoot q) ^ 2 := by positivity
   have hkey_cleared :
@@ -90,10 +90,11 @@ theorem llsPart1PrimitiveFullLevelUpperBound_le_fullLevel {q : ℕ} (hq : 3000 �
         llsAuxiliaryTerm q * (llsTheorem11S1RadiusRoot q) ^ 2 -
         (llsTheorem11S1RadiusRoot q) ^ 2 / 4 ≤
       (llsTheorem11S1RadiusRoot q - 1) ^ 2 * (Real.log q / 2 + 2 / 5 - llsAuxiliaryTerm q) := by
-    nlinarith [mul_nonneg haux (show (0 : ℝ) ≤ 2 * llsTheorem11S1RadiusRoot q - 1 by linarith),
-      mul_nonneg (show (0 : ℝ) ≤ llsTheorem11S1RadiusRoot q - 1 by linarith)
-        (show (0 : ℝ) ≤ llsTheorem11S1RadiusRoot q - Real.log q by linarith),
-      mul_nonneg (show (0 : ℝ) ≤ Real.log Real.pi - 1 by linarith)
+    nlinarith only [haux, hy8, hlevel, hlogPi,
+      mul_nonneg haux (show (0 : ℝ) ≤ 2 * llsTheorem11S1RadiusRoot q - 1 by linarith only [hy8]),
+      mul_nonneg (show (0 : ℝ) ≤ llsTheorem11S1RadiusRoot q - 1 by linarith only [hy8])
+        (show (0 : ℝ) ≤ llsTheorem11S1RadiusRoot q - Real.log q by exact sub_nonneg.mpr hlevel),
+      mul_nonneg (show (0 : ℝ) ≤ Real.log Real.pi - 1 by exact sub_nonneg.mpr hlogPi)
         (show (0 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 - 1
           by
           have hsq :=
@@ -104,8 +105,8 @@ theorem llsPart1PrimitiveFullLevelUpperBound_le_fullLevel {q : ℕ} (hq : 3000 �
             _ ≤ llsTheorem11S1RadiusRoot q * llsTheorem11S1RadiusRoot q - 1 :=
               sub_le_sub_right hsq 1
             _ = (llsTheorem11S1RadiusRoot q) ^ 2 - 1 := by ring),
-      mul_nonneg (show (0 : ℝ) ≤ llsTheorem11S1RadiusRoot q - 8 by linarith)
-        (show (0 : ℝ) ≤ llsTheorem11S1RadiusRoot q - 8 by linarith)]
+      mul_nonneg (show (0 : ℝ) ≤ llsTheorem11S1RadiusRoot q - 8 by linarith only [hy8])
+        (show (0 : ℝ) ≤ llsTheorem11S1RadiusRoot q - 8 by linarith only [hy8])]
   have hyne : llsTheorem11S1RadiusRoot q ≠ 0 := hypos.ne'
   have hkey :
     1 / 2 * (1 - 1 / (llsTheorem11S1RadiusRoot q) ^ 2) * (Real.log q - Real.log Real.pi) -
@@ -123,13 +124,13 @@ theorem llsPart1PrimitiveFullLevelUpperBound_le_fullLevel {q : ℕ} (hq : 3000 �
         1 / 2 * (1 - 1 / (llsTheorem11S1RadiusRoot q) ^ 2) * (Real.log q - Real.log Real.pi) -
           llsAuxiliaryTerm q -
           1 / 4 := by
-      field_simp
+      field_simp [hyne]
     have heq2 :
       ((llsTheorem11S1RadiusRoot q - 1) ^ 2 * (Real.log q / 2 + 2 / 5 - llsAuxiliaryTerm q)) *
           (1 / (llsTheorem11S1RadiusRoot q) ^ 2) =
         (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 *
           (Real.log q / 2 + 2 / 5 - llsAuxiliaryTerm q) := by
-      field_simp
+      field_simp [hyne]
     rw [heq1, heq2] at hscaled
     exact hscaled
   have hC22nonneg :

@@ -38,8 +38,8 @@ theorem norm_riemannZeta_le {s : ℂ} (hs : 1 < s.re) :
     · have hsne : s ≠ 0 := fun h => by
         rw [h] at hs
         simp only [Complex.zero_re] at hs
-        linarith
-      have hneg : -s.re ≠ 0 := by linarith
+        linarith only [hs]
+      have hneg : -s.re ≠ 0 := by linarith only [hs]
       simp only [CharP.cast_eq_zero, Complex.zero_cpow hsne, div_zero, norm_zero]
       rw [Real.zero_rpow hneg]
     · have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn0
@@ -48,7 +48,7 @@ theorem norm_riemannZeta_le {s : ℂ} (hs : 1 < s.re) :
       simp only [one_div]
   have hsummable : Summable (fun n : ℕ => ‖(1 : ℂ) / (n : ℂ) ^ s‖) := by
     simp_rw [hterm]
-    exact Real.summable_nat_rpow.mpr (by linarith)
+    exact Real.summable_nat_rpow.mpr (by linarith only [hs])
   calc
     ‖∑' n : ℕ, (1 : ℂ) / (n : ℂ) ^ s‖ ≤ ∑' n : ℕ, ‖(1 : ℂ) / (n : ℂ) ^ s‖ :=
       norm_tsum_le_tsum_norm hsummable
@@ -86,7 +86,7 @@ theorem side_conditions_of_one_lt_re {w : ℂ} (hw : 1 < w.re) : (∀ n : ℕ, w
   refine ⟨fun n hn => ?_, fun h => ?_⟩
   · have hre := congrArg Complex.re hn
     rw [Complex.neg_re, Complex.natCast_re] at hre
-    linarith [(Nat.cast_nonneg n : (0 : ℝ) ≤ (n : ℝ))]
+    linarith only [hw, hre, Nat.cast_nonneg (α := ℝ) n]
   · rw [h] at hw
     simp only [Complex.one_re, lt_self_iff_false] at hw
 

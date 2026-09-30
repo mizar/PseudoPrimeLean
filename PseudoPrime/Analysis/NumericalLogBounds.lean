@@ -23,10 +23,14 @@ Role: produces affine logarithmic lower bounds on compact positive intervals.
 theorem log_gt_affine_of_anchor {a b y L : ℝ} (ha : 0 < a) (hab : a ≤ b) (hay : a ≤ y) (hyb : y ≤ b)
     (hL : L < Real.log a) : L + 2 / (a + b) * (y - a) < Real.log y := by
   have hy0 : 0 < y := by linarith only [ha, hay]
-  have hfactor : a * (y / a) = y := by field_simp (discharger := exact ha.ne')
+  have hfactor : a * (y / a) = y := by
+    calc
+      a * (y / a) = a * (y * a⁻¹) := by rw [div_eq_mul_inv]
+      _ = y * (a * a⁻¹) := by ring
+      _ = y := by rw [mul_inv_cancel₀ ha.ne', mul_one]
   rw [← hfactor]
   have hlogmul : Real.log (a * (y / a)) = Real.log a + Real.log (y / a) := by
-    rw [Real.log_mul (ne_of_gt ha) (by positivity)]
+    rw [Real.log_mul (ne_of_gt ha) (div_ne_zero hy0.ne' ha.ne')]
   rw [hlogmul]
   have hratio : 1 ≤ y / a := (le_div_iff₀ ha).2 (by linarith only [hay])
   have hx : 0 ≤ y / a - 1 := by linarith only [hratio]
@@ -38,8 +42,30 @@ theorem log_gt_affine_of_anchor {a b y L : ℝ} (ha : 0 < a) (hab : a ≤ b) (ha
   have hfrac : 2 / (a + b) * (y - a) ≤ 2 * (y / a - 1) / ((y / a - 1) + 2) := by
     apply (le_div_iff₀ hden).2
     have haab : 0 < a + b := by exact add_pos ha (lt_of_lt_of_le ha hab)
-    field_simp [ne_of_gt ha, ne_of_gt haab]
-    nlinarith only [mul_nonneg (sub_nonneg.mpr hay) (sub_nonneg.mpr hyb)]
+    have hU : 0 ≤ y - a := sub_nonneg.mpr hay
+    have haux : y / a - 1 + 2 ≤ (a + b) / a := by
+      have hself : (1 : ℝ) = a / a := (div_self ha.ne').symm
+      calc
+        y / a - 1 + 2 = y / a + 1 := by ring
+        _ = (y + a) / a := by rw [hself, add_div]
+        _ ≤ (a + b) / a := by
+          exact
+            (div_le_div_iff₀ ha ha).mpr (mul_le_mul_of_nonneg_right (by linarith only [hyb]) ha.le)
+    have hfactor_nonneg : 0 ≤ 2 / (a + b) * (y - a) :=
+      mul_nonneg (div_nonneg (by norm_num only) haab.le) hU
+    have hmul := mul_le_mul_of_nonneg_left haux hfactor_nonneg
+    have hcancel : 2 / (a + b) * (y - a) * ((a + b) / a) = 2 * ((y - a) / a) := by
+      rw [div_eq_mul_inv, div_eq_mul_inv, div_eq_mul_inv]
+      calc
+        2 * (a + b)⁻¹ * (y - a) * ((a + b) * a⁻¹) = 2 * (y - a) * ((a + b) * (a + b)⁻¹) * a⁻¹ := by
+          ring
+        _ = 2 * ((y - a) * a⁻¹) := by
+          rw [mul_inv_cancel₀ haab.ne', mul_one]; ring
+    have hratio' : y / a - 1 = (y - a) / a := by rw [sub_div, div_self ha.ne']
+    calc
+      2 / (a + b) * (y - a) * (y / a - 1 + 2) ≤ 2 / (a + b) * (y - a) * ((a + b) / a) := hmul
+      _ = 2 * ((y - a) / a) := hcancel
+      _ = 2 * (y / a - 1) := by rw [hratio']
   rw [hfactor]
   linarith only [hL, hla', hfrac]
 
@@ -65,7 +91,7 @@ theorem log_four_sub_log_pi_gt_twenty_four : (24 : ℝ) / 100 < Real.log 4 - Rea
     exact div_pos Real.pi_pos (by norm_num only)
   have hlogadd := Real.log_le_sub_one_of_pos (x := 1 + (Real.pi / 3 - 1)) hlogarg
   have hlogdiv : Real.log (Real.pi / 3) = Real.log Real.pi - Real.log 3 := by
-    rw [Real.log_div (by positivity) (by norm_num only)]
+    rw [Real.log_div (x := Real.pi) (y := 3) Real.pi_pos.ne' (by norm_num only)]
   have hlogone : Real.log (1 + (Real.pi / 3 - 1)) = Real.log (Real.pi / 3) := by
     congr 1
     ring
@@ -81,15 +107,16 @@ theorem eight_lt_log_level {q : ℕ} (hq : 3000 ≤ q) : (8 : ℝ) < Real.log q 
         gcongr
         exact Real.exp_one_lt_d9
       _ < 3000 := by norm_num only
-  apply (Real.lt_log_iff_exp_lt (by positivity)).mpr
+  have hqpos : 0 < (q : ℝ) := by
+    exact_mod_cast (lt_of_lt_of_le (by norm_num only : (0 : ℕ) < 3000) hq)
+  apply (Real.lt_log_iff_exp_lt hqpos).mpr
   exact hexp.trans_le (by exact_mod_cast hq)
 
 /-- On `[12, ∞)`, `log 2` is at most twice `log y`. -/
 theorem log_two_le_two_mul_log {y : ℝ} (hy : 12 ≤ y) : Real.log 2 ≤ 2 * Real.log y := by
   have hlog : Real.log 2 ≤ Real.log y :=
     Real.log_le_log (by norm_num only) (le_trans (by norm_num only : (2 : ℝ) ≤ 12) hy)
-  have hnonneg : 0 ≤ Real.log y :=
-    Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 12) hy)
+  have hnonneg : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 12) hy)
   linarith only [hlog, hnonneg]
 
 /-- A rational upper certificate for `log 12`, obtained from the bounds for `log 2` and `log 3`. -/
@@ -114,8 +141,7 @@ theorem log_twelve_gt : (247 : ℝ) / 100 < Real.log 12 := by
 theorem log_ge_twelve_lower {y : ℝ} (hy : 12 ≤ y) : (247 : ℝ) / 100 < Real.log y := by
   have hlog :=
     Real.strictMonoOn_log.monotoneOn (by norm_num only : (0 : ℝ) < 12)
-      (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 12) hy)
-      hy
+      (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 12) hy) hy
   exact log_twelve_gt.trans_le hlog
 
 /-- A rational upper certificate for `log 13`, propagated from the tangent at `12`. -/

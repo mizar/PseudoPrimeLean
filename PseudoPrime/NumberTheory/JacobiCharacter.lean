@@ -24,7 +24,9 @@ def jacobiNumeratorCharacter (n : ℕ) (hn : Odd n) : DirichletCharacter ℤ n :
   let _ : NeZero n :=
     ⟨by
       have hnmod : n % 2 = 1 := Nat.odd_iff.mp hn
-      omega⟩
+      intro hzero
+      subst n
+      norm_num only at hnmod⟩
   exact
     { toFun := fun a => jacobiSym a.val n
       map_one' := by

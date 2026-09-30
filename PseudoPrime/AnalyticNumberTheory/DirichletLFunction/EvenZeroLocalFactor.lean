@@ -32,7 +32,7 @@ theorem Gammaℝ_two_ne_zero : Complex.Gammaℝ 2 ≠ 0 := by
   have hnnn : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
   simp only [Complex.re_ofNat, Complex.neg_re, Complex.mul_re, Complex.natCast_re, Complex.im_ofNat,
     Complex.natCast_im, mul_zero, sub_zero] at hre
-  linarith
+  linarith only [hre, hnnn]
 
 /-- The even-zero local factor's denominator `2π · Γ_ℝ(s + 2)` is analytic and nonzero at `0`. -/
 theorem analyticAt_evenZeroLocalFactor_denom :
@@ -116,10 +116,10 @@ theorem eventuallyEq_dirichletLFunction_evenZeroLocalFactor {N : ℕ} [NeZero N]
       ring
     have hdenomEq : 2 * (Real.pi : ℂ) * Complex.Gammaℝ (s + 2) = Complex.Gammaℝ s * s := by
       rw [hGE]
-      field_simp
+      field_simp [Complex.ofReal_ne_zero.mpr Real.pi_ne_zero]
     rw [hdenomEq]
     have hπne : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
-    field_simp
+    field_simp [hΓsne', hs0, hπne]
 
 /--
 Input/assumptions: `N ≥ 1`, `χ` primitive nontrivial even mod `N`.
@@ -258,13 +258,13 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
     have hre_bound : |s.re| ≤ ‖s‖ := Complex.abs_re_le_norm s
     have hre_gt : (-1 : ℝ) < s.re := by
       have := abs_lt.mp (hre_bound.trans_lt hs)
-      linarith [this.1]
+      exact this.1
     have him := congrArg Complex.re hm
     simp only [Complex.add_re, Complex.div_ofNat_re, Complex.neg_re, Complex.natCast_re] at him
     have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
     have h2re : Complex.re (2 : ℂ) = 2 := by rfl
     rw [h2re] at him
-    linarith
+    linarith only [him, hmnn, hre_gt]
   have hΓne : ∀ᶠ s in nhds (0 : ℂ), Complex.Gammaℝ (s + 2) ≠ 0 := by
     filter_upwards [hhalf_near] with s hs
     exact Gammaℝ_ne_zero_of_half_ne_neg_nat hs
@@ -336,7 +336,7 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
       have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
       simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, div_self, Complex.one_re,
         Complex.neg_re, Complex.natCast_re] at him
-      linarith
+      linarith only [him, hmnn]
     have hΓanalytic2 : AnalyticAt ℂ Complex.Gammaℝ (2 : ℂ) := analyticAt_Gammaℝ_of_ne_zero hΓ2ne
     have hshiftAnalytic : AnalyticAt ℂ (fun t : ℂ => t + 2) 0 := by fun_prop
     have hcompAnalytic : AnalyticAt ℂ (fun t : ℂ => Complex.Gammaℝ (t + 2)) 0 := by

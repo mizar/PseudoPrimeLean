@@ -44,7 +44,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_o
       k ∈ Finset.Icc 1 ⌊Real.log (y ^ 2) / Real.log 2⌋₊ →
         p ∈ Finset.Ioc 0 ⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊ →
         p.Prime → Odd p → bridge.character.primitiveCharacter p = 1 :=
-    bridge.primitiveCharacter_eq_one_in_log_square_range (by linarith) hno
+    bridge.primitiveCharacter_eq_one_in_log_square_range (by linarith only [hy]) hno
   exact
     LLS.Extensions.primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_false_common
       bridge.character bridge.character_ne_one bridge.primitiveCharacter_isQuadratic
@@ -71,7 +71,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_commo
       k ∈ Finset.Icc 1 ⌊Real.log (y ^ 2) / Real.log 2⌋₊ →
         p ∈ Finset.Ioc 0 ⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊ →
         p.Prime → Odd p → bridge.character.primitiveCharacter p = 1 :=
-    bridge.primitiveCharacter_eq_one_in_log_square_range (by linarith) hno
+    bridge.primitiveCharacter_eq_one_in_log_square_range (by linarith only [hy]) hno
   exact
     LLS.Extensions.primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_common
       bridge.character bridge.character_ne_one bridge.primitiveCharacter_isQuadratic
@@ -98,7 +98,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of
       k ∈ Finset.Icc 1 ⌊Real.log (y ^ 2) / Real.log 2⌋₊ →
         p ∈ Finset.Ioc 0 ⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊ →
         p.Prime → Odd p → bridge.character.primitiveCharacter p = 1 :=
-    bridge.primitiveCharacter_eq_one_in_log_square_range (by linarith) hno
+    bridge.primitiveCharacter_eq_one_in_log_square_range (by linarith only [hy]) hno
   exact
     LLS.Extensions.primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common
       bridge.character bridge.character_ne_one bridge.primitiveCharacter_isQuadratic
@@ -292,16 +292,20 @@ theorem qNeOneAnalyticFalse_of_bridge_of_explicit_cutoff {n : ℕ} {hn : Odd n} 
   have hNpos : 0 < (10 ^ 6 : ℕ) := by norm_num only
   have hN : (12 : ℝ) ≤ Real.log ((10 ^ 6 : ℕ) : ℝ) := by
     have h8 : Real.log (8 : ℝ) ≤ Real.log 10 := by
-      exact Real.strictMonoOn_log.monotoneOn (by norm_num) (by norm_num) (by norm_num)
+      exact
+        Real.strictMonoOn_log.monotoneOn (by norm_num only [Set.mem_Ioi])
+          (by norm_num only [Set.mem_Ioi]) (by norm_num only)
     have hlog8 : Real.log (8 : ℝ) = 3 * Real.log 2 := by
       rw [show (8 : ℝ) = 2 ^ 3 by norm_num only, Real.log_pow]
       norm_num only
     have h2 := Real.log_two_gt_d9
     norm_num only at h2
-    have hlog10 : (207 / 100 : ℝ) < Real.log 10 := by linarith
+    have hlog10 : (207 / 100 : ℝ) < Real.log 10 := by
+      rw [Real.log_ten_eq]
+      linarith only [Real.log_two_gt_d9, Real.log_five_gt_d9]
     rw [Nat.cast_pow, Real.log_pow]
     norm_num only
     nlinarith only [hlog10]
-  exact qNeOneAnalyticFalse_of_bridge_of_cutoff bridge hGRH hNpos (by linarith) hNd hno
+  exact qNeOneAnalyticFalse_of_bridge_of_cutoff bridge hGRH hNpos hN hNd hno
 
 end PseudoPrime.PseudoSquare

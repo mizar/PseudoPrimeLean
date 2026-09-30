@@ -53,7 +53,7 @@ theorem norm_dirichletLogContourKernel_leftVertical_le {N : ℕ} [NeZero N]
   rw [← hs_def] at hpow
   have hsnorm_pos : (0 : ℝ) < ‖s‖ ^ 2 := by
     have h1t : (0 : ℝ) < 1 + t ^ 2 := by positivity
-    linarith [hden]
+    linarith only [hden, h1t]
   have hK_eq :
     ‖dirichletLogContourKernel x χ s‖ =
       ‖logDeriv (DirichletCharacter.LFunction χ) s‖ * x ^ (-(A : ℝ) - 1 / 2) / ‖s‖ ^ 2 := by
@@ -107,11 +107,14 @@ private theorem quadContinuousLogKernel_leftVertical {N : ℕ} [NeZero N] {χ : 
     have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
     have hsre_neg : (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I).re < 0 := by
       rw [hsre]
-      linarith
+      have hApos : (0 : ℝ) < (A : ℝ) := lt_of_lt_of_le (by norm_num only) hA'
+      calc
+        -(A : ℝ) - 1 / 2 < 0 - 1 / 2 := sub_lt_sub_right (neg_lt_zero.mpr hApos) _
+        _ < 0 := by norm_num only
     have hs0 : ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ 0 := by
       intro h
       rw [h, Complex.zero_re] at hsre_neg
-      linarith
+      exact lt_irrefl 0 hsre_neg
     have hL := quadraticDirichletLFunction_ne_zero_leftVertical hprimitive hne hquad A hA t
     exact (differentiableAt_dirichletLogContourKernel hx hne hs0 hL).continuousAt.continuousWithinAt
   exact hOn.comp_continuous hg (fun t => Set.mem_range_self t)
@@ -139,12 +142,12 @@ theorem norm_dirichletLogContourKernel_leftVertical_envelope_le {N : ℕ} [NeZer
   set BA : ℝ := ((A : ℝ) + 5) ^ 2 + 1 with hBA_def
   have hBA1 : (1 : ℝ) ≤ BA := by
     rw [hBA_def]
-    nlinarith [sq_nonneg ((A : ℝ) + 5)]
-  have htlog_nn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith [abs_nonneg t])
+    nlinarith only [sq_nonneg ((A : ℝ) + 5)]
+  have htlog_nn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith only [abs_nonneg t])
   have htsq_pos : (0 : ℝ) < 1 + t ^ 2 := by positivity
   have hxpow_nn : (0 : ℝ) ≤ x ^ (-(A : ℝ) - 1 / 2) := (Real.rpow_pos_of_pos hx _).le
   have hstep : BA + Real.log (|t| + 2) ≤ BA * (1 + Real.log (|t| + 2)) := by
-    nlinarith [hBA1, htlog_nn]
+    nlinarith only [hBA1, htlog_nn]
   have hnum :
     D * x ^ (-(A : ℝ) - 1 / 2) * (BA + Real.log (|t| + 2)) ≤
       D * x ^ (-(A : ℝ) - 1 / 2) * (BA * (1 + Real.log (|t| + 2))) :=
@@ -273,7 +276,7 @@ theorem quadraticTendsto_dirichletLogContourKernel_leftVertical_integral_atTop {
       (fun A : ℕ ↦
         ∫ t : ℝ, dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := lt_trans zero_lt_one hx
   obtain ⟨D, hDnn, hD⟩ :=
     exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le hprimitive hne hquad
   have hMassnn : (0 : ℝ) ≤ General.logQuadraticEnvelopeMass :=
@@ -292,7 +295,7 @@ theorem quadraticTendsto_dirichletLogContourKernel_leftVertical_integral_atTop {
   have hpoly_le : ∀ A : ℕ, ((A : ℝ) + 5) ^ 2 + 1 ≤ 26 * (((A : ℝ) + 1) ^ 2) := by
     intro A
     have hAnn : (0 : ℝ) ≤ (A : ℝ) := Nat.cast_nonneg A
-    nlinarith [sq_nonneg (A : ℝ)]
+    nlinarith only [hAnn, sq_nonneg (A : ℝ)]
   set K : ℝ := D * x ^ (-(1 : ℝ) / 2) * General.logQuadraticEnvelopeMass * 26 with hK_def
   have hKnn : (0 : ℝ) ≤ K := by
     rw [hK_def]

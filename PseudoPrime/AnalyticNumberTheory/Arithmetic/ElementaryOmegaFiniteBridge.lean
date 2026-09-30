@@ -59,11 +59,11 @@ theorem elementaryOmegaRhsReal_mono {a b : ℝ} (ha : Real.exp (Real.exp 1) ≤ 
       _ ≤ u := Real.log_le_log hepos ha
   have huv : u ≤ v := Real.log_le_log hapos hab
   have hv_ge : Real.exp 1 ≤ v := hu_ge.trans huv
-  have h1e : (1 : ℝ) < Real.exp 1 := by linarith [Real.exp_one_gt_d9]
+  have h1e : (1 : ℝ) < Real.exp 1 := by linarith only [Real.exp_one_gt_d9]
   have h1u : (1 : ℝ) < u := h1e.trans_le hu_ge
   have h1v : (1 : ℝ) < v := h1e.trans_le hv_ge
-  have hupos : 0 < u := by linarith
-  have hvpos : 0 < v := by linarith
+  have hupos : 0 < u := lt_trans (by norm_num only : (0 : ℝ) < 1) h1u
+  have hvpos : 0 < v := lt_trans (by norm_num only : (0 : ℝ) < 1) h1v
   have hlogu_pos : 0 < Real.log u := Real.log_pos h1u
   have hlogv_pos : 0 < Real.log v := Real.log_pos h1v
   have hsub : Real.log v / v ≤ Real.log u / u :=
@@ -128,12 +128,12 @@ theorem elementaryAnchor_le_characterModulus {n : ℕ} (hn : Odd n) (hn750 : 750
     (4 : ℝ) * (oddPrimorial n.primeFactors.card : ℝ) ≤ (NumberTheory.characterModulus n : ℝ) := by
     have hnat : 4 * oddPrimorial n.primeFactors.card ≤ NumberTheory.characterModulus n := by
       unfold NumberTheory.characterModulus
-      omega
+      exact Nat.mul_le_mul_left 4 hprim
     exact_mod_cast hnat
   have hqle : (3000 : ℝ) ≤ (NumberTheory.characterModulus n : ℝ) := by
     have hnat : (3000 : ℕ) ≤ NumberTheory.characterModulus n := by
       unfold NumberTheory.characterModulus
-      omega
+      exact Nat.le_trans (by norm_num only : 3000 ≤ 4 * 750) (Nat.mul_le_mul_left 4 hn750)
     exact_mod_cast hnat
   exact max_le hprimR hqle
 
@@ -148,14 +148,16 @@ theorem elementaryOmegaFiniteStatement_of_certificates
     (hcert : ∀ m : ℕ, 1 ≤ m → m < 163 → (m + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor m)) :
     ElementaryOmegaFiniteStatement := by
   intro n hn hn750 hmcard
-  have hn1 : 1 < n := by omega
+  have hn1 : 1 < n := Nat.lt_of_lt_of_le (by norm_num only : 1 < 750) hn750
   have hm1 : 1 ≤ n.primeFactors.card := by
     rcases Nat.eq_zero_or_pos n.primeFactors.card with h0 | hpos
     · exfalso
       have hempty : n.primeFactors = ∅ := Finset.card_eq_zero.mp h0
-      have hn0 : n ≠ 0 := by omega
+      have hn0 : n ≠ 0 := Nat.ne_of_gt (Nat.lt_trans (by norm_num only : 0 < 1) hn1)
       have := Nat.primeFactors_eq_empty.mp hempty
-      omega
+      rcases this with h | h
+      · exact hn0 h
+      · exact (Nat.ne_of_gt hn1) h
     · exact hpos
   have hcertm := hcert n.primeFactors.card hm1 hmcard
   have hmono :=

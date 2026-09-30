@@ -26,7 +26,7 @@ theorem classicalNeOneMaximum_cast_le_log_sq_of_751_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ} (hB : 751 ≤ B) :
     (classicalNeOneMaximum B : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
   rw [classicalNeOneMaximum_eq_QNeOne_of_751_le hB]
-  exact PseudoSquare.QNeOne_le_log_sq_of_grh hGRH (by omega)
+  exact PseudoSquare.QNeOne_le_log_sq_of_grh hGRH ((by decide : 10 ≤ 751).trans hB)
 
 /--
 Under GRH and `B ≥ 751`, the Wheel30 factor-detecting stopping-value maximum over
@@ -38,6 +38,6 @@ theorem wheel30NeOneMaximum_cast_le_log_sq_of_751_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ} (hB : 751 ≤ B) :
     (wheel30NeOneMaximum B : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
   rw [wheel30NeOneMaximum_eq_QNeOne_of_751_le hB]
-  exact PseudoSquare.QNeOne_le_log_sq_of_grh hGRH (by omega)
+  exact PseudoSquare.QNeOne_le_log_sq_of_grh hGRH ((by decide : 10 ≤ 751).trans hB)
 
 end PseudoPrime.PrimeTestBounds.Selfridge

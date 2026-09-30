@@ -29,7 +29,7 @@ theorem riemannZeta_zero_re_eq_half_of_riemannHypothesis (hRH : RiemannHypothesi
       push_cast
       ring
     rw [hn', Complex.ofReal_re] at hre
-    nlinarith [Nat.cast_nonneg (α := ℝ) n]
+    nlinarith only [hre, Nat.cast_nonneg (α := ℝ) n]
   exact hRH ρ hρ hntrivial hne1
 
 /-- Under RH, a nontrivial zeta zero satisfies `normSq (ρ - 1) = normSq ρ`. -/

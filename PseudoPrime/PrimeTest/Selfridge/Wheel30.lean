@@ -24,67 +24,67 @@ theorem wheel30NeOneCandidate_classical {i : ℕ} (hi : isWheel30NeOneCandidate 
 theorem wheel30NegOneCandidate_classical {i : ℕ} (hi : isWheel30NegOneCandidate i) :
     isClassicalCandidate i := by exact isWheel30NegOneCandidate_isClassical hi
 
-/-- Every odd prime at least `5` belongs to the factor-detecting Wheel30 candidates. -/
-theorem prime_mem_wheel30NeOneCandidate {p : ℕ} (hp : p.Prime) (hpodd : Odd p) (hp5 : 5 ≤ p) :
-    isWheel30NeOneCandidate p := by
+/-- Every odd prime at least `5` belongs to both Wheel30 candidate sets. This private theorem
+contains the shared prime and residue argument used by the two public membership results. -/
+private theorem prime_mem_wheel30Candidates {p : ℕ} (hp : p.Prime) (hpodd : Odd p) (hp5 : 5 ≤ p) :
+    isWheel30NeOneCandidate p ∧ isWheel30NegOneCandidate p := by
+  unfold isWheel30NeOneCandidate isWheel30NegOneCandidate
   by_cases hpeq5 : p = 5
   · subst p
-    norm_num only [isWheel30NeOneCandidate, isWheel30NeOneInitial, isWheel30TailResidue, false_or,
-      true_or, false_and, or_false]
+    constructor
+    · norm_num only [isWheel30NeOneInitial, isWheel30TailResidue, false_or, true_or, false_and,
+        or_false]
+    · norm_num only [isWheel30NegOneInitial, isWheel30TailResidue, false_or, true_or, false_and,
+        or_false]
   · have hpmod2 : p % 2 = 1 := Nat.odd_iff.mp hpodd
     have hpmod3 : p % 3 ≠ 0 := by
       intro hmod
       have hdvd : 3 ∣ p := Nat.dvd_of_mod_eq_zero hmod
-      rcases hp.eq_one_or_self_of_dvd 3 hdvd with h | h <;> omega
+      rcases hp.eq_one_or_self_of_dvd 3 hdvd with h | h
+      · norm_num only at h
+      · have hp5' : 5 ≤ 3 := by simpa only [← h] using hp5
+        exact Nat.not_le_of_gt (by decide : 3 < 5) hp5'
     have hpmod5 : p % 5 ≠ 0 := by
       intro hmod
       have hdvd : 5 ∣ p := Nat.dvd_of_mod_eq_zero hmod
-      rcases hp.eq_one_or_self_of_dvd 5 hdvd with h | h <;> omega
-    have hpmod3cases : p % 3 = 1 ∨ p % 3 = 2 := by
-      have hlt := Nat.mod_lt p (by norm_num only : 0 < 3)
-      omega
-    have hpmod5cases : p % 5 = 1 ∨ p % 5 = 2 ∨ p % 5 = 3 ∨ p % 5 = 4 := by
-      have hlt := Nat.mod_lt p (by norm_num only : 0 < 5)
-      omega
+      rcases hp.eq_one_or_self_of_dvd 5 hdvd with h | h
+      · norm_num only at h
+      · exact hpeq5 h.symm
     by_cases hp29 : p ≤ 29
-    · left
-      unfold isWheel30NeOneInitial
-      rcases hpmod3cases with h3 | h3 <;> rcases hpmod5cases with h5 | h5 | h5 | h5 <;> omega
-    · right
-      refine ⟨by omega, ?_⟩
-      unfold isWheel30TailResidue
-      rcases hpmod3cases with h3 | h3 <;> rcases hpmod5cases with h5 | h5 | h5 | h5 <;> omega
+    · have hne : isWheel30NeOneInitial p := by
+        unfold isWheel30NeOneInitial
+        interval_cases p <;> norm_num only [Nat.reduceMod] at * <;>
+          simp only [or_false, or_true] at *
+      have hneg : isWheel30NegOneInitial p := by
+        unfold isWheel30NegOneInitial
+        interval_cases p <;> norm_num only [Nat.reduceMod] at * <;>
+          simp only [or_false, or_true] at *
+      exact ⟨Or.inl hne, Or.inl hneg⟩
+    · have hmod2' : (p % 30) % 2 = 1 := by
+        rw [Nat.mod_mod_of_dvd p (by decide : 2 ∣ 30)]
+        exact hpmod2
+      have hmod3' : (p % 30) % 3 ≠ 0 := by
+        rw [Nat.mod_mod_of_dvd p (by decide : 3 ∣ 30)]
+        exact hpmod3
+      have hmod5' : (p % 30) % 5 ≠ 0 := by
+        rw [Nat.mod_mod_of_dvd p (by decide : 5 ∣ 30)]
+        exact hpmod5
+      have hlt30 : p % 30 < 30 := Nat.mod_lt p (by norm_num only : 0 < 30)
+      have htail : isWheel30TailResidue p := by
+        unfold isWheel30TailResidue
+        interval_cases h : p % 30 <;> norm_num only [h, Nat.reduceMod] at * <;>
+          simp only [or_false, or_true] at *
+      exact ⟨Or.inr ⟨Nat.lt_of_not_ge hp29, htail⟩, Or.inr ⟨Nat.lt_of_not_ge hp29, htail⟩⟩
+
+/-- Every odd prime at least `5` belongs to the factor-detecting Wheel30 candidates. -/
+theorem prime_mem_wheel30NeOneCandidate {p : ℕ} (hp : p.Prime) (hpodd : Odd p) (hp5 : 5 ≤ p) :
+    isWheel30NeOneCandidate p :=
+  (prime_mem_wheel30Candidates hp hpodd hp5).1
 
 /-- Every odd prime at least `5` belongs to the pure `-1` Wheel30 candidates. -/
 theorem prime_mem_wheel30NegOneCandidate {p : ℕ} (hp : p.Prime) (hpodd : Odd p) (hp5 : 5 ≤ p) :
-    isWheel30NegOneCandidate p := by
-  by_cases hpeq5 : p = 5
-  · subst p
-    norm_num only [isWheel30NegOneCandidate, isWheel30NegOneInitial, isWheel30TailResidue, false_or,
-      true_or, false_and, or_false]
-  · have hpmod2 : p % 2 = 1 := Nat.odd_iff.mp hpodd
-    have hpmod3 : p % 3 ≠ 0 := by
-      intro hmod
-      have hdvd : 3 ∣ p := Nat.dvd_of_mod_eq_zero hmod
-      rcases hp.eq_one_or_self_of_dvd 3 hdvd with h | h <;> omega
-    have hpmod5 : p % 5 ≠ 0 := by
-      intro hmod
-      have hdvd : 5 ∣ p := Nat.dvd_of_mod_eq_zero hmod
-      rcases hp.eq_one_or_self_of_dvd 5 hdvd with h | h <;> omega
-    have hpmod3cases : p % 3 = 1 ∨ p % 3 = 2 := by
-      have hlt := Nat.mod_lt p (by norm_num only : 0 < 3)
-      omega
-    have hpmod5cases : p % 5 = 1 ∨ p % 5 = 2 ∨ p % 5 = 3 ∨ p % 5 = 4 := by
-      have hlt := Nat.mod_lt p (by norm_num only : 0 < 5)
-      omega
-    by_cases hp29 : p ≤ 29
-    · left
-      unfold isWheel30NegOneInitial
-      rcases hpmod3cases with h3 | h3 <;> rcases hpmod5cases with h5 | h5 | h5 | h5 <;> omega
-    · right
-      refine ⟨by omega, ?_⟩
-      unfold isWheel30TailResidue
-      rcases hpmod3cases with h3 | h3 <;> rcases hpmod5cases with h5 | h5 | h5 | h5 <;> omega
+    isWheel30NegOneCandidate p :=
+  (prime_mem_wheel30Candidates hp hpodd hp5).2
 
 /-- For a positive odd nonsquare input, the classical and Wheel30 factor-detecting first-stops
 agree. -/
@@ -100,7 +100,7 @@ theorem firstStopNeOne_wheel30_eq_classical {n : ℕ} (hnpos : 0 < n) (hn : Odd 
       · exact prime_mem_wheel30NeOneCandidate hp hstop.1.2 hstop.1.1
       · have hi : 0 < firstStopNeOne isClassicalCandidate n hclass := by
           have hi5 := hstop.1.1
-          omega
+          exact Nat.lt_of_lt_of_le (by decide : 0 < 5) hi5
         have hmin :
           ∀ j < firstStopNeOne isClassicalCandidate n hclass,
             j ∉ FirstStopNeOneSet isClassicalCandidate n := by
@@ -134,7 +134,7 @@ theorem firstStopNegOne_wheel30_eq_classical {n : ℕ} (hn : Odd n)
       · exact prime_mem_wheel30NegOneCandidate hp hstop.1.2 hstop.1.1
       · have hi : 0 < firstStopNegOne isClassicalCandidate n hclass := by
           have hi5 := hstop.1.1
-          omega
+          exact Nat.lt_of_lt_of_le (by decide : 0 < 5) hi5
         have hmin :
           ∀ j < firstStopNegOne isClassicalCandidate n hclass,
             j ∉ FirstStopNegOneSet isClassicalCandidate n := by

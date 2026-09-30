@@ -35,7 +35,7 @@ theorem tendsto_farLeftLength_div_unifiedContourHeightSeq :
         div_le_div_of_nonneg_right hlength (farLeftHeightSeq_pos m).le
       _ = 3 / (farLeftBTerm m + 1) := by
         simp only [farLeftHeightSeq]
-        field_simp
+        field_simp [Nat.cast_ne_zero.mpr (Nat.succ_ne_zero m), (farLeftBTerm_pos m).ne']
   have hden : Filter.Tendsto (fun m : ℕ => farLeftBTerm m + 1) Filter.atTop Filter.atTop :=
     Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_farLeftBTerm_atTop
   have hrhs : Filter.Tendsto (fun m : ℕ => 3 / (farLeftBTerm m + 1)) Filter.atTop (nhds 0) := by
@@ -172,10 +172,10 @@ theorem llsRiemannRectangleBoundaryIsRegular_unified_tau {τ : ℝ} (hτ : 1 < �
   have hre : (unifiedRectangleLower m).re < (unifiedTauRectangleUpper τ m).re := by
     simp only [unifiedRectangleLower, unifiedTauRectangleUpper]
     have hm : (0 : ℝ) ≤ m := Nat.cast_nonneg m
-    linarith
+    linarith only [hτ, hm]
   have him : (unifiedRectangleLower m).im < (unifiedTauRectangleUpper τ m).im := by
     simp only [unifiedRectangleLower, unifiedTauRectangleUpper]
-    linarith
+    linarith only [hUpos]
   have hsbox := hs.1
   by_cases hsleft : s.re = (unifiedRectangleLower m).re
   · refine ⟨?_, ?_, ?_⟩
@@ -183,16 +183,16 @@ theorem llsRiemannRectangleBoundaryIsRegular_unified_tau {τ : ℝ} (hτ : 1 < �
       have hreal := congrArg Complex.re hs0
       rw [hsleft] at hreal
       simp only [unifiedRectangleLower, Complex.zero_re] at hreal
-      nlinarith
+      nlinarith only [hreal, Nat.cast_nonneg (α := ℝ) m]
     · intro hs1
       have hreal := congrArg Complex.re hs1
       rw [hsleft] at hreal
       simp only [unifiedRectangleLower, Complex.one_re] at hreal
-      nlinarith
+      nlinarith only [hreal, Nat.cast_nonneg (α := ℝ) m]
     · apply riemannZeta_ne_zero_of_re_neg
       · rw [hsleft]
         simp only [unifiedRectangleLower]
-        nlinarith
+        nlinarith only [Nat.cast_nonneg (α := ℝ) m]
       · intro n hsn
         have hreal := congrArg Complex.re hsn
         rw [hsleft] at hreal
@@ -207,21 +207,28 @@ theorem llsRiemannRectangleBoundaryIsRegular_unified_tau {τ : ℝ} (hτ : 1 < �
             change (2 : ℝ) = 2
             rfl
           rw [h2re] at hreal
-          linarith [hreal]
+          linarith only [hreal]
         have hcast : (2 : ℤ) * m + 1 = 2 * ((n : ℤ) + 1) := by exact_mod_cast hreal'
-        omega
+        have hleft : ((2 : ℤ) * m + 1) % 2 = 1 := by
+          rw [Int.add_emod, Int.mul_emod, Int.emod_self, Int.zero_mul, Int.zero_emod]
+          norm_num only
+        have hright : (2 * ((n : ℤ) + 1)) % 2 = 0 := by
+          rw [Int.mul_emod, Int.emod_self, Int.zero_mul, Int.zero_emod]
+        have hmod := congrArg (fun x : ℤ => x % 2) hcast
+        rw [hleft, hright] at hmod
+        norm_num only at hmod
   by_cases hsright : s.re = (unifiedTauRectangleUpper τ m).re
   · refine ⟨?_, ?_, ?_⟩
     · intro hs0
       have hreal := congrArg Complex.re hs0
       rw [hsright] at hreal
       simp only [unifiedTauRectangleUpper, Complex.zero_re] at hreal
-      linarith
+      linarith only [hτ, hreal]
     · intro hs1
       have hreal := congrArg Complex.re hs1
       rw [hsright] at hreal
       simp only [unifiedTauRectangleUpper, Complex.one_re] at hreal
-      linarith
+      linarith only [hτ, hreal]
     · apply riemannZeta_ne_zero_of_one_lt_re
       rw [hsright]
       simpa only [unifiedTauRectangleUpper] using hτ
@@ -242,12 +249,12 @@ theorem llsRiemannRectangleBoundaryIsRegular_unified_tau {τ : ℝ} (hτ : 1 < �
       have himag := congrArg Complex.im hs0
       rw [hslower] at himag
       simp only [unifiedRectangleLower, Complex.zero_im] at himag
-      linarith
+      linarith only [hUpos, himag]
     · intro hs1
       have himag := congrArg Complex.im hs1
       rw [hslower] at himag
       simp only [unifiedRectangleLower, Complex.one_im] at himag
-      linarith
+      linarith only [hUpos, himag]
   by_cases hsupper : s.im = (unifiedTauRectangleUpper τ m).im
   · have hne : riemannZeta s ≠ 0 := by
       have heq : s = (s.re : ℂ) + unifiedContourHeightSeq m * Complex.I := by
@@ -264,12 +271,12 @@ theorem llsRiemannRectangleBoundaryIsRegular_unified_tau {τ : ℝ} (hτ : 1 < �
       have himag := congrArg Complex.im hs0
       rw [hsupper] at himag
       simp only [unifiedTauRectangleUpper, Complex.zero_im] at himag
-      linarith
+      linarith only [hUpos, himag]
     · intro hs1
       have himag := congrArg Complex.im hs1
       rw [hsupper] at himag
       simp only [unifiedTauRectangleUpper, Complex.one_im] at himag
-      linarith
+      linarith only [hUpos, himag]
   exfalso
   apply hs.2
   exact
@@ -285,19 +292,19 @@ theorem zero_one_mem_llsClosedRectangle_unified_tau {τ : ℝ} (hτ : 1 < τ) (m
   have hUpos : 0 < unifiedContourHeightSeq m :=
     (farLeftHeightSeq_pos m).trans_le (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   have hm : (0 : ℝ) ≤ m := Nat.cast_nonneg m
-  have hleft : -(2 * (m : ℝ) + 1) < τ := by linarith
-  have hheight : -unifiedContourHeightSeq m < unifiedContourHeightSeq m := by linarith
+  have hleft : -(2 * (m : ℝ) + 1) < τ := by linarith only [hτ, hm]
+  have hheight : -unifiedContourHeightSeq m < unifiedContourHeightSeq m := by linarith only [hUpos]
   constructor
   · change
       (0 : ℝ) ∈ Set.uIcc (-(2 * (m : ℝ) + 1)) τ ∧
         (0 : ℝ) ∈ Set.uIcc (-unifiedContourHeightSeq m) (unifiedContourHeightSeq m)
     rw [Set.uIcc_of_lt hleft, Set.uIcc_of_lt hheight]
-    constructor <;> constructor <;> linarith
+    constructor <;> constructor <;> linarith only [hleft, hheight, hm, hτ]
   · change
       (1 : ℝ) ∈ Set.uIcc (-(2 * (m : ℝ) + 1)) τ ∧
         (0 : ℝ) ∈ Set.uIcc (-unifiedContourHeightSeq m) (unifiedContourHeightSeq m)
     rw [Set.uIcc_of_lt hleft, Set.uIcc_of_lt hheight]
-    constructor <;> constructor <;> linarith
+    constructor <;> constructor <;> linarith only [hleft, hheight, hm, hτ]
 
 /-- A point with real part in `[-(2m+1),τ]` and imaginary part in `[-H_m,H_m]`
 belongs to the corresponding unified rectangle. No separate assumption `τ > 1` is needed. -/
@@ -319,16 +326,16 @@ theorem zero_mem_unifiedTauRectangle {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
     mem_unifiedTauRectangle τ m (p := 0)
       (by
         simp only [neg_add_rev, Complex.zero_re, add_neg_le_iff_le_add, zero_add]
-        linarith)
+        linarith only [hmR])
       (by
         simp only [Complex.zero_re]
-        linarith)
+        linarith only [hτ])
       (by
         simp only [Complex.zero_im, Left.neg_nonpos_iff]
-        linarith)
+        linarith only [hH])
       (by
         simp only [Complex.zero_im]
-        linarith)
+        linarith only [hH])
 
 /-- The point `1` lies in every unified `τ`-rectangle with `τ > 1`. -/
 theorem one_mem_unifiedTauRectangle {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
@@ -341,15 +348,15 @@ theorem one_mem_unifiedTauRectangle {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
     mem_unifiedTauRectangle τ m (p := 1)
       (by
         simp only [neg_add_rev, Complex.one_re, add_neg_le_iff_le_add]
-        linarith)
+        linarith only [hmR])
       (by
         simp only [Complex.one_re]
-        linarith)
+        linarith only [hτ])
       (by
         simp only [Complex.one_im, Left.neg_nonpos_iff]
-        linarith)
+        linarith only [hH])
       (by
         simp only [Complex.one_im]
-        linarith)
+        linarith only [hH])
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

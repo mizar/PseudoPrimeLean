@@ -80,28 +80,43 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_admissible
       exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare hGRH ha.odd ha.not_isSquare hn11
     refine ⟨hdn, ?_⟩
     have hnposR : (0 : ℝ) < n := by exact_mod_cast ha.pos
-    have hBposR : (0 : ℝ) < B := by exact_mod_cast (show 0 < B by omega)
+    have hBposR : (0 : ℝ) < B := by exact_mod_cast (Nat.lt_of_lt_of_le (by decide) hB)
     have hnleR : (n : ℝ) ≤ B := by exact_mod_cast ha.le
     have hlog : Real.log (n : ℝ) ≤ Real.log (B : ℝ) :=
       Real.strictMonoOn_log.monotoneOn hnposR hBposR hnleR
     have hlogn : 0 ≤ Real.log (n : ℝ) := by
       apply Real.log_nonneg
-      exact_mod_cast (show 1 ≤ n by omega)
+      exact_mod_cast (Nat.succ_le_iff.mpr ha.pos)
     have hlogB : 0 ≤ Real.log (B : ℝ) := by
       apply Real.log_nonneg
-      exact_mod_cast (show 1 ≤ B by omega)
+      exact_mod_cast (Nat.le_trans (by decide) hB)
     nlinarith only [hdnBound, hlog, hlogn, hlogB, sq_nonneg (Real.log (B : ℝ) - Real.log (n : ℝ))]
   · have hcases : n = 3 ∨ n = 5 ∨ n = 7 := by
       obtain ⟨k, hk⟩ := ha.odd
       have hn1 : n ≠ 1 := by
         intro h
         apply ha.not_isSquare
-        exact ⟨1, by omega⟩
+        exact ⟨1, by rw [h]⟩
       have hn9 : n ≠ 9 := by
         intro h
         apply ha.not_isSquare
-        exact ⟨3, by omega⟩
-      omega
+        exact ⟨3, by rw [h]⟩
+      have hnlt11 : n < 11 := Nat.not_le.mp hn11
+      have hkbound : 2 * k + 1 < 11 := by simpa only [hk] using hnlt11
+      have h2k : 2 * k < 10 := by
+        exact Nat.lt_of_add_lt_add_right (by simpa only [Nat.reduceAdd] using hkbound)
+      have hk5 : k < 5 := Nat.lt_of_mul_lt_mul_left (by simpa only [Nat.reduceMul] using h2k)
+      interval_cases k
+      · have h1 : n = 1 := by simpa only [Nat.reduceMul, Nat.reduceAdd] using hk
+        exact (hn1 h1).elim
+      · have h3 : n = 3 := by simpa only [Nat.reduceMul, Nat.reduceAdd] using hk
+        exact Or.inl h3
+      · have h5 : n = 5 := by simpa only [Nat.reduceMul, Nat.reduceAdd] using hk
+        exact Or.inr (Or.inl h5)
+      · have h7 : n = 7 := by simpa only [Nat.reduceMul, Nat.reduceAdd] using hk
+        exact Or.inr (Or.inr h7)
+      · have h9 : n = 9 := by simpa only [Nat.reduceMul, Nat.reduceAdd] using hk
+        exact (hn9 h9).elim
     exact exists_primeNeOneWitness_cast_le_log_sq_of_small_admissible hB hn hcases
 
 /-

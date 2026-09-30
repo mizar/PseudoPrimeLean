@@ -34,7 +34,12 @@ theorem meromorphic_riemannZeta : Meromorphic riemannZeta := by
           zero_mul, riemannZeta₁_one, mul_one]
       · rw [riemannZeta_eq_inv_sub_mul hz]
         simp only [smul_eq_mul]
-        field_simp [hz]
+        have hsub : z - 1 ≠ 0 := sub_ne_zero.mpr hz
+        calc
+          (z - 1) ^ 2 * ((z - 1)⁻¹ * riemannZeta₁ z) =
+              (z - 1) * ((z - 1) * (z - 1)⁻¹) * riemannZeta₁ z :=
+            by ring
+          _ = (z - 1) * riemannZeta₁ z := by rw [mul_inv_cancel₀ hsub, mul_one]
     rw [heq]
     exact (analyticAt_id.sub analyticAt_const).mul (differentiable_riemannZeta₁.analyticAt 1)
   · exact (analyticOn_riemannZeta s hs).meromorphicAt

@@ -56,7 +56,7 @@ theorem completedLFunction_zero_re_eq_half_of_grh_quadratic {N : ℕ} [NeZero N]
     have hsne0 : s ≠ 0 := by
       intro h
       rw [h, Complex.zero_re] at hs1
-      linarith
+      linarith only [hs1]
     have heq := dirichletLFunction_eq_completed_div_gammaFactor χ s (Or.inl hsne0)
     rw [hs0, zero_div] at heq
     exact DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hne) hs1 heq
@@ -81,7 +81,7 @@ theorem completedLFunction_zero_re_eq_half_of_grh_quadratic {N : ℕ} [NeZero N]
         rw [hs_def]
         simp only [Complex.sub_re, Complex.one_re]
       rw [hsre_eq]
-      linarith
+      linarith only [h]
     exact hstep1 s hzero_s hsre
   have hρne0 : ρ ≠ 0 := by
     intro h
@@ -214,7 +214,7 @@ theorem completedLFunction_logDeriv_zero_re_add_half_log_eq_neg_zeroMass_isQuadr
       Real.log N + (logDeriv (DirichletCharacter.completedLFunction χ) 0).re := by
     have := congrArg Complex.re hH10d
     simpa only [Complex.neg_re, Complex.add_re, hlogNre] using this
-  linarith [hre9g, hre10d, hH10c]
+  linarith only [hre9g, hre10d, hH10c]
 
 /--
 Input/assumptions: GRH, `2 ≤ N`, and a primitive nontrivial quadratic complex Dirichlet character.
@@ -396,7 +396,7 @@ theorem norm_completedReciprocalZeroTerm_eq {N : ℕ} [NeZero N] {χ : Dirichlet
     have hconj : (1 : ℂ) - ρ = starRingEnd ℂ ρ := by
       have h1 : (1 - ρ).re = (starRingEnd ℂ ρ).re := by
         simp only [Complex.sub_re, Complex.one_re, Complex.conj_re]
-        linarith [hre_half]
+        linarith only [hre_half]
       have h2 : (1 - ρ).im = (starRingEnd ℂ ρ).im := by
         simp only [Complex.sub_im, Complex.one_im, zero_sub, Complex.conj_im]
       exact Complex.ext h1 h2
@@ -560,7 +560,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
                   ‖DirichletCharacter.completedLFunction χ 0‖) /
               Real.log 2) /
         δ := by
-  have hN1 : 1 < N := by omega
+  have hN1 : 1 < N := by exact Nat.lt_of_succ_le hN2
   set Dv :=
     MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball (0 : ℂ) R) with
     hDv_def
@@ -615,7 +615,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
     have hρ0 : ρ ≠ 0 := fun h0 => h0ne (h0 ▸ hFzero)
     have hsρ : s ≠ ρ := fun heq => hsne (heq ▸ hFzero)
     have hid : (1 : ℂ) / (s - ρ) + 1 / ρ = s / (ρ * (s - ρ)) := by
-      field_simp
+      field_simp [hρ0, hsρ]
       ring
     rw [hid, norm_mul, norm_div, norm_mul, Complex.norm_intCast,
       abs_of_nonneg (show (0 : ℝ) ≤ (Dv ρ : ℝ) by exact_mod_cast hDv_nonneg ρ)]
@@ -787,7 +787,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le {N : ℕ} [NeZero N] (hN2 : 
                 Real.log 2) /
           δ := by
       positivity
-    nlinarith [hCSfull, hsum_nonneg, hrhs_nonneg]
+    nlinarith only [hCSfull, hsum_nonneg, hrhs_nonneg]
   calc
     ‖completedLFunctionTruncatedGenusSum χ R s‖ ≤ ‖s‖ * ∑ ρ ∈ S, (Dv ρ : ℝ) / (‖ρ‖ * ‖s - ρ‖) :=
       hnorm_le
@@ -850,11 +850,11 @@ theorem norm_centeredLogDeriv_le_of_separation {N : ℕ} [NeZero N] (hN2 : 2 ≤
                     ‖DirichletCharacter.completedLFunction χ 0‖) /
                 Real.log 2) /
           δ := by
-  have hN1 : 1 < N := by omega
+  have hN1 : 1 < N := by exact Nat.lt_of_succ_le hN2
   have hH9e := norm_centeredLogDeriv_sub_truncatedGenus_le hN1 hprimitive hne hinv hR hzf hs hsne
   have hGenus :=
     norm_completedLFunctionTruncatedGenusSum_le hN2 hGRH hprimitive hne hinv hquad
-      (show (0 : ℝ) < R by linarith) hsne hδ hsep
+      (show (0 : ℝ) < R by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hR) hsne hδ hsep
   calc
     ‖logDeriv (DirichletCharacter.completedLFunction χ) s -
             logDeriv (DirichletCharacter.completedLFunction χ) 0‖ =
@@ -1032,10 +1032,10 @@ theorem norm_deriv_logDeriv_completedLFunction_zero_le {N : ℕ} [NeZero N]
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0) :
     ‖deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0‖ ≤
       completedLFunctionH9eSlopeError χ R + 2 * |primitiveBRe χ| := by
-  have hN1 : 1 < N := by omega
+  have hN1 : 1 < N := by exact Nat.lt_of_succ_le hN2
   obtain ⟨D, hD, hDnorm⟩ :=
     exists_hasDerivAt_completedLFunctionTruncatedGenusSum_zero_norm_le hGRH hprimitive hne hinv
-      hquad hN2 (show (0 : ℝ) < R by linarith)
+      hquad hN2 (show (0 : ℝ) < R by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hR)
   have hsub := norm_deriv_logDeriv_completedLFunction_zero_sub_le hN1 hprimitive hne hinv hR hzf hD
   calc
     ‖deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0‖ ≤
@@ -1081,7 +1081,7 @@ theorem norm_deriv_logDeriv_completedLFunction_zero_le_two_mul_abs_BRe {N : ℕ}
     have hRgt := completedLFunctionGoodRadius_gt hne n
     have hR1 : (1 : ℝ) ≤ completedLFunctionGoodRadius hne n := by
       have hnnn : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
-      linarith
+      linarith only [hRgt, hnnn]
     exact
       norm_deriv_logDeriv_completedLFunction_zero_le hGRH hprimitive hne hinv hquad hN2 hR1
         (completedLFunctionGoodRadius_zeroFree hne n)
@@ -1104,7 +1104,7 @@ theorem neg_re_deriv_logDeriv_completedLFunction_zero_le {N : ℕ} [NeZero N]
       hN2
   have hre := Complex.re_le_norm (-deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0)
   rw [Complex.neg_re, norm_neg] at hre
-  linarith [hre, hnormBound]
+  exact le_trans hre hnormBound
 
 /--
 Input/assumptions: `N ≥ 2`, `χ` primitive nontrivial quadratic mod `N`, GRH, `χ⁻¹ ≠ 1`.
@@ -1131,7 +1131,7 @@ theorem completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log {N : ℕ
       (logDeriv (DirichletCharacter.completedLFunction χ) 0).re + (1 / 2) * Real.log N := by
     rw [primitiveBRe, (hprimitive : χ.conductor = N)]
   rw [hBneg] at hBRe
-  linarith [hBRe]
+  linarith only [hBRe]
 
 /--
 Input/assumptions: `N ≥ 2`, `χ` primitive nontrivial quadratic mod `N`, GRH, `χ⁻¹ ≠ 1`.
@@ -1163,6 +1163,6 @@ theorem completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log {N : ℕ} [Ne
     simpa only [Complex.neg_re, Complex.add_re, hlogNre] using this
   rw [completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
       hquad] at hFEre
-  linarith [hFEre]
+  linarith only [hFEre]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

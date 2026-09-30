@@ -55,19 +55,19 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch {N : ℕ} [NeZero N]
   rw [hlogdiv] at hraw
   have hlower :=
     characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_sub_log_two_of_eq_zero x χ hriemann
-      (by linarith) hodd h2
+      (by exact le_trans (by norm_num only) hx) hodd h2
   have hsqrt : 1 < Real.sqrt x := by
-    have hxone : (1 : ℝ) < x := by linarith
+    have hxone : (1 : ℝ) < x := by linarith only [hx]
     have hsqrt_nonneg : 0 ≤ Real.sqrt x := Real.sqrt_nonneg x
-    have hsqrt_sq : Real.sqrt x ^ 2 = x := Real.sq_sqrt (by linarith)
+    have hsqrt_sq : Real.sqrt x ^ 2 = x := Real.sq_sqrt (le_trans (by norm_num only) hx)
     nlinarith only [hxone, hsqrt_nonneg, hsqrt_sq]
   have hden : 0 < (1 - 1 / Real.sqrt x) ^ 2 := by
-    have hsqrtpos : 0 < Real.sqrt x := Real.sqrt_pos.2 (by linarith)
+    have hsqrtpos : 0 < Real.sqrt x := Real.sqrt_pos.2 (lt_of_lt_of_le (by norm_num only) hx)
     have hpos : 0 < 1 - 1 / Real.sqrt x := by
       have hdiv : 1 / Real.sqrt x < 1 := by
         apply (div_lt_iff₀ hsqrtpos).2
-        linarith
-      linarith
+        simpa only [one_mul] using hsqrt
+      linarith only [hdiv]
     positivity
   apply (le_div_iff₀ hden).2
   have hbd :
@@ -75,7 +75,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch {N : ℕ} [NeZero N]
         |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| ≤
       (1 / 2) * (1 - 1 / x) * (Real.log χ.conductor - Real.log Real.pi) - 1 / 4 -
         (Real.log x - 8 / 5 - Real.log 2) := by
-    linarith [hraw, hlower]
+    linarith only [hraw, hlower]
   simpa only [one_div, mul_comm, ge_iff_le] using hbd
 
 /-! The `χ̃(2)=1` reciprocal lower bound is stronger than the c=0 bound. -/
@@ -112,22 +112,22 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch {N : ℕ} [NeZero N]
         have hN1 : χ.conductor ≠ 1 :=
           AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
-        omega)
+        exact Nat.succ_le_iff.mpr (Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨Nat.ne_of_gt hNpos, hN1⟩))
       hGRH hprimitive hprimne hinv hquad heven hx
   have hlower :=
     characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_of_eq_one x χ hquad hriemann
-      (by linarith) hodd h2
+      (by exact le_trans (by norm_num only) hx) hodd h2
   have hsqrt : 1 < Real.sqrt x := by
-    have hxone : (1 : ℝ) < x := by linarith
+    have hxone : (1 : ℝ) < x := by linarith only [hx]
     have hsqrt_nonneg : 0 ≤ Real.sqrt x := Real.sqrt_nonneg x
-    have hsqrt_sq : Real.sqrt x ^ 2 = x := Real.sq_sqrt (by linarith)
+    have hsqrt_sq : Real.sqrt x ^ 2 = x := Real.sq_sqrt (le_trans (by norm_num only) hx)
     nlinarith only [hxone, hsqrt_nonneg, hsqrt_sq]
   have hden : 0 < (1 - 1 / Real.sqrt x) ^ 2 := by
-    have hsqrtpos : 0 < Real.sqrt x := Real.sqrt_pos.2 (by linarith)
+    have hsqrtpos : 0 < Real.sqrt x := Real.sqrt_pos.2 (lt_of_lt_of_le (by norm_num only) hx)
     have hpos : 0 < 1 - 1 / Real.sqrt x := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hsqrtpos).2
-      linarith
+      linarith only [hsqrt]
     positivity
   apply (le_div_iff₀ hden).2
   have hbd :
@@ -135,7 +135,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch {N : ℕ} [NeZero N]
         |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| ≤
       (1 / 2) * (1 - 1 / x) * (Real.log χ.conductor - Real.log Real.pi) - 4 / 5 -
         (Real.log x - 8 / 5 - Real.log 2) := by
-    linarith [hraw, hlower, Real.log_pos one_lt_two]
+    linarith only [hraw, hlower, Real.log_pos one_lt_two]
   simpa only [one_div, mul_comm, ge_iff_le] using hbd
 
 /-!
@@ -175,22 +175,22 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even {N : ℕ} [NeZero N]
         have hN1 : χ.conductor ≠ 1 :=
           AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
-        omega)
+        exact Nat.succ_le_iff.mpr (Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨Nat.ne_of_gt hNpos, hN1⟩))
       hGRH hprimitive hprimne hinv hquad heven hx
   have hlower :=
     characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_sub_log_two_of_eq_zero x χ hriemann
-      (by linarith) hodd h2
+      (by exact le_trans (by norm_num only) hx) hodd h2
   have hsqrt : 1 < Real.sqrt x := by
-    have hxone : (1 : ℝ) < x := by linarith
+    have hxone : (1 : ℝ) < x := by linarith only [hx]
     have hsqrt_nonneg : 0 ≤ Real.sqrt x := Real.sqrt_nonneg x
-    have hsqrt_sq : Real.sqrt x ^ 2 = x := Real.sq_sqrt (by linarith)
+    have hsqrt_sq : Real.sqrt x ^ 2 = x := Real.sq_sqrt (le_trans (by norm_num only) hx)
     nlinarith only [hxone, hsqrt_nonneg, hsqrt_sq]
   have hden : 0 < (1 - 1 / Real.sqrt x) ^ 2 := by
-    have hsqrtpos : 0 < Real.sqrt x := Real.sqrt_pos.2 (by linarith)
+    have hsqrtpos : 0 < Real.sqrt x := Real.sqrt_pos.2 (lt_of_lt_of_le (by norm_num only) hx)
     have hpos : 0 < 1 - 1 / Real.sqrt x := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hsqrtpos).2
-      linarith
+      linarith only [hsqrt]
     positivity
   apply (le_div_iff₀ hden).2
   have hbd :
@@ -198,7 +198,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even {N : ℕ} [NeZero N]
         |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| ≤
       (1 / 2) * (1 - 1 / x) * (Real.log χ.conductor - Real.log Real.pi) - 4 / 5 -
         (Real.log x - 8 / 5 - Real.log 2) := by
-    linarith [hraw, hlower]
+    linarith only [hraw, hlower]
   simpa only [one_div, mul_comm, ge_iff_le] using hbd
 
 /-- The same Q_ne1 bound specialized to `x = y²` and `log D ≤ y`. -/
@@ -216,8 +216,8 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_at_square {N : ℕ} [NeZe
     |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| ≤
       ((1 / 2) * (1 - 1 / y ^ 2) * y - 1 / 4 - (2 * Real.log y - 8 / 5 - Real.log 2)) /
         (1 - 1 / y) ^ 2 := by
-  have hypos : 0 < y := by linarith
-  have hx : 64 ≤ y ^ 2 := by nlinarith
+  have hypos : 0 < y := by linarith only [hy]
+  have hx : 64 ≤ y ^ 2 := by nlinarith only [hy]
   have hbase := primitiveQuadraticBRe_le_of_qneOne_zero_branch χ hne hquad hGRH hx hriemann hodd h2
   have hsqrt : Real.sqrt (y ^ 2) = y := by rw [Real.sqrt_sq_eq_abs, abs_of_pos hypos]
   have hlogsq : Real.log (y ^ 2) = 2 * Real.log y := by
@@ -225,11 +225,11 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_at_square {N : ℕ} [NeZe
     norm_num only
   have hcoef : 0 ≤ (1 / 2 : ℝ) * (1 - 1 / y ^ 2) := by
     have : 0 ≤ 1 - 1 / y ^ 2 := by
-      have : 1 ≤ y ^ 2 := by nlinarith
+      have : 1 ≤ y ^ 2 := by nlinarith only [hy]
       have : 1 / y ^ 2 ≤ 1 := by
         apply (div_le_iff₀ (sq_pos_of_pos hypos)).2
-        nlinarith
-      linarith
+        nlinarith only [hy]
+      linarith only [this]
     positivity
   have hnum :
     (1 / 2) * (1 - 1 / y ^ 2) * (Real.log χ.conductor - Real.log Real.pi) - 1 / 4 -
@@ -237,7 +237,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_at_square {N : ℕ} [NeZe
       (1 / 2) * (1 - 1 / y ^ 2) * y - 1 / 4 - (2 * Real.log y - 8 / 5 - Real.log 2) := by
     rw [hlogsq]
     have hmul := mul_le_mul_of_nonneg_left (sub_le_sub_right hlogD (Real.log Real.pi)) hcoef
-    have hpi : 0 ≤ Real.log Real.pi := Real.log_nonneg (by linarith [Real.pi_gt_three])
+    have hpi : 0 ≤ Real.log Real.pi := Real.log_nonneg (by linarith only [Real.pi_gt_three])
     have hmul' := le_trans hmul (mul_le_mul_of_nonneg_left (sub_le_self _ hpi) hcoef)
     convert
       sub_le_sub_right (sub_le_sub_right hmul' (1 / 4 : ℝ))
@@ -249,8 +249,8 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_at_square {N : ℕ} [NeZe
     have : 0 < 1 - 1 / y := by
       have : 1 / y < 1 := by
         apply (div_lt_iff₀ hypos).2
-        linarith
-      linarith
+        linarith only [hy]
+      linarith only [this]
     positivity
   rw [hlogsq] at hnum
   calc
@@ -287,8 +287,8 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_at_square_log_four {N : �
       ((1 / 2) * (1 - 1 / y ^ 2) * (y + Real.log 4 - Real.log Real.pi) - 1 / 4 -
           (2 * Real.log y - 8 / 5 - Real.log 2)) /
         (1 - 1 / y) ^ 2 := by
-  have hypos : 0 < y := by linarith
-  have hx : 64 ≤ y ^ 2 := by nlinarith
+  have hypos : 0 < y := by linarith only [hy]
+  have hx : 64 ≤ y ^ 2 := by nlinarith only [hy]
   have hbase := primitiveQuadraticBRe_le_of_qneOne_zero_branch χ hne hquad hGRH hx hriemann hodd h2
   have hsqrt : Real.sqrt (y ^ 2) = y := by rw [Real.sqrt_sq_eq_abs, abs_of_pos hypos]
   have hlogsq : Real.log (y ^ 2) = 2 * Real.log y := by
@@ -296,11 +296,11 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_at_square_log_four {N : �
     norm_num only
   have hcoef : 0 ≤ (1 / 2 : ℝ) * (1 - 1 / y ^ 2) := by
     have hnonneg : 0 ≤ 1 - 1 / y ^ 2 := by
-      have hy2 : 1 ≤ y ^ 2 := by nlinarith
+      have hy2 : 1 ≤ y ^ 2 := by nlinarith only [hy]
       have hinv : 1 / y ^ 2 ≤ 1 := by
         apply (div_le_iff₀ (sq_pos_of_pos hypos)).2
-        nlinarith
-      linarith
+        nlinarith only [hy]
+      linarith only [hinv]
     positivity
   have hnum :
     (1 / 2) * (1 - 1 / y ^ 2) * (Real.log χ.conductor - Real.log Real.pi) - 1 / 4 -
@@ -309,14 +309,14 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_at_square_log_four {N : �
         (2 * Real.log y - 8 / 5 - Real.log 2) := by
     rw [hlogsq]
     have hmul := mul_le_mul_of_nonneg_left (sub_le_sub_right hlogD (Real.log Real.pi)) hcoef
-    nlinarith
+    nlinarith only [hmul]
   rw [hsqrt] at hbase
   rw [hlogsq] at hbase
   have hden : 0 < (1 - 1 / y) ^ 2 := by
     have hpos : 0 < 1 - 1 / y := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hypos).2
-      linarith
+      linarith only [hy]
     positivity
   rw [hlogsq] at hnum
   calc
@@ -351,10 +351,10 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square_simple {N : ℕ}
     (h2 : χ.primitiveCharacter 2 = 1) :
     |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| ≤
       (1 + 5 / (2 * y)) * (y / 2 - 2 * Real.log y + 1) := by
-  have hypos : 0 < y := by linarith
+  have hypos : 0 < y := by linarith only [hy]
+  have hy2 : 64 ≤ y ^ 2 := by nlinarith only [hy]
   have hstrong :=
-    primitiveQuadraticBRe_le_of_qneOne_one_branch χ hne hquad heven hGRH (by nlinarith : 64 ≤ y ^ 2)
-      hriemann hodd h2
+    primitiveQuadraticBRe_le_of_qneOne_one_branch χ hne hquad heven hGRH hy2 hriemann hodd h2
   have hsqrt : Real.sqrt (y ^ 2) = y := by rw [Real.sqrt_sq_eq_abs, abs_of_pos hypos]
   have hlogsq : Real.log (y ^ 2) = 2 * Real.log y := by
     rw [Real.log_pow]
@@ -364,7 +364,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square_simple {N : ℕ}
     have hpos : 0 < 1 - 1 / y := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hypos).2
-      linarith
+      linarith only [hy]
     positivity
   have hlog_upper : Real.log y ≤ y / 8 + 3 * Real.log 2 - 1 := by
     have hquot : 0 < y / 8 := by positivity
@@ -379,25 +379,24 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square_simple {N : ℕ}
         Real.log y = Real.log ((y / 8) * 8) := by rw [hmul]
         _ = _ := hlogmul
     rw [hylog, hlog8]
-    linarith
+    linarith only [hlog]
   have hlog_lower : 3 * Real.log 2 ≤ Real.log y := by
     have h28 :=
       Real.strictMonoOn_log.monotoneOn (show 0 < (2 : ℝ) by norm_num only)
         (show 0 < (8 : ℝ) by norm_num only) (by norm_num only : (2 : ℝ) ≤ 8)
-    have h8y :=
-      Real.strictMonoOn_log.monotoneOn (show 0 < (8 : ℝ) by norm_num only) (show 0 < y by linarith)
-        hy
+    have h8y := Real.strictMonoOn_log.monotoneOn (show 0 < (8 : ℝ) by norm_num only) hypos hy
     have hlog8 : Real.log (8 : ℝ) = 3 * Real.log 2 := by
       rw [show (8 : ℝ) = 2 ^ 3 by norm_num only, Real.log_pow]
       norm_num only
-    linarith
-  have hlog2_lower : 0.69 ≤ Real.log 2 := by linarith [Real.log_two_gt_d9]
-  have hlog2_upper : Real.log 2 ≤ 0.7 := by linarith [Real.log_two_lt_d9]
+    rw [← hlog8]
+    exact h8y
+  have hlog2_lower : 0.69 ≤ Real.log 2 := by linarith only [Real.log_two_gt_d9]
+  have hlog2_upper : Real.log 2 ≤ 0.7 := by linarith only [Real.log_two_lt_d9]
   have hlogpi_lower : 1.098 < Real.log Real.pi := by
     have h3pi :=
       Real.strictMonoOn_log.monotoneOn (show 0 < (3 : ℝ) by norm_num only)
         (show 0 < Real.pi by positivity) (le_of_lt Real.pi_gt_three)
-    linarith [Real.log_three_gt_d9]
+    linarith only [Real.log_three_gt_d9, h3pi]
   have hlogpi_upper : Real.log Real.pi ≤ 1.4 := by
     have hp4 :=
       Real.strictMonoOn_log.monotoneOn (show 0 < Real.pi by positivity)
@@ -405,13 +404,13 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square_simple {N : ℕ}
     have hlog4 : Real.log (4 : ℝ) = 2 * Real.log 2 := by
       rw [show (4 : ℝ) = 2 ^ 2 by norm_num only, Real.log_pow]
       norm_num only
-    linarith [Real.log_two_lt_d9]
+    linarith only [Real.log_two_lt_d9, hp4, hlog4]
   have hcoef : 0 ≤ (1 / 2 : ℝ) * (1 - 1 / y ^ 2) := by
-    have hsq : 1 ≤ y ^ 2 := by nlinarith
+    have hsq : 1 ≤ y ^ 2 := by nlinarith only [hy]
     have hinv : 1 / y ^ 2 ≤ 1 := by
       apply (div_le_iff₀ (sq_pos_of_pos hypos)).2
-      nlinarith
-    have : 0 ≤ 1 - 1 / y ^ 2 := by linarith
+      nlinarith only [hy]
+    have : 0 ≤ 1 - 1 / y ^ 2 := by linarith only [hinv]
     positivity
   have hnum :
     (1 / 2) * (1 - 1 / y ^ 2) * (Real.log χ.conductor - Real.log Real.pi) - 4 / 5 -
@@ -419,7 +418,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square_simple {N : ℕ}
       (1 / 2) * (1 - 1 / y ^ 2) * (y - Real.log Real.pi) - 4 / 5 -
         (2 * Real.log y - 8 / 5 - Real.log 2) := by
     have hmul := mul_le_mul_of_nonneg_left (sub_le_sub_right hlogD (Real.log Real.pi)) hcoef
-    linarith
+    linarith only [hmul]
   have hcoeff :=
     Analysis.reciprocal_square_coefficient_nonneg hy hlog_upper hlog_lower hlog2_lower hlog2_upper
       hypos
@@ -436,9 +435,9 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square_simple {N : ℕ}
         (0.45 - Real.log 2 + Real.log Real.pi / 2) - (Real.log y + 1) / y +
           (8 * Real.log y - 11 / 4 - Real.log Real.pi / 2) / y ^ 2 +
           (-5 * Real.log y + 5 / 2) / y ^ 3 := by
-      field_simp
+      field_simp [ne_of_gt hypos]
       ring
-    have hpi_lower : 0 ≤ (Real.log Real.pi - 1.098) / 2 := by linarith
+    have hpi_lower : 0 ≤ (Real.log Real.pi - 1.098) / 2 := by linarith only [hlogpi_lower]
     have hpi_upper : 0 ≤ (1.4 - Real.log Real.pi) / (2 * y ^ 2) := by positivity
     have heq2 :
       (0.45 - Real.log 2 + Real.log Real.pi / 2) - (Real.log y + 1) / y +
@@ -449,7 +448,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square_simple {N : ℕ}
           (-5 * Real.log y + 5 / 2) / y ^ 3 +
           (Real.log Real.pi - 1.098) / 2 +
           (1.4 - Real.log Real.pi) / (2 * y ^ 2) := by
-      field_simp
+      field_simp [ne_of_gt hypos]
       ring
     have hE :
       0 ≤
@@ -457,7 +456,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square_simple {N : ℕ}
           (8 * Real.log y - 11 / 4 - Real.log Real.pi / 2) / y ^ 2 +
           (-5 * Real.log y + 5 / 2) / y ^ 3 := by
       rw [heq2]
-      linarith
+      linarith only [hcoeff, hpi_lower, hpi_upper]
     nlinarith only [hE, heq]
   calc
     _ ≤
@@ -489,8 +488,8 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square {N : ℕ} 
       ((1 / 2) * (1 - 1 / y ^ 2) * (y - Real.log Real.pi) - 4 / 5 -
           (2 * Real.log y - 8 / 5 - Real.log 2)) /
         (1 - 1 / y) ^ 2 := by
-  have hypos : 0 < y := by linarith
-  have hx : 64 ≤ y ^ 2 := by nlinarith
+  have hypos : 0 < y := by linarith only [hy]
+  have hx : 64 ≤ y ^ 2 := by nlinarith only [hy]
   have hbase :=
     primitiveQuadraticBRe_le_of_qneOne_zero_branch_even χ hne hquad heven hGRH hx hriemann hodd h2
   have hsqrt : Real.sqrt (y ^ 2) = y := by rw [Real.sqrt_sq_eq_abs, abs_of_pos hypos]
@@ -498,11 +497,11 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square {N : ℕ} 
     rw [Real.log_pow]
     norm_num only
   have hcoef : 0 ≤ (1 / 2 : ℝ) * (1 - 1 / y ^ 2) := by
-    have hsq : 1 ≤ y ^ 2 := by nlinarith
+    have hsq : 1 ≤ y ^ 2 := by nlinarith only [hy]
     have hinv : 1 / y ^ 2 ≤ 1 := by
       apply (div_le_iff₀ (sq_pos_of_pos hypos)).2
-      nlinarith
-    have : 0 ≤ 1 - 1 / y ^ 2 := by linarith
+      nlinarith only [hy]
+    have : 0 ≤ 1 - 1 / y ^ 2 := by linarith only [hinv]
     positivity
   have hnum :
     (1 / 2) * (1 - 1 / y ^ 2) * (Real.log χ.conductor - Real.log Real.pi) - 4 / 5 -
@@ -511,13 +510,13 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square {N : ℕ} 
         (2 * Real.log y - 8 / 5 - Real.log 2) := by
     rw [hlogsq]
     have hmul := mul_le_mul_of_nonneg_left (sub_le_sub_right hlogD (Real.log Real.pi)) hcoef
-    linarith
+    linarith only [hmul]
   rw [hsqrt, hlogsq] at hbase
   have hden : 0 < (1 - 1 / y) ^ 2 := by
     have hpos : 0 < 1 - 1 / y := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hypos).2
-      linarith
+      linarith only [hy]
     positivity
   rw [hlogsq] at hnum
   calc
@@ -549,8 +548,8 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_log_four_s
       ((1 / 2) * (1 - 1 / y ^ 2) * (y + Real.log 4 - Real.log Real.pi) - 4 / 5 -
           (2 * Real.log y - 8 / 5 - Real.log 2)) /
         (1 - 1 / y) ^ 2 := by
-  have hypos : 0 < y := by linarith
-  have hx : 64 ≤ y ^ 2 := by nlinarith
+  have hypos : 0 < y := by linarith only [hy]
+  have hx : 64 ≤ y ^ 2 := by nlinarith only [hy]
   have hbase :=
     primitiveQuadraticBRe_le_of_qneOne_zero_branch_even χ hne hquad heven hGRH hx hriemann hodd h2
   have hsqrt : Real.sqrt (y ^ 2) = y := by rw [Real.sqrt_sq_eq_abs, abs_of_pos hypos]
@@ -558,11 +557,11 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_log_four_s
     rw [Real.log_pow]
     norm_num only
   have hcoef : 0 ≤ (1 / 2 : ℝ) * (1 - 1 / y ^ 2) := by
-    have hsq : 1 ≤ y ^ 2 := by nlinarith
+    have hsq : 1 ≤ y ^ 2 := by nlinarith only [hy]
     have hinv : 1 / y ^ 2 ≤ 1 := by
       apply (div_le_iff₀ (sq_pos_of_pos hypos)).2
-      nlinarith
-    have : 0 ≤ 1 - 1 / y ^ 2 := by linarith
+      nlinarith only [hy]
+    have : 0 ≤ 1 - 1 / y ^ 2 := by linarith only [hinv]
     positivity
   have hnum :
     (1 / 2) * (1 - 1 / y ^ 2) * (Real.log χ.conductor - Real.log Real.pi) - 4 / 5 -
@@ -571,13 +570,13 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_log_four_s
         (2 * Real.log y - 8 / 5 - Real.log 2) := by
     rw [hlogsq]
     have hmul := mul_le_mul_of_nonneg_left (sub_le_sub_right hlogD (Real.log Real.pi)) hcoef
-    linarith
+    linarith only [hmul]
   rw [hsqrt, hlogsq] at hbase
   have hden : 0 < (1 - 1 / y) ^ 2 := by
     have hpos : 0 < 1 - 1 / y := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hypos).2
-      linarith
+      linarith only [hy]
     positivity
   rw [hlogsq] at hnum
   calc
@@ -613,7 +612,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_simple {N 
     (h2 : χ.primitiveCharacter 2 = 0) :
     |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| ≤
       (1 + 5 / (2 * y)) * (y / 2 - 2 * Real.log y + 1) := by
-  have hypos : 0 < y := by linarith
+  have hypos : 0 < y := by linarith only [hy]
   have hstrong :=
     primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square χ hne hquad heven hGRH hy hlogD
       hriemann hodd h2
@@ -621,7 +620,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_simple {N 
     have hpos : 0 < 1 - 1 / y := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hypos).2
-      linarith
+      linarith only [hy]
     positivity
   have hlog_upper : Real.log y ≤ y / 8 + 3 * Real.log 2 - 1 := by
     have hquot : 0 < y / 8 := by positivity
@@ -636,25 +635,24 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_simple {N 
         Real.log y = Real.log ((y / 8) * 8) := by rw [hmul]
         _ = _ := hlogmul
     rw [hylog, hlog8]
-    linarith
+    linarith only [hlog]
   have hlog_lower : 3 * Real.log 2 ≤ Real.log y := by
     have h28 :=
       Real.strictMonoOn_log.monotoneOn (show 0 < (2 : ℝ) by norm_num only)
         (show 0 < (8 : ℝ) by norm_num only) (by norm_num only : (2 : ℝ) ≤ 8)
-    have h8y :=
-      Real.strictMonoOn_log.monotoneOn (show 0 < (8 : ℝ) by norm_num only) (show 0 < y by linarith)
-        hy
+    have h8y := Real.strictMonoOn_log.monotoneOn (show 0 < (8 : ℝ) by norm_num only) hypos hy
     have hlog8 : Real.log (8 : ℝ) = 3 * Real.log 2 := by
       rw [show (8 : ℝ) = 2 ^ 3 by norm_num only, Real.log_pow]
       norm_num only
-    linarith
-  have hlog2_lower : 0.69 ≤ Real.log 2 := by linarith [Real.log_two_gt_d9]
-  have hlog2_upper : Real.log 2 ≤ 0.7 := by linarith [Real.log_two_lt_d9]
+    rw [← hlog8]
+    exact h8y
+  have hlog2_lower : 0.69 ≤ Real.log 2 := by linarith only [Real.log_two_gt_d9]
+  have hlog2_upper : Real.log 2 ≤ 0.7 := by linarith only [Real.log_two_lt_d9]
   have hlogpi_lower : 1.098 < Real.log Real.pi := by
     have h3pi :=
       Real.strictMonoOn_log.monotoneOn (show 0 < (3 : ℝ) by norm_num only)
         (show 0 < Real.pi by positivity) (le_of_lt Real.pi_gt_three)
-    linarith [Real.log_three_gt_d9]
+    linarith only [Real.log_three_gt_d9, h3pi]
   have hlogpi_upper : Real.log Real.pi ≤ 1.4 := by
     have hp4 :=
       Real.strictMonoOn_log.monotoneOn (show 0 < Real.pi by positivity)
@@ -662,7 +660,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_simple {N 
     have hlog4 : Real.log (4 : ℝ) = 2 * Real.log 2 := by
       rw [show (4 : ℝ) = 2 ^ 2 by norm_num only, Real.log_pow]
       norm_num only
-    linarith [Real.log_two_lt_d9]
+    linarith only [Real.log_two_lt_d9, hp4, hlog4]
   have hcoeff :=
     Analysis.reciprocal_square_coefficient_nonneg_explicit hy hlog_upper hlog_lower hlog2_lower
       hlog2_upper hypos
@@ -679,9 +677,9 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_simple {N 
         (0.45 - Real.log 2 + Real.log Real.pi / 2) - (Real.log y + 1) / y +
           (8 * Real.log y - 11 / 4 - Real.log Real.pi / 2) / y ^ 2 +
           (-5 * Real.log y + 5 / 2) / y ^ 3 := by
-      field_simp
+      field_simp [ne_of_gt hypos]
       ring
-    have hpi_lower : 0 ≤ (Real.log Real.pi - 1.098) / 2 := by linarith
+    have hpi_lower : 0 ≤ (Real.log Real.pi - 1.098) / 2 := by linarith only [hlogpi_lower]
     have hpi_upper : 0 ≤ (1.4 - Real.log Real.pi) / (2 * y ^ 2) := by positivity
     have heq2 :
       (0.45 - Real.log 2 + Real.log Real.pi / 2) - (Real.log y + 1) / y +
@@ -692,7 +690,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_simple {N 
           (-5 * Real.log y + 5 / 2) / y ^ 3 +
           (Real.log Real.pi - 1.098) / 2 +
           (1.4 - Real.log Real.pi) / (2 * y ^ 2) := by
-      field_simp
+      field_simp [ne_of_gt hypos]
       ring
     have hE :
       0 ≤
@@ -700,7 +698,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_simple {N 
           (8 * Real.log y - 11 / 4 - Real.log Real.pi / 2) / y ^ 2 +
           (-5 * Real.log y + 5 / 2) / y ^ 3 := by
       rw [heq2]
-      linarith
+      linarith only [hcoeff, hpi_lower, hpi_upper]
     nlinarith only [hE, heq]
   exact hstrong.trans hcompare
 
@@ -738,21 +736,22 @@ theorem primitiveQuadraticBRe_le_of_qneOne_neg_one_branch {N : ℕ} [NeZero N]
         have hN1 : χ.conductor ≠ 1 :=
           AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
-        omega)
+        exact Nat.succ_le_iff.mpr (Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨Nat.ne_of_gt hNpos, hN1⟩))
       hGRH hprimitive hprimne hinv hquad heven hx
   have hlower :=
-    characterReciprocalWeightedSum_re_ge_log_sub_cneg_one x χ hquad hriemann (by linarith) hodd h2
+    characterReciprocalWeightedSum_re_ge_log_sub_cneg_one x χ hquad hriemann
+      (by exact le_trans (by norm_num only) hx) hodd h2
   have hsqrt : 1 < Real.sqrt x := by
-    have hxone : (1 : ℝ) < x := by linarith
+    have hxone : (1 : ℝ) < x := by linarith only [hx]
     have hsqrt_nonneg : 0 ≤ Real.sqrt x := Real.sqrt_nonneg x
-    have hsqrt_sq : Real.sqrt x ^ 2 = x := Real.sq_sqrt (by linarith)
-    nlinarith
+    have hsqrt_sq : Real.sqrt x ^ 2 = x := Real.sq_sqrt (le_trans (by norm_num only) hx)
+    nlinarith only [hxone, hsqrt_nonneg, hsqrt_sq]
   have hden : 0 < (1 - 1 / Real.sqrt x) ^ 2 := by
-    have hsqrtpos : 0 < Real.sqrt x := Real.sqrt_pos.2 (by linarith)
+    have hsqrtpos : 0 < Real.sqrt x := Real.sqrt_pos.2 (lt_of_lt_of_le (by norm_num only) hx)
     have hpos : 0 < 1 - 1 / Real.sqrt x := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hsqrtpos).2
-      linarith
+      simpa only [one_mul] using hsqrt
     positivity
   apply (le_div_iff₀ hden).2
   have hbd :
@@ -760,7 +759,7 @@ theorem primitiveQuadraticBRe_le_of_qneOne_neg_one_branch {N : ℕ} [NeZero N]
         |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| ≤
       (1 / 2) * (1 - 1 / x) * (Real.log χ.conductor - Real.log Real.pi) - 4 / 5 -
         (Real.log x - 8 / 5 - (4 / 3) * Real.log 2) := by
-    linarith [hraw, hlower]
+    linarith only [hraw, hlower]
   simpa only [one_div, mul_comm, ge_iff_le] using hbd
 
 /-!
@@ -787,8 +786,8 @@ theorem primitiveQuadraticBRe_le_of_qneOne_neg_one_branch_at_square {N : ℕ} [N
       ((1 / 2) * (1 - 1 / y ^ 2) * (y - Real.log 4 - Real.log Real.pi) - 4 / 5 -
           (2 * Real.log y - 8 / 5 - (4 / 3) * Real.log 2)) /
         (1 - 1 / y) ^ 2 := by
-  have hypos : 0 < y := by linarith
-  have hx : (64 : ℝ) ≤ y ^ 2 := by nlinarith
+  have hypos : 0 < y := by linarith only [hy]
+  have hx : (64 : ℝ) ≤ y ^ 2 := by nlinarith only [hy]
   have hraw :=
     primitiveQuadraticBRe_le_of_qneOne_neg_one_branch χ hne hquad heven hGRH hx hriemann hodd h2
   have hsqrt : Real.sqrt (y ^ 2) = y := by rw [Real.sqrt_sq_eq_abs, abs_of_pos hypos]
@@ -797,23 +796,23 @@ theorem primitiveQuadraticBRe_le_of_qneOne_neg_one_branch_at_square {N : ℕ} [N
     norm_num only
   rw [hsqrt, hlogsq] at hraw
   have hcoef : 0 ≤ (1 / 2 : ℝ) * (1 - 1 / y ^ 2) := by
-    have hy2 : 1 ≤ y ^ 2 := by nlinarith
+    have hy2 : 1 ≤ y ^ 2 := by nlinarith only [hy]
     have hinv : 1 / y ^ 2 ≤ 1 := by
       apply (div_le_iff₀ (sq_pos_of_pos hypos)).2
-      nlinarith
-    linarith
+      nlinarith only [hy]
+    linarith only [hinv]
   have hnum :
     (1 / 2) * (1 - 1 / y ^ 2) * (Real.log χ.conductor - Real.log Real.pi) - 4 / 5 -
         (2 * Real.log y - 8 / 5 - (4 / 3) * Real.log 2) ≤
       (1 / 2) * (1 - 1 / y ^ 2) * (y - Real.log 4 - Real.log Real.pi) - 4 / 5 -
         (2 * Real.log y - 8 / 5 - (4 / 3) * Real.log 2) := by
     have hmul := mul_le_mul_of_nonneg_left (sub_le_sub_right hlogD (Real.log Real.pi)) hcoef
-    linarith
+    linarith only [hmul]
   have hden : 0 < (1 - 1 / y) ^ 2 := by
     have hpos : 0 < 1 - 1 / y := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hypos).2
-      linarith
+      linarith only [hy]
     positivity
   calc
     _ ≤
@@ -845,8 +844,8 @@ theorem primitiveQuadraticBRe_le_of_qneOne_neg_one_branch_at_square_le {N : ℕ}
       ((1 / 2) * (1 - 1 / y ^ 2) * (y - Real.log Real.pi) - 4 / 5 -
           (2 * Real.log y - 8 / 5 - (4 / 3) * Real.log 2)) /
         (1 - 1 / y) ^ 2 := by
-  have hypos : 0 < y := by linarith
-  have hx : (64 : ℝ) ≤ y ^ 2 := by nlinarith
+  have hypos : 0 < y := by linarith only [hy]
+  have hx : (64 : ℝ) ≤ y ^ 2 := by nlinarith only [hy]
   have hraw :=
     primitiveQuadraticBRe_le_of_qneOne_neg_one_branch χ hne hquad heven hGRH hx hriemann hodd h2
   have hsqrt : Real.sqrt (y ^ 2) = y := by rw [Real.sqrt_sq_eq_abs, abs_of_pos hypos]
@@ -855,23 +854,23 @@ theorem primitiveQuadraticBRe_le_of_qneOne_neg_one_branch_at_square_le {N : ℕ}
     norm_num only
   rw [hsqrt, hlogsq] at hraw
   have hcoef : 0 ≤ (1 / 2 : ℝ) * (1 - 1 / y ^ 2) := by
-    have hy2 : 1 ≤ y ^ 2 := by nlinarith
+    have hy2 : 1 ≤ y ^ 2 := by nlinarith only [hy]
     have hinv : 1 / y ^ 2 ≤ 1 := by
       apply (div_le_iff₀ (sq_pos_of_pos hypos)).2
-      nlinarith
-    linarith
+      nlinarith only [hy]
+    linarith only [hinv]
   have hnum :
     (1 / 2) * (1 - 1 / y ^ 2) * (Real.log χ.conductor - Real.log Real.pi) - 4 / 5 -
         (2 * Real.log y - 8 / 5 - (4 / 3) * Real.log 2) ≤
       (1 / 2) * (1 - 1 / y ^ 2) * (y - Real.log Real.pi) - 4 / 5 -
         (2 * Real.log y - 8 / 5 - (4 / 3) * Real.log 2) := by
     have hmul := mul_le_mul_of_nonneg_left (sub_le_sub_right hlogD (Real.log Real.pi)) hcoef
-    linarith
+    linarith only [hmul]
   have hden : 0 < (1 - 1 / y) ^ 2 := by
     have hpos : 0 < 1 - 1 / y := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hypos).2
-      linarith
+      linarith only [hy]
     positivity
   calc
     _ ≤
@@ -898,20 +897,20 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square {N : ℕ} [NeZer
       ((1 / 2) * (1 - 1 / y ^ 2) * (y - Real.log Real.pi) - 4 / 5 -
           (2 * Real.log y - 8 / 5 - Real.log 2)) /
         (1 - 1 / y) ^ 2 := by
-  have hypos : 0 < y := by linarith
+  have hypos : 0 < y := by linarith only [hy]
+  have hy2 : 64 ≤ y ^ 2 := by nlinarith only [hy]
   have hbase :=
-    primitiveQuadraticBRe_le_of_qneOne_one_branch χ hne hquad heven hGRH (by nlinarith : 64 ≤ y ^ 2)
-      hriemann hodd h2
+    primitiveQuadraticBRe_le_of_qneOne_one_branch χ hne hquad heven hGRH hy2 hriemann hodd h2
   have hsqrt : Real.sqrt (y ^ 2) = y := by rw [Real.sqrt_sq_eq_abs, abs_of_pos hypos]
   have hlogsq : Real.log (y ^ 2) = 2 * Real.log y := by
     rw [Real.log_pow]
     norm_num only
   have hcoef : 0 ≤ (1 / 2 : ℝ) * (1 - 1 / y ^ 2) := by
-    have hsq : 1 ≤ y ^ 2 := by nlinarith
+    have hsq : 1 ≤ y ^ 2 := by nlinarith only [hy]
     have hinv : 1 / y ^ 2 ≤ 1 := by
       apply (div_le_iff₀ (sq_pos_of_pos hypos)).2
-      nlinarith
-    have : 0 ≤ 1 - 1 / y ^ 2 := by linarith
+      nlinarith only [hy]
+    have : 0 ≤ 1 - 1 / y ^ 2 := by linarith only [hinv]
     positivity
   have hnum :
     (1 / 2) * (1 - 1 / y ^ 2) * (Real.log χ.conductor - Real.log Real.pi) - 4 / 5 -
@@ -920,13 +919,13 @@ theorem primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square {N : ℕ} [NeZer
         (2 * Real.log y - 8 / 5 - Real.log 2) := by
     rw [hlogsq]
     have hmul := mul_le_mul_of_nonneg_left (sub_le_sub_right hlogD (Real.log Real.pi)) hcoef
-    linarith
+    linarith only [hmul]
   rw [hsqrt, hlogsq] at hbase
   have hden : 0 < (1 - 1 / y) ^ 2 := by
     have hpos : 0 < 1 - 1 / y := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hypos).2
-      linarith
+      linarith only [hy]
     positivity
   rw [hlogsq] at hnum
   calc
@@ -966,8 +965,8 @@ theorem llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_quadratic {q : �
     simp only [DirichletCharacter.changeLevel_one] at hchange
     exact hne hchange.symm
   have hy : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
-  have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := by linarith
-  have hx64 : (64 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 := by nlinarith
+  have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := by linarith only [hy]
+  have hx64 : (64 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 := by nlinarith only [hy]
   have hsqrt : Real.sqrt ((llsTheorem11S1RadiusRoot q) ^ 2) = llsTheorem11S1RadiusRoot q := by
     rw [Real.sqrt_sq_eq_abs, abs_of_pos hypos]
   have hraw :=
@@ -1005,7 +1004,7 @@ theorem llsPart1PrimitiveZeroMassFullLevelRawAt_of_grh_quadratic {q : ℕ} [NeZe
   have hlevelchange := llsPart1PrimitiveReciprocalLowerWithLevelChangeAt_of_riemann h24 χ hq hsmall
   rw [LLSPart1PrimitiveReciprocalLowerWithLevelChangeAt] at hlevelchange
   have hy : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
-  have hx2 : (2 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 := by nlinarith
+  have hx2 : (2 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 := by nlinarith only [hy]
   have hqd : q / χ.conductor ≠ 0 := by
     rw [Nat.div_ne_zero_iff]
     exact
@@ -1022,6 +1021,6 @@ theorem llsPart1PrimitiveZeroMassFullLevelRawAt_of_grh_quadratic {q : ℕ} [NeZe
   rw [hlogd] at hraw
   unfold LLSPart1PrimitiveZeroMassFullLevelRawAt
   rw [hlogq]
-  linarith [hraw, hlevelchange, habsorb]
+  linarith only [hraw, hlevelchange, habsorb]
 
 end PseudoPrime.LLS.Extensions

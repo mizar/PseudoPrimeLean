@@ -40,12 +40,19 @@ theorem xiOrderOneBound_monotoneOn : MonotoneOn xiOrderOneBound (Set.Ici (0 : �
   have hpolynonneg :
     0 ≤ a + (a + 1) / 2 + a * (a + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2) := by
     have : 0 ≤ a * (a + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2) := by positivity
-    linarith
+    linarith only [ha, this]
   have hexpmono :
     Real.exp ((a / 2 + 1) * Real.log (a / 2 + 1)) ≤
       Real.exp ((b / 2 + 1) * Real.log (b / 2 + 1)) := by
     apply Real.exp_le_exp.mpr
-    exact Gamma.mul_log_mono_of_one_le (by linarith) (by linarith)
+    exact
+      Gamma.mul_log_mono_of_one_le
+        (by
+          have ha2 : 0 ≤ a / 2 := div_nonneg ha (by norm_num only)
+          simpa only [zero_add, add_comm] using add_le_add_left ha2 1)
+        (by
+          have hab2 : a / 2 ≤ b / 2 := div_le_div_of_nonneg_right hab (by norm_num only)
+          simpa only [add_comm] using add_le_add_left hab2 1)
   have hexpnonneg : 0 ≤ Real.exp ((a / 2 + 1) * Real.log (a / 2 + 1)) := (Real.exp_pos _).le
   gcongr
 
@@ -53,14 +60,14 @@ theorem one_le_xiOrderOneBound {x : ℝ} (hx : 0 ≤ x) : 1 ≤ xiOrderOneBound 
   have h1 : 0 ≤ x + (x + 1) / 2 + x * (x + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2) := by
     have : 0 ≤ x * (x + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2) :=
       mul_nonneg (mul_nonneg hx (by positivity)) (RiemannZeta.sawtoothRemainderBound_nonneg _)
-    linarith
+    linarith only [hx, this]
   have h2 :
     0 ≤
       Real.pi ^ (-(1 : ℝ) / 4) * Real.exp ((x / 2 + 1) * Real.log (x / 2 + 1)) *
         (x + (x + 1) / 2 + x * (x + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2)) :=
     mul_nonneg (mul_nonneg (Real.rpow_nonneg Real.pi_pos.le _) (Real.exp_pos _).le) h1
   unfold xiOrderOneBound
-  linarith
+  exact le_add_of_nonneg_right h2
 
 /-- **The order-1 growth bound on `Re s ≥ 1/2`.** Assembles the closed form
 `PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi_eq_gamma_mul_zetaEntire`
@@ -84,7 +91,7 @@ theorem norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 
       rw [Real.norm_of_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2)]
     rw [hval]
     exact le_trans (by norm_num only) (one_le_xiOrderOneBound (norm_nonneg _))
-  · have hre_half_pos : (0 : ℝ) < s.re / 2 + 1 := by linarith
+  · have hre_half_pos : (0 : ℝ) < s.re / 2 + 1 := by linarith only [hs]
     have hΓne : Complex.Gamma (s / 2 + 1) ≠ 0 := by
       apply Complex.Gamma_ne_zero_of_re_pos
       simpa only [Complex.add_re, Complex.div_ofNat_re, Complex.one_re] using hre_half_pos
@@ -97,8 +104,8 @@ theorem norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 
       rw [heq]
       have hre_eq : (-s / 2).re = -(s.re) / 2 := by simp only [Complex.div_ofNat_re, Complex.neg_re]
       rw [hre_eq]
-      have hpi1 : (1 : ℝ) ≤ Real.pi := by linarith [Real.pi_gt_three]
-      exact Real.rpow_le_rpow_of_exponent_le hpi1 (by linarith)
+      have hpi1 : (1 : ℝ) ≤ Real.pi := by linarith only [Real.pi_gt_three]
+      exact Real.rpow_le_rpow_of_exponent_le hpi1 (by linarith only [hs])
     -- Factor 2: `‖Γ(s/2+1)‖ ≤ exp((‖s‖/2+1)·log(‖s‖/2+1))`.
     have hfac2 :
       ‖Complex.Gamma (s / 2 + 1)‖ ≤ Real.exp ((‖s‖ / 2 + 1) * Real.log (‖s‖ / 2 + 1)) := by
@@ -111,8 +118,8 @@ theorem norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 
             exact hre_half_pos)
       rw [hre2_eq] at hstep1
       have hlog : Real.log (Real.Gamma (s.re / 2 + 1)) ≤ (s.re / 2 + 1) * Real.log (s.re / 2 + 1) :=
-        Gamma.log_Gamma_le_of_one_le (by linarith)
-      have hGammapos : 0 < Real.Gamma (s.re / 2 + 1) := Real.Gamma_pos_of_pos (by linarith)
+        Gamma.log_Gamma_le_of_one_le (by linarith only [hs])
+      have hGammapos : 0 < Real.Gamma (s.re / 2 + 1) := Real.Gamma_pos_of_pos hre_half_pos
       have hstep2 :
         Real.Gamma (s.re / 2 + 1) ≤ Real.exp ((s.re / 2 + 1) * Real.log (s.re / 2 + 1)) := by
         calc
@@ -123,13 +130,24 @@ theorem norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 
         Real.exp ((s.re / 2 + 1) * Real.log (s.re / 2 + 1)) ≤
           Real.exp ((‖s‖ / 2 + 1) * Real.log (‖s‖ / 2 + 1)) := by
         apply Real.exp_le_exp.mpr
-        exact Gamma.mul_log_mono_of_one_le (by linarith) (by linarith)
+        exact
+          Gamma.mul_log_mono_of_one_le
+            (by
+              have hsre_nonneg : 0 ≤ s.re := le_trans (by norm_num only) hs
+              have hsre_half_nonneg : 0 ≤ s.re / 2 := div_nonneg hsre_nonneg (by norm_num only)
+              simpa only [zero_add, add_comm] using add_le_add_left hsre_half_nonneg 1)
+            (by
+              have hsre_le_norm_half : s.re / 2 ≤ ‖s‖ / 2 :=
+                div_le_div_of_nonneg_right hsre_le (by norm_num only)
+              simpa only [add_comm] using add_le_add_left hsre_le_norm_half 1)
       exact hstep1.trans (hstep2.trans hstep3)
     -- Factor 3: `‖RiemannZeta.zetaEntire s‖` is polynomially bounded.
     have hfac3 :
       ‖RiemannZeta.zetaEntire s‖ ≤
         ‖s‖ + (‖s‖ + 1) / 2 + ‖s‖ * (‖s‖ + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2) := by
-      have hz := RiemannZeta.norm_zetaEntire_le_of_reGt_neg_one (s := s) (by linarith)
+      have hz :=
+        RiemannZeta.norm_zetaEntire_le_of_reGt_neg_one (s := s)
+          (lt_of_lt_of_le (by norm_num only) hs)
       have hsaw_le :
         RiemannZeta.sawtoothRemainderBound s.re ≤ RiemannZeta.sawtoothRemainderBound (1 / 2) :=
         RiemannZeta.sawtoothRemainderBound_antitone (by norm_num only) hs
@@ -148,7 +166,7 @@ theorem norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 
             ‖s‖ * (‖s‖ + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2)) := by
       gcongr
     unfold xiOrderOneBound
-    linarith [hcombine]
+    linarith only [hcombine]
 
 /-- The global xi norm bound follows from the right-half-plane estimate,
 monotonicity of the envelope, and reflection `s ↦ 1-s`.
@@ -168,7 +186,7 @@ theorem norm_riemannXi_le_xiOrderOneBound_on_closedBall {R : ℝ} (hR : 0 ≤ R)
   · change 0 ≤ ‖s‖ + 1
     positivity
   · change 0 ≤ R + 1
-    linarith
-  · linarith
+    exact add_nonneg hR (by norm_num only)
+  · simpa only [add_comm] using add_le_add_left hs 1
 
 end PseudoPrime.AnalyticNumberTheory.RiemannXi

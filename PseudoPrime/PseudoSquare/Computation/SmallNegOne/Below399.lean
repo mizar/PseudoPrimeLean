@@ -381,60 +381,61 @@ theorem below399NegOneCertificate_valid : Below399NegOneCertificate := by
   · by_cases h96 : n.val < 96
     · by_cases h48 : n.val < 48
       · by_cases h16 : n.val < 16
-        · exact below399NegOneCertificate_valid_block_0 n (by omega) (by omega)
+        · exact below399NegOneCertificate_valid_block_0 n (Nat.zero_le _) h16
         · by_cases h32 : n.val < 32
-          · exact below399NegOneCertificate_valid_block_16 n (by omega) (by omega)
-          · exact below399NegOneCertificate_valid_block_32 n (by omega) (by omega)
+          · exact below399NegOneCertificate_valid_block_16 n (Nat.le_of_not_lt h16) h32
+          · exact below399NegOneCertificate_valid_block_32 n (Nat.le_of_not_lt h32) h48
       · by_cases h64 : n.val < 64
-        · exact below399NegOneCertificate_valid_block_48 n (by omega) (by omega)
+        · exact below399NegOneCertificate_valid_block_48 n (Nat.le_of_not_lt h48) h64
         · by_cases h80 : n.val < 80
-          · exact below399NegOneCertificate_valid_block_64 n (by omega) (by omega)
-          · exact below399NegOneCertificate_valid_block_80 n (by omega) (by omega)
+          · exact below399NegOneCertificate_valid_block_64 n (Nat.le_of_not_lt h64) h80
+          · exact below399NegOneCertificate_valid_block_80 n (Nat.le_of_not_lt h80) h96
     · by_cases h144 : n.val < 144
       · by_cases h112 : n.val < 112
-        · exact below399NegOneCertificate_valid_block_96 n (by omega) (by omega)
+        · exact below399NegOneCertificate_valid_block_96 n (Nat.le_of_not_lt h96) h112
         · by_cases h128 : n.val < 128
-          · exact below399NegOneCertificate_valid_block_112 n (by omega) (by omega)
-          · exact below399NegOneCertificate_valid_block_128 n (by omega) (by omega)
+          · exact below399NegOneCertificate_valid_block_112 n (Nat.le_of_not_lt h112) h128
+          · exact below399NegOneCertificate_valid_block_128 n (Nat.le_of_not_lt h128) h144
       · by_cases h160 : n.val < 160
-        · exact below399NegOneCertificate_valid_block_144 n (by omega) (by omega)
+        · exact below399NegOneCertificate_valid_block_144 n (Nat.le_of_not_lt h144) h160
         · by_cases h176 : n.val < 176
-          · exact below399NegOneCertificate_valid_block_160 n (by omega) (by omega)
-          · exact below399NegOneCertificate_valid_block_176 n (by omega) (by omega)
+          · exact below399NegOneCertificate_valid_block_160 n (Nat.le_of_not_lt h160) h176
+          · exact below399NegOneCertificate_valid_block_176 n (Nat.le_of_not_lt h176) h192
   · by_cases h288 : n.val < 288
     · by_cases h240 : n.val < 240
       · by_cases h208 : n.val < 208
-        · exact below399NegOneCertificate_valid_block_192 n (by omega) (by omega)
+        · exact below399NegOneCertificate_valid_block_192 n (Nat.le_of_not_lt h192) h208
         · by_cases h224 : n.val < 224
-          · exact below399NegOneCertificate_valid_block_208 n (by omega) (by omega)
-          · exact below399NegOneCertificate_valid_block_224 n (by omega) (by omega)
+          · exact below399NegOneCertificate_valid_block_208 n (Nat.le_of_not_lt h208) h224
+          · exact below399NegOneCertificate_valid_block_224 n (Nat.le_of_not_lt h224) h240
       · by_cases h256 : n.val < 256
-        · exact below399NegOneCertificate_valid_block_240 n (by omega) (by omega)
+        · exact below399NegOneCertificate_valid_block_240 n (Nat.le_of_not_lt h240) h256
         · by_cases h272 : n.val < 272
-          · exact below399NegOneCertificate_valid_block_256 n (by omega) (by omega)
-          · exact below399NegOneCertificate_valid_block_272 n (by omega) (by omega)
+          · exact below399NegOneCertificate_valid_block_256 n (Nat.le_of_not_lt h256) h272
+          · exact below399NegOneCertificate_valid_block_272 n (Nat.le_of_not_lt h272) h288
     · by_cases h336 : n.val < 336
       · by_cases h304 : n.val < 304
-        · exact below399NegOneCertificate_valid_block_288 n (by omega) (by omega)
+        · exact below399NegOneCertificate_valid_block_288 n (Nat.le_of_not_lt h288) h304
         · by_cases h320 : n.val < 320
-          · exact below399NegOneCertificate_valid_block_304 n (by omega) (by omega)
-          · exact below399NegOneCertificate_valid_block_320 n (by omega) (by omega)
+          · exact below399NegOneCertificate_valid_block_304 n (Nat.le_of_not_lt h304) h320
+          · exact below399NegOneCertificate_valid_block_320 n (Nat.le_of_not_lt h320) h336
       · by_cases h368 : n.val < 368
         · by_cases h352 : n.val < 352
-          · exact below399NegOneCertificate_valid_block_336 n (by omega) (by omega)
-          · exact below399NegOneCertificate_valid_block_352 n (by omega) (by omega)
+          · exact below399NegOneCertificate_valid_block_336 n (Nat.le_of_not_lt h336) h352
+          · exact below399NegOneCertificate_valid_block_352 n (Nat.le_of_not_lt h352) h368
         · by_cases h384 : n.val < 384
-          · exact below399NegOneCertificate_valid_block_368 n (by omega) (by omega)
-          · exact below399NegOneCertificate_valid_block_384 n (by omega) (by omega)
+          · exact below399NegOneCertificate_valid_block_368 n (Nat.le_of_not_lt h368) h384
+          · exact below399NegOneCertificate_valid_block_384 n (Nat.le_of_not_lt h384) n.isLt
 
 -- END GENERATED below399NegOneCertificate_valid
 
 /-- A square below `399` has a square root below `20`. -/
 theorem square_root_lt_twenty_of_lt_399 {n k : ℕ} (hn : n < 399) (hk : n = k ^ 2) : k < 20 := by
   by_contra hnot
-  have hk20 : 20 ≤ k := by omega
+  have hk20 : 20 ≤ k := Nat.le_of_not_lt hnot
   have h400 : 400 ≤ k ^ 2 := by simpa only [pow_two] using Nat.mul_self_le_mul_self hk20
-  omega
+  have h399 : 399 ≤ n := hk ▸ Nat.le_trans (by norm_num only) h400
+  exact Nat.not_lt_of_ge h399 hn
 
 /-- Every odd nonsquare below `399` has least odd-prime Jacobi `-1` witness at most `17`. -/
 theorem primeNegOneWitness_le_seventeen_of_lt_399 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
@@ -466,10 +467,10 @@ theorem primeNegOneWitness_91_eq_17 (hw : (NumberTheory.PrimeNegOneWitnessSet 91
     primeNegOneWitness_le_seventeen_of_lt_399 (by decide) not_isSquare_91 (by norm_num only)
   have hmem := NumberTheory.primeNegOneWitness_mem 91 hw
   by_contra hne
-  have hlt : NumberTheory.primeNegOneWitness 91 hw < 17 := by omega
+  have hlt : NumberTheory.primeNegOneWitness 91 hw < 17 := Nat.lt_of_le_of_ne hle hne
   rcases hmem with ⟨_hprime, hodd, hjacobi⟩
-  rcases hodd with ⟨k, hk⟩
-  interval_cases NumberTheory.primeNegOneWitness 91 hw <;> try omega
+  have hpmod : NumberTheory.primeNegOneWitness 91 hw % 2 = 1 := Nat.odd_iff.mp hodd
+  interval_cases NumberTheory.primeNegOneWitness 91 hw <;> norm_num only at hpmod
   all_goals norm_num only at hjacobi
 
 /-- Immediately before `399`, the finite maximum is `17`. -/

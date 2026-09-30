@@ -130,7 +130,7 @@ theorem qNeOneSmall750_wheel_2310_1 {n : ℕ} (hn : n < 750) (hr : n % 2310 = 1)
 theorem qNeOneSmall750_reject_13_5 {n : ℕ} (hr : n % 13 = 5)
     (hpass : QNeOneSievePasses qNeOneSmall750Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 421 modulo 2310, below 750. -/
@@ -144,7 +144,7 @@ theorem qNeOneSmall750_wheel_2310_421 {n : ℕ} (hn : n < 750) (hr : n % 2310 = 
 theorem qNeOneSmall750_reject_13_7 {n : ℕ} (hr : n % 13 = 7)
     (hpass : QNeOneSievePasses qNeOneSmall750Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 7) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 7) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 631 modulo 2310, below 750. -/
@@ -179,7 +179,7 @@ theorem qNeOneSmall750_wheel_210_1 {n : ℕ} (hn : n < 750) (hr : n % 210 = 1)
 theorem qNeOneSmall750_reject_13_6 {n : ℕ} (hr : n % 13 = 6)
     (hpass : QNeOneSievePasses qNeOneSmall750Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 331 modulo 2310, below 750. -/
@@ -264,7 +264,7 @@ theorem qNeOneSmall750_wheel_2310_169 {n : ℕ} (hn : n < 750) (hr : n % 2310 = 
 theorem qNeOneSmall750_reject_13_2 {n : ℕ} (hr : n % 13 = 2)
     (hpass : QNeOneSievePasses qNeOneSmall750Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 379 modulo 2310, below 750. -/
@@ -422,7 +422,7 @@ theorem qNeOneSmall1000_wheel_2310_1 {n : ℕ} (hn : n < 1000) (hr : n % 2310 = 
 theorem qNeOneSmall1000_reject_13_5 {n : ℕ} (hr : n % 13 = 5)
     (hpass : QNeOneSievePasses qNeOneSmall1000Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 421 modulo 2310, below 1000. -/
@@ -436,7 +436,7 @@ theorem qNeOneSmall1000_wheel_2310_421 {n : ℕ} (hn : n < 1000) (hr : n % 2310 
 theorem qNeOneSmall1000_reject_13_7 {n : ℕ} (hr : n % 13 = 7)
     (hpass : QNeOneSievePasses qNeOneSmall1000Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 7) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 7) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 631 modulo 2310, below 1000. -/
@@ -478,7 +478,7 @@ theorem qNeOneSmall1000_wheel_210_1 {n : ℕ} (hn : n < 1000) (hr : n % 210 = 1)
 theorem qNeOneSmall1000_reject_13_6 {n : ℕ} (hr : n % 13 = 6)
     (hpass : QNeOneSievePasses qNeOneSmall1000Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 331 modulo 2310, below 1000. -/
@@ -492,7 +492,7 @@ theorem qNeOneSmall1000_wheel_2310_331 {n : ℕ} (hn : n < 1000) (hr : n % 2310 
 theorem qNeOneSmall1000_reject_17_3 {n : ℕ} (hr : n % 17 = 3)
     (hpass : QNeOneSievePasses qNeOneSmall1000Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num only)
         (hpass 17 (by decide))).elim
 
 /-- Coverage of the surviving class 751 modulo 2310, below 1000. -/
@@ -534,7 +534,7 @@ theorem qNeOneSmall1000_wheel_210_121 {n : ℕ} (hn : n < 1000) (hr : n % 210 = 
 theorem qNeOneSmall1000_reject_17_5 {n : ℕ} (hr : n % 17 = 5)
     (hpass : QNeOneSievePasses qNeOneSmall1000Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num only)
         (hpass 17 (by decide))).elim
 
 /-- Coverage of the surviving class 991 modulo 2310, below 1000. -/
@@ -598,7 +598,7 @@ theorem qNeOneSmall1000_wheel_2310_169 {n : ℕ} (hn : n < 1000) (hr : n % 2310 
 theorem qNeOneSmall1000_reject_13_2 {n : ℕ} (hr : n % 13 = 2)
     (hpass : QNeOneSievePasses qNeOneSmall1000Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 379 modulo 2310, below 1000. -/
@@ -682,7 +682,7 @@ theorem qNeOneSmall1000_wheel_2310_529 {n : ℕ} (hn : n < 1000) (hr : n % 2310 
 theorem qNeOneSmall1000_reject_13_0 {n : ℕ} (hr : n % 13 = 0)
     (hpass : QNeOneSievePasses qNeOneSmall1000Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 949 modulo 2310, below 1000. -/
@@ -770,7 +770,7 @@ theorem qNeOneSmall1500_wheel_2310_1 {n : ℕ} (hn : n < 1500) (hr : n % 2310 = 
 theorem qNeOneSmall1500_reject_13_5 {n : ℕ} (hr : n % 13 = 5)
     (hpass : QNeOneSievePasses qNeOneSmall1500Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 421 modulo 2310, below 1500. -/
@@ -784,7 +784,7 @@ theorem qNeOneSmall1500_wheel_2310_421 {n : ℕ} (hn : n < 1500) (hr : n % 2310 
 theorem qNeOneSmall1500_reject_13_7 {n : ℕ} (hr : n % 13 = 7)
     (hpass : QNeOneSievePasses qNeOneSmall1500Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 7) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 7) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 631 modulo 2310, below 1500. -/
@@ -826,7 +826,7 @@ theorem qNeOneSmall1500_wheel_210_1 {n : ℕ} (hn : n < 1500) (hr : n % 210 = 1)
 theorem qNeOneSmall1500_reject_13_6 {n : ℕ} (hr : n % 13 = 6)
     (hpass : QNeOneSievePasses qNeOneSmall1500Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 6) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 331 modulo 2310, below 1500. -/
@@ -840,7 +840,7 @@ theorem qNeOneSmall1500_wheel_2310_331 {n : ℕ} (hn : n < 1500) (hr : n % 2310 
 theorem qNeOneSmall1500_reject_17_3 {n : ℕ} (hr : n % 17 = 3)
     (hpass : QNeOneSievePasses qNeOneSmall1500Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 3) (hr.trans (by decide)) (by norm_num only)
         (hpass 17 (by decide))).elim
 
 /-- Coverage of the surviving class 751 modulo 2310, below 1500. -/
@@ -861,7 +861,7 @@ theorem qNeOneSmall1500_wheel_2310_961 {n : ℕ} (hn : n < 1500) (hr : n % 2310 
 theorem qNeOneSmall1500_reject_19_12 {n : ℕ} (hr : n % 19 = 12)
     (hpass : QNeOneSievePasses qNeOneSmall1500Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num only)
         (hpass 19 (by decide))).elim
 
 /-- Coverage of the surviving class 1171 modulo 2310, below 1500. -/
@@ -896,7 +896,7 @@ theorem qNeOneSmall1500_wheel_210_121 {n : ℕ} (hn : n < 1500) (hr : n % 210 = 
 theorem qNeOneSmall1500_reject_17_5 {n : ℕ} (hr : n % 17 = 5)
     (hpass : QNeOneSievePasses qNeOneSmall1500Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 5) (hr.trans (by decide)) (by norm_num only)
         (hpass 17 (by decide))).elim
 
 /-- Coverage of the surviving class 991 modulo 2310, below 1500. -/
@@ -967,7 +967,7 @@ theorem qNeOneSmall1500_wheel_2310_169 {n : ℕ} (hn : n < 1500) (hr : n % 2310 
 theorem qNeOneSmall1500_reject_13_2 {n : ℕ} (hr : n % 13 = 2)
     (hpass : QNeOneSievePasses qNeOneSmall1500Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 2) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 379 modulo 2310, below 1500. -/
@@ -981,7 +981,7 @@ theorem qNeOneSmall1500_wheel_2310_379 {n : ℕ} (hn : n < 1500) (hr : n % 2310 
 theorem qNeOneSmall1500_reject_17_12 {n : ℕ} (hr : n % 17 = 12)
     (hpass : QNeOneSievePasses qNeOneSmall1500Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 12) (hr.trans (by decide)) (by norm_num only)
         (hpass 17 (by decide))).elim
 
 /-- Coverage of the surviving class 1219 modulo 2310, below 1500. -/
@@ -1065,7 +1065,7 @@ theorem qNeOneSmall1500_wheel_2310_529 {n : ℕ} (hn : n < 1500) (hr : n % 2310 
 theorem qNeOneSmall1500_reject_13_0 {n : ℕ} (hr : n % 13 = 0)
     (hpass : QNeOneSievePasses qNeOneSmall1500Primes n) : IsSquare n := by
   exact
-    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num)
+    (qNeOne_reject_residue (r := 0) (hr.trans (by decide)) (by norm_num only)
         (hpass 13 (by decide))).elim
 
 /-- Coverage of the surviving class 949 modulo 2310, below 1500. -/

@@ -33,7 +33,7 @@ theorem quadraticDirichletLFunction_ne_zero_leftVertical {N : ℕ} [NeZero N]
   have hs1re : (1 : ℝ) ≤ (1 - s).re := by
     have h1 : (1 - s).re = 1 - s.re := by simp only [Complex.sub_re, Complex.one_re]
     rw [h1, hsre]
-    linarith
+    linarith only [Nat.cast_nonneg (α := ℝ) A]
   have hFsne := completedLFunction_ne_zero_farLeft_of_isQuadratic hprimitive hne hquad hs1re
   have hΓsne : DirichletCharacter.gammaFactor χ s ≠ 0 := by
     rcases χ.even_or_odd with heven | hodd
@@ -62,7 +62,7 @@ theorem dirichletLFunction_ne_zero_leftVertical {N : ℕ} [NeZero N] {χ : Diric
     have h1 : (1 - s).re = 1 - s.re := by simp only [Complex.sub_re, Complex.one_re]
     rw [h1, hsre]
     have hA' : (2 : ℝ) ≤ A := by exact_mod_cast hA
-    linarith
+    linarith only [hA']
   have hFsne := completedLFunction_ne_zero_farLeft hprimitive hne hinv hs1re
   have hΓsne : DirichletCharacter.gammaFactor χ s ≠ 0 := by
     rcases χ.even_or_odd with heven | hodd

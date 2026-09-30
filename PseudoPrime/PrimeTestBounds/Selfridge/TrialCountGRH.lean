@@ -20,9 +20,9 @@ theorem classicalNegOneTrialMaximum_real_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ} (hB : 751 ≤ B) :
     (classicalNegOneTrialMaximum B : ℝ) ≤ PseudoSquare.elementaryRadius B / 2 + 1 := by
   have hM : (classicalNegOneMaximum B : ℝ) ≤ PseudoSquare.elementaryRadius B := by
-    have h399 : 399 ≤ B := by omega
+    have h399 : 399 ≤ B := (by decide : 399 ≤ 751).trans hB
     rw [classicalNegOneMaximum_eq_QNegOne_of_399_le h399]
-    exact (PseudoSquare.elementary_formula_real hGRH (by omega)).2
+    exact (PseudoSquare.elementary_formula_real hGRH ((by decide : 3 ≤ 751).trans hB)).2
   unfold classicalNegOneTrialMaximum
   have hbase := classicalTrialCountThrough_real_le (classicalNegOneMaximum B)
   linarith only [hbase, hM]
@@ -39,8 +39,8 @@ theorem classicalTrialMaximum_elementary_bound_explicit
         (Real.log (4 * (B : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (B : ℝ))) + 3) ^ 2 / 2 +
           1 := by
   refine ⟨?_, ?_⟩
-  · exact PrimeTest.classicalTrialCountThrough_mono
-      (classicalNeOneMaximum_le_classicalNegOneMaximum B)
+  · exact
+      PrimeTest.classicalTrialCountThrough_mono (classicalNeOneMaximum_le_classicalNegOneMaximum B)
   · have := classicalNegOneTrialMaximum_real_le hGRH hB
     simpa only [PseudoSquare.elementaryRadius] using this
 

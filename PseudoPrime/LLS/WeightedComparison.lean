@@ -64,7 +64,7 @@ theorem re_characterLogWeightedSum_ge_of_defect_le (h21 : LLSRiemannWeightedLowe
   have hriemann := h21 X hX
   unfold weightedLogDefect at hdS
   unfold riemannLogLowerAt
-  linarith
+  linarith only [hdS, hriemann]
 
 /-- `C2`: a bounded reciprocal defect transports `LLSRiemannReciprocalLowerBound` to a lower
 bound on `Re R`. -/
@@ -75,7 +75,7 @@ theorem re_characterReciprocalWeightedSum_ge_of_defect_le (h24 : LLSRiemannRecip
       (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum X ψ).re := by
   have hriemann := h24 X hX
   unfold weightedReciprocalDefect at hdR
-  linarith
+  linarith only [hdR, hriemann]
 
 /--
 The common weighted-comparison core `C2`-`C4` for one nontrivial character `ψ` of level `f`, a

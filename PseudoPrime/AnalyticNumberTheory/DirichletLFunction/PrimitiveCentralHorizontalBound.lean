@@ -61,7 +61,7 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_central_integral_le
           rintro σ ⟨hσ1, hσ2⟩
           exact (hη k σ (abs_le.mpr ⟨hσ1.le, hσ2⟩)).1)
     rw [show |(2 : ℝ) - (-2)| = 4 from by norm_num only] at hbound
-    linarith
+    simpa only [mul_comm] using hbound
   · have hbound :=
       intervalIntegral.norm_integral_le_of_norm_le_const (a := (-2 : ℝ)) (b := 2) (f := fun σ : ℝ =>
         dirichletReciprocalContourKernel x χ
@@ -72,7 +72,7 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_central_integral_le
           rintro σ ⟨hσ1, hσ2⟩
           exact (hη k σ (abs_le.mpr ⟨hσ1.le, hσ2⟩)).2)
     rw [show |(2 : ℝ) - (-2)| = 4 from by norm_num only] at hbound
-    linarith
+    simpa only [mul_comm] using hbound
 
 /--
 Input/assumptions: same as
@@ -152,7 +152,7 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_central_integral_le
           rintro σ ⟨hσ1, hσ2⟩
           exact (hη k σ (abs_le.mpr ⟨hσ1.le, hσ2⟩)).1)
     rw [show |(2 : ℝ) - (-2)| = 4 from by norm_num only] at hbound
-    linarith
+    simpa only [mul_comm] using hbound
   · have hbound :=
       intervalIntegral.norm_integral_le_of_norm_le_const (a := (-2 : ℝ)) (b := 2) (f := fun σ : ℝ =>
         dirichletReciprocalContourKernel x χ
@@ -164,7 +164,7 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_central_integral_le
           rintro σ ⟨hσ1, hσ2⟩
           exact (hη k σ (abs_le.mpr ⟨hσ1.le, hσ2⟩)).2)
     rw [show |(2 : ℝ) - (-2)| = 4 from by norm_num only] at hbound
-    linarith
+    simpa only [mul_comm] using hbound
 
 /--
 Input/assumptions: same as

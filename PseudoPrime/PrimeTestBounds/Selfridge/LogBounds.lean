@@ -61,20 +61,22 @@ private theorem nine_le_log_sq_of_twenty_nine_le {n : ℕ} (hn : 29 ≤ n) :
   have hlog25 : (2 * (1.6094379123 : ℝ)) < Real.log 25 := by
     rw [show (25 : ℝ) = 5 * 5 by norm_num only, Real.log_mul (by norm_num only) (by norm_num only)]
     nlinarith only [Real.log_five_gt_d9]
-  have hcast : (25 : ℝ) ≤ n := by exact_mod_cast (show 25 ≤ n by omega)
+  have hcast : (25 : ℝ) ≤ n := by
+    exact_mod_cast (show 25 ≤ n by exact Nat.le_trans (by norm_num only : 25 ≤ 29) hn)
   have hmono :=
     Real.strictMonoOn_log.monotoneOn (by norm_num only : (0 : ℝ) < 25)
       (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 25) hcast) hcast
   nlinarith only [hlog25, hmono, sq_nonneg (Real.log (n : ℝ) - 3)]
 
-theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 {n : ℕ} (hn13 : 13 ≤ n)
+theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 {n : ℕ} (_hn13 : 13 ≤ n)
     (hn49 : n < 49) (hn : Odd n) (hns : ¬IsSquare n) :
     (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
           (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns) :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
   interval_cases n
-  all_goals try (obtain ⟨k, hk⟩ := hn; omega)
+  all_goals (have hnmod := Nat.odd_iff.mp hn; norm_num only at hnmod)
+  all_goals clear hnmod
   case «13» | «15» | «17» | «23» | «27» | «33» | «35» | «37» | «43» | «45» |
     «47» =>
     have hle :=
@@ -83,7 +85,7 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 {n : ℕ} (hn13
         (by
           rw [PrimeTest.jacobi_selfridgeD (by decide) hn]
           norm_num only [PseudoSquare.jacobiSym_nat_mod_left'])
-    exact (Nat.cast_le.mpr hle).trans (PseudoSquare.five_le_log_sq_of_eleven_le (by omega))
+    exact (Nat.cast_le.mpr hle).trans (PseudoSquare.five_le_log_sq_of_eleven_le (by norm_num only))
   case «19» | «21» | «31» |
     «41» =>
     have hle :=
@@ -92,17 +94,17 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 {n : ℕ} (hn13
         (by
           rw [PrimeTest.jacobi_selfridgeD (by decide) hn]
           norm_num only [PseudoSquare.jacobiSym_nat_mod_left'])
-    exact (Nat.cast_le.mpr hle).trans (PseudoSquare.seven_le_log_sq_of_sixteen_le (by omega))
+    exact
+      (Nat.cast_le.mpr hle).trans (PseudoSquare.seven_le_log_sq_of_sixteen_le (by norm_num only))
   case
     «29» =>
     have hle :=
       PrimeTest.firstStopNeOne_le_candidate (i := 11) hn hns
-        (by exact ⟨by norm_num only, by decide⟩)
-        (by norm_num only)
+        (by exact ⟨by norm_num only, by decide⟩) (by norm_num only)
         (by
           rw [PrimeTest.jacobi_selfridgeD (by decide) hn]
           norm_num only [PseudoSquare.jacobiSym_nat_mod_left'])
-    exact (Nat.cast_le.mpr hle).trans (eleven_le_log_sq_of_twenty_nine_le (by omega))
+    exact (Nat.cast_le.mpr hle).trans (eleven_le_log_sq_of_twenty_nine_le (by norm_num only))
   case
     «39» =>
     have hle :=
@@ -111,11 +113,11 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 {n : ℕ} (hn13
         (by
           rw [PrimeTest.jacobi_selfridgeD (by decide) hn]
           norm_num only [PseudoSquare.jacobiSym_nat_mod_left'])
-    exact (Nat.cast_le.mpr hle).trans (nine_le_log_sq_of_twenty_nine_le (by omega))
+    exact (Nat.cast_le.mpr hle).trans (nine_le_log_sq_of_twenty_nine_le (by norm_num only))
   case «25» => exact (hns ⟨5, by norm_num only⟩).elim
 
-theorem classicalFirstStopNeOne_le_fifteen_of_13_le_of_lt_49 {n : ℕ} (hn13 : 13 ≤ n) (hn49 : n < 49)
-    (hn : Odd n) (hns : ¬IsSquare n) :
+theorem classicalFirstStopNeOne_le_fifteen_of_13_le_of_lt_49 {n : ℕ} (_hn13 : 13 ≤ n)
+    (hn49 : n < 49) (hn : Odd n) (hns : ¬IsSquare n) :
     PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
         (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns) ≤
       15 := by
@@ -125,8 +127,10 @@ theorem classicalFirstStopNeOne_le_fifteen_of_13_le_of_lt_49 {n : ℕ} (hn13 : 1
   let hs := PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
   have hmax :=
     PrimeTest.primeNeOneWitness_le_classicalFirstStop_le_max_unconditional hn.pos hn hns hw hs
-  have hw7 := PseudoSquare.primeNeOneWitness_le_seven_of_lt_sixtyFour hn hns (by omega : n < 64)
-  have hw15 : NumberTheory.primeNeOneWitness n hw ≤ 15 := hw7.trans (by norm_num)
+  have hw7 :=
+    PseudoSquare.primeNeOneWitness_le_seven_of_lt_sixtyFour hn hns
+      (hn49.trans (by norm_num only : 49 < 64))
+  have hw15 : NumberTheory.primeNeOneWitness n hw ≤ 15 := hw7.trans (by norm_num only)
   have hbound : max 15 (NumberTheory.primeNeOneWitness n hw) ≤ 15 := by exact (max_eq_left hw15).le
   exact hmax.2.trans hbound
 

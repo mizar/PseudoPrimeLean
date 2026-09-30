@@ -52,7 +52,7 @@ theorem commonFactorLogWeightedSum_eq_zero_of_noSmallPrimeFactor {m : ℕ} {X : 
   obtain ⟨hk1, hkle⟩ := Finset.mem_Icc.mp hk
   have hfloorne : ⌊X⌋₊ ≠ 0 := by
     have : 0 < ⌊X⌋₊ := lt_of_lt_of_le hpprime.pos hpfloor
-    omega
+    exact Nat.ne_of_gt this
   have hpk_le_nat : p ^ k ≤ ⌊X⌋₊ := Nat.pow_le_of_le_log hfloorne hkle
   have hpk_le : ((p ^ k : ℕ) : ℝ) ≤ X := (Nat.cast_le.mpr hpk_le_nat).trans (Nat.floor_le hX.le)
   have hpk_ge : (p : ℝ) ≤ (p : ℝ) ^ k :=
@@ -109,11 +109,12 @@ theorem commonFactorReciprocalWeightedSum_eq_zero_of_noSmallPrimeFactor {m : ℕ
       rw [div_lt_one (by exact_mod_cast Nat.pos_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk1))]
       exact_mod_cast hk1lt
     have hppow : (p : ℝ) ^ ((1 : ℝ) / k) < (p : ℝ) ^ (1 : ℝ) :=
-      Real.rpow_lt_rpow_of_exponent_lt (by linarith) hexp_lt_one
+      Real.rpow_lt_rpow_of_exponent_lt (lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 2) hpge2)
+        hexp_lt_one
     rw [Real.rpow_one] at hppow
     have hfloor_lt : ⌊(p : ℝ) ^ ((1 : ℝ) / k)⌋₊ < p :=
-      (Nat.floor_lt (Real.rpow_nonneg (by positivity) _)).mpr hppow
+      (Nat.floor_lt (Real.rpow_nonneg (Nat.cast_nonneg p) _)).mpr hppow
     rw [← hpXeq] at hpfloor
-    omega
+    exact (Nat.not_lt_of_ge hpfloor) hfloor_lt
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

@@ -46,13 +46,13 @@ def LLSRiemannReciprocalRemainderBound : Prop :=
 /-- The reciprocal Riemann remainder is uniformly bounded below by `-8 / 5`. -/
 theorem llsRiemannReciprocalRemainderBound : LLSRiemannReciprocalRemainderBound := by
   intro x hx
-  have hxpos : 0 < x := by linarith
+  have hxpos : 0 < x := (by norm_num only : (0 : ℝ) < 2).trans_le hx
   have hsqrt : 0 < Real.sqrt x := Real.sqrt_pos.2 hxpos
   have htail :=
     (AnalyticNumberTheory.RiemannZeta.riemannReciprocalTrivialZeroSeries_le_geometric hx).trans
       (Analysis.geometricTail_le_one_div_eighteen_mul hx)
   have hzeroNumerator : 2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass ≤ (3 / 10 : ℝ) := by
-    nlinarith [AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_three_twentieths]
+    nlinarith only [AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_three_twentieths]
   have hzero :
     2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass / Real.sqrt x ≤ 3 / (10 * Real.sqrt x) := by
     calc
@@ -66,19 +66,21 @@ theorem llsRiemannReciprocalRemainderBound : LLSRiemannReciprocalRemainderBound 
         2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass / Real.sqrt x ≤
       1 / 50 + Real.log (2 * Real.pi) / x := by
     have hreciprocal : (1 : ℝ) / (18 * x) + 9 / (8 * x) ≤ (3 / 2) / x := by
-      field_simp [hxpos.ne']
-      norm_num only
-    linarith
-  nlinarith [Analysis.eulerMascheroniConstant_lt_twentyNine_fiftieths]
+      calc
+        (1 : ℝ) / (18 * x) + 9 / (8 * x) = (1 / 18 + 9 / 8) / x := by
+          rw [add_div, div_mul_eq_div_div, div_mul_eq_div_div]
+        _ ≤ (3 / 2) / x := (div_le_div_iff_of_pos_right hxpos).mpr (by norm_num only)
+    linarith only [htail, hzero, hsqrtTradeoff, hlog, hreciprocal]
+  nlinarith only [hcost, Analysis.eulerMascheroniConstant_lt_twentyNine_fiftieths]
 
 /-- The explicit-formula lower bound and its remainder estimate imply the reciprocal lower bound. -/
 theorem llsRiemannReciprocalLowerBound_of_explicit
     (hexplicit : LLSRiemannReciprocalExplicitLowerBound)
     (hremainder : LLSRiemannReciprocalRemainderBound) : LLSRiemannReciprocalLowerBound := by
   intro x hx
-  have hlower := hexplicit x (by linarith)
+  have hlower := hexplicit x ((by norm_num only : (1 : ℝ) < 2).trans_le hx)
   have herror := hremainder x hx
-  linarith
+  linarith only [hlower, herror]
 
 /-- The explicit-formula lower bound alone now implies the reciprocal Riemann estimate. -/
 theorem llsRiemannReciprocalLowerBound_of_explicit_analytic

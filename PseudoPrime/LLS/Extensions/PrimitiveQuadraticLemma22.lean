@@ -58,9 +58,9 @@ theorem llsPart1PrimitiveWeightedUpperAt_of_grh_quadratic {q : ℕ} [NeZero q]
     have hN1 : χ.conductor ≠ 1 :=
       AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
     have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
-    omega
+    exact Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨Nat.ne_of_gt hNpos, hN1⟩
   have hy : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
-  have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := by linarith
+  have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := by linarith only [hy]
   have hx64 : (64 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 := by
     have hsq := mul_self_le_mul_self (show (0 : ℝ) ≤ 8 by norm_num only) hy.le
     calc
@@ -75,7 +75,7 @@ theorem llsPart1PrimitiveWeightedUpperAt_of_grh_quadratic {q : ℕ} [NeZero q]
     Real.log_div (by exact_mod_cast χ.conductor_ne_zero) Real.pi_ne_zero
   unfold LLSPart1PrimitiveWeightedUpperAt
   rw [hlogdiv]
-  linarith [hraw]
+  linarith only [hraw, hlogdiv]
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
@@ -117,7 +117,7 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_quadratic {q : ℕ} [NeZe
     characterLogWeightedSum_re_primitive_eq_add_levelChangeCorrection
       ((llsTheorem11S1RadiusRoot q) ^ 2) χ
   have hy8 : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
-  have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := by linarith
+  have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := by linarith only [hy8]
   have hqd : q / χ.conductor ≠ 0 := by
     rw [Nat.div_ne_zero_iff]
     exact
@@ -141,7 +141,7 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_quadratic {q : ℕ} [NeZe
   have hinv2pos : (0 : ℝ) < (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 := by
     have : (0 : ℝ) < 1 - 1 / llsTheorem11S1RadiusRoot q := by
       rw [sub_pos, div_lt_one hypos]
-      linarith
+      linarith only [hy8]
     positivity
   have hlogdconddiv :
     Real.log ((χ.conductor : ℝ) / Real.pi) = Real.log χ.conductor - Real.log Real.pi :=
@@ -175,7 +175,7 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_quadratic {q : ℕ} [NeZe
   rw [hmuleq] at hmul
   unfold llsPart1PrimitiveFullLevelUpperBound
   rw [hlogdconddiv] at hweighted
-  linarith [hweighted, hexact, habsorb, hmul]
+  linarith only [hweighted, hexact, habsorb, hmul]
 
 /--
 Input/assumptions: LLS Lemma 2.4's Riemann reciprocal lower bound, a level-`q` character with

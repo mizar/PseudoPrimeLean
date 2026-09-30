@@ -44,7 +44,7 @@ theorem continuous_dirichletReciprocalContourKernel_horizontalHeightSeq {N : ℕ
   have hTge := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
   have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k := by
     have hknn : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-    linarith
+    linarith only [hTge, hknn]
   have hpt :
     ∀ s : ℂ,
       s.im = primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k ∨
@@ -146,7 +146,7 @@ theorem tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_horizontal_integra
               ((σ : ℂ) -
                 primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k * Complex.I))
         Filter.atTop (nhds 0) := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := by linarith only [hx]
   have hfarLeft :=
     tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral A hA hN2 hGRH hprimitive
       hne hinv hquad hx
@@ -226,7 +226,7 @@ theorem tendsto_normalized_dirichletReciprocalBoundary_heightSeq {N : ℕ} [NeZe
             ∫ t : ℝ,
               dirichletReciprocalContourKernel x χ
                 (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I))) := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := by linarith only [hx]
   have hpi_ne : (2 * (Real.pi : ℂ)) ≠ 0 := by
     have hpine : (Real.pi : ℝ) ≠ 0 := Real.pi_ne_zero
     simp only [ne_eq, mul_eq_zero, OfNat.ofNat_ne_zero, Complex.ofReal_eq_zero, hpine, or_self,

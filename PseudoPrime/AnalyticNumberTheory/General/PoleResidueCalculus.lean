@@ -39,7 +39,7 @@ theorem circleIntegral_eq_two_pi_I_mul_of_mul_sub_eq {f g : ℂ → ℂ} {c : �
         exact hR.ne' hz.symm
       change f z = (z - c)⁻¹ * g z
       rw [← heq z hz]
-      field_simp
+      field_simp [hsub]
     _ = 2 * Real.pi * Complex.I * g c := by
       simpa only [smul_eq_mul] using hg.circleIntegral_sub_inv_smul (Metric.mem_ball_self hR)
 
@@ -126,7 +126,7 @@ theorem circleIntegral_eq_two_pi_I_mul_deriv_of_sq_mul_sub_eq {f g : ℂ → ℂ
         exact hR.ne' hz.symm
       change f z = (1 / (z - c) ^ 2) * g z
       rw [← heq z hz]
-      field_simp
+      field_simp [hsub]
     _ = 2 * Real.pi * Complex.I * deriv g c := by
       simpa only [smul_eq_mul] using hg.deriv_eq_smul_circleIntegral hR
 
@@ -179,7 +179,7 @@ theorem circleIntegral_eq_two_pi_I_div_two_mul_iteratedDeriv_two_of_cube_mul_sub
         exact hR.ne' hz.symm
       change f z = (1 / (z - c) ^ 3) * g z
       rw [← heq z hz]
-      field_simp
+      field_simp [hsub]
     _ = (2 * Real.pi * Complex.I / 2) * iteratedDeriv 2 g c := by
       simpa only [one_div, Nat.reduceAdd, smul_eq_mul, Nat.factorial_two, Nat.cast_ofNat] using
         hg.circleIntegral_one_div_sub_center_pow_smul hR 2
@@ -258,9 +258,9 @@ theorem dslope_dslope_dslope_of_ne {h : ℂ → ℂ} {c z : ℂ} (hne : z ≠ c)
   have hd1c : dslope h c c = deriv h c := dslope_same h c
   have hd2 : dslope (dslope h c) c z = (h z - h c - deriv h c * (z - c)) / (z - c) ^ 2 := by
     rw [dslope_of_ne (dslope h c) hne, slope_def_field, hd1, hd1c]
-    field_simp
+    field_simp [hsub]
   rw [dslope_of_ne (dslope (dslope h c) c) hne, slope_def_field, hd2]
-  field_simp
+  field_simp [hsub]
 
 /--
 A cubic punctured identity has the Laurent decomposition formed by three divided slopes.
@@ -281,7 +281,7 @@ theorem eqOn_cubicPrincipalParts_of_mul_eq {f h : ℂ → ℂ} {c : ℂ} {S : Se
   have hmul := heq z hz
   simp only
   rw [hrem]
-  field_simp at hmul ⊢
+  field_simp [hsub] at hmul ⊢
   linear_combination hmul
 
 /--
@@ -350,7 +350,7 @@ theorem re_inv_two_pi_smul_ge_of_tendsto_residueLedger {f : ℕ → ℂ} {L : �
     Filter.Tendsto (fun m : ℕ => (f m).re) Filter.atTop (nhds ((2 * Real.pi : ℝ)⁻¹ * L.re)) := by
     have h := hstep3.const_mul (2 * Real.pi : ℝ)⁻¹
     refine h.congr (fun m => ?_)
-    field_simp
+    field_simp [Real.pi_ne_zero]
   have hle := ge_of_tendsto hstep4 (Filter.Eventually.of_forall hbound)
   simpa only [mul_inv_rev, Complex.real_smul, Complex.ofReal_mul, Complex.ofReal_inv,
     Complex.ofReal_ofNat, Complex.mul_re, Complex.inv_re, Complex.ofReal_re, Complex.normSq_ofReal,

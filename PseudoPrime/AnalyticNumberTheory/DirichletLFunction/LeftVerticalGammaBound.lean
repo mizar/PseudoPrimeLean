@@ -115,7 +115,8 @@ theorem reflectedLeftVertical_even_half_ne_neg_nat (A : ℕ) (hA : 2 ≤ A) (t :
   apply
     ne_neg_nat_of_re_quarterSep (z := ((A : ℝ) / 2 + 3 / 4 : ℂ) + ((-(t / 2) : ℝ) : ℂ) * Complex.I)
   intro q
-  have hpos : (1 : ℝ) / 4 ≤ (A : ℝ) / 2 + 3 / 4 := by linarith
+  have hpos : (1 : ℝ) / 4 ≤ (A : ℝ) / 2 + 3 / 4 := by
+    linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))]
   have h := quarterSep_of_pos hpos q
   simpa only [one_div, Complex.ofReal_natCast, Complex.ofReal_neg, Complex.ofReal_div,
     Complex.ofReal_ofNat, neg_mul, Complex.add_re, Complex.div_ofNat_re, Complex.natCast_re,
@@ -150,7 +151,8 @@ theorem reflectedLeftVertical_odd_half_ne_neg_nat (A : ℕ) (hA : 2 ≤ A) (t : 
   apply
     ne_neg_nat_of_re_quarterSep (z := ((A : ℝ) / 2 + 5 / 4 : ℂ) + ((-(t / 2) : ℝ) : ℂ) * Complex.I)
   intro q
-  have hpos : (1 : ℝ) / 4 ≤ (A : ℝ) / 2 + 5 / 4 := by linarith
+  have hpos : (1 : ℝ) / 4 ≤ (A : ℝ) / 2 + 5 / 4 := by
+    linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))]
   have h := quarterSep_of_pos hpos q
   simpa only [one_div, Complex.ofReal_natCast, Complex.ofReal_neg, Complex.ofReal_div,
     Complex.ofReal_ofNat, neg_mul, Complex.add_re, Complex.div_ofNat_re, Complex.natCast_re,
@@ -190,7 +192,7 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
   set C : ℝ := Cψ + |Real.log Real.pi| + 10 with hC_def
   have hCnn : 0 ≤ C := by
     have := abs_nonneg (Real.log Real.pi)
-    linarith
+    linarith only [hC_def, hCψnn, this]
   refine ⟨C, hCnn, fun A hA N χ t => ?_⟩
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
   have hlogpi_norm : ‖(-(Complex.log (Real.pi : ℂ)) / 2 : ℂ)‖ = |Real.log Real.pi| / 2 := by
@@ -200,8 +202,9 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
       ring
     rw [h1, Complex.norm_real, Real.norm_eq_abs, abs_div, abs_neg]
     norm_num only
-  have htnn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith [abs_nonneg t])
-  have hEA1 : (1 : ℝ) ≤ ((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2) := by nlinarith [hA', htnn]
+  have htnn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith only [abs_nonneg t])
+  have hEA1 : (1 : ℝ) ≤ ((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2) := by
+    nlinarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ)), htnn]
   have hmain :
     ∀ a b : ℝ,
       |a| ≤ (A : ℝ) + 2 →
@@ -225,7 +228,7 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
         gcongr
       _ ≤ (C / 2) * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) := by
         rw [hC_def]
-        nlinarith [hCψnn, hEA1, abs_nonneg (Real.log Real.pi)]
+        nlinarith only [hCψnn, hEA1, abs_nonneg (Real.log Real.pi)]
   rcases χ.even_or_odd with heven | hodd
   · rw [logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat heven
         (leftVertical_even_half_ne_neg_nat A t),
@@ -269,8 +272,14 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
           Complex.div_ofNat_re]
         ring
     rw [hform1, hform2]
-    have ha1 : |(-(A : ℝ) / 2 - 1 / 4)| ≤ (A : ℝ) + 2 := abs_le.mpr ⟨by linarith, by linarith⟩
-    have ha2 : |((A : ℝ) / 2 + 3 / 4)| ≤ (A : ℝ) + 2 := abs_le.mpr ⟨by linarith, by linarith⟩
+    have ha1 : |(-(A : ℝ) / 2 - 1 / 4)| ≤ (A : ℝ) + 2 :=
+      abs_le.mpr
+        ⟨by linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))], by
+          linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))]⟩
+    have ha2 : |((A : ℝ) / 2 + 3 / 4)| ≤ (A : ℝ) + 2 :=
+      abs_le.mpr
+        ⟨by linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))], by
+          linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))]⟩
     have hb1 : (2 : ℝ) * |t / 2| = |t| := by
       rw [abs_div, show |(2 : ℝ)| = 2 from by norm_num only]
       ring
@@ -278,10 +287,10 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
       rw [abs_neg]
       exact hb1
     have hsep2 : ∀ q : ℕ, (1 : ℝ) / 4 ≤ |((A : ℝ) / 2 + 3 / 4) + (q : ℝ)| := fun q =>
-      quarterSep_of_pos (by linarith) q
+      quarterSep_of_pos (by linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))]) q
     have h1 := hmain (-(A : ℝ) / 2 - 1 / 4) (t / 2) ha1 (leftEven_quarterSep A) hb1
     have h2 := hmain ((A : ℝ) / 2 + 3 / 4) (-(t / 2)) ha2 hsep2 hb2
-    linarith [h1, h2]
+    linarith only [h1, h2]
   · rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hodd
         (leftVertical_odd_half_ne_neg_nat A t),
       logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hodd
@@ -325,8 +334,14 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
           Complex.div_ofNat_re]
         ring
     rw [hform1, hform2]
-    have ha1 : |(-(A : ℝ) / 2 + 1 / 4)| ≤ (A : ℝ) + 2 := abs_le.mpr ⟨by linarith, by linarith⟩
-    have ha2 : |((A : ℝ) / 2 + 5 / 4)| ≤ (A : ℝ) + 2 := abs_le.mpr ⟨by linarith, by linarith⟩
+    have ha1 : |(-(A : ℝ) / 2 + 1 / 4)| ≤ (A : ℝ) + 2 :=
+      abs_le.mpr
+        ⟨by linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))], by
+          linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))]⟩
+    have ha2 : |((A : ℝ) / 2 + 5 / 4)| ≤ (A : ℝ) + 2 :=
+      abs_le.mpr
+        ⟨by linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))], by
+          linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))]⟩
     have hb1 : (2 : ℝ) * |t / 2| = |t| := by
       rw [abs_div, show |(2 : ℝ)| = 2 from by norm_num only]
       ring
@@ -334,9 +349,9 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
       rw [abs_neg]
       exact hb1
     have hsep2 : ∀ q : ℕ, (1 : ℝ) / 4 ≤ |((A : ℝ) / 2 + 5 / 4) + (q : ℝ)| := fun q =>
-      quarterSep_of_pos (by linarith) q
+      quarterSep_of_pos (by linarith only [(Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))]) q
     have h1 := hmain (-(A : ℝ) / 2 + 1 / 4) (t / 2) ha1 (leftOdd_quarterSep A) hb1
     have h2 := hmain ((A : ℝ) / 2 + 5 / 4) (-(t / 2)) ha2 hsep2 hb2
-    linarith [h1, h2]
+    linarith only [h1, h2]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

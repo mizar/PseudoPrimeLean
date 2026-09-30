@@ -132,14 +132,14 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_leftVertical_le {x : �
       riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)) (C :=
       leftVerticalZetaLogDerivBound m T * x ^ (-(2 * (m : ℝ) + 1)) / (2 * (m : ℝ) + 1) ^ 2)
       (by
-        rw [Set.uIoc_of_le (by linarith : -T ≤ T)]
+        rw [Set.uIoc_of_le (by linarith only [hT] : -T ≤ T)]
         rintro t ⟨ht1, ht2⟩
         have hbase := norm_riemannZetaLogContourKernel_leftVertical_le (x := x) hx (m := m) (t := t)
         have htabs : |t| ≤ T := abs_le.mpr ⟨ht1.le, ht2⟩
         have hle : leftVerticalZetaLogDerivBound m t ≤ leftVerticalZetaLogDerivBound m T := by
           unfold leftVerticalZetaLogDerivBound
           rw [abs_of_nonneg hT]
-          nlinarith [mul_le_mul_of_nonneg_left htabs Real.pi_pos.le]
+          nlinarith only [mul_le_mul_of_nonneg_left htabs Real.pi_pos.le]
         calc
           ‖riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤
               leftVerticalZetaLogDerivBound m t * x ^ (-(2 * (m : ℝ) + 1)) /
@@ -151,7 +151,7 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_leftVertical_le {x : �
             by
             apply div_le_div_of_nonneg_right _ (by positivity)
             exact mul_le_mul_of_nonneg_right hle (by positivity))
-  rwa [show T - -T = 2 * T from by ring, abs_of_nonneg (by linarith)] at hbound
+  rwa [show T - -T = 2 * T from by ring, abs_of_nonneg (mul_nonneg (by norm_num only) hT)] at hbound
 
 /-- The reciprocal-kernel analogue of
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.`
@@ -170,7 +170,7 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical_le
       leftVerticalZetaLogDerivBound m T * x ^ (-(2 * (m : ℝ) + 2)) /
         ((2 * (m : ℝ) + 1) * (2 * (m : ℝ) + 2)))
       (by
-        rw [Set.uIoc_of_le (by linarith : -T ≤ T)]
+        rw [Set.uIoc_of_le (by linarith only [hT] : -T ≤ T)]
         rintro t ⟨ht1, ht2⟩
         have hbase :=
           norm_riemannZetaReciprocalContourKernel_leftVertical_le (x := x) hx (m := m) (t := t)
@@ -178,7 +178,7 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical_le
         have hle : leftVerticalZetaLogDerivBound m t ≤ leftVerticalZetaLogDerivBound m T := by
           unfold leftVerticalZetaLogDerivBound
           rw [abs_of_nonneg hT]
-          nlinarith [mul_le_mul_of_nonneg_left htabs Real.pi_pos.le]
+          nlinarith only [mul_le_mul_of_nonneg_left htabs Real.pi_pos.le]
         calc
           ‖riemannZetaReciprocalContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤
               leftVerticalZetaLogDerivBound m t * x ^ (-(2 * (m : ℝ) + 2)) /
@@ -190,7 +190,7 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical_le
             by
             apply div_le_div_of_nonneg_right _ (by positivity)
             exact mul_le_mul_of_nonneg_right hle (by positivity))
-  rwa [show T - -T = 2 * T from by ring, abs_of_nonneg (by linarith)] at hbound
+  rwa [show T - -T = 2 * T from by ring, abs_of_nonneg (mul_nonneg (by norm_num only) hT)] at hbound
 
 /-- For fixed `x > 1`, the logarithmic-kernel integral on `Re s=-(2m+1)`
 with imaginary part in `[-(m+1),m+1]` tends to zero. Geometric decay absorbs
@@ -214,23 +214,25 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_leftVertical_atTop 
         2 * K1 * x ^ (-(1 : ℝ)) * (((m : ℝ) + 1) ^ 2 * (x ^ (-(2 : ℝ))) ^ m) := by
     intro m
     have hbase :=
-      norm_intervalIntegral_riemannZetaLogContourKernel_leftVertical_le (x := x) (by linarith) (m :=
-        m) (T := (m : ℝ) + 1) (by positivity)
-    have hxσpos : (0 : ℝ) < x ^ (-(2 * (m : ℝ) + 1)) := Real.rpow_pos_of_pos (by linarith) _
+      norm_intervalIntegral_riemannZetaLogContourKernel_leftVertical_le (x := x)
+        (lt_trans zero_lt_one hx) (m := m) (T := (m : ℝ) + 1) (by positivity)
+    have hxσpos : (0 : ℝ) < x ^ (-(2 * (m : ℝ) + 1)) :=
+      Real.rpow_pos_of_pos (lt_trans zero_lt_one hx) _
     have hm1pos : (0 : ℝ) < 2 * (m : ℝ) + 1 := by positivity
     have hlvbound_le : leftVerticalZetaLogDerivBound m ((m : ℝ) + 1) ≤ K1 * ((m : ℝ) + 1) := by
       unfold leftVerticalZetaLogDerivBound
       rw [abs_of_nonneg (by positivity : (0 : ℝ) ≤ (m : ℝ) + 1)]
       rw [hK1_def]
       have hCm : |C| ≤ |C| * ((m : ℝ) + 1) :=
-        le_mul_of_one_le_right (abs_nonneg C) (by linarith [Nat.cast_nonneg (α := ℝ) m])
-      nlinarith [le_abs_self C, Nat.cast_nonneg (α := ℝ) m, hCm]
+        le_mul_of_one_le_right (abs_nonneg C) (by linarith only [Nat.cast_nonneg (α := ℝ) m])
+      nlinarith only [le_abs_self C, Nat.cast_nonneg (α := ℝ) m, hCm]
     have hstep1 :
       leftVerticalZetaLogDerivBound m ((m : ℝ) + 1) * x ^ (-(2 * (m : ℝ) + 1)) /
             (2 * (m : ℝ) + 1) ^ 2 *
           (2 * ((m : ℝ) + 1)) ≤
         2 * K1 * ((m : ℝ) + 1) ^ 2 * x ^ (-(2 * (m : ℝ) + 1)) := by
-      have hden_ge : (1 : ℝ) ≤ (2 * (m : ℝ) + 1) ^ 2 := by nlinarith [Nat.cast_nonneg (α := ℝ) m]
+      have hden_ge : (1 : ℝ) ≤ (2 * (m : ℝ) + 1) ^ 2 := by
+        nlinarith only [Nat.cast_nonneg (α := ℝ) m]
       have hlvnn : (0 : ℝ) ≤ leftVerticalZetaLogDerivBound m ((m : ℝ) + 1) :=
         le_trans (norm_nonneg _)
           (norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le_uniform m ((m : ℝ) + 1))
@@ -255,7 +257,8 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_leftVertical_atTop 
         _ = 2 * K1 * ((m : ℝ) + 1) ^ 2 * x ^ (-(2 * (m : ℝ) + 1)) := by ring
     have hxeq : x ^ (-(2 * (m : ℝ) + 1)) = x ^ (-(1 : ℝ)) * (x ^ (-(2 : ℝ))) ^ m := by
       rw [show -(2 * (m : ℝ) + 1) = -(2 : ℝ) * (m : ℝ) + -(1 : ℝ) from by ring,
-        Real.rpow_add (by linarith), Real.rpow_mul (by linarith : (0 : ℝ) ≤ x), Real.rpow_natCast]
+        Real.rpow_add (lt_trans zero_lt_one hx),
+        Real.rpow_mul (le_of_lt (lt_trans zero_lt_one hx) : (0 : ℝ) ≤ x), Real.rpow_natCast]
       ring
     calc
       ‖∫ t in (-((m : ℝ) + 1))..((m : ℝ) + 1),
@@ -270,11 +273,11 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_leftVertical_atTop 
         ring
   have hrpos : (0 : ℝ) ≤ x ^ (-(2 : ℝ)) := by positivity
   have hrlt1 : x ^ (-(2 : ℝ)) < 1 := by
-    rw [show (-(2 : ℝ)) = -(2 : ℕ) from by norm_num only, Real.rpow_neg (by linarith),
-      Real.rpow_natCast]
+    rw [show (-(2 : ℝ)) = -(2 : ℕ) from by norm_num only,
+      Real.rpow_neg (le_of_lt (lt_trans zero_lt_one hx)), Real.rpow_natCast]
     rw [inv_lt_one_iff₀]
     right
-    nlinarith [hx, sq_nonneg (x - 1)]
+    nlinarith only [hx, sq_nonneg (x - 1)]
   have htend :
     Filter.Tendsto
       (fun m : ℕ => 2 * K1 * x ^ (-(1 : ℝ)) * (((m : ℝ) + 1) ^ 2 * (x ^ (-(2 : ℝ))) ^ m))
@@ -311,20 +314,22 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_leftVertical_farLef
     have hTm1 : (m : ℝ) + 1 ≤ T := add_one_le_farLeftHeightSeq m
     have hTpos : (0 : ℝ) < T := farLeftHeightSeq_pos m
     have hbase :=
-      norm_intervalIntegral_riemannZetaLogContourKernel_leftVertical_le (x := x) (by linarith) (m :=
-        m) (T := T) (by positivity)
-    have hxσpos : (0 : ℝ) < x ^ (-(2 * (m : ℝ) + 1)) := Real.rpow_pos_of_pos (by linarith) _
+      norm_intervalIntegral_riemannZetaLogContourKernel_leftVertical_le (x := x)
+        (lt_trans zero_lt_one hx) (m := m) (T := T) (by positivity)
+    have hxσpos : (0 : ℝ) < x ^ (-(2 * (m : ℝ) + 1)) :=
+      Real.rpow_pos_of_pos (lt_trans zero_lt_one hx) _
     have hm1pos : (0 : ℝ) < 2 * (m : ℝ) + 1 := by positivity
     have hlvbound_le : leftVerticalZetaLogDerivBound m T ≤ K1 * T := by
       unfold leftVerticalZetaLogDerivBound
       rw [abs_of_nonneg hTpos.le, hK1_def]
       have hCT : |C| ≤ |C| * T := le_mul_of_one_le_right (abs_nonneg C) hT1
-      nlinarith [le_abs_self C, hCT, hTm1]
+      nlinarith only [le_abs_self C, hCT, hTm1]
     have hstep1 :
       leftVerticalZetaLogDerivBound m T * x ^ (-(2 * (m : ℝ) + 1)) / (2 * (m : ℝ) + 1) ^ 2 *
           (2 * T) ≤
         2 * K1 * T ^ 2 * x ^ (-(2 * (m : ℝ) + 1)) := by
-      have hden_ge : (1 : ℝ) ≤ (2 * (m : ℝ) + 1) ^ 2 := by nlinarith [Nat.cast_nonneg (α := ℝ) m]
+      have hden_ge : (1 : ℝ) ≤ (2 * (m : ℝ) + 1) ^ 2 := by
+        nlinarith only [Nat.cast_nonneg (α := ℝ) m]
       have hlvnn : (0 : ℝ) ≤ leftVerticalZetaLogDerivBound m T :=
         le_trans (norm_nonneg _) (norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le_uniform m T)
       have hnum_le :
@@ -343,7 +348,8 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_leftVertical_farLef
         _ = 2 * K1 * T ^ 2 * x ^ (-(2 * (m : ℝ) + 1)) := by ring
     have hxeq : x ^ (-(2 * (m : ℝ) + 1)) = x ^ (-(1 : ℝ)) * (x ^ (-(2 : ℝ))) ^ m := by
       rw [show -(2 * (m : ℝ) + 1) = -(2 : ℝ) * (m : ℝ) + -(1 : ℝ) from by ring,
-        Real.rpow_add (by linarith), Real.rpow_mul (by linarith : (0 : ℝ) ≤ x), Real.rpow_natCast]
+        Real.rpow_add (lt_trans zero_lt_one hx),
+        Real.rpow_mul (le_of_lt (lt_trans zero_lt_one hx) : (0 : ℝ) ≤ x), Real.rpow_natCast]
       ring
     calc
       ‖∫ t in (-T)..T, riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤
@@ -356,11 +362,11 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_leftVertical_farLef
         ring
   have hrpos : (0 : ℝ) ≤ x ^ (-(2 : ℝ)) := by positivity
   have hrlt1 : x ^ (-(2 : ℝ)) < 1 := by
-    rw [show (-(2 : ℝ)) = -(2 : ℕ) from by norm_num only, Real.rpow_neg (by linarith),
-      Real.rpow_natCast]
+    rw [show (-(2 : ℝ)) = -(2 : ℕ) from by norm_num only,
+      Real.rpow_neg (le_of_lt (lt_trans zero_lt_one hx)), Real.rpow_natCast]
     rw [inv_lt_one_iff₀]
     right
-    nlinarith [hx, sq_nonneg (x - 1)]
+    nlinarith only [hx, sq_nonneg (x - 1)]
   have htend :
     Filter.Tendsto
       (fun m : ℕ => 2 * K1 * x ^ (-(1 : ℝ)) * (farLeftHeightSeq m ^ 2 * (x ^ (-(2 : ℝ))) ^ m))
@@ -399,17 +405,18 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical
     have hTpos : (0 : ℝ) < T := farLeftHeightSeq_pos m
     have hbase :=
       norm_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical_le (x := x)
-        (by linarith) (m := m) (T := T) (by positivity)
-    have hxσpos : (0 : ℝ) < x ^ (-(2 * (m : ℝ) + 2)) := Real.rpow_pos_of_pos (by linarith) _
+        (lt_trans zero_lt_one hx) (m := m) (T := T) (by positivity)
+    have hxσpos : (0 : ℝ) < x ^ (-(2 * (m : ℝ) + 2)) :=
+      Real.rpow_pos_of_pos (lt_trans zero_lt_one hx) _
     have hm1pos : (0 : ℝ) < 2 * (m : ℝ) + 1 := by positivity
     have hm2pos : (0 : ℝ) < 2 * (m : ℝ) + 2 := by positivity
     have hlvbound_le : leftVerticalZetaLogDerivBound m T ≤ K1 * T := by
       unfold leftVerticalZetaLogDerivBound
       rw [abs_of_nonneg hTpos.le, hK1_def]
       have hCT : |C| ≤ |C| * T := le_mul_of_one_le_right (abs_nonneg C) hT1
-      nlinarith [le_abs_self C, hCT, hTm1]
+      nlinarith only [le_abs_self C, hCT, hTm1]
     have hden_ge : (1 : ℝ) ≤ (2 * (m : ℝ) + 1) * (2 * (m : ℝ) + 2) := by
-      nlinarith [Nat.cast_nonneg (α := ℝ) m]
+      nlinarith only [Nat.cast_nonneg (α := ℝ) m]
     have hlvnn : (0 : ℝ) ≤ leftVerticalZetaLogDerivBound m T :=
       le_trans (norm_nonneg _) (norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le_uniform m T)
     have hnum_le :
@@ -434,7 +441,8 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical
         _ = 2 * K1 * T ^ 2 * x ^ (-(2 * (m : ℝ) + 2)) := by ring
     have hxeq : x ^ (-(2 * (m : ℝ) + 2)) = x ^ (-(2 : ℝ)) * (x ^ (-(2 : ℝ))) ^ m := by
       rw [show -(2 * (m : ℝ) + 2) = -(2 : ℝ) * (m : ℝ) + -(2 : ℝ) from by ring,
-        Real.rpow_add (by linarith), Real.rpow_mul (by linarith : (0 : ℝ) ≤ x), Real.rpow_natCast]
+        Real.rpow_add (lt_trans zero_lt_one hx),
+        Real.rpow_mul (le_of_lt (lt_trans zero_lt_one hx) : (0 : ℝ) ≤ x), Real.rpow_natCast]
       ring
     calc
       ‖∫ t in (-T)..T,
@@ -449,11 +457,11 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical
         ring
   have hrpos : (0 : ℝ) ≤ x ^ (-(2 : ℝ)) := by positivity
   have hrlt1 : x ^ (-(2 : ℝ)) < 1 := by
-    rw [show (-(2 : ℝ)) = -(2 : ℕ) from by norm_num only, Real.rpow_neg (by linarith),
-      Real.rpow_natCast]
+    rw [show (-(2 : ℝ)) = -(2 : ℕ) from by norm_num only,
+      Real.rpow_neg (le_of_lt (lt_trans zero_lt_one hx)), Real.rpow_natCast]
     rw [inv_lt_one_iff₀]
     right
-    nlinarith [hx, sq_nonneg (x - 1)]
+    nlinarith only [hx, sq_nonneg (x - 1)]
   have htend :
     Filter.Tendsto
       (fun m : ℕ => 2 * K1 * x ^ (-(2 : ℝ)) * (farLeftHeightSeq m ^ 2 * (x ^ (-(2 : ℝ))) ^ m))

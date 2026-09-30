@@ -93,16 +93,17 @@ theorem eight_lt_llsTheorem11S1RadiusRoot {q : ℕ} (hq : 3000 ≤ q) :
 theorem llsPart1RadiusInverseSq_le_sixtyFour_div_fortyNine {q : ℕ} (hq : 3000 ≤ q) :
     (1 - 1 / llsTheorem11S1RadiusRoot q)⁻¹ ^ 2 ≤ (64 / 49 : ℝ) := by
   have hr : (8 : ℝ) ≤ llsTheorem11S1RadiusRoot q := (eight_lt_llsTheorem11S1RadiusRoot hq).le
-  have hrpos : 0 < llsTheorem11S1RadiusRoot q := by linarith
+  have hrpos : 0 < llsTheorem11S1RadiusRoot q := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) hr
   have hden : 0 < 1 - 1 / llsTheorem11S1RadiusRoot q := by
     rw [sub_pos, div_lt_one hrpos]
-    linarith
+    exact lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 8) hr
   have hinv : 1 / llsTheorem11S1RadiusRoot q ≤ (1 / 8 : ℝ) := by
     apply (div_le_iff₀ hrpos).2
     calc
       (1 : ℝ) = (1 / 8) * 8 := by norm_num only
       _ ≤ (1 / 8) * llsTheorem11S1RadiusRoot q := mul_le_mul_of_nonneg_left hr (by norm_num only)
-  have hden_lower : (7 / 8 : ℝ) ≤ 1 - 1 / llsTheorem11S1RadiusRoot q := by linarith
+  have hden_lower : (7 / 8 : ℝ) ≤ 1 - 1 / llsTheorem11S1RadiusRoot q :=
+    le_trans (by norm_num only : (7 / 8 : ℝ) ≤ 1 - 1 / 8) (sub_le_sub_left hinv 1)
   have hsq : (7 / 8 : ℝ) ^ 2 ≤ (1 - 1 / llsTheorem11S1RadiusRoot q) ^ 2 := by
     nlinarith only [hden_lower, sq_nonneg ((1 - 1 / llsTheorem11S1RadiusRoot q) - 7 / 8)]
   have hden' : 0 < 1 - (llsTheorem11S1RadiusRoot q)⁻¹ := by simpa only [sub_pos, one_div] using hden
@@ -123,7 +124,7 @@ theorem llsPart1FullLevelUpperBound_le_intermediate {q : ℕ} (hq : 3000 ≤ q) 
   have hlogPi : (4 / 5 : ℝ) < Real.log Real.pi := by
     have hlogThreePi :=
       Real.strictMonoOn_log (by norm_num only [Set.mem_Ioi]) Real.pi_pos Real.pi_gt_three
-    exact (show (4 / 5 : ℝ) < Real.log 3 by linarith [Real.log_three_gt_d9]).trans hlogThreePi
+    exact (show (4 / 5 : ℝ) < Real.log 3 by linarith only [Real.log_three_gt_d9]).trans hlogThreePi
   have haux := llsAuxiliaryTerm_nonneg q
   rw [llsPart1FullLevelUpperBound, llsPart1IntermediateUpperBound]
   nlinarith only [mul_nonneg hlogX (sub_nonneg.mpr hlogPi.le), mul_nonneg haux hlogX, hy, hlogX,
@@ -145,12 +146,16 @@ theorem llsPart1IntermediateUpperBound_le_upper {q : ℕ} (hq : 3000 ≤ q) :
         simp only [Set.mem_Ici]
         exact hlogQ.le.trans hroot)
       hroot
-  have hmul := mul_le_mul_of_nonneg_right hratio (show 0 ≤ Real.log (q : ℝ) by linarith)
+  have hmul :=
+    mul_le_mul_of_nonneg_right hratio
+      (show 0 ≤ Real.log (q : ℝ) by
+        exact le_of_lt (lt_trans (by norm_num only : (0 : ℝ) < 8) hlogQ))
   have hratioQ :
     Analysis.logLinearRatio (Real.log q) * Real.log q = 2 * Real.log (Real.log q) + 1 := by
     rw [Analysis.logLinearRatio]
     field_simp [hlogQ.ne']
-  have hrootPos : 0 < llsTheorem11S1RadiusRoot q := by linarith
+  have hrootPos : 0 < llsTheorem11S1RadiusRoot q :=
+    lt_of_lt_of_le (lt_trans (by norm_num only : (0 : ℝ) < 8) hlogQ) hroot
   have hleft :
     Analysis.logLinearRatio (llsTheorem11S1RadiusRoot q) * Real.log q =
       ((2 * Real.log (llsTheorem11S1RadiusRoot q) + 1) * Real.log q) /
@@ -212,9 +217,15 @@ theorem tradeoffRadiusInequality_iff_margin :
     LLSTradeoffRadiusInequality ↔ ∀ y : ℝ, 8 ≤ y → 0 ≤ llsTradeoffMargin y := by
   constructor
   · intro h y hy
-    exact (tradeoff_radius_inequality_iff_margin_nonneg (by linarith)).mp (h y hy)
+    exact
+      (tradeoff_radius_inequality_iff_margin_nonneg
+            (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) hy)).mp
+        (h y hy)
   · intro h y hy
-    exact (tradeoff_radius_inequality_iff_margin_nonneg (by linarith)).mpr (h y hy)
+    exact
+      (tradeoff_radius_inequality_iff_margin_nonneg
+            (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) hy)).mpr
+        (h y hy)
 
 /-- The numerator controlling the sign of the derivative of `llsTradeoffMargin`. -/
 noncomputable def llsTradeoffDerivNumerator (y : ℝ) : ℝ :=
@@ -254,15 +265,18 @@ theorem strictMonoOn_llsTradeoffDerivNumerator :
   apply strictMonoOn_of_deriv_pos (convex_Ici 8)
   · intro y hy
     simp only [Set.mem_Ici] at hy
-    exact (hasDerivAt_llsTradeoffDerivNumerator (by linarith)).continuousAt.continuousWithinAt
+    exact
+      (hasDerivAt_llsTradeoffDerivNumerator
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) hy)).continuousAt.continuousWithinAt
   · intro y hy
     simp only [interior_Ici, Set.mem_Ioi] at hy
-    rw [(hasDerivAt_llsTradeoffDerivNumerator (by linarith)).deriv]
+    rw [(hasDerivAt_llsTradeoffDerivNumerator
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) (le_of_lt hy))).deriv]
     have hdiv : 8 / y ≤ (1 : ℝ) := by
-      apply (div_le_one (by linarith)).mpr
+      apply (div_le_one (lt_trans (by norm_num only : (0 : ℝ) < 8) hy)).mpr
       exact hy.le
     have hlog : (1 : ℝ) < 2 * Real.log 2 := by linarith only [Real.log_two_gt_d9]
-    linarith
+    exact sub_pos.mpr (lt_of_le_of_lt hdiv hlog)
 
 /-- The derivative numerator is negative at `12`. -/
 theorem llsTradeoffDerivNumerator_twelve_neg : llsTradeoffDerivNumerator 12 < 0 := by
@@ -283,31 +297,37 @@ theorem strictAntiOn_llsTradeoffMargin_Icc : StrictAntiOn llsTradeoffMargin (Set
   apply strictAntiOn_of_deriv_neg (convex_Icc 8 12)
   · intro y hy
     simp only [Set.mem_Icc] at hy
-    exact (hasDerivAt_llsTradeoffMargin (by linarith)).continuousAt.continuousWithinAt
+    exact
+      (hasDerivAt_llsTradeoffMargin
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) hy.1)).continuousAt.continuousWithinAt
   · intro y hy
     simp only [interior_Icc, Set.mem_Ioo] at hy
-    rw [(hasDerivAt_llsTradeoffMargin (by linarith)).deriv]
+    rw [(hasDerivAt_llsTradeoffMargin
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) (le_of_lt hy.1))).deriv]
     have hnum : llsTradeoffDerivNumerator y < 0 :=
       (strictMonoOn_llsTradeoffDerivNumerator
             (by
               simp only [Set.mem_Ici]
-              linarith)
+              exact le_of_lt hy.1)
             (by
               simp only [Set.mem_Ici]
               norm_num only)
             hy.2).trans
         llsTradeoffDerivNumerator_twelve_neg
-    exact div_neg_of_neg_of_pos hnum (by linarith)
+    exact div_neg_of_neg_of_pos hnum (lt_trans (by norm_num only : (0 : ℝ) < 8) hy.1)
 
 /-- The tradeoff margin is strictly increasing on `[16, ∞)`. -/
 theorem strictMonoOn_llsTradeoffMargin_Ici : StrictMonoOn llsTradeoffMargin (Set.Ici 16) := by
   apply strictMonoOn_of_deriv_pos (convex_Ici 16)
   · intro y hy
     simp only [Set.mem_Ici] at hy
-    exact (hasDerivAt_llsTradeoffMargin (by linarith)).continuousAt.continuousWithinAt
+    exact
+      (hasDerivAt_llsTradeoffMargin
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 16) hy)).continuousAt.continuousWithinAt
   · intro y hy
     simp only [interior_Ici, Set.mem_Ioi] at hy
-    rw [(hasDerivAt_llsTradeoffMargin (by linarith)).deriv]
+    rw [(hasDerivAt_llsTradeoffMargin
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 16) (le_of_lt hy))).deriv]
     have hnum : 0 < llsTradeoffDerivNumerator y :=
       llsTradeoffDerivNumerator_sixteen_pos.trans
         (strictMonoOn_llsTradeoffDerivNumerator
@@ -316,9 +336,9 @@ theorem strictMonoOn_llsTradeoffMargin_Ici : StrictMonoOn llsTradeoffMargin (Set
             norm_num only)
           (by
             simp only [Set.mem_Ici]
-            linarith)
+            exact le_trans (by norm_num only : (8 : ℝ) ≤ 16) (le_of_lt hy))
           hy)
-    exact div_pos hnum (by linarith)
+    exact div_pos hnum (lt_trans (by norm_num only : (0 : ℝ) < 16) hy)
 
 /-- The compact-interval margin condition used to prove the universal radius inequality. -/
 def LLSTradeoffCoreInterval : Prop :=
@@ -348,7 +368,7 @@ theorem tradeoffRadiusInequality_of_coreInterval (hcore : LLSTradeoffCoreInterva
       hcore y
         (by
           simp only [Set.mem_Icc]
-          constructor <;> linarith)
+          exact ⟨le_of_lt (lt_of_not_ge hy12), hy16⟩)
   · exact
       (hcore 16
             (by
@@ -360,8 +380,8 @@ theorem tradeoffRadiusInequality_of_coreInterval (hcore : LLSTradeoffCoreInterva
             norm_num only)
           (by
             simp only [Set.mem_Ici]
-            linarith)
-          (by linarith))
+            exact le_of_lt (lt_of_not_ge hy16))
+          (le_of_lt (lt_of_not_ge hy16)))
 
 /--
 A compact-interval certificate for nonnegativity of the tradeoff margin.
@@ -375,7 +395,9 @@ theorem llsTradeoffMargin_nonneg_of_log_upper {a y U : ℝ} (hay : a ≤ y) (hy 
     0 ≤ llsTradeoffMargin y := by
   have hlogTwo : Real.log 2 ≤ 2 * Real.log y := Analysis.log_two_le_two_mul_log hy
   have hfactorLeft : 0 ≤ U - Real.log y := sub_nonneg.mpr hlogUpper
-  have hfactorRight : 0 ≤ U + Real.log y - Real.log 2 := by linarith
+  have hfactorRight : 0 ≤ U + Real.log y - Real.log 2 := by
+    rw [show U + Real.log y - Real.log 2 = (U - Real.log y) + (2 * Real.log y - Real.log 2) by ring]
+    exact add_nonneg hfactorLeft (sub_nonneg.mpr hlogTwo)
   have hquadratic :
     4 * Real.log 2 * U - 4 * U ^ 2 ≤ 4 * Real.log 2 * Real.log y - 4 * (Real.log y) ^ 2 := by
     nlinarith only [mul_nonneg hfactorLeft hfactorRight]
@@ -395,9 +417,9 @@ theorem llsTradeoffMargin_nonneg_of_log_tangent {a y L : ℝ} (ha : 12 ≤ a) (h
     (hcertificate :
       0 ≤ Real.log 2 * (2 * y + 2 + 4 * (L + (y - a) / a)) - 4 * (L + (y - a) / a) ^ 2) :
     0 ≤ llsTradeoffMargin y := by
-  have hapos : 0 < a := by linarith
+  have hapos : 0 < a := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 12) ha
   have hypos : 0 < y := hapos.trans_le hay
-  have hshift : Real.log a + (y - a) / a ≤ L + (y - a) / a := by linarith
+  have hshift : Real.log a + (y - a) / a ≤ L + (y - a) / a := add_le_add_left hlogBase ((y - a) / a)
   have hlogUpper : Real.log y ≤ L + (y - a) / a :=
     (Analysis.log_le_log_add_sub_div hapos hypos).trans hshift
   exact llsTradeoffMargin_nonneg_of_log_upper le_rfl (ha.trans hay) hlogUpper hcertificate
@@ -472,10 +494,10 @@ theorem llsTradeoffCoreInterval : LLSTradeoffCoreInterval := by
   by_cases hy13 : y ≤ 13
   · exact llsTradeoffMargin_nonneg_on_twelve_thirteen y ⟨hy.1, hy13⟩
   by_cases hy14 : y ≤ 14
-  · exact llsTradeoffMargin_nonneg_on_thirteen_fourteen y ⟨by linarith, hy14⟩
+  · exact llsTradeoffMargin_nonneg_on_thirteen_fourteen y ⟨le_of_lt (lt_of_not_ge hy13), hy14⟩
   by_cases hy15 : y ≤ 15
-  · exact llsTradeoffMargin_nonneg_on_fourteen_fifteen y ⟨by linarith, hy15⟩
-  exact llsTradeoffMargin_nonneg_on_fifteen_sixteen y ⟨by linarith, hy.2⟩
+  · exact llsTradeoffMargin_nonneg_on_fourteen_fifteen y ⟨le_of_lt (lt_of_not_ge hy14), hy15⟩
+  exact llsTradeoffMargin_nonneg_on_fifteen_sixteen y ⟨le_of_lt (lt_of_not_ge hy15), hy.2⟩
 
 /-- The LLS radius inequality, discharged entirely by kernel-checked analytic certificates. -/
 theorem llsTradeoffRadiusInequality : LLSTradeoffRadiusInequality :=
@@ -520,12 +542,15 @@ theorem strictMonoOn_llsPart1SeparationMargin :
   apply strictMonoOn_of_deriv_pos (convex_Ici 8)
   · intro y hy
     simp only [Set.mem_Ici] at hy
-    exact (hasDerivAt_llsPart1SeparationMargin (by linarith)).continuousAt.continuousWithinAt
+    exact
+      (hasDerivAt_llsPart1SeparationMargin
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) hy)).continuousAt.continuousWithinAt
   · intro y hy
     simp only [interior_Ici, Set.mem_Ioi] at hy
-    rw [(hasDerivAt_llsPart1SeparationMargin (by linarith)).deriv]
+    rw [(hasDerivAt_llsPart1SeparationMargin
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) (le_of_lt hy))).deriv]
     have hratio : 2 * Real.log (2 * Real.pi) / y < (1 / 2 : ℝ) := by
-      rw [div_lt_iff₀ (by linarith)]
+      rw [div_lt_iff₀ (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) (le_of_lt hy))]
       nlinarith only [hy, Analysis.log_two_mul_pi_lt]
     linarith only [hratio, AnalyticNumberTheory.RiemannXi.riemannZeroMass_lt_three_twentieths]
 
@@ -563,7 +588,7 @@ theorem llsPart1NumericalSeparation : llsTheorem11S1NumericalSeparation := by
   intro q hq
   have hmargin := llsPart1SeparationMargin_pos (eight_lt_llsTheorem11S1RadiusRoot hq).le
   have hlower := llsPart1SeparationMargin_le_lower_sub_upper hq
-  linarith
+  exact (sub_pos).mp (lt_of_lt_of_le hmargin hlower)
 
 /-- The logarithmic common-factor error from Lemma 3.1 is bounded by the error term in `lower2`. -/
 theorem llsPart1CommonFactorError_le {q : ℕ} (hq : 3000 ≤ q) :
@@ -583,7 +608,8 @@ theorem llsPart1CommonFactorError_le {q : ℕ} (hq : 3000 ≤ q) :
         exact hlogQ.le.trans hroot)
       hroot
   rw [Analysis.logSquareRatio, Analysis.logSquareRatio] at hratio
-  have hscaled := (div_le_iff₀ (by linarith [hlogQ, hroot])).mp hratio
+  have hscaled :=
+    (div_le_iff₀ (lt_trans (by norm_num only : (0 : ℝ) < 8) (lt_of_lt_of_le hlogQ hroot))).mp hratio
   have hbase :
     (1 / 2 : ℝ) * (Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) ^ 2 ≤
       llsTheorem11S1RadiusRoot q * (2 * (Real.log (Real.log q)) ^ 2 / Real.log q) := by

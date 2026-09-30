@@ -22,7 +22,7 @@ theorem re_riemannZetaLogContourResidueLedger_unifiedTau_ge_of_riemannHypothesis
         2 * RiemannXi.riemannZeroMass * (Real.sqrt x + 1) ≤
       (riemannZetaLogContourResidueLedger x (unifiedRectangleLower m)
           (unifiedTauRectangleUpper τ m)).re := by
-  have hxpos : 0 < x := by linarith
+  have hxpos : 0 < x := by linarith only [hx]
   rw [riemannZetaLogContourResidueLedger_unifiedTau_eq hτ, Complex.add_re, Complex.add_re,
     riemannZetaLogResidueAtZero_eq hxpos, riemannZetaLogResidueAtOne_eq]
   have hre0 :
@@ -35,8 +35,8 @@ theorem re_riemannZetaLogContourResidueLedger_unifiedTau_ge_of_riemannHypothesis
     rw [show (2 : ℂ) * (Real.pi : ℂ) = ((2 * Real.pi : ℝ) : ℂ) from by
         push_cast
         ring,
-      ← Complex.ofReal_log (by positivity), ← Complex.ofReal_log hxpos.le, ← Complex.ofReal_mul,
-      Complex.ofReal_re]
+      ← Complex.ofReal_log (mul_nonneg (by norm_num only) Real.pi_pos.le), ←
+      Complex.ofReal_log hxpos.le, ← Complex.ofReal_mul, Complex.ofReal_re]
   have hre1 : (x : ℂ).re = x := Complex.ofReal_re x
   rw [hre0, hre1]
   unfold riemannZetaLogContourZeroLedger
@@ -45,7 +45,7 @@ theorem re_riemannZetaLogContourResidueLedger_unifiedTau_ge_of_riemannHypothesis
       (riemannZetaZerosInAnyRectangle (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m))
       (fun ρ hρ => (mem_riemannZetaZerosInAnyRectangle_iff.mp hρ).2)
   have hq := RiemannXi.re_qMinusOne_add_logTrivialZeroSeries_le hRH hx
-  linarith [hzero_ledger, hq]
+  linarith only [hzero_ledger, hq]
 
 /-- **The `τ = 2` case of the vertical-integral lower bound (logarithmic kernel), under RH.**
 Combines the finite ledger bound with

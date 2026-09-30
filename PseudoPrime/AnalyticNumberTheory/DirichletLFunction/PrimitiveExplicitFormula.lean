@@ -35,11 +35,11 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
   set σ : ℝ := τ - 1 with hσ_def
   have hσ0 : (0 : ℝ) < σ := by
     rw [hσ_def]
-    linarith
+    exact sub_pos.mpr hτ
   have hσ1 : σ ≠ -1 := by
     rw [hσ_def]
     intro h
-    linarith
+    linarith only [h, hτ]
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ (((τ : ℂ) + y * Complex.I) * ((τ : ℂ) + y * Complex.I - 1))⁻¹ with hK_def
   have hK_int : MeasureTheory.Integrable K := by
@@ -132,12 +132,32 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
       push_cast
       ring
     rw [hshift, hshift']
-    rw [show (-((σ : ℂ) + y * Complex.I)) = 1 + -((τ : ℂ) + y * Complex.I) by
+    rw [show (-((σ : ℂ) + y * Complex.I)) = 1 + -((τ : ℂ) + y * Complex.I)
+        by
         rw [hσ_def]
         push_cast
         ring,
       Complex.cpow_add _ _ hnC, Complex.cpow_one]
-    field_simp [hnC]
+    rw [mul_comm ((τ : ℂ) + y * Complex.I) ((σ : ℂ) + y * Complex.I), div_eq_mul_inv]
+    calc
+      ↑(ArithmeticFunction.vonMangoldt n) * (↑n)⁻¹ * χ ↑n *
+            (↑n * ↑n ^ (-(↑τ + y * Complex.I)) * ↑x ^ (↑σ + y * Complex.I) *
+              ((↑σ + y * Complex.I) * (↑τ + y * Complex.I))⁻¹) =
+          ↑(ArithmeticFunction.vonMangoldt n) * ((↑n)⁻¹ * ↑n) * χ ↑n *
+            ↑n ^ (-(↑τ + y * Complex.I)) *
+            ↑x ^ (↑σ + y * Complex.I) *
+            ((↑σ + y * Complex.I) * (↑τ + y * Complex.I))⁻¹ :=
+        by ring
+      _ =
+          ↑(ArithmeticFunction.vonMangoldt n) * 1 * χ ↑n * ↑n ^ (-(↑τ + y * Complex.I)) *
+            ↑x ^ (↑σ + y * Complex.I) *
+            ((↑σ + y * Complex.I) * (↑τ + y * Complex.I))⁻¹ :=
+        by rw [inv_mul_cancel₀ hnC]
+      _ =
+          ((↑σ + y * Complex.I) * (↑τ + y * Complex.I))⁻¹ *
+            (↑(ArithmeticFunction.vonMangoldt n) * χ ↑n * ↑n ^ (-(↑τ + y * Complex.I)) *
+              ↑x ^ (↑σ + y * Complex.I)) :=
+        by ring
   -- (2) each `G n` is integrable, dominated by a constant multiple of `K`
   have hGint : ∀ n : ℕ, MeasureTheory.Integrable (G n) := by
     intro n
@@ -230,7 +250,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
     have hs : (1 : ℝ) < ((τ : ℂ) + y * Complex.I).re := by
       simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-      linarith
+      exact hτ
     have hLS := lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ hs
     have hsum :
       ∑' n : ℕ,

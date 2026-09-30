@@ -34,7 +34,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 /-- The common exponential growth factor `exp((x+2)log(x+2))` is monotone for `x ≥ 0`. -/
 theorem expLog_two_mono {x y : ℝ} (hx : 0 ≤ x) (hxy : x ≤ y) :
     Real.exp ((x + 2) * Real.log (x + 2)) ≤ Real.exp ((y + 2) * Real.log (y + 2)) :=
-  Real.exp_le_exp.mpr (Gamma.mul_log_mono_of_one_le (by linarith) (by linarith))
+  Real.exp_le_exp.mpr
+    (Gamma.mul_log_mono_of_one_le (by linarith only [hx]) (by linarith only [hxy]))
 
 /-- An envelope for completed `L` on `‖z‖ ≤ R`, depending only on the level `N` and radius.
 It adds the right-half-plane bound at norm `R` and the reflected bound using
@@ -57,19 +58,20 @@ theorem norm_completedLFunction_le_completedLFunctionBallBound {N : ℕ} [NeZero
   · have hb := norm_completedLFunction_lt_half_le hN1 hprimitive hinv hzre
     have hzre_ge : -R ≤ z.re := by
       have h1 : -‖z‖ ≤ z.re := neg_le_of_abs_le (Complex.abs_re_le_norm z)
-      linarith
-    have h1z : (1 : ℝ) / 2 - z.re ≤ R + 1 := by linarith
+      linarith only [h1, hz]
+    have h1z : (1 : ℝ) / 2 - z.re ≤ R + 1 := by linarith only [hzre_ge]
     have h1zpow : (N : ℝ) ^ (1 / 2 - z.re) ≤ (N : ℝ) ^ (R + 1) :=
       Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hN1.le) h1z
     have hnorm1z : ‖(1 : ℂ) - z‖ ≤ R + 1 := by
       have h1 : ‖(1 : ℂ) - z‖ ≤ ‖(1 : ℂ)‖ + ‖z‖ := norm_sub_le 1 z
       rw [norm_one] at h1
-      linarith
+      linarith only [h1, hz]
     have hexpstep :
       Real.exp ((‖(1 : ℂ) - z‖ + 2) * Real.log (‖(1 : ℂ) - z‖ + 2)) ≤
         Real.exp ((R + 3) * Real.log (R + 3)) :=
       Real.exp_le_exp.mpr
-        (Gamma.mul_log_mono_of_one_le (by linarith [norm_nonneg ((1 : ℂ) - z)]) (by linarith))
+        (Gamma.mul_log_mono_of_one_le (by linarith only [norm_nonneg ((1 : ℂ) - z)])
+          (by linarith only [hnorm1z]))
     have h1 : (2 : ℝ) * N * ‖(1 : ℂ) - z‖ ≤ 2 * N * (R + 1) :=
       mul_le_mul_of_nonneg_left hnorm1z (by positivity)
     have e1 :
@@ -162,7 +164,7 @@ theorem finsum_divisor_completedLFunction_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
         Real.log 2 := by
   have hzero := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have hdiff := DirichletCharacter.differentiable_completedLFunction hne
-  have h2Rpos : (0 : ℝ) < 2 * R := by linarith
+  have h2Rpos : (0 : ℝ) < 2 * R := mul_pos zero_lt_two hR
   have hanalytic :
     AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) (Metric.closedBall (0 : ℂ) |2 * R|) :=
     fun z _ => hdiff.analyticAt z
@@ -174,16 +176,16 @@ theorem finsum_divisor_completedLFunction_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
     rw [Metric.mem_sphere, dist_zero_right, abs_of_pos h2Rpos] at hz
     exact
       le_max_of_le_right
-        (norm_completedLFunction_le_completedLFunctionBallBound hN1 hprimitive hne hinv
-          (by linarith) hz.le)
+        (norm_completedLFunction_le_completedLFunctionBallBound hN1 hprimitive hne hinv h2Rpos.le
+          hz.le)
   have hjensen :=
     AnalyticOnNhd.sum_divisor_le (c := (0 : ℂ)) (r := R) (R := 2 * R) (M :=
       max 1 (completedLFunctionBallBound N (2 * R))) (abs_pos.mpr hR.ne')
       (by
         rw [abs_of_pos hR, abs_of_pos h2Rpos]
-        linarith)
+        linarith only [hR])
       (le_max_left 1 _) hanalytic hzero hbound
-  rwa [abs_of_pos hR, show 2 * R / R = 2 from by field_simp] at hjensen
+  rwa [abs_of_pos hR, show 2 * R / R = 2 from by field_simp [ne_of_gt hR]] at hjensen
 
 /-! ### Domain-independence of the divisor for the entire function `completedLFunction χ` -/
 
@@ -277,15 +279,16 @@ by an exponential and combine them using `Real.exp_add`. This gives the explicit
 -/
 
 /-- `x ≤ exp x`, elementary consequence of `Real.add_one_le_exp`. -/
-theorem le_self_exp (x : ℝ) : x ≤ Real.exp x := by linarith [Real.add_one_le_exp x]
+theorem le_self_exp (x : ℝ) : x ≤ Real.exp x := by
+  exact le_trans (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1)) (Real.add_one_le_exp x)
 
 /-- `1 ≤ log(R+3)` for `R ≥ 1` (since `R + 3 ≥ 4 > 3 > exp 1`). -/
 theorem one_le_log_add_three {R : ℝ} (hR : 1 ≤ R) : 1 ≤ Real.log (R + 3) := by
-  have h1 : Real.exp 1 < R + 3 := lt_of_lt_of_le Real.exp_one_lt_three (by linarith)
+  have h1 : Real.exp 1 < R + 3 := lt_of_lt_of_le Real.exp_one_lt_three (by linarith only [hR])
   have h2 : (1 : ℝ) < Real.log (R + 3) := by
     rw [← Real.log_exp 1]
     exact Real.log_lt_log (Real.exp_pos 1) h1
-  linarith
+  exact h2.le
 
 /-- **The exponential envelope**:
 `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedLFunctionBallBound N R ≤
@@ -295,30 +298,48 @@ theorem completedLFunctionBallBound_le_exp {N : ℕ} (hN2 : 2 ≤ N) {R : ℝ} (
     completedLFunctionBallBound N R ≤
       Real.exp ((4 * (N : ℝ) + 3) * ((R + 3) * Real.log (R + 3))) := by
   have hL1 : (1 : ℝ) ≤ Real.log (R + 3) := one_le_log_add_three hR
-  have hR3 : (4 : ℝ) ≤ R + 3 := by linarith
-  have hNpos : (0 : ℝ) < N := by exact_mod_cast (by omega : 0 < N)
+  have hR3 : (4 : ℝ) ≤ R + 3 := by linarith only [hR]
+  have hNpos : (0 : ℝ) < N := by exact_mod_cast (Nat.lt_of_lt_of_le Nat.zero_lt_two hN2)
   set X : ℝ := (R + 3) * Real.log (R + 3) with hX_def
   have hX4 : (4 : ℝ) ≤ X := by
     calc
       (4 : ℝ) = 4 * 1 := by ring
-      _ ≤ (R + 3) * Real.log (R + 3) := mul_le_mul hR3 hL1 (by norm_num only) (by linarith)
+      _ ≤ (R + 3) * Real.log (R + 3) :=
+        mul_le_mul hR3 hL1 (by norm_num only) (le_trans (by norm_num only : (0 : ℝ) ≤ 4) hR3)
   have hCpos : Real.pi ^ (-(1 : ℝ) / 4) * 4 < 4 := by
     have h1 : Real.pi ^ (-(1 : ℝ) / 4) < 1 :=
-      Real.rpow_lt_one_of_one_lt_of_neg (by linarith [Real.pi_gt_three]) (by norm_num only)
-    nlinarith [Real.rpow_pos_of_pos Real.pi_pos (-(1 : ℝ) / 4)]
+      Real.rpow_lt_one_of_one_lt_of_neg (lt_trans (by norm_num only : (1 : ℝ) < 3) Real.pi_gt_three)
+        (by norm_num only)
+    simpa only [one_mul] using mul_lt_mul_of_pos_right h1 (by norm_num only : (0 : ℝ) < 4)
   -- T1 = A * (C * exp((R+2)log(R+2))), A := 2NR, C := π^{-1/4}*4
   have hA1 : (2 : ℝ) * N * R ≤ Real.exp (2 * (N : ℝ) * X) := by
     refine le_trans ?_ (le_self_exp _)
     calc
-      (2 : ℝ) * N * R ≤ 2 * N * (R + 3) := by nlinarith
+      (2 : ℝ) * N * R ≤ 2 * N * (R + 3) := by
+        exact
+          mul_le_mul_of_nonneg_left (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 3))
+            (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hNpos.le)
       _ ≤ 2 * N * X := by
-        nlinarith [mul_le_mul_of_nonneg_left hL1 (by positivity : (0 : ℝ) ≤ R + 3)]
+        have hfactor : (0 : ℝ) ≤ 2 * N * (R + 3) :=
+          mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hNpos.le)
+            (le_trans (by norm_num only : (0 : ℝ) ≤ 4) hR3)
+        rw [hX_def]
+        calc
+          2 * N * (R + 3) = (2 * N * (R + 3)) * 1 := by ring
+          _ ≤ (2 * N * (R + 3)) * Real.log (R + 3) := mul_le_mul_of_nonneg_left hL1 hfactor
+          _ = 2 * N * ((R + 3) * Real.log (R + 3)) := by ring
   have hC1 :
     Real.pi ^ (-(1 : ℝ) / 4) * 4 * Real.exp ((R + 2) * Real.log (R + 2)) ≤ Real.exp (2 * X) := by
     have hQ1 : Real.exp ((R + 2) * Real.log (R + 2)) ≤ Real.exp X := by
       apply Real.exp_le_exp.mpr
       rw [hX_def]
-      exact Gamma.mul_log_mono_of_one_le (by linarith) (by linarith)
+      have hRplus2 : (1 : ℝ) ≤ R + 2 :=
+        le_trans hR (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 2))
+      have hRplus2_le_Rplus3 : R + 2 ≤ R + 3 := by
+        calc
+          R + 2 ≤ (R + 2) + 1 := le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1)
+          _ = R + 3 := by ring
+      exact Gamma.mul_log_mono_of_one_le hRplus2 hRplus2_le_Rplus3
     have hCexp : Real.pi ^ (-(1 : ℝ) / 4) * 4 ≤ Real.exp X :=
       le_trans hCpos.le (le_trans hX4 (le_self_exp X))
     calc
@@ -339,7 +360,11 @@ theorem completedLFunctionBallBound_le_exp {N : ℕ} (hN2 : 2 ≤ N) {R : ℝ} (
     calc
       2 * (N : ℝ) * R * (Real.pi ^ (-(1 : ℝ) / 4) * 4 * Real.exp ((R + 2) * Real.log (R + 2))) ≤
           Real.exp (2 * (N : ℝ) * X) * Real.exp (2 * X) :=
-        mul_le_mul hA1 hC1 (by positivity) (Real.exp_pos _).le
+        mul_le_mul hA1 hC1
+          (mul_nonneg
+            (mul_nonneg (Real.rpow_nonneg Real.pi_pos.le _) (by norm_num only : (0 : ℝ) ≤ 4))
+            (Real.exp_pos _).le)
+          (Real.exp_pos _).le
       _ = Real.exp ((2 * (N : ℝ) + 2) * X) := by
         rw [← Real.exp_add]
         ring_nf
@@ -348,14 +373,35 @@ theorem completedLFunctionBallBound_le_exp {N : ℕ} (hN2 : 2 ≤ N) {R : ℝ} (
     have hNR1 : (N : ℝ) ^ (R + 1) ≤ Real.exp ((N : ℝ) * X) := by
       rw [Real.rpow_def_of_pos hNpos]
       apply Real.exp_le_exp.mpr
-      have hlogN : Real.log (N : ℝ) ≤ (N : ℝ) := by linarith [Real.log_le_sub_one_of_pos hNpos]
+      have hlogN : Real.log (N : ℝ) ≤ (N : ℝ) :=
+        le_trans (Real.log_le_sub_one_of_pos hNpos)
+          (sub_le_self (N : ℝ) (by norm_num only : (0 : ℝ) ≤ 1))
       calc
-        Real.log (N : ℝ) * (R + 1) ≤ (N : ℝ) * (R + 3) := by nlinarith
+        Real.log (N : ℝ) * (R + 1) ≤ (N : ℝ) * (R + 3) := by
+          have hRplus1_nonneg : (0 : ℝ) ≤ R + 1 :=
+            add_nonneg (le_trans (by norm_num only : (0 : ℝ) ≤ 1) hR) (by norm_num only)
+          have hRplus1_le_Rplus3 : R + 1 ≤ R + 3 := by
+            calc
+              R + 1 ≤ (R + 1) + 2 := le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 2)
+              _ = R + 3 := by ring
+          calc
+            Real.log (N : ℝ) * (R + 1) ≤ (N : ℝ) * (R + 1) :=
+              mul_le_mul_of_nonneg_right hlogN hRplus1_nonneg
+            _ ≤ (N : ℝ) * (R + 3) := mul_le_mul_of_nonneg_left hRplus1_le_Rplus3 hNpos.le
         _ ≤ (N : ℝ) * X := by
-          nlinarith [mul_le_mul_of_nonneg_left hL1 (by positivity : (0 : ℝ) ≤ R + 3)]
+          have hfactor : (0 : ℝ) ≤ (N : ℝ) * (R + 3) :=
+            mul_nonneg hNpos.le (le_trans (by norm_num only : (0 : ℝ) ≤ 4) hR3)
+          rw [hX_def]
+          calc
+            (N : ℝ) * (R + 3) = ((N : ℝ) * (R + 3)) * 1 := by ring
+            _ ≤ ((N : ℝ) * (R + 3)) * Real.log (R + 3) := mul_le_mul_of_nonneg_left hL1 hfactor
+            _ = (N : ℝ) * ((R + 3) * Real.log (R + 3)) := by ring
     have hNle : (N : ℝ) ≤ Real.exp ((N : ℝ) * X) := by
       refine le_trans ?_ (le_self_exp _)
-      nlinarith
+      calc
+        (N : ℝ) = (N : ℝ) * 1 := by ring
+        _ ≤ (N : ℝ) * X :=
+          mul_le_mul_of_nonneg_left (le_trans (by norm_num only : (1 : ℝ) ≤ 4) hX4) hNpos.le
     calc
       (N : ℝ) ^ (R + 1) * N ≤ Real.exp ((N : ℝ) * X) * Real.exp ((N : ℝ) * X) :=
         mul_le_mul hNR1 hNle hNpos.le (Real.exp_pos _).le
@@ -365,14 +411,31 @@ theorem completedLFunctionBallBound_le_exp {N : ℕ} (hN2 : 2 ≤ N) {R : ℝ} (
   have hB2 : (2 : ℝ) * N * (R + 1) ≤ Real.exp (2 * (N : ℝ) * X) := by
     refine le_trans ?_ (le_self_exp _)
     calc
-      (2 : ℝ) * N * (R + 1) ≤ 2 * N * (R + 3) := by nlinarith
+      (2 : ℝ) * N * (R + 1) ≤ 2 * N * (R + 3) := by
+        have hRplus1_le_Rplus3 : R + 1 ≤ R + 3 := by
+          calc
+            R + 1 ≤ (R + 1) + 2 := le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 2)
+            _ = R + 3 := by ring
+        exact
+          mul_le_mul_of_nonneg_left hRplus1_le_Rplus3
+            (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hNpos.le)
       _ ≤ 2 * N * X := by
-        nlinarith [mul_le_mul_of_nonneg_left hL1 (by positivity : (0 : ℝ) ≤ R + 3)]
+        have hfactor : (0 : ℝ) ≤ 2 * N * (R + 3) :=
+          mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hNpos.le)
+            (le_trans (by norm_num only : (0 : ℝ) ≤ 4) hR3)
+        rw [hX_def]
+        calc
+          2 * N * (R + 3) = (2 * N * (R + 3)) * 1 := by ring
+          _ ≤ (2 * N * (R + 3)) * Real.log (R + 3) := mul_le_mul_of_nonneg_left hL1 hfactor
+          _ = 2 * N * ((R + 3) * Real.log (R + 3)) := by ring
   have hAB2 : (N : ℝ) ^ (R + 1) * N * (2 * N * (R + 1)) ≤ Real.exp (4 * (N : ℝ) * X) := by
     calc
       (N : ℝ) ^ (R + 1) * N * (2 * N * (R + 1)) ≤
           Real.exp (2 * (N : ℝ) * X) * Real.exp (2 * (N : ℝ) * X) :=
-        mul_le_mul hA2 hB2 (by positivity) (Real.exp_pos _).le
+        mul_le_mul hA2 hB2
+          (mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hNpos.le)
+            (add_nonneg (le_trans (by norm_num only : (0 : ℝ) ≤ 1) hR) (by norm_num only)))
+          (Real.exp_pos _).le
       _ = Real.exp (4 * (N : ℝ) * X) := by
         rw [← Real.exp_add]
         ring_nf
@@ -400,13 +463,22 @@ theorem completedLFunctionBallBound_le_exp {N : ℕ} (hN2 : 2 ≤ N) {R : ℝ} (
       (N : ℝ) ^ (R + 1) * N * (2 * N * (R + 1)) *
             (Real.pi ^ (-(1 : ℝ) / 4) * (4 * Real.exp ((R + 3) * Real.log (R + 3)))) ≤
           Real.exp (4 * (N : ℝ) * X) * Real.exp (2 * X) :=
-        mul_le_mul hAB2 hC2 (by positivity) (Real.exp_pos _).le
+        mul_le_mul hAB2 hC2
+          (mul_nonneg (Real.rpow_nonneg Real.pi_pos.le _)
+            (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 4) (Real.exp_pos _).le))
+          (Real.exp_pos _).le
       _ = Real.exp ((4 * (N : ℝ) + 2) * X) := by
         rw [← Real.exp_add]
         ring_nf
-  have h2leX : (2 : ℝ) ≤ Real.exp X := le_trans (by linarith) (le_trans hX4 (le_self_exp X))
+  have h2leX : (2 : ℝ) ≤ Real.exp X :=
+    le_trans (le_trans (by norm_num only : (2 : ℝ) ≤ 4) hX4) (le_self_exp X)
   have hmax : Real.exp ((2 * (N : ℝ) + 2) * X) ≤ Real.exp ((4 * (N : ℝ) + 2) * X) :=
-    Real.exp_le_exp.mpr (by nlinarith)
+    Real.exp_le_exp.mpr
+      (by
+        have hmul : 2 * (N : ℝ) ≤ 4 * (N : ℝ) :=
+          mul_le_mul_of_nonneg_right (by norm_num only : (2 : ℝ) ≤ 4) (Nat.cast_nonneg N)
+        have hcoeff : 2 * (N : ℝ) + 2 ≤ 4 * (N : ℝ) + 2 := add_le_add_left hmul 2
+        exact mul_le_mul_of_nonneg_right hcoeff (le_trans (by norm_num only : (0 : ℝ) ≤ 4) hX4))
   unfold completedLFunctionBallBound
   calc
     2 * (N : ℝ) * R * (Real.pi ^ (-(1 : ℝ) / 4) * (4 * Real.exp ((R + 2) * Real.log (R + 2)))) +
@@ -437,7 +509,8 @@ noncomputable def shellIdx (s : ℂ) : ℕ :=
 theorem norm_lt_two_of_shellIdx_eq_zero {s : ℂ} (hs : shellIdx s = 0) : ‖s‖ < 2 := by
   rw [shellIdx, Nat.floor_eq_zero] at hs
   rcases (norm_nonneg s).eq_or_lt with h0 | h0
-  · linarith
+  · rw [← h0]
+    norm_num only
   · rw [Real.logb_lt_iff_lt_rpow (by norm_num only) h0, Real.rpow_one] at hs
     exact hs
 
@@ -449,7 +522,7 @@ theorem two_pow_le_norm_of_shellIdx_eq {s : ℂ} {k : ℕ} (hk : k ≠ 0) (hs : 
     · exfalso
       apply hk
       rw [shellIdx, ← h, Real.logb_zero, Nat.floor_zero] at hs
-      omega
+      exact hs.symm
   have hle : (k : ℝ) ≤ Real.logb 2 ‖s‖ := by
     rw [shellIdx] at hs
     exact_mod_cast (Nat.le_floor_iff' hk).mp hs.ge
@@ -460,7 +533,7 @@ theorem norm_lt_two_pow_succ_of_shellIdx_eq {s : ℂ} {k : ℕ} (hs : shellIdx s
     ‖s‖ < (2 : ℝ) ^ (k + 1) := by
   rcases eq_or_ne ‖s‖ 0 with h0 | h0
   · rw [h0]
-    positivity
+    exact pow_pos (by norm_num only : (0 : ℝ) < 2) (k + 1)
   · have hpos : (0 : ℝ) < ‖s‖ := (norm_nonneg s).lt_of_ne (Ne.symm h0)
     have hlt : Real.logb 2 ‖s‖ < (k : ℝ) + 1 := by
       rw [shellIdx] at hs
@@ -512,7 +585,7 @@ theorem sum_le_finsum_divisor_completedLFunction {N : ℕ} [NeZero N] {χ : Diri
         by_contra hne'
         exact hnx (hfin.mem_toFinset.mpr hne')
       simp only [hx0, Int.cast_zero]
-    linarith [h1, h2]
+    exact h1.trans_eq h2
   have heq : ∑ᶠ u : ℂ, (D u : ℝ) = ∑ s ∈ hfin.toFinset, (D s : ℝ) := by
     have hsub : Function.support (fun u : ℂ => (D u : ℝ)) ⊆ ↑hfin.toFinset := by
       intro x hx
@@ -540,7 +613,7 @@ theorem completedLFunctionZeroWeight_nonneg {N : ℕ} [NeZero N] {χ : Dirichlet
     hdiff.analyticAt z
   exact
     div_nonneg (by exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic s)
-      (by positivity)
+      (add_nonneg (by norm_num only) (sq_nonneg ‖s‖))
 
 /-- The `Set.univ`-divisor and the `closedBall`-divisor agree on the ball: both unfold to the
 same `meromorphicOrderAt` value once the point is known to lie in the (smaller) domain. -/
@@ -569,9 +642,9 @@ theorem sum_completedLFunctionZeroWeight_shell_le {N : ℕ} [NeZero N] (hN2 : 2 
             Real.log ‖DirichletCharacter.completedLFunction χ 0‖) /
           Real.log 2) /
         4 ^ k := by
-  have hN1 : 1 < N := by omega
+  have hN1 : 1 < N := lt_of_lt_of_le (by norm_num only : 1 < 2) hN2
   have hzero := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
-  have hR2k1 : (0 : ℝ) < (2 : ℝ) ^ (k + 1) := by positivity
+  have hR2k1 : (0 : ℝ) < (2 : ℝ) ^ (k + 1) := pow_pos (by norm_num only : (0 : ℝ) < 2) (k + 1)
   have hjensen := finsum_divisor_completedLFunction_le hN1 hprimitive hne hinv hR2k1
   have hReq : (2 : ℝ) * (2 : ℝ) ^ (k + 1) = (2 : ℝ) ^ (k + 2) := by ring
   rw [hReq] at hjensen
@@ -605,9 +678,15 @@ theorem sum_completedLFunctionZeroWeight_shell_le {N : ℕ} [NeZero N] (hN2 : 2 
       Real.exp
         ((4 * (N : ℝ) + 3) * ((2 : ℝ) ^ (k + 2) + 3) * Real.log ((2 : ℝ) ^ (k + 2) + 3)) := by
     apply Real.one_le_exp
-    have hL : (0 : ℝ) ≤ Real.log ((2 : ℝ) ^ (k + 2) + 3) :=
-      Real.log_nonneg (by nlinarith [pow_pos (show (0 : ℝ) < 2 by norm_num only) (k + 2)])
-    positivity
+    have harg : (1 : ℝ) ≤ (2 : ℝ) ^ (k + 2) + 3 :=
+      le_trans h1leR (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 3))
+    have hL : (0 : ℝ) ≤ Real.log ((2 : ℝ) ^ (k + 2) + 3) := Real.log_nonneg harg
+    have hcoef : (0 : ℝ) ≤ 4 * (N : ℝ) + 3 :=
+      add_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 4) (Nat.cast_nonneg N))
+        (by norm_num only)
+    have harg_nonneg : (0 : ℝ) ≤ (2 : ℝ) ^ (k + 2) + 3 :=
+      le_trans (by norm_num only : (0 : ℝ) ≤ 1) harg
+    exact mul_nonneg (mul_nonneg hcoef harg_nonneg) hL
   have hmax_le :
     max 1 (completedLFunctionBallBound N ((2 : ℝ) ^ (k + 2))) ≤
       Real.exp ((4 * (N : ℝ) + 3) * ((2 : ℝ) ^ (k + 2) + 3) * Real.log ((2 : ℝ) ^ (k + 2) + 3)) :=
@@ -619,10 +698,12 @@ theorem sum_completedLFunctionZeroWeight_shell_le {N : ℕ} [NeZero N] (hN2 : 2 
           ‖DirichletCharacter.completedLFunction χ 0‖) ≤
       (4 * (N : ℝ) + 3) * ((2 : ℝ) ^ (k + 2) + 3) * Real.log ((2 : ℝ) ^ (k + 2) + 3) -
         Real.log ‖DirichletCharacter.completedLFunction χ 0‖ := by
-    rw [Real.log_div (by positivity) hzeronorm.ne']
-    have := Real.log_le_log (by positivity) hmax_le
-    rw [Real.log_exp] at this
-    linarith
+    have hmax_pos : (0 : ℝ) < max 1 (completedLFunctionBallBound N ((2 : ℝ) ^ (k + 2))) :=
+      lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) (le_max_left _ _)
+    rw [Real.log_div hmax_pos.ne' hzeronorm.ne']
+    have hlog_bound_exp := Real.log_le_log hmax_pos hmax_le
+    rw [Real.log_exp] at hlog_bound_exp
+    exact sub_le_sub_right hlog_bound_exp _
   have hZC :
     ∑ᶠ u : ℂ,
         (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
@@ -654,10 +735,10 @@ theorem sum_completedLFunctionZeroWeight_shell_le {N : ℕ} [NeZero N] (hN2 : 2 
     have h4k : (4 : ℝ) ^ k = (2 : ℝ) ^ k * (2 : ℝ) ^ k := by
       rw [show (4 : ℝ) = 2 * 2 from by norm_num only, mul_pow]
     have hsq : (2 : ℝ) ^ k * (2 : ℝ) ^ k ≤ ‖s‖ * ‖s‖ :=
-      mul_le_mul hlb hlb (by positivity) (norm_nonneg s)
+      mul_le_mul hlb hlb (pow_nonneg (by norm_num only : (0 : ℝ) ≤ 2) k) (norm_nonneg s)
     have hden : (4 : ℝ) ^ k ≤ 1 + ‖s‖ ^ 2 := by
       rw [h4k, sq]
-      linarith
+      exact hsq.trans (le_add_of_nonneg_left (by norm_num only : (0 : ℝ) ≤ 1))
     have hnn :
       (0 : ℝ) ≤
         (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
@@ -669,7 +750,7 @@ theorem sum_completedLFunctionZeroWeight_shell_le {N : ℕ} [NeZero N] (hN2 : 2 
           (Metric.closedBall (0 : ℂ) ((2 : ℝ) ^ (k + 1))) :=
         fun z _ => hdiff.analyticAt z
       exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic s
-    apply div_le_div_of_nonneg_left hnn (by positivity) hden
+    apply div_le_div_of_nonneg_left hnn (pow_pos (by norm_num only : (0 : ℝ) < 4) k) hden
   have hsum_le :
     ∑ s ∈ t, completedLFunctionZeroWeight χ s ≤
       ∑ s ∈ t,
@@ -682,7 +763,7 @@ theorem sum_completedLFunctionZeroWeight_shell_le {N : ℕ} [NeZero N] (hN2 : 2 
   refine hsum_le.trans ?_
   have hfsum_le :=
     sum_le_finsum_divisor_completedLFunction (N := N) (χ := χ) hne (R := (2 : ℝ) ^ (k + 1)) (t := t)
-  have h4kpos : (0 : ℝ) < 4 ^ k := by positivity
+  have h4kpos : (0 : ℝ) < 4 ^ k := pow_pos (by norm_num only : (0 : ℝ) < 4) k
   exact div_le_div_of_nonneg_right (hfsum_le.trans hZC) h4kpos.le
 
 /-- The shell weight is bounded by `(A(k+3)+C)/2^k`, with the displayed constants depending
@@ -697,7 +778,9 @@ theorem sum_completedLFunctionZeroWeight_shell_le' {N : ℕ} [NeZero N] (hN2 : 2
         2 ^ k := by
   refine (sum_completedLFunctionZeroWeight_shell_le hN2 hprimitive hne hinv hk htk).trans ?_
   have hLpos : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num only)
-  have hApos : (0 : ℝ) < 4 * (N : ℝ) + 3 := by positivity
+  have hApos : (0 : ℝ) < 4 * (N : ℝ) + 3 :=
+    add_pos_of_nonneg_of_pos (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 4) (Nat.cast_nonneg N))
+      (by norm_num only : (0 : ℝ) < 3)
   have hxle : (2 : ℝ) ^ (k + 2) + 3 ≤ (2 : ℝ) ^ (k + 3) := by
     have h1 : (3 : ℝ) ≤ (2 : ℝ) ^ (k + 2) := by
       calc
@@ -705,28 +788,39 @@ theorem sum_completedLFunctionZeroWeight_shell_le' {N : ℕ} [NeZero N] (hN2 : 2
         _ = (2 : ℝ) ^ 2 := by norm_num only
         _ ≤ (2 : ℝ) ^ (k + 2) := by
           apply pow_le_pow_right₀ (by norm_num only)
-          omega
+          exact Nat.le_add_left 2 k
     have h2 : (2 : ℝ) ^ (k + 3) = (2 : ℝ) ^ (k + 2) + (2 : ℝ) ^ (k + 2) := by
       rw [show k + 3 = (k + 2) + 1 from rfl, pow_succ]
       ring
-    linarith
+    calc
+      (2 : ℝ) ^ (k + 2) + 3 = 3 + (2 : ℝ) ^ (k + 2) := by ring
+      _ ≤ (2 : ℝ) ^ (k + 2) + (2 : ℝ) ^ (k + 2) := add_le_add_left h1 ((2 : ℝ) ^ (k + 2))
+      _ = (2 : ℝ) ^ (k + 3) := h2.symm
   have hlogxle : Real.log ((2 : ℝ) ^ (k + 2) + 3) ≤ ((k : ℝ) + 3) * Real.log 2 := by
     calc
       Real.log ((2 : ℝ) ^ (k + 2) + 3) ≤ Real.log ((2 : ℝ) ^ (k + 3)) :=
-        Real.log_le_log (by positivity) hxle
+        Real.log_le_log
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 3)
+            (le_add_of_nonneg_left (pow_nonneg (by norm_num only : (0 : ℝ) ≤ 2) (k + 2))))
+          hxle
       _ = ((k : ℝ) + 3) * Real.log 2 := by
         rw [Real.log_pow]
         push_cast
         ring
-  have hxpos : (0 : ℝ) < (2 : ℝ) ^ (k + 2) + 3 := by positivity
+  have hxpos : (0 : ℝ) < (2 : ℝ) ^ (k + 2) + 3 :=
+    lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 3)
+      (le_add_of_nonneg_left (pow_nonneg (by norm_num only : (0 : ℝ) ≤ 2) (k + 2)))
   have hnum_le :
     (4 * (N : ℝ) + 3) * ((2 : ℝ) ^ (k + 2) + 3) * Real.log ((2 : ℝ) ^ (k + 2) + 3) ≤
       (4 * (N : ℝ) + 3) * (2 : ℝ) ^ (k + 3) * (((k : ℝ) + 3) * Real.log 2) := by
     have h1 : (4 * (N : ℝ) + 3) * ((2 : ℝ) ^ (k + 2) + 3) ≤ (4 * (N : ℝ) + 3) * (2 : ℝ) ^ (k + 3) :=
       mul_le_mul_of_nonneg_left hxle hApos.le
-    have h1lex : (1 : ℝ) ≤ (2 : ℝ) ^ (k + 2) + 3 := by
-      nlinarith only [pow_pos (show (0 : ℝ) < 2 by norm_num only) (k + 2)]
-    exact mul_le_mul h1 hlogxle (Real.log_nonneg h1lex) (by positivity)
+    have h1lex : (1 : ℝ) ≤ (2 : ℝ) ^ (k + 2) + 3 :=
+      le_trans (by norm_num only : (1 : ℝ) ≤ 3)
+        (le_add_of_nonneg_left (pow_nonneg (by norm_num only : (0 : ℝ) ≤ 2) (k + 2)))
+    exact
+      mul_le_mul h1 hlogxle (Real.log_nonneg h1lex)
+        (mul_nonneg hApos.le (pow_nonneg (by norm_num only : (0 : ℝ) ≤ 2) (k + 3)))
   have hAoverL :
     (4 * (N : ℝ) + 3) * ((2 : ℝ) ^ (k + 2) + 3) * Real.log ((2 : ℝ) ^ (k + 2) + 3) / Real.log 2 ≤
       (4 * (N : ℝ) + 3) * (2 : ℝ) ^ (k + 3) * ((k : ℝ) + 3) := by
@@ -755,9 +849,9 @@ theorem sum_completedLFunctionZeroWeight_shell_le' {N : ℕ} [NeZero N] (hN2 : 2
       (4 * (N : ℝ) + 3) * (2 : ℝ) ^ (k + 3) * ((k : ℝ) + 3) +
         |Real.log ‖DirichletCharacter.completedLFunction χ 0‖| / Real.log 2 := by
     rw [hsplit]
-    linarith [hAoverL, hyoverL]
-  have h2kpos : (0 : ℝ) < (2 : ℝ) ^ k := by positivity
-  have h4kpos' : (0 : ℝ) < (4 : ℝ) ^ k := by positivity
+    exact add_le_add hAoverL hyoverL
+  have h2kpos : (0 : ℝ) < (2 : ℝ) ^ k := pow_pos (by norm_num only : (0 : ℝ) < 2) k
+  have h4kpos' : (0 : ℝ) < (4 : ℝ) ^ k := pow_pos (by norm_num only : (0 : ℝ) < 4) k
   have hpow_eq : (2 : ℝ) ^ (k + 3) = 8 * (2 : ℝ) ^ k := by
     rw [pow_add]
     ring
@@ -767,18 +861,18 @@ theorem sum_completedLFunctionZeroWeight_shell_le' {N : ℕ} [NeZero N] (hN2 : 2
     (4 * (N : ℝ) + 3) * (2 : ℝ) ^ (k + 3) * ((k : ℝ) + 3) / (4 : ℝ) ^ k =
       8 * (4 * (N : ℝ) + 3) * ((k : ℝ) + 3) / (2 : ℝ) ^ k := by
     rw [hpow_eq, h4eq]
-    field_simp
+    field_simp [h2kpos.ne']
   set yabs : ℝ := |Real.log ‖DirichletCharacter.completedLFunction χ 0‖| / Real.log 2 with hyabs_def
   have habsle : yabs / (4 : ℝ) ^ k ≤ yabs / (2 : ℝ) ^ k := by
     apply
       div_le_div_of_nonneg_left
         (by
           rw [hyabs_def]
-          positivity)
+          exact div_nonneg (abs_nonneg _) hLpos.le)
         h2kpos
     rw [h4eq]
     have h1 : (1 : ℝ) ≤ (2 : ℝ) ^ k := one_le_pow₀ (by norm_num only)
-    nlinarith [h2kpos]
+    simpa only [mul_one] using mul_le_mul_of_nonneg_left h1 h2kpos.le
   calc
     (((4 * (N : ℝ) + 3) * ((2 : ℝ) ^ (k + 2) + 3) * Real.log ((2 : ℝ) ^ (k + 2) + 3) -
               Real.log ‖DirichletCharacter.completedLFunction χ 0‖) /
@@ -790,7 +884,7 @@ theorem sum_completedLFunctionZeroWeight_shell_le' {N : ℕ} [NeZero N] (hN2 : 2
       by rw [add_div]
     _ ≤ 8 * (4 * (N : ℝ) + 3) * ((k : ℝ) + 3) / (2 : ℝ) ^ k + yabs / (2 : ℝ) ^ k := by
       rw [hBeq]
-      linarith [habsle]
+      exact add_le_add (le_refl _) habsle
     _ = (8 * (4 * (N : ℝ) + 3) * ((k : ℝ) + 3) + yabs) / 2 ^ k := by rw [add_div]
 
 /-- The geometric comparison series for the shell bounds: `(A(k+3)+C)/2^k` is summable for any
@@ -853,7 +947,7 @@ theorem sum_completedLFunctionZeroWeight_shell_zero_le {N : ℕ} [NeZero N]
         AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) (Metric.closedBall (0 : ℂ) 2) :=
         fun z _ => hdiff.analyticAt z
       exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic s
-    have hden : (1 : ℝ) ≤ 1 + ‖s‖ ^ 2 := by nlinarith [sq_nonneg ‖s‖]
+    have hden : (1 : ℝ) ≤ 1 + ‖s‖ ^ 2 := le_add_of_nonneg_right (sq_nonneg ‖s‖)
     calc
       (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.closedBall (0 : ℂ) 2)
                 s :
@@ -895,8 +989,16 @@ theorem summable_completedLFunctionZeroWeight {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
   have hgnn : ∀ k, 0 ≤ g k := by
     intro k
     rw [hg_def]
-    have habs : (0 : ℝ) ≤ |Real.log ‖DirichletCharacter.completedLFunction χ 0‖| := abs_nonneg _
-    positivity
+    apply div_nonneg
+    · apply add_nonneg
+      · exact
+          mul_nonneg
+            (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 8)
+              (add_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 4) (Nat.cast_nonneg N))
+                (by norm_num only)))
+            (add_nonneg (Nat.cast_nonneg k) (by norm_num only))
+      · exact div_nonneg (abs_nonneg _) (Real.log_pos (by norm_num only)).le
+    · exact (pow_pos (by norm_num only : (0 : ℝ) < 2) k).le
   refine
     summable_of_sum_le (completedLFunctionZeroWeight_nonneg hne) (c := L + ∑' k, g k) fun u => ?_
   rw [← Finset.sum_filter_add_sum_filter_not u (fun s => shellIdx s = 0)]
@@ -931,7 +1033,7 @@ theorem summable_completedLFunctionZeroWeight {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
         (Finset.sum_fiberwise_of_maps_to hmaps (completedLFunctionZeroWeight χ)).symm
       _ ≤ ∑ j ∈ tt, g j := Finset.sum_le_sum hband
       _ ≤ ∑' k, g k := hgsum.sum_le_tsum tt (fun k _ => hgnn k)
-  linarith [hlow, hhigh]
+  exact add_le_add hlow hhigh
 
 /-! ### A zero-free sphere in every unit interval
 
@@ -954,7 +1056,8 @@ theorem exists_zeroFree_sphere_radius {N : ℕ} [NeZero N] {χ : DirichletCharac
         (Metric.closedBall (0 : ℂ) ((n : ℝ) + 1) ∩
           (DirichletCharacter.completedLFunction χ) ⁻¹' {0})).Finite :=
     hfin.image _
-  have hIooinf : (Set.Ioo (n : ℝ) ((n : ℝ) + 1)).Infinite := Set.Ioo_infinite (by linarith)
+  have hIooinf : (Set.Ioo (n : ℝ) ((n : ℝ) + 1)).Infinite :=
+    Set.Ioo_infinite (lt_add_of_pos_right _ (by norm_num only : (0 : ℝ) < 1))
   obtain ⟨R, hRmem, hRnotin⟩ := hIooinf.exists_notMem_finite hnormfin
   refine ⟨R, hRmem.1, hRmem.2, fun ρ hρ hcontra => hRnotin ?_⟩
   refine ⟨ρ, ⟨?_, hcontra⟩, hρ⟩
@@ -1152,7 +1255,7 @@ theorem norm_ecanonicalDecomp_zero_ge {N : ℕ} [NeZero N] {χ : DirichletCharac
         rw [Complex.norm_real, Real.norm_of_nonneg hR.le, sq, mul_div_mul_left R ‖i‖ hR.ne']
       have hge1 : (1 : ℝ) ≤ ‖Complex.canonicalFactor R i 0‖ := by
         rw [hnormeq, le_div_iff₀ (norm_pos_iff.mpr hine0)]
-        linarith
+        simpa only [one_mul] using hnormlt.le
       have hlognn : (0 : ℝ) ≤ Real.log ‖Complex.canonicalFactor R i 0‖ := Real.log_nonneg hge1
       have hdivnn :
         (0 : ℝ) ≤
@@ -1181,7 +1284,7 @@ theorem norm_ecanonicalDecomp_zero_ge {N : ℕ} [NeZero N] {χ : DirichletCharac
   have hF0_pos : (0 : ℝ) < ‖DirichletCharacter.completedLFunction χ 0‖ := norm_pos_iff.mpr hF0ne
   have hlog_le : Real.log ‖DirichletCharacter.completedLFunction χ 0‖ ≤ Real.log ‖g 0‖ := by
     rw [hlogeq]
-    linarith
+    exact le_add_of_nonneg_left hballnn
   exact (Real.log_le_log_iff hF0_pos hg0_pos).mp hlog_le
 
 /-- On a zero-free sphere, the norm of the canonical analytic factor equals the completed
@@ -1231,7 +1334,7 @@ theorem ecanonicalDecomp_log_norm_oscillation_le {N : ℕ} [NeZero N] (hN1 : 1 <
     (Real.log_le_log_iff hgz_pos hbound_pos).mpr hzle
   have h2 : Real.log ‖DirichletCharacter.completedLFunction χ 0‖ ≤ Real.log ‖g 0‖ :=
     (Real.log_le_log_iff hF0_pos hg0_pos).mpr hF0ge
-  linarith
+  linarith only [h1, h2]
 
 /-! ### Derivative variation
 
@@ -1262,7 +1365,7 @@ theorem norm_logDeriv_ecanonicalDecomp_sub_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
               Real.log ‖DirichletCharacter.completedLFunction χ 0‖ +
             1) /
         R ^ 2 := by
-  have hR0 : 0 < R := by linarith
+  have hR0 : 0 < R := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hR
   have hN2 : 2 ≤ N := hN1
   have hanalyticBall : AnalyticOnNhd ℂ g (Metric.ball (0 : ℂ) R) := fun z hz =>
     D.analyticOnNhd z (Metric.ball_subset_closedBall hz)
@@ -1274,7 +1377,7 @@ theorem norm_logDeriv_ecanonicalDecomp_sub_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
     norm_pos_iff.mpr (dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne)
   have h0R : ‖(0 : ℂ)‖ ≤ R := by
     rw [norm_zero]
-    linarith
+    exact le_trans (by norm_num only : (0 : ℝ) ≤ 1) hR
   have hboundge : ‖DirichletCharacter.completedLFunction χ 0‖ ≤ completedLFunctionBallBound N R :=
     norm_completedLFunction_le_completedLFunctionBallBound hN1 hprimitive hne hinv hR0.le h0R
   have hboundpos : (0 : ℝ) < completedLFunctionBallBound N R := hF0_pos.trans_le hboundge
@@ -1284,11 +1387,7 @@ theorem norm_logDeriv_ecanonicalDecomp_sub_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
       (4 * (N : ℝ) + 3) * (R + 3) * Real.log (R + 3) := by
     have hlog := Real.log_le_log hboundpos hbound_exp
     rw [Real.log_exp] at hlog
-    linarith [hlog,
-      show
-        (4 * (N : ℝ) + 3) * ((R + 3) * Real.log (R + 3)) =
-          (4 * (N : ℝ) + 3) * (R + 3) * Real.log (R + 3)
-        from by ring]
+    simpa only [mul_assoc] using hlog
   have hlogF0_le_bound :
     Real.log ‖DirichletCharacter.completedLFunction χ 0‖ ≤
       Real.log (completedLFunctionBallBound N R) :=
@@ -1307,7 +1406,7 @@ theorem norm_logDeriv_ecanonicalDecomp_sub_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
     have hoscR := ecanonicalDecomp_log_norm_oscillation_le hN1 hprimitive hne hinv hR0 D hzf hwcl
     have hew := hh_re w hw
     have he0 := hh_re 0 h0ball
-    linarith [hoscR, hlog_bound_le, hew, he0]
+    linarith only [hoscR, hlog_bound_le, hew, he0]
   set M : ℝ :=
     (hh 0).re +
       ((4 * (N : ℝ) + 3) * (R + 3) * Real.log (R + 3) -
@@ -1315,13 +1414,30 @@ theorem norm_logDeriv_ecanonicalDecomp_sub_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
       1 with
     hM_def
   have hM0 : (hh 0).re < M := by
+    have hbound :
+      Real.log ‖DirichletCharacter.completedLFunction χ 0‖ ≤
+        (4 * (N : ℝ) + 3) * (R + 3) * Real.log (R + 3) :=
+      hlogF0_le_bound.trans hlog_bound_le
     rw [hM_def]
-    linarith [hlog_bound_le, hlogF0_le_bound]
+    exact
+      (le_add_of_nonneg_right (sub_nonneg.mpr hbound)).trans_lt
+        (lt_add_of_pos_right _ (by norm_num only : (0 : ℝ) < 1))
   have hRe_le : ∀ w ∈ Metric.ball (0 : ℂ) R, (hh w).re ≤ M := by
     intro w hw
     have := hosc w hw
     rw [hM_def]
-    linarith
+    calc
+      (hh w).re ≤
+          (hh 0).re +
+            ((4 * (N : ℝ) + 3) * (R + 3) * Real.log (R + 3) -
+              Real.log ‖DirichletCharacter.completedLFunction χ 0‖) :=
+        this
+      _ ≤
+          (hh 0).re +
+            ((4 * (N : ℝ) + 3) * (R + 3) * Real.log (R + 3) -
+              Real.log ‖DirichletCharacter.completedLFunction χ 0‖) +
+            1 :=
+        le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1)
   have h7 := General.norm_hasDerivAt_sub_le_of_re_le hR0 hh' hM0 hRe_le hs
   have hMcalc :
     M - (hh 0).re =
@@ -1338,23 +1454,27 @@ theorem norm_logDeriv_ecanonicalDecomp_sub_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
     hA_def
   have hApos : 0 < A := by
     rw [← hMcalc]
-    linarith
+    exact sub_pos.mpr hM0
   have hsnn : 0 ≤ ‖s‖ := norm_nonneg s
-  have hRs : R / 2 ≤ R - ‖s‖ := by linarith
-  have hRspos : 0 < R - ‖s‖ := by linarith
+  have hRs : R / 2 ≤ R - ‖s‖ := by
+    calc
+      R / 2 = R - R / 2 := by ring
+      _ ≤ R - ‖s‖ := sub_le_sub_left hs R
+  have hRspos : 0 < R - ‖s‖ := lt_of_lt_of_le (half_pos hR0) hRs
   have hratio : (R + ‖s‖) / (R - ‖s‖) ^ 3 ≤ 12 / R ^ 2 := by
-    rw [div_le_div_iff₀ (by positivity) (by positivity)]
-    have h3 : (R / 2) ^ 3 ≤ (R - ‖s‖) ^ 3 := pow_le_pow_left₀ (by linarith) hRs 3
+    rw [div_le_div_iff₀ (pow_pos hRspos 3) (sq_pos_of_pos hR0)]
+    have h3 : (R / 2) ^ 3 ≤ (R - ‖s‖) ^ 3 := pow_le_pow_left₀ (half_pos hR0).le hRs 3
     have hstep1 : (R + ‖s‖) * R ^ 2 ≤ (3 / 2) * R * R ^ 2 := by
       have hsum : R + ‖s‖ ≤ (3 / 2 : ℝ) * R := by linarith only [hs]
       exact mul_le_mul_of_nonneg_right hsum (sq_nonneg R)
     have hstep2 : (3 / 2 : ℝ) * R * R ^ 2 = 12 * (R ^ 3 / 8) := by ring
     have hstep3 : (12 : ℝ) * (R ^ 3 / 8) ≤ 12 * (R - ‖s‖) ^ 3 := by
-      have : (R : ℝ) ^ 3 / 8 = (R / 2) ^ 3 := by ring
-      linarith only [h3, this]
-    linarith only [hstep1, hstep2, hstep3]
+      have heq : (R : ℝ) ^ 3 / 8 = (R / 2) ^ 3 := by ring
+      rw [heq]
+      exact mul_le_mul_of_nonneg_left h3 (by norm_num only : (0 : ℝ) ≤ 12)
+    exact (hstep1.trans_eq hstep2).trans hstep3
   have hcrude : 16 * A * (R + ‖s‖) / (R - ‖s‖) ^ 3 * ‖s‖ ≤ 192 * ‖s‖ * A / R ^ 2 := by
-    have hAnn : (0 : ℝ) ≤ 16 * A := by linarith [hApos]
+    have hAnn : (0 : ℝ) ≤ 16 * A := mul_nonneg (by norm_num only : (0 : ℝ) ≤ 16) hApos.le
     have h1 : 16 * A * ((R + ‖s‖) / (R - ‖s‖) ^ 3) ≤ 16 * A * (12 / R ^ 2) :=
       mul_le_mul_of_nonneg_left hratio hAnn
     calc
@@ -1385,7 +1505,7 @@ theorem tendsto_add_mul_log_div_sq_atTop :
     have heq2 : (fun R : ℝ => 1 + 3 / R) =ᶠ[Filter.atTop] (fun R : ℝ => (R + 3) / R) := by
       filter_upwards [Filter.eventually_gt_atTop (0 : ℝ)] with R hR
       have hRne : R ≠ 0 := hR.ne'
-      field_simp
+      field_simp [hRne]
     exact hadd.congr' heq2
   have hratiosq : Filter.Tendsto (fun R : ℝ => ((R + 3) / R) ^ 2) Filter.atTop (nhds 1) := by
     have := hratio1.pow 2
@@ -1400,8 +1520,8 @@ theorem tendsto_add_mul_log_div_sq_atTop :
       (fun R : ℝ => (Real.log (R + 3) / (R + 3)) * ((R + 3) / R) ^ 2) := by
     filter_upwards [Filter.eventually_gt_atTop (0 : ℝ)] with R hR
     have hRne : R ≠ 0 := hR.ne'
-    have hR3ne : R + 3 ≠ 0 := by positivity
-    field_simp
+    have hR3ne : R + 3 ≠ 0 := (add_pos hR (by norm_num only : (0 : ℝ) < 3)).ne'
+    field_simp [hRne, hR3ne]
   exact hmul.congr' heq1.symm
 
 /-- For arbitrary real constants, `K1 * (K2*(R+3)*log(R+3)+c0)/R²` tends to zero.
@@ -1433,7 +1553,7 @@ theorem tendsto_const_mul_add_mul_log_add_const_div_sq_atTop (K1 K2 c0 : ℝ) :
   refine hsum.congr' ?_
   filter_upwards [Filter.eventually_gt_atTop (0 : ℝ)] with R hR
   have hRne : R ≠ 0 := hR.ne'
-  field_simp
+  field_simp [hRne]
 
 /-! ### A good-radius sequence
 
@@ -2163,7 +2283,8 @@ theorem norm_canonicalCorrectionSum_le {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : 
             ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 :=
     finsum_divisor_completedLFunction_le hN1 hprimitive hne hinv hR
-  have hpos : (0 : ℝ) ≤ 2 * ‖s‖ / R ^ 2 := by positivity
+  have hpos : (0 : ℝ) ≤ 2 * ‖s‖ / R ^ 2 :=
+    div_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) (norm_nonneg s)) (sq_nonneg R)
   calc
     ‖∑ ρ ∈ hfin.toFinset,
             ((D ρ : ℤ) : ℂ) *
@@ -2233,13 +2354,13 @@ theorem norm_centeredLogDeriv_sub_truncatedGenus_le {N : ℕ} [NeZero N] (hN1 : 
               (max 1 (completedLFunctionBallBound N (2 * R)) /
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) := by
-  have hR0 : 0 < R := by linarith
+  have hR0 : 0 < R := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hR
   obtain ⟨g, D⟩ := exists_ecanonicalDecomp_completedLFunction hne R
   have h0closed : (0 : ℂ) ∈ Metric.closedBall (0 : ℂ) R := by
     simp only [Metric.mem_closedBall, dist_self, hR0.le]
   have hsclosed : s ∈ Metric.closedBall (0 : ℂ) R := by
     rw [Metric.mem_closedBall, dist_zero_right]
-    linarith
+    exact hs.trans (half_le_self hR0.le)
   have heq := ecanonicalDecomp_centered_logDeriv_eq hprimitive hne hR0 D hzf hsclosed hsne
   have hdiff := DirichletCharacter.differentiable_completedLFunction hne
   have hanalyticClosed :
@@ -2401,12 +2522,12 @@ theorem summable_completedLFunctionGenusOneTerm_one {N : ℕ} [NeZero N] (hN2 : 
       have h1 : ‖ρ‖ - ‖(1 : ℂ)‖ ≤ ‖ρ - 1‖ := norm_sub_norm_le ρ 1
       rw [norm_one] at h1
       rw [show ‖(1 : ℂ) - ρ‖ = ‖ρ - 1‖ from norm_sub_rev 1 ρ]
-      linarith
+      linarith only [h2ρ, h1]
     have hρne0 : ρ ≠ 0 := by
       intro h
       rw [h] at h2ρ
       simp only [norm_zero] at h2ρ
-      linarith
+      norm_num only at h2ρ
     have hρne1 : (1 : ℂ) - ρ ≠ 0 := by
       intro h
       have hρeq1 : ρ = 1 := by linear_combination -h
@@ -2414,21 +2535,26 @@ theorem summable_completedLFunctionGenusOneTerm_one {N : ℕ} [NeZero N] (hN2 : 
       norm_num only [norm_one] at h2ρ
     have hterm : ‖(1 : ℂ) / (1 - ρ) + 1 / ρ‖ ≤ 2 / ‖ρ‖ ^ 2 := by
       have heq : (1 : ℂ) / (1 - ρ) + 1 / ρ = 1 / (ρ * (1 - ρ)) := by
-        field_simp
+        field_simp [hρne0, hρne1]
         ring
       rw [heq, norm_div, norm_mul, norm_one]
-      rw [div_le_div_iff₀ (by positivity) (by positivity)]
+      rw [div_le_div_iff₀ (mul_pos (norm_pos_iff.mpr hρne0) (norm_pos_iff.mpr hρne1))
+          (sq_pos_of_pos (norm_pos_iff.mpr hρne0))]
       have h1 : ‖ρ‖ * (‖ρ‖ / 2) ≤ ‖ρ‖ * ‖(1 : ℂ) - ρ‖ :=
         mul_le_mul_of_nonneg_left hρ1 (norm_nonneg ρ)
-      nlinarith [norm_nonneg ρ, sq_nonneg ‖ρ‖]
+      calc
+        1 * ‖ρ‖ ^ 2 = 2 * (‖ρ‖ * (‖ρ‖ / 2)) := by ring
+        _ ≤ 2 * (‖ρ‖ * ‖(1 : ℂ) - ρ‖) :=
+          mul_le_mul_of_nonneg_left h1 (by norm_num only : (0 : ℝ) ≤ 2)
     have hDcast :
       ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ)‖ =
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) := by
       rw [Complex.norm_intCast, abs_of_nonneg hDnn]
     rw [norm_mul, hDcast]
     have hratio : (2 : ℝ) / ‖ρ‖ ^ 2 ≤ 4 / (1 + ‖ρ‖ ^ 2) := by
-      rw [div_le_div_iff₀ (by positivity) (by positivity)]
-      nlinarith [h2ρ]
+      rw [div_le_div_iff₀ (sq_pos_of_pos (norm_pos_iff.mpr hρne0))
+          (add_pos_of_pos_of_nonneg (by norm_num only : (0 : ℝ) < 1) (sq_nonneg ‖ρ‖))]
+      nlinarith only [h2ρ]
     have hcombine :
       ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) *
           (2 / ‖ρ‖ ^ 2) ≤
@@ -2569,7 +2695,7 @@ theorem tendsto_two_mul_add_mul_log_div_sq_atTop :
   refine h4.congr' ?_
   filter_upwards [Filter.eventually_gt_atTop (0 : ℝ)] with R hR
   have hRne : R ≠ 0 := hR.ne'
-  field_simp
+  field_simp [hRne]
   ring
 
 /-- The finite-radius error term of
@@ -2585,7 +2711,7 @@ theorem tendsto_h9dError_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : Dirich
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2))
       Filter.atTop (nhds 0) := by
-  have hN1 : 1 < N := by omega
+  have hN1 : 1 < N := Nat.lt_of_lt_of_le (by norm_num only : 1 < 2) hN2
   have hF0_pos : (0 : ℝ) < ‖DirichletCharacter.completedLFunction χ 0‖ :=
     norm_pos_iff.mpr (dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne)
   have hupper :
@@ -2635,7 +2761,7 @@ theorem tendsto_h9dError_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : Dirich
     refine hdiv.congr' ?_
     filter_upwards [Filter.eventually_gt_atTop (0 : ℝ)] with R hR
     have hRne : R ≠ 0 := hR.ne'
-    field_simp
+    field_simp [hRne]
     ring
   have h0le :
     ∀ᶠ R in Filter.atTop,
@@ -2646,14 +2772,14 @@ theorem tendsto_h9dError_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : Dirich
                 ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) := by
     filter_upwards [Filter.eventually_ge_atTop (1 : ℝ)] with R hR
-    have hR0 : 0 < R := by linarith
+    have hR0 : 0 < R := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hR
     have h0R : ‖(0 : ℂ)‖ ≤ 2 * R := by
       rw [norm_zero]
-      linarith
+      exact le_of_lt (mul_pos (by norm_num only : (0 : ℝ) < 2) hR0)
     have hboundge :
       ‖DirichletCharacter.completedLFunction χ 0‖ ≤ completedLFunctionBallBound N (2 * R) :=
-      norm_completedLFunction_le_completedLFunctionBallBound hN1 hprimitive hne hinv (by linarith)
-        h0R
+      norm_completedLFunction_le_completedLFunctionBallBound hN1 hprimitive hne hinv
+        (le_of_lt (mul_pos (by norm_num only : (0 : ℝ) < 2) hR0)) h0R
     have hle :
       ‖DirichletCharacter.completedLFunction χ 0‖ ≤ max 1 (completedLFunctionBallBound N (2 * R)) :=
       le_max_of_le_right hboundge
@@ -2663,7 +2789,11 @@ theorem tendsto_h9dError_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : Dirich
           (max 1 (completedLFunctionBallBound N (2 * R)) /
             ‖DirichletCharacter.completedLFunction χ 0‖) :=
       Real.log_nonneg ((one_le_div hF0_pos).mpr hle)
-    positivity
+    exact
+      mul_nonneg
+        (div_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) (by norm_num only : (0 : ℝ) ≤ 1))
+          (sq_nonneg R))
+        (div_nonneg hlog_nonneg (Real.log_pos (by norm_num only : (1 : ℝ) < 2)).le)
   have hle :
     ∀ᶠ R in Filter.atTop,
       2 * 1 / R ^ 2 *
@@ -2676,17 +2806,21 @@ theorem tendsto_h9dError_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : Dirich
               Real.log ‖DirichletCharacter.completedLFunction χ 0‖) /
             Real.log 2) := by
     filter_upwards [Filter.eventually_ge_atTop (1 : ℝ)] with R hR
-    have hR0 : 0 < R := by linarith
-    have h2Rpos : (0 : ℝ) < 2 * R := by linarith
+    have hR0 : 0 < R := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hR
+    have h2Rpos : (0 : ℝ) < 2 * R := mul_pos (by norm_num only : (0 : ℝ) < 2) hR0
     have h0R : ‖(0 : ℂ)‖ ≤ 2 * R := by
       rw [norm_zero]
-      linarith
+      exact h2Rpos.le
     have hboundge :
       ‖DirichletCharacter.completedLFunction χ 0‖ ≤ completedLFunctionBallBound N (2 * R) :=
-      norm_completedLFunction_le_completedLFunctionBallBound hN1 hprimitive hne hinv (by linarith)
-        h0R
+      norm_completedLFunction_le_completedLFunctionBallBound hN1 hprimitive hne hinv h2Rpos.le h0R
     have hboundpos : (0 : ℝ) < completedLFunctionBallBound N (2 * R) := hF0_pos.trans_le hboundge
-    have hexp0 := completedLFunctionBallBound_le_exp (N := N) hN2 (show (1 : ℝ) ≤ 2 * R by linarith)
+    have hexp0 :=
+      completedLFunctionBallBound_le_exp (N := N) hN2
+        (show (1 : ℝ) ≤ 2 * R by
+          simpa only [one_mul] using
+            (mul_le_mul (by norm_num only : (1 : ℝ) ≤ 2) hR (by norm_num only : (0 : ℝ) ≤ 1)
+              (by norm_num only : (0 : ℝ) ≤ 2)))
     have hexp :
       completedLFunctionBallBound N (2 * R) ≤
         Real.exp ((4 * (N : ℝ) + 3) * (2 * R + 3) * Real.log (2 * R + 3)) := by
@@ -2698,8 +2832,17 @@ theorem tendsto_h9dError_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : Dirich
     have hexp_ge1 :
       (1 : ℝ) ≤ Real.exp ((4 * (N : ℝ) + 3) * (2 * R + 3) * Real.log (2 * R + 3)) := by
       apply Real.one_le_exp
-      have hL : (0 : ℝ) ≤ Real.log (2 * R + 3) := Real.log_nonneg (by linarith)
-      positivity
+      have hL : (0 : ℝ) ≤ Real.log (2 * R + 3) :=
+        Real.log_nonneg
+          (le_trans (by norm_num only : (1 : ℝ) ≤ 3)
+            (le_add_of_nonneg_left (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hR0.le)))
+      have hA : (0 : ℝ) ≤ 4 * (N : ℝ) + 3 :=
+        add_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 4) (Nat.cast_nonneg N))
+          (by norm_num only : (0 : ℝ) ≤ 3)
+      have hB : (0 : ℝ) ≤ 2 * R + 3 :=
+        add_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hR0.le)
+          (by norm_num only : (0 : ℝ) ≤ 3)
+      exact mul_nonneg (mul_nonneg hA hB) hL
     have hmax_le :
       max 1 (completedLFunctionBallBound N (2 * R)) ≤
         Real.exp ((4 * (N : ℝ) + 3) * (2 * R + 3) * Real.log (2 * R + 3)) :=
@@ -2710,10 +2853,12 @@ theorem tendsto_h9dError_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : Dirich
             ‖DirichletCharacter.completedLFunction χ 0‖) ≤
         (4 * (N : ℝ) + 3) * (2 * R + 3) * Real.log (2 * R + 3) -
           Real.log ‖DirichletCharacter.completedLFunction χ 0‖ := by
-      rw [Real.log_div (by positivity) hF0_pos.ne']
-      have := Real.log_le_log (by positivity) hmax_le
+      have hmaxpos : (0 : ℝ) < max 1 (completedLFunctionBallBound N (2 * R)) :=
+        lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) (le_max_left _ _)
+      rw [Real.log_div hmaxpos.ne' hF0_pos.ne']
+      have := Real.log_le_log hmaxpos hmax_le
       rw [Real.log_exp] at this
-      linarith
+      linarith only [this]
     have hlog2pos : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num only)
     have h1 : 2 * 1 / R ^ 2 ≤ 2 / R ^ 2 := by rw [mul_one]
     have h2 :
@@ -2761,7 +2906,7 @@ theorem completedLFunction_centeredLogDeriv_one_eq_tsum {N : ℕ} [NeZero N] (hN
       ∑' ρ : ℂ,
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
           (1 / (1 - ρ) + 1 / ρ) := by
-  have hN1 : 1 < N := by omega
+  have hN1 : 1 < N := Nat.lt_of_lt_of_le (by norm_num only : 1 < 2) hN2
   have h1ne : DirichletCharacter.completedLFunction χ 1 ≠ 0 :=
     dirichletCompletedLFunction_one_ne_zero_of_ne_one hne
   set centered :=
@@ -2785,10 +2930,18 @@ theorem completedLFunction_centeredLogDeriv_one_eq_tsum {N : ℕ} [NeZero N] (hN
     intro n
     have hRgt : (n : ℝ) + 2 < R n := completedLFunctionGoodRadius_gt hne n
     have hn0 : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
-    have hR1 : (1 : ℝ) ≤ R n := by linarith
+    have hR1 : (1 : ℝ) ≤ R n := by
+      have h1le : (1 : ℝ) ≤ (n : ℝ) + 2 :=
+        le_trans (by norm_num only : (1 : ℝ) ≤ 2)
+          (by simpa only [add_comm, zero_add] using add_le_add_left hn0 (2 : ℝ))
+      exact le_of_lt (lt_of_le_of_lt h1le hRgt)
     have hs : ‖(1 : ℂ)‖ ≤ R n / 2 := by
+      have h2le : (2 : ℝ) ≤ (n : ℝ) + 2 := by
+        simpa only [add_comm, zero_add] using add_le_add_left hn0 (2 : ℝ)
+      have hR2 : (2 : ℝ) < R n := lt_of_le_of_lt h2le hRgt
       rw [norm_one]
-      linarith
+      rw [le_div_iff₀ (by norm_num only : (0 : ℝ) < 2)]
+      simpa only [one_mul] using hR2.le
     have hb :=
       norm_centeredLogDeriv_sub_truncatedGenus_le hN1 hprimitive hne hinv hR1
         (completedLFunctionGoodRadius_zeroFree hne n) hs h1ne

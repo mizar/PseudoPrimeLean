@@ -198,7 +198,11 @@ theorem logDeriv_Gammaℝ_of_half_ne_neg_nat {s : ℂ} (hhalf : ∀ m : ℕ, s /
   have hpow_logDeriv :
     logDeriv (fun z : ℂ => (Real.pi : ℂ) ^ (-z / 2)) s = -(Complex.log (Real.pi : ℂ)) / 2 := by
     rw [logDeriv_apply, hpow_deriv.deriv]
-    field_simp [hpow_ne]
+    calc
+      (Real.pi : ℂ) ^ (-s / 2) * Complex.log (Real.pi : ℂ) * (-1 / 2) / (Real.pi : ℂ) ^ (-s / 2) =
+          Complex.log (Real.pi : ℂ) * (-1 / 2) :=
+        by rw [mul_assoc, mul_div_cancel_left₀ _ hpow_ne]
+      _ = -(Complex.log (Real.pi : ℂ)) / 2 := by ring
   have hhalf_deriv : HasDerivAt (fun z : ℂ => z / 2) ((1 : ℂ) / 2) s := by
     simpa only [id_eq] using (hasDerivAt_id s).div_const (2 : ℂ)
   have hgam_diff : DifferentiableAt ℂ Complex.Gamma (s / 2) :=

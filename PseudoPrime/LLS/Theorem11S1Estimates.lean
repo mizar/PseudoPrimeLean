@@ -44,7 +44,7 @@ theorem llsPart1PrimitiveWeightedUpperAt_of_grh_generic {q : ℕ} [NeZero q]
     have hN1 : χ.conductor ≠ 1 :=
       AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
     have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
-    omega
+    exact Nat.succ_le_iff.mpr (Nat.lt_of_le_of_ne hNpos (Ne.symm hN1))
   have hy : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
   have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := lt_trans (by norm_num only) hy
   have hx64 : (64 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 := Analysis.sq_ge_64_of_ge_8 hy.le
@@ -96,7 +96,7 @@ theorem llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_generic {q : ℕ}
         have hN1 : χ.conductor ≠ 1 :=
           AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
-        omega)
+        exact Nat.succ_le_iff.mpr (Nat.lt_of_le_of_ne hNpos (Ne.symm hN1)))
       hGRH hprimitive hprimne hinv hx64
   rw [hsqrt] at hraw
   have hd_ne : (χ.conductor : ℝ) ≠ 0 := by exact_mod_cast χ.conductor_ne_zero

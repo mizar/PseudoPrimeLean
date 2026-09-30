@@ -11,6 +11,7 @@ import PseudoPrime.PrimeTest.Result
 -/
 
 namespace PseudoPrime.PrimeTest
+
 /-- Preserve the existing exact trial-division leaf policy for BLS generators.
 This policy has no input-size bound; its cost is separate from rho fuel. -/
 abbrev exactPrimeLeafPolicy : NumberTheory.Factorization.PrimeLeafPolicy where
@@ -21,7 +22,8 @@ abbrev exactPrimeLeafPolicy : NumberTheory.Factorization.PrimeLeafPolicy where
 /-- Use only proved-prime decisions as factorization leaves.
 Both unknown and proved-nonprime decisions leave a value available for splitting. -/
 def primeLeafPolicyOfDecision (classify : (n : ℕ) → Decision n) :
-    NumberTheory.Factorization.PrimeLeafPolicy where
+    NumberTheory.Factorization.PrimeLeafPolicy
+    where
   accepts n := (classify n).toOption = some true
   decideAccepts := inferInstance
   sound n h := by

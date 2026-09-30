@@ -30,14 +30,14 @@ theorem norm_dirichletLogContourKernel_horizontal_le {N : ℕ} [NeZero N] {χ : 
   have hsre : s.re = σ := by
     simp only [hs_def, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := lt_of_lt_of_le zero_lt_one hx
   have hxs : ‖(x : ℂ) ^ s‖ = x ^ σ := by rw [Complex.norm_cpow_eq_rpow_re_of_pos hxpos, hsre]
   have hxσ_le : x ^ σ ≤ x ^ 2 := by
     have h1 : x ^ σ ≤ x ^ (2 : ℝ) :=
       Real.rpow_le_rpow_of_exponent_le hx
         (by
           have := abs_le.mp hσ
-          linarith)
+          exact this.2)
     rwa [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num only, Real.rpow_natCast] at h1
   have htabs_pos : (0 : ℝ) < |T| := abs_pos.mpr hT
   have hsnorm_ge : |T| ≤ ‖s‖ := by
@@ -106,9 +106,13 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_bound_of_grh {N : ℕ} [Ne
   have hTk_ge1 : 1 ≤ primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := by
     have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
     have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-    linarith
+    have hk1 : (1 : ℝ) ≤ 1 + (k : ℝ) := by simpa only [add_zero] using add_le_add_right hk0 1
+    calc
+      (1 : ℝ) ≤ 1 + (k : ℝ) := hk1
+      _ = (k : ℝ) + 1 := by ring
+      _ ≤ primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := h
   have hTk_ne : primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k ≠ 0 := by
-    linarith
+    exact ne_of_gt (lt_of_lt_of_le zero_lt_one hTk_ge1)
   refine ⟨norm_dirichletLogContourKernel_horizontal_le hx hσ hTk_ne (hη k σ hσ).1, ?_⟩
   have hform :
     (σ : ℂ) - primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I =
@@ -163,7 +167,15 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_central_integral_le_of_grh
           rintro σ ⟨hσ1, hσ2⟩
           exact (hη k σ (abs_le.mpr ⟨hσ1.le, hσ2⟩)).1)
     rw [show |(2 : ℝ) - (-2)| = 4 by norm_num only] at hbound
-    linarith
+    calc
+      ‖∫ (σ : ℝ) in -2..2,
+              dirichletLogContourKernel x χ
+                (↑σ +
+                  ↑(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k) *
+                    Complex.I)‖ ≤
+          x ^ 2 * η k * 4 :=
+        hbound
+      _ = 4 * (x ^ 2 * η k) := by ring
   · have hbound :=
       intervalIntegral.norm_integral_le_of_norm_le_const (a := (-2 : ℝ)) (b := 2) (f := fun σ : ℝ =>
         dirichletLogContourKernel x χ
@@ -175,7 +187,15 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_central_integral_le_of_grh
           rintro σ ⟨hσ1, hσ2⟩
           exact (hη k σ (abs_le.mpr ⟨hσ1.le, hσ2⟩)).2)
     rw [show |(2 : ℝ) - (-2)| = 4 by norm_num only] at hbound
-    linarith
+    calc
+      ‖∫ (σ : ℝ) in -2..2,
+              dirichletLogContourKernel x χ
+                (↑σ -
+                  ↑(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k) *
+                    Complex.I)‖ ≤
+          x ^ 2 * η k * 4 :=
+        hbound
+      _ = 4 * (x ^ 2 * η k) := by ring
 
 /-- The generic central horizontal logarithmic integrals converge to zero along GRH heights. -/
 theorem tendsto_primitiveHorizontalHeightSeq_logKernel_central_integral_of_grh {N : ℕ} [NeZero N]
@@ -221,10 +241,11 @@ theorem norm_dirichletLogContourKernel_farLeft_le {N : ℕ} [NeZero N] {χ : Dir
   have hsre : s.re = σ := by
     simp only [hs_def, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := lt_of_lt_of_le zero_lt_one hx
   have hxs : ‖(x : ℂ) ^ s‖ = x ^ σ := by rw [Complex.norm_cpow_eq_rpow_re_of_pos hxpos, hsre]
   have hxσ_le : x ^ σ ≤ 1 := by
-    have h1 : x ^ σ ≤ x ^ (0 : ℝ) := Real.rpow_le_rpow_of_exponent_le hx (by linarith)
+    have h1 : x ^ σ ≤ x ^ (0 : ℝ) :=
+      Real.rpow_le_rpow_of_exponent_le hx (le_trans hσ (by norm_num only : (-2 : ℝ) ≤ 0))
     rwa [Real.rpow_zero] at h1
   have htabs_pos : (0 : ℝ) < |T| := abs_pos.mpr hT
   have hsnorm_ge : |T| ≤ ‖s‖ := by
@@ -289,7 +310,9 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le_of_grh
               μ k := by
   have hAab : -(A : ℝ) - 1 / 2 ≤ -2 := by
     have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
-    linarith
+    calc
+      -(A : ℝ) - (1 / 2 : ℝ) ≤ -2 - (1 / 2 : ℝ) := sub_le_sub_right (neg_le_neg hA') (1 / 2 : ℝ)
+      _ ≤ -2 := by norm_num only
   obtain ⟨D, hDnonneg, hD⟩ :=
     exists_norm_logDeriv_dirichletLFunction_farLeft_le_general A hprimitive hne hinv
   set T : ℕ → ℝ := primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv with hT_def
@@ -303,23 +326,27 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le_of_grh
       tendsto_const_nhds.div_atTop hT_tendsto
     have hupper : ∀ᶠ k : ℕ in Filter.atTop, η k ≤ 2 * D / T k := by
       filter_upwards [hT_tendsto.eventually_ge_atTop (1 : ℝ)] with k hk
-      have hTk_pos : 0 < T k := by linarith
+      have hTk_pos : 0 < T k := lt_of_lt_of_le zero_lt_one hk
       rw [hη_def, div_le_div_iff₀ (by positivity) hTk_pos]
-      have h1 : D * (T k + 1) ≤ D * (2 * T k) := by nlinarith [hDnonneg, hk]
-      nlinarith [h1]
+      have h1 : D * (T k + 1) ≤ D * (2 * T k) := by nlinarith only [hDnonneg, hk]
+      nlinarith only [h1, hDnonneg, hk]
     have hlower : ∀ᶠ k : ℕ in Filter.atTop, (0 : ℝ) ≤ η k := by
       filter_upwards [hT_tendsto.eventually_gt_atTop (0 : ℝ)] with k hk
-      exact div_nonneg (mul_nonneg hDnonneg (by linarith)) (by positivity)
+      exact div_nonneg (mul_nonneg hDnonneg (add_nonneg hk.le zero_le_one)) (by positivity)
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds h2D_tendsto hlower hupper
   refine ⟨μ, by simpa only [hμ_def, zero_mul] using hη_tendsto.mul_const L, fun k => ⟨?_, ?_⟩⟩
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
       rw [hT_def]
-      linarith
-    have hTk_pos : 0 < T k := by linarith
+      have hk1 : (1 : ℝ) ≤ 1 + (k : ℝ) := by simpa only [add_zero] using add_le_add_right hk0 1
+      calc
+        (1 : ℝ) ≤ 1 + (k : ℝ) := hk1
+        _ = (k : ℝ) + 1 := by ring
+        _ ≤ primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := h
+    have hTk_pos : 0 < T k := lt_of_lt_of_le zero_lt_one hTk_ge1
     have hTksq_pos : 0 < (T k) ^ 2 := by positivity
-    have hTk_ne : T k ≠ 0 := by linarith
+    have hTk_ne : T k ≠ 0 := ne_of_gt hTk_pos
     have hbound :=
       intervalIntegral.norm_integral_le_of_norm_le_const (a := (-(A : ℝ) - 1 / 2)) (b := -2) (f :=
         fun σ : ℝ => dirichletLogContourKernel x χ ((σ : ℂ) + T k * Complex.I)) (C := η k)
@@ -344,10 +371,14 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le_of_grh
       have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
       rw [hT_def]
-      linarith
-    have hTk_pos : 0 < T k := by linarith
+      have hk1 : (1 : ℝ) ≤ 1 + (k : ℝ) := by simpa only [add_zero] using add_le_add_right hk0 1
+      calc
+        (1 : ℝ) ≤ 1 + (k : ℝ) := hk1
+        _ = (k : ℝ) + 1 := by ring
+        _ ≤ primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := h
+    have hTk_pos : 0 < T k := lt_of_lt_of_le zero_lt_one hTk_ge1
     have hTksq_pos : 0 < (T k) ^ 2 := by positivity
-    have hTk_ne : T k ≠ 0 := by linarith
+    have hTk_ne : T k ≠ 0 := ne_of_gt hTk_pos
     have hform :
       ∀ σ : ℝ, (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I :=
       fun σ => by
@@ -418,7 +449,9 @@ theorem continuous_dirichletLogContourKernel_horizontalHeightSeq_of_grh {N : ℕ
   have hTge := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
   have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := by
     have hknn : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
-    linarith
+    have hk1 : (1 : ℝ) ≤ 1 + (k : ℝ) := by simpa only [add_zero] using add_le_add_right hknn 1
+    have hk1' : (1 : ℝ) ≤ (k : ℝ) + 1 := by simpa only [add_comm] using hk1
+    exact lt_of_lt_of_le zero_lt_one (hk1'.trans hTge)
   have hpt :
     ∀ s : ℂ,
       s.im = primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k ∨
@@ -511,7 +544,7 @@ theorem tendsto_primitiveHorizontalHeightSeq_logKernel_horizontal_integral_of_gr
               ((σ : ℂ) -
                 primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I))
         Filter.atTop (nhds 0) := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := lt_of_lt_of_le zero_lt_one hx
   have hfarLeft :=
     tendsto_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_of_grh A hA hN2 hGRH hprimitive
       hne hinv hx

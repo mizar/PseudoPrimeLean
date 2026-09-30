@@ -29,12 +29,13 @@ theorem norm_riemannXi_le_of_forall_one_half_le_re {bound : ℝ → ℝ}
   by_cases hs : 1 / 2 ≤ s.re
   · exact
       (h s hs).trans
-        (hbound_mono (norm_nonneg s) (Set.mem_Ici.mpr (by positivity))
-          (by linarith [norm_nonneg s]))
+        (hbound_mono (norm_nonneg s)
+          (Set.mem_Ici.mpr (add_nonneg (norm_nonneg s) (by norm_num only)))
+          (by linarith only [norm_nonneg s]))
   · rw [not_le] at hs
     have hs' : 1 / 2 ≤ (1 - s).re := by
       simp only [Complex.sub_re, Complex.one_re]
-      linarith
+      linarith only [hs]
     have h1 : ‖riemannXi (1 - s)‖ ≤ bound ‖1 - s‖ := h (1 - s) hs'
     rw [riemannXi_one_sub] at h1
     have habs : ‖(1 : ℂ) - s‖ ≤ ‖s‖ + 1 := by
@@ -43,7 +44,10 @@ theorem norm_riemannXi_le_of_forall_one_half_le_re {bound : ℝ → ℝ}
         _ = ‖s‖ + 1 := by
           rw [norm_one]
           ring
-    exact h1.trans (hbound_mono (norm_nonneg _) (Set.mem_Ici.mpr (by positivity)) habs)
+    exact
+      h1.trans
+        (hbound_mono (norm_nonneg _)
+          (Set.mem_Ici.mpr (add_nonneg (norm_nonneg s) (by norm_num only))) habs)
 
 /-- For `s ≠ 1` and `Γ(s/2+1) ≠ 0`, xi equals
 `π^(-s/2) Γ(s/2+1) zetaEntire(s)`. This form separates the three factors

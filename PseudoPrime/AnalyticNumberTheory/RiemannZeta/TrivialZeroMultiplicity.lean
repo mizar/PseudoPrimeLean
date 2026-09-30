@@ -42,7 +42,7 @@ theorem riemannZeta_eq_mul_sin_eventually (n : ℕ) :
     rw [hw0re] at hre_lt
     have hwre_neg : w.re < 0 := by
       have := (abs_lt.mp hre_lt).2
-      nlinarith [Nat.cast_nonneg (α := ℝ) n]
+      linarith only [this, (Nat.cast_nonneg (α := ℝ) n)]
     refine
       ⟨fun h0 => by
         rw [h0] at hwre_neg
@@ -51,7 +51,7 @@ theorem riemannZeta_eq_mul_sin_eventually (n : ℕ) :
       rw [hm]
       simp only [Complex.add_re, Complex.one_re, Complex.natCast_re]
     rw [this] at hwre_neg
-    nlinarith [Nat.cast_nonneg (α := ℝ) m]
+    linarith only [hwre_neg, (Nat.cast_nonneg (α := ℝ) m)]
   filter_upwards [Metric.ball_mem_nhds (-2 * ((n : ℂ) + 1)) one_pos] with w hw
   obtain ⟨hw0, hwm⟩ := hball hw
   have hs :=
@@ -88,7 +88,7 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
     rw [hw₀re] at hre_lt
     have hlt := (abs_lt.mp hre_lt).2
     change w.re < 0
-    linarith [Nat.cast_nonneg (α := ℝ) n]
+    linarith only [hlt, (Nat.cast_nonneg (α := ℝ) n)]
   have hAdiff : ∀ w ∈ Metric.ball w₀ 1, DifferentiableAt ℂ A w := by
     intro w hw
     have hwre : w.re < 0 := hball hw
@@ -98,19 +98,19 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
         rw [hm]
         simp only [Complex.neg_re, Complex.natCast_re]
       simp only [Complex.sub_re, Complex.one_re] at hre
-      nlinarith [Nat.cast_nonneg (α := ℝ) m]
+      linarith only [hwre, hre, (Nat.cast_nonneg (α := ℝ) m)]
     have h1mne1 : (1 - w) ≠ 1 := by
       intro h
       have hre : (1 - w).re = 1 := by
         rw [h]
         simp only [Complex.one_re]
       simp only [Complex.sub_re, Complex.one_re] at hre
-      linarith
+      linarith only [hwre, hre]
     have hc_ne : (2 * (Real.pi : ℂ)) ≠ 0 := by
       rw [show (2 * (Real.pi : ℂ)) = ((2 * Real.pi : ℝ) : ℂ) from by
           push_cast
           ring]
-      exact Complex.ofReal_ne_zero.mpr (by positivity)
+      exact Complex.ofReal_ne_zero.mpr (mul_ne_zero (by norm_num only) Real.pi_ne_zero)
     have hexp_diff : DifferentiableAt ℂ (fun w : ℂ => -(1 - w)) w := by fun_prop
     have h1 : DifferentiableAt ℂ (fun w : ℂ => (2 * (Real.pi : ℂ)) ^ (-(1 - w))) w :=
       hexp_diff.const_cpow (Or.inl hc_ne)
@@ -149,17 +149,17 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
     riemannZeta_ne_zero_of_one_lt_re
       (by
         rw [h1msub_re]
-        linarith [Nat.cast_nonneg (α := ℝ) n])
+        linarith only [Nat.cast_nonneg (α := ℝ) n])
   have hΓ_ne : Complex.Gamma (1 - w₀) ≠ 0 :=
     Complex.Gamma_ne_zero_of_re_pos
       (by
         rw [h1msub_re]
-        linarith [Nat.cast_nonneg (α := ℝ) n])
+        linarith only [Nat.cast_nonneg (α := ℝ) n])
   have hc_ne : (2 * (Real.pi : ℂ)) ≠ 0 := by
     rw [show (2 * (Real.pi : ℂ)) = ((2 * Real.pi : ℝ) : ℂ) from by
         push_cast
         ring]
-    exact Complex.ofReal_ne_zero.mpr (by positivity)
+    exact Complex.ofReal_ne_zero.mpr (mul_ne_zero (by norm_num only) Real.pi_ne_zero)
   have hpow_ne : (2 * (Real.pi : ℂ)) ^ (-(1 - w₀)) ≠ 0 :=
     Complex.cpow_ne_zero_iff.mpr (Or.inl hc_ne)
   have hAw₀_ne : A w₀ ≠ 0 := by
@@ -183,7 +183,12 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
       linear_combination 2 * hk
     have heq : (2 * ((n : ℤ) + 1) : ℂ) = ((2 * k + 1 : ℤ) : ℂ) := mul_right_cancel₀ hpi_ne h2
     have : 2 * ((n : ℤ) + 1) = 2 * k + 1 := by exact_mod_cast heq
-    omega
+    clear * - this
+    have hodd : Odd (2 * k + 1) := ⟨k, by ring⟩
+    have heven : Even (2 * k + 1) := by
+      rw [← this]
+      exact ⟨(n : ℤ) + 1, by ring⟩
+    exact (Int.not_even_iff_odd.mpr hodd) heven
   have hBderiv_ne : deriv B w₀ ≠ 0 := by
     have hf : HasDerivAt (fun w : ℂ => (Real.pi : ℂ) * w / 2) ((Real.pi : ℂ) / 2) w₀ := by
       simpa only [id_eq, mul_one] using ((hasDerivAt_id w₀).const_mul (Real.pi : ℂ)).div_const 2
@@ -197,7 +202,7 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
       rw [show (Real.pi : ℂ) / 2 = ((Real.pi / 2 : ℝ) : ℂ) from by
           push_cast
           ring]
-      exact Complex.ofReal_ne_zero.mpr (by positivity)
+      exact Complex.ofReal_ne_zero.mpr (div_ne_zero Real.pi_ne_zero (by norm_num only))
     exact mul_ne_zero hcos_ne hpi2_ne
   have hBorder : analyticOrderAt B w₀ = 1 :=
     hBanalytic.analyticOrderAt_eq_one_of_zero_deriv_ne_zero hBw₀_zero hBderiv_ne
@@ -241,22 +246,29 @@ theorem riemannZetaReciprocalZeroContribution_neg_two_mul_nat_add_one {x : ℝ} 
 
 theorem reciprocalTrivialZeroTerm_nonneg {x : ℝ} (hx : 0 ≤ x) (k : ℕ) :
     0 ≤ x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1)) := by
-  exact div_nonneg (pow_nonneg (inv_nonneg.mpr hx) _) (mul_nonneg (by positivity) (by positivity))
+  have hk_nonneg : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
+  have hden1 : (0 : ℝ) ≤ 2 * ((k : ℝ) + 1) :=
+    mul_nonneg (by norm_num only) (add_nonneg hk_nonneg (by norm_num only))
+  have hden2 : (0 : ℝ) ≤ 2 * ((k : ℝ) + 1) + 1 := add_nonneg hden1 (by norm_num only)
+  exact div_nonneg (pow_nonneg (inv_nonneg.mpr hx) _) (mul_nonneg hden1 hden2)
 
 /-! A reciprocal trivial-zero summand is bounded by a geometric summand on `x ≥ 2`. -/
 
 theorem reciprocalTrivialZeroTerm_le_geometric {x : ℝ} (hx : 2 ≤ x) (k : ℕ) :
     x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1)) ≤
       x⁻¹ ^ 3 / 6 * (x⁻¹ ^ 2) ^ k := by
-  have hinv : 0 ≤ x⁻¹ := inv_nonneg.mpr (by positivity)
+  have hinv : 0 ≤ x⁻¹ := inv_nonneg.mpr (le_trans (by norm_num only) hx)
   have hnumerator : 0 ≤ x⁻¹ ^ (2 * (k + 1) + 1) := pow_nonneg hinv _
   have hdenominator : (6 : ℝ) ≤ (2 * (k + 1) : ℝ) * (2 * (k + 1) + 1) := by
-    nlinarith [Nat.cast_nonneg (α := ℝ) k]
+    nlinarith only [Nat.cast_nonneg (α := ℝ) k]
   calc
     _ ≤ x⁻¹ ^ (2 * (k + 1) + 1) / 6 :=
       div_le_div_of_nonneg_left hnumerator (by norm_num only) hdenominator
     _ = x⁻¹ ^ 3 / 6 * (x⁻¹ ^ 2) ^ k := by
-      have hexponent : 2 * (k + 1) + 1 = 3 + 2 * k := by omega
+      have hexponent : 2 * (k + 1) + 1 = 3 + 2 * k := by
+        calc
+          2 * (k + 1) + 1 = 2 * k + 3 := by ring
+          _ = 3 + 2 * k := Nat.add_comm _ _
       rw [hexponent, pow_add, pow_mul]
       ring
 
@@ -267,12 +279,15 @@ theorem reciprocalTrivialZeroTerm_le_geometric_of_pos {x : ℝ} (hx : 0 < x) (k 
   have hinv : 0 ≤ x⁻¹ := inv_nonneg.mpr hx.le
   have hnumerator : 0 ≤ x⁻¹ ^ (2 * (k + 1) + 1) := pow_nonneg hinv _
   have hdenominator : (6 : ℝ) ≤ (2 * (k + 1) : ℝ) * (2 * (k + 1) + 1) := by
-    nlinarith [Nat.cast_nonneg (α := ℝ) k]
+    nlinarith only [Nat.cast_nonneg (α := ℝ) k]
   calc
     _ ≤ x⁻¹ ^ (2 * (k + 1) + 1) / 6 :=
       div_le_div_of_nonneg_left hnumerator (by norm_num only) hdenominator
     _ = x⁻¹ ^ 3 / 6 * (x⁻¹ ^ 2) ^ k := by
-      have hexponent : 2 * (k + 1) + 1 = 3 + 2 * k := by omega
+      have hexponent : 2 * (k + 1) + 1 = 3 + 2 * k := by
+        calc
+          2 * (k + 1) + 1 = 2 * k + 3 := by ring
+          _ = 3 + 2 * k := Nat.add_comm _ _
       rw [hexponent, pow_add, pow_mul]
       ring
 
@@ -313,29 +328,43 @@ noncomputable def riemannZetaLogTrivialZeroSeries (x : ℝ) : ℝ :=
 theorem riemannZetaLogTrivialZeroSeries_nonneg {x : ℝ} (hx : 0 ≤ x) :
     0 ≤ riemannZetaLogTrivialZeroSeries x := by
   rw [riemannZetaLogTrivialZeroSeries]
-  exact tsum_nonneg fun k => div_nonneg (pow_nonneg (inv_nonneg.mpr hx) _) (by positivity)
+  exact
+    tsum_nonneg fun k =>
+      div_nonneg (pow_nonneg (inv_nonneg.mpr hx) _)
+        (mul_nonneg (by norm_num only) (sq_nonneg ((k : ℝ) + 1)))
 
 /-- The logarithmic trivial-zero series' summand sequence is summable for every `x > 1`. -/
 theorem summable_logTrivialZeroTerm {x : ℝ} (hx : 1 < x) :
     Summable fun k : ℕ => x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2) := by
-  have hxpos : 0 < x := by linarith
+  have hxpos : 0 < x := lt_trans (by norm_num only) hx
   have hinv : 0 ≤ x⁻¹ := inv_nonneg.mpr hxpos.le
   have hinvlt : x⁻¹ < (1 : ℝ) := inv_lt_one_of_one_lt₀ hx
-  have hratio : x⁻¹ ^ 2 < 1 := by nlinarith [sq_nonneg (x⁻¹)]
+  have hratio : x⁻¹ ^ 2 < 1 := by nlinarith only [hinv, hinvlt, sq_nonneg (x⁻¹)]
   have hgeom : Summable fun k : ℕ => (x⁻¹ ^ 2) ^ k :=
     summable_geometric_of_lt_one (pow_nonneg hinv 2) hratio
   have hmajor : Summable fun k : ℕ => x⁻¹ ^ 2 / 4 * (x⁻¹ ^ 2) ^ k := hgeom.mul_left (x⁻¹ ^ 2 / 4)
   refine
-    hmajor.of_nonneg_of_le (fun k => div_nonneg (pow_nonneg hinv _) (by positivity)) (fun k => ?_)
-  have hk1sq : (1 : ℝ) ≤ ((k : ℝ) + 1) ^ 2 := by nlinarith [Nat.cast_nonneg (α := ℝ) k]
+    hmajor.of_nonneg_of_le
+      (fun k =>
+        div_nonneg (pow_nonneg hinv _) (mul_nonneg (by norm_num only) (sq_nonneg ((k : ℝ) + 1))))
+      (fun k => ?_)
+  have hk1 : (1 : ℝ) ≤ (k : ℝ) + 1 := by
+    calc
+      1 ≤ 1 + (k : ℝ) := le_add_of_nonneg_right (Nat.cast_nonneg k)
+      _ = (k : ℝ) + 1 := by ring
+  have hk1sq : (1 : ℝ) ≤ ((k : ℝ) + 1) ^ 2 := by nlinarith only [hk1, sq_nonneg ((k : ℝ) + 1)]
   have hnum_eq : x⁻¹ ^ (2 * (k + 1)) = x⁻¹ ^ 2 * (x⁻¹ ^ 2) ^ k := by
     rw [← pow_mul, show 2 * (k + 1) = 2 + 2 * k from by ring, pow_add]
   rw [hnum_eq]
-  have hnum_nonneg : (0 : ℝ) ≤ x⁻¹ ^ 2 * (x⁻¹ ^ 2) ^ k := by positivity
+  have hnum_nonneg : (0 : ℝ) ≤ x⁻¹ ^ 2 * (x⁻¹ ^ 2) ^ k :=
+    mul_nonneg (sq_nonneg x⁻¹) (pow_nonneg (sq_nonneg x⁻¹) k)
   calc
     x⁻¹ ^ 2 * (x⁻¹ ^ 2) ^ k / (4 * ((k : ℝ) + 1) ^ 2) ≤ x⁻¹ ^ 2 * (x⁻¹ ^ 2) ^ k / 4 := by
       apply div_le_div_of_nonneg_left hnum_nonneg (by norm_num only)
-      nlinarith [hk1sq]
+      calc
+        4 = 4 * 1 := by norm_num only
+        _ ≤ 4 * ((k : ℝ) + 1) ^ 2 :=
+          mul_le_mul_of_nonneg_left hk1sq (by norm_num only : (0 : ℝ) ≤ 4)
     _ = x⁻¹ ^ 2 / 4 * (x⁻¹ ^ 2) ^ k := by ring
 
 /-- The logarithmic trivial-zero series is bounded by the Basel sum for `x > 1`. -/
@@ -369,13 +398,15 @@ theorem riemannZetaLogTrivialZeroSeries_le_pi_sq_div_twenty_four {x : ℝ} (hx :
           have hi : 0 ≤ x⁻¹ := inv_nonneg.mpr hx0.le
           have hil : x⁻¹ ≤ (1 : ℝ) := (inv_le_one₀ hx0).2 (le_of_lt hx)
           exact pow_le_one₀ hi hil
-        exact div_le_div_of_nonneg_right hpow (by positivity)
+        exact
+          div_le_div_of_nonneg_right hpow (mul_nonneg (by norm_num only) (sq_nonneg ((k : ℝ) + 1)))
       · simpa only [mul_comm, div_eq_mul_inv, mul_inv_rev, one_mul] using hbase.mul_left (1 / 4 : ℝ)
     _ = ∑' k : ℕ, (1 / 4 : ℝ) * (1 / ((k : ℝ) + 1) ^ 2) := by
       apply tsum_congr
       intro k
-      have hk : (0 : ℝ) < (k : ℝ) + 1 := by positivity
-      field_simp
+      have hk : (0 : ℝ) < (k : ℝ) + 1 :=
+        add_pos_of_nonneg_of_pos (Nat.cast_nonneg k) (by norm_num only)
+      field_simp [ne_of_gt hk]
     _ = (1 / 4 : ℝ) * (Real.pi ^ 2 / 6) := by rw [tsum_mul_left, hsum]
     _ = Real.pi ^ 2 / 24 := by ring
 
@@ -395,10 +426,12 @@ theorem sum_logTrivialZeroTerm_le {x : ℝ} (hx : 1 < x) (S : Finset ℂ)
     (Finset.sum_image (f := fun k : ℕ => x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2)) hinj).symm
   rw [himg]
   have hsummable := summable_logTrivialZeroTerm hx
-  have hxnn : (0 : ℝ) ≤ x := by linarith
+  have hxnn : (0 : ℝ) ≤ x := (lt_trans (by norm_num only) hx).le
   have hle :=
     hsummable.sum_le_tsum (S.image trivialZeroIndex)
-      (fun k _ => div_nonneg (pow_nonneg (inv_nonneg.mpr hxnn) _) (by positivity))
+      (fun k _ =>
+        div_nonneg (pow_nonneg (inv_nonneg.mpr hxnn) _)
+          (mul_nonneg (by norm_num only) (sq_nonneg ((k : ℝ) + 1))))
   rwa [show
       (∑' k : ℕ, x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2)) = riemannZetaLogTrivialZeroSeries x
       from rfl] at hle

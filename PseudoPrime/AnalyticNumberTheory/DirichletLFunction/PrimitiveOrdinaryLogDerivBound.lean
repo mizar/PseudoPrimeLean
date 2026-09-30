@@ -77,27 +77,29 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small {N : ℕ} [
     have hKnonneg : 0 ≤ K := by
       rw [hK_def]
       have h0 := norm_nonneg (logDeriv (DirichletCharacter.completedLFunction χ) (0 : ℂ))
-      linarith
+      rw [← hF0_def] at h0
+      exact add_nonneg h0 (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hCΓnonneg)
     have hrest_upper :
       ∀ᶠ k : ℕ in Filter.atTop, F0 / (T k) ^ 2 + CΓ * (T k + 1) / (T k) ^ 2 ≤ K / T k := by
       filter_upwards [hT_tendsto.eventually_ge_atTop (1 : ℝ)] with k hk
-      have hTk_pos : 0 < T k := by linarith
-      rw [← add_div, div_le_div_iff₀ (by positivity) hTk_pos]
+      have hTk_pos : 0 < T k := lt_of_lt_of_le zero_lt_one hk
+      rw [← add_div, div_le_div_iff₀ (pow_pos hTk_pos 2) hTk_pos]
       have h1 : 0 ≤ F0 * T k * (T k - 1) := by
         apply mul_nonneg (mul_nonneg (norm_nonneg _) hTk_pos.le)
-        linarith
+        exact sub_nonneg.mpr hk
       have h2 : 0 ≤ CΓ * T k * (T k - 1) := by
         apply mul_nonneg (mul_nonneg hCΓnonneg hTk_pos.le)
-        linarith
-      have h3 : 0 ≤ CΓ * (T k) ^ 2 := mul_nonneg hCΓnonneg (sq_nonneg _)
-      nlinarith [h1, h2, h3]
+        exact sub_nonneg.mpr hk
+      nlinarith only [hK_def, h1, h2]
     have hrest_lower :
       ∀ᶠ k : ℕ in Filter.atTop, (0 : ℝ) ≤ F0 / (T k) ^ 2 + CΓ * (T k + 1) / (T k) ^ 2 := by
       filter_upwards [hT_tendsto.eventually_gt_atTop (0 : ℝ)] with k hk
-      have h1 : (0 : ℝ) ≤ F0 / (T k) ^ 2 := by positivity
+      have h1 : (0 : ℝ) ≤ F0 / (T k) ^ 2 := by
+        rw [hF0_def]
+        exact div_nonneg (norm_nonneg _) (sq_nonneg _)
       have h2 : (0 : ℝ) ≤ CΓ * (T k + 1) / (T k) ^ 2 := by
-        apply div_nonneg (mul_nonneg hCΓnonneg (by linarith)) (by positivity)
-      linarith
+        exact div_nonneg (mul_nonneg hCΓnonneg (add_nonneg (le_of_lt hk) zero_le_one)) (sq_nonneg _)
+      exact add_nonneg h1 h2
     have hK_tendsto : Filter.Tendsto (fun k : ℕ => K / T k) Filter.atTop (nhds 0) :=
       tendsto_const_nhds.div_atTop hT_tendsto
     have hrest_tendsto :
@@ -110,10 +112,14 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small {N : ℕ} [
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
+      have hk1 : (1 : ℝ) ≤ (k : ℝ) + 1 := by
+        calc
+          (1 : ℝ) = 0 + 1 := by norm_num only
+          _ ≤ (k : ℝ) + 1 := add_le_add_left hk0 1
       rw [hT_def]
-      linarith
-    have hTk_pos : 0 < T k := by linarith
-    have hTksq_pos : 0 < (T k) ^ 2 := by positivity
+      exact le_trans hk1 h
+    have hTk_pos : 0 < T k := lt_of_lt_of_le zero_lt_one hTk_ge1
+    have hTksq_pos : 0 < (T k) ^ 2 := pow_pos hTk_pos 2
     have hmain :
       ∀ Treal : ℝ,
         |Treal| = T k →
@@ -174,7 +180,10 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small {N : ℕ} [
                 CΓ * (T k + 1) :=
             by
             gcongr
-            linarith [htri, hcompleted_diff_le]
+            calc
+              _ ≤ _ := htri
+              _ = _ := add_comm _ _
+              _ ≤ _ := add_le_add_right hcompleted_diff_le _
           _ =
               ε k * (T k) ^ 2 + ‖logDeriv (DirichletCharacter.completedLFunction χ) (0 : ℂ)‖ +
                 CΓ * (T k + 1) :=
@@ -186,7 +195,7 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small {N : ℕ} [
             (T k) ^ 2 =
           ε k * (T k) ^ 2 + ‖logDeriv (DirichletCharacter.completedLFunction χ) (0 : ℂ)‖ +
             CΓ * (T k + 1) := by
-        field_simp
+        field_simp [ne_of_gt hTk_pos]
       rw [heq]
       exact hLbound
     refine ⟨?_, ?_⟩
@@ -276,27 +285,29 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh {N :
     have hKnonneg : 0 ≤ K := by
       rw [hK_def]
       have h0 := norm_nonneg (logDeriv (DirichletCharacter.completedLFunction χ) (0 : ℂ))
-      linarith
+      rw [← hF0_def] at h0
+      exact add_nonneg h0 (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hCΓnonneg)
     have hrest_upper :
       ∀ᶠ k : ℕ in Filter.atTop, F0 / (T k) ^ 2 + CΓ * (T k + 1) / (T k) ^ 2 ≤ K / T k := by
       filter_upwards [hT_tendsto.eventually_ge_atTop (1 : ℝ)] with k hk
-      have hTk_pos : 0 < T k := by linarith
-      rw [← add_div, div_le_div_iff₀ (by positivity) hTk_pos]
+      have hTk_pos : 0 < T k := lt_of_lt_of_le zero_lt_one hk
+      rw [← add_div, div_le_div_iff₀ (pow_pos hTk_pos 2) hTk_pos]
       have h1 : 0 ≤ F0 * T k * (T k - 1) := by
         apply mul_nonneg (mul_nonneg (norm_nonneg _) hTk_pos.le)
-        linarith
+        exact sub_nonneg.mpr hk
       have h2 : 0 ≤ CΓ * T k * (T k - 1) := by
         apply mul_nonneg (mul_nonneg hCΓnonneg hTk_pos.le)
-        linarith
-      have h3 : 0 ≤ CΓ * (T k) ^ 2 := mul_nonneg hCΓnonneg (sq_nonneg _)
-      nlinarith [h1, h2, h3]
+        exact sub_nonneg.mpr hk
+      nlinarith only [hK_def, h1, h2]
     have hrest_lower :
       ∀ᶠ k : ℕ in Filter.atTop, (0 : ℝ) ≤ F0 / (T k) ^ 2 + CΓ * (T k + 1) / (T k) ^ 2 := by
       filter_upwards [hT_tendsto.eventually_gt_atTop (0 : ℝ)] with k hk
-      have h1 : (0 : ℝ) ≤ F0 / (T k) ^ 2 := by positivity
+      have h1 : (0 : ℝ) ≤ F0 / (T k) ^ 2 := by
+        rw [hF0_def]
+        exact div_nonneg (norm_nonneg _) (sq_nonneg _)
       have h2 : (0 : ℝ) ≤ CΓ * (T k + 1) / (T k) ^ 2 := by
-        apply div_nonneg (mul_nonneg hCΓnonneg (by linarith)) (by positivity)
-      linarith
+        exact div_nonneg (mul_nonneg hCΓnonneg (add_nonneg (le_of_lt hk) zero_le_one)) (sq_nonneg _)
+      exact add_nonneg h1 h2
     have hK_tendsto : Filter.Tendsto (fun k : ℕ => K / T k) Filter.atTop (nhds 0) :=
       tendsto_const_nhds.div_atTop hT_tendsto
     have hrest_tendsto :
@@ -309,10 +320,14 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh {N :
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
+      have hk1 : (1 : ℝ) ≤ (k : ℝ) + 1 := by
+        calc
+          (1 : ℝ) = 0 + 1 := by norm_num only
+          _ ≤ (k : ℝ) + 1 := add_le_add_left hk0 1
       rw [hT_def]
-      linarith
-    have hTk_pos : 0 < T k := by linarith
-    have hTksq_pos : 0 < (T k) ^ 2 := by positivity
+      exact le_trans hk1 h
+    have hTk_pos : 0 < T k := lt_of_lt_of_le zero_lt_one hTk_ge1
+    have hTksq_pos : 0 < (T k) ^ 2 := pow_pos hTk_pos 2
     have hmain :
       ∀ Treal : ℝ,
         |Treal| = T k →
@@ -373,7 +388,10 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh {N :
                 CΓ * (T k + 1) :=
             by
             gcongr
-            linarith [htri, hcompleted_diff_le]
+            calc
+              _ ≤ _ := htri
+              _ = _ := add_comm _ _
+              _ ≤ _ := add_le_add_right hcompleted_diff_le _
           _ =
               ε k * (T k) ^ 2 + ‖logDeriv (DirichletCharacter.completedLFunction χ) (0 : ℂ)‖ +
                 CΓ * (T k + 1) :=
@@ -385,7 +403,7 @@ theorem exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh {N :
             (T k) ^ 2 =
           ε k * (T k) ^ 2 + ‖logDeriv (DirichletCharacter.completedLFunction χ) (0 : ℂ)‖ +
             CΓ * (T k + 1) := by
-        field_simp
+        field_simp [ne_of_gt hTk_pos]
       rw [heq]
       exact hLbound
     refine ⟨?_, ?_⟩

@@ -25,7 +25,7 @@ theorem re_sum_riemannZetaLogZeroContribution_nontrivial_ge_of_riemannHypothesis
     intro ρ hρ
     have h2 := abs_le.mp (Complex.abs_re_le_norm (riemannZetaLogZeroContribution x ρ))
     rw [norm_riemannZetaLogZeroContribution_of_rh hRH hx (hSzero ρ hρ) (hSre ρ hρ)] at h2
-    linarith [h2.1]
+    linarith only [h2.1]
   have hsum_bound :
     -(∑ ρ ∈ S, Real.sqrt x * (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ) ≤
       ∑ ρ ∈ S, (riemannZetaLogZeroContribution x ρ).re := by
@@ -49,7 +49,7 @@ theorem re_sum_riemannZetaLogZeroContribution_nontrivial_ge_of_riemannHypothesis
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun ρ hρ => ?_
     rw [← hxieq ρ hρ]
-    field_simp
+    ring
   rw [hsum_eq]
   have hle_tsum :
     (∑ ρ ∈ S, if riemannXi ρ = 0 then (riemannXiZeroMultiplicity ρ : ℝ) / Complex.normSq ρ else 0) ≤
@@ -61,7 +61,7 @@ theorem re_sum_riemannZetaLogZeroContribution_nontrivial_ge_of_riemannHypothesis
           split <;> [exact div_nonneg (Nat.cast_nonneg _) (Complex.normSq_nonneg _);
             exact le_refl 0])
   have hmul := mul_le_mul_of_nonneg_left hle_tsum hxsqrt_nonneg
-  linarith [hmul]
+  linarith only [hmul]
 
 /-- Under RH and for `x > 1`, a finite logarithmic-kernel zero sum has real
 part at least minus the logarithmic trivial-zero series minus
@@ -71,7 +71,7 @@ theorem re_sum_riemannZetaLogZeroContribution_ge_of_riemannHypothesis (hRH : Rie
     -riemannZetaLogTrivialZeroSeries x - 2 * RiemannXi.riemannZeroMass * Real.sqrt x ≤
       (∑ ρ ∈ S, riemannZetaLogZeroContribution x ρ).re := by
   classical
-  have hxpos : 0 < x := by linarith
+  have hxpos : 0 < x := lt_trans zero_lt_one hx
   set St := S.filter (fun ρ => ρ.re < 0) with hSt_def
   set Sn := S.filter (fun ρ => ¬ρ.re < 0) with hSn_def
   have hsplit : St ∪ Sn = S := Finset.filter_union_filter_not_eq _ S
@@ -105,10 +105,10 @@ theorem re_sum_riemannZetaLogZeroContribution_ge_of_riemannHypothesis (hRH : Rie
       rw [riemannZetaLogZeroContribution_neg_two_mul_nat_add_one hxpos, Complex.neg_re,
         Complex.ofReal_re]
     rw [Finset.sum_congr rfl heq, Finset.sum_neg_distrib]
-    linarith [sum_logTrivialZeroTerm_le hx St hStriv]
+    linarith only [sum_logTrivialZeroTerm_le hx St hStriv]
   have hnontriv :=
     re_sum_riemannZetaLogZeroContribution_nontrivial_ge_of_riemannHypothesis hRH hxpos Sn
       (fun ρ hρ => (hSnz ρ hρ).1) (fun ρ hρ => (hSnz ρ hρ).2)
-  linarith [htriv, hnontriv]
+  linarith only [htriv, hnontriv]
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

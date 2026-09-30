@@ -50,7 +50,7 @@ theorem primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness_in_root_cuto
     (hpmem : p ∈ Finset.Ioc 0 ⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊)
     (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ PrimeNeOneWitnessSet n) :
     primitiveQuadraticCharacter n hn (p : ℤ) = 1 := by
-  have hbase : 1 ≤ y ^ 2 := by nlinarith [sq_nonneg (y - 1)]
+  have hbase : 1 ≤ y ^ 2 := by nlinarith only [hy, sq_nonneg (y - 1)]
   have hkpos : (0 : ℝ) < k := by exact_mod_cast Nat.zero_lt_of_lt hk
   have hexp : (1 : ℝ) / k ≤ 1 := by
     rw [div_le_iff₀ hkpos]
@@ -63,7 +63,7 @@ theorem primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness_in_root_cuto
     have hpcast : (p : ℝ) ≤ (y ^ 2) ^ ((1 : ℝ) / k) := by
       calc
         (p : ℝ) ≤ (⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊ : ℕ) := by exact_mod_cast (Finset.mem_Ioc.mp hpmem).2
-        _ ≤ (y ^ 2) ^ ((1 : ℝ) / k) := Nat.floor_le (by positivity)
+        _ ≤ (y ^ 2) ^ ((1 : ℝ) / k) := Nat.floor_le (Real.rpow_nonneg (zero_le_one.trans hbase) _)
     exact hpcast.trans hpow
   exact
     primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness hn hp hodd hpX hno
@@ -92,7 +92,7 @@ theorem JacobiCharacterArithmeticData.primitiveCharacter_eq_one_in_log_square_ra
         p ∈ Finset.Ioc 0 ⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊ →
         p.Prime → Odd p → bridge.character.primitiveCharacter p = 1 := by
   intro k p hk hpmem hp hodd
-  have hbase : 1 ≤ y ^ 2 := by nlinarith [sq_nonneg (y - 1)]
+  have hbase : 1 ≤ y ^ 2 := by nlinarith only [hy, sq_nonneg (y - 1)]
   have hkpos : (0 : ℝ) < k := by exact_mod_cast Nat.zero_lt_of_lt (Finset.mem_Icc.mp hk).1
   have hexp : (1 : ℝ) / k ≤ 1 := by
     rw [div_le_iff₀ hkpos]
@@ -105,7 +105,7 @@ theorem JacobiCharacterArithmeticData.primitiveCharacter_eq_one_in_log_square_ra
     have hpcast : (p : ℝ) ≤ (y ^ 2) ^ ((1 : ℝ) / k) := by
       calc
         (p : ℝ) ≤ (⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊ : ℕ) := by exact_mod_cast (Finset.mem_Ioc.mp hpmem).2
-        _ ≤ (y ^ 2) ^ ((1 : ℝ) / k) := Nat.floor_le (by positivity)
+        _ ≤ (y ^ 2) ^ ((1 : ℝ) / k) := Nat.floor_le (Real.rpow_nonneg (zero_le_one.trans hbase) _)
     exact hpcast.trans hpow
   simpa only [Int.cast_natCast] using
     bridge.primitiveCharacter_eq_one_of_no_primeNeOne_witness hp hodd hpX hno

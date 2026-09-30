@@ -42,7 +42,7 @@ theorem greatestOddPrimeLE_cast_le {R : ℝ} (hR : 0 ≤ R) : (greatestOddPrimeL
 /-- For a natural `q ≥ 3000`, both `log q` and `loglog q` are positive. -/
 theorem log_log_pos_of_le {q : ℕ} (hq : 3000 ≤ q) :
     0 < Real.log (q : ℝ) ∧ 0 < Real.log (Real.log (q : ℝ)) := by
-  have hqreal : (1 : ℝ) < q := by exact_mod_cast (show 1 < q by omega)
+  have hqreal : (1 : ℝ) < q := by exact_mod_cast ((by decide : 1 < 3000).trans_le hq)
   have hx : 0 < Real.log (q : ℝ) := Real.log_pos hqreal
   have hone : (1 : ℝ) < Real.log (q : ℝ) := by
     have hlog3000 : (1 : ℝ) < Real.log 3000 := by

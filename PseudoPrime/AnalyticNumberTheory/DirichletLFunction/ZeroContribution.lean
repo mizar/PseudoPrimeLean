@@ -66,7 +66,7 @@ theorem dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero {N :
         push_cast
         ring
       rw [hρre, Complex.ofReal_im, Complex.ofReal_re]
-      exact ⟨rfl, by linarith⟩
+      exact ⟨rfl, by linarith only [hm1]⟩
     · rw [hodd.gammaFactor_def, Complex.Gammaℝ_eq_zero_iff] at hΓ
       obtain ⟨m, hm⟩ := hΓ
       have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
@@ -76,7 +76,7 @@ theorem dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero {N :
         push_cast
         ring
       rw [hρre, Complex.ofReal_im, Complex.ofReal_re]
-      exact ⟨rfl, by linarith⟩
+      exact ⟨rfl, by linarith only [hmnn]⟩
   obtain ⟨him, hre⟩ := hreim
   have hρeq_real : ρ = ((ρ.re : ℝ) : ℂ) := by
     apply Complex.ext
@@ -91,7 +91,7 @@ theorem dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero {N :
     conv_lhs => rw [hρeq_real]
     push_cast
     ring
-  have hdenom_pos : (0 : ℝ) < σ ^ 2 := by nlinarith [hre]
+  have hdenom_pos : (0 : ℝ) < σ ^ 2 := by nlinarith only [hre]
   set m : ℕ := dirichletLFunctionZeroMultiplicity χ ρ with hm_def
   have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
   unfold dirichletLFunctionLogZeroContribution
@@ -102,7 +102,7 @@ theorem dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero {N :
       ring,
     Complex.ofReal_re]
   apply div_nonpos_of_nonpos_of_nonneg
-  · nlinarith [mul_nonneg hmnn hxpow_pos.le]
+  · nlinarith only [hmnn, hxpow_pos.le]
   · exact hdenom_pos.le
 
 /--
@@ -392,7 +392,7 @@ theorem dirichletLFunctionReciprocalZeroContribution_re_nonpos_of_gammaFactor_ze
         push_cast
         ring
       rw [hρre, Complex.ofReal_im, Complex.ofReal_re]
-      exact ⟨rfl, by linarith⟩
+      exact ⟨rfl, by linarith only [hm1]⟩
     · rw [hodd.gammaFactor_def, Complex.Gammaℝ_eq_zero_iff] at hΓ
       obtain ⟨m, hm⟩ := hΓ
       have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
@@ -402,7 +402,7 @@ theorem dirichletLFunctionReciprocalZeroContribution_re_nonpos_of_gammaFactor_ze
         push_cast
         ring
       rw [hρre, Complex.ofReal_im, Complex.ofReal_re]
-      exact ⟨rfl, by linarith⟩
+      exact ⟨rfl, by linarith only [hmnn]⟩
   obtain ⟨him, hre⟩ := hreim
   have hρeq_real : ρ = ((ρ.re : ℝ) : ℂ) := by
     apply Complex.ext
@@ -420,7 +420,7 @@ theorem dirichletLFunctionReciprocalZeroContribution_re_nonpos_of_gammaFactor_ze
     conv_lhs => rw [hρeq_real]
     push_cast
     ring
-  have hdenom_pos : (0 : ℝ) < σ * (σ - 1) := by nlinarith [hre]
+  have hdenom_pos : (0 : ℝ) < σ * (σ - 1) := by nlinarith only [hre]
   set m : ℕ := dirichletLFunctionZeroMultiplicity χ ρ with hm_def
   have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
   unfold dirichletLFunctionReciprocalZeroContribution
@@ -433,7 +433,7 @@ theorem dirichletLFunctionReciprocalZeroContribution_re_nonpos_of_gammaFactor_ze
       ring,
     Complex.ofReal_re]
   apply div_nonpos_of_nonpos_of_nonneg
-  · nlinarith [mul_nonneg hmnn hxpow_pos.le]
+  · nlinarith only [hmnn, hxpow_pos.le]
   · exact hdenom_pos.le
 
 /--

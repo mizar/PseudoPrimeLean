@@ -113,7 +113,7 @@ theorem three_halves_le_log_two_pi : (3 / 2 : ℝ) ≤ Real.log (2 * Real.pi) :=
   exact
     hlogSix.le.trans
       (Real.strictMonoOn_log (by norm_num only [Set.mem_Ioi])
-          (show (0 : ℝ) < 2 * Real.pi by positivity) hsix).le
+          (show (0 : ℝ) < 2 * Real.pi from mul_pos (by norm_num only) Real.pi_pos) hsix).le
 
 /-- The closed geometric tail is at most `1 / (18x)` on `x ≥ 2`. -/
 theorem geometricTail_le_one_div_eighteen_mul {x : ℝ} (hx : 2 ≤ x) :

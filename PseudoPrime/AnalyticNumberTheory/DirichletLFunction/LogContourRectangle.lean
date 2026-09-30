@@ -160,10 +160,9 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
         hpointHyp
     obtain ⟨ε, hε, hball⟩ := interior.exists_closedBall_pointOfCell_subset_open hcell
     set r := min (ε / 2) (Rc / 2) with hr_def
-    have hr : 0 < r := lt_min (by linarith) (by linarith)
+    have hr : 0 < r := lt_min (half_pos hε) (half_pos hRc)
     have hball' : Metric.closedBall c r ⊆ RectangleGeometry.rectangleOpenBox cell.1 cell.2 :=
-      (Metric.closedBall_subset_closedBall
-            (le_trans (min_le_left _ _) (by linarith : ε / 2 ≤ ε))).trans
+      (Metric.closedBall_subset_closedBall (le_trans (min_le_left _ _) (half_le_self hε.le))).trans
         hball
     have hcuts := RectangleGeometry.centeredSquare_cuts_inside hcellOrder.1 hcellOrder.2 hr hball'
     set a := RectangleGeometry.centeredSquareLower c r with ha_def
@@ -231,7 +230,7 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
       assignment.parent_boundaryIntegral_eq_of_shrink (dirichletLogContourKernel x χ) hcell hcuts.1
         hcuts.2.1 hcuts.2.2.1 hcuts.2.2.2.1 hcuts.2.2.2.2.1 hcuts.2.2.2.2.2 hpoint hdiffCell hgrid3
     rw [hshrink]
-    have hrRc : r ≤ Rc := le_trans (min_le_right _ _) (by linarith : Rc / 2 ≤ Rc)
+    have hrRc : r ≤ Rc := le_trans (min_le_right _ _) (half_le_self hRc.le)
     exact hcert r hr hrRc
   exact
     RectangleGeometry.rectangleBoundaryIntegral_eq_sum_res (dirichletLogContourKernel x χ)
@@ -279,9 +278,18 @@ theorem dirichletLogFiniteContourIdentity_normalized {N : ℕ} [NeZero N] {x : �
   apply Finset.sum_congr rfl
   intro s hs
   have hπ : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
-  field_simp [hπ]
-  rw [Complex.I_sq]
-  ring
+  have hden : (2 * Real.pi : ℂ) ≠ 0 := mul_ne_zero (by norm_num only) hπ
+  calc
+    -Complex.I / (2 * Real.pi) * (2 * Real.pi * Complex.I * dirichletLogResidueAt hne x s) =
+        -Complex.I * ((2 * Real.pi : ℂ)⁻¹ * (2 * Real.pi)) * Complex.I *
+          dirichletLogResidueAt hne x s :=
+      by
+      rw [div_eq_mul_inv]
+      ring
+    _ = -Complex.I * 1 * Complex.I * dirichletLogResidueAt hne x s := by rw [inv_mul_cancel₀ hden]
+    _ = -((Complex.I : ℂ) ^ 2 * dirichletLogResidueAt hne x s) := by ring
+    _ = dirichletLogResidueAt hne x s := by
+      rw [Complex.I_sq]; ring
 
 /--
 The normalized log-kernel height-sequence contour identity, mirroring

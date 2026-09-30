@@ -86,7 +86,7 @@ theorem elementary_formula_real (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiem
   refine ⟨hne, ?_⟩
   have hR : (0 : ℝ) ≤ elementaryRadius B := by
     unfold elementaryRadius
-    positivity
+    exact sq_nonneg _
   exact (Nat.cast_le.mpr hneg).trans (AnalyticNumberTheory.Arithmetic.greatestOddPrimeLE_cast_le hR)
 
 /--

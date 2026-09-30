@@ -163,7 +163,9 @@ private def largePrimeSquare : ℕ :=
 
 #eval
   ("method-a-a-star-d5-agree",
-    all (fun n => strongLucasMethodAStar n 5 (by norm_num) = strongLucasMethodA n 5 (by norm_num))
+    all
+      (fun n =>
+        strongLucasMethodAStar n 5 (by norm_num only) = strongLucasMethodA n 5 (by norm_num only))
       methodAStarFiveCases)
 
 /- These assertions make a false regression result fail compilation. -/
@@ -180,7 +182,9 @@ example : all (fun n => strengthenedBPSW n = false) strongLucasCases := by nativ
 example : all (fun n => strengthenedBPSW n = false) lucasVCases := by native_decide
 
 example :
-    all (fun n => strongLucasMethodAStar n 5 (by norm_num) = strongLucasMethodA n 5 (by norm_num))
+    all
+      (fun n =>
+        strongLucasMethodAStar n 5 (by norm_num only) = strongLucasMethodA n 5 (by norm_num only))
       methodAStarFiveCases := by
   native_decide
 

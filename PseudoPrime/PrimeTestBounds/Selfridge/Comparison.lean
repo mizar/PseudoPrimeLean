@@ -38,8 +38,8 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs
       exact hns ⟨1, by norm_num only⟩
     have hnpos : 0 < n := by
       rcases hn with ⟨k, hk⟩
-      omega
-    omega
+      exact hk ▸ Nat.zero_lt_succ (2 * k)
+    exact Nat.lt_of_le_of_ne hnpos (Ne.symm hneq)
   have hle :
     PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n hne ≤
       PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n hneg :=

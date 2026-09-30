@@ -140,7 +140,7 @@ theorem llsPrimitiveReciprocalWeightedSum_re_lower_safe {q : ℕ} [NeZero q] (x 
       (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ -
         AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ.primitiveCharacter)
   rw [Complex.sub_re, horiginal] at hre
-  linarith
+  linarith only [horiginal, hsplit, hnorm, hre]
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 /--
@@ -182,7 +182,7 @@ theorem llsPrimitiveReciprocalWeightedSum_re_lower_primeFactorSums {q : ℕ} [Ne
     Nat.div_pos (Nat.le_of_dvd (NeZero.pos q) χ.conductor_dvd_level) χ.conductor_ne_zero.bot_lt
   have hquotient :=
     AnalyticNumberTheory.Arithmetic.commonFactorReciprocalWeightedSum_le hquotientPos.ne' hx
-  linarith
+  linarith only [hsafe, hlevel, hquotient]
 
 /--
 LLS Lemma 2.4 and the safe primitive-character comparison give a reciprocal lower bound with
@@ -201,10 +201,11 @@ theorem llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_riemann
   have hx : 0 < x := sq_pos_of_pos hy
   have hxTwo : (2 : ℝ) ≤ x := by
     dsimp only [x]
-    nlinarith [eight_lt_llsTheorem11S1RadiusRoot hq]
+    nlinarith only [eight_lt_llsTheorem11S1RadiusRoot hq]
   have hlower := llsPrimitiveReciprocalWeightedSum_re_lower_primeFactorSums x χ hx hsmall le_rfl
   have hriemann := h24 x hxTwo
-  have hlogq : 0 < Real.log q := Real.log_pos (by exact_mod_cast (show 1 < q by omega))
+  have hlogq : 0 < Real.log q :=
+    Real.log_pos (by exact_mod_cast ((by decide : 1 < 3000).trans_le hq))
   have hroot : Real.log q ≤ llsTheorem11S1RadiusRoot q :=
     le_add_of_nonneg_right (llsCorrectionTerm_nonneg q)
   have hlogRoot : Real.log (Real.log q) ≤ Real.log (llsTheorem11S1RadiusRoot q) :=
@@ -212,9 +213,9 @@ theorem llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_riemann
   have hlogX : 2 * Real.log (Real.log q) ≤ Real.log x := by
     rw [show Real.log x = 2 * Real.log (llsTheorem11S1RadiusRoot q) by
         exact Analysis.log_sq_eq_two_mul_log hy]
-    linarith
+    linarith only [hlogRoot]
   rw [LLSPart1PrimitiveReciprocalLowerAtWithQuotient]
-  linarith
+  linarith only [hlogX, hriemann, hlower]
 
 /--
 Input/assumptions: a positive cutoff within the Part 1 range and a no-small-prime character.
@@ -240,7 +241,7 @@ theorem characterReciprocalWeightedSum_re_lower_level {q : ℕ} [NeZero q] (x : 
     AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum_eq_coprime_add_common x q
   have hcommon :=
     AnalyticNumberTheory.Arithmetic.commonFactorReciprocalWeightedSum_le (NeZero.ne q) hx
-  linarith [horiginal, hsplit, hcommon]
+  linarith only [horiginal, hsplit, hcommon]
 
 /-- Under the no-small-prime hypothesis and within the Part 1 cutoff, the reciprocal sum has
 nonnegative real part. -/
@@ -289,11 +290,12 @@ theorem llsPart1LevelReciprocalLowerAt_of_riemann (h24 : LLSRiemannReciprocalLow
   have hx : 0 < x := sq_pos_of_pos hy
   have hxTwo : (2 : ℝ) ≤ x := by
     dsimp only [x]
-    nlinarith [eight_lt_llsTheorem11S1RadiusRoot hq]
+    nlinarith only [eight_lt_llsTheorem11S1RadiusRoot hq]
   have hlower := characterReciprocalWeightedSum_re_lower_level x χ hx hsmall le_rfl
   have hriemann := h24 x hxTwo
   have hsumNonneg := characterReciprocalWeightedSum_re_nonneg_level x χ hx hsmall le_rfl
-  have hlogq : 0 < Real.log q := Real.log_pos (by exact_mod_cast (show 1 < q by omega))
+  have hlogq : 0 < Real.log q :=
+    Real.log_pos (by exact_mod_cast ((by decide : 1 < 3000).trans_le hq))
   have hroot : Real.log q ≤ llsTheorem11S1RadiusRoot q :=
     le_add_of_nonneg_right (llsCorrectionTerm_nonneg q)
   have hlogRoot : Real.log (Real.log q) ≤ Real.log (llsTheorem11S1RadiusRoot q) :=
@@ -301,10 +303,10 @@ theorem llsPart1LevelReciprocalLowerAt_of_riemann (h24 : LLSRiemannReciprocalLow
   have hlogX : 2 * Real.log (Real.log q) ≤ Real.log x := by
     rw [show Real.log x = 2 * Real.log (llsTheorem11S1RadiusRoot q) by
         exact Analysis.log_sq_eq_two_mul_log hy]
-    linarith
+    linarith only [hlogRoot]
   rw [LLSPart1LevelReciprocalLowerAt, llsAuxiliaryTerm]
   apply max_le hsumNonneg
-  linarith
+  linarith only [hlogX, hriemann, hlower]
 
 /--
 Input/assumptions: a level-`q` character.
@@ -339,7 +341,7 @@ theorem llsPart1PrimitiveReciprocalLowerWithLevelChangeAt_of_riemann
       ((llsTheorem11S1RadiusRoot q) ^ 2) χ
   rw [LLSPart1LevelReciprocalLowerAt] at hlevel
   rw [LLSPart1PrimitiveReciprocalLowerWithLevelChangeAt]
-  linarith [hlevel, hidentity]
+  linarith only [hlevel, hidentity]
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 /-- Under equal prime support, the finite reciprocal lower bound has only the level correction. -/
@@ -352,7 +354,7 @@ theorem llsPrimitiveReciprocalWeightedSum_re_lower_of_conductorPrimeSupport {q :
   have hsplit := reciprocalWeightedMangoldtSum_eq_coprime_add_common x q
   have hcommon := commonFactorReciprocalWeightedSum_le (NeZero.ne q) hx
   rw [← characterReciprocalWeightedSum_eq_primitive_of_conductorPrimeSupport x χ hsupport]
-  linarith
+  linarith only [horiginal, hsplit, hcommon]
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 /--
@@ -368,7 +370,7 @@ theorem llsPart1PrimitiveReciprocalLowerAt_of_riemann_of_conductorPrimeSupport
   have hx : 0 < x := sq_pos_of_pos hy
   have hxTwo : (2 : ℝ) ≤ x := by
     dsimp only [x]
-    nlinarith [eight_lt_llsTheorem11S1RadiusRoot hq]
+    nlinarith only [eight_lt_llsTheorem11S1RadiusRoot hq]
   have hlower :=
     llsPrimitiveReciprocalWeightedSum_re_lower_of_conductorPrimeSupport x χ hx hsmall le_rfl
       hsupport
@@ -382,7 +384,8 @@ theorem llsPart1PrimitiveReciprocalLowerAt_of_riemann_of_conductorPrimeSupport
     exact
       reciprocalWeightedMangoldtTerm_nonneg hx (Finset.mem_Ioc.mp hnIoc).1
         (Finset.mem_Ioc.mp hnIoc).2
-  have hlogq : 0 < Real.log q := Real.log_pos (by exact_mod_cast (show 1 < q by omega))
+  have hlogq : 0 < Real.log q :=
+    Real.log_pos (by exact_mod_cast ((by decide : 1 < 3000).trans_le hq))
   have hroot : Real.log q ≤ llsTheorem11S1RadiusRoot q :=
     le_add_of_nonneg_right (llsCorrectionTerm_nonneg q)
   have hlogRoot : Real.log (Real.log q) ≤ Real.log (llsTheorem11S1RadiusRoot q) :=
@@ -390,10 +393,10 @@ theorem llsPart1PrimitiveReciprocalLowerAt_of_riemann_of_conductorPrimeSupport
   have hlogX : 2 * Real.log (Real.log q) ≤ Real.log x := by
     rw [show Real.log x = 2 * Real.log (llsTheorem11S1RadiusRoot q) by
         exact Analysis.log_sq_eq_two_mul_log hy]
-    linarith
+    linarith only [hlogRoot]
   rw [LLSPart1PrimitiveReciprocalLowerAt, llsAuxiliaryTerm]
   apply max_le hsumNonneg
-  linarith
+  linarith only [hlogX, hriemann, hlower]
 
 /-- Lemma 2.3's raw upper-bound shape at the Part 1 radius for a real candidate `b` representing
 `|Re B(χ̃)|`; the proposition itself imposes no equality with the zero mass. -/
@@ -497,7 +500,7 @@ theorem llsPart1PrimitiveZeroMassSimplification : LLSPart1PrimitiveZeroMassSimpl
   have hlogPi : (1 : ℝ) ≤ Real.log Real.pi := by
     have hlogThreePi : Real.log 3 < Real.log Real.pi :=
       Real.strictMonoOn_log (by norm_num only [Set.mem_Ioi]) Real.pi_pos Real.pi_gt_three
-    linarith [Real.log_three_gt_d9]
+    linarith only [hlogThreePi, Real.log_three_gt_d9]
   have hlogConductor : 0 ≤ Real.log χ.conductor :=
     Real.log_nonneg (by exact_mod_cast AnalyticNumberTheory.DirichletLFunction.conductor_pos χ)
   have hproduct :
@@ -511,10 +514,10 @@ theorem llsPart1PrimitiveZeroMassSimplification : LLSPart1PrimitiveZeroMassSimpl
         AnalyticNumberTheory.Arithmetic.inverseSquareLogTradeoff hy (hconductor.trans hlevel) hlogPi
           hdiff
     · have hinverse : 0 ≤ (1 - 1 / llsTheorem11S1RadiusRoot q)⁻¹ ^ 2 := sq_nonneg _
-      nlinarith
+      nlinarith only [hdiff, hinverse, hlogConductor, hlogPi]
   rw [LLSPart1PrimitiveZeroMassRawUpperAt] at hraw
   rw [LLSPart1PrimitiveZeroMassUpperAt]
-  nlinarith
+  nlinarith only [hraw, hproduct]
 
 /--
 Input/assumptions: the quotient-corrected raw Lemma 2.3 estimate, `q ≥ 3000`, and `0 ≤ b`.
@@ -533,7 +536,7 @@ theorem llsPart1PrimitiveZeroMassSimplificationWithQuotient {q : ℕ} [NeZero q]
   have hlogPi : (1 : ℝ) ≤ Real.log Real.pi := by
     have hlogThreePi : Real.log 3 < Real.log Real.pi :=
       Real.strictMonoOn_log (by norm_num only [Set.mem_Ioi]) Real.pi_pos Real.pi_gt_three
-    linarith [Real.log_three_gt_d9]
+    linarith only [hlogThreePi, Real.log_three_gt_d9]
   have hlogConductor : 0 ≤ Real.log χ.conductor :=
     Real.log_nonneg (by exact_mod_cast AnalyticNumberTheory.DirichletLFunction.conductor_pos χ)
   have hproduct :
@@ -547,10 +550,10 @@ theorem llsPart1PrimitiveZeroMassSimplificationWithQuotient {q : ℕ} [NeZero q]
         AnalyticNumberTheory.Arithmetic.inverseSquareLogTradeoff hy (hconductor.trans hlevel) hlogPi
           hdiff
     · have hinverse : 0 ≤ (1 - 1 / llsTheorem11S1RadiusRoot q)⁻¹ ^ 2 := sq_nonneg _
-      nlinarith
+      nlinarith only [hdiff, hinverse, hlogConductor, hlogPi]
   rw [LLSPart1PrimitiveZeroMassRawUpperWithQuotientAt] at hraw
   rw [LLSPart1PrimitiveZeroMassUpperWithQuotientAt]
-  nlinarith
+  nlinarith only [hraw, hproduct]
 
 /--
 Definition: the simplified shared-witness core with the reciprocal quotient correction retained.
@@ -601,18 +604,18 @@ theorem llsPrimitiveLogWeightedSum_re_le_comparisonUpperWithQuotient {q : ℕ} [
   have hcoefficient :
     0 ≤ 2 * llsTheorem11S1RadiusRoot q + 2 + Real.log ((llsTheorem11S1RadiusRoot q) ^ 2) := by
     have hroot : 1 ≤ llsTheorem11S1RadiusRoot q := by
-      linarith [eight_lt_llsTheorem11S1RadiusRoot hq]
+      linarith only [eight_lt_llsTheorem11S1RadiusRoot hq]
     have hlog : 0 ≤ Real.log ((llsTheorem11S1RadiusRoot q) ^ 2) := by
       apply Real.log_nonneg
-      nlinarith
-    linarith
+      nlinarith only [hroot]
+    linarith only [hroot, hlog]
   have hmul := mul_le_mul_of_nonneg_left hzero hcoefficient
   have hcomparison :
     0 ≤
       (1 / 2 : ℝ) * (q / χ.conductor).primeFactors.card *
         (Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) ^ 2 := by
     positivity
-  linarith
+  linarith only [hweighted, hmul]
 
 /--
 Input/assumptions: the corrected primitive shared-witness core for one Part 1 character.
@@ -748,13 +751,13 @@ theorem characterLogWeightedSum_re_le_upperBound_of_corrections {q : ℕ} [NeZer
   have hcoefficient :
     0 ≤ 2 * llsTheorem11S1RadiusRoot q + 2 + Real.log ((llsTheorem11S1RadiusRoot q) ^ 2) := by
     have hroot : 1 ≤ llsTheorem11S1RadiusRoot q := by
-      linarith [eight_lt_llsTheorem11S1RadiusRoot hq]
+      linarith only [eight_lt_llsTheorem11S1RadiusRoot hq]
     have hlog : 0 ≤ Real.log ((llsTheorem11S1RadiusRoot q) ^ 2) := by
       apply Real.log_nonneg
-      nlinarith
-    linarith
+      nlinarith only [hroot]
+    linarith only [hroot, hlog]
   have hmul := mul_le_mul_of_nonneg_left hzero hcoefficient
-  nlinarith [hexact, hweighted, hmul]
+  nlinarith only [hexact, hweighted, hmul]
 
 /-- Raw analytic core bounds and their numerical simplification give the shared-witness core. -/
 theorem llsPart1PrimitiveCoreBounds_of_raw (hraw : LLSPart1PrimitiveRawCoreBounds)

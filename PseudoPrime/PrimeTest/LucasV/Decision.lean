@@ -2,6 +2,7 @@ import PseudoPrime.PrimeTest.Decision
 import PseudoPrime.PrimeTest.LucasV.Prime
 
 /-! # Certified one-sided LucasV decisions -/
+
 namespace PseudoPrime.PrimeTest
 
 /-- Check the discriminant identity and Jacobi -1 branch before using prime completeness.

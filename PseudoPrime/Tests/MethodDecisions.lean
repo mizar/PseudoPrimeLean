@@ -5,14 +5,18 @@ import PseudoPrime.PrimeTest.Lucas.Decision
 import PseudoPrime.PrimeTest.LucasV.Decision
 import PseudoPrime.PrimeTest.StrongLucas.Decision
 import PseudoPrime.PrimeTest.BPSW.Decision
+
 /-! # Individual probable-prime decision contracts -/
+
 namespace PseudoPrime.PrimeTest.MethodDecisionTests
+
 /-- All five requested methods plus Strong Lucas on common explicit inputs. -/
 def decisions (n : ℕ) : List (PrimeTest.Decision n) :=
-  [MillerRabin.decideBase2 n, MillerRabin.decideWithBase n 2,
-   EulerJacobi.decideWithBase n 2, EulerJacobi.decideWithIntBase n (-1),
-   Lucas.decideWithParams n 5 1 (-1), LucasV.decideWithParams n 5 1 (-1),
-   StrongLucas.decideWithParams n 5 1 (-1), BPSW.decide n, BPSW.decideStrengthened n]
+  [MillerRabin.decideBase2 n, MillerRabin.decideWithBase n 2, EulerJacobi.decideWithBase n 2,
+    EulerJacobi.decideWithIntBase n (-1), Lucas.decideWithParams n 5 1 (-1),
+    LucasV.decideWithParams n 5 1 (-1), StrongLucas.decideWithParams n 5 1 (-1), BPSW.decide n,
+    BPSW.decideStrengthened n]
+
 /-- Verify boundaries, parameter guards, pseudoprimes and the downstream execution consumer. -/
 def runTests : IO Unit := do
   for n in List.range 51 do
@@ -31,8 +35,7 @@ def runTests : IO Unit := do
     throw (IO.userError "Euler-Jacobi pseudoprime promoted")
   unless (EulerJacobi.decideWithBase 9 0).toOption == none do
     throw (IO.userError "zero base comparison changed meaning")
-  for method in [Lucas.decideWithParams, LucasV.decideWithParams,
-      StrongLucas.decideWithParams] do
+  for method in [Lucas.decideWithParams, LucasV.decideWithParams, StrongLucas.decideWithParams] do
     unless (method 7 6 1 (-1)).toOption == none do
       throw (IO.userError "invalid discriminant used")
     unless (method 11 5 1 (-1)).toOption == none do
@@ -41,14 +44,18 @@ def runTests : IO Unit := do
       throw (IO.userError "Jacobi zero treated as composite")
     unless (method 27 5 1 (-1)).toOption == some false do
       throw (IO.userError "supported Lucas rejection missing")
-  let limits : PrimeTest.APRCL.CertificateLimits := ⟨⟨32,4,16,8⟩,12,2⟩
-  for filter in [fun _ : Unit ↦ Lucas.decideWithParams 27 5 1 (-1),
-      fun _ ↦ LucasV.decideWithParams 27 5 1 (-1),
+  let limits : PrimeTest.APRCL.CertificateLimits := ⟨⟨32, 4, 16, 8⟩, 12, 2⟩
+  for filter in
+    [fun _ : Unit ↦ Lucas.decideWithParams 27 5 1 (-1), fun _ ↦ LucasV.decideWithParams 27 5 1 (-1),
       fun _ ↦ StrongLucas.decideWithParams 27 5 1 (-1)] do
-    let result := Execution.runWithDecision 2 27 filter [] (fun _ ↦ .unknown)
-      (limits := limits) (fun _ ↦ .unknown)
+    let result :=
+      Execution.runWithDecision 2 27 filter [] (fun _ ↦ .unknown) (limits := limits)
+        (fun _ ↦ .unknown)
     unless result.toDecision.toOption == some false do
       throw (IO.userError "guarded filter not connected to execution")
+
 end PseudoPrime.PrimeTest.MethodDecisionTests
+
 /-- Execute individual method regressions outside the public library. -/
-def main : IO Unit := PseudoPrime.PrimeTest.MethodDecisionTests.runTests
+def main : IO Unit :=
+  PseudoPrime.PrimeTest.MethodDecisionTests.runTests

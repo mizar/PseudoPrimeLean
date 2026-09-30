@@ -63,7 +63,7 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero N] (hN2
             |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| +
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
-  have hx1 : (1 : ℝ) ≤ x := by linarith
+  have hx1 : (1 : ℝ) ≤ x := by linarith only [hx]
   have htend :=
     AnalyticNumberTheory.DirichletLFunction.tendsto_normalized_dirichletLogBoundary_heightSeq hN2
       hGRH hprimitive hne hinv hquad hx1 A hA
@@ -84,7 +84,7 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero N] (hN2
     filter_upwards with k
     have hid :=
       AnalyticNumberTheory.DirichletLFunction.dirichletLogFiniteContourIdentity_heightSeq_normalized
-        hN2 hGRH hprimitive hne hinv hquad (by linarith : (0 : ℝ) < x) A k hA
+        hN2 hGRH hprimitive hne hinv hquad (by linarith only [hx] : (0 : ℝ) < x) A k hA
     open
       AnalyticNumberTheory.DirichletLFunction in
       obtain ⟨h0, h1⟩ :=
@@ -142,7 +142,7 @@ theorem primitiveQuadraticLogWeightedUpper {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
             |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| +
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
-  have hx1 : (1 : ℝ) < x := by linarith
+  have hx1 : (1 : ℝ) < x := by linarith only [hx]
   open
     AnalyticNumberTheory.DirichletLFunction in
     have htend :=

@@ -65,7 +65,7 @@ theorem twoAdicLogCorrection_eq_sum_of_isQuadratic {q : ℕ} (x : ℝ) (χ : Dir
   intro k hk
   have hkpos : k ≠ 0 := by
     have hk' := (Finset.mem_Icc.mp hk).1
-    omega
+    exact Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one hk')
   rw [logWeightedMangoldtTerm_prime_pow hx Nat.prime_two hkpos,
     characterLogWeightedTerm_primitive_re_prime_pow_of_isQuadratic x χ hχ hx Nat.prime_two hkpos]
   norm_num only
@@ -83,7 +83,7 @@ theorem twoAdicReciprocalCorrection_eq_sum_of_isQuadratic {q : ℕ} (x : ℝ)
   intro k hk
   have hkpos : k ≠ 0 := by
     have hk' := (Finset.mem_Icc.mp hk).1
-    omega
+    exact Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one hk')
   rw [reciprocalWeightedMangoldtTerm_prime_pow Nat.prime_two hkpos,
     characterReciprocalWeightedTerm_primitive_re_prime_pow_of_isQuadratic x χ hχ Nat.prime_two
       hkpos]
@@ -416,8 +416,9 @@ theorem logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrecti
     logWeightedMangoldtSum x - (characterLogWeightedSum x χ.primitiveCharacter).re =
       twoAdicLogCorrection x χ := by
   rw [logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_primePowerDifference x χ
-      (by linarith)]
-  rw [logPrimePowerDifferenceSum_eq_twoAdic_of_eq_one x χ (by linarith) hodd]
+      (le_trans (by norm_num only : (0 : ℝ) ≤ 2) hx)]
+  rw [logPrimePowerDifferenceSum_eq_twoAdic_of_eq_one x χ
+      (ne_of_gt (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx)) hodd]
   exact
     twoAdicLogPrimePowerDifference_eq_twoAdicLogCorrection_of_mem x χ
       (fun hk ↦ two_mem_prime_cutoff_of_two_le hx hk)
@@ -432,7 +433,7 @@ theorem reciprocalWeightedSum_sub_re_eq_twoAdicCorrection_of_eq_one {q : ℕ} (x
     reciprocalWeightedMangoldtSum x - (characterReciprocalWeightedSum x χ.primitiveCharacter).re =
       twoAdicReciprocalCorrection x χ := by
   rw [reciprocalWeightedMangoldtSum_sub_characterReciprocalWeightedSum_re_eq_primePowerDifference x
-      χ (by linarith)]
+      χ (le_trans (by norm_num only : (0 : ℝ) ≤ 2) hx)]
   rw [reciprocalPrimePowerDifferenceSum_eq_twoAdic_of_eq_one x χ hodd]
   exact
     twoAdicReciprocalPrimePowerDifference_eq_twoAdicReciprocalCorrection_of_mem x χ
@@ -535,11 +536,11 @@ theorem twoAdicLogCorrection_le_log_sq_of_apply_two_eq_neg_one {q : ℕ} (x : �
   let K := ⌊Real.log x / Real.log 2⌋₊
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   have hquot_nonneg : 0 ≤ Real.log x / Real.log 2 :=
-    div_nonneg (Real.log_nonneg (by linarith)) hlog2.le
+    div_nonneg (Real.log_nonneg (le_trans (by norm_num only) hx)) hlog2.le
   have hfull :
     ∑ k ∈ Finset.Icc 1 K, 2 * (Real.log 2 * (Real.log x - k * Real.log 2)) ≤ (Real.log x) ^ 2 := by
     rw [← Finset.mul_sum]
-    nlinarith [sum_log_weight_le_half_sq (a := Real.log 2) (L := Real.log x) (K := K)]
+    nlinarith only [sum_log_weight_le_half_sq (a := Real.log 2) (L := Real.log x) (K := K)]
   apply le_trans ?_ hfull
   apply Finset.sum_le_sum
   intro k hk
@@ -550,8 +551,8 @@ theorem twoAdicLogCorrection_le_log_sq_of_apply_two_eq_neg_one {q : ℕ} (x : �
       exact (Finset.mem_Icc.mp hk).2
     have hlog : (k : ℝ) * Real.log 2 ≤ Real.log x := (le_div_iff₀ hlog2).mp hklog
     have hnonneg : 0 ≤ Real.log 2 * (Real.log x - k * Real.log 2) :=
-      mul_nonneg hlog2.le (by linarith)
-    linarith
+      mul_nonneg hlog2.le (sub_nonneg.mpr hlog)
+    exact mul_nonneg (by norm_num only) hnonneg
 
 /-! The reciprocal odd tail has the corresponding explicit `4/3` constant. -/
 
@@ -564,7 +565,7 @@ theorem twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_o
   let K := ⌊Real.log x / Real.log 2⌋₊
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   have hquot_nonneg : 0 ≤ Real.log x / Real.log 2 :=
-    div_nonneg (Real.log_nonneg (by linarith)) hlog2.le
+    div_nonneg (Real.log_nonneg (le_trans (by norm_num only) hx)) hlog2.le
   calc
     _ ≤ ∑ k ∈ Finset.Icc 1 K, (if Odd k then 2 * (Real.log 2 / (2 : ℝ) ^ k) else 0) := by
       apply Finset.sum_le_sum
@@ -588,8 +589,8 @@ theorem twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_o
           simpa only [ge_iff_le] using hdiv
         have hnonneg : 0 ≤ Real.log 2 / (2 : ℝ) ^ k := by positivity
         have hratio : 0 ≤ (2 : ℝ) ^ k / x := by positivity
-        have hfactor : 0 ≤ 1 - (2 : ℝ) ^ k / x := by linarith
-        nlinarith
+        have hfactor : 0 ≤ 1 - (2 : ℝ) ^ k / x := by exact sub_nonneg.mpr hpow
+        nlinarith only [hnonneg, hratio, hfactor]
       · rfl
     _ = 2 * Real.log 2 * (∑ k ∈ Finset.Icc 1 K, (if Odd k then (1 : ℝ) / (2 : ℝ) ^ k else 0)) := by
       calc
@@ -601,7 +602,7 @@ theorem twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_o
         _ = _ := by rw [Finset.mul_sum]
     _ ≤ (4 / 3) * Real.log 2 := by
       have hsum := sum_odd_inv_two_pow_le K
-      nlinarith [hlog2.le]
+      nlinarith only [hsum, hlog2]
 
 /-!
 Input/assumptions: `x ≥ 2`, a quadratic primitive character, and `χ̃(2) = -1`.
@@ -620,14 +621,13 @@ theorem twoAdicReciprocalCorrection_neg_one_absorbed_by_log_four_saving {q : ℕ
     (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicReciprocalCorrection x χ ≤ Real.log 2 + (1 - 1 / x) * Real.log 2 := by
   have hcorr :=
-    twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_one x χ hχ (by linarith)
-      h2
-  have hxpos : 0 < x := by linarith
+    twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_one x χ hχ hx h2
+  have hxpos : 0 < x := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   have hinv : 1 / x ≤ (2 : ℝ) / 3 := by
     apply (div_le_iff₀ hxpos).mpr
-    nlinarith
-  nlinarith
+    nlinarith only [hx]
+  nlinarith only [hcorr, hlog2, hinv]
 
 /-!
 Input/assumptions: `x ≥ 2`, a quadratic primitive character, and one of the three possible values
@@ -643,10 +643,10 @@ theorem twoAdicLogCorrection_le_log_sq_of_apply_two_mem {q : ℕ} (x : ℝ) (χ 
     (hχ : χ.primitiveCharacter.IsQuadratic) (hx : (2 : ℝ) ≤ x)
     (h2 : χ.primitiveCharacter 2 = 0 ∨ χ.primitiveCharacter 2 = 1 ∨ χ.primitiveCharacter 2 = -1) :
     twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 := by
-  have hxne : x ≠ 0 := by linarith
+  have hxne : x ≠ 0 := ne_of_gt (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx)
   rcases h2 with h2 | h2 | h2
   · have h := twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_zero x χ hxne h2
-    nlinarith [sq_nonneg (Real.log x)]
+    linarith only [h, sq_nonneg (Real.log x)]
   · rw [twoAdicLogCorrection_eq_zero_of_apply_two_eq_one x χ hχ hxne h2]
     positivity
   · exact twoAdicLogCorrection_le_log_sq_of_apply_two_eq_neg_one x χ hχ hx h2
@@ -663,7 +663,7 @@ theorem twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_mem {q :
       twoAdicReciprocalCorrection_le_log_two_of_apply_two_eq_zero x χ
         (lt_of_lt_of_le (by norm_num only) hx) h2
     have hlog2 : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num only)
-    nlinarith
+    linarith only [h, hlog2]
   · rw [twoAdicReciprocalCorrection_eq_zero_of_apply_two_eq_one x χ hχ h2]
     positivity
   · exact twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_one x χ hχ hx h2
@@ -695,12 +695,13 @@ private lemma alternating_linear_sum_le_first {A b : ℝ} (hA : 2 * b ≤ A) (hb
       · have hEven2 : Even (K + 2) := by
           obtain ⟨j, rfl⟩ := hEven
           use j + 1
-          omega
+          ring
         have hNotEven1 : ¬Even (K + 1) := by
           intro h
-          obtain ⟨i, hi⟩ := hEven
-          obtain ⟨j, hj⟩ := h
-          omega
+          have hOdd1 : Odd (K + 1) := by
+            obtain ⟨i, hi⟩ := hEven
+            exact ⟨i, by rw [hi, two_mul]⟩
+          exact (Nat.not_even_iff_odd.mpr hOdd1) h
         simp only [hEven, ↓reduceIte, hNotEven1, Nat.cast_add, Nat.cast_one, neg_sub, hEven2,
           Nat.cast_ofNat]
         ring_nf
@@ -708,12 +709,15 @@ private lemma alternating_linear_sum_le_first {A b : ℝ} (hA : 2 * b ≤ A) (hb
         have hEven' : Even (K + 1) := by
           obtain ⟨j, rfl⟩ := hOdd
           use j + 1
-          omega
+          ring
         have hNotEven2 : ¬Even (K + 2) := by
           intro h
-          obtain ⟨i, hi⟩ := hOdd
-          obtain ⟨j, hj⟩ := h
-          omega
+          have hOdd2 : Odd (K + 2) := by
+            obtain ⟨i, hi⟩ := hOdd
+            exact
+              ⟨i + 1, by
+                rw [hi]; ring⟩
+          exact (Nat.not_even_iff_odd.mpr hOdd2) h
         simp only [hEven, ↓reduceIte, neg_sub, sub_add_sub_cancel', hEven', Nat.cast_add,
           Nat.cast_one, hNotEven2, Nat.cast_ofNat]
         ring_nf
@@ -721,17 +725,20 @@ private lemma alternating_linear_sum_le_first {A b : ℝ} (hA : 2 * b ≤ A) (hb
   by_cases hEven : Even K
   · rw [ite_eq_left hEven]
     obtain ⟨j, hj⟩ := hEven
-    have hj' : K = 2 * j := by omega
+    have hj' : K = 2 * j := by simpa only [two_mul] using hj
     have hKcast : (K : ℝ) = 2 * j := by exact_mod_cast hj'
-    nlinarith
+    nlinarith only [hA, hK, hKcast]
   · have hKpos : 1 ≤ K := by
       by_contra h
-      have : K = 0 := by omega
+      have : K = 0 := by
+        cases K with
+        | zero => rfl
+        | succ k => exact False.elim (h (Nat.succ_le_succ (Nat.zero_le k)))
       subst K
       simp only [Even.zero, not_true_eq_false] at hEven
     have hKreal : (1 : ℝ) ≤ K := by exact_mod_cast hKpos
     rw [ite_eq_right hEven]
-    nlinarith
+    nlinarith only [hA, hb, hKreal]
 
 /-- For `x ≥ 4` and `K * log 2 ≤ log x`, the alternating affine sum with first term
 `log 2 * (log x - log 2)` is at most that first term. -/
@@ -745,13 +752,13 @@ theorem alternatingLogCorrection_le_log_two_mul_log_half {x : ℝ} (K : ℕ) (hx
   have hlog4 : Real.log 4 = 2 * Real.log 2 := by
     rw [show (4 : ℝ) = 2 ^ 2 by norm_num only, Real.log_pow]
     norm_num only
-  have hxpos : 0 < x := by linarith
+  have hxpos : 0 < x := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 4) hx
   have hlogx : Real.log 4 ≤ Real.log x := by
     exact Real.strictMonoOn_log.monotoneOn (by norm_num only [Set.mem_Ioi]) hxpos hx
   have hA : 2 * (Real.log 2) ^ 2 ≤ Real.log 2 * Real.log x := by
     have hmul := mul_le_mul_of_nonneg_left hlogx hlog2.le
     rw [hlog4] at hmul
-    nlinarith
+    linarith only [hmul]
   have hKb : (K : ℝ) * (Real.log 2) ^ 2 ≤ Real.log 2 * Real.log x := by
     have hmul := mul_le_mul_of_nonneg_right hK hlog2.le
     calc
@@ -788,8 +795,9 @@ theorem alternatingLogCorrection_Icc_le_log_two_mul_log_half {x : ℝ} (K : ℕ)
       have hlog2 : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num only)
       have hKle : (K : ℝ) * Real.log 2 ≤ (K + 1 : ℕ) * Real.log 2 := by
         gcongr
-        omega
-      rw [Finset.sum_Icc_succ_top (by omega), Finset.sum_range_succ, ih (hKle.trans hK)]
+        exact Nat.le_succ K
+      rw [Finset.sum_Icc_succ_top (Nat.succ_le_succ (Nat.zero_le K)), Finset.sum_range_succ,
+        ih (hKle.trans hK)]
       congr 1
       by_cases he : Even K
       · have hodd : Odd (K + 1) := by
@@ -813,11 +821,12 @@ theorem twoAdicLogCorrection_le_half_log_sq_add_log_two_mul_log_half_of_apply_tw
     (x : ℝ) (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : 4 ≤ x)
     (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 / 2 + Real.log 2 * (Real.log x - Real.log 2) := by
-  rw [twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ hχ (by linarith : x ≠ 0) h2]
+  rw [twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ hχ
+      (ne_of_gt (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 4) hx)) h2]
   let K := ⌊Real.log x / Real.log 2⌋₊
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   have hquot_nonneg : 0 ≤ Real.log x / Real.log 2 :=
-    div_nonneg (Real.log_nonneg (by linarith)) hlog2.le
+    div_nonneg (Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 4) hx)) hlog2.le
   have hfloor : (K : ℝ) ≤ Real.log x / Real.log 2 := by
     dsimp only [K]
     exact Nat.floor_le hquot_nonneg
@@ -838,7 +847,7 @@ theorem twoAdicLogCorrection_le_half_log_sq_add_log_two_mul_log_half_of_apply_tw
       ring
     · simp only [hodd, ↓reduceIte, add_neg_cancel]
   rw [hdecomp]
-  nlinarith
+  linarith only [hbase, halt]
 
 /-!
 Input/assumptions: `x ≠ 0` and two characters with quadratic primitive parts whose values at

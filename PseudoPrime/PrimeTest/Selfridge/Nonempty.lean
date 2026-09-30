@@ -51,7 +51,22 @@ theorem primeNegOneWitnessSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (
     exact hns ⟨1, by norm_num only⟩
   have hn3 : n = 3 ∨ 3 < n := by
     obtain ⟨k, hk⟩ := hn
-    omega
+    by_cases hk1 : k = 1
+    · left
+      rw [hk, hk1]
+      norm_num only
+    · right
+      have hk0 : k ≠ 0 := by
+        intro h
+        apply hn1
+        rw [hk, h]
+        norm_num only
+      have hkge1 : 1 ≤ k := Nat.succ_le_iff.mpr (Nat.pos_of_ne_zero hk0)
+      have hkge2 : 2 ≤ k := Nat.succ_le_iff.mpr (lt_of_le_of_ne hkge1 (Ne.symm hk1))
+      rw [hk]
+      calc
+        3 < 2 * 2 + 1 := by decide
+        _ ≤ 2 * k + 1 := Nat.add_le_add_right (Nat.mul_le_mul_left 2 hkge2) 1
   rcases hn3 with rfl | hn3
   · exact ⟨5, Nat.prime_five, by decide, Internal.jacobiSym_three_five_eq_neg_one⟩
   · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ :=
@@ -69,10 +84,7 @@ theorem firstStopNegOneSet_nonempty_of_primeWitness {C : ℕ → Prop} {n : ℕ}
     rw [jacobi_selfridgeD (by decide) hn, show 27 = 3 ^ 3 by norm_num only, jacobiSym.pow_right,
       hpvalue]
     norm_num only
-  · have hp5 : 5 ≤ p := by
-      have hp2 := hpprime.two_le
-      have hpmod := Nat.odd_iff.mp hpodd
-      omega
+  · have hp5 : 5 ≤ p := by exact Internal.oddPrime_ge_five_of_ne_three hpprime hpodd hp3
     exact
       ⟨p,
         mem_firstStopNegOneSet_of_mem_primeNegOneWitnessSet hn (hprime hpprime hpodd hp5)
@@ -98,7 +110,7 @@ theorem classicalFirstStopNegOne_lt_of_odd_nonsquare_of_twenty_seven_lt {n : ℕ
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     firstStopNegOne isClassicalCandidate n hs < n := by
   obtain ⟨p, hp, hpodd, hplt, hpvalue⟩ :=
-    NumberTheory.oddNonsquareHasSmallerNegOneWitness hn (by omega) hns
+    NumberTheory.oddNonsquareHasSmallerNegOneWitness hn (lt_trans (by decide : 3 < 27) hn27) hns
   by_cases hp3 : p = 3
   · subst p
     have hmem : 27 ∈ FirstStopNegOneSet isClassicalCandidate n := by
@@ -107,10 +119,7 @@ theorem classicalFirstStopNegOne_lt_of_odd_nonsquare_of_twenty_seven_lt {n : ℕ
         jacobiSym.pow_right, hpvalue]
       norm_num only
     exact (firstStopNegOne_le isClassicalCandidate n hs hmem).trans_lt hn27
-  · have hp5 : 5 ≤ p := by
-      have hp2 := hp.two_le
-      have hpmod := Nat.odd_iff.mp hpodd
-      omega
+  · have hp5 : 5 ≤ p := by exact Internal.oddPrime_ge_five_of_ne_three hp hpodd hp3
     have hmem : p ∈ FirstStopNegOneSet isClassicalCandidate n :=
       mem_firstStopNegOneSet_of_mem_primeNegOneWitnessSet (C := isClassicalCandidate) (p := p) hn
         ⟨hp5, hpodd⟩ ⟨hp, hpodd, hpvalue⟩
@@ -136,7 +145,7 @@ theorem wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n
         intro h
         subst n
         exact hns ⟨1, by norm_num only⟩
-      omega
+      exact Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨ne_of_gt hnpos, hn1⟩
     · exact classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns
   have hstop := firstStopNeOne_mem isClassicalCandidate n hclass
   have hcand : isWheel30NeOneCandidate (firstStopNeOne isClassicalCandidate n hclass) := by
@@ -144,7 +153,7 @@ theorem wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n
     · exact prime_mem_wheel30NeOneCandidate hp hstop.1.2 hstop.1.1
     · have hi : 0 < firstStopNeOne isClassicalCandidate n hclass := by
         have hi5 := hstop.1.1
-        omega
+        exact lt_of_lt_of_le (by decide : 0 < 5) hi5
       have hmin :
         ∀ j < firstStopNeOne isClassicalCandidate n hclass,
           j ∉ FirstStopNeOneSet isClassicalCandidate n := by
@@ -169,7 +178,7 @@ theorem classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd
       subst n
       exact hns ⟨1, by norm_num only⟩
     have hnpos := Odd.pos hn
-    omega
+    exact Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨ne_of_gt hnpos, hn1⟩
   · exact classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns
 
 end PseudoPrime.PrimeTest

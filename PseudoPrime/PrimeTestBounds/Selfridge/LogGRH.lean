@@ -22,7 +22,8 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_49_le
       Real.log (n : ℝ) ^ 2 := by
   let hs := PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
   obtain ⟨hw, hqR⟩ :=
-    PseudoSquare.exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare hGRH hn hns (by omega)
+    PseudoSquare.exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare hGRH hn hns
+      ((by decide : 11 ≤ 49).trans hn49)
   have hmax :=
     PrimeTest.primeNeOneWitness_le_classicalFirstStop_le_max_unconditional hn.pos hn hns hw hs
   have hmaxR :
@@ -55,7 +56,7 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le
       Real.log (n : ℝ) ^ 2 := by
   by_cases hn49 : n < 49
   · exact classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 hn13 hn49 hn hns
-  · exact classicalFirstStopNeOne_cast_le_log_sq_of_49_le hGRH (by omega) hn hns
+  · exact classicalFirstStopNeOne_cast_le_log_sq_of_49_le hGRH (Nat.le_of_not_lt hn49) hn hns
 
 theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn13 : 13 ≤ n)
@@ -100,13 +101,17 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq
           (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns) ≤
         13 := by
       interval_cases n
-      all_goals try (obtain ⟨k, hk⟩ := hn; omega)
+      case «2» => norm_num only at hn
+      case «4» => norm_num only at hn
+      case «6» => norm_num only at hn
+      case «8» => norm_num only at hn
+      case «10» => norm_num only at hn
+      case «12» => norm_num only at hn
       case «1» => exact (hns ⟨1, by norm_num only⟩).elim
       case «3» =>
         exact
           (PrimeTest.firstStopNeOne_le_candidate (i := 5) hn hns
-            (by exact ⟨by norm_num only, by decide⟩)
-                (by norm_num only)
+                (by exact ⟨by norm_num only, by decide⟩) (by norm_num only)
                 (by
                   rw [PrimeTest.jacobi_selfridgeD (by decide) hn]
                   norm_num only [PseudoSquare.jacobiSym_nat_mod_left'])).trans
@@ -114,8 +119,7 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq
       case «5» =>
         exact
           (PrimeTest.firstStopNeOne_le_candidate (i := 7) hn hns
-            (by exact ⟨by norm_num only, by decide⟩)
-                (by norm_num only)
+                (by exact ⟨by norm_num only, by decide⟩) (by norm_num only)
                 (by
                   rw [PrimeTest.jacobi_selfridgeD (by decide) hn]
                   norm_num only [PseudoSquare.jacobiSym_nat_mod_left'])).trans
@@ -123,8 +127,7 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq
       case «7» =>
         exact
           (PrimeTest.firstStopNeOne_le_candidate (i := 5) hn hns
-            (by exact ⟨by norm_num only, by decide⟩)
-                (by norm_num only)
+                (by exact ⟨by norm_num only, by decide⟩) (by norm_num only)
                 (by
                   rw [PrimeTest.jacobi_selfridgeD (by decide) hn]
                   norm_num only [PseudoSquare.jacobiSym_nat_mod_left'])).trans
@@ -133,8 +136,7 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq
       case «11» =>
         exact
           (PrimeTest.firstStopNeOne_le_candidate (i := 13) hn hns
-            (by exact ⟨by norm_num only, by decide⟩)
-                (by norm_num only)
+                (by exact ⟨by norm_num only, by decide⟩) (by norm_num only)
                 (by
                   rw [PrimeTest.jacobi_selfridgeD (by decide) hn]
                   norm_num only [PseudoSquare.jacobiSym_nat_mod_left'])).trans
@@ -184,7 +186,7 @@ theorem classicalSelfridgeD_firstStopNegOne_natAbs_cast_le_log_sq_of_3_le
   have hstop := PrimeTest.classicalFirstStopNegOne_le_max_twenty_seven_primeWitness hn hw hs
   have hmem : n ∈ NumberTheory.admissibleFinset n := by
     apply NumberTheory.mem_admissibleFinset_iff.mpr
-    exact ⟨by omega, le_rfl, hn, hns⟩
+    exact ⟨(by decide : 0 < 3).trans_le hn3, le_rfl, hn, hns⟩
   have hq := PseudoSquare.primeNegOneWitness_le_QNegOne (B := n) (n := n) hmem
   have hQ := (PseudoSquare.elementary_formula_real hGRH hn3).2
   have hqR : (PrimeTest.primeNegOneWitness n hw : ℝ) ≤ PseudoSquare.elementaryRadius n := by

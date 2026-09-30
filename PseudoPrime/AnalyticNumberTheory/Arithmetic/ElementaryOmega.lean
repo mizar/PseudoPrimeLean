@@ -38,7 +38,9 @@ theorem oddPrime_ge (k : ℕ) : 2 * k + 3 ≤ oddPrime k := by
     ih =>
     have hmono : oddPrime k < oddPrime (k + 1) := oddPrime_strictMono (Nat.lt_succ_self k)
     obtain ⟨j, hj⟩ := oddPrime_odd (k + 1)
-    omega
+    have hkj : k + 1 < j := by nlinarith only [ih, hmono, hj]
+    have hkj' : k + 2 ≤ j := Nat.succ_le_iff.mpr hkj
+    nlinarith only [hj, hkj']
 
 /-- The odd primorial dominates `2^m * m!`: termwise, the `j`-th odd prime (`≥ 2j+3`, in particular
 `> 2(j+1)`) exceeds the `j`-th even number `2(j+1)` used to build `2^m * m!`. -/
@@ -49,7 +51,7 @@ theorem oddPrimorial_ge_pow_mul_factorial (m : ℕ) : 2 ^ m * Nat.factorial m �
     rw [oddPrimorial_succ, Nat.factorial_succ, pow_succ]
     have hle : 2 * (m + 1) ≤ oddPrime m := by
       have := oddPrime_ge m
-      omega
+      nlinarith only [this]
     have h3 : (2 ^ m * Nat.factorial m) * (2 * (m + 1)) ≤ oddPrimorial m * oddPrime m :=
       Nat.mul_le_mul ih hle
     calc

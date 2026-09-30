@@ -24,74 +24,80 @@ abbrev partialPrimeFactorSupply (params : NumberTheory.Factorization.PollardRho.
 /-- Every retained factor is prime, and the known factors times the residual cofactor equal the
 input. The identity remains valid when rho stops at any unresolved composite leaf. -/
 theorem partialPrimeFactorSupply_sound (params : NumberTheory.Factorization.PollardRho.Params)
-    (fuel : ℕ) : ∀ n : ℕ,
-    (∀ p, p ∈ (partialPrimeFactorSupply params fuel n).factors → Nat.Prime p) ∧
-      (partialPrimeFactorSupply params fuel n).factors.prod *
-        (partialPrimeFactorSupply params fuel n).remainder = n := by
-  exact NumberTheory.Factorization.PollardRho.partialPrimeFactorSupply_sound
-    exactPrimeLeafPolicy params fuel
+    (fuel : ℕ) :
+    ∀ n : ℕ,
+      (∀ p, p ∈ (partialPrimeFactorSupply params fuel n).factors → Nat.Prime p) ∧
+        (partialPrimeFactorSupply params fuel n).factors.prod *
+            (partialPrimeFactorSupply params fuel n).remainder =
+          n := by
+  exact
+    NumberTheory.Factorization.PollardRho.partialPrimeFactorSupply_sound exactPrimeLeafPolicy params
+      fuel
 
 /-- Execute a partial factor supply according to an explicit whole-tree budget. -/
 abbrev partialPrimeFactorSupplyByTree (params : NumberTheory.Factorization.PollardRho.Params) :
-    NumberTheory.Factorization.PollardRho.RhoBudgetTree → ℕ →
-      NumberTheory.Factorization.PartialPrimeFactorSupply :=
+    NumberTheory.Factorization.PollardRho.RhoBudgetTree →
+      ℕ → NumberTheory.Factorization.PartialPrimeFactorSupply :=
   NumberTheory.Factorization.PollardRho.partialPrimeFactorSupplyByTree exactPrimeLeafPolicy params
 
 /-- A tree-guided supply retains only prime leaves and preserves the represented input exactly. -/
 theorem partialPrimeFactorSupplyByTree_sound (params : NumberTheory.Factorization.PollardRho.Params)
-    (tree : NumberTheory.Factorization.PollardRho.RhoBudgetTree) : ∀ n : ℕ,
-    (∀ p, p ∈ (partialPrimeFactorSupplyByTree params tree n).factors → Nat.Prime p) ∧
-      (partialPrimeFactorSupplyByTree params tree n).factors.prod *
-        (partialPrimeFactorSupplyByTree params tree n).remainder = n := by
-  exact NumberTheory.Factorization.PollardRho.partialPrimeFactorSupplyByTree_sound
-    exactPrimeLeafPolicy params tree
+    (tree : NumberTheory.Factorization.PollardRho.RhoBudgetTree) :
+    ∀ n : ℕ,
+      (∀ p, p ∈ (partialPrimeFactorSupplyByTree params tree n).factors → Nat.Prime p) ∧
+        (partialPrimeFactorSupplyByTree params tree n).factors.prod *
+            (partialPrimeFactorSupplyByTree params tree n).remainder =
+          n := by
+  exact
+    NumberTheory.Factorization.PollardRho.partialPrimeFactorSupplyByTree_sound exactPrimeLeafPolicy
+      params tree
 
 /-- Count actual Floyd rounds used by a tree-guided partial factor supply. -/
-abbrev partialPrimeFactorSupplyByTreeRounds (params :
-    NumberTheory.Factorization.PollardRho.Params) :
+abbrev partialPrimeFactorSupplyByTreeRounds
+    (params : NumberTheory.Factorization.PollardRho.Params) :
     NumberTheory.Factorization.PollardRho.RhoBudgetTree → ℕ → ℕ :=
-  NumberTheory.Factorization.PollardRho.partialPrimeFactorSupplyByTreeRounds
-    exactPrimeLeafPolicy params
+  NumberTheory.Factorization.PollardRho.partialPrimeFactorSupplyByTreeRounds exactPrimeLeafPolicy
+    params
 
 /-- Actual Floyd rounds at every reached node sum to no more than all allowances in the tree. -/
-theorem partialPrimeFactorSupplyByTreeRounds_le (params :
-    NumberTheory.Factorization.PollardRho.Params)
+theorem partialPrimeFactorSupplyByTreeRounds_le
+    (params : NumberTheory.Factorization.PollardRho.Params)
     (tree : NumberTheory.Factorization.PollardRho.RhoBudgetTree) (n : ℕ) :
     partialPrimeFactorSupplyByTreeRounds params tree n ≤ tree.totalFuel := by
-  exact NumberTheory.Factorization.PollardRho.partialPrimeFactorSupplyByTreeRounds_le
-    exactPrimeLeafPolicy params tree n
+  exact
+    NumberTheory.Factorization.PollardRho.partialPrimeFactorSupplyByTreeRounds_le
+      exactPrimeLeafPolicy params tree n
 
 /-- Convert retained prime leaves to BLS prime-power data when their product exceeds one.
 If no nontrivial certified part is known, return `none` instead of claiming a useful factorization.
 -/
-def partialFactorizationDataOfSupply (supply :
-    NumberTheory.Factorization.PartialPrimeFactorSupply) :
+def partialFactorizationDataOfSupply
+    (supply : NumberTheory.Factorization.PartialPrimeFactorSupply) :
     Option PartialFactorizationData :=
   let factors := NumberTheory.Factorization.aggregatePrimeFactorList supply.factors
   if 1 < factorProduct factors then some ⟨factors, supply.remainder⟩ else none
 
 /-- A successful conversion preserves the input product and satisfies the BLS partial
 factorization checker, provided the retained leaves are prime and the supply product is exact. -/
-theorem partialFactorizationDataOfSupply_sound {supply :
-    NumberTheory.Factorization.PartialPrimeFactorSupply} {n : ℕ}
+theorem partialFactorizationDataOfSupply_sound
+    {supply : NumberTheory.Factorization.PartialPrimeFactorSupply} {n : ℕ}
     (hprimes : ∀ p, p ∈ supply.factors → Nat.Prime p)
-    (hproduct : supply.factors.prod * supply.remainder = n - 1)
-    {data : PartialFactorizationData}
+    (hproduct : supply.factors.prod * supply.remainder = n - 1) {data : PartialFactorizationData}
     (h : partialFactorizationDataOfSupply supply = some data) :
     ValidPartialFactorization n data := by
   let factors := NumberTheory.Factorization.aggregatePrimeFactorList supply.factors
   have hbound : 1 < factorProduct factors := by
     have hif :
-        (if 1 < factorProduct factors then
-          some ⟨factors, supply.remainder⟩ else none) = some data := by
+      (if 1 < factorProduct factors then some ⟨factors, supply.remainder⟩ else none) =
+        some data := by
       exact h
     split at hif
     · assumption
     · cases hif
   have hdata : data = ⟨factors, supply.remainder⟩ := by
     have hif :
-        (if 1 < factorProduct factors then
-          some ⟨factors, supply.remainder⟩ else none) = some data := by
+      (if 1 < factorProduct factors then some ⟨factors, supply.remainder⟩ else none) =
+        some data := by
       exact h
     have hsome : some ⟨factors, supply.remainder⟩ = some data := by
       rw [ite_eq_left hbound] at hif
@@ -102,14 +108,13 @@ theorem partialFactorizationDataOfSupply_sound {supply :
   refine ⟨hbound, ?_, ?_, ?_⟩
   · calc
       n - 1 = supply.factors.prod * supply.remainder := hproduct.symm
-      _ = factorProduct factors * supply.remainder := by
-        rw [aggregatePrimeFactorList_product]
-  · change (NumberTheory.Factorization.aggregatePrimeFactorList supply.factors).map Prod.fst
-    |>.Nodup
+      _ = factorProduct factors * supply.remainder := by rw [aggregatePrimeFactorList_product]
+  · change
+      (NumberTheory.Factorization.aggregatePrimeFactorList supply.factors).map Prod.fst |>.Nodup
     dsimp only [factors, NumberTheory.Factorization.aggregatePrimeFactorList]
     have hmap :
-        (supply.factors.dedup.map fun q => (q, supply.factors.count q)).map Prod.fst =
-          supply.factors.dedup := by
+      (supply.factors.dedup.map fun q => (q, supply.factors.count q)).map Prod.fst =
+        supply.factors.dedup := by
       simp only [List.map_map, Function.comp_def]
       exact List.map_id _
     rw [hmap]

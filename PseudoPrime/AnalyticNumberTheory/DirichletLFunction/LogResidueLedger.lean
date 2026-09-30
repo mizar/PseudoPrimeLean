@@ -161,11 +161,12 @@ theorem exists_radius_forall_dirichletRectangleBoundaryIntegral_log_residueAt_on
   have h0near : ∀ᶠ s : ℂ in nhds (1 : ℂ), s ≠ 0 := compl_singleton_mem_nhds (by norm_num only)
   obtain ⟨R0, hR0, hball⟩ := Metric.eventually_nhds_iff.mp (hLnear.and h0near)
   set R := R0 / 2 with hR_def
-  have hR : 0 < R := by positivity
+  have hR : 0 < R := by
+    rw [hR_def]; exact div_pos hR0 (by norm_num only)
   refine ⟨R, hR, fun r hr hrR => ?_⟩
   have hsqrt2lt2 : Real.sqrt 2 < 2 := by
     have hsq : Real.sqrt 2 ^ 2 = 2 := Real.sq_sqrt (by norm_num only)
-    nlinarith [Real.sqrt_nonneg (2 : ℝ)]
+    nlinarith only [hsq, Real.sqrt_nonneg (2 : ℝ)]
   have hsub :
     Rectangle.rectangleClosedBox (RectangleGeometry.centeredSquareLower 1 r)
         (RectangleGeometry.centeredSquareUpper 1 r) ⊆
@@ -174,7 +175,7 @@ theorem exists_radius_forall_dirichletRectangleBoundaryIntegral_log_residueAt_on
     apply Metric.closedBall_subset_ball
     calc
       Real.sqrt 2 * r ≤ Real.sqrt 2 * R := mul_le_mul_of_nonneg_left hrR (Real.sqrt_nonneg 2)
-      _ < 2 * R := by nlinarith
+      _ < 2 * R := by exact mul_lt_mul_of_pos_right hsqrt2lt2 hR
       _ = R0 := by
         rw [hR_def]
         ring

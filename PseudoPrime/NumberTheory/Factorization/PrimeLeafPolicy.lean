@@ -22,6 +22,7 @@ structure PrimeLeafPolicy where
   /-- Every accepted leaf is prime; completeness is not required. -/
   sound : ∀ n, accepts n → Nat.Prime n
 
-instance (policy : PrimeLeafPolicy) : DecidablePred policy.accepts := policy.decideAccepts
+instance (policy : PrimeLeafPolicy) : DecidablePred policy.accepts :=
+  policy.decideAccepts
 
 end PseudoPrime.NumberTheory.Factorization

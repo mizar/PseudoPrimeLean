@@ -34,7 +34,7 @@ theorem re_add_llsPrimitiveReciprocalResidues_zero_one_le {N : ℕ} [NeZero N] (
     (dirichletReciprocalResidueAt hne x 0 + dirichletReciprocalResidueAt hne x 1).re ≤
       (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - (1 + 1 / x) * |primitiveBRe χ| -
         1 / 4 := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := by linarith only [hx]
   rcases χ.even_or_odd with heven | hodd
   · have hraw :=
       re_add_dirichletReciprocalResidues_zero_one_of_even_raw hN2 hGRH hprimitive hne hinv heven
@@ -42,13 +42,13 @@ theorem re_add_llsPrimitiveReciprocalResidues_zero_one_le {N : ℕ} [NeZero N] (
     have herr := llsPrimitiveReciprocalEvenMainError_le_neg_quarter hx
     unfold Analysis.primitiveReciprocalEvenMainError at herr
     rw [hraw]
-    nlinarith [herr]
+    nlinarith only [herr]
   · have hraw :=
       re_add_dirichletReciprocalResidues_zero_one_of_odd_raw hN2 hGRH hprimitive hne hinv hodd hxpos
     have herr := llsPrimitiveReciprocalOddMainError_le_neg_quarter hx
     unfold Analysis.primitiveReciprocalOddMainError at herr
     rw [hraw]
-    nlinarith [herr]
+    nlinarith only [herr]
 
 /--
 Input/assumptions: `N ≥ 2`, `χ` primitive nontrivial mod `N`, GRH, `χ⁻¹ ≠ 1`, `x ≥ 64`,
@@ -84,7 +84,7 @@ theorem re_sum_llsPrimitiveReciprocalResidueAt_le {N : ℕ} [NeZero N] (hN2 : 2 
           AnalyticNumberTheory.DirichletLFunction.dirichletReciprocalResidueAt hne x s).re ≤
       (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 1 / 4 -
         (1 - 1 / Real.sqrt x) ^ 2 * |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := by linarith only [hx]
   rw [AnalyticNumberTheory.DirichletLFunction.dirichletSplitReciprocalSingularitySum x hne h1 h0]
   have h01 := re_add_llsPrimitiveReciprocalResidues_zero_one_le hN2 hGRH hprimitive hne hinv hx
   have hzeros :=
@@ -159,7 +159,7 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_le_of_grh {N : ℕ} [
                 (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re ≤
       (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 1 / 4 -
         (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
-  have hx1 : (1 : ℝ) ≤ x := by linarith
+  have hx1 : (1 : ℝ) ≤ x := by linarith only [hx]
   have htend :=
     tendsto_normalized_dirichletReciprocalBoundary_heightSeq_of_grh hN2 hGRH hprimitive hne hinv hx1
       A hA
@@ -176,7 +176,7 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_le_of_grh {N : ℕ} [
     filter_upwards with k
     have hid :=
       dirichletReciprocalFiniteContourIdentity_heightSeq_normalized_of_grh hN2 hGRH hprimitive hne
-        hinv (by linarith : (0 : ℝ) < x) A k hA
+        hinv (by linarith only [hx] : (0 : ℝ) < x) A k hA
         (primitiveHeightSeq_singularities_mem_open_of_grh hN2 hGRH hprimitive hne hinv A k hA)
     obtain ⟨h0, h1⟩ :=
       primitiveReciprocalMellinPoints_mem_singularities_heightSeq_of_grh hN2 hGRH hprimitive hne
@@ -216,7 +216,7 @@ theorem primitiveReciprocalRaw_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ :
     (characterReciprocalWeightedSum x χ).re ≤
       (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 1 / 4 -
         (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
-  have hx1 : (1 : ℝ) < x := by linarith
+  have hx1 : (1 : ℝ) < x := by linarith only [hx]
   have htend :=
     tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop hprimitive hne hinv hx1
   have htendRe := (Complex.continuous_re.tendsto _).comp htend

@@ -263,7 +263,7 @@ theorem dirichletCompletedMultiplicityHadamardFactor_eq_sub_pow_mul_unit {N : �
   rw [← mul_pow]
   congr 1
   unfold dirichletCompletedHadamardFactor
-  field_simp
+  field_simp [hρ]
   ring
 
 /-- The analytic unit in a completed multiplicity-aware factor is nonzero at its attached zero. -/
@@ -365,7 +365,7 @@ theorem exists_dirichletCompletedMultiplicityHadamardQuotient_localFactor {N : �
     simp only [smul_eq_mul] at hscompleted
     rw [hscompleted, hsproduct]
     have hsne : s - ρ ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hs)
-    field_simp
+    field_simp [hsne, hunit]
 
 /-- A selected analytic local extension of the completed finite Hadamard quotient. -/
 noncomputable def dirichletCompletedMultiplicityHadamardQuotientLocalExtension {N : ℕ} [NeZero N]
@@ -492,7 +492,7 @@ theorem dirichletCompletedLFunction_eq_multiplicityHadamardProduct_mul_entireQuo
       unfold dirichletCompletedHadamardFactor
       have hsne := dirichletCompletedLFunction_zero_ne_zero_of_mem_ledger hprimitive hχ hs
       apply mul_eq_zero_of_left
-      field_simp
+      field_simp [hsne]
       ring
     rw [hfactor]
     have hmult : 0 < dirichletCompletedLFunctionZeroMultiplicity χ s :=
@@ -505,7 +505,7 @@ theorem dirichletCompletedLFunction_eq_multiplicityHadamardProduct_mul_entireQuo
     have hproduct :=
       dirichletCompletedMultiplicityHadamardProduct_ne_zero hprimitive hχ (z := z) (w := w) (s := s)
         (fun ρ hρ hsr => hs (hsr ▸ hρ))
-    field_simp
+    field_simp [hproduct]
 
 /-- Away from completed `L`-zeros, its logarithmic derivative is the finite zero sum plus the
 logarithmic derivative of the patched finite Hadamard quotient. -/

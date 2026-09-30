@@ -68,7 +68,7 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
     · have hnxlt : x < n := (Nat.floor_lt hx.le).mp (hn hn0)
       have ht : (0 : ℝ) < (n : ℝ) / x := div_pos (by exact_mod_cast hn0) hx
       have hdivgt : (1 : ℝ) < (n : ℝ) / x := (one_lt_div hx).mpr hnxlt
-      rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_right (by linarith)]
+      rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_right (sub_nonpos.mpr hdivgt.le)]
       simp only [Complex.ofReal_zero, mul_zero]
   rw [tsum_eq_sum hvanish, reciprocalWeightedMangoldtSum]
   push_cast
@@ -79,7 +79,7 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
   have hnxle : (n : ℝ) ≤ x := (Nat.le_floor_iff hx.le).mp hnx
   have hnxdiv : (n : ℝ) / x ≤ 1 := (div_le_one hx).mpr hnxle
   have ht : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-  rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_left (by linarith),
+  rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_left (sub_nonneg.mpr hnxdiv),
     reciprocalWeightedMangoldtTerm]
   push_cast
   ring
@@ -114,7 +114,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq {N : ℕ} [NeZero N] (χ : Diric
     · have hnxlt : x < n := (Nat.floor_lt hx.le).mp (hn hn0)
       have ht : (0 : ℝ) < (n : ℝ) / x := div_pos (by exact_mod_cast hn0) hx
       have hdivgt : (1 : ℝ) < (n : ℝ) / x := (one_lt_div hx).mpr hnxlt
-      rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_right (by linarith)]
+      rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_right (sub_nonpos.mpr hdivgt.le)]
       simp only [Complex.ofReal_zero, mul_zero]
   rw [tsum_eq_sum hvanish, characterReciprocalWeightedSum]
   apply Finset.sum_congr rfl
@@ -124,7 +124,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq {N : ℕ} [NeZero N] (χ : Diric
   have hnxle : (n : ℝ) ≤ x := (Nat.le_floor_iff hx.le).mp hnx
   have hnxdiv : (n : ℝ) / x ≤ 1 := (div_le_one hx).mpr hnxle
   have ht : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-  rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_left (by linarith),
+  rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_left (sub_nonneg.mpr hnxdiv),
     characterReciprocalWeightedTerm, reciprocalWeightedMangoldtTerm]
   push_cast
   ring

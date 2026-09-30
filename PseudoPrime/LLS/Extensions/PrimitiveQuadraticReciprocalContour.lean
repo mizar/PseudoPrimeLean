@@ -42,14 +42,14 @@ theorem re_add_llsPrimitiveReciprocalResidues_zero_one_even_lt {N : ℕ} [NeZero
       (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) -
         (1 + 1 / x) * |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| -
         4 / 5 := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := (by norm_num only : (0 : ℝ) < 64).trans_le hx
   have hraw :=
     AnalyticNumberTheory.DirichletLFunction.re_add_dirichletReciprocalResidues_zero_one_of_even_raw
       hN2 hGRH hprimitive hne hinv heven hxpos
   have herr := llsPrimitiveReciprocalEvenMainError_lt_neg_four_fifths hx
   unfold Analysis.primitiveReciprocalEvenMainError at herr
   rw [hraw]
-  nlinarith [herr]
+  nlinarith only [herr]
 
 /-! ### Fixed-`A`, `k → ∞` contour boundary limit -/
 
@@ -83,7 +83,7 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero 
                 (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re ≤
       (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 1 / 4 -
         (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
-  have hx1 : (1 : ℝ) ≤ x := by linarith
+  have hx1 : (1 : ℝ) ≤ x := (by norm_num only : (1 : ℝ) ≤ 64).trans hx
   have htend :=
     tendsto_normalized_dirichletReciprocalBoundary_heightSeq hN2 hGRH hprimitive hne hinv hquad hx1
       A hA
@@ -100,7 +100,7 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero 
     filter_upwards with k
     have hid :=
       dirichletReciprocalFiniteContourIdentity_heightSeq_normalized hN2 hGRH hprimitive hne hinv
-        hquad (by linarith : (0 : ℝ) < x) A k hA
+        hquad (show (0 : ℝ) < x from (by norm_num only : (0 : ℝ) < 64).trans_le hx) A k hA
     obtain ⟨h0, h1⟩ :=
       primitiveReciprocalMellinPoints_mem_singularities_heightSeq hN2 hGRH hprimitive hne hinv hquad
         A k hA
@@ -148,7 +148,7 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_lt_of_even {N : ℕ} 
                 (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re ≤
       (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 4 / 5 -
         (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
-  have hx1 : (1 : ℝ) ≤ x := by linarith
+  have hx1 : (1 : ℝ) ≤ x := (by norm_num only : (1 : ℝ) ≤ 64).trans hx
   have htend :=
     tendsto_normalized_dirichletReciprocalBoundary_heightSeq hN2 hGRH hprimitive hne hinv hquad hx1
       A hA
@@ -165,7 +165,7 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_lt_of_even {N : ℕ} 
     filter_upwards with k
     have hid :=
       dirichletReciprocalFiniteContourIdentity_heightSeq_normalized hN2 hGRH hprimitive hne hinv
-        hquad (by linarith : (0 : ℝ) < x) A k hA
+        hquad (show (0 : ℝ) < x from (by norm_num only : (0 : ℝ) < 64).trans_le hx) A k hA
     obtain ⟨h0, h1⟩ :=
       primitiveReciprocalMellinPoints_mem_singularities_heightSeq hN2 hGRH hprimitive hne hinv hquad
         A k hA
@@ -174,13 +174,14 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_lt_of_even {N : ℕ} 
     rw [hid]
     have hsum :=
       re_sum_erased_primitiveReciprocalResidues_le hN2 hGRH hprimitive hne hinv
-        (by linarith : (0 : ℝ) < x) (z :=
+        (show (0 : ℝ) < x from (by norm_num only : (0 : ℝ) < 64).trans_le hx) (z :=
         primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k) (w :=
         primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k)
     rw [dirichletSplitReciprocalSingularitySum x hne h1 h0]
     rw [Complex.add_re, Complex.add_re]
-    have hsqrtx_pos : (0 : ℝ) < Real.sqrt x := Real.sqrt_pos.mpr (by linarith)
-    have hsqrt_sq : Real.sqrt x ^ 2 = x := Real.sq_sqrt (by linarith)
+    have hsqrtx_pos : (0 : ℝ) < Real.sqrt x :=
+      Real.sqrt_pos.mpr ((by norm_num only : (0 : ℝ) < 64).trans_le hx)
+    have hsqrt_sq : Real.sqrt x ^ 2 = x := Real.sq_sqrt ((by norm_num only : (0 : ℝ) ≤ 64).trans hx)
     have hinv_sqrt_sq : (1 / Real.sqrt x) ^ 2 = 1 / x := by rw [div_pow, one_pow, hsqrt_sq]
     have hbcoeff :
       -(1 + 1 / x) * |primitiveBRe χ| + 2 * |primitiveBRe χ| / Real.sqrt x =
@@ -258,7 +259,7 @@ theorem primitiveQuadraticReciprocalRaw {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     (characterReciprocalWeightedSum x χ).re ≤
       (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 1 / 4 -
         (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
-  have hx1 : (1 : ℝ) < x := by linarith
+  have hx1 : (1 : ℝ) < x := (by norm_num only : (1 : ℝ) < 64).trans_le hx
   have htend :=
     quadraticTendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop hprimitive hne
       hquad hx1
@@ -304,7 +305,7 @@ theorem primitiveQuadraticReciprocalRaw_even_le {N : ℕ} [NeZero N] (hN2 : 2 �
     (characterReciprocalWeightedSum x χ).re ≤
       (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 4 / 5 -
         (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
-  have hx1 : (1 : ℝ) < x := by linarith
+  have hx1 : (1 : ℝ) < x := (by norm_num only : (1 : ℝ) < 64).trans_le hx
   have htend :=
     tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop hprimitive hne hinv hx1
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
@@ -355,7 +356,7 @@ theorem primitiveQuadraticReciprocalRaw' {N : ℕ} [NeZero N] (χ : DirichletCha
     have hN1 : N ≠ 1 :=
       AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hne
     have hNpos : 0 < N := NeZero.pos N
-    omega
+    exact Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨Nat.ne_of_gt hNpos, hN1⟩
   have hinv : χ⁻¹ ≠ 1 := by
     rw [hquad.inv]
     exact hne
@@ -363,6 +364,6 @@ theorem primitiveQuadraticReciprocalRaw' {N : ℕ} [NeZero N] (χ : DirichletCha
   have hlogdiv : Real.log ((N : ℝ) / Real.pi) = Real.log N - Real.log Real.pi :=
     Real.log_div (by exact_mod_cast (NeZero.pos N).ne') Real.pi_ne_zero
   rw [hlogdiv]
-  linarith [hraw]
+  linarith only [hraw]
 
 end PseudoPrime.LLS.Extensions

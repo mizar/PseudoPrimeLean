@@ -51,7 +51,7 @@ theorem norm_Gamma_le_Gamma_add_nat {z : ℂ} (hz : 1 ≤ z.re) (n : ℕ) :
       simp only [Complex.zero_re] at hre
       have hzle : z.re ≤ z.re + (n : ℝ) := le_add_of_nonneg_right (Nat.cast_nonneg n)
       have hpos : (0 : ℝ) < z.re + (n : ℝ) :=
-        lt_of_lt_of_le (lt_of_lt_of_le (by positivity) hz) hzle
+        lt_of_lt_of_le (lt_of_lt_of_le (by norm_num only) hz) hzle
       exact (ne_of_gt hpos) hre
     have hrec : Complex.Gamma (z + ((n : ℕ) + 1 : ℕ)) = (z + (n : ℂ)) * Complex.Gamma (z + n) := by
       rw [show z + (((n : ℕ) + 1 : ℕ) : ℂ) = (z + (n : ℂ)) + 1 from by
@@ -61,7 +61,7 @@ theorem norm_Gamma_le_Gamma_add_nat {z : ℂ} (hz : 1 ≤ z.re) (n : ℕ) :
     rw [hrec, norm_mul]
     have h1 : (1 : ℝ) ≤ ‖z + (n : ℂ)‖ :=
       calc
-        (1 : ℝ) ≤ z.re + n := by linarith [(Nat.cast_nonneg n : (0 : ℝ) ≤ (n : ℝ))]
+        (1 : ℝ) ≤ z.re + n := le_trans hz (le_add_of_nonneg_right (Nat.cast_nonneg (α := ℝ) n))
         _ = (z + (n : ℂ)).re := hzn_re.symm
         _ ≤ ‖z + (n : ℂ)‖ := Complex.re_le_norm _
     calc
@@ -130,8 +130,8 @@ theorem norm_Gamma_one_add_mul_I_sq {t : ℝ} (ht : t ≠ 0) :
   rw [hsin] at hnormSq
   have hsinh_ne : Real.sinh (Real.pi * t) ≠ 0 := by
     rcases ht.lt_or_gt with h | h
-    · exact ne_of_lt (Real.sinh_neg_iff.mpr (by nlinarith [Real.pi_pos]))
-    · exact ne_of_gt (Real.sinh_pos_iff.mpr (by positivity))
+    · exact ne_of_lt (Real.sinh_neg_iff.mpr (mul_neg_of_pos_of_neg Real.pi_pos h))
+    · exact ne_of_gt (Real.sinh_pos_iff.mpr (mul_pos Real.pi_pos h))
   have hrhs :
     (t : ℂ) * Complex.I * (Real.pi : ℂ) / ((Real.sinh (Real.pi * t) : ℂ) * Complex.I) =
       ((Real.pi * t / Real.sinh (Real.pi * t) : ℝ) : ℂ) := by
@@ -169,15 +169,20 @@ theorem norm_Gamma_one_add_mul_I_ge {t : ℝ} (ht : t ≠ 0) :
     rcases abs_cases t with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · rw [h1]
     · rw [h1, show Real.pi * -t = -(Real.pi * t) from by ring, Real.sinh_neg]
-      field_simp
+      have hsinh_ne : Real.sinh (Real.pi * t) ≠ 0 :=
+        ne_of_lt (Real.sinh_neg_iff.mpr (mul_neg_of_pos_of_neg Real.pi_pos h2))
+      field_simp [hsinh_ne]
   rw [hEq] at hsq
-  have hsinh_pos : (0 : ℝ) < Real.sinh (Real.pi * |t|) := Real.sinh_pos_iff.mpr (by positivity)
+  have hsinh_pos : (0 : ℝ) < Real.sinh (Real.pi * |t|) :=
+    Real.sinh_pos_iff.mpr (mul_pos Real.pi_pos habs_pos)
   have hsinh_le : Real.sinh (Real.pi * |t|) ≤ Real.exp (Real.pi * |t|) :=
-    sinh_le_exp (by positivity)
+    sinh_le_exp (mul_nonneg Real.pi_pos.le (abs_nonneg t))
   have hlower :
     Real.pi * |t| * Real.exp (-(Real.pi * |t|)) ≤ Real.pi * |t| / Real.sinh (Real.pi * |t|) := by
     rw [Real.exp_neg, ← div_eq_mul_inv, div_le_div_iff₀ (Real.exp_pos _) hsinh_pos]
-    nlinarith [mul_le_mul_of_nonneg_left hsinh_le (show (0 : ℝ) ≤ Real.pi * |t| by positivity)]
+    have hnonneg : (0 : ℝ) ≤ Real.pi * |t| := mul_nonneg Real.pi_pos.le (abs_nonneg t)
+    have hleprod := mul_le_mul_of_nonneg_left hsinh_le hnonneg
+    nlinarith only [hleprod]
   have hsq_ge :
     Real.pi * |t| * Real.exp (-(Real.pi * |t|)) ≤ ‖Complex.Gamma (1 + (t : ℂ) * Complex.I)‖ ^ 2 :=
     hsq ▸ hlower
@@ -188,9 +193,10 @@ theorem norm_Gamma_one_add_mul_I_ge {t : ℝ} (ht : t ≠ 0) :
   have hrhs_eq :
     Real.pi * |t| * Real.exp (-(Real.pi * |t|)) =
       (Real.sqrt (Real.pi * |t|) * Real.exp (-(Real.pi * |t| / 2))) ^ 2 := by
-    rw [mul_pow, Real.sq_sqrt (by positivity), hexp_sq]
+    rw [mul_pow, Real.sq_sqrt (mul_nonneg Real.pi_pos.le (abs_nonneg t)), hexp_sq]
   rw [hrhs_eq] at hsq_ge
-  have hnn1 : (0 : ℝ) ≤ Real.sqrt (Real.pi * |t|) * Real.exp (-(Real.pi * |t| / 2)) := by positivity
+  have hnn1 : (0 : ℝ) ≤ Real.sqrt (Real.pi * |t|) * Real.exp (-(Real.pi * |t| / 2)) :=
+    mul_nonneg (Real.sqrt_nonneg _) (Real.exp_nonneg _)
   have hnn2 : (0 : ℝ) ≤ ‖Complex.Gamma (1 + (t : ℂ) * Complex.I)‖ := norm_nonneg _
   have hroot := Real.sqrt_le_sqrt hsq_ge
   rwa [Real.sqrt_sq hnn1, Real.sqrt_sq hnn2] at hroot
@@ -201,10 +207,11 @@ theorem neg_log_norm_Gamma_one_add_mul_I_le {t : ℝ} (ht : t ≠ 0) :
       Real.pi * |t| / 2 - Real.log (Real.sqrt (Real.pi * |t|)) := by
   have habs_pos : (0 : ℝ) < |t| := abs_pos.mpr ht
   have hlb := norm_Gamma_one_add_mul_I_ge ht
-  have hlb_pos : (0 : ℝ) < Real.sqrt (Real.pi * |t|) * Real.exp (-(Real.pi * |t| / 2)) := by
-    positivity
+  have hlb_pos : (0 : ℝ) < Real.sqrt (Real.pi * |t|) * Real.exp (-(Real.pi * |t| / 2)) :=
+    mul_pos (Real.sqrt_pos.2 (mul_pos Real.pi_pos habs_pos)) (Real.exp_pos _)
   have hlog := Real.log_le_log hlb_pos hlb
-  rw [Real.log_mul (by positivity) (Real.exp_pos _).ne', Real.log_exp] at hlog
+  rw [Real.log_mul (Real.sqrt_pos.2 (mul_pos Real.pi_pos habs_pos)).ne' (Real.exp_pos _).ne',
+    Real.log_exp] at hlog
   linarith only [hlog]
 
 /-- `Γ` is differentiable (hence continuous) at every point `1 + it` (`t` real), since the real
@@ -263,7 +270,8 @@ theorem exists_neg_log_norm_Gamma_one_add_mul_I_le_uniform :
   by_cases ht : |t| ≤ 1
   · have h1 := hC₀ t ht
     have h2 : C₀ ≤ max C₀ 0 := le_max_left _ _
-    have h3 : (0 : ℝ) ≤ Real.pi * |t| / 2 := by positivity
+    have h3 : (0 : ℝ) ≤ Real.pi * |t| / 2 :=
+      div_nonneg (mul_nonneg Real.pi_pos.le (abs_nonneg t)) (by norm_num only)
     linarith only [h1, h2, h3]
   · rw [not_le] at ht
     have htne : t ≠ 0 := by
@@ -333,7 +341,7 @@ theorem exists_hasDerivAt_digamma_re_eq_log_norm_Gamma {c : ℂ} {r : ℝ} (hr :
       Complex.exp (g w) * Complex.digamma w * (Complex.Gamma w)⁻¹ +
           Complex.exp (g w) * (-(Complex.digamma w * Complex.Gamma w) / (Complex.Gamma w) ^ 2) =
         0 := by
-      field_simp
+      field_simp [hGammaNew]
       ring
     rw [hzero] at hGw
     exact hGw
@@ -353,7 +361,7 @@ theorem exists_hasDerivAt_digamma_re_eq_log_norm_Gamma {c : ℂ} {r : ℝ} (hr :
   have hGammaNew := hGammaNe w hw
   have hexpeq : Complex.exp (g w) = Complex.Gamma w := by
     have : Complex.exp (g w) * (Complex.Gamma w)⁻¹ = 1 := hGw1
-    field_simp at this
+    field_simp [hGammaNew] at this
     exact this
   have hnormeq : Real.exp (g w).re = ‖Complex.Gamma w‖ := by rw [← Complex.norm_exp, hexpeq]
   have hpos : (0 : ℝ) < ‖Complex.Gamma w‖ := norm_pos_iff.mpr hGammaNew
@@ -366,7 +374,7 @@ theorem Real.Gamma_le_sqrt_pi_of_mem_Icc {σ : ℝ} (hσ : σ ∈ Set.Icc (1 / 2
   have h1 : Real.Gamma (3 / 2 : ℝ) ≤ Real.sqrt Real.pi := by
     rw [show (3 / 2 : ℝ) = 1 / 2 + 1 from by norm_num only, Real.Gamma_add_one (by norm_num only),
       Real.Gamma_one_half_eq]
-    nlinarith [Real.sqrt_nonneg Real.pi]
+    nlinarith only [Real.sqrt_nonneg Real.pi]
   have hseg : σ ∈ segment ℝ (1 / 2 : ℝ) (3 / 2 : ℝ) := by
     rw [segment_eq_Icc (by norm_num only : (1 / 2 : ℝ) ≤ 3 / 2)]
     exact hσ
@@ -517,7 +525,7 @@ theorem neg_log_norm_Gamma_add_add_mul_I_le_of_abs_le_half {a : ℝ} (ha : 1 ≤
     calc
       ‖h (f : ℂ)‖ ≤ 2 * M * |f| / (3 / 4 - |f|) := hBC
       _ = 2 * M * (|f| / (3 / 4 - |f|)) := by ring
-      _ ≤ 2 * M * 2 := mul_le_mul_of_nonneg_left hfle (by positivity)
+      _ ≤ 2 * M * 2 := mul_le_mul_of_nonneg_left hfle (mul_nonneg (by norm_num only) hMpos.le)
       _ = 4 * M := by ring
   have hcf_mem : c + (f : ℂ) ∈ Metric.ball c (3 / 4 : ℝ) := by
     rw [Metric.mem_ball, dist_eq_norm]
@@ -555,7 +563,20 @@ theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_lt_one {f t : ℝ} (hf0 : 0 �
         (max (Real.Gamma (5 / 4)) (Real.Gamma (11 / 4))) +
       1 with
     hGboundFull_def
-  have hGboundFull_pos : 0 < GboundFull := by positivity
+  have hGamma14_pos : (0 : ℝ) < Real.Gamma (1 / 4) := Real.Gamma_pos_of_pos (by norm_num only)
+  have hGamma54_pos : (0 : ℝ) < Real.Gamma (5 / 4) := Real.Gamma_pos_of_pos (by norm_num only)
+  have hGammaMax1_pos : (0 : ℝ) < max (Real.Gamma (1 / 4)) (Real.Gamma (7 / 4)) :=
+    lt_of_lt_of_le hGamma14_pos (le_max_left _ _)
+  have hGammaMax2_pos : (0 : ℝ) < max (Real.Gamma (5 / 4)) (Real.Gamma (11 / 4)) :=
+    lt_of_lt_of_le hGamma54_pos (le_max_left _ _)
+  have hGbound1_pos : (0 : ℝ) < max (Real.Gamma (1 / 4)) (Real.Gamma (7 / 4)) + 1 :=
+    add_pos_of_pos_of_nonneg hGammaMax1_pos (by norm_num only)
+  have hGbound2_pos : (0 : ℝ) < max (Real.Gamma (5 / 4)) (Real.Gamma (11 / 4)) + 1 :=
+    add_pos_of_pos_of_nonneg hGammaMax2_pos (by norm_num only)
+  have hGboundFull_pos : 0 < GboundFull := by
+    rw [hGboundFull_def]
+    exact
+      add_pos_of_pos_of_nonneg (lt_of_lt_of_le hGammaMax1_pos (le_max_left _ _)) (by norm_num only)
   have hle1 : max (Real.Gamma (1 / 4)) (Real.Gamma (7 / 4)) + 1 ≤ GboundFull := by
     have :=
       le_max_left (max (Real.Gamma (1 / 4)) (Real.Gamma (7 / 4)))
@@ -578,7 +599,7 @@ theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_lt_one {f t : ℝ} (hf0 : 0 �
     norm_num only at hbound
     have hlog_le :
       Real.log (max (Real.Gamma (1 / 4)) (Real.Gamma (7 / 4)) + 1) ≤ Real.log GboundFull :=
-      Real.log_le_log (by positivity) hle1
+      Real.log_le_log hGbound1_pos hle1
     linarith only [hbound, hlog_le]
   · push Not at hf
     set f' : ℝ := f - 1 with hf'_def
@@ -600,7 +621,7 @@ theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_lt_one {f t : ℝ} (hf0 : 0 �
     rw [heq] at hbound
     have hlog_le2 :
       Real.log (max (Real.Gamma (5 / 4)) (Real.Gamma (11 / 4)) + 1) ≤ Real.log GboundFull :=
-      Real.log_le_log (by positivity) hle2
+      Real.log_le_log hGbound2_pos hle2
     have hone_ne : (1 : ℂ) + (t : ℂ) * Complex.I ≠ 0 := by
       intro h
       have := congrArg Complex.re h
@@ -654,17 +675,17 @@ theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_nonneg {r t : ℝ} (hr : 0 �
   have hn_lt : r < n + 1 := Nat.lt_floor_add_one r
   have hf0 : 0 ≤ f := by
     rw [hf_def]
-    linarith
+    exact sub_nonneg.mpr hn_le
   have hf1 : f < 1 := by
     rw [hf_def]
-    linarith
+    linarith only [hn_lt]
   have hfn : f + n = r := by
     rw [hf_def]
     ring
   have hzre : (1 : ℝ) ≤ (1 + (f : ℂ) + (t : ℂ) * Complex.I).re := by
     simp only [Complex.add_re, Complex.one_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
-      Complex.I_im, Complex.ofReal_im]
-    linarith
+      Complex.I_im, Complex.ofReal_im, mul_zero, zero_mul, sub_zero, add_zero]
+    exact le_add_of_nonneg_right hf0
   have hstep := norm_Gamma_le_Gamma_add_nat hzre n
   have heq :
     (1 : ℂ) + (f : ℂ) + (t : ℂ) * Complex.I + (n : ℕ) = 1 + (r : ℂ) + (t : ℂ) * Complex.I := by
@@ -679,13 +700,13 @@ theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_nonneg {r t : ℝ} (hr : 0 �
     ring
   rw [heq] at hstep
   have hGammaf_ne : Complex.Gamma (1 + (f : ℂ) + (t : ℂ) * Complex.I) ≠ 0 :=
-    Complex.Gamma_ne_zero_of_re_pos (by linarith [hzre])
+    Complex.Gamma_ne_zero_of_re_pos (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hzre)
   have hneg_log_ge :
     -Real.log ‖Complex.Gamma (1 + (r : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       -Real.log ‖Complex.Gamma (1 + (f : ℂ) + (t : ℂ) * Complex.I)‖ := by
     have := Real.log_le_log (norm_pos_iff.mpr hGammaf_ne) hstep
-    linarith
-  linarith [hneg_log_ge, neg_log_norm_Gamma_one_add_add_mul_I_le_of_lt_one (t := t) hf0 hf1]
+    linarith only [this]
+  linarith only [hneg_log_ge, neg_log_norm_Gamma_one_add_add_mul_I_le_of_lt_one (t := t) hf0 hf1]
 
 /-- There are constants giving an affine-in-`|t|` upper bound for
 `-log ‖Γ(1+r+it)‖`, simultaneously for all `r ≥ 0` and real `t`. -/
@@ -730,11 +751,11 @@ theorem norm_digamma_shift_add_mul_I_le (r : ℝ) (hr : 0 ≤ r) (t : ℝ) :
     have hd : ‖w - c‖ < 1 / 2 := by simpa only [Metric.mem_ball, Complex.dist_eq] using hw
     have hle := Complex.abs_re_le_norm (w - c)
     rw [Complex.sub_re, hcre] at hle
-    linarith
+    exact lt_of_le_of_lt hle hd
   have hball : ∀ w ∈ Metric.ball c (1 / 2 : ℝ), 0 < w.re := by
     intro w hw
     have := (abs_lt.mp (hre_bound w hw)).1
-    linarith
+    linarith only [this, hr]
   obtain ⟨g, hg', hgRe⟩ :=
     exists_hasDerivAt_digamma_re_eq_log_norm_Gamma (by norm_num only : (0 : ℝ) < 1 / 2) hball
   set Gbound : ℝ := max (Real.Gamma (r + 1 / 2)) (Real.Gamma (r + 3 / 2)) + 1 with hGbound_def
@@ -742,8 +763,8 @@ theorem norm_digamma_shift_add_mul_I_le (r : ℝ) (hr : 0 ≤ r) (t : ℝ) :
     intro w hw
     have hwre_mem : w.re ∈ Set.Icc (r + 1 / 2 : ℝ) (r + 3 / 2) := by
       have := abs_lt.mp (hre_bound w hw)
-      constructor <;> linarith [this.1, this.2]
-    have hwre_pos : 0 < w.re := by linarith [hwre_mem.1]
+      constructor <;> linarith only [this.1, this.2]
+    have hwre_pos : 0 < w.re := by linarith only [hwre_mem.1, hr]
     rw [hgRe w hw]
     have h1 : ‖Complex.Gamma w‖ ≤ Real.Gamma w.re := norm_Gamma_le_Gamma_re hwre_pos
     have h2 : Real.Gamma w.re ≤ max (Real.Gamma (r + 1 / 2)) (Real.Gamma (r + 3 / 2)) :=
@@ -754,7 +775,7 @@ theorem norm_digamma_shift_add_mul_I_le (r : ℝ) (hr : 0 ≤ r) (t : ℝ) :
       _ ≤ max (Real.Gamma (r + 1 / 2)) (Real.Gamma (r + 3 / 2)) := h2
       _ ≤ Gbound := by
         rw [hGbound_def]
-        linarith
+        exact le_add_of_nonneg_right (by norm_num only)
   have hccenter : c ∈ Metric.ball c (1 / 2 : ℝ) := Metric.mem_ball_self (by norm_num only)
   set M : ℝ := Real.log Gbound - (g c).re with hM_def
   have hMpos : 0 < M := by
@@ -767,7 +788,7 @@ theorem norm_digamma_shift_add_mul_I_le (r : ℝ) (hr : 0 ≤ r) (t : ℝ) :
     have hGammaC_le_max :
       Real.Gamma (1 + r) ≤ max (Real.Gamma (r + 1 / 2)) (Real.Gamma (r + 3 / 2)) := by
       apply Real.Gamma_le_max_of_mem_Icc hr
-      constructor <;> linarith
+      constructor <;> linarith only []
     have hlt : Real.log ‖Complex.Gamma c‖ < Real.log Gbound := by
       apply Real.log_lt_log (norm_pos_iff.mpr hGammaCne)
       calc
@@ -775,9 +796,9 @@ theorem norm_digamma_shift_add_mul_I_le (r : ℝ) (hr : 0 ≤ r) (t : ℝ) :
         _ ≤ max (Real.Gamma (r + 1 / 2)) (Real.Gamma (r + 3 / 2)) := hGammaC_le_max
         _ < Gbound := by
           rw [hGbound_def]
-          linarith
+          exact lt_add_of_pos_right _ (by norm_num only)
     rw [hgRe c hccenter] at hM_def
-    linarith [hlt]
+    linarith only [hlt, hM_def]
   set h : ℂ → ℂ := fun z => g (c + z) - g c with hh_def
   have hgc_shift_diffOn : DifferentiableOn ℂ h (Metric.ball (0 : ℂ) (1 / 2 : ℝ)) := by
     intro z hz
@@ -793,7 +814,7 @@ theorem norm_digamma_shift_add_mul_I_le (r : ℝ) (hr : 0 ≤ r) (t : ℝ) :
       simpa only [one_div, Metric.mem_ball, dist_self_add_left, dist_zero_right] using hz
     have := hRe_le (c + z) hcz_mem
     simp only [hh_def, Complex.sub_re]
-    linarith [hM_def]
+    linarith only [this, hM_def]
   have hBC : ∀ z ∈ Metric.ball (0 : ℂ) (1 / 2 : ℝ), ‖h z‖ ≤ 2 * M * ‖z‖ / ((1 / 2 : ℝ) - ‖z‖) := by
     intro z hz
     exact
@@ -806,8 +827,8 @@ theorem norm_digamma_shift_add_mul_I_le (r : ℝ) (hr : 0 ≤ r) (t : ℝ) :
   have hf_diffOn : DifferentiableOn ℂ f (Metric.ball c (1 / 4 : ℝ)) := by
     intro w hw
     have hw' : w ∈ Metric.ball c (1 / 2 : ℝ) := by
-      have := Metric.mem_ball.mp hw
-      exact Metric.mem_ball.mpr (by linarith)
+      have hdist := Metric.mem_ball.mp hw
+      exact Metric.mem_ball.mpr (lt_trans hdist (by norm_num only : (1 / 4 : ℝ) < 1 / 2))
     exact ((hg' w hw').differentiableAt.sub_const (g c)).differentiableWithinAt
   have hf_diffContOnCl : DiffContOnCl ℂ f (Metric.ball c (1 / 4 : ℝ)) := by
     constructor
@@ -817,7 +838,7 @@ theorem norm_digamma_shift_add_mul_I_le (r : ℝ) (hr : 0 ≤ r) (t : ℝ) :
         have hw' : w ∈ Metric.ball c (1 / 2 : ℝ) := by
           have hw2 := Metric.closure_ball_subset_closedBall hw
           have := Metric.mem_closedBall.mp hw2
-          exact Metric.mem_ball.mpr (by linarith)
+          exact Metric.mem_ball.mpr (lt_of_le_of_lt this (by norm_num only : (1 / 4 : ℝ) < 1 / 2))
         exact ((hg' w hw').differentiableAt.sub_const (g c)).differentiableWithinAt
       exact hDiffCl.continuousOn
   have hsphere_bound : ∀ w ∈ Metric.sphere c (1 / 4 : ℝ), ‖f w‖ ≤ 2 * M := by
@@ -868,19 +889,19 @@ theorem norm_digamma_one_add_mul_I_le (t : ℝ) :
     have hd : ‖w - c‖ < 1 / 2 := by simpa only [Metric.mem_ball, Complex.dist_eq] using hw
     have hle := Complex.abs_re_le_norm (w - c)
     rw [Complex.sub_re, hcre] at hle
-    linarith
+    exact lt_of_le_of_lt hle hd
   have hball : ∀ w ∈ Metric.ball c (1 / 2 : ℝ), 0 < w.re := by
     intro w hw
     have := (abs_lt.mp (hre_bound w hw)).1
-    linarith
+    linarith only [this]
   obtain ⟨g, hg', hgRe⟩ :=
     exists_hasDerivAt_digamma_re_eq_log_norm_Gamma (by norm_num only : (0 : ℝ) < 1 / 2) hball
   have hRe_le : ∀ w ∈ Metric.ball c (1 / 2 : ℝ), (g w).re ≤ Real.log (Real.sqrt Real.pi) := by
     intro w hw
     have hwre_mem : w.re ∈ Set.Icc (1 / 2 : ℝ) (3 / 2 : ℝ) := by
       have := abs_lt.mp (hre_bound w hw)
-      constructor <;> linarith [this.1, this.2]
-    have hwre_pos : 0 < w.re := by linarith [hwre_mem.1]
+      constructor <;> linarith only [this.1, this.2]
+    have hwre_pos : 0 < w.re := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1 / 2) hwre_mem.1
     rw [hgRe w hw]
     have h1 : ‖Complex.Gamma w‖ ≤ Real.Gamma w.re := norm_Gamma_le_Gamma_re hwre_pos
     have h2 : Real.Gamma w.re ≤ Real.sqrt Real.pi := Real.Gamma_le_sqrt_pi_of_mem_Icc hwre_mem
@@ -901,9 +922,10 @@ theorem norm_digamma_one_add_mul_I_le (t : ℝ) :
         ‖Complex.Gamma c‖ ≤ 1 := hGammaC_le
         _ < Real.sqrt Real.pi := by
           rw [show (1 : ℝ) = Real.sqrt 1 from (Real.sqrt_one).symm]
-          exact Real.sqrt_lt_sqrt (by norm_num only) (by linarith [Real.pi_gt_three])
+          exact Real.sqrt_lt_sqrt (by norm_num only) (by nlinarith only [Real.pi_gt_three])
     rw [hgRe c hccenter] at hM_def
-    linarith [hlt]
+    rw [hM_def]
+    exact sub_pos.mpr hlt
   set h : ℂ → ℂ := fun z => g (c + z) - g c with hh_def
   have hgc_shift_diffOn : DifferentiableOn ℂ h (Metric.ball (0 : ℂ) (1 / 2 : ℝ)) := by
     intro z hz
@@ -919,7 +941,7 @@ theorem norm_digamma_one_add_mul_I_le (t : ℝ) :
       simpa only [one_div, Metric.mem_ball, dist_self_add_left, dist_zero_right] using hz
     have := hRe_le (c + z) hcz_mem
     simp only [hh_def, Complex.sub_re]
-    linarith [hM_def]
+    exact sub_le_sub_right this (g c).re
   have hBC : ∀ z ∈ Metric.ball (0 : ℂ) (1 / 2 : ℝ), ‖h z‖ ≤ 2 * M * ‖z‖ / ((1 / 2 : ℝ) - ‖z‖) := by
     intro z hz
     exact
@@ -933,7 +955,7 @@ theorem norm_digamma_one_add_mul_I_le (t : ℝ) :
     intro w hw
     have hw' : w ∈ Metric.ball c (1 / 2 : ℝ) := by
       have := Metric.mem_ball.mp hw
-      exact Metric.mem_ball.mpr (by linarith)
+      exact Metric.mem_ball.mpr (lt_trans this (by norm_num only : (1 / 4 : ℝ) < 1 / 2))
     exact ((hg' w hw').differentiableAt.sub_const (g c)).differentiableWithinAt
   have hf_diffContOnCl : DiffContOnCl ℂ f (Metric.ball c (1 / 4 : ℝ)) := by
     constructor
@@ -943,7 +965,7 @@ theorem norm_digamma_one_add_mul_I_le (t : ℝ) :
         have hw' : w ∈ Metric.ball c (1 / 2 : ℝ) := by
           have hw2 := Metric.closure_ball_subset_closedBall hw
           have := Metric.mem_closedBall.mp hw2
-          exact Metric.mem_ball.mpr (by linarith)
+          exact Metric.mem_ball.mpr (lt_of_le_of_lt this (by norm_num only : (1 / 4 : ℝ) < 1 / 2))
         exact ((hg' w hw').differentiableAt.sub_const (g c)).differentiableWithinAt
       exact hDiffCl.continuousOn
   have hsphere_bound : ∀ w ∈ Metric.sphere c (1 / 4 : ℝ), ‖f w‖ ≤ 2 * M := by
@@ -998,7 +1020,13 @@ theorem norm_digamma_one_sub_mul_I_add_nat_sub_le (t : ℝ) (n : ℕ) :
       intro m hm
       have hre := congrArg Complex.re hm
       rw [hshift_re, Complex.neg_re, Complex.natCast_re] at hre
-      linarith [(Nat.cast_nonneg m : (0 : ℝ) ≤ (m : ℝ)), (Nat.cast_nonneg n : (0 : ℝ) ≤ (n : ℝ))]
+      have hpos : (0 : ℝ) < 1 + (n : ℝ) :=
+        add_pos_of_pos_of_nonneg (by norm_num only) (Nat.cast_nonneg n)
+      have hnonpos : 1 + (n : ℝ) ≤ 0 := by
+        calc
+          1 + (n : ℝ) = -(m : ℝ) := hre
+          _ ≤ 0 := neg_nonpos.mpr (Nat.cast_nonneg m)
+      exact (not_lt_of_ge hnonpos hpos).elim
     have hrec := Complex.digamma_apply_add_one (base + n) hshift_ne
     have heq : base + ((n : ℕ) + 1 : ℕ) = (base + n) + 1 := by
       push_cast
@@ -1008,7 +1036,7 @@ theorem norm_digamma_one_sub_mul_I_add_nat_sub_le (t : ℝ) (n : ℕ) :
       rw [norm_inv]
       have hge : (1 : ℝ) ≤ ‖base + (n : ℂ)‖ := by
         calc
-          (1 : ℝ) ≤ 1 + n := by linarith [(Nat.cast_nonneg n : (0 : ℝ) ≤ (n : ℝ))]
+          (1 : ℝ) ≤ 1 + n := le_add_of_nonneg_right (Nat.cast_nonneg n)
           _ = (base + (n : ℂ)).re := hshift_re.symm
           _ ≤ ‖base + (n : ℂ)‖ := Complex.re_le_norm _
       rw [inv_le_one_iff₀]
@@ -1023,7 +1051,7 @@ theorem norm_digamma_one_sub_mul_I_add_nat_sub_le (t : ℝ) (n : ℕ) :
               ‖(Complex.digamma (base + n) - Complex.digamma base) + (base + (n : ℂ))⁻¹‖ :=
             by ring_nf
           _ ≤ _ := this
-      _ ≤ (n : ℝ) + 1 := by linarith [ih, hinv_le]
+      _ ≤ (n : ℝ) + 1 := add_le_add ih hinv_le
       _ = ((n : ℕ) + 1 : ℕ) := by
         push_cast
         ring
@@ -1069,7 +1097,7 @@ theorem norm_digamma_two_mul_add_two_sub_mul_I_le (m : ℕ) (t : ℝ) :
     _ ≤
         ((2 * m + 1 : ℕ) : ℝ) +
           8 * (Real.log (Real.sqrt Real.pi) - Real.log ‖Complex.Gamma (1 - (t : ℂ) * Complex.I)‖) :=
-      by linarith [hprop, hone]
+      add_le_add hprop hone
     _ =
         8 * (Real.log (Real.sqrt Real.pi) - Real.log ‖Complex.Gamma (1 - (t : ℂ) * Complex.I)‖) +
           (2 * m + 1) :=
@@ -1102,7 +1130,7 @@ theorem logDeriv_two_pi_cpow_neg (s : ℂ) :
     intro h
     exact hne ((Complex.cpow_eq_zero_iff _ _).mp h).1
   rw [logDeriv_apply, hderiv.deriv]
-  field_simp
+  field_simp [hval_ne]
 
 /-- The logarithmic derivative of `w ↦ cos(πw/2)` is `-(π/2) tan(πs/2)`. -/
 theorem logDeriv_cos_pi_mul_div_two (s : ℂ) :
@@ -1236,12 +1264,19 @@ theorem cos_pi_mul_two_mul_add_two_sub_mul_I_div_two_ne_zero (m : ℕ) (t : ℝ)
     neg_eq_zero, div_eq_zero_iff, mul_eq_zero, Real.pi_ne_zero, false_or, OfNat.ofNat_ne_zero,
     or_false, Complex.sub_re, sub_self] at him hre
   have hpi := Real.pi_ne_zero
-  have h2 : Real.pi * (m + 1) = (2 * (k : ℝ) + 1) * Real.pi / 2 := by linarith [hre]
+  have h2 : Real.pi * (m + 1) = (2 * (k : ℝ) + 1) * Real.pi / 2 := hre
   have hfactor : Real.pi * ((m + 1 : ℝ) - (2 * (k : ℝ) + 1) / 2) = 0 := by linear_combination h2
   have hzero : (m + 1 : ℝ) - (2 * (k : ℝ) + 1) / 2 = 0 := (mul_eq_zero.mp hfactor).resolve_left hpi
-  have hcontra : (2 : ℝ) * (m + 1) = 2 * k + 1 := by linarith [hzero]
+  have hcontra : (2 : ℝ) * (m + 1) = 2 * k + 1 := by linarith only [hzero]
   have hint : (2 : ℤ) * (m + 1) = 2 * k + 1 := by exact_mod_cast hcontra
-  omega
+  have hleft : ((2 : ℤ) * (m + 1)) % 2 = 0 := by
+    rw [Int.mul_emod, Int.emod_self, Int.zero_mul, Int.zero_emod]
+  have hright : (2 * k + 1 : ℤ) % 2 = 1 := by
+    rw [Int.add_emod, Int.mul_emod, Int.emod_self, Int.zero_mul, Int.zero_emod]
+    norm_num only
+  have hmod := congrArg (fun x : ℤ => x % 2) hint
+  rw [hleft, hright] at hmod
+  norm_num only at hmod
 
 /-- `‖tan(πs/2)‖ ≤ 1` at `s = (2m+2) - it`: the integer-multiple-of-`π` real part makes
 `sin`/`cos` collapse to `∓sinh(πt/2)·I`/`±cosh(πt/2)`, whose ratio is a bounded hyperbolic
@@ -1319,7 +1354,7 @@ theorem norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le (m : ℕ) (t : ℝ) :
       simp only [Complex.add_re, Complex.mul_re, Complex.re_ofNat, Complex.natCast_re,
         Complex.im_ofNat, Complex.natCast_im, mul_zero, sub_zero]
     rw [this]
-    linarith [(Nat.cast_nonneg m : (0 : ℝ) ≤ (m : ℝ))]
+    linarith only [(Nat.cast_nonneg m : (0 : ℝ) ≤ (m : ℝ))]
   have hcos_ne := cos_pi_mul_two_mul_add_two_sub_mul_I_div_two_ne_zero m t
   rw [← hs_def] at hcos_ne
   have hident := logDeriv_riemannZeta_one_sub hs_re hcos_ne
@@ -1340,17 +1375,17 @@ theorem norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le (m : ℕ) (t : ℝ) :
       norm_deriv_riemannZeta_div_le (τ := (2 * m + 2 : ℝ))
         (by
           have : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
-          linarith)
+          linarith only [this])
         (-t)
     simpa only [Complex.ofReal_add, Complex.ofReal_mul, Complex.ofReal_ofNat,
       Complex.ofReal_natCast, neg_mul, Complex.norm_div, ge_iff_le, Complex.ofReal_neg] using this
   have hlogpi_le : ‖Complex.log (2 * (Real.pi : ℂ))‖ ≤ Real.log (2 * Real.pi) := by
-    have h2pi1 : (1 : ℝ) < 2 * Real.pi := by linarith [Real.pi_gt_three]
+    have h2pi1 : (1 : ℝ) < 2 * Real.pi := by nlinarith only [Real.pi_gt_three]
     rw [show (2 * (Real.pi : ℂ)) = ((2 * Real.pi : ℝ) : ℂ) from by
         push_cast
         ring,
-      ← Complex.ofReal_log (by linarith), Complex.norm_real, Real.norm_eq_abs,
-      abs_of_pos (Real.log_pos h2pi1)]
+      ← Complex.ofReal_log (mul_nonneg (by norm_num only) Real.pi_pos.le), Complex.norm_real,
+      Real.norm_eq_abs, abs_of_pos (Real.log_pos h2pi1)]
   have hA :
     ‖Complex.log (2 * (Real.pi : ℂ)) - Complex.digamma s‖ ≤
       ‖Complex.log (2 * (Real.pi : ℂ))‖ + ‖Complex.digamma s‖ :=
@@ -1361,11 +1396,11 @@ theorem norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le (m : ℕ) (t : ℝ) :
       rw [show (Real.pi : ℂ) / 2 = ((Real.pi / 2 : ℝ) : ℂ) from by
           push_cast
           ring,
-        Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by positivity)]
+        Complex.norm_real, Real.norm_eq_abs, abs_of_pos (div_pos Real.pi_pos (by norm_num only))]
     rw [hpi2]
     calc
       Real.pi / 2 * ‖Complex.tan ((Real.pi : ℂ) * s / 2)‖ ≤ Real.pi / 2 * 1 :=
-        mul_le_mul_of_nonneg_left htan_le (by positivity)
+        mul_le_mul_of_nonneg_left htan_le (div_nonneg Real.pi_pos.le (by norm_num only))
       _ = Real.pi / 2 := mul_one _
   have hfull :
     ‖Complex.log (2 * (Real.pi : ℂ)) - Complex.digamma s +
@@ -1390,7 +1425,7 @@ theorem norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le (m : ℕ) (t : ℝ) :
         gcongr
         exact norm_add_le _ _
   rw [hident]
-  linarith [hfull, hA, hB, hlogpi_le, hdigamma_le, hzeta_le]
+  linarith only [hfull, hA, hB, hlogpi_le, hdigamma_le, hzeta_le]
 
 /-!
 ### A tangent bound independent of the real part
@@ -1438,17 +1473,17 @@ theorem norm_tan_le_of_im_ne_zero {z : ℂ} (hz : z.im ≠ 0) :
     ‖Complex.tan z‖ ≤ Real.sqrt (1 + 1 / Real.sinh z.im ^ 2) := by
   have hspos : (0 : ℝ) < Real.sinh z.im ^ 2 := by
     have := Real.sinh_ne_zero.mpr hz
-    positivity
+    exact sq_pos_of_ne_zero this
   have hpyth : Real.sin z.re ^ 2 + Real.cos z.re ^ 2 = 1 := Real.sin_sq_add_cos_sq z.re
   have hhyp : Real.cosh z.im ^ 2 - Real.sinh z.im ^ 2 = 1 := Real.cosh_sq_sub_sinh_sq z.im
   have hdiff :
     Complex.normSq (Complex.sin z) - Complex.normSq (Complex.cos z) =
       Real.sin z.re ^ 2 - Real.cos z.re ^ 2 := by
     rw [normSq_sin_eq, normSq_cos_eq]
-    nlinarith [hhyp]
+    nlinarith only [hpyth, hhyp]
   have hcos_ge : Real.sinh z.im ^ 2 ≤ Complex.normSq (Complex.cos z) := by
     rw [normSq_cos_eq]
-    nlinarith [sq_nonneg (Real.cos z.re), hpyth]
+    nlinarith only [sq_nonneg (Real.sin z.re), hpyth, hhyp]
   have hcos_pos : (0 : ℝ) < Complex.normSq (Complex.cos z) := lt_of_lt_of_le hspos hcos_ge
   have hcos_ne : Complex.cos z ≠ 0 := by
     intro h
@@ -1458,17 +1493,19 @@ theorem norm_tan_le_of_im_ne_zero {z : ℂ} (hz : z.im ≠ 0) :
     Complex.normSq (Complex.sin z) / Complex.normSq (Complex.cos z) ≤
       1 + 1 / Real.sinh z.im ^ 2 := by
     rw [div_le_iff₀ hcos_pos]
-    have h1 : Real.sin z.re ^ 2 - Real.cos z.re ^ 2 ≤ 1 := by nlinarith [sq_nonneg (Real.cos z.re)]
-    have h2 : Complex.normSq (Complex.sin z) ≤ Complex.normSq (Complex.cos z) + 1 := by linarith
+    have h1 : Real.sin z.re ^ 2 - Real.cos z.re ^ 2 ≤ 1 := by
+      nlinarith only [sq_nonneg (Real.cos z.re), hpyth]
+    have h2 : Complex.normSq (Complex.sin z) ≤ Complex.normSq (Complex.cos z) + 1 := by
+      linarith only [hdiff, h1]
     have h3 :
       (1 + 1 / Real.sinh z.im ^ 2) * Complex.normSq (Complex.cos z) =
         Complex.normSq (Complex.cos z) + Complex.normSq (Complex.cos z) / Real.sinh z.im ^ 2 := by
-      field_simp
+      field_simp [ne_of_gt hspos]
     rw [h3]
     have h4 : (1 : ℝ) ≤ Complex.normSq (Complex.cos z) / Real.sinh z.im ^ 2 := by
       rw [le_div_iff₀ hspos]
-      linarith [hcos_ge]
-    linarith
+      simpa only [one_mul] using hcos_ge
+    linarith only [h2, h4]
   rw [Complex.tan_eq_sin_div_cos, norm_div]
   rw [show ‖Complex.sin z‖ = Real.sqrt (Complex.normSq (Complex.sin z)) from by
       rw [Complex.normSq_eq_norm_sq, Real.sqrt_sq (norm_nonneg _)],
@@ -1521,7 +1558,7 @@ theorem norm_logDeriv_riemannZeta_neg_add_mul_I_le {σ : ℝ} (hσ : σ < 0) {t 
     rw [hs_def]
     simp only [Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_zero]
-    linarith
+    linarith only [hσ]
   have hs_im : s.im ≠ 0 := by
     rw [hs_def]
     simp only [Complex.sub_im, Complex.ofReal_im, Complex.mul_im, Complex.I_im, mul_one,
@@ -1533,7 +1570,7 @@ theorem norm_logDeriv_riemannZeta_neg_add_mul_I_le {σ : ℝ} (hσ : σ < 0) {t 
   set r : ℝ := -σ with hr_def
   have hr_nonneg : (0 : ℝ) ≤ r := by
     rw [hr_def]
-    linarith
+    exact neg_nonneg.mpr (le_of_lt hσ)
   have hdigamma_le := norm_digamma_shift_add_mul_I_le r hr_nonneg (-t)
   have hseq : ((1 + r : ℝ) : ℂ) + ((-t : ℝ) : ℂ) * Complex.I = s := by
     rw [hs_def, hr_def]
@@ -1551,14 +1588,14 @@ theorem norm_logDeriv_riemannZeta_neg_add_mul_I_le {σ : ℝ} (hσ : σ < 0) {t 
       ring
     have hz_im : ((Real.pi : ℂ) * s / 2).im = -(Real.pi * t / 2) := by
       rw [hz_eq]
-      simp only [Complex.add_im, Complex.mul_im, Complex.ofReal_im, Complex.ofReal_re,
-        Complex.I_im, Complex.I_re, mul_zero, add_zero, mul_one, zero_add]
+      simp only [Complex.add_im, Complex.mul_im, Complex.ofReal_im, Complex.ofReal_re, Complex.I_im,
+        Complex.I_re, mul_zero, add_zero, mul_one, zero_add]
     have hz_im_ne : ((Real.pi : ℂ) * s / 2).im ≠ 0 := by
       rw [hz_im]
       intro h
       apply ht
       have hpi_pos := Real.pi_pos
-      nlinarith [h]
+      nlinarith only [h, hpi_pos]
     have hbound := norm_tan_le_of_im_ne_zero hz_im_ne
     rwa [hz_im, Real.sinh_neg, neg_sq] at hbound
   have hzeta_le :
@@ -1569,16 +1606,16 @@ theorem norm_logDeriv_riemannZeta_neg_add_mul_I_le {σ : ℝ} (hσ : σ < 0) {t 
       push_cast
       ring
     rw [heq, logDeriv_apply]
-    have := norm_deriv_riemannZeta_div_le (τ := (1 - σ : ℝ)) (by linarith) (-t)
+    have := norm_deriv_riemannZeta_div_le (τ := (1 - σ : ℝ)) (by linarith only [hσ]) (-t)
     simpa only [Complex.ofReal_sub, Complex.ofReal_one, neg_mul, Complex.norm_div, ge_iff_le,
       Complex.ofReal_neg] using this
   have hlogpi_le : ‖Complex.log (2 * (Real.pi : ℂ))‖ ≤ Real.log (2 * Real.pi) := by
-    have h2pi1 : (1 : ℝ) < 2 * Real.pi := by linarith [Real.pi_gt_three]
+    have h2pi1 : (1 : ℝ) < 2 * Real.pi := by nlinarith only [Real.pi_gt_three]
     rw [show (2 * (Real.pi : ℂ)) = ((2 * Real.pi : ℝ) : ℂ) from by
         push_cast
         ring,
-      ← Complex.ofReal_log (by linarith), Complex.norm_real, Real.norm_eq_abs,
-      abs_of_pos (Real.log_pos h2pi1)]
+      ← Complex.ofReal_log (mul_nonneg (by norm_num only) Real.pi_pos.le), Complex.norm_real,
+      Real.norm_eq_abs, abs_of_pos (Real.log_pos h2pi1)]
   have hA :
     ‖Complex.log (2 * (Real.pi : ℂ)) - Complex.digamma s‖ ≤
       ‖Complex.log (2 * (Real.pi : ℂ))‖ + ‖Complex.digamma s‖ :=
@@ -1591,9 +1628,9 @@ theorem norm_logDeriv_riemannZeta_neg_add_mul_I_le {σ : ℝ} (hσ : σ < 0) {t 
       rw [show (Real.pi : ℂ) / 2 = ((Real.pi / 2 : ℝ) : ℂ) from by
           push_cast
           ring,
-        Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by positivity)]
+        Complex.norm_real, Real.norm_eq_abs, abs_of_pos (div_pos Real.pi_pos (by norm_num only))]
     rw [hpi2]
-    exact mul_le_mul_of_nonneg_left htan_le (by positivity)
+    exact mul_le_mul_of_nonneg_left htan_le (div_nonneg Real.pi_pos.le (by norm_num only))
   have hfull :
     ‖Complex.log (2 * (Real.pi : ℂ)) - Complex.digamma s +
             ((Real.pi : ℂ) / 2) * Complex.tan ((Real.pi : ℂ) * s / 2) -
@@ -1617,6 +1654,6 @@ theorem norm_logDeriv_riemannZeta_neg_add_mul_I_le {σ : ℝ} (hσ : σ < 0) {t 
         gcongr
         exact norm_add_le _ _
   rw [hident]
-  linarith [hfull, hA, hB, hlogpi_le, hdigamma_le, hzeta_le]
+  linarith only [hfull, hA, hB, hlogpi_le, hdigamma_le, hzeta_le]
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

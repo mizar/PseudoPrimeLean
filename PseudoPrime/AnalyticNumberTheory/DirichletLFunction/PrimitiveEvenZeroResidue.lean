@@ -74,7 +74,7 @@ theorem deriv_dirichletReciprocalEvenZeroRegularization_zero {x : ℝ} (hx : 0 <
   rw [hR.deriv]
   have hpow0 : (x : ℂ) ^ ((0 : ℂ) - 1) = (x : ℂ)⁻¹ := by rw [zero_sub, Complex.cpow_neg_one]
   rw [hpow0]
-  field_simp
+  simp only [zero_mul, add_zero, zero_sub, inv_neg, inv_one, neg_mul, mul_one, one_div]
   ring
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

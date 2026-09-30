@@ -74,7 +74,8 @@ theorem bailliePSWClassicalWithinTwoMul_of_search_methodA {n : ℕ} (hn : Odd n)
     have hjacobi : jacobiSym 5 n = -1 := by
       simpa only using selfridgeClassicalSearchAscending_some_spec hsearch
     have hfive := bailliePSWWithParams_methodAStar_eq_methodA_of_five hn hjacobi
-    convert congrArg some hfive using 1 <;> norm_num [LucasParams.methodAStar]
+    simpa only [LucasParams.methodAStar, ↓reduceDIte,
+      show ((1 - (5 : ℤ)) / 4) = -1 by norm_num only] using congrArg some hfive
   · rw [LucasParams.methodAStar_eq_methodA_of_ne_five hmod hD]
     simp only [LucasParams.methodA_D, LucasParams.methodA_P, LucasParams.methodA_Q]
 

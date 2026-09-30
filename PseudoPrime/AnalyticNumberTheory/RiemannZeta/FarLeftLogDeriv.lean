@@ -31,7 +31,7 @@ theorem exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc :
         ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (3 / 2 : ℝ),
       fun m σ t hσ ht => ?_⟩
   obtain ⟨hσlo, hσhi⟩ := hσ
-  have hσ0 : σ < 0 := by linarith
+  have hσ0 : σ < 0 := lt_of_le_of_lt hσhi (by norm_num only)
   have hbase := norm_logDeriv_riemannZeta_neg_add_mul_I_le hσ0 ht
   set M0 : ℝ :=
     max (max (Real.Gamma 1) (Real.Gamma 2))
@@ -40,9 +40,11 @@ theorem exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc :
   -- Step (A): the `log(Gbound(r))` term is bounded uniformly in `σ` by `log(M0 + 1)`.
   have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
   have hGamma1_le : Real.Gamma (-σ + 1 / 2) ≤ max (Real.Gamma 1) (Real.Gamma (2 * m + 3 / 2)) :=
-    Real.Gamma_le_max_of_mem_Icc' (by norm_num only) (by linarith) (by constructor <;> linarith)
+    Real.Gamma_le_max_of_mem_Icc' (by norm_num only) (by linarith only [hσhi])
+      (by constructor <;> linarith only [hσhi, hσlo])
   have hGamma2_le : Real.Gamma (-σ + 3 / 2) ≤ max (Real.Gamma 2) (Real.Gamma (2 * m + 5 / 2)) :=
-    Real.Gamma_le_max_of_mem_Icc' (by norm_num only) (by linarith) (by constructor <;> linarith)
+    Real.Gamma_le_max_of_mem_Icc' (by norm_num only) (by linarith only [hσhi])
+      (by constructor <;> linarith only [hσhi, hσlo])
   have hΓ1M0 : Real.Gamma 1 ≤ M0 := le_trans (le_max_left _ _) (le_max_left _ _)
   have hΓ2M0 : Real.Gamma 2 ≤ M0 := le_trans (le_max_right _ _) (le_max_left _ _)
   have hΓ3M0 : Real.Gamma (2 * m + 3 / 2) ≤ M0 := le_trans (le_max_left _ _) (le_max_right _ _)
@@ -51,15 +53,15 @@ theorem exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc :
     apply max_le
     · exact le_trans hGamma1_le (max_le hΓ1M0 hΓ3M0)
     · exact le_trans hGamma2_le (max_le hΓ2M0 hΓ4M0)
-  have hΓ1pos : 0 < Real.Gamma (-σ + 1 / 2) := Real.Gamma_pos_of_pos (by linarith)
+  have hΓ1pos : 0 < Real.Gamma (-σ + 1 / 2) := Real.Gamma_pos_of_pos (by linarith only [hσhi])
   have hmax_pos : 0 < max (Real.Gamma (-σ + 1 / 2)) (Real.Gamma (-σ + 3 / 2)) + 1 := by
     have := le_max_left (Real.Gamma (-σ + 1 / 2)) (Real.Gamma (-σ + 3 / 2))
-    linarith
+    linarith only [hΓ1pos, this]
   have hlog_le :
     Real.log (max (Real.Gamma (-σ + 1 / 2)) (Real.Gamma (-σ + 3 / 2)) + 1) ≤ Real.log (M0 + 1) :=
-    Real.log_le_log hmax_pos (by linarith)
+    Real.log_le_log hmax_pos (add_le_add hmax_le (le_refl (1 : ℝ)))
   -- Step (B): the `-log‖Γ(1-σ-it)‖` term is bounded by the `r ≥ 0` uniform bound at `r := -σ`.
-  have hr0 : (0 : ℝ) ≤ -σ := by linarith
+  have hr0 : (0 : ℝ) ≤ -σ := by linarith only [hσhi]
   have hGammaB := hC₁ (-σ) (-t) hr0
   have heqB :
     (1 : ℂ) + ((-σ : ℝ) : ℂ) + ((-t : ℝ) : ℂ) * Complex.I =
@@ -70,10 +72,10 @@ theorem exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc :
   have habsB : |(-t : ℝ)| = |t| := abs_neg t
   rw [habsB] at hGammaB
   -- Step (C): the von Mangoldt tail sum is bounded by its value at the segment's right endpoint.
-  have h32 : (3 / 2 : ℝ) ≤ 1 - σ := by linarith
+  have h32 : (3 / 2 : ℝ) ≤ 1 - σ := by linarith only [hσhi]
   have hsum_le :=
     tsum_vonMangoldt_div_rpow_antitone (x := 3 / 2) (y := 1 - σ) (by norm_num only) h32
-  linarith [hbase, hlog_le, hGammaB, hsum_le]
+  linarith only [hbase, hlog_le, hGammaB, hsum_le]
 
 /-- A concrete witness constant for `exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc`,
 following the `goodHeightSeq`/`PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_good_height`
@@ -125,15 +127,17 @@ theorem farLeftBTerm_pos (m : ℕ) : 0 < farLeftBTerm m := by
     (1 : ℝ) ≤
       max (max (Real.Gamma 1) (Real.Gamma 2))
         (max (Real.Gamma (2 * (m : ℝ) + 3 / 2)) (Real.Gamma (2 * (m : ℝ) + 5 / 2))) := by
-    linarith [Real.Gamma_one, hΓ1_le]
+    calc
+      1 = Real.Gamma 1 := Real.Gamma_one.symm
+      _ ≤ _ := hΓ1_le
   have hlog_pos :
     0 <
       Real.log
         (max (max (Real.Gamma 1) (Real.Gamma 2))
             (max (Real.Gamma (2 * (m : ℝ) + 3 / 2)) (Real.Gamma (2 * (m : ℝ) + 5 / 2))) +
           1) :=
-    Real.log_pos (by linarith)
-  linarith
+    Real.log_pos (by linarith only [hM0_ge_one])
+  exact mul_pos (by norm_num only) hlog_pos
 
 /-- The height `T_m=(m+1)*(farLeftBTerm m+1)` dominates both the segment length
 and its logarithmic-derivative envelope. The far-left horizontal integral then
@@ -143,13 +147,14 @@ noncomputable def farLeftHeightSeq (m : ℕ) : ℝ :=
   ((m : ℝ) + 1) * (farLeftBTerm m + 1)
 
 theorem add_one_le_farLeftHeightSeq (m : ℕ) : (m : ℝ) + 1 ≤ farLeftHeightSeq m := by
-  have h1 : (1 : ℝ) ≤ farLeftBTerm m + 1 := by linarith [farLeftBTerm_pos m]
+  have h1 : (1 : ℝ) ≤ farLeftBTerm m + 1 := by linarith only [farLeftBTerm_pos m]
   calc
     (m : ℝ) + 1 = ((m : ℝ) + 1) * 1 := (mul_one _).symm
-    _ ≤ ((m : ℝ) + 1) * (farLeftBTerm m + 1) := mul_le_mul_of_nonneg_left h1 (by positivity)
+    _ ≤ ((m : ℝ) + 1) * (farLeftBTerm m + 1) :=
+      mul_le_mul_of_nonneg_left h1 (add_nonneg (Nat.cast_nonneg m) (by norm_num only : (0 : ℝ) ≤ 1))
 
 theorem farLeftBTerm_le_farLeftHeightSeq (m : ℕ) : farLeftBTerm m ≤ farLeftHeightSeq m := by
-  have h1 : (1 : ℝ) ≤ (m : ℝ) + 1 := by linarith [Nat.cast_nonneg (α := ℝ) m]
+  have h1 : (1 : ℝ) ≤ (m : ℝ) + 1 := by linarith only [Nat.cast_nonneg (α := ℝ) m]
   have h2 : (0 : ℝ) ≤ farLeftBTerm m := (farLeftBTerm_pos m).le
   calc
     farLeftBTerm m = 1 * farLeftBTerm m := (one_mul _).symm
@@ -158,7 +163,8 @@ theorem farLeftBTerm_le_farLeftHeightSeq (m : ℕ) : farLeftBTerm m ≤ farLeftH
       mul_le_mul_of_nonneg_left (by linarith only []) (by linarith only [h1])
 
 theorem farLeftHeightSeq_pos (m : ℕ) : 0 < farLeftHeightSeq m :=
-  lt_of_lt_of_le (by positivity) (add_one_le_farLeftHeightSeq m)
+  lt_of_lt_of_le (add_pos_of_nonneg_of_pos (Nat.cast_nonneg m) (by norm_num only))
+    (add_one_le_farLeftHeightSeq m)
 
 theorem one_le_farLeftHeightSeq (m : ℕ) : (1 : ℝ) ≤ farLeftHeightSeq m :=
   le_trans (by linarith only [Nat.cast_nonneg (α := ℝ) m]) (add_one_le_farLeftHeightSeq m)
@@ -200,10 +206,18 @@ theorem farLeftBTerm_le_poly (m : ℕ) :
       rw [hR_def]
       have h1 := Gamma.Gamma_two_mul_add_three_half_le m
       have h2 : (2 * (m : ℝ) + 2) ^ (2 * m) ≤ (2 * (m : ℝ) + 3) ^ (2 * m) :=
-        pow_le_pow_left₀ (by positivity) (by linarith only []) _
+        pow_le_pow_left₀
+          (add_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) (Nat.cast_nonneg m))
+            (by norm_num only))
+          (by linarith only []) _
       have h3 : (2 * (m : ℝ) + 3) ^ (2 * m) ≤ (2 * (m : ℝ) + 3) ^ (2 * m + 1) := by
         rw [pow_succ]
-        exact le_mul_of_one_le_right (by positivity) (by linarith only [Nat.cast_nonneg (α := ℝ) m])
+        have hbase : (0 : ℝ) ≤ 2 * (m : ℝ) + 3 :=
+          add_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) (Nat.cast_nonneg m))
+            (by norm_num only)
+        exact
+          le_mul_of_one_le_right (pow_nonneg hbase _)
+            (by linarith only [Nat.cast_nonneg (α := ℝ) m])
       calc
         Real.Gamma (2 * (m : ℝ) + 3 / 2) ≤ (2 * (m : ℝ) + 2) ^ (2 * m) * Real.Gamma (3 / 2) := h1
         _ ≤ (2 * (m : ℝ) + 3) ^ (2 * m) * Real.Gamma (3 / 2) :=
@@ -211,7 +225,11 @@ theorem farLeftBTerm_le_poly (m : ℕ) :
         _ ≤ (2 * (m : ℝ) + 3) ^ (2 * m + 1) * Real.Gamma (3 / 2) :=
           mul_le_mul_of_nonneg_right h3 hΓ32pos.le
         _ ≤ (2 * (m : ℝ) + 3) ^ (2 * m + 1) * (Real.Gamma (3 / 2) + 1) :=
-          mul_le_mul_of_nonneg_left (by linarith only []) (by positivity)
+          mul_le_mul_of_nonneg_left (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1))
+            (pow_nonneg
+              (add_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) (Nat.cast_nonneg m))
+                (by norm_num only))
+              _)
     have hΓ4 : Real.Gamma (2 * (m : ℝ) + 5 / 2) ≤ R := by
       rw [hR_def]
       have h1 := Gamma.Gamma_two_mul_add_five_half_le m
@@ -219,13 +237,17 @@ theorem farLeftBTerm_le_poly (m : ℕ) :
         Real.Gamma (2 * (m : ℝ) + 5 / 2) ≤ (2 * (m : ℝ) + 3) ^ (2 * m + 1) * Real.Gamma (3 / 2) :=
           h1
         _ ≤ (2 * (m : ℝ) + 3) ^ (2 * m + 1) * (Real.Gamma (3 / 2) + 1) :=
-          mul_le_mul_of_nonneg_left (by linarith only []) (by positivity)
+          mul_le_mul_of_nonneg_left (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1))
+            (pow_nonneg
+              (add_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) (Nat.cast_nonneg m))
+                (by norm_num only))
+              _)
     have hpart1 : max (Real.Gamma 1) (Real.Gamma 2) ≤ CQ + 2 * R := by
       rw [hCQ_def]
       linarith only [hRpos]
     have hpart2 :
       max (Real.Gamma (2 * (m : ℝ) + 3 / 2)) (Real.Gamma (2 * (m : ℝ) + 5 / 2)) ≤ CQ + 2 * R :=
-      max_le (by linarith [hΓ3]) (by linarith [hΓ4])
+      max_le (by linarith only [hΓ3, hCQnn, hRpos]) (by linarith only [hΓ4, hCQnn, hRpos])
     exact max_le hpart1 hpart2
   have hlog_le :
     Real.log
@@ -269,15 +291,21 @@ theorem farLeftBTerm_le_poly (m : ℕ) :
     have hlogR :
       Real.log R =
         (2 * (m : ℝ) + 1) * Real.log (2 * (m : ℝ) + 3) + Real.log (Real.Gamma (3 / 2) + 1) := by
-      rw [hR_def, Real.log_mul (by positivity) (by positivity), Real.log_pow]
+      rw [hR_def,
+        Real.log_mul (ne_of_gt (pow_pos (by linarith only [Nat.cast_nonneg (α := ℝ) m]) _))
+          (ne_of_gt (add_pos_of_pos_of_nonneg hΓ32pos (by norm_num only))),
+        Real.log_pow]
       push_cast
       ring
     simp only [hCQ_def] at hlog1
     linarith only [hlog1, hlog2, hlogR]
   have hlog2m3_le : Real.log (2 * (m : ℝ) + 3) ≤ 2 * (m : ℝ) + 2 := by
-    have h := Real.log_le_sub_one_of_pos (x := 2 * (m : ℝ) + 3) (by positivity)
+    have h :=
+      Real.log_le_sub_one_of_pos (x := 2 * (m : ℝ) + 3)
+        (by linarith only [Nat.cast_nonneg (α := ℝ) m])
     linarith only [h]
-  have hcoeff_nn : (0 : ℝ) ≤ 2 * (m : ℝ) + 1 := by positivity
+  have hcoeff_nn : (0 : ℝ) ≤ 2 * (m : ℝ) + 1 :=
+    add_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) (Nat.cast_nonneg m)) (by norm_num only)
   nlinarith only [hlog_le, mul_le_mul_of_nonneg_left hlog2m3_le hcoeff_nn]
 
 /-- The far-left height sequence grows at most cubically, by the quadratic
@@ -290,16 +318,16 @@ theorem farLeftHeightSeq_le_poly :
       (Real.log (max (Real.Gamma 1) (Real.Gamma 2) + 4) + Real.log 2 +
         Real.log (Real.Gamma (3 / 2) + 1)) with
     hD_def
-  refine ⟨|D| + 97, by positivity, fun m => ?_⟩
+  refine ⟨|D| + 97, add_nonneg (abs_nonneg D) (by norm_num only), fun m => ?_⟩
   have hB_le := farLeftBTerm_le_poly m
   rw [← hD_def] at hB_le
   have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
   have hstep1 : farLeftBTerm m ≤ (|D| + 96) * ((m : ℝ) + 1) ^ 2 := by
-    nlinarith [hB_le, le_abs_self D, abs_nonneg D, mul_nonneg hmnn hmnn, hmnn]
-  have hsq_ge1 : (1 : ℝ) ≤ ((m : ℝ) + 1) ^ 2 := by nlinarith [hmnn]
+    nlinarith only [hB_le, le_abs_self D, abs_nonneg D, mul_nonneg hmnn hmnn, hmnn]
+  have hsq_ge1 : (1 : ℝ) ≤ ((m : ℝ) + 1) ^ 2 := by nlinarith only [hmnn]
   have hstep2 : farLeftBTerm m + 1 ≤ (|D| + 97) * ((m : ℝ) + 1) ^ 2 := by
-    nlinarith [hstep1, hsq_ge1]
-  have hm1nn : (0 : ℝ) ≤ (m : ℝ) + 1 := by positivity
+    nlinarith only [hstep1, hsq_ge1]
+  have hm1nn : (0 : ℝ) ≤ (m : ℝ) + 1 := add_nonneg hmnn (by norm_num only)
   unfold farLeftHeightSeq
   calc
     ((m : ℝ) + 1) * (farLeftBTerm m + 1) ≤ ((m : ℝ) + 1) * ((|D| + 97) * ((m : ℝ) + 1) ^ 2) :=
@@ -320,7 +348,7 @@ theorem tendsto_farLeftHeightSeq_sq_mul_pow_of_lt_one {r : ℝ} (hr : 0 ≤ r) (
     have h3 : farLeftHeightSeq m ^ 2 ≤ (G * ((m : ℝ) + 1) ^ 3) ^ 2 := pow_le_pow_left₀ h2 h1 2
     calc
       farLeftHeightSeq m ^ 2 * r ^ m ≤ (G * ((m : ℝ) + 1) ^ 3) ^ 2 * r ^ m :=
-        mul_le_mul_of_nonneg_right h3 (by positivity)
+        mul_le_mul_of_nonneg_right h3 (pow_nonneg hr m)
       _ = G ^ 2 * (((m : ℝ) + 1) ^ 3) ^ 2 * r ^ m := by ring
   have htend :
     Filter.Tendsto (fun m : ℕ => G ^ 2 * (((m : ℝ) + 1) ^ 3) ^ 2 * r ^ m) Filter.atTop
@@ -334,6 +362,8 @@ theorem tendsto_farLeftHeightSeq_sq_mul_pow_of_lt_one {r : ℝ} (hr : 0 ≤ r) (
       ring
     rw [h2]
     simpa only [mul_zero] using h1.const_mul (G ^ 2)
-  exact squeeze_zero (fun m => by positivity) hbound htend
+  exact
+    squeeze_zero (fun m => mul_nonneg (sq_nonneg (farLeftHeightSeq m)) (pow_nonneg hr m)) hbound
+      htend
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

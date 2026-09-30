@@ -20,7 +20,7 @@ theorem fortySeven_le_log_sq_of_1024_le {n : ℕ} (hn : 1024 ≤ n) :
   have hnR : (1024 : ℝ) ≤ n := by exact_mod_cast hn
   have hlog :=
     Real.strictMonoOn_log.monotoneOn (by norm_num only : (0 : ℝ) < 1024)
-      (by exact_mod_cast (show 0 < n by omega) : (0 : ℝ) < n) hnR
+      (by exact_mod_cast (show 0 < n from Nat.lt_of_lt_of_le (by decide) hn) : (0 : ℝ) < n) hnR
   have hlog1024 : Real.log (1024 : ℝ) = 10 * Real.log 2 := by
     rw [show (1024 : ℝ) = 2 ^ 10 by norm_num only, Real.log_pow]
     norm_num only
@@ -83,7 +83,7 @@ theorem log_two_mul_le_log_of_pow_two_le {n k : ℕ} (hn : 2 ^ k ≤ n) :
   simpa only [Real.log_pow] using hlog
 
 theorem five_le_log_sq_of_eleven_le {n : ℕ} (hn : 11 ≤ n) : (5 : ℝ) ≤ Real.log (n : ℝ) ^ 2 := by
-  have hnR : (10 : ℝ) ≤ n := by exact_mod_cast (show 10 ≤ n by omega)
+  have hnR : (10 : ℝ) ≤ n := by exact_mod_cast (show 10 ≤ n from Nat.le_trans (by decide) hn)
   have hlog :=
     Real.strictMonoOn_log.monotoneOn (by norm_num only : (0 : ℝ) < 10)
       (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 10) hnR) hnR
@@ -118,7 +118,7 @@ theorem primeNeOneWitness_cast_le_log_sq_of_eleven_le_of_lt_sixtyFour {n : ℕ} 
       (Nat.cast_le.mpr (primeNeOneWitness_le_seven_of_lt_sixtyFour hn hns hhi)).trans
         (seven_le_log_sq_of_sixteen_le h16)
   · exact
-      (Nat.cast_le.mpr (primeNeOneWitness_le_five_of_lt_sixteen hn hns (by omega))).trans
+      (Nat.cast_le.mpr (primeNeOneWitness_le_five_of_lt_sixteen hn hns (lt_of_not_ge h16))).trans
         (five_le_log_sq_of_eleven_le hlo)
 
 /-- For odd nonsquares from `1001` through `1030`, one of the odd primes at most `19`
@@ -175,26 +175,30 @@ def Through1125TailNeOneCertificate : Prop :=
 
 theorem through1030NeOneCertificate_valid : Through1030NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1060NeOneCertificate_valid : Through1060NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1090NeOneCertificate_valid : Through1090NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1125TailNeOneCertificate_valid : Through1125TailNeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 /-- The combined certificate for odd nonsquares from `1001` through `1125`, supplying an
@@ -213,8 +217,9 @@ def Through1125NeOneCertificate : Prop :=
 /-- The combined finite certificate for `1001 ≤ n ≤ 1125`. -/
 theorem through1125NeOneCertificate_valid : Through1125NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 /-- Every odd nonsquare in `1001 ≤ n ≤ 1125` has least witness at most `19`. -/
@@ -239,10 +244,11 @@ theorem primeNeOneWitness_le_nineteen_of_1001_le_of_le_1125 {n : ℕ} (hn : Odd 
 /-- The `1001`--`1125` finite block lies inside the logarithmic witness radius. -/
 theorem nineteen_le_log_sq_of_1001_le {n : ℕ} (hn1001 : 1001 ≤ n) :
     (19 : ℝ) ≤ Real.log (n : ℝ) ^ 2 := by
-  have hn128 : (128 : ℝ) ≤ n := by exact_mod_cast (show 128 ≤ n by omega)
-  have hlog :=
-    Real.strictMonoOn_log.monotoneOn (show (0 : ℝ) < 128 by norm_num only)
-      (by exact_mod_cast (show 0 < n by omega) : (0 : ℝ) < n) hn128
+  have hn128nat : 128 ≤ n := Nat.le_trans (by decide : 128 ≤ 1001) hn1001
+  have hn128 : (128 : ℝ) ≤ n := by exact_mod_cast hn128nat
+  have hnpos : 0 < n := Nat.lt_of_lt_of_le (by decide : 0 < 128) hn128nat
+  have hnposR : (0 : ℝ) < n := by exact_mod_cast hnpos
+  have hlog := Real.strictMonoOn_log.monotoneOn (show (0 : ℝ) < 128 by norm_num only) hnposR hn128
   have hlog128 : Real.log (128 : ℝ) = 7 * Real.log 2 := by
     rw [show (128 : ℝ) = 2 ^ 7 by norm_num only, Real.log_pow]
     norm_num only
@@ -321,26 +327,30 @@ def Through1250TailNeOneCertificate : Prop :=
 
 theorem through1155NeOneCertificate_valid : Through1155NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1185NeOneCertificate_valid : Through1185NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1215NeOneCertificate_valid : Through1215NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1250TailNeOneCertificate_valid : Through1250TailNeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 /-- The combined certificate for odd nonsquares from `1126` through `1250`, supplying an
@@ -358,8 +368,9 @@ def Through1250NeOneCertificate : Prop :=
 
 theorem through1250NeOneCertificate_valid : Through1250NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 /-- Every odd nonsquare in `1126 ≤ n ≤ 1250` has least witness at most `19`. -/
@@ -397,7 +408,7 @@ theorem primeNeOneWitness_cast_le_log_sq_of_1126_le_of_le_1250 {n : ℕ} (hn : O
         ℝ) ≤
       19 := by
     exact_mod_cast hw
-  exact hwR.trans (nineteen_le_log_sq_of_1001_le (by omega))
+  exact hwR.trans (nineteen_le_log_sq_of_1001_le (Nat.le_trans (by decide : 1001 ≤ 1126) hn1126))
 
 /-- The first small block of the `1251`--`1375` finite certificate. -/
 def Through1280NeOneCertificate : Prop :=
@@ -449,26 +460,30 @@ def Through1375TailNeOneCertificate : Prop :=
 
 theorem through1280NeOneCertificate_valid : Through1280NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1310NeOneCertificate_valid : Through1310NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1340NeOneCertificate_valid : Through1340NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1375TailNeOneCertificate_valid : Through1375TailNeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 def Through1375NeOneCertificate : Prop :=
@@ -484,8 +499,9 @@ def Through1375NeOneCertificate : Prop :=
 
 theorem through1375NeOneCertificate_valid : Through1375NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem primeNeOneWitness_le_nineteen_of_1251_le_of_le_1375 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
@@ -521,7 +537,7 @@ theorem primeNeOneWitness_cast_le_log_sq_of_1251_le_of_le_1375 {n : ℕ} (hn : O
         ℝ) ≤
       19 := by
     exact_mod_cast hw
-  exact hwR.trans (nineteen_le_log_sq_of_1001_le (by omega))
+  exact hwR.trans (nineteen_le_log_sq_of_1001_le (Nat.le_trans (by decide : 1001 ≤ 1251) hn1251))
 
 /-- The first small block of the `1376`--`1500` finite certificate. -/
 def Through1405NeOneCertificate : Prop :=
@@ -573,26 +589,34 @@ def Through1500TailNeOneCertificate : Prop :=
 
 theorem through1405NeOneCertificate_valid : Through1405NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1435NeOneCertificate_valid : Through1435NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1465NeOneCertificate_valid : Through1465NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := Nat.lt_of_lt_of_le n.isLt (by decide)
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem through1500TailNeOneCertificate_valid : Through1500TailNeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := by
+    apply Nat.lt_of_le_of_ne (Nat.le_of_lt_succ n.isLt)
+    intro heq
+    rw [heq] at hnodd
+    norm_num only at hnodd
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 def Through1500NeOneCertificate : Prop :=
@@ -608,8 +632,13 @@ def Through1500NeOneCertificate : Prop :=
 
 theorem through1500NeOneCertificate_valid : Through1500NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1500 : n.val < 1500 := by
+    apply Nat.lt_of_le_of_ne (Nat.le_of_lt_succ n.isLt)
+    intro heq
+    rw [heq] at hnodd
+    norm_num only at hnodd
+  have hw := qNeOneSmall1500_exists (Nat.odd_iff.mpr hnodd) hsq hn1500
   exact exists_qNeOneSmall1500_to_or hw
 
 theorem primeNeOneWitness_le_nineteen_of_1376_le_of_le_1500 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
@@ -645,7 +674,7 @@ theorem primeNeOneWitness_cast_le_log_sq_of_1376_le_of_le_1500 {n : ℕ} (hn : O
         ℝ) ≤
       19 := by
     exact_mod_cast hw
-  exact hwR.trans (nineteen_le_log_sq_of_1001_le (by omega))
+  exact hwR.trans (nineteen_le_log_sq_of_1001_le (Nat.le_trans (by decide : 1001 ≤ 1376) hn1376))
 
 /-! The finite certificate and logarithmic bound for `751 ≤ n ≤ 1000`. -/
 
@@ -661,8 +690,13 @@ def Through1000NeOneCertificate : Prop :=
 
 theorem through1000NeOneCertificate_valid : Through1000NeOneCertificate := by
   intro n _hlo hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
-  have hw := qNeOneSmall1000_exists (Nat.odd_iff.mpr hnodd) hsq (by omega)
+  have hsq := not_isSquare_of_fin_certificate (Nat.lt_of_lt_of_le n.isLt (by decide)) hns
+  have hn1000 : n.val < 1000 := by
+    apply Nat.lt_of_le_of_ne (Nat.le_of_lt_succ n.isLt)
+    intro heq
+    rw [heq] at hnodd
+    norm_num only at hnodd
+  have hw := qNeOneSmall1000_exists (Nat.odd_iff.mpr hnodd) hsq hn1000
   exact exists_qNeOneSmall1000_to_or hw
 
 theorem primeNeOneWitness_le_seventeen_of_751_le_of_le_1000 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
@@ -685,10 +719,11 @@ theorem primeNeOneWitness_le_seventeen_of_751_le_of_le_1000 {n : ℕ} (hn : Odd 
 
 theorem seventeen_le_log_sq_of_751_le {n : ℕ} (hn751 : 751 ≤ n) :
     (17 : ℝ) ≤ Real.log (n : ℝ) ^ 2 := by
-  have hn64 : (64 : ℝ) ≤ n := by exact_mod_cast (show 64 ≤ n by omega)
-  have hlog :=
-    Real.strictMonoOn_log.monotoneOn (show (0 : ℝ) < 64 by norm_num only)
-      (by exact_mod_cast (show 0 < n by omega) : (0 : ℝ) < n) hn64
+  have hn64nat : 64 ≤ n := Nat.le_trans (by decide : 64 ≤ 751) hn751
+  have hn64 : (64 : ℝ) ≤ n := by exact_mod_cast hn64nat
+  have hnpos : 0 < n := Nat.lt_of_lt_of_le (by decide : 0 < 64) hn64nat
+  have hnposR : (0 : ℝ) < n := by exact_mod_cast hnpos
+  have hlog := Real.strictMonoOn_log.monotoneOn (show (0 : ℝ) < 64 by norm_num only) hnposR hn64
   have hlog64 : Real.log (64 : ℝ) = 6 * Real.log 2 := by
     rw [show (64 : ℝ) = 2 ^ 6 by norm_num only, Real.log_pow]
     norm_num only
@@ -730,13 +765,19 @@ theorem primeNeOneWitness_cast_le_log_sq_of_eleven_le_of_lt_million {n : ℕ} (h
   by_cases h1024 : 1024 ≤ n
   · exact primeNeOneWitness_cast_le_log_sq_of_1024_le_of_lt_million hn hns h1024 hhi
   by_cases h1001 : 1001 ≤ n
-  · exact primeNeOneWitness_cast_le_log_sq_of_1001_le_of_le_1125 hn hns h1001 (by omega)
+  · exact
+      primeNeOneWitness_cast_le_log_sq_of_1001_le_of_le_1125 hn hns h1001
+        (Nat.le_trans (Nat.le_of_lt_succ (lt_of_not_ge h1024)) (by decide))
   by_cases h751 : 751 ≤ n
-  · exact primeNeOneWitness_cast_le_log_sq_of_751_le_of_le_1000 hn hns h751 (by omega)
+  · exact
+      primeNeOneWitness_cast_le_log_sq_of_751_le_of_le_1000 hn hns h751
+        (Nat.le_of_lt_succ (lt_of_not_ge h1001))
   by_cases h64 : 64 ≤ n
   · exact
-      (Nat.cast_le.mpr (primeNeOneWitness_le_thirteen_of_le_750 hn hns (by omega))).trans
+      (Nat.cast_le.mpr
+            (primeNeOneWitness_le_thirteen_of_le_750 hn hns
+              (Nat.le_of_lt_succ (lt_of_not_ge h751)))).trans
         (thirteen_le_log_sq_of_sixtyFour_le h64)
-  exact primeNeOneWitness_cast_le_log_sq_of_eleven_le_of_lt_sixtyFour hn hns hlo (by omega)
+  exact primeNeOneWitness_cast_le_log_sq_of_eleven_le_of_lt_sixtyFour hn hns hlo (lt_of_not_ge h64)
 
 end PseudoPrime.PseudoSquare

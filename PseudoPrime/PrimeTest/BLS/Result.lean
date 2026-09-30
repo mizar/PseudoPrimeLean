@@ -17,7 +17,7 @@ inductive BLSResult (n : ℕ) where
   /-- A proof that the original input is prime. -/
   | prime (proof : Nat.Prime n)
   /-- A proof that the original input is not prime. -/
-  | composite (proof : ¬ Nat.Prime n)
+  | composite (proof : ¬Nat.Prime n)
   /-- Neither bounded search produced a primality or compositeness proof. -/
   | unknown
   /-- The input is outside the domain `1 < n`. -/
@@ -28,7 +28,7 @@ uninformative; every conclusive or invalid-input constructor returns its corresp
 def BLSResult.sound {n : ℕ} (result : BLSResult n) : Prop :=
   match result with
   | .prime _ => Nat.Prime n
-  | .composite _ => ¬ Nat.Prime n
+  | .composite _ => ¬Nat.Prime n
   | .unknown => True
   | .invalidInput _ => n ≤ 1
 

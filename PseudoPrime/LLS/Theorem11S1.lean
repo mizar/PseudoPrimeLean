@@ -98,7 +98,7 @@ theorem characterLogWeightedSum_re_le_comparisonUpper
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
           χ).re ≤
       llsTheorem11S1ComparisonUpperBound χ := by
-  have hqone : (1 : ℝ) < q := by exact_mod_cast (show 1 < q by omega)
+  have hqone : (1 : ℝ) < q := by exact_mod_cast ((by decide : 1 < 3000).trans_le hq)
   have hy : 0 < llsTheorem11S1RadiusRoot q := by
     exact add_pos_of_pos_of_nonneg (Real.log_pos hqone) (llsCorrectionTerm_nonneg q)
   have hcomparison :=

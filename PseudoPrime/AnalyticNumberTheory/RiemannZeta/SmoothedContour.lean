@@ -113,13 +113,13 @@ theorem differentiableAt_riemannZetaLogContourKernel {x : ℝ} (hx : 0 < x) {s :
 theorem mul_riemannZetaReciprocalContourKernel (x : ℝ) {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
     s * riemannZetaReciprocalContourKernel x s = riemannZetaReciprocalZeroRegularization x s := by
   unfold riemannZetaReciprocalContourKernel riemannZetaReciprocalZeroRegularization
-  field_simp
+  field_simp [hs0, hs1]
 
 /-- Multiplication by `s²` removes the logarithmic kernel's double Mellin pole away from zero. -/
 theorem sq_mul_riemannZetaLogContourKernel (x : ℝ) {s : ℂ} (hs0 : s ≠ 0) :
     s ^ 2 * riemannZetaLogContourKernel x s = riemannZetaLogZeroRegularization x s := by
   unfold riemannZetaLogContourKernel riemannZetaLogZeroRegularization
-  field_simp
+  field_simp [hs0]
 
 /-- Near zero, multiplying the reciprocal kernel by `s` gives its zero-regularized extension. -/
 theorem eventuallyEq_riemannZetaReciprocalZeroRegularization (x : ℝ) :
@@ -200,7 +200,7 @@ theorem eventuallyEq_riemannZetaReciprocalOneRegularization (x : ℝ) :
     hzero] with s hs hsreg hs0
   rw [riemannZetaReciprocalContourKernel, riemannZetaReciprocalOneRegularization, ← hsreg]
   have hs1 : s - 1 ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hs)
-  field_simp
+  field_simp [hs0, hs1]
 
 /-- Near one, `s-1` times the logarithmic kernel equals its regularized extension. -/
 theorem eventuallyEq_riemannZetaLogOneRegularization (x : ℝ) :
@@ -212,7 +212,7 @@ theorem eventuallyEq_riemannZetaLogOneRegularization (x : ℝ) :
     hzeroNhds.filter_mono nhdsWithin_le_nhds
   filter_upwards [eventuallyEq_riemannZetaOneLogDerivativeRegularization, hzero] with s hsreg hs0
   rw [riemannZetaLogContourKernel, riemannZetaLogOneRegularization, ← hsreg]
-  field_simp
+  field_simp [hs0]
 
 /-- The reciprocal one-regularization is analytic near one. -/
 theorem analyticAt_riemannZetaReciprocalOneRegularization {x : ℝ} (hx : 0 < x) :
@@ -314,7 +314,7 @@ theorem exists_eventuallyEq_reciprocalKernel_zetaZeroRegularization (x : ℝ) {�
     exact hlogs
   rw [riemannZetaReciprocalContourKernel, riemannZetaReciprocalZetaZeroRegularization, hlogs']
   have hsρ' : s - ρ ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hsρ)
-  field_simp
+  field_simp [hs0, hs1, hsρ']
 
 /--
 At a zeta zero away from zero and one, the scaled logarithmic kernel agrees locally with its
@@ -343,7 +343,7 @@ theorem exists_eventuallyEq_logKernel_zetaZeroRegularization (x : ℝ) {ρ : ℂ
     exact hlogs
   rw [riemannZetaLogContourKernel, riemannZetaLogZetaZeroRegularization, hlogs']
   have hsρ' : s - ρ ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hsρ)
-  field_simp
+  field_simp [hs0, hsρ']
 
 /-!
 Finite zeta zero ledgers and the simple poles of its logarithmic derivative
@@ -1734,7 +1734,7 @@ theorem exists_riemannZetaPuncturedContourCertificate_le {x : ℝ} (hx : 0 < x) 
   · intro s hs t ht hst
     apply RectangleGeometry.disjoint_singularity_closedBalls
     have hpairs' := hpairs s hs t ht hst
-    linarith
+    linarith only [hRgeometry', hpairs']
 
 /--
 Choose a punctured-contour certificate whose closed circles lie inside their assigned open cells.
@@ -2547,11 +2547,11 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
   set σ : ℝ := τ - 1 with hσ_def
   have hσ0 : (0 : ℝ) < σ := by
     rw [hσ_def]
-    linarith
+    exact sub_pos.mpr hτ
   have hσ1 : σ ≠ -1 := by
     rw [hσ_def]
     intro h
-    linarith
+    linarith only [hτ, h]
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ (((τ : ℂ) + y * Complex.I) * ((τ : ℂ) + y * Complex.I - 1))⁻¹ with hK_def
   have hK_int : MeasureTheory.Integrable K := by
@@ -2628,12 +2628,13 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
       push_cast
       ring
     rw [hshift, hshift']
-    rw [show (-((σ : ℂ) + y * Complex.I)) = 1 + -((τ : ℂ) + y * Complex.I) by
+    rw [show (-((σ : ℂ) + y * Complex.I)) = 1 + -((τ : ℂ) + y * Complex.I)
+        by
         rw [hσ_def]
         push_cast
         ring,
       Complex.cpow_add _ _ hnC, Complex.cpow_one]
-    field_simp
+    field_simp [hnC, hσ0.ne', hτ.ne']
   -- (2) each `G n` is integrable, dominated by a constant multiple of `K`
   have hGint : ∀ n : ℕ, MeasureTheory.Integrable (G n) := by
     intro n

@@ -96,7 +96,7 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZer
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
-        linarith)
+        linarith only [him, hmnn])
   have hdΓ1 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 1 :=
     differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat heven
       (by
@@ -105,7 +105,7 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZer
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
-        linarith)
+        linarith only [him, hmnn])
   have hF1ne : DirichletCharacter.completedLFunction χ 1 ≠ 0 :=
     completedLFunction_ne_zero_of_one_le_re hne (le_refl 1)
   have hbridge1 :=

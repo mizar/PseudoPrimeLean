@@ -30,7 +30,7 @@ theorem norm_zetaEntire_le_of_reGt_neg_one {s : ℂ} (hs : -1 < s.re) :
   rcases eq_or_ne s 1 with rfl | hne
   · have hz1 : zetaEntire (1 : ℂ) = 1 := by simp only [zetaEntire, Function.update_self]
     rw [hz1, norm_one]
-    nlinarith [norm_nonneg (1 : ℂ)]
+    nlinarith only [hsawnn, norm_nonneg (1 : ℂ)]
   · have hzeq : zetaEntire s = (s - 1) * riemannZeta s := by
       simp only [zetaEntire, Function.update_of_ne hne]
     have hsm1_ne : s - 1 ≠ 0 := sub_ne_zero.mpr hne
@@ -53,7 +53,8 @@ theorem norm_zetaEntire_le_of_reGt_neg_one {s : ℂ} (hs : -1 < s.re) :
       calc
         ‖s - 1‖ ≤ ‖s‖ + ‖(1 : ℂ)‖ := norm_sub_le _ _
         _ = ‖s‖ + 1 := by rw [norm_one]
-    have hnn : 0 ≤ ‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re := by positivity
+    have hnn : 0 ≤ ‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re :=
+      mul_nonneg (mul_nonneg (norm_nonneg s) (add_nonneg (norm_nonneg s) (by norm_num only))) hsawnn
     calc
       ‖zetaEntire s‖ ≤
           ‖s‖ + ‖s - 1‖ / 2 + ‖s - 1‖ * (‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re) :=

@@ -2,6 +2,7 @@ import PseudoPrime.PrimeTest.Result
 import PseudoPrime.PrimeTest.APRCL.KnownDivisor
 
 /-! # APR-CL adapter to certified primality decisions -/
+
 namespace PseudoPrime.PrimeTest.APRCL
 
 /-- Extract only proved conclusions from APR-CL execution.

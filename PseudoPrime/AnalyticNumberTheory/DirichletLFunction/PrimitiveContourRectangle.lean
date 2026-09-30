@@ -96,9 +96,21 @@ theorem dirichletReciprocalFiniteContourIdentity_normalized {N : ℕ} [NeZero N]
   apply Finset.sum_congr rfl
   intro s hs
   have hπ : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
-  field_simp [hπ]
-  rw [Complex.I_sq]
-  ring
+  have hprod : (2 : ℂ) * Real.pi ≠ 0 := mul_ne_zero (by norm_num only) hπ
+  calc
+    -Complex.I / (2 * ↑Real.pi) *
+          (2 * ↑Real.pi * Complex.I * dirichletReciprocalResidueAt hne x s) =
+        (2 * ↑Real.pi) * (-Complex.I * Complex.I * dirichletReciprocalResidueAt hne x s) /
+          (2 * ↑Real.pi) :=
+      by
+      rw [div_mul_eq_mul_div]
+      congr 1
+      ring
+    _ = -Complex.I * Complex.I * dirichletReciprocalResidueAt hne x s :=
+      mul_div_cancel_left₀ _ hprod
+    _ = dirichletReciprocalResidueAt hne x s := by
+      rw [neg_mul, Complex.I_mul_I]
+      ring
 
 /-- Normalized reciprocal identity for the Generic GRH height-sequence corners. -/
 theorem dirichletReciprocalFiniteContourIdentity_heightSeq_normalized_of_grh {N : ℕ} [NeZero N]

@@ -49,7 +49,18 @@ theorem primeNegOneWitnessSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (
     exact hns ⟨1, by norm_num only⟩
   have hn3 : n = 3 ∨ 3 < n := by
     obtain ⟨k, hk⟩ := hn
-    omega
+    by_cases hk0 : k = 0
+    · subst k
+      norm_num only [mul_zero, add_zero] at hk
+      exact False.elim (hn1 hk)
+    have hkpos : 0 < k := Nat.pos_of_ne_zero hk0
+    rcases Nat.eq_or_lt_of_le hkpos with hkeq | hkgt
+    · subst k
+      left
+      norm_num only at hk ⊢
+      exact hk
+    · right
+      nlinarith only [hk, hkgt]
   rcases hn3 with rfl | hn3
   · exact ⟨5, Nat.prime_five, by decide, Internal.jacobiSym_three_five_eq_neg_one⟩
   · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ := oddNonsquareHasSmallerNegOneWitness hn hn3 hns

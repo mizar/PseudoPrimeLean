@@ -22,7 +22,7 @@ theorem re_sum_riemannZetaReciprocalZeroContribution_ge_of_riemannHypothesis
     -riemannReciprocalTrivialZeroSeries x - 2 * riemannZeroMass / Real.sqrt x ≤
       (∑ ρ ∈ S, riemannZetaReciprocalZeroContribution x ρ).re := by
   classical
-  have hxpos : 0 < x := by linarith
+  have hxpos : 0 < x := lt_trans zero_lt_one hx
   have hxsqrtpos : 0 < Real.sqrt x := Real.sqrt_pos.mpr hxpos
   set St := S.filter (fun ρ => ρ.re < 0) with hSt_def
   set Sn := S.filter (fun ρ => ¬ρ.re < 0) with hSn_def
@@ -59,7 +59,7 @@ theorem re_sum_riemannZetaReciprocalZeroContribution_ge_of_riemannHypothesis
       rw [riemannZetaReciprocalZeroContribution_neg_two_mul_nat_add_one hxpos, Complex.neg_re,
         Complex.ofReal_re]
     rw [Finset.sum_congr rfl heq, Finset.sum_neg_distrib]
-    linarith [sum_reciprocalTrivialZeroTerm_le hx St hStriv]
+    linarith only [sum_reciprocalTrivialZeroTerm_le hx St hStriv]
   have hnontriv :
     -(2 * riemannZeroMass / Real.sqrt x) ≤
       (∑ ρ ∈ Sn, riemannZetaReciprocalZeroContribution x ρ).re := by
@@ -73,7 +73,7 @@ theorem re_sum_riemannZetaReciprocalZeroContribution_ge_of_riemannHypothesis
       have h2 := abs_le.mp h1
       rw [norm_riemannZetaReciprocalZeroContribution_of_rh hRH hxpos (hSnz ρ hρ).1
           (hSnz ρ hρ).2] at h2
-      linarith [h2.1]
+      exact h2.1
     have hsum_bound :
       -(∑ ρ ∈ Sn, (riemannZetaZeroMultiplicity ρ : ℝ) / (Real.sqrt x * Complex.normSq ρ)) ≤
         ∑ ρ ∈ Sn, (riemannZetaReciprocalZeroContribution x ρ).re := by
@@ -99,7 +99,7 @@ theorem re_sum_riemannZetaReciprocalZeroContribution_ge_of_riemannHypothesis
       apply Finset.sum_congr rfl
       intro ρ hρ
       rw [← hxieq ρ hρ]
-      field_simp
+      field_simp [hxsqrtpos.ne']
     rw [hsum_eq]
     have hle_tsum :
       (∑ ρ ∈ Sn,
@@ -115,8 +115,8 @@ theorem re_sum_riemannZetaReciprocalZeroContribution_ge_of_riemannHypothesis
     have hmul := mul_le_mul_of_nonneg_left hle_tsum hinv_nonneg
     have heq2 :
       (2 : ℝ) * riemannZeroMass / Real.sqrt x = (Real.sqrt x)⁻¹ * (2 * riemannZeroMass) := by ring
-    linarith [hmul, heq2]
-  linarith [htriv, hnontriv]
+    linarith only [hmul, heq2]
+  linarith only [htriv, hnontriv]
 
 /-- Under RH, combine the closed-form residues at zero and one with the finite
 zero-contribution bound to obtain the reciprocal residue-ledger lower bound. -/
@@ -127,7 +127,7 @@ theorem re_riemannZetaReciprocalContourResidueLedger_unifiedTau_ge_of_riemannHyp
         2 * RiemannXi.riemannZeroMass / Real.sqrt x ≤
       (riemannZetaReciprocalContourResidueLedger x (unifiedRectangleLower m)
           (unifiedTauRectangleUpper τ m)).re := by
-  have hxpos : 0 < x := by linarith
+  have hxpos : 0 < x := lt_trans zero_lt_one hx
   rw [riemannZetaReciprocalContourResidueLedger_unifiedTau_eq hτ, Complex.add_re, Complex.add_re,
     riemannZetaReciprocalResidueAtZero_eq, riemannZetaReciprocalResidueAtOne_eq hxpos]
   have hre0 : (Complex.log (2 * (Real.pi : ℂ)) * (x : ℂ)⁻¹).re = Real.log (2 * Real.pi) / x := by
@@ -149,7 +149,7 @@ theorem re_riemannZetaReciprocalContourResidueLedger_unifiedTau_ge_of_riemannHyp
     re_sum_riemannZetaReciprocalZeroContribution_ge_of_riemannHypothesis hRH hx
       (riemannZetaZerosInAnyRectangle (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m))
       (fun ρ hρ => (mem_riemannZetaZerosInAnyRectangle_iff.mp hρ).2)
-  linarith [hzero_ledger]
+  linarith only [hzero_ledger]
 
 /-- **The `τ = 2` case of the vertical-integral lower bound, under RH.** Combines the finite
 ledger bound with `RiemannZeta.tendsto_riemannZetaReciprocalContourResidueLedger_atTop` via

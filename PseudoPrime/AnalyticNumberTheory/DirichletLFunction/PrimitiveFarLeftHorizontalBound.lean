@@ -52,12 +52,13 @@ theorem norm_dirichletReciprocalContourKernel_farLeft_le {N : ℕ} [NeZero N]
     simp only [hs_def, Complex.sub_im, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
       Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add,
       Complex.one_im, sub_zero]
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := lt_of_lt_of_le zero_lt_one hx
   have hxs : ‖(x : ℂ) ^ (s - 1)‖ = x ^ (σ - 1) := by
     rw [Complex.norm_cpow_eq_rpow_re_of_pos hxpos, Complex.sub_re, hsre, Complex.one_re]
   have hxσpos : (0 : ℝ) < x ^ (σ - 1) := Real.rpow_pos_of_pos hxpos (σ - 1)
   have hxσ_le : x ^ (σ - 1) ≤ 1 := by
-    have h1 : x ^ (σ - 1) ≤ x ^ (0 : ℝ) := Real.rpow_le_rpow_of_exponent_le hx (by linarith)
+    have h1 : x ^ (σ - 1) ≤ x ^ (0 : ℝ) :=
+      Real.rpow_le_rpow_of_exponent_le hx (by linarith only [hσ])
     rwa [Real.rpow_zero] at h1
   have htabs_pos : (0 : ℝ) < |T| := abs_pos.mpr hT
   have hsnorm_ge : |T| ≤ ‖s‖ := by
@@ -133,7 +134,7 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
               μ k := by
   have hAab : -(A : ℝ) - 1 / 2 ≤ -2 := by
     have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
-    linarith
+    linarith only [hA']
   obtain ⟨D, hDnonneg, hD⟩ :=
     exists_norm_logDeriv_dirichletLFunction_farLeft_le A hprimitive hne hquad
   set T : ℕ → ℝ := primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad with hT_def
@@ -147,23 +148,27 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
       tendsto_const_nhds.div_atTop hT_tendsto
     have hupper : ∀ᶠ k : ℕ in Filter.atTop, η k ≤ 2 * D / T k := by
       filter_upwards [hT_tendsto.eventually_ge_atTop (1 : ℝ)] with k hk
-      have hTk_pos : 0 < T k := by linarith
+      have hTk_pos : 0 < T k := lt_of_lt_of_le zero_lt_one hk
       rw [hη_def, div_le_div_iff₀ (by positivity) hTk_pos]
-      have h1 : D * (T k + 1) ≤ D * (2 * T k) := by nlinarith [hDnonneg, hk]
-      nlinarith [h1]
+      have h1 : D * (T k + 1) ≤ D * (2 * T k) := by nlinarith only [hDnonneg, hk]
+      calc
+        D * (T k + 1) * T k ≤ D * (2 * T k) * T k :=
+          mul_le_mul_of_nonneg_right h1 (le_of_lt hTk_pos)
+        _ = 2 * D * T k ^ 2 := by ring
     have hlower : ∀ᶠ k : ℕ in Filter.atTop, (0 : ℝ) ≤ η k := by
       filter_upwards [hT_tendsto.eventually_gt_atTop (0 : ℝ)] with k hk
-      exact div_nonneg (mul_nonneg hDnonneg (by linarith)) (by positivity)
+      exact
+        div_nonneg (mul_nonneg hDnonneg (add_nonneg (le_of_lt hk) zero_le_one)) (sq_nonneg (T k))
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds h2D_tendsto hlower hupper
   refine ⟨μ, by simpa only [hμ_def, zero_mul] using hη_tendsto.mul_const L, fun k => ⟨?_, ?_⟩⟩
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
       rw [hT_def]
-      linarith
-    have hTk_pos : (0 : ℝ) < T k := by linarith
+      linarith only [h, hk0]
+    have hTk_pos : (0 : ℝ) < T k := lt_of_lt_of_le zero_lt_one hTk_ge1
     have hTksq_pos : (0 : ℝ) < (T k) ^ 2 := by positivity
-    have hTk_ne : T k ≠ 0 := by linarith
+    have hTk_ne : T k ≠ 0 := ne_of_gt hTk_pos
     have hbound :=
       intervalIntegral.norm_integral_le_of_norm_le_const (a := (-(A : ℝ) - 1 / 2)) (b := -2) (f :=
         fun σ : ℝ => dirichletReciprocalContourKernel x χ ((σ : ℂ) + T k * Complex.I)) (C := η k)
@@ -188,10 +193,10 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
       have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
       rw [hT_def]
-      linarith
-    have hTk_pos : (0 : ℝ) < T k := by linarith
+      linarith only [h, hk0]
+    have hTk_pos : (0 : ℝ) < T k := lt_of_lt_of_le zero_lt_one hTk_ge1
     have hTksq_pos : (0 : ℝ) < (T k) ^ 2 := by positivity
-    have hTk_ne : T k ≠ 0 := by linarith
+    have hTk_ne : T k ≠ 0 := ne_of_gt hTk_pos
     have hform :
       ∀ σ : ℝ, (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I :=
       fun σ => by
@@ -287,7 +292,7 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
               μ k := by
   have hAab : -(A : ℝ) - 1 / 2 ≤ -2 := by
     have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
-    linarith
+    linarith only [hA']
   obtain ⟨D, hDnonneg, hD⟩ :=
     exists_norm_logDeriv_dirichletLFunction_farLeft_le_general A hprimitive hne hinv
   set T : ℕ → ℝ := primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv with hT_def
@@ -301,23 +306,27 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
       tendsto_const_nhds.div_atTop hT_tendsto
     have hupper : ∀ᶠ k : ℕ in Filter.atTop, η k ≤ 2 * D / T k := by
       filter_upwards [hT_tendsto.eventually_ge_atTop (1 : ℝ)] with k hk
-      have hTk_pos : 0 < T k := by linarith
+      have hTk_pos : 0 < T k := lt_of_lt_of_le zero_lt_one hk
       rw [hη_def, div_le_div_iff₀ (by positivity) hTk_pos]
-      have h1 : D * (T k + 1) ≤ D * (2 * T k) := by nlinarith [hDnonneg, hk]
-      nlinarith [h1]
+      have h1 : D * (T k + 1) ≤ D * (2 * T k) := by nlinarith only [hDnonneg, hk]
+      calc
+        D * (T k + 1) * T k ≤ D * (2 * T k) * T k :=
+          mul_le_mul_of_nonneg_right h1 (le_of_lt hTk_pos)
+        _ = 2 * D * T k ^ 2 := by ring
     have hlower : ∀ᶠ k : ℕ in Filter.atTop, (0 : ℝ) ≤ η k := by
       filter_upwards [hT_tendsto.eventually_gt_atTop (0 : ℝ)] with k hk
-      exact div_nonneg (mul_nonneg hDnonneg (by linarith)) (by positivity)
+      exact
+        div_nonneg (mul_nonneg hDnonneg (add_nonneg (le_of_lt hk) zero_le_one)) (sq_nonneg (T k))
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds h2D_tendsto hlower hupper
   refine ⟨μ, by simpa only [hμ_def, zero_mul] using hη_tendsto.mul_const L, fun k => ⟨?_, ?_⟩⟩
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
       rw [hT_def]
-      linarith
-    have hTk_pos : (0 : ℝ) < T k := by linarith
+      linarith only [h, hk0]
+    have hTk_pos : (0 : ℝ) < T k := lt_of_lt_of_le zero_lt_one hTk_ge1
     have hTksq_pos : (0 : ℝ) < (T k) ^ 2 := by positivity
-    have hTk_ne : T k ≠ 0 := by linarith
+    have hTk_ne : T k ≠ 0 := ne_of_gt hTk_pos
     have hbound :=
       intervalIntegral.norm_integral_le_of_norm_le_const (a := (-(A : ℝ) - 1 / 2)) (b := -2) (f :=
         fun σ : ℝ => dirichletReciprocalContourKernel x χ ((σ : ℂ) + T k * Complex.I)) (C := η k)
@@ -342,10 +351,10 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
       have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
       rw [hT_def]
-      linarith
-    have hTk_pos : (0 : ℝ) < T k := by linarith
+      linarith only [h, hk0]
+    have hTk_pos : (0 : ℝ) < T k := lt_of_lt_of_le zero_lt_one hTk_ge1
     have hTksq_pos : (0 : ℝ) < (T k) ^ 2 := by positivity
-    have hTk_ne : T k ≠ 0 := by linarith
+    have hTk_ne : T k ≠ 0 := ne_of_gt hTk_pos
     have hform :
       ∀ σ : ℝ, (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I :=
       fun σ => by

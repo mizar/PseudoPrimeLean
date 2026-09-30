@@ -97,7 +97,7 @@ theorem primeFactorLogSum_le_card_mul_log_two {n : ℕ} :
               exact_mod_cast hpprime.pos)
             (by
               change 0 < (2 : ℝ) ^ (p - 1)
-              positivity)
+              exact pow_pos (by norm_num only : (0 : ℝ) < 2) _)
             hpowp'
       rw [Real.log_pow] at hlogp
       rw [Nat.cast_sub hpone] at hlogp

@@ -2,6 +2,7 @@ import PseudoPrime.PrimeTest.Decision
 import PseudoPrime.PrimeTest.MillerRabin.Prime
 
 /-! # Certified one-sided MillerRabin decisions -/
+
 namespace PseudoPrime.PrimeTest
 
 /-- Refute primality using Miller-Rabin only when the supplied base is coprime to n.

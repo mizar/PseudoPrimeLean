@@ -45,7 +45,7 @@ theorem logTwo_lt_logTwoUpper : Real.log 2 < logTwoUpper := by
 for the power-of-two domain check. -/
 theorem exp_exp_one_lt_sixteen : Real.exp (Real.exp 1) < 16 := by
   have h1 : Real.exp 1 < 2.7182818286 := Real.exp_one_lt_d9
-  have h2 : (2.7182818286 : ℝ) < 4 * Real.log 2 := by nlinarith [Real.log_two_gt_d9]
+  have h2 : (2.7182818286 : ℝ) < 4 * Real.log 2 := by nlinarith only [Real.log_two_gt_d9]
   have h3 : Real.exp (Real.exp 1) < Real.exp (4 * Real.log 2) := Real.exp_lt_exp.mpr (h1.trans h2)
   have h4 : Real.exp ((4 : ℝ) * Real.log 2) = 16 := by
     have hpow : (4 : ℝ) * Real.log 2 = Real.log (2 ^ 4) := by
@@ -71,13 +71,20 @@ This bound is rational when `u` is rational. -/
 theorem log_le_powTwo_tangent {u : ℝ} (hu : 0 < u) (k : ℕ) :
     Real.log u ≤ (k : ℝ) * logTwoUpper + u / 2 ^ k - 1 := by
   have hueq : u = (2 : ℝ) ^ k * (u / 2 ^ k) := by
-    field_simp (discharger := exact pow_ne_zero k (by norm_num only : (2 : ℝ) ≠ 0))
+    have hpow : (2 : ℝ) ^ k ≠ 0 := pow_ne_zero k (by norm_num only)
+    calc
+      u = u * (((2 : ℝ) ^ k)⁻¹ * (2 : ℝ) ^ k) := by rw [inv_mul_cancel₀ hpow, mul_one]
+      _ = (2 : ℝ) ^ k * (u * ((2 : ℝ) ^ k)⁻¹) := by ring
+      _ = (2 : ℝ) ^ k * (u / 2 ^ k) := by rw [div_eq_mul_inv]
   have hlogu : Real.log u = (k : ℝ) * Real.log 2 + Real.log (u / 2 ^ k) := by
     conv_lhs => rw [hueq]
-    rw [Real.log_mul (by positivity) (by positivity), Real.log_pow]
-  have htangent : Real.log (u / 2 ^ k) ≤ u / 2 ^ k - 1 := Real.log_le_sub_one_of_pos (by positivity)
+    rw [Real.log_mul (pow_ne_zero k (by norm_num only))
+        (div_ne_zero hu.ne' (pow_ne_zero k (by norm_num only))),
+      Real.log_pow]
+  have htangent : Real.log (u / 2 ^ k) ≤ u / 2 ^ k - 1 :=
+    Real.log_le_sub_one_of_pos (div_pos hu (pow_pos (by norm_num only) k))
   have hklog : (k : ℝ) * Real.log 2 ≤ (k : ℝ) * logTwoUpper :=
-    mul_le_mul_of_nonneg_left logTwo_lt_logTwoUpper.le (by positivity)
+    mul_le_mul_of_nonneg_left logTwo_lt_logTwoUpper.le (Nat.cast_nonneg k)
   linarith only [hlogu, htangent, hklog]
 
 end ElementaryOmegaPowTwoBridgeInternal
@@ -116,7 +123,7 @@ theorem certificate_of_powTwo_le_anchor {m e k : ℕ} (he4 : 4 ≤ e)
   have hdom : Real.exp (Real.exp 1) ≤ (2 : ℝ) ^ e :=
     ElementaryOmegaPowTwoBridgeInternal.exp_exp_one_le_two_pow he4
   have hmono := elementaryOmegaRhsReal_mono hdom he
-  have hepos : (0 : ℝ) < (e : ℝ) := by exact_mod_cast (by omega : 0 < e)
+  have hepos : (0 : ℝ) < (e : ℝ) := by exact_mod_cast (Nat.lt_of_lt_of_le (by decide : 0 < 4) he4)
   have hlog2e :
     (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower ≤ Real.log ((2 : ℝ) ^ e) := by
     rw [Real.log_pow]
@@ -164,7 +171,7 @@ theorem certificate_of_powTwo_le_anchor {m e k : ℕ} (he4 : 4 ≤ e)
             ((k : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
                 (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper / 2 ^ k -
               1) :=
-        mul_le_mul_of_nonneg_left hLLupper (by positivity)
+        mul_le_mul_of_nonneg_left hLLupper (Nat.cast_nonneg (m + 1))
       _ ≤ elementaryOmegaConstant * ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower) :=
         hnum
       _ ≤ elementaryOmegaConstant * Real.log ((2 : ℝ) ^ e) :=

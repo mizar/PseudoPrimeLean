@@ -55,8 +55,13 @@ theorem riemannXi_eq {s : ℂ} (hs : s ≠ 1) :
     riemannXi s = (1 / 2 : ℂ) * (s - 1) * (s * completedRiemannZeta₀ s - 1 - s / (1 - s)) := by
   unfold riemannXi
   have h1s : (1 - s) ≠ 0 := sub_ne_zero.mpr (Ne.symm hs)
-  field_simp (discharger := first | exact h1s | exact (by norm_num only : (2 : ℂ) ≠ 0))
-  ring
+  have hcancel : (1 - s) * (s / (1 - s)) = s := by
+    rw [div_eq_mul_inv, mul_comm s, ← mul_assoc, mul_inv_cancel₀ h1s, one_mul]
+  have hprod : (s - 1) * (s / (1 - s)) = -s := by
+    calc
+      (s - 1) * (s / (1 - s)) = -(1 - s) * (s / (1 - s)) := by ring
+      _ = -s := by rw [neg_mul, hcancel]
+  linear_combination (1 / 2 : ℂ) * hprod
 
 /-- The denominator from `riemannZeta_eq_mul_completedRiemannZeta₀` is nonzero away from the
 trivial-zero locations `s = -2(n+1)`. -/

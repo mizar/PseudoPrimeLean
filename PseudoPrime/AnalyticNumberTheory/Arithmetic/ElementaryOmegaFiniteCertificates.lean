@@ -49,7 +49,7 @@ private theorem certificate_rational_of_nat {m e k : ℕ}
     Nat.cast_one]
   apply (mul_le_mul_iff_right₀ (show (0 : ℝ) < 2 ^ k by positivity)).mp
   have hp : (2 : ℝ) ^ k ≠ 0 := by positivity
-  field_simp
+  field_simp [hp]
   nlinarith only [hR]
 
 theorem elementaryCertificate_at_1 :

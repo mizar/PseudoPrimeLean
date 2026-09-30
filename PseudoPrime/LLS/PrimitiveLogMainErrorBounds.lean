@@ -40,22 +40,21 @@ theorem llsPrimitiveLogOddMainError_le_neg_eleven_fourths {x : ℝ} (hx : 64 ≤
   have hγ := Analysis.twenty_seven_fiftieths_lt_eulerMascheroniConstant
   have hpi := Real.pi_lt_d4
   have hpinn : (0 : ℝ) ≤ Real.pi := Real.pi_pos.le
-  have hpisq : Real.pi ^ 2 ≤ (3.1416 : ℝ) ^ 2 := by nlinarith
-  have hlogx_pos : (0 : ℝ) ≤ 6 * Real.log 2 := by linarith
+  have hpisq : Real.pi ^ 2 ≤ (3.1416 : ℝ) ^ 2 := by nlinarith only [hpi, hpinn]
   have hterm1 :
     (963 / 1000 : ℝ) * (4158 / 1000) ≤
       (Real.log 2 + Real.eulerMascheroniConstant / 2) * Real.log x := by
-    have hcoef : (963 / 1000 : ℝ) ≤ Real.log 2 + Real.eulerMascheroniConstant / 2 := by linarith
-    have hxbound : (4158 / 1000 : ℝ) ≤ Real.log x := by linarith
-    have hcoef_nn : (0 : ℝ) ≤ (963 / 1000 : ℝ) := by norm_num only
+    have hcoef : (963 / 1000 : ℝ) ≤ Real.log 2 + Real.eulerMascheroniConstant / 2 := by
+      linarith only [hlog2, hγ]
+    have hxbound : (4158 / 1000 : ℝ) ≤ Real.log x := by linarith only [hlogx, hlog2]
     calc
       (963 / 1000 : ℝ) * (4158 / 1000) ≤
           (Real.log 2 + Real.eulerMascheroniConstant / 2) * (4158 / 1000) :=
         mul_le_mul_of_nonneg_right hcoef (by norm_num only)
       _ ≤ (Real.log 2 + Real.eulerMascheroniConstant / 2) * Real.log x :=
-        mul_le_mul_of_nonneg_left hxbound (by linarith)
+        mul_le_mul_of_nonneg_left hxbound (le_trans (by norm_num only : (0 : ℝ) ≤ 963 / 1000) hcoef)
   unfold Analysis.primitiveLogOddMainError
-  nlinarith [hpisq, hterm1]
+  nlinarith only [hpisq, hterm1]
 
 /--
 Input/assumptions: `x ≥ 64`.
@@ -72,6 +71,10 @@ theorem llsPrimitiveLogEvenMainError_le_neg_eleven_fourths {x : ℝ} (hx : 64 �
     Analysis.six_mul_log_two_le_log_of_sixty_four_le hx
   have hlog2 := Real.log_two_gt_d9
   have hγ := Real.one_half_lt_eulerMascheroniConstant
+  have hγpos : 0 < Real.eulerMascheroniConstant := (by norm_num only : (0 : ℝ) < 1 / 2).trans hγ
+  have hγhalf_nonneg : 0 ≤ Real.eulerMascheroniConstant / 2 :=
+    div_nonneg hγpos.le (by norm_num only)
+  have hγquarter : (1 / 4 : ℝ) ≤ Real.eulerMascheroniConstant / 2 := by nlinarith only [hγ]
   have hpi := Real.pi_lt_four
   have hpinn : (0 : ℝ) ≤ Real.pi := Real.pi_pos.le
   have hpisq : Real.pi ^ 2 ≤ (4 : ℝ) ^ 2 := by nlinarith only [hpi, hpinn]
@@ -81,9 +84,9 @@ theorem llsPrimitiveLogEvenMainError_le_neg_eleven_fourths {x : ℝ} (hx : 64 �
     have h1 : (1 / 4 : ℝ) * 4 ≤ (Real.eulerMascheroniConstant / 2) * Real.log x := by
       calc
         (1 / 4 : ℝ) * 4 ≤ (Real.eulerMascheroniConstant / 2) * 4 :=
-          mul_le_mul_of_nonneg_right (by linarith) (by norm_num only)
+          mul_le_mul_of_nonneg_right hγquarter (by norm_num only)
         _ ≤ (Real.eulerMascheroniConstant / 2) * Real.log x :=
-          mul_le_mul_of_nonneg_left hlogx4 (by linarith)
+          mul_le_mul_of_nonneg_left hlogx4 hγhalf_nonneg
     linarith only [h1]
   have hterm2 : (8 : ℝ) ≤ (1 / 2) * Real.log x ^ 2 := by
     have h1 : (4 : ℝ) * 4 ≤ Real.log x * Real.log x := by nlinarith only [hlogx4]

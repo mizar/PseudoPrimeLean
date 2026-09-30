@@ -65,7 +65,7 @@ theorem logDeriv_dirichletLFunction_reflection_leftVertical_isQuadratic {N : ℕ
   have hs1re : (1 : ℝ) ≤ (1 - s).re := by
     have h1 : (1 - s).re = 1 - s.re := by simp only [Complex.sub_re, Complex.one_re]
     rw [h1, hsre]
-    linarith
+    linarith only [hA']
   have hFsne := completedLFunction_ne_zero_farLeft_of_isQuadratic hprimitive hne hquad hs1re
   have hF1sne := completedLFunction_ne_zero_of_one_le_re hne hs1re
   have hFE :=
@@ -145,7 +145,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le {N : ℕ} [NeZ
   set D : ℝ := ‖Complex.log (N : ℂ)‖ + M3 + CΓ + 5 with hD_def
   have hDnn : 0 ≤ D := by
     have h1 := norm_nonneg (Complex.log (N : ℂ))
-    linarith
+    linarith only [h1, hM3nn, hCΓnn]
   refine ⟨D, hDnn, fun A hA t => ?_⟩
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
   set s : ℂ := ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I with hs_def
@@ -161,15 +161,15 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le {N : ℕ} [NeZ
   have hs1re3 : (3 : ℝ) ≤ (1 - s).re := by
     have h1 : (1 - s).re = 1 - s.re := by simp only [Complex.sub_re, Complex.one_re]
     rw [h1, hsre]
-    linarith
+    linarith only [hA']
   have hLone := norm_logDeriv_dirichletLFunction_le_of_three_le_re χ hs1re3
   have hgam := hCΓ A hA χ t
   rw [← hs_def] at hgam
-  have htnn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith [abs_nonneg t])
+  have htnn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith only [abs_nonneg t])
   have hEA1 : (1 : ℝ) ≤ ((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2) := by
     calc
-      (1 : ℝ) ≤ ((A : ℝ) + 5) ^ 2 + 1 := by linarith [sq_nonneg ((A : ℝ) + 5)]
-      _ ≤ ((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2) := by linarith
+      (1 : ℝ) ≤ ((A : ℝ) + 5) ^ 2 + 1 := by linarith only [sq_nonneg ((A : ℝ) + 5)]
+      _ ≤ ((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2) := by linarith only [htnn]
   have htri :
     ‖logDeriv (DirichletCharacter.LFunction χ) s‖ ≤
       ‖Complex.log (N : ℂ)‖ + ‖logDeriv (DirichletCharacter.LFunction χ) (1 - s)‖ +
@@ -223,7 +223,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le {N : ℕ} [NeZ
             ‖logDeriv (DirichletCharacter.gammaFactor χ) (1 - s)‖ ≤
           CΓ * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) :=
         hgam
-      linarith [hLone, hgam']
+      linarith only [hLone, hgam']
     _ ≤ D * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) := by
       rw [hD_def]
       have hBnn : (0 : ℝ) ≤ ((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2) :=
@@ -251,7 +251,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le {N : ℕ} [NeZ
         _ ≤ (‖Complex.log (N : ℂ)‖ + M3 + CΓ + 5) * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) :=
           by
           apply mul_le_mul_of_nonneg_right _ hBnn
-          linarith
+          linarith only [hDnn]
 
 theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
@@ -270,7 +270,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
   set D : ℝ := ‖Complex.log (N : ℂ)‖ + M3 + CΓ + 5
   have hDnn : 0 ≤ D := by
     have h1 := norm_nonneg (Complex.log (N : ℂ))
-    linarith
+    linarith only [h1, hM3nn, hCΓnn]
   refine ⟨D, hDnn, fun A hA t => ?_⟩
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
   set s : ℂ := ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I
@@ -287,14 +287,14 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
   have h1sre : (3 : ℝ) ≤ (1 - s).re := by
     have h1 : (1 - s).re = 1 - s.re := by simp only [Complex.sub_re, Complex.one_re]
     rw [h1, hsre]
-    linarith
+    linarith only [hA']
   have hLone := norm_logDeriv_dirichletLFunction_le_of_three_le_re χ⁻¹ h1sre
   have hgam := hCΓ A hA χ t
-  have htnn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith [abs_nonneg t])
+  have htnn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith only [abs_nonneg t])
   have hEA1 : (1 : ℝ) ≤ ((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2) := by
     calc
-      (1 : ℝ) ≤ ((A : ℝ) + 5) ^ 2 + 1 := by linarith [sq_nonneg ((A : ℝ) + 5)]
-      _ ≤ ((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2) := by linarith
+      (1 : ℝ) ≤ ((A : ℝ) + 5) ^ 2 + 1 := by linarith only [sq_nonneg ((A : ℝ) + 5)]
+      _ ≤ ((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2) := by linarith only [htnn]
   have htri :
     ‖logDeriv (DirichletCharacter.LFunction χ) s‖ ≤
       ‖Complex.log (N : ℂ)‖ + ‖logDeriv (DirichletCharacter.LFunction χ⁻¹) (1 - s)‖ +
@@ -328,12 +328,12 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
           (‖-Complex.log (N : ℂ) - logDeriv (DirichletCharacter.LFunction χ⁻¹) (1 - s)‖ +
               ‖logDeriv (DirichletCharacter.gammaFactor χ⁻¹) (1 - s)‖) +
             ‖logDeriv (DirichletCharacter.gammaFactor χ) s‖ :=
-        by nlinarith [hAB]
+        by nlinarith only [hAB]
       _ ≤
           ((‖-Complex.log (N : ℂ)‖ + ‖logDeriv (DirichletCharacter.LFunction χ⁻¹) (1 - s)‖) +
               ‖logDeriv (DirichletCharacter.gammaFactor χ⁻¹) (1 - s)‖) +
             ‖logDeriv (DirichletCharacter.gammaFactor χ) s‖ :=
-        by nlinarith [hA]
+        by nlinarith only [hA]
       _ = _ := by rw [norm_neg]
   calc
     ‖logDeriv (DirichletCharacter.LFunction χ) s‖ ≤
@@ -357,7 +357,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
           rw [hgf]
         rw [hld]
         simpa only [add_comm, add_assoc, s] using hgam'
-      linarith [hLone, hgam'']
+      linarith only [hLone, hgam'']
     _ ≤ D * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) := by
       dsimp only [D]
       have hBnn : (0 : ℝ) ≤ ((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2) :=
@@ -385,6 +385,6 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
         _ ≤ (‖Complex.log (N : ℂ)‖ + M3 + CΓ + 5) * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) :=
           by
           apply mul_le_mul_of_nonneg_right _ hBnn
-          linarith
+          linarith only [hDnn]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

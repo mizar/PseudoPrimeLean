@@ -18,10 +18,10 @@ noncomputable def riemannReciprocalTrivialZeroSeries (x : ℝ) : ℝ :=
 /-- The reciprocal trivial-zero series is bounded by an explicit geometric tail. -/
 theorem riemannReciprocalTrivialZeroSeries_le_geometric {x : ℝ} (hx : 2 ≤ x) :
     riemannReciprocalTrivialZeroSeries x ≤ x⁻¹ ^ 3 / 6 * (1 - x⁻¹ ^ 2)⁻¹ := by
-  have hxpos : 0 < x := by linarith
+  have hxpos : 0 < x := lt_of_lt_of_le (by norm_num only) hx
   have hinv : 0 ≤ x⁻¹ := inv_nonneg.mpr hxpos.le
   have hinvle : x⁻¹ ≤ (2 : ℝ)⁻¹ := (inv_le_inv₀ hxpos (by norm_num only)).2 hx
-  have hratio : x⁻¹ ^ 2 < 1 := by nlinarith [sq_nonneg (x⁻¹ - (2 : ℝ)⁻¹)]
+  have hratio : x⁻¹ ^ 2 < 1 := by nlinarith only [hinv, hinvle]
   have hgeom : Summable fun k : ℕ ↦ (x⁻¹ ^ 2) ^ k :=
     summable_geometric_of_lt_one (pow_nonneg hinv 2) hratio
   have hmajor : Summable fun k : ℕ ↦ x⁻¹ ^ 3 / 6 * (x⁻¹ ^ 2) ^ k := hgeom.mul_left (x⁻¹ ^ 3 / 6)
@@ -42,11 +42,11 @@ theorem riemannReciprocalTrivialZeroSeries_le_geometric {x : ℝ} (hx : 2 ≤ x)
 /-- The reciprocal trivial-zero summand sequence is summable for every `x > 1`. -/
 theorem summable_reciprocalTrivialZeroTerm_of_one_lt {x : ℝ} (hx : 1 < x) :
     Summable fun k : ℕ => x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1)) := by
-  have hxpos : 0 < x := by linarith
+  have hxpos : 0 < x := lt_trans (by norm_num only) hx
   have hinv : 0 ≤ x⁻¹ := inv_nonneg.mpr hxpos.le
   have hratio : x⁻¹ ^ 2 < 1 := by
     have h1 : x⁻¹ < 1 := inv_lt_one_iff₀.mpr (Or.inr hx)
-    nlinarith [hinv, h1]
+    nlinarith only [hinv, h1]
   have hgeom : Summable fun k : ℕ => (x⁻¹ ^ 2) ^ k :=
     summable_geometric_of_lt_one (pow_nonneg hinv 2) hratio
   have hmajor : Summable fun k : ℕ => x⁻¹ ^ 3 / 6 * (x⁻¹ ^ 2) ^ k := hgeom.mul_left (x⁻¹ ^ 3 / 6)
@@ -58,7 +58,7 @@ theorem summable_reciprocalTrivialZeroTerm_of_one_lt {x : ℝ} (hx : 1 < x) :
 theorem hasSum_riemannZetaReciprocalZeroContribution_trivialZeros_of_one_lt {x : ℝ} (hx : 1 < x) :
     HasSum (fun k : ℕ => riemannZetaReciprocalZeroContribution x (-2 * ((k : ℂ) + 1)))
       (-(riemannReciprocalTrivialZeroSeries x : ℂ)) := by
-  have hxpos : 0 < x := by linarith
+  have hxpos : 0 < x := lt_trans (by norm_num only) hx
   have hsum :
     HasSum (fun k : ℕ => x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1)))
       (riemannReciprocalTrivialZeroSeries x) :=
@@ -88,7 +88,7 @@ theorem sum_reciprocalTrivialZeroTerm_le {x : ℝ} (hx : 1 < x) (S : Finset ℂ)
     (Finset.sum_image (f := fun k : ℕ =>
         x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1))) hinj).symm
   rw [himg]
-  have hxpos : 0 < x := by linarith
+  have hxpos : 0 < x := lt_trans (by norm_num only) hx
   have hsummable := summable_reciprocalTrivialZeroTerm_of_one_lt hx
   have hle :=
     hsummable.sum_le_tsum (S.image trivialZeroIndex)

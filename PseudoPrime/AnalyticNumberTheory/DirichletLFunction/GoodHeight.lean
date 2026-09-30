@@ -54,7 +54,7 @@ theorem card_primitiveZeroOrdinatesInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
     rw [Set.Finite.mem_toFinset, Function.mem_support] at hu
     have hnonneg : (0 : ℤ) ≤ MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) U u :=
       MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAn u
-    omega
+    exact Int.add_one_le_of_lt (Int.lt_iff_le_and_ne.mpr ⟨hnonneg, Ne.symm hu⟩)
   have hcard1 :
     (hfin.toFinset.card : ℝ) ≤
       Real.log
@@ -159,7 +159,7 @@ theorem exists_primitiveGoodHeight {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : Diri
       Real.log 2 with
     hB_def
   set c : ℝ := n / (4 * (B + 1)) with hc_def
-  have hR2n : (0 : ℝ) < 2 * n := by linarith
+  have hR2n : (0 : ℝ) < 2 * n := by linarith only [hn]
   have hcard_le : ((primitiveZeroOrdinatesInBall χ (2 * n)).card : ℝ) ≤ B := by
     have hraw := card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv hR2n
     rwa [show 2 * (2 * n) = 4 * n from by ring] at hraw
@@ -169,13 +169,14 @@ theorem exists_primitiveGoodHeight {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : Diri
     positivity
   have hc_eq : c * (4 * (B + 1)) = n := by
     rw [hc_def]
-    field_simp
+    field_simp [hc_def]
   have hstep : c * (primitiveZeroOrdinatesInBall χ (2 * n)).card ≤ c * B :=
     mul_le_mul_of_nonneg_left hcard_le hc_pos.le
   have hlenbound : 2 * c * (primitiveZeroOrdinatesInBall χ (2 * n)).card < n := by
-    nlinarith [hstep, hc_pos, hBnonneg, hc_eq]
+    nlinarith only [hstep, hc_pos, hBnonneg, hc_eq]
   obtain ⟨T, hT, hTgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos (show (0 : ℝ) < n by linarith) hlenbound
+    RiemannZeta.exists_avoiding_point_length hc_pos
+      (show (0 : ℝ) < n by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hn) hlenbound
   refine ⟨T, by rwa [show n + n = 2 * n from by ring] at hT, fun ρ hζ hρ => ?_⟩
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) (2 * n) := by
     rw [Metric.mem_closedBall, dist_zero_right]
@@ -225,7 +226,7 @@ theorem exists_primitiveGoodHeightRadius {N : ℕ} [NeZero N] (hN1 : 1 < N)
       Real.log 2 with
     hB_def
   set c : ℝ := n / (4 * (B + 1)) with hc_def
-  have hRmaxpos : (0 : ℝ) < Rmax := by linarith
+  have hRmaxpos : (0 : ℝ) < Rmax := by linarith only [hn, hRmax]
   have hcard_le : ((primitiveZeroOrdinatesInBall χ Rmax).card : ℝ) ≤ B :=
     card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv hRmaxpos
   have hBnonneg : (0 : ℝ) ≤ B := le_trans (Nat.cast_nonneg _) hcard_le
@@ -234,13 +235,14 @@ theorem exists_primitiveGoodHeightRadius {N : ℕ} [NeZero N] (hN1 : 1 < N)
     positivity
   have hc_eq : c * (4 * (B + 1)) = n := by
     rw [hc_def]
-    field_simp
+    field_simp [hc_def]
   have hstep : c * (primitiveZeroOrdinatesInBall χ Rmax).card ≤ c * B :=
     mul_le_mul_of_nonneg_left hcard_le hc_pos.le
   have hlenbound : 2 * c * (primitiveZeroOrdinatesInBall χ Rmax).card < n := by
-    nlinarith [hstep, hc_pos, hBnonneg, hc_eq]
+    nlinarith only [hstep, hc_pos, hBnonneg, hc_eq]
   obtain ⟨T, hT, hTgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos (show (0 : ℝ) < n by linarith) hlenbound
+    RiemannZeta.exists_avoiding_point_length hc_pos
+      (show (0 : ℝ) < n by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hn) hlenbound
   refine ⟨T, by rwa [show n + n = 2 * n from by ring] at hT, fun ρ hζ hρ => ?_⟩
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) Rmax := by
     rw [Metric.mem_closedBall, dist_zero_right]
@@ -289,7 +291,7 @@ theorem card_primitiveZeroOrdinatesInBallSymm_le {N : ℕ} [NeZero N] (hN1 : 1 <
     (((primitiveZeroOrdinatesInBall χ R).image (fun x => -x)).card : ℝ) ≤
       ((primitiveZeroOrdinatesInBall χ R).card : ℝ) := by
     exact_mod_cast Finset.card_image_le
-  linarith [hunion_le, himg_le, hcardR]
+  linarith only [hunion_le, himg_le, hcardR]
 
 /--
 Two-sided analogue of `DirichletLFunction.exists_primitiveGoodHeightRadius`: the same `T ∈ [n, 2n]`
@@ -334,7 +336,7 @@ theorem exists_primitiveGoodHeightRadius_twoSided {N : ℕ} [NeZero N] (hN1 : 1 
       Real.log 2 with
     hB_def
   set c : ℝ := n / (8 * (B + 1)) with hc_def
-  have hRmaxpos : (0 : ℝ) < Rmax := by linarith
+  have hRmaxpos : (0 : ℝ) < Rmax := by linarith only [hn, hRmax]
   have hcard_le : ((primitiveZeroOrdinatesInBallSymm χ Rmax).card : ℝ) ≤ 2 * B :=
     card_primitiveZeroOrdinatesInBallSymm_le hN1 hprimitive hne hinv hRmaxpos
   have hBnonneg : (0 : ℝ) ≤ B :=
@@ -345,13 +347,14 @@ theorem exists_primitiveGoodHeightRadius_twoSided {N : ℕ} [NeZero N] (hN1 : 1 
     positivity
   have hc_eq : c * (8 * (B + 1)) = n := by
     rw [hc_def]
-    field_simp
+    field_simp [hc_def]
   have hstep : c * (primitiveZeroOrdinatesInBallSymm χ Rmax).card ≤ c * (2 * B) :=
     mul_le_mul_of_nonneg_left hcard_le hc_pos.le
   have hlenbound : 2 * c * (primitiveZeroOrdinatesInBallSymm χ Rmax).card < n := by
-    nlinarith [hstep, hc_pos, hBnonneg, hc_eq]
+    nlinarith only [hstep, hc_pos, hBnonneg, hc_eq]
   obtain ⟨T, hT, hTgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos (show (0 : ℝ) < n by linarith) hlenbound
+    RiemannZeta.exists_avoiding_point_length hc_pos
+      (show (0 : ℝ) < n by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hn) hlenbound
   refine ⟨T, by rwa [show n + n = 2 * n from by ring] at hT, fun ρ hζ hρ => ?_⟩
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) Rmax := by
     rw [Metric.mem_closedBall, dist_zero_right]
@@ -417,7 +420,7 @@ theorem card_primitiveZeroNormsInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
     rw [Set.Finite.mem_toFinset, Function.mem_support] at hu
     have hnonneg : (0 : ℤ) ≤ MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) U u :=
       MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAn u
-    omega
+    exact Int.add_one_le_of_lt (Int.lt_iff_le_and_ne.mpr ⟨hnonneg, Ne.symm hu⟩)
   have hcard1 :
     (hfin.toFinset.card : ℝ) ≤
       Real.log
@@ -481,7 +484,7 @@ theorem exists_primitiveGoodRadius {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : Diri
       Real.log 2 with
     hB_def
   set c : ℝ := n / (4 * (B + 1)) with hc_def
-  have hR2n : (0 : ℝ) < 2 * n := by linarith
+  have hR2n : (0 : ℝ) < 2 * n := by linarith only [hn]
   have hcard_le : ((primitiveZeroNormsInBall χ (2 * n)).card : ℝ) ≤ B := by
     have hraw := card_primitiveZeroNormsInBall_le hN1 hprimitive hne hinv hR2n
     rwa [show 2 * (2 * n) = 4 * n from by ring] at hraw
@@ -491,13 +494,14 @@ theorem exists_primitiveGoodRadius {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : Diri
     positivity
   have hc_eq : c * (4 * (B + 1)) = n := by
     rw [hc_def]
-    field_simp
+    field_simp [hc_def]
   have hstep : c * (primitiveZeroNormsInBall χ (2 * n)).card ≤ c * B :=
     mul_le_mul_of_nonneg_left hcard_le hc_pos.le
   have hlenbound : 2 * c * (primitiveZeroNormsInBall χ (2 * n)).card < n := by
-    nlinarith [hstep, hc_pos, hBnonneg, hc_eq]
+    nlinarith only [hstep, hc_pos, hBnonneg, hc_eq]
   obtain ⟨R, hR, hRgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos (show (0 : ℝ) < n by linarith) hlenbound
+    RiemannZeta.exists_avoiding_point_length hc_pos
+      (show (0 : ℝ) < n by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hn) hlenbound
   refine ⟨R, by rwa [show n + n = 2 * n from by ring] at hR, fun ρ hζ hρ => ?_⟩
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) (2 * n) := by
     rw [Metric.mem_closedBall, dist_zero_right]

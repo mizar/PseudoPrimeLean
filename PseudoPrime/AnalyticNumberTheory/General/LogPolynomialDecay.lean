@@ -19,9 +19,13 @@ namespace PseudoPrime.AnalyticNumberTheory.General
 
 /-- `(x + 3) log(x + 3)` is monotone on `x ≥ 0`. -/
 theorem add_three_mul_log_add_three_mono {x y : ℝ} (hx : 0 ≤ x) (hxy : x ≤ y) :
-    (x + 3) * Real.log (x + 3) ≤ (y + 3) * Real.log (y + 3) :=
-  mul_le_mul (by linarith) (Real.log_le_log (by linarith) (by linarith))
-    (Real.log_nonneg (by linarith)) (by linarith)
+    (x + 3) * Real.log (x + 3) ≤ (y + 3) * Real.log (y + 3) := by
+  have hprod : x + 3 ≤ y + 3 := add_le_add hxy le_rfl
+  have hpos : 0 < x + 3 := by linarith only [hx]
+  have hbase_nonneg : 0 ≤ y + 3 := by linarith only [hx, hxy]
+  have hlog : Real.log (x + 3) ≤ Real.log (y + 3) := Real.log_le_log hpos hprod
+  have hlog_nonneg : 0 ≤ Real.log (x + 3) := Real.log_nonneg (by linarith only [hx])
+  exact mul_le_mul hprod hlog hlog_nonneg hbase_nonneg
 
 /-- `log n / n² → 0`. -/
 theorem tendsto_log_div_sq_atTop :
@@ -35,7 +39,7 @@ theorem tendsto_log_div_sq_atTop :
   rw [mul_zero] at hmul
   refine hmul.congr' ?_
   filter_upwards [Filter.eventually_ne_atTop (0 : ℝ)] with n hn
-  field_simp (discharger := exact hn)
+  rw [div_eq_mul_inv, div_eq_mul_inv, ← inv_pow, pow_two, mul_assoc]
 
 /--
 Input/assumptions: a positive constant `K`.
@@ -83,22 +87,25 @@ theorem tendsto_sqrt_mul_add_one_div_sq_atTop (K : ℝ) (hK : 0 < K) :
   have hsq : Filter.Tendsto (fun n : ℝ => (f n) ^ 2) Filter.atTop (nhds 0) := by
     refine hsum.congr' ?_
     filter_upwards [Filter.eventually_ge_atTop (1 : ℝ)] with n hn1
-    have hn0 : (0 : ℝ) < n := by linarith
+    have hn0 : (0 : ℝ) < n := lt_of_lt_of_le zero_lt_one hn1
     have hL : 0 ≤ Real.log n := Real.log_nonneg hn1
-    have hKn : 0 ≤ K * n * Real.log n := by positivity
+    have hKn : 0 ≤ K * n * Real.log n := mul_nonneg (mul_nonneg hK.le hn0.le) hL
     have hne : n ≠ 0 := hn0.ne'
     rw [hf_def]
     dsimp only
     rw [div_pow, mul_pow, Real.sq_sqrt hKn]
-    field_simp (discharger := exact hne)
+    field_simp [hne]
     ring
   have hnonneg : ∀ᶠ n in Filter.atTop, 0 ≤ f n := by
     filter_upwards [Filter.eventually_ge_atTop (1 : ℝ)] with n hn1
     have hL : 0 ≤ Real.log n := Real.log_nonneg hn1
-    have hKn : 0 ≤ K * n * Real.log n := by positivity
+    have hKn : 0 ≤ K * n * Real.log n :=
+      mul_nonneg (mul_nonneg hK.le (le_trans (by norm_num only : (0 : ℝ) ≤ 1) hn1)) hL
     rw [hf_def]
     dsimp only
-    positivity
+    exact
+      div_nonneg (mul_nonneg (Real.sqrt_nonneg _) (add_nonneg hKn (by norm_num only : (0 : ℝ) ≤ 1)))
+        (sq_nonneg n)
   have hsqrt_cont : Filter.Tendsto Real.sqrt (nhds (0 : ℝ)) (nhds 0) := by
     have h := Real.continuous_sqrt.tendsto (0 : ℝ)
     rwa [Real.sqrt_zero] at h

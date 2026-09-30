@@ -2,6 +2,7 @@ import PseudoPrime.PrimeTest.Decision
 import PseudoPrime.PrimeTest.BPSW.Top
 
 /-! # Certified one-sided BPSW decisions -/
+
 namespace PseudoPrime.PrimeTest
 
 /-- Apply the full prechecked test specification; rejection proves non-primality.

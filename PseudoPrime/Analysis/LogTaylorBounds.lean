@@ -31,7 +31,8 @@ theorem log_bounds_of_taylor {N : ℕ} (hN : 0 < N) (j n : ℕ) {x : ℝ} (hx : 
     rw [hx]
     ring
   have hlogeq : Real.log (1 - x) = Real.log N - Real.log ((2 : ℝ) ^ j) := by
-    rw [h1x, Real.log_div (by exact_mod_cast hN.ne') (by positivity)]
+    rw [h1x,
+      Real.log_div (by exact_mod_cast hN.ne') (pow_ne_zero j (by norm_num only : (2 : ℝ) ≠ 0))]
   have hlog2j : Real.log ((2 : ℝ) ^ j) = (j : ℝ) * Real.log 2 := Real.log_pow 2 j
   have hbound := Real.abs_log_sub_add_sum_range_le hx1 n
   rw [abs_le] at hbound
@@ -58,7 +59,7 @@ theorem log_bounds_of_taylor_real {N : ℝ} (hN : 0 < N) (j n : ℕ) {x : ℝ} (
     rw [hx]
     ring
   have hlogeq : Real.log (1 - x) = Real.log N - Real.log ((2 : ℝ) ^ j) := by
-    rw [h1x, Real.log_div hN.ne' (by positivity)]
+    rw [h1x, Real.log_div hN.ne' (pow_ne_zero j (by norm_num only : (2 : ℝ) ≠ 0))]
   have hlog2j : Real.log ((2 : ℝ) ^ j) = (j : ℝ) * Real.log 2 := Real.log_pow 2 j
   have hbound := Real.abs_log_sub_add_sum_range_le hx1 n
   rw [abs_le] at hbound

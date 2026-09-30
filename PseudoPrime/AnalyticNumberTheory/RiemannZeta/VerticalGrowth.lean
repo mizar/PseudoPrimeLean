@@ -94,13 +94,13 @@ theorem continuousOn_sawtoothIBP_deriv {s : ℂ} (n : ℤ) {a : ℝ} (ha : 0 < a
     simp only [Set.mem_Icc] at hy
     exact
       (Complex.continuousAt_ofReal_cpow_const y (-s - 2)
-          (Or.inr (by linarith : y ≠ (0 : ℝ)))).continuousWithinAt
+          (Or.inr (ne_of_gt (lt_of_lt_of_le ha hy.1)))).continuousWithinAt
   have hcpow2 : ContinuousOn (fun y : ℝ => (y : ℂ) ^ (-s - 1)) (Set.Icc a (a + 1)) := by
     intro y hy
     simp only [Set.mem_Icc] at hy
     exact
       (Complex.continuousAt_ofReal_cpow_const y (-s - 1)
-          (Or.inr (by linarith : y ≠ (0 : ℝ)))).continuousWithinAt
+          (Or.inr (ne_of_gt (lt_of_lt_of_le ha hy.1)))).continuousWithinAt
   apply ContinuousOn.add
   · apply ContinuousOn.mul continuousOn_const
     apply ContinuousOn.mul hcpow1
@@ -113,7 +113,7 @@ theorem ae_eq_of_mem_Ico_zetaSawtooth (n : ℤ) (s : ℂ) :
       t ∈ Set.uIoc (n : ℝ) (n + 1) →
         (t : ℂ) ^ (-s - 2) * (((t - n) * (t - n - 1) / 2 : ℝ) : ℂ) =
           (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ) := by
-  rw [Set.uIoc_of_le (by linarith : (n : ℝ) ≤ n + 1)]
+  rw [Set.uIoc_of_le (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1))]
   filter_upwards [(MeasureTheory.Ioo_ae_eq_Ioc (μ := MeasureTheory.volume) (a := (n : ℝ)) (b :=
         n + 1)).mem_iff] with
     t ht₁ ht₂
@@ -126,7 +126,7 @@ theorem ae_eq_of_mem_Ico_fract (n : ℤ) (s : ℂ) :
       t ∈ Set.uIoc (n : ℝ) (n + 1) →
         (t : ℂ) ^ (-s - 1) * ((t - n - 1 / 2 : ℝ) : ℂ) =
           (t : ℂ) ^ (-s - 1) * ((Int.fract t - 1 / 2 : ℝ) : ℂ) := by
-  rw [Set.uIoc_of_le (by linarith : (n : ℝ) ≤ n + 1)]
+  rw [Set.uIoc_of_le (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1))]
   filter_upwards [(MeasureTheory.Ioo_ae_eq_Ioc (μ := MeasureTheory.volume) (a := (n : ℝ)) (b :=
         n + 1)).mem_iff] with
     t ht₁ ht₂
@@ -155,14 +155,14 @@ theorem integral_fract_sub_half_mul_cpow_eq {s : ℂ} (hs : s ≠ -1) (n : ℤ) 
     rfl
   have hderiv : ∀ t ∈ Set.uIcc (n : ℝ) (n + 1), HasDerivAt F (D t) t := by
     intro t ht
-    rw [Set.uIcc_of_le (by linarith)] at ht
+    rw [Set.uIcc_of_le (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1))] at ht
     have ht0 : t ≠ 0 := by
       simp only [Set.mem_Icc] at ht
-      linarith
+      exact ne_of_gt (lt_of_lt_of_le hn1 ht.1)
     exact hasDerivAt_sawtoothIBP hs n ht0
   have hcont : ContinuousOn D (Set.Icc (n : ℝ) (n + 1)) := continuousOn_sawtoothIBP_deriv n hn1
   have hint : IntervalIntegrable D MeasureTheory.volume (n : ℝ) (n + 1) :=
-    hcont.intervalIntegrable_of_Icc (by linarith)
+    hcont.intervalIntegrable_of_Icc (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1))
   have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
   have hFn1 : F (n + 1 : ℝ) = 0 := by
     simp only [hF, Complex.ofReal_div, Complex.ofReal_mul, Complex.ofReal_sub,
@@ -178,24 +178,28 @@ theorem integral_fract_sub_half_mul_cpow_eq {s : ℂ} (hs : s ≠ -1) (n : ℤ) 
   have hint1 :
     IntervalIntegrable (fun t => (t : ℂ) ^ (-s - 2) * (((t - n) * (t - n - 1) / 2 : ℝ) : ℂ))
       MeasureTheory.volume (n : ℝ) (n + 1) := by
-    apply ContinuousOn.intervalIntegrable_of_Icc (by linarith)
+    apply
+      ContinuousOn.intervalIntegrable_of_Icc
+        (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1))
     apply ContinuousOn.mul
     · intro y hy
       simp only [Set.mem_Icc] at hy
       exact
         (Complex.continuousAt_ofReal_cpow_const y (-s - 2)
-            (Or.inr (by linarith : y ≠ (0 : ℝ)))).continuousWithinAt
+            (Or.inr (ne_of_gt (lt_of_lt_of_le hn1 hy.1)))).continuousWithinAt
     · fun_prop
   have hint2 :
     IntervalIntegrable (fun t => (t : ℂ) ^ (-s - 1) * ((t - n - 1 / 2 : ℝ) : ℂ))
       MeasureTheory.volume (n : ℝ) (n + 1) := by
-    apply ContinuousOn.intervalIntegrable_of_Icc (by linarith)
+    apply
+      ContinuousOn.intervalIntegrable_of_Icc
+        (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1))
     apply ContinuousOn.mul
     · intro y hy
       simp only [Set.mem_Icc] at hy
       exact
         (Complex.continuousAt_ofReal_cpow_const y (-s - 1)
-            (Or.inr (by linarith : y ≠ (0 : ℝ)))).continuousWithinAt
+            (Or.inr (ne_of_gt (lt_of_lt_of_le hn1 hy.1)))).continuousWithinAt
     · fun_prop
   have hI1 :
     ∫ t in (n : ℝ)..(n + 1 : ℝ), (t : ℂ) ^ (-s - 2) * (((t - n) * (t - n - 1) / 2 : ℝ) : ℂ) =
@@ -229,13 +233,15 @@ theorem intervalIntegrable_cpow_mul_sawtooth (n : ℤ) (hn : 1 ≤ n) (s : ℂ) 
   have hint1 :
     IntervalIntegrable (fun t => (t : ℂ) ^ (-s - 2) * (((t - n) * (t - n - 1) / 2 : ℝ) : ℂ))
       MeasureTheory.volume (n : ℝ) (n + 1) := by
-    apply ContinuousOn.intervalIntegrable_of_Icc (by linarith)
+    apply
+      ContinuousOn.intervalIntegrable_of_Icc
+        (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1))
     apply ContinuousOn.mul
     · intro y hy
       simp only [Set.mem_Icc] at hy
       exact
         (Complex.continuousAt_ofReal_cpow_const y (-s - 2)
-            (Or.inr (by linarith : y ≠ (0 : ℝ)))).continuousWithinAt
+            (Or.inr (ne_of_gt (lt_of_lt_of_le hn1 hy.1)))).continuousWithinAt
     · fun_prop
   exact
     hint1.congr_ae
@@ -248,13 +254,15 @@ theorem intervalIntegrable_cpow_mul_fract (n : ℤ) (hn : 1 ≤ n) (s : ℂ) :
   have hint2 :
     IntervalIntegrable (fun t => (t : ℂ) ^ (-s - 1) * ((t - n - 1 / 2 : ℝ) : ℂ))
       MeasureTheory.volume (n : ℝ) (n + 1) := by
-    apply ContinuousOn.intervalIntegrable_of_Icc (by linarith)
+    apply
+      ContinuousOn.intervalIntegrable_of_Icc
+        (le_add_of_nonneg_right (by norm_num only : (0 : ℝ) ≤ 1))
     apply ContinuousOn.mul
     · intro y hy
       simp only [Set.mem_Icc] at hy
       exact
         (Complex.continuousAt_ofReal_cpow_const y (-s - 1)
-            (Or.inr (by linarith : y ≠ (0 : ℝ)))).continuousWithinAt
+            (Or.inr (ne_of_gt (lt_of_lt_of_le hn1 hy.1)))).continuousWithinAt
     · fun_prop
   exact
     hint2.congr_ae
@@ -359,14 +367,14 @@ theorem integrableOn_cpow_mul_sawtooth_Ioi {s : ℂ} (hs : -1 < s.re) :
       (Set.Ioi (1 : ℝ)) := by
   have hdom :
     MeasureTheory.IntegrableOn (fun t : ℝ => (1 / 8) * t ^ (-(s.re + 2))) (Set.Ioi (1 : ℝ)) :=
-    (integrableOn_Ioi_rpow_of_lt (by linarith) zero_lt_one).const_mul _
+    (integrableOn_Ioi_rpow_of_lt (by linarith only [hs]) zero_lt_one).const_mul _
   refine MeasureTheory.Integrable.mono' hdom ?_ ?_
   · have hcont : ContinuousOn (fun t : ℝ => (t : ℂ) ^ (-s - 2)) (Set.Ioi (1 : ℝ)) := by
       intro y hy
       simp only [Set.mem_Ioi] at hy
       exact
         (Complex.continuousAt_ofReal_cpow_const y (-s - 2)
-            (Or.inr (by linarith))).continuousWithinAt
+            (Or.inr (ne_of_gt (lt_trans (by norm_num only : (0 : ℝ) < 1) hy)))).continuousWithinAt
     have h1 :
       MeasureTheory.AEStronglyMeasurable (fun t : ℝ => (t : ℂ) ^ (-s - 2))
         (MeasureTheory.volume.restrict (Set.Ioi (1 : ℝ))) :=
@@ -378,14 +386,16 @@ theorem integrableOn_cpow_mul_sawtooth_Ioi {s : ℂ} (hs : -1 < s.re) :
     exact h1.mul h2
   · filter_upwards [MeasureTheory.self_mem_ae_restrict measurableSet_Ioi] with t ht
     simp only [Set.mem_Ioi] at ht
-    rw [norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos (by linarith : (0 : ℝ) < t)]
+    rw [norm_mul,
+      Complex.norm_cpow_eq_rpow_re_of_pos (lt_trans (by norm_num only : (0 : ℝ) < 1) ht)]
     have h1 : (-s - 2).re = -(s.re + 2) := by
       simp only [Complex.sub_re, Complex.neg_re, Complex.re_ofNat, neg_add_rev]
       ring
     rw [h1, Complex.norm_real, Real.norm_eq_abs]
     calc
       t ^ (-(s.re + 2)) * |zetaSawtooth t| ≤ t ^ (-(s.re + 2)) * (1 / 8) :=
-        mul_le_mul_of_nonneg_left (abs_zetaSawtooth_le t) (Real.rpow_nonneg (by linarith) _)
+        mul_le_mul_of_nonneg_left (abs_zetaSawtooth_le t)
+          (Real.rpow_nonneg (lt_trans (by norm_num only : (0 : ℝ) < 1) ht).le _)
       _ = 1 / 8 * t ^ (-(s.re + 2)) := by ring
 
 /-- **Level 2 of the Euler-Maclaurin extension**: the classical `Re s > 0` remainder integral
@@ -487,7 +497,7 @@ theorem not_mem_segment_offLine {a b : ℂ} (hab : a ≠ b) {c : ℂ} (hc : c.im
     have ht1 : t = 1 := by
       rcases mul_eq_zero.mp himt2 with h | h
       · exact absurd h hc
-      · linarith
+      · exact (sub_eq_zero.mp h).symm
     apply hs1
     have hso : (s : ℂ) = 1 := by
       rw [← heq3, ht1]
@@ -510,12 +520,19 @@ theorem re_gt_neg_one_of_mem_segment {a b : ℂ} (ha : -1 < a.re) (hb : -1 < b.r
   rw [hbare] at hqre
   rcases hu01.1.lt_or_eq with hu0 | hu0
   · rcases hu01.2.lt_or_eq with hu1 | hu1
-    · nlinarith only [ha, hb, hqre, hu0, hu1, mul_pos hu0 (by linarith : (0 : ℝ) < b.re + 1),
-        mul_pos (by linarith : (0 : ℝ) < 1 - u) (by linarith : (0 : ℝ) < a.re + 1)]
+    · have hb1 : (0 : ℝ) < b.re + 1 := by
+        have h01 : (0 : ℝ) < 1 := by norm_num only
+        linarith only [hb, h01]
+      have ha1 : (0 : ℝ) < a.re + 1 := by
+        have h01 : (0 : ℝ) < 1 := by norm_num only
+        linarith only [ha, h01]
+      nlinarith only [ha, hb, hqre, hu0, hu1, mul_pos hu0 hb1, mul_pos (sub_pos.mpr hu1) ha1]
     · rw [hu1] at hqre
-      nlinarith
+      have hqrb : q.re = b.re := by linarith only [hqre]
+      exact hqrb ▸ hb
   · rw [← hu0] at hqre
-    nlinarith
+    simp only [zero_mul, add_zero] at hqre
+    exact hqre ▸ ha
 
 /-- The real part of `a+(1/2+ε*I)*(b-a)` is
 `(a.re+b.re)/2-ε*(b.im-a.im)` for arbitrary `a`, `b`, and real `ε`.
@@ -538,15 +555,15 @@ theorem joinedIn_reGt_neg_one_diff_one {a b : ℂ} (ha : -1 < a.re) (ha1 : a ≠
   · set δ : ℝ := (a.re + b.re) / 2 + 1 with hδ_def
     have hδ_pos : 0 < δ := by
       rw [hδ_def]
-      linarith
+      linarith only [ha, hb]
     set d : ℝ := |b.im - a.im| + 1 with hd_def
     have hd_pos : 0 < d := by
       rw [hd_def]
-      positivity
+      exact add_pos_of_nonneg_of_pos (abs_nonneg _) (by norm_num only)
     set ε₀ : ℝ := δ / (2 * d) with hε₀_def
     have hε₀_pos : 0 < ε₀ := by
       rw [hε₀_def]
-      positivity
+      exact div_pos hδ_pos (mul_pos (by norm_num only) hd_pos)
     have hbound : ∀ ε : ℝ, |ε| ≤ ε₀ → |ε * (b.im - a.im)| < δ := by
       intro ε hε
       rw [abs_mul]
@@ -555,11 +572,11 @@ theorem joinedIn_reGt_neg_one_diff_one {a b : ℂ} (ha : -1 < a.re) (ha1 : a ≠
         _ < ε₀ * d := by
           apply mul_lt_mul_of_pos_left _ hε₀_pos
           rw [hd_def]
-          linarith
+          exact lt_add_of_pos_right _ (by norm_num only)
         _ = δ / 2 := by
           rw [hε₀_def]
-          field_simp
-        _ < δ := by linarith
+          field_simp [hd_pos.ne']
+        _ < δ := (div_lt_iff₀ (by norm_num only : (0 : ℝ) < 2)).2 (by nlinarith only [hδ_pos])
     have hre : ∀ ε : ℝ, |ε| ≤ ε₀ → -1 < (a + ((1 : ℂ) / 2 + (ε : ℝ) * Complex.I) * (b - a)).re := by
       intro ε hε
       rw [re_detourPoint_gt]
@@ -572,8 +589,8 @@ theorem joinedIn_reGt_neg_one_diff_one {a b : ℂ} (ha : -1 < a.re) (ha1 : a ≠
     have hz2re : -1 < z₂.re :=
       hre (ε₀ / 2)
         (by
-          rw [abs_of_pos (by linarith)]
-          linarith)
+          rw [abs_of_pos (div_pos hε₀_pos (by norm_num only))]
+          exact div_le_self hε₀_pos.le (by norm_num only : (1 : ℝ) ≤ 2))
     have hne : z₁ ≠ z₂ := by
       rw [hz1_def, hz2_def]
       intro heq
@@ -586,7 +603,7 @@ theorem joinedIn_reGt_neg_one_diff_one {a b : ℂ} (ha : -1 < a.re) (ha1 : a ≠
           Complex.normSq_ofNat, zero_div, Complex.mul_im, Complex.ofReal_re, Complex.I_im, mul_one,
           Complex.ofReal_im, Complex.I_re, mul_zero, add_zero, zero_add, Complex.ofReal_div,
           Complex.ofReal_ofNat, Complex.div_ofNat_re, Complex.div_ofNat_im] using this
-      linarith
+      linarith only [hε₀_pos, himeq]
     have hz1z2 : z₁ ≠ 1 ∨ z₂ ≠ 1 := by
       by_contra h
       push Not at h
@@ -602,7 +619,7 @@ theorem joinedIn_reGt_neg_one_diff_one {a b : ℂ} (ha : -1 < a.re) (ha1 : a ≠
         Complex.div_ofNat_re, Complex.ofReal_re, Complex.I_im, mul_one, Complex.div_ofNat_im,
         Complex.ofReal_im, Complex.I_re, mul_zero, add_zero, zero_add, ne_eq, div_eq_zero_iff,
         OfNat.ofNat_ne_zero, or_false]
-      positivity
+      exact hε₀_pos.ne'
     have hp1 : (1 : ℂ) ≠ a := Ne.symm ha1
     have hp2 : (1 : ℂ) ≠ b := Ne.symm hb1
     rcases hz1z2 with hz1ne1 | hz2ne1
@@ -739,7 +756,7 @@ theorem differentiableAt_mellin_zetaSawtoothIndicator {w : ℂ} (hw1 : w.re < 0)
     DifferentiableAt ℂ (mellin zetaSawtoothIndicator) w :=
   mellin_differentiableAt_of_isBigO_rpow locallyIntegrableOn_zetaSawtoothIndicator
     isBigO_atTop_zetaSawtoothIndicator (by simpa only using hw1)
-    (isBigO_nhdsWithin_zetaSawtoothIndicator (w.re - 1)) (by linarith)
+    (isBigO_nhdsWithin_zetaSawtoothIndicator (w.re - 1)) (sub_lt_self _ zero_lt_one)
 
 /-- `mellin PseudoPrime.AnalyticNumberTheory.RiemannZeta.zetaSawtoothIndicator w`
 agrees with the sawtooth remainder integral `J` at
@@ -779,7 +796,7 @@ theorem mellin_zetaSawtoothIndicator_eq {s : ℂ} (hs : -1 < s.re) :
         · exact Or.inr (not_le.mp h)
       · rintro (⟨ht, _⟩ | ht)
         · exact ht
-        · linarith,
+        · exact lt_trans (by norm_num only : (0 : ℝ) < 1) ht,
     MeasureTheory.setIntegral_union Set.Ioc_disjoint_Ioi_same measurableSet_Ioi hint1 hint2,
     MeasureTheory.setIntegral_congr_fun measurableSet_Ioc (g := fun _ => (0 : ℂ)) fun t ht => by
       rw [zetaSawtoothIndicator_eq_zero_of_le_one ht.2, smul_zero],
@@ -802,13 +819,13 @@ theorem differentiableAt_sawtoothRemainder {s : ℂ} (hs1 : -1 < s.re) :
   have hd : DifferentiableAt ℂ (mellin zetaSawtoothIndicator) (-s - 1) := by
     apply differentiableAt_mellin_zetaSawtoothIndicator
     simp only [Complex.sub_re, Complex.neg_re, Complex.one_re]
-    linarith
+    linarith only [hs1]
   have hcd := hd.comp s hcomp
   have heq :
     (mellin zetaSawtoothIndicator ∘ fun s : ℂ => -s - 1) =ᶠ[nhds s]
       (fun s => ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ)) := by
     filter_upwards [(Complex.continuous_re.isOpen_preimage _ isOpen_Ioi).mem_nhds
-        (show (-1 : ℝ) < s.re by linarith : s ∈ Complex.re ⁻¹' Set.Ioi (-1 : ℝ))] with
+        (show (-1 : ℝ) < s.re from hs1 : s ∈ Complex.re ⁻¹' Set.Ioi (-1 : ℝ))] with
       t ht
     exact mellin_zetaSawtoothIndicator_eq ht
   exact hcd.congr_of_eventuallyEq heq.symm
@@ -882,7 +899,7 @@ theorem continuousOn_deriv_cpow_neg (s : ℂ) {a b : ℝ} (ha : 0 < a) :
   simp only [Set.mem_Icc] at ht
   exact
     (Complex.continuousAt_ofReal_cpow_const t (-s - 1)
-        (Or.inr (by linarith : t ≠ (0 : ℝ)))).continuousWithinAt
+        (Or.inr (ne_of_gt (lt_of_lt_of_le ha ht.1)))).continuousWithinAt
 
 /-- The classical finite Abel-summation identity `∑_{k=1}^N k^{-s} = N^{1-s} + s∫_1^N t^{-s-1}⌊t⌋dt`
 for any `N ≥ 1`. -/
@@ -895,7 +912,7 @@ theorem sum_cpow_eq_sub_integral {s : ℂ} (hs0 : s ≠ 0) (N : ℕ) (hN : 1 ≤
     ∀ t ∈ Set.Icc (1 : ℝ) (N : ℝ), DifferentiableAt ℝ (fun y : ℝ => (y : ℂ) ^ (-s)) t := by
     intro t ht
     simp only [Set.mem_Icc] at ht
-    exact (hasDerivAt_cpow_neg hs0 (by linarith : t ≠ (0 : ℝ))).differentiableAt
+    exact (hasDerivAt_cpow_neg hs0 (ne_of_gt (lt_of_lt_of_le zero_lt_one ht.1))).differentiableAt
   have hf_int :
     MeasureTheory.IntegrableOn (deriv (fun y : ℝ => (y : ℂ) ^ (-s))) (Set.Icc (1 : ℝ) (N : ℝ)) := by
     have hderiv_eq :
@@ -903,7 +920,7 @@ theorem sum_cpow_eq_sub_integral {s : ℂ} (hs0 : s ≠ 0) (N : ℕ) (hN : 1 ≤
         deriv (fun y : ℝ => (y : ℂ) ^ (-s)) t = -s * (t : ℂ) ^ (-s - 1) := by
       intro t ht
       simp only [Set.mem_Icc] at ht
-      exact (hasDerivAt_cpow_neg hs0 (by linarith : t ≠ (0 : ℝ))).deriv
+      exact (hasDerivAt_cpow_neg hs0 (ne_of_gt (lt_of_lt_of_le zero_lt_one ht.1))).deriv
     exact ((continuousOn_deriv_cpow_neg s zero_lt_one).congr hderiv_eq).integrableOn_Icc
   have hraw := sum_mul_eq_sub_integral_mul₀ oneFromOne oneFromOne_zero (N : ℝ) hf_diff hf_int
   rw [Nat.floor_natCast] at hraw
@@ -914,13 +931,14 @@ theorem sum_cpow_eq_sub_integral {s : ℂ} (hs0 : s ≠ 0) (N : ℕ) (hN : 1 ≤
       Finset.sum_subset (Finset.Icc_subset_Icc_left (Nat.zero_le 1))
         (fun k hk0N hk1 => by
           simp only [Finset.mem_Icc] at hk0N hk1
-          have hk0 : k = 0 := by omega
+          have hk0 : k = 0 :=
+            Nat.eq_zero_of_not_pos (fun hkpos => hk1 ⟨Nat.succ_le_of_lt hkpos, hk0N.2⟩)
           rw [hk0, oneFromOne_zero, mul_zero])]
     apply Finset.sum_congr rfl
     intro k hk
     simp only [Finset.mem_Icc] at hk
     unfold oneFromOne
-    rw [ite_eq_right (by omega : k ≠ 0), mul_one]
+    rw [ite_eq_right (ne_of_gt (Nat.lt_of_lt_of_le Nat.zero_lt_one hk.1)), mul_one]
   rw [hlhs, sum_oneFromOne] at hraw
   have hint_eq :
     ∫ t in Set.Ioc (1 : ℝ) (N : ℝ),
@@ -933,7 +951,7 @@ theorem sum_cpow_eq_sub_integral {s : ℂ} (hs0 : s ≠ 0) (N : ℕ) (hN : 1 ≤
     change
       deriv (fun y : ℝ => (y : ℂ) ^ (-s)) t * ∑ k ∈ Finset.Icc 0 ⌊t⌋₊, oneFromOne k =
         -s * ((t : ℂ) ^ (-s - 1) * ((⌊t⌋₊ : ℕ) : ℂ))
-    rw [sum_oneFromOne, (hasDerivAt_cpow_neg hs0 (by linarith : t ≠ (0 : ℝ))).deriv]
+    rw [sum_oneFromOne, (hasDerivAt_cpow_neg hs0 (ne_of_gt (lt_trans zero_lt_one ht.1))).deriv]
     ring
   rw [hint_eq] at hraw
   linear_combination hraw
@@ -948,7 +966,7 @@ theorem integral_cpow_neg {s : ℂ} (hs1 : s ≠ 1) {N : ℝ} (hN : 1 ≤ N) :
     intro t ht
     rw [Set.uIcc_of_le hN] at ht
     simp only [Set.mem_Icc] at ht
-    have ht0 : t ≠ (0 : ℝ) := by linarith
+    have ht0 : t ≠ (0 : ℝ) := ne_of_gt (lt_of_lt_of_le zero_lt_one ht.1)
     have h := (hasDerivAt_ofReal_cpow_const ht0 h1s).div_const (1 - s)
     have heq : (1 - s) * (t : ℂ) ^ (1 - s - 1) / (1 - s) = (t : ℂ) ^ (-s) := by
       rw [mul_comm, mul_div_assoc, div_self h1s, mul_one, show (1 - s - 1 : ℂ) = -s from by ring]
@@ -957,10 +975,12 @@ theorem integral_cpow_neg {s : ℂ} (hs1 : s ≠ 1) {N : ℝ} (hN : 1 ≤ N) :
     apply ContinuousOn.intervalIntegrable_of_Icc hN
     intro t ht
     simp only [Set.mem_Icc] at ht
-    exact (Complex.continuousAt_ofReal_cpow_const t (-s) (Or.inr (by linarith))).continuousWithinAt
+    exact
+      (Complex.continuousAt_ofReal_cpow_const t (-s)
+          (Or.inr (ne_of_gt (lt_of_lt_of_le zero_lt_one ht.1)))).continuousWithinAt
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint]
   rw [show ((1 : ℝ) : ℂ) ^ (1 - s) = 1 from by simp only [Complex.ofReal_one, Complex.one_cpow]]
-  field_simp
+  field_simp [h1s]
 
 /-- `∫₁^N t^{-s-1} dt = (1 - N^{-s})/s`, for `s ≠ 0`. -/
 theorem integral_cpow_neg_sub_one {s : ℂ} (hs0 : s ≠ 0) {N : ℝ} (hN : 1 ≤ N) :
@@ -972,7 +992,7 @@ theorem integral_cpow_neg_sub_one {s : ℂ} (hs0 : s ≠ 0) {N : ℝ} (hN : 1 �
     intro t ht
     rw [Set.uIcc_of_le hN] at ht
     simp only [Set.mem_Icc] at ht
-    have ht0 : t ≠ (0 : ℝ) := by linarith
+    have ht0 : t ≠ (0 : ℝ) := ne_of_gt (lt_of_lt_of_le zero_lt_one ht.1)
     have h := (hasDerivAt_ofReal_cpow_const ht0 hns0).div_const (-s)
     have heq : -s * (t : ℂ) ^ (-s - 1) / (-s) = (t : ℂ) ^ (-s - 1) := by
       rw [mul_comm, mul_div_assoc, div_self hns0, mul_one]
@@ -982,10 +1002,11 @@ theorem integral_cpow_neg_sub_one {s : ℂ} (hs0 : s ≠ 0) {N : ℝ} (hN : 1 �
     intro t ht
     simp only [Set.mem_Icc] at ht
     exact
-      (Complex.continuousAt_ofReal_cpow_const t (-s - 1) (Or.inr (by linarith))).continuousWithinAt
+      (Complex.continuousAt_ofReal_cpow_const t (-s - 1)
+          (Or.inr (ne_of_gt (lt_of_lt_of_le zero_lt_one ht.1)))).continuousWithinAt
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint]
   rw [show ((1 : ℝ) : ℂ) ^ (-s) = 1 from by simp only [Complex.ofReal_one, Complex.one_cpow]]
-  field_simp
+  field_simp [hns0]
   ring
 
 /-- The classical finite Abel-summation identity, now expressed via the sawtooth remainder
@@ -1007,8 +1028,8 @@ theorem sum_cpow_eq_sawtoothFormula_finite {s : ℂ} (hs0 : s ≠ 0) (hs1 : s �
     intro t ht
     rw [Set.uIcc_of_le hN1] at ht
     simp only [Set.mem_Icc] at ht
-    have ht0 : (0 : ℝ) < t := by linarith
-    have hcast_ne : (t : ℂ) ≠ 0 := by exact_mod_cast ht0.ne'
+    have ht0 : (0 : ℝ) < t := lt_of_lt_of_le zero_lt_one ht.1
+    have hcast_ne : (t : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr ht0.ne'
     have hfloor_real : ((⌊t⌋₊ : ℕ) : ℝ) = t - Int.fract t := by
       rw [natCast_floor_eq_intCast_floor ht0.le, ← Int.self_sub_floor]
       ring
@@ -1034,14 +1055,15 @@ theorem sum_cpow_eq_sawtoothFormula_finite {s : ℂ} (hs0 : s ≠ 0) (hs1 : s �
       intro t ht
       simp only [Set.mem_Icc] at ht
       exact
-        (Complex.continuousAt_ofReal_cpow_const t (-s) (Or.inr (by linarith))).continuousWithinAt
+        (Complex.continuousAt_ofReal_cpow_const t (-s)
+            (Or.inr (ne_of_gt (lt_of_lt_of_le zero_lt_one ht.1)))).continuousWithinAt
     · apply IntervalIntegrable.const_mul
       apply ContinuousOn.intervalIntegrable_of_Icc hN1
       intro t ht
       simp only [Set.mem_Icc] at ht
       exact
         (Complex.continuousAt_ofReal_cpow_const t (-s - 1)
-            (Or.inr (by linarith))).continuousWithinAt
+            (Or.inr (ne_of_gt (lt_of_lt_of_le zero_lt_one ht.1)))).continuousWithinAt
   have hint2 :
     IntervalIntegrable (fun t : ℝ => (t : ℂ) ^ (-s - 1) * ((Int.fract t - 1 / 2 : ℝ) : ℂ))
       MeasureTheory.volume 1 (N : ℝ) :=
@@ -1051,18 +1073,20 @@ theorem sum_cpow_eq_sawtoothFormula_finite {s : ℂ} (hs0 : s ≠ 0) (hs1 : s �
       (ContinuousOn.intervalIntegrable_of_Icc hN1 fun t ht => by
         simp only [Set.mem_Icc] at ht
         exact
-          (Complex.continuousAt_ofReal_cpow_const t (-s) (Or.inr (by linarith))).continuousWithinAt)
+          (Complex.continuousAt_ofReal_cpow_const t (-s)
+              (Or.inr (ne_of_gt (lt_of_lt_of_le zero_lt_one ht.1)))).continuousWithinAt)
       (IntervalIntegrable.const_mul
         (ContinuousOn.intervalIntegrable_of_Icc hN1 fun t ht => by
           simp only [Set.mem_Icc] at ht
           exact
             (Complex.continuousAt_ofReal_cpow_const t (-s - 1)
-                (Or.inr (by linarith))).continuousWithinAt)
+                (Or.inr (ne_of_gt (lt_of_lt_of_le zero_lt_one ht.1)))).continuousWithinAt)
         (1 / 2 : ℂ)),
     intervalIntegral.integral_const_mul, integral_cpow_neg hs1 hN1,
     integral_cpow_neg_sub_one hs0 hN1] at hraw
   simp only [Complex.ofReal_natCast] at hraw
-  have hNcast_ne : (N : ℂ) ≠ 0 := by exact_mod_cast (by omega : N ≠ 0)
+  have hNcast_ne : (N : ℂ) ≠ 0 :=
+    Nat.cast_ne_zero.mpr (ne_of_gt (Nat.lt_of_lt_of_le Nat.zero_lt_one hN))
   have hNpow : (N : ℂ) ^ (-s) * (N : ℂ) = (N : ℂ) ^ (1 - s) := by
     have h := (Complex.cpow_add (-s) 1 hNcast_ne).symm
     rw [Complex.cpow_one] at h
@@ -1072,7 +1096,7 @@ theorem sum_cpow_eq_sawtoothFormula_finite {s : ℂ} (hs0 : s ≠ 0) (hs1 : s �
   rw [hNpow] at hraw
   rw [hraw]
   have h1s : (1 : ℂ) - s ≠ 0 := sub_ne_zero.mpr (Ne.symm hs1)
-  field_simp
+  field_simp [hs0, hs1, h1s]
   ring_nf
 
 /-! ### The classical formula for `Re s > 1`, and its extension to the punctured half-plane -/
@@ -1085,8 +1109,7 @@ theorem tendsto_natCast_cpow_atTop_zero {z : ℂ} (hz : z.re < 0) :
     filter_upwards [Filter.eventually_gt_atTop 0] with n hn
     exact Complex.norm_natCast_cpow_of_pos hn z
   rw [Filter.tendsto_congr' heq]
-  have h :=
-    (tendsto_rpow_neg_atTop (show (0 : ℝ) < -z.re by linarith)).comp tendsto_natCast_atTop_atTop
+  have h := (tendsto_rpow_neg_atTop (neg_pos.mpr hz)).comp tendsto_natCast_atTop_atTop
   simp only [Function.comp_def, neg_neg] at h
   exact h
 
@@ -1100,13 +1123,13 @@ theorem riemannZeta_eq_sawtoothFormula_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
         s * (s + 1) * ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ) := by
   have hs0 : s ≠ 0 := fun h => by
     simp only [h, Complex.zero_re] at hs
-    linarith
+    linarith only [hs]
   have hs1 : s ≠ 1 := fun h => by
     simp only [h, Complex.one_re] at hs
-    linarith
+    linarith only [hs]
   have hsm1 : s ≠ -1 := fun h => by
     simp only [h, Complex.neg_re, Complex.one_re] at hs
-    linarith
+    linarith only [hs]
   have hsumtail :
     Filter.Tendsto (fun N : ℕ => ∑ k ∈ Finset.Icc 1 N, (k : ℂ) ^ (-s)) Filter.atTop
       (nhds (riemannZeta s)) := by
@@ -1122,7 +1145,8 @@ theorem riemannZeta_eq_sawtoothFormula_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
         Finset.sum_subset (Finset.Icc_subset_Icc_left (Nat.zero_le 1))
           (fun k hk hk1 => by
             simp only [Finset.mem_Icc] at hk hk1
-            have hk0 : k = 0 := by omega
+            have hk0 : k = 0 :=
+              Nat.eq_zero_of_not_pos (fun hkpos => hk1 ⟨Nat.succ_le_of_lt hkpos, hk.2⟩)
             rw [hk0]
             simp only [CharP.cast_eq_zero, ne_eq, hs0, not_false_eq_true, Complex.zero_cpow,
               div_zero])]
@@ -1134,7 +1158,7 @@ theorem riemannZeta_eq_sawtoothFormula_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
       (tendsto_natCast_cpow_atTop_zero (z := 1 - s)
             (by
               simp only [Complex.sub_re, Complex.one_re]
-              linarith)).div_const
+              linarith only [hs])).div_const
         (1 - s)
     rwa [zero_div] at h
   have h2 : Filter.Tendsto (fun N : ℕ => (N : ℂ) ^ (-s) / 2) Filter.atTop (nhds 0) := by
@@ -1142,7 +1166,7 @@ theorem riemannZeta_eq_sawtoothFormula_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
       (tendsto_natCast_cpow_atTop_zero (z := -s)
             (by
               simp only [Complex.neg_re]
-              linarith)).div_const
+              linarith only [hs])).div_const
         (2 : ℂ)
     rwa [zero_div] at h
   have h3 :
@@ -1153,7 +1177,9 @@ theorem riemannZeta_eq_sawtoothFormula_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
       (nhds
         (s *
           ((s + 1) * ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ)))) :=
-    (tendsto_integral_fract_sub_half_mul_cpow hsm1 (by linarith)).const_mul s
+    (tendsto_integral_fract_sub_half_mul_cpow hsm1
+          (lt_trans (by norm_num only : (-1 : ℝ) < 1) hs)).const_mul
+      s
   have hc1 : Filter.Tendsto (fun _ : ℕ => s / (s - 1)) Filter.atTop (nhds (s / (s - 1))) :=
     tendsto_const_nhds
   have hc2 : Filter.Tendsto (fun _ : ℕ => (1 : ℂ) / 2) Filter.atTop (nhds ((1 : ℂ) / 2)) :=
@@ -1242,7 +1268,7 @@ theorem norm_sawtoothRemainder_le {s : ℂ} (hs : -1 < s.re) :
       sawtoothRemainderBound s.re := by
   have hdom :
     MeasureTheory.IntegrableOn (fun t : ℝ => (1 / 8 : ℝ) * t ^ (-(s.re + 2))) (Set.Ioi (1 : ℝ)) :=
-    (integrableOn_Ioi_rpow_of_lt (by linarith) zero_lt_one).const_mul _
+    (integrableOn_Ioi_rpow_of_lt (by linarith only [hs]) zero_lt_one).const_mul _
   calc
     ‖∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ)‖ ≤
         ∫ t in Set.Ioi (1 : ℝ), ‖(t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ)‖ :=
@@ -1253,14 +1279,16 @@ theorem norm_sawtoothRemainder_le {s : ℂ} (hs : -1 < s.re) :
       · exact hdom
       · filter_upwards [MeasureTheory.self_mem_ae_restrict measurableSet_Ioi] with t ht
         simp only [Set.mem_Ioi] at ht
-        rw [norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos (by linarith : (0 : ℝ) < t)]
+        rw [norm_mul,
+          Complex.norm_cpow_eq_rpow_re_of_pos (lt_trans (by norm_num only : (0 : ℝ) < 1) ht)]
         have h1 : (-s - 2).re = -(s.re + 2) := by
           simp only [Complex.sub_re, Complex.neg_re, Complex.re_ofNat, neg_add_rev]
           ring
         rw [h1, Complex.norm_real, Real.norm_eq_abs]
         calc
           t ^ (-(s.re + 2)) * |zetaSawtooth t| ≤ t ^ (-(s.re + 2)) * (1 / 8) :=
-            mul_le_mul_of_nonneg_left (abs_zetaSawtooth_le t) (Real.rpow_nonneg (by linarith) _)
+            mul_le_mul_of_nonneg_left (abs_zetaSawtooth_le t)
+              (Real.rpow_nonneg (le_trans (by norm_num only : (0 : ℝ) ≤ 1) ht.le) _)
           _ = 1 / 8 * t ^ (-(s.re + 2)) := by ring
 
 theorem sawtoothRemainderBound_nonneg (σ : ℝ) : 0 ≤ sawtoothRemainderBound σ := by
@@ -1268,7 +1296,9 @@ theorem sawtoothRemainderBound_nonneg (σ : ℝ) : 0 ≤ sawtoothRemainderBound 
   apply MeasureTheory.integral_nonneg_of_ae
   filter_upwards [MeasureTheory.self_mem_ae_restrict measurableSet_Ioi] with t ht
   simp only [Set.mem_Ioi] at ht
-  positivity
+  exact
+    mul_nonneg (by norm_num only)
+      (Real.rpow_nonneg (le_trans (by norm_num only : (0 : ℝ) ≤ 1) ht.le) _)
 
 /-- On `(-1,∞)`, the sawtooth remainder bound is antitone: if `-1 < a ≤ b`,
 its value at `b` is at most its value at `a`. Compare the defining integrands. -/
@@ -1278,11 +1308,13 @@ theorem sawtoothRemainderBound_antitone {a b : ℝ} (ha : -1 < a) (hab : a ≤ b
   apply MeasureTheory.integral_mono_of_nonneg
   · filter_upwards [MeasureTheory.self_mem_ae_restrict measurableSet_Ioi] with t ht
     simp only [Set.mem_Ioi] at ht
-    positivity
-  · exact (integrableOn_Ioi_rpow_of_lt (by linarith) zero_lt_one).const_mul _
+    exact
+      mul_nonneg (by norm_num only)
+        (Real.rpow_nonneg (le_trans (by norm_num only : (0 : ℝ) ≤ 1) ht.le) _)
+  · exact (integrableOn_Ioi_rpow_of_lt (by linarith only [ha]) zero_lt_one).const_mul _
   · filter_upwards [MeasureTheory.self_mem_ae_restrict measurableSet_Ioi] with t ht
     simp only [Set.mem_Ioi] at ht
-    have hexp : -(b + 2) ≤ -(a + 2) := by linarith
+    have hexp : -(b + 2) ≤ -(a + 2) := neg_le_neg (add_le_add_left hab 2)
     exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le ht.le hexp) (by norm_num only)
 
 /-- On `Re s > -1`, away from one, the zeta norm is bounded using a quadratic
@@ -1307,7 +1339,8 @@ theorem norm_riemannZeta_le_of_reGt_neg_one_diff_one {s : ℂ}
       rw [hJ_def]
       exact norm_sawtoothRemainder_le hs.1
     exact
-      mul_le_mul (mul_le_mul_of_nonneg_left hb (norm_nonneg s)) hc (norm_nonneg _) (by positivity)
+      mul_le_mul (mul_le_mul_of_nonneg_left hb (norm_nonneg s)) hc (norm_nonneg _)
+        (mul_nonneg (norm_nonneg s) (add_nonneg (norm_nonneg s) (by norm_num only)))
   have h1 : ‖s / (s - 1)‖ = ‖s‖ / ‖s - 1‖ := norm_div _ _
   have h2 : ‖(1 : ℂ) / 2‖ = (1 : ℝ) / 2 := by
     rw [norm_div, norm_one]

@@ -38,7 +38,7 @@ theorem eq_one_or_three_or_nine_of_dvd_nine {n : ℕ} (hn : 0 < n) (hdvd : n ∣
 theorem eq_one_or_three_or_five_or_fifteen_of_dvd_fifteen {n : ℕ} (hn : 0 < n) (hdvd : n ∣ 15) :
     n = 1 ∨ n = 3 ∨ n = 5 ∨ n = 15 := by
   have hnle : n ≤ 15 := Nat.le_of_dvd (by norm_num only) hdvd
-  interval_cases n <;> omega
+  interval_cases n <;> norm_num only at hn <;> norm_num only at hdvd <;> decide
 
 /-- The fixed Jacobi value needed for the input `3` is not `1`. -/
 theorem jacobiSym_five_three_ne_one : jacobiSym 5 3 ≠ 1 := by
@@ -72,6 +72,77 @@ theorem jacobiSym_neg_seven_five_ne_one : jacobiSym (-7) 5 ≠ 1 := by
 theorem jacobiSym_five_fifteen_eq_zero : jacobiSym 5 15 = 0 := by
   rw [NumberTheory.jacobi_eq_zero_iff_not_coprime]
   norm_num only
+
+/-- An odd prime other than `3` is at least `5`. -/
+theorem oddPrime_ge_five_of_ne_three {p : ℕ} (hp : Nat.Prime p) (hpodd : Odd p) (hp3 : p ≠ 3) :
+    5 ≤ p := by
+  have hp2 := hp.two_le
+  have hpmod := Nat.odd_iff.mp hpodd
+  by_contra hp5
+  have hplt : p < 5 := Nat.lt_of_not_ge hp5
+  interval_cases p
+  · norm_num only [Nat.reduceMod] at hpmod
+  · exact hp3 rfl
+  · norm_num only [Nat.reduceMod] at hpmod
+
+/-- An odd multiple of `3` between `5` and `15`, other than `9`, equals `15`. -/
+theorem three_mul_eq_fifteen_of_odd_bounds {k : ℕ} (hlo : 5 ≤ 3 * k) (hhi : 3 * k ≤ 15)
+    (hmod : 3 * k % 2 = 1) (h9 : 3 * k ≠ 9) : 3 * k = 15 := by
+  have hkne1 : k ≠ 1 := by
+    intro h
+    subst k
+    norm_num only at hlo
+  have hk1 : 1 ≤ k :=
+    Nat.le_of_mul_le_mul_left (Nat.le_trans (by decide : 3 ≤ 5) hlo) (by decide : 0 < 3)
+  have hk2 : 2 ≤ k := Nat.succ_le_iff.mpr (lt_of_le_of_ne hk1 (Ne.symm hkne1))
+  have hk5 : k ≤ 5 := Nat.le_of_mul_le_mul_left hhi (by decide : 0 < 3)
+  interval_cases k
+  · norm_num only [Nat.reduceMul, Nat.reduceMod] at hmod
+  · norm_num only [Nat.reduceMul] at h9
+  · norm_num only [Nat.reduceMul, Nat.reduceMod] at hmod
+  · decide
+
+/-- An odd multiple of `3` bounded by `21`, avoiding `9` and `15`, equals `21`. -/
+theorem three_mul_eq_twenty_one_of_odd_bounds {k : ℕ} (hlo : 5 ≤ 3 * k) (hhi : 3 * k ≤ 21)
+    (hmod : 3 * k % 2 = 1) (h9 : 3 * k ≠ 9) (h15 : 3 * k ≠ 15) :
+    3 * k = 15 ∨ 3 * k = 21 ∨ 3 * k = 27 := by
+  have hkne1 : k ≠ 1 := by
+    intro h
+    subst k
+    norm_num only at hlo
+  have hk1 : 1 ≤ k :=
+    Nat.le_of_mul_le_mul_left (Nat.le_trans (by decide : 3 ≤ 5) hlo) (by decide : 0 < 3)
+  have hk2 : 2 ≤ k := Nat.succ_le_iff.mpr (lt_of_le_of_ne hk1 (Ne.symm hkne1))
+  have hk7 : k ≤ 7 := Nat.le_of_mul_le_mul_left hhi (by decide : 0 < 3)
+  interval_cases k
+  · norm_num only [Nat.reduceMul, Nat.reduceMod] at hmod
+  · norm_num only [Nat.reduceMul] at h9
+  · norm_num only [Nat.reduceMul, Nat.reduceMod] at hmod
+  · norm_num only [Nat.reduceMul] at h15
+  · norm_num only [Nat.reduceMul, Nat.reduceMod] at hmod
+  · decide
+
+/-- An odd multiple of `3` bounded by `27`, avoiding `5`, `9`, `15`, and `21`, equals `27`. -/
+theorem three_mul_eq_twenty_seven_of_odd_bounds {k : ℕ} (hlo : 5 ≤ 3 * k) (hhi : 3 * k ≤ 27)
+    (hmod : 3 * k % 2 = 1) (h9 : 3 * k ≠ 9) (h15 : 3 * k ≠ 15) (h21 : 3 * k ≠ 21) :
+    3 * k = 15 ∨ 3 * k = 21 ∨ 3 * k = 27 := by
+  have hkne1 : k ≠ 1 := by
+    intro h
+    subst k
+    norm_num only at hlo
+  have hk1 : 1 ≤ k :=
+    Nat.le_of_mul_le_mul_left (Nat.le_trans (by decide : 3 ≤ 5) hlo) (by decide : 0 < 3)
+  have hk2 : 2 ≤ k := Nat.succ_le_iff.mpr (lt_of_le_of_ne hk1 (Ne.symm hkne1))
+  have hk9 : k ≤ 9 := Nat.le_of_mul_le_mul_left hhi (by decide : 0 < 3)
+  interval_cases k
+  · norm_num only [Nat.reduceMul, Nat.reduceMod] at hmod
+  · norm_num only [Nat.reduceMul] at h9
+  · norm_num only [Nat.reduceMul, Nat.reduceMod] at hmod
+  · norm_num only [Nat.reduceMul] at h15
+  · norm_num only [Nat.reduceMul, Nat.reduceMod] at hmod
+  · norm_num only [Nat.reduceMul] at h21
+  · norm_num only [Nat.reduceMul, Nat.reduceMod] at hmod
+  · decide
 
 end Internal
 
@@ -122,10 +193,7 @@ theorem three_dvd_of_composite_minimal_classical_neOne {n i : ℕ} (hn : Odd n) 
       hstop
   have hp3 : p = 3 := by
     by_contra hpne
-    have hp5 : 5 ≤ p := by
-      have hp2 : 2 ≤ p := hp.two_le
-      have hpmod : p % 2 = 1 := Nat.odd_iff.mp hpodd
-      omega
+    have hp5 : 5 ≤ p := by exact Internal.oddPrime_ge_five_of_ne_three hp hpodd hpne
     have hndvd : ¬n ∣ p := fun hnp ↦ hstop.2.1 (hnp.trans hpdvd)
     exact
       hmin p hplt
@@ -149,10 +217,7 @@ theorem three_dvd_of_composite_minimal_classical_negOne {n i : ℕ} (hn : Odd n)
       hstop
   have hp3 : p = 3 := by
     by_contra hpne
-    have hp5 : 5 ≤ p := by
-      have hp2 : 2 ≤ p := hp.two_le
-      have hpmod : p % 2 = 1 := Nat.odd_iff.mp hpodd
-      omega
+    have hp5 : 5 ≤ p := by exact Internal.oddPrime_ge_five_of_ne_three hp hpodd hpne
     exact
       hmin p hplt
         ⟨⟨hp5, hpodd⟩, by
@@ -209,14 +274,14 @@ theorem composite_minimal_classical_neOne_eq_nine_or_fifteen_of_not_dvd {n i : �
       have hi9 : i ≤ 9 := by
         by_contra hle9
         exact hmin 9 (Nat.lt_of_not_ge hle9) h9mem
-      omega
+      exact Nat.le_trans hi9 (by decide : 9 ≤ 15)
     · exact False.elim (h3ne h3)
     · have hndvd5 : ¬n ∣ 5 := fun h ↦ hndvd15 (h.trans (by norm_num only))
       have hi5 : i ≠ 5 := by
         intro hieq
         subst i
         exact hcomp (by decide)
-      have h5lt : 5 < i := by omega
+      have h5lt : 5 < i := lt_of_le_of_ne hi_ge (Ne.symm hi5)
       have h5 : jacobiSym n 5 = 1 := by
         rcases jacobiSym.trichotomy (n : ℤ) 5 with h50 | h51 | h5m
         · exact
@@ -241,7 +306,22 @@ theorem composite_minimal_classical_neOne_eq_nine_or_fifteen_of_not_dvd {n i : �
       exact hmin 15 (Nat.lt_of_not_ge hle) h15mem
   have himod : i % 2 = 1 := Nat.odd_iff.mp hstop.1.2
   obtain ⟨k, rfl⟩ := h3dvd
-  omega
+  have hkne1 : k ≠ 1 := by
+    intro h
+    subst k
+    norm_num only at hi_ge
+  have hk1 : 1 ≤ k :=
+    Nat.le_of_mul_le_mul_left
+      (by simpa only [Nat.mul_one] using Nat.le_trans (by decide : 3 ≤ 5) hi_ge) (by decide : 0 < 3)
+  have hk2 : 2 ≤ k := Nat.succ_le_iff.mpr (lt_of_le_of_ne hk1 (Ne.symm hkne1))
+  have hk5 : k ≤ 5 :=
+    Nat.le_of_mul_le_mul_left (by simpa only [show 15 = 3 * 5 by decide] using hle)
+      (by decide : 0 < 3)
+  interval_cases k
+  · norm_num only [Nat.reduceMul, Nat.reduceMod] at himod
+  · decide
+  · norm_num only [Nat.reduceMul, Nat.reduceMod] at himod
+  · decide
 
 /--
 For a positive nonsquare input, `9` cannot divide the input of a composite minimal classical
@@ -257,7 +337,7 @@ theorem not_dvd_nine_of_nonsquare_composite_minimal_classical_neOne {n i : ℕ} 
   · have h5lt : 5 < i := by
       have hi5le : 5 ≤ i := hstop.1.1
       have hi5 : i ≠ 5 := fun h ↦ hcomp (h ▸ by decide)
-      omega
+      exact lt_of_le_of_ne hi5le (Ne.symm hi5)
     exact
       hmin 5 h5lt
         (by
@@ -280,7 +360,7 @@ theorem not_dvd_fifteen_of_nonsquare_composite_minimal_classical_neOne {n i : �
   · have h5lt : 5 < i := by
       have hi5le : 5 ≤ i := hstop.1.1
       have hi5 : i ≠ 5 := fun h ↦ hcomp (h ▸ by decide)
-      omega
+      exact lt_of_le_of_ne hi5le (Ne.symm hi5)
     exact
       hmin 5 h5lt
         (by
@@ -291,7 +371,12 @@ theorem not_dvd_fifteen_of_nonsquare_composite_minimal_classical_neOne {n i : �
       have hi5 : i ≠ 5 := fun h ↦ hcomp (h ▸ by decide)
       have hi7 : i ≠ 7 := fun h ↦ hcomp (h ▸ by decide)
       have himod : i % 2 = 1 := Nat.odd_iff.mp hstop.1.2
-      omega
+      by_contra h7lt
+      have hi_le7 : i ≤ 7 := Nat.le_of_not_gt h7lt
+      interval_cases i
+      · exact False.elim (hi5 rfl)
+      · norm_num only [Nat.reduceMod] at himod
+      · exact False.elim (hi7 rfl)
     exact
       hmin 7 h7lt
         (by
@@ -300,7 +385,7 @@ theorem not_dvd_fifteen_of_nonsquare_composite_minimal_classical_neOne {n i : �
   · have h5lt : 5 < i := by
       have hi5le : 5 ≤ i := hstop.1.1
       have hi5 : i ≠ 5 := fun h ↦ hcomp (h ▸ by decide)
-      omega
+      exact lt_of_le_of_ne hi5le (Ne.symm hi5)
     exact
       hmin 5 h5lt
         (by
@@ -374,7 +459,7 @@ theorem composite_minimal_classical_negOne_eq_fifteen_or_twenty_one_or_twenty_se
   obtain ⟨h3dvd, h3⟩ := three_dvd_of_composite_minimal_classical_negOne hn hi hcomp hstop hmin
   have hi_ge : 5 ≤ i := hstop.1.1
   have hi5 : i ≠ 5 := fun h ↦ hcomp (h ▸ by decide)
-  have h5lt : 5 < i := by omega
+  have h5lt : 5 < i := lt_of_le_of_ne hi_ge (Ne.symm hi5)
   have hi9 : i ≠ 9 := by
     intro hieq
     subst i
@@ -401,14 +486,19 @@ theorem composite_minimal_classical_negOne_eq_fifteen_or_twenty_one_or_twenty_se
         norm_num only at hvalue
       have himod : i % 2 = 1 := Nat.odd_iff.mp hstop.1.2
       obtain ⟨k, rfl⟩ := h3dvd
-      omega
+      exact Internal.three_mul_eq_twenty_seven_of_odd_bounds hi_ge hle himod hi9 hi15 hi21
     · have hle := minimal_classical_negOne_le_twenty_one hn h3 h71 hmin
       have himod : i % 2 = 1 := Nat.odd_iff.mp hstop.1.2
       obtain ⟨k, rfl⟩ := h3dvd
-      omega
+      exact Internal.three_mul_eq_twenty_one_of_odd_bounds hi_ge hle himod hi9 hi15
     · have hi7 : i ≠ 7 := fun h ↦ hcomp (h ▸ by decide)
       have himod : i % 2 = 1 := Nat.odd_iff.mp hstop.1.2
-      have h7lt : 7 < i := by omega
+      have h7lt : 7 < i := by
+        by_contra hnot7
+        have hi_le7 : i ≤ 7 := Nat.le_of_not_gt hnot7
+        interval_cases i
+        · norm_num only [Nat.reduceMod] at himod
+        · exact False.elim (hi7 rfl)
       exact
         False.elim <|
           hmin 7 h7lt
@@ -418,7 +508,7 @@ theorem composite_minimal_classical_negOne_eq_fifteen_or_twenty_one_or_twenty_se
   · have hle := minimal_classical_negOne_le_fifteen hn h3 h51 hmin
     have himod : i % 2 = 1 := Nat.odd_iff.mp hstop.1.2
     obtain ⟨k, rfl⟩ := h3dvd
-    omega
+    exact Or.inl (Internal.three_mul_eq_fifteen_of_odd_bounds hi_ge hle himod hi9)
   · exact
       False.elim <|
         hmin 5 h5lt

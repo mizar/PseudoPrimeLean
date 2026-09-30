@@ -30,7 +30,7 @@ suffices. -/
 theorem llsRiemannReciprocalVerticalIntegralLowerBound_of_riemannHypothesis
     (hRH : RiemannHypothesis) : LLSRiemannReciprocalVerticalIntegralLowerBound := by
   intro x hx τ hτ
-  have hx0 : (0 : ℝ) < x := by linarith
+  have hx0 : (0 : ℝ) < x := (by norm_num only : (0 : ℝ) < 1).trans hx
   have heq2 := reciprocalWeightedMangoldtSum_eq_integral hx0 (τ := 2) (by norm_num only)
   have heqτ := reciprocalWeightedMangoldtSum_eq_integral hx0 hτ
   have hre_eq :

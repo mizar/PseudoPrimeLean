@@ -20,8 +20,11 @@ theorem eventuallyEq_riemannZetaOneLogDerivativeRegularization :
     hslog
   rw [riemannZetaOneLogDerivativeRegularization, hslog]
   have hsub : s - 1 ≠ 0 := sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hs)
-  field_simp
-  ring
+  calc
+    (s - 1) * -(-(s - 1)⁻¹ + deriv riemannZeta₁ s / riemannZeta₁ s) =
+        (s - 1) * (s - 1)⁻¹ - (s - 1) * (deriv riemannZeta₁ s / riemannZeta₁ s) :=
+      by ring
+    _ = 1 - (s - 1) * (deriv riemannZeta₁ s / riemannZeta₁ s) := by rw [mul_inv_cancel₀ hsub]
 
 /-- The regularized negative logarithmic derivative is differentiable at one. -/
 theorem differentiableAt_riemannZetaOneLogDerivativeRegularization :

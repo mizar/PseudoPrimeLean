@@ -243,7 +243,7 @@ theorem riemannXiZeroNormWeight_le_riemannXiZeroWeight (s : ℂ) :
     apply one_div_le_one_div_of_le
     · positivity
     · rw [← Complex.normSq_eq_norm_sq]
-      nlinarith [Complex.im_sq_le_normSq s]
+      nlinarith only [Complex.im_sq_le_normSq s]
   · rw [ite_eq_right hs, ite_eq_right hs]
 
 /-- The analytic order of `PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi`
@@ -394,7 +394,7 @@ theorem riemannXiZeroMultiplicityNormWeight_le_riemannXiZeroMultiplicityWeight (
   · rw [ite_eq_left hs, ite_eq_left hs]
     apply div_le_div_of_nonneg_left (by positivity) (by positivity)
     rw [← Complex.normSq_eq_norm_sq]
-    nlinarith [Complex.im_sq_le_normSq s]
+    nlinarith only [Complex.im_sq_le_normSq s]
   · rw [ite_eq_right hs, ite_eq_right hs]
 
 /-- The finite radial xi-zero multiplicity mass is monotone as the ledger radius grows. -/
@@ -564,7 +564,7 @@ theorem logDeriv_riemannXiHadamardFactor {s ρ : ℂ} (hρ : ρ ≠ 0) (hs : s �
     apply hs
     have hdiv : s / ρ = 1 := sub_eq_zero.mp h |>.symm
     simpa only [one_mul] using (div_eq_iff hρ).mp hdiv
-  field_simp
+  field_simp [hρ, hlinear]
   ring
 
 /-- The finite genus-one Hadamard product over xi-zeros in the radius-`R` ledger. -/
@@ -633,7 +633,7 @@ theorem riemannXiMultiplicityHadamardFactor_eq_sub_pow_mul_unit {s ρ : ℂ} (h�
   rw [← mul_pow]
   congr 1
   unfold riemannXiHadamardFactor
-  field_simp
+  field_simp [hρ]
   ring
 
 /-- The analytic unit in a multiplicity-aware factor is nonzero at a nonzero attached zero. -/
@@ -868,7 +868,7 @@ theorem riemannXi_eq_multiplicityHadamardProduct_mul_entireQuotient (R : ℝ) (s
       apply riemannXiMultiplicityHadamardProduct_ne_zero
       intro ρ hρ hsr
       exact hs (hsr ▸ hρ)
-    field_simp
+    field_simp [hproduct]
 
 /-- At a nonzero value of `PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi`,
 neither factor in the finite global Hadamard factorization vanishes. -/
@@ -970,7 +970,7 @@ theorem logDeriv_riemannXi_zero_eq_finiteHadamardConstant (R : ℝ) :
     apply Finset.sum_eq_zero
     intro ρ hρ
     have hne : ρ ≠ 0 := riemannXiZero_ne_zero_of_mem_ledger hρ
-    field_simp
+    field_simp [hne]
     ring
   rw [hsum, zero_add]
 
@@ -1078,7 +1078,7 @@ theorem exists_log_norm_bound_riemannXiMultiplicityHadamardEntireQuotient {R : �
       ⟨0, hzero, rfl⟩
     have := hC himage
     dsimp only [q] at this ⊢
-    linarith
+    linarith only [this]
   · intro w hw
     have hclosed : w ∈ Metric.closedBall (0 : ℂ) R := Metric.ball_subset_closedBall hw
     have himage :
@@ -1087,7 +1087,7 @@ theorem exists_log_norm_bound_riemannXiMultiplicityHadamardEntireQuotient {R : �
       ⟨w, hclosed, rfl⟩
     have := hC himage
     dsimp only [q] at this ⊢
-    linarith
+    linarith only [this]
 
 /-- At each positive radius, the finite Hadamard zero sum approximates `ξ'/ξ`
 on the stated disk with a finite Borel–Carathéodory bound. This theorem does

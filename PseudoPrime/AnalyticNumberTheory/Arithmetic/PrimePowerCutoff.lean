@@ -19,7 +19,7 @@ theorem two_mem_prime_cutoff_of_two_le {x : ℝ} (hx : 2 ≤ x) {k : ℕ}
   have hxpos : 0 < x := lt_of_lt_of_le (by norm_num only) hx
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   have hquot_nonneg : 0 ≤ Real.log x / Real.log 2 := by
-    exact div_nonneg (Real.log_nonneg (by linarith)) hlog2.le
+    exact div_nonneg (Real.log_nonneg (by linarith only [hx])) hlog2.le
   have hklog : (k : ℝ) ≤ Real.log x / Real.log 2 :=
     (Nat.le_floor_iff hquot_nonneg).mp (Finset.mem_Icc.mp hk).2
   have hlog : (k : ℝ) * Real.log 2 ≤ Real.log x := (le_div_iff₀ hlog2).mp hklog
@@ -36,7 +36,7 @@ theorem two_mem_prime_cutoff_of_two_le {x : ℝ} (hx : 2 ≤ x) {k : ℕ}
     simpa only [one_div, ge_iff_le] using h
   exact
     Finset.mem_Ioc.mpr
-      ⟨by norm_num only, (Nat.le_floor_iff (Real.rpow_nonneg (by linarith) _)).mpr hrpow⟩
+      ⟨by norm_num only, (Nat.le_floor_iff (Real.rpow_nonneg (by linarith only [hx]) _)).mpr hrpow⟩
 
 /-!
 The odd reciprocal tail is a geometric progression.  Keeping this finite-sum
@@ -64,16 +64,28 @@ theorem sum_odd_inv_two_pow_le (K : ℕ) :
       simp only [Finset.mem_range] at hj
       simp only [s, Finset.mem_filter, Finset.mem_Icc]
       constructor
-      · omega
-      · exact ⟨j, by omega⟩
+      · constructor
+        · exact Nat.succ_le_succ (Nat.zero_le (2 * j))
+        · clear * - hj
+          have hmul : j * 2 < (K + 1) - (2 - 1) :=
+            (Nat.lt_div_iff_mul_lt (by norm_num only : 0 < 2)).mp hj
+          have hmul' : j * 2 < K := by simpa only [Nat.add_sub_cancel] using hmul
+          have hbound : j * 2 + 1 ≤ K := Nat.succ_le_of_lt hmul'
+          simpa only [Nat.mul_comm j 2] using hbound
+      · exact ⟨j, rfl⟩
     · intro j₁ hj₁ j₂ hj₂ h
-      omega
+      clear * - h
+      have hmul : 2 * j₁ = 2 * j₂ := Nat.add_right_cancel h
+      exact Nat.mul_left_cancel (by norm_num only : 0 < 2) hmul
     · intro k hk
       simp only [s, Finset.mem_filter, Finset.mem_Icc] at hk
       rcases hk.2 with ⟨j, rfl⟩
       refine ⟨j, ?_, ?_⟩
       · simp only [Finset.mem_range]
-        omega
+        clear * - hk
+        apply (Nat.lt_div_iff_mul_lt (by norm_num only : 0 < 2)).2
+        have hlt : 2 * j < K := Nat.lt_of_lt_of_le (Nat.lt_succ_self _) hk.1.2
+        simpa only [Nat.mul_comm j 2, Nat.add_sub_cancel] using hlt
       · rfl
     · intro j hj
       simp only [Finset.mem_range] at hj
@@ -85,6 +97,6 @@ theorem sum_odd_inv_two_pow_le (K : ℕ) :
   have h :=
     geom_sum_Ico_le_of_lt_one (x := (1 / 4 : ℝ)) (m := 0) (n := (K + 1) / 2) (by norm_num only)
       (by norm_num only)
-  nlinarith
+  nlinarith only [h]
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

@@ -12,6 +12,7 @@ import Mathlib.Data.Nat.Basic
 namespace PseudoPrime.NumberTheory.Factorization
 
 /-- `d` is a nontrivial proper divisor of `n`, independently of the search algorithm. -/
-def ProperFactor (n d : ℕ) : Prop := 1 < d ∧ d < n ∧ d ∣ n
+def ProperFactor (n d : ℕ) : Prop :=
+  1 < d ∧ d < n ∧ d ∣ n
 
 end PseudoPrime.NumberTheory.Factorization

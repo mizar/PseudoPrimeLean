@@ -112,7 +112,7 @@ theorem classicalNeOneMaximum_le_classicalNegOneMaximum (B : ℕ) :
     exact hn.not_isSquare (h ▸ ⟨1, rfl⟩)
   have hn1 : 1 < n.val := by
     have := hn.pos
-    omega
+    exact Nat.lt_of_le_of_ne this (Ne.symm hne1)
   exact
     PrimeTest.firstStopNeOne_le_firstStopNegOne_same_candidates hn1
       (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
@@ -215,7 +215,7 @@ theorem fifteen_lt_QNeOne_of_751_le {B : ℕ} (hB : 751 ≤ B) : 15 < PseudoSqua
         PseudoSquare.not_isSquare_751)
   have hle := PseudoSquare.primeNeOneWitness_le_QNeOne hadm
   rw [PseudoSquare.primeNeOneWitness_751_eq_17 hw] at hle
-  omega
+  exact (by decide : 15 < 17).trans_le hle
 
 /-- The Wheel30 pure `-1` maximum equals `QNegOne` from `399` onward. -/
 theorem wheel30NegOneMaximum_eq_QNegOne_of_399_le {B : ℕ} (hB : 399 ≤ B) :

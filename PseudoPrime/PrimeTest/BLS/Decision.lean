@@ -2,6 +2,7 @@ import PseudoPrime.PrimeTest.Result
 import PseudoPrime.PrimeTest.BLS.Certificate
 
 /-! # BLS adapter to certified primality decisions -/
+
 namespace PseudoPrime.PrimeTest.BLS
 
 /-- Project BLS outcomes to the common proof-only interface.

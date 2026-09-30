@@ -4,8 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 import Lean
+
 /-! # Shared certificate command parsing and bounded UTF-8 input -/
+
 namespace PseudoPrime.Tools.CertificateIO
+
 /-- Parse an unsigned decimal command argument. -/
 def readNat (s : String) : Except String Nat :=
   match s.toNat? with
@@ -20,16 +23,23 @@ def readFileBounded (path : System.FilePath) (maxBytes : Nat) : IO (Option Strin
   IO.FS.withFile path .read fun handle => do
     let rec loop (remaining : Nat) (data : ByteArray) : IO (Option ByteArray) := do
       let chunk ← handle.read (USize.ofNat (min 65536 remaining))
-      if chunk.isEmpty then return some data
-      if chunk.size > remaining then return none
+      if chunk.isEmpty then
+        return some data
+      if chunk.size > remaining then
+        return none
       let data := data ++ chunk
-      if data.size > maxBytes then return none
+      if data.size > maxBytes then
+        return none
       if _h : remaining - chunk.size < remaining then
         loop (remaining - chunk.size) data
-      else return some data
+      else
+        return some data
     termination_by remaining
     let some data ← loop (maxBytes + 1) ByteArray.empty | return none
     match String.fromUTF8? data with
-    | some text => return some text
-    | none => throw (IO.userError "certificate is not valid UTF-8")
+    | some text =>
+      return some text
+    | none =>
+      throw (IO.userError "certificate is not valid UTF-8")
+
 end PseudoPrime.Tools.CertificateIO

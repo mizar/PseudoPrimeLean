@@ -30,7 +30,7 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
         (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
           General.mellinWeightTwo ((n : ℝ) / x) =
       (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
-  have hτ0 : (0 : ℝ) < τ := by linarith
+  have hτ0 : (0 : ℝ) < τ := lt_trans zero_lt_one hτ
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ (((τ : ℂ) + y * Complex.I) ^ 2)⁻¹ with hK_def
   have hK_int : MeasureTheory.Integrable K := by
@@ -111,7 +111,7 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
     filter_upwards with y
     simp only [hG_def, hH_def, hK_def]
     rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div, Complex.ofReal_natCast]
-    field_simp
+    ac_rfl
   -- (2) each `G n` is integrable, dominated by a constant multiple of `K`
   have hGint : ∀ n : ℕ, MeasureTheory.Integrable (G n) := by
     intro n
@@ -202,7 +202,7 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
     have hs : (1 : ℝ) < ((τ : ℂ) + y * Complex.I).re := by
       simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-      linarith
+      exact hτ
     have hLS := lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ hs
     have hsum :
       ∑' n : ℕ,

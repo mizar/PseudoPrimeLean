@@ -92,16 +92,15 @@ theorem oddPrime_le_orderEmbOfFin {s : Finset ℕ} (hprime : ∀ p ∈ s, p.Prim
         have heq := Nat.nth_count (hfprime ⟨0, hj⟩)
         rw [hz, Nat.nth_prime_zero_eq_two] at heq
         have htwo : Odd 2 := heq.symm ▸ hfodd ⟨0, hj⟩
-        rcases htwo with ⟨k, hk⟩
-        omega
-      omega
+        exact (Nat.not_odd_iff_even.mpr ⟨1, rfl⟩) htwo
+      exact Nat.one_le_iff_ne_zero.mpr hne
     | succ j ih =>
       intro hj
       have hj' : j < s.card := (Nat.lt_succ_self j).trans hj
       have hlt : Nat.count Nat.Prime (f ⟨j, hj'⟩) < Nat.count Nat.Prime (f ⟨j + 1, hj⟩) :=
         Nat.count_strict_mono (hfprime ⟨j, hj'⟩) (f.strictMono (by exact Nat.lt_succ_self j))
       have hind := ih hj'
-      omega
+      exact Nat.succ_le_iff.mpr (lt_of_le_of_lt hind hlt)
   rw [oddPrime, ← Nat.nth_count (hfprime i)]
   exact Nat.nth_monotone Nat.infinite_setOfPred_prime (hcountNat i.val i.isLt)
 
@@ -136,7 +135,7 @@ theorem distinctPrimeFactorCount_lt_of_lt_oddPrimorial {n k : ℕ} (hn : Odd n)
 theorem distinctPrimeFactorCount_le_of_le_of_lt_oddPrimorial_succ {n B k : ℕ} (hn : Odd n)
     (hnB : n ≤ B) (hB : B < oddPrimorial (k + 1)) : distinctPrimeFactorCount n ≤ k := by
   have hlt := distinctPrimeFactorCount_lt_of_lt_oddPrimorial hn (hnB.trans_lt hB)
-  omega
+  exact Nat.le_of_lt_succ hlt
 
 /-- The index of an odd primorial never exceeds the product itself. -/
 theorem le_oddPrimorial (k : ℕ) : k ≤ oddPrimorial k := by

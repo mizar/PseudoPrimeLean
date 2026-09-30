@@ -39,18 +39,16 @@ def balancedRhoBudgetTree : ℕ → ℕ → RhoBudgetTree
 theorem balancedRhoBudgetTree_totalFuel_le (depth budget : ℕ) :
     (balancedRhoBudgetTree depth budget).totalFuel ≤ budget := by
   induction depth generalizing budget with
-  | zero =>
-    exact Nat.zero_le budget
+  | zero => exact Nat.zero_le budget
   | succ depth ih =>
     let childBudget := budget / 3
     have hleft := ih childBudget
     simp only [balancedRhoBudgetTree, RhoBudgetTree.totalFuel]
     calc
-        childBudget +
-          (balancedRhoBudgetTree depth childBudget).totalFuel +
+      childBudget + (balancedRhoBudgetTree depth childBudget).totalFuel +
             (balancedRhoBudgetTree depth childBudget).totalFuel ≤
-        childBudget + childBudget + childBudget := by
-          exact Nat.add_le_add (Nat.add_le_add_left hleft childBudget) hleft
+          childBudget + childBudget + childBudget :=
+        by exact Nat.add_le_add (Nat.add_le_add_left hleft childBudget) hleft
       _ ≤ budget := by
         have hdiv := Nat.div_mul_le_self budget 3
         dsimp only [childBudget]

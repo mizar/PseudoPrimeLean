@@ -32,12 +32,12 @@ Role: the odd half of the reciprocal main-error estimate.
 -/
 theorem llsPrimitiveReciprocalOddMainError_le_neg_quarter {x : ℝ} (hx : 64 ≤ x) :
     Analysis.primitiveReciprocalOddMainError x ≤ -(1 / 4 : ℝ) := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := by linarith only [hx]
   have hinv_le : 1 / x ≤ 1 / 64 := by
     apply div_le_div_of_nonneg_left (by norm_num only) (by norm_num only) hx
-  have hinv_nn : (0 : ℝ) ≤ 1 / x := by positivity
-  have h1mx_ge : (63 / 64 : ℝ) ≤ 1 - 1 / x := by linarith
-  have h1mx_nn : (0 : ℝ) ≤ 1 - 1 / x := by linarith
+  have hinv_nn : (0 : ℝ) ≤ 1 / x := div_nonneg (by norm_num only) hxpos.le
+  have h1mx_ge : (63 / 64 : ℝ) ≤ 1 - 1 / x := by linarith only [hinv_le]
+  have h1mx_nn : (0 : ℝ) ≤ 1 - 1 / x := by linarith only [hinv_le]
   have hγ := Analysis.twenty_seven_fiftieths_lt_eulerMascheroniConstant
   have hlog2 := Real.log_two_lt_d9
   have hterm1 : (27 / 50 : ℝ) * (1 - 1 / x) ≤ Real.eulerMascheroniConstant * (1 - 1 / x) :=
@@ -46,9 +46,9 @@ theorem llsPrimitiveReciprocalOddMainError_le_neg_quarter {x : ℝ} (hx : 64 ≤
     mul_le_mul_of_nonneg_left h1mx_ge (by norm_num only)
   have hterm3 : Real.log 2 / x ≤ (0.6931471808 : ℝ) * (1 / 64) := by
     rw [div_eq_mul_inv, ← one_div]
-    exact mul_le_mul hlog2.le hinv_le (by positivity) (by norm_num only)
+    exact mul_le_mul hlog2.le hinv_le hinv_nn (by norm_num only)
   unfold Analysis.primitiveReciprocalOddMainError
-  nlinarith [hterm1, hterm2, hterm3]
+  nlinarith only [hterm1, hterm2, hterm3]
 
 /--
 Input/assumptions: `x ≥ 64`.
@@ -63,8 +63,8 @@ Role: the even half of the reciprocal main-error estimate.
 -/
 theorem llsPrimitiveReciprocalEvenMainError_le_neg_quarter {x : ℝ} (hx : 64 ≤ x) :
     Analysis.primitiveReciprocalEvenMainError x ≤ -(1 / 4 : ℝ) := by
-  have hxpos : (0 : ℝ) < x := by linarith
-  have hlogx_nn : (0 : ℝ) ≤ Real.log x := Real.log_nonneg (by linarith)
+  have hxpos : (0 : ℝ) < x := by linarith only [hx]
+  have hlogx_nn : (0 : ℝ) ≤ Real.log x := Real.log_nonneg (by linarith only [hx])
   have hratio_le : (Real.log x + 1) / x ≤ Analysis.logLinearRatio x := by
     unfold Analysis.logLinearRatio
     apply div_le_div_of_nonneg_right _ hxpos.le
@@ -76,7 +76,7 @@ theorem llsPrimitiveReciprocalEvenMainError_le_neg_quarter {x : ℝ} (hx : 64 �
         norm_num only)
       (by
         simp only [Set.mem_Ici]
-        linarith)
+        linarith only [hx])
       hx
   have hratio64 : Analysis.logLinearRatio 64 = (12 * Real.log 2 + 1) / 64 := by
     unfold Analysis.logLinearRatio
@@ -87,8 +87,8 @@ theorem llsPrimitiveReciprocalEvenMainError_le_neg_quarter {x : ℝ} (hx : 64 �
   have hlog2 := Real.log_two_gt_d9
   have hinv_le : 1 / x ≤ 1 / 64 := by
     apply div_le_div_of_nonneg_left (by norm_num only) (by norm_num only) hx
-  have h1mx_ge : (63 / 64 : ℝ) ≤ 1 - 1 / x := by linarith
-  have h1mx_nn : (0 : ℝ) ≤ 1 - 1 / x := by linarith
+  have h1mx_ge : (63 / 64 : ℝ) ≤ 1 - 1 / x := by linarith only [hinv_le]
+  have h1mx_nn : (0 : ℝ) ≤ 1 - 1 / x := by linarith only [hinv_le]
   have hterm1 : (1 / 4 : ℝ) * (63 / 64) ≤ (Real.eulerMascheroniConstant / 2) * (1 - 1 / x) := by
     have hstep1 : (1 / 2 : ℝ) * (1 - 1 / x) ≤ Real.eulerMascheroniConstant * (1 - 1 / x) :=
       mul_le_mul_of_nonneg_right hγ.le h1mx_nn

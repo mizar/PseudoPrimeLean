@@ -28,8 +28,7 @@ theorem quadraticCharacter_apply_odd_prime (n : ℕ) (hn : Odd n) {ℓ : ℕ} (h
   have hℓne2 : ℓ ≠ 2 := by
     intro hℓtwo
     subst ℓ
-    obtain ⟨k, hk⟩ := hℓodd
-    omega
+    exact (Nat.not_odd_iff_even.mpr ⟨1, rfl⟩) hℓodd
   have hℓ4 : Nat.Coprime ℓ 4 := by
     have hℓ2 : Nat.Coprime ℓ 2 := (Nat.coprime_primes hℓ Nat.prime_two).mpr hℓne2
     have hpow := hℓ2.pow_right 2
@@ -40,7 +39,9 @@ theorem quadraticCharacter_apply_odd_prime (n : ℕ) (hn : Odd n) {ℓ : ℕ} (h
   rcases Nat.odd_mod_four_iff.mp (Nat.odd_iff.mp hn) with hn1 | hn3
   · simp only [hn1, ite_true]
     exact (jacobiSym.quadratic_reciprocity_one_mod_four hn1 hℓodd).symm
-  · rw [ite_eq_right (by omega : n % 4 ≠ 1)]
+  · rw [ite_eq_right
+        (by
+          rw [hn3]; decide : n % 4 ≠ 1)]
     rcases Nat.odd_mod_four_iff.mp (Nat.odd_iff.mp hℓodd) with hℓ1 | hℓ3
     · have hchi : ZMod.χ₄ (((ℓ : ℤ) : ZMod 4)) = 1 := by
         simpa only [Int.cast_natCast] using ZMod.χ₄_nat_one_mod_four hℓ1
@@ -122,9 +123,22 @@ theorem quadraticCharacter_ne_one_of_not_square (n : ℕ) (hn : Odd n) (hns : ¬
     subst n
     exact hns ((isSquare_iff_exists_sq 1).mpr ⟨1, by norm_num only⟩)
   have hn3 : n = 3 ∨ 3 < n := by
-    have hnpos := Odd.pos hn
     obtain ⟨k, hk⟩ := hn
-    omega
+    cases k with
+    | zero =>
+      norm_num only [Nat.mul_zero, Nat.zero_add] at hk
+      exact False.elim (hn1 hk)
+    | succ k =>
+      cases k with
+      | zero =>
+        norm_num only [Nat.mul_one, Nat.add_assoc] at hk
+        exact Or.inl hk
+      | succ k =>
+        right
+        rw [hk]
+        exact
+          lt_of_lt_of_le (by decide : 3 < 5)
+            (Nat.add_le_add_right (Nat.mul_le_mul_left 2 (Nat.le_add_left 2 k)) 1)
   refine MulChar.ne_one_iff.mpr ?_
   rcases hn3 with rfl | hn3
   · let u := ZMod.unitOfCoprime 5 (by norm_num only : Nat.Coprime 5 (4 * 3))
@@ -152,12 +166,12 @@ theorem quadraticCharacter_ne_one_of_not_square (n : ℕ) (hn : Odd n) (hns : ¬
       rw [Nat.coprime_comm, Nat.coprime_iff_gcd_eq_one, ← Int.gcd_natCast_natCast]
       by_contra hgcd
       have hzero : jacobiSym n q = 0 := jacobi_eq_zero_iff_not_coprime.mpr hgcd
-      omega
+      rw [hzero] at hqvalue
+      norm_num only at hqvalue
     have hqne2 : q ≠ 2 := by
       intro hqtwo
       subst q
-      obtain ⟨k, hk⟩ := hqodd
-      omega
+      exact (Nat.not_odd_iff_even.mpr ⟨1, rfl⟩) hqodd
     have hq4 : Nat.Coprime q 4 := by
       have hq2 := (Nat.coprime_primes hqprime Nat.prime_two).mpr hqne2
       have hpow := hq2.pow_right 2

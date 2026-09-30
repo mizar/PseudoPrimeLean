@@ -39,11 +39,11 @@ theorem continuous_dirichletLogContourKernel_leftVertical_line {N : ℕ} [NeZero
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
     have hsre_neg : (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I).re < 0 := by
       rw [hsre]
-      linarith
+      linarith only [hA']
     have hs0 : ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ 0 := by
       intro h
       rw [h, Complex.zero_re] at hsre_neg
-      linarith
+      linarith only [hsre_neg]
     have hL := dirichletLFunction_ne_zero_leftVertical hprimitive hne hinv A hA t
     have hcont := (differentiableAt_dirichletLogContourKernel hx hne hs0 hL).continuousAt
     exact hcont.continuousWithinAt
@@ -115,7 +115,7 @@ theorem tendsto_dirichletLogContourKernel_leftVertical_integral_atTop {N : ℕ} 
       (fun A : ℕ =>
         ∫ t : ℝ, dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := by linarith only [hx]
   obtain ⟨D, hDnn, hD⟩ :=
     exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general hprimitive hne hinv
   have hMassnn : (0 : ℝ) ≤ General.logQuadraticEnvelopeMass :=
@@ -134,7 +134,7 @@ theorem tendsto_dirichletLogContourKernel_leftVertical_integral_atTop {N : ℕ} 
   have hpoly_le : ∀ A : ℕ, ((A : ℝ) + 5) ^ 2 + 1 ≤ 26 * (((A : ℝ) + 1) ^ 2) := by
     intro A
     have hAnn : (0 : ℝ) ≤ (A : ℝ) := Nat.cast_nonneg A
-    nlinarith [sq_nonneg (A : ℝ)]
+    nlinarith only [hAnn, sq_nonneg (A : ℝ)]
   set K : ℝ := D * x ^ (-(1 : ℝ) / 2) * General.logQuadraticEnvelopeMass * 26 with hK_def
   have hKnn : (0 : ℝ) ≤ K := by
     rw [hK_def]

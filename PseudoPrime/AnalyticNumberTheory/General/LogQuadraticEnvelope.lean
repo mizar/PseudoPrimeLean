@@ -27,9 +27,9 @@ Role: feeds both the integrability majorant argument and the envelope mass's non
 -/
 theorem logQuadraticEnvelope_nonneg (t : ℝ) : 0 ≤ logQuadraticEnvelope t := by
   unfold logQuadraticEnvelope
-  apply div_nonneg _ (by positivity)
-  have := Real.log_nonneg (show (1 : ℝ) ≤ |t| + 2 by linarith [abs_nonneg t])
-  linarith
+  apply div_nonneg _ (add_nonneg (by norm_num only) (sq_nonneg t))
+  have := Real.log_nonneg (show (1 : ℝ) ≤ |t| + 2 by linarith only [abs_nonneg t])
+  exact add_nonneg (by norm_num only) this
 
 /--
 Input/assumptions: none.
@@ -67,14 +67,14 @@ theorem integrable_logQuadraticEnvelope : MeasureTheory.Integrable logQuadraticE
     unfold logQuadraticEnvelope
     fun_prop
   refine hint.mono' hmeas (Filter.Eventually.of_forall fun t => ?_)
-  have htsq_pos : (0 : ℝ) < 1 + t ^ 2 := by positivity
-  have hlt : |t| + 2 ≤ 3 * (1 + t ^ 2) := by nlinarith [sq_abs t, sq_nonneg (|t| - 1)]
+  have htsq_pos : (0 : ℝ) < 1 + t ^ 2 := add_pos_of_pos_of_nonneg (by norm_num only) (sq_nonneg t)
+  have hlt : |t| + 2 ≤ 3 * (1 + t ^ 2) := by nlinarith only [sq_abs t, sq_nonneg (|t| - 1)]
   have hlog1 : Real.log (|t| + 2) ≤ Real.log (3 * (1 + t ^ 2)) :=
-    Real.log_le_log (by linarith [abs_nonneg t]) hlt
+    Real.log_le_log (by linarith only [abs_nonneg t]) hlt
   have hlog2 : Real.log (3 * (1 + t ^ 2)) = Real.log 3 + Real.log (1 + t ^ 2) :=
-    Real.log_mul (by norm_num only) (by positivity)
+    Real.log_mul (by norm_num only) htsq_pos.ne'
   have hlog3 : Real.log (1 + t ^ 2) ≤ (1 + t ^ 2) ^ (1 / 4 : ℝ) / (1 / 4) :=
-    Real.log_le_rpow_div (by positivity) (by norm_num only)
+    Real.log_le_rpow_div htsq_pos.le (by norm_num only)
   have hlog4 : (1 + t ^ 2) ^ (1 / 4 : ℝ) / (1 / 4) = 4 * (1 + t ^ 2) ^ (1 / 4 : ℝ) := by ring
   rw [Real.norm_eq_abs, abs_of_nonneg (logQuadraticEnvelope_nonneg t)]
   unfold logQuadraticEnvelope
@@ -82,7 +82,9 @@ theorem integrable_logQuadraticEnvelope : MeasureTheory.Integrable logQuadraticE
   simp only [hh_def]
   rw [add_mul]
   have hterm1 : (1 + Real.log 3) * (1 + t ^ 2)⁻¹ * (1 + t ^ 2) = 1 + Real.log 3 := by
-    field_simp (discharger := exact htsq_pos.ne')
+    calc
+      _ = (1 + Real.log 3) * ((1 + t ^ 2)⁻¹ * (1 + t ^ 2)) := by rw [mul_assoc]
+      _ = 1 + Real.log 3 := by rw [inv_mul_cancel₀ htsq_pos.ne', mul_one]
   have hterm2 : 4 * (1 + t ^ 2) ^ (-(3 : ℝ) / 4) * (1 + t ^ 2) = 4 * (1 + t ^ 2) ^ (1 / 4 : ℝ) := by
     have h : (1 + t ^ 2) ^ (-(3 : ℝ) / 4) * (1 + t ^ 2) = (1 + t ^ 2) ^ (1 / 4 : ℝ) := by
       nth_rewrite 2 [← Real.rpow_one (1 + t ^ 2)]
@@ -90,7 +92,7 @@ theorem integrable_logQuadraticEnvelope : MeasureTheory.Integrable logQuadraticE
       norm_num only
     rw [mul_assoc, h]
   rw [hterm1, hterm2]
-  linarith [hlog1, hlog2, hlog3, hlog4]
+  linarith only [hlog1, hlog2, hlog3, hlog4]
 
 /-- The integral of `logQuadraticEnvelope` over the real line. Its value is a nonnegative
 constant used to bound integrals of functions dominated by a multiple of this envelope. -/

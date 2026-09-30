@@ -32,7 +32,9 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
     ∃ hdn : (NumberTheory.PrimeNeOneWitnessSet n).Nonempty,
       (NumberTheory.primeNeOneWitness n hdn : ℝ) ≤ (Real.log n) ^ 2 := by
   let bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns :=
-    Classical.choice (NumberTheory.exists_jacobiCharacterArithmeticData (by omega) hn hns)
+    Classical.choice
+      (NumberTheory.exists_jacobiCharacterArithmeticData
+        (Nat.lt_of_lt_of_le (by norm_num only : 0 < 11) hn11) hn hns)
   have hbpos : 0 < bridge.squareFactor := Odd.pos bridge.squareFactor_odd
   have hb2pos : 0 < bridge.squareFactor ^ 2 := pow_pos hbpos 2
   by_cases hdsmall :
@@ -76,22 +78,27 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
           · change (0 : ℝ) < (bridge.squarefreePart : ℝ)
             exact_mod_cast bridge.squarefreePart_pos
           · change (0 : ℝ) < (n : ℝ)
-            exact_mod_cast (by omega)
+            exact_mod_cast (Nat.lt_of_lt_of_le (by norm_num only : 0 < 11) hn11)
           · exact_mod_cast hdle
         have hlogd : 0 ≤ bridge.y := by
           dsimp only [NumberTheory.JacobiCharacterArithmeticData.y]
           apply Real.log_nonneg
-          exact_mod_cast (show 1 ≤ bridge.squarefreePart by omega)
+          exact_mod_cast (Nat.succ_le_of_lt bridge.squarefreePart_pos)
         have hlogn : 0 ≤ Real.log (n : ℝ) := by
           apply Real.log_nonneg
-          exact_mod_cast (show 1 ≤ n by omega)
+          exact_mod_cast (Nat.succ_le_of_lt (Nat.lt_of_lt_of_le (by norm_num only : 0 < 11) hn11))
         nlinarith only [hleqR, hqR, hyn, hlogd, hlogn]
       exact hbound ⟨_, hdnR⟩
     exact qNeOneAnalyticFalse_of_bridge_of_explicit_cutoff bridge hGRH hdbig hno
-  · have hdbelow : bridge.squarefreePart < 1000000 := by omega
+  · have hdbelow : bridge.squarefreePart < 1000000 := Nat.lt_of_not_ge hdbig
     have hd11 : 11 ≤ bridge.squarefreePart :=
       NumberTheory.JacobiCharacterArithmeticData.squarefreePart_ge_eleven_of_not_small bridge
-        (by omega) (by omega) (by omega)
+        (by
+          intro heq; exact hdsmall (Or.inl heq))
+        (by
+          intro heq; exact hdsmall (Or.inr (Or.inl heq)))
+        (by
+          intro heq; exact hdsmall (Or.inr (Or.inr heq)))
     have hnsd : ¬IsSquare bridge.squarefreePart := by
       rintro ⟨k, hk⟩
       apply hns
@@ -128,14 +135,14 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
       · change (0 : ℝ) < (bridge.squarefreePart : ℝ)
         exact_mod_cast bridge.squarefreePart_pos
       · change (0 : ℝ) < (n : ℝ)
-        exact_mod_cast (by omega)
+        exact_mod_cast (Nat.lt_of_lt_of_le (by norm_num only : 0 < 11) hn11)
       · exact_mod_cast hdle
     have hlogd : 0 ≤ Real.log (bridge.squarefreePart : ℝ) := by
       apply Real.log_nonneg
-      exact_mod_cast (show 1 ≤ bridge.squarefreePart by omega)
+      exact_mod_cast (Nat.succ_le_of_lt bridge.squarefreePart_pos)
     have hlogn : 0 ≤ Real.log (n : ℝ) := by
       apply Real.log_nonneg
-      exact_mod_cast (show 1 ≤ n by omega)
+      exact_mod_cast (Nat.succ_le_of_lt (Nat.lt_of_lt_of_le (by norm_num only : 0 < 11) hn11))
     nlinarith only [hwd, htransferR, hlog, hlogd, hlogn]
 
 end PseudoPrime.PseudoSquare

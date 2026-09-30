@@ -58,9 +58,11 @@ theorem not_isSquare_of_fin_certificate {n K : ℕ} (hB : n < K ^ 2)
   have hk2 : n = k ^ 2 := by simpa only [pow_two] using hk
   have hkK : k < K := by
     by_contra hnot
-    have hKk : K ≤ k := by omega
+    have hKk : K ≤ k := Nat.le_of_not_lt hnot
     have hsq : K ^ 2 ≤ k ^ 2 := by simpa only [pow_two] using Nat.mul_self_le_mul_self hKk
-    omega
+    have hlt : k ^ 2 < K ^ 2 := by
+      rw [← hk2]; exact hB
+    exact (Nat.not_lt_of_ge hsq) hlt
   exact hns ⟨k, hkK⟩ hk2
 
 /--
@@ -77,7 +79,7 @@ theorem twenty_seven_lt_QNegOne_of_399_le {B : ℕ} (hB : 399 ≤ B) : 27 < QNeg
     NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide) not_isSquare_399
   have hle := primeNegOneWitness_le_QNegOne hadm
   rw [primeNegOneWitness_399_eq_31 hw] at hle
-  omega
+  exact lt_of_lt_of_le (by norm_num only : 27 < 31) hle
 
 /-! The finite 750-bound certificate and its exact Q maximum. -/
 
@@ -91,7 +93,8 @@ def Through750NeOneCertificate : Prop :=
 
 theorem through750NeOneCertificate_valid : Through750NeOneCertificate := by
   intro n hnodd hns
-  have hsq := not_isSquare_of_fin_certificate (by omega) hns
+  have hsq :=
+    not_isSquare_of_fin_certificate (lt_trans n.isLt (by norm_num only : 750 < 28 ^ 2)) hns
   have hw := qNeOneSmall750_exists (Nat.odd_iff.mpr hnodd) hsq n.isLt
   exact exists_qNeOneSmall750_to_or hw
 
@@ -105,8 +108,11 @@ theorem primeNeOneWitness_le_thirteen_of_le_750 {n : ℕ} (hn : Odd n) (hns : ¬
     intro k hk
     exact hns ⟨k.val, by simpa only [pow_two] using hk⟩
   have hnlt750 : n < 750 := by
-    rcases hn with ⟨k, hk⟩
-    omega
+    have hne : n ≠ 750 := by
+      intro heq
+      subst n
+      exact (Nat.not_even_iff_odd.mpr hn) ⟨375, by norm_num only⟩
+    exact lt_of_le_of_ne hn750 hne
   have hcertificate := through750NeOneCertificate_valid ⟨n, hnlt750⟩ (Nat.odd_iff.mp hn) hnosquare
   obtain hjacobi | hjacobi | hjacobi | hjacobi | hjacobi := hcertificate
   all_goals
@@ -127,10 +133,13 @@ theorem primeNeOneWitness_331_eq_13 (hw : (NumberTheory.PrimeNeOneWitnessSet 331
     exact ⟨by decide, by decide, by norm_num only⟩
   have hmem := NumberTheory.primeNeOneWitness_mem 331 hw
   by_contra hne
-  have hlt : NumberTheory.primeNeOneWitness 331 hw < 13 := by omega
+  have hlt : NumberTheory.primeNeOneWitness 331 hw < 13 := by
+    rcases Nat.lt_or_eq_of_le hle with hlt | heq
+    · exact hlt
+    · exact False.elim (hne heq)
   rcases hmem with ⟨_hprime, hodd, hjacobi⟩
-  rcases hodd with ⟨k, hk⟩
-  interval_cases NumberTheory.primeNeOneWitness 331 hw <;> try omega
+  have hpmod : NumberTheory.primeNeOneWitness 331 hw % 2 = 1 := Nat.odd_iff.mp hodd
+  interval_cases NumberTheory.primeNeOneWitness 331 hw <;> norm_num only at hpmod
   all_goals norm_num only at hjacobi
 
 theorem QNeOne_750_eq_13 : QNeOne 750 = 13 := by
@@ -156,9 +165,10 @@ theorem not_isSquare_751 : ¬IsSquare 751 := by
   obtain ⟨k, hk⟩ := (isSquare_iff_exists_sq 751).mp hsquare
   have hk28 : k < 28 := by
     by_contra hnot
-    have hk28' : 28 ≤ k := by omega
+    have hk28' : 28 ≤ k := Nat.le_of_not_lt hnot
     have h784 : 784 ≤ k ^ 2 := by simpa only [pow_two] using Nat.mul_self_le_mul_self hk28'
-    omega
+    rw [← hk] at h784
+    norm_num only at h784
   interval_cases k <;> norm_num only at hk
 
 /-- At the next input, the least odd-prime Jacobi witness different from `1` jumps to `17`. -/
@@ -169,10 +179,13 @@ theorem primeNeOneWitness_751_eq_17 (hw : (NumberTheory.PrimeNeOneWitnessSet 751
     exact ⟨by decide, by decide, by norm_num only⟩
   have hmem := NumberTheory.primeNeOneWitness_mem 751 hw
   by_contra hne
-  have hlt : NumberTheory.primeNeOneWitness 751 hw < 17 := by omega
+  have hlt : NumberTheory.primeNeOneWitness 751 hw < 17 := by
+    rcases Nat.lt_or_eq_of_le hle with hlt | heq
+    · exact hlt
+    · exact False.elim (hne heq)
   rcases hmem with ⟨_hprime, hodd, hjacobi⟩
-  rcases hodd with ⟨k, hk⟩
-  interval_cases NumberTheory.primeNeOneWitness 751 hw <;> try omega
+  have hpmod : NumberTheory.primeNeOneWitness 751 hw % 2 = 1 := Nat.odd_iff.mp hodd
+  interval_cases NumberTheory.primeNeOneWitness 751 hw <;> norm_num only at hpmod
   all_goals norm_num only at hjacobi
 
 theorem QNeOne_751_eq_17 : QNeOne 751 = 17 := by
@@ -188,7 +201,10 @@ theorem QNeOne_751_eq_17 : QNeOne 751 = 17 := by
         (primeNeOneWitness_le_thirteen_of_le_750 hadm.odd hadm.not_isSquare hn750).trans
           (by norm_num only)
     · have hnle : n.val ≤ 751 := hadm.le
-      have hn751 : n.val = 751 := by omega
+      have hn751 : n.val = 751 := by
+        rcases Nat.lt_or_eq_of_le hnle with hlt | heq
+        · exact False.elim (hn750 (Nat.le_of_lt_succ hlt))
+        · exact heq
       apply NumberTheory.primeNeOneWitness_le
       refine ⟨by decide, by decide, ?_⟩
       norm_num only [hn751]

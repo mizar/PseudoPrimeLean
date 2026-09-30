@@ -52,7 +52,7 @@ theorem norm_dirichletReciprocalContourKernel_leftVertical_le {N : ℕ} [NeZero 
   rw [← hs_def] at hpow
   have hsnorm_pos : (0 : ℝ) < ‖s‖ * ‖s - 1‖ := by
     have h1t : (0 : ℝ) < 1 + t ^ 2 := by positivity
-    linarith [hden]
+    linarith only [hden, h1t]
   have hK_eq :
     ‖dirichletReciprocalContourKernel x χ s‖ =
       ‖logDeriv (DirichletCharacter.LFunction χ) s‖ * x ^ (-(A : ℝ) - 3 / 2) / (‖s‖ * ‖s - 1‖) := by
@@ -110,18 +110,20 @@ private theorem quadraticContinuousReciprocalKernel_leftVertical_line {N : ℕ} 
         Complex.natCast_re, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
         div_self_mul_self', Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-    have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
     have hsre_neg : (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I).re < 0 := by
       rw [hsre]
-      linarith
+      have hApos : (0 : ℝ) < (A : ℝ) := by exact_mod_cast Nat.lt_of_lt_of_le (by decide : 0 < 2) hA
+      calc
+        -(A : ℝ) - 1 / 2 < 0 - 0 := sub_lt_sub (neg_lt_zero.mpr hApos) (by norm_num only)
+        _ = 0 := sub_self 0
     have hs0 : ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ 0 := by
       intro h
       rw [h, Complex.zero_re] at hsre_neg
-      linarith
+      exact (not_lt_of_ge (le_rfl : (0 : ℝ) ≤ 0)) hsre_neg
     have hs1 : ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ 1 := by
       intro h
       rw [h, Complex.one_re] at hsre_neg
-      linarith
+      exact (not_lt_of_ge (show (0 : ℝ) ≤ 1 from by norm_num only)) hsre_neg
     have hL := quadraticDirichletLFunction_ne_zero_leftVertical hprimitive hne hquad A hA t
     exact
       (differentiableAt_dirichletReciprocalContourKernel hx hne hs0 hs1
@@ -153,12 +155,12 @@ theorem norm_dirichletReciprocalContourKernel_leftVertical_envelope_le {N : ℕ}
   set BA : ℝ := ((A : ℝ) + 5) ^ 2 + 1 with hBA_def
   have hBA1 : (1 : ℝ) ≤ BA := by
     rw [hBA_def]
-    nlinarith [sq_nonneg ((A : ℝ) + 5)]
-  have htlog_nn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith [abs_nonneg t])
+    nlinarith only [sq_nonneg ((A : ℝ) + 5)]
+  have htlog_nn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith only [abs_nonneg t])
   have htsq_pos : (0 : ℝ) < 1 + t ^ 2 := by positivity
   have hxpow_nn : (0 : ℝ) ≤ x ^ (-(A : ℝ) - 3 / 2) := (Real.rpow_pos_of_pos hx _).le
   have hstep : BA + Real.log (|t| + 2) ≤ BA * (1 + Real.log (|t| + 2)) := by
-    nlinarith [hBA1, htlog_nn]
+    nlinarith only [hBA1, htlog_nn]
   have hnum :
     D * x ^ (-(A : ℝ) - 3 / 2) * (BA + Real.log (|t| + 2)) ≤
       D * x ^ (-(A : ℝ) - 3 / 2) * (BA * (1 + Real.log (|t| + 2))) :=
@@ -327,18 +329,20 @@ theorem continuous_dirichletReciprocalContourKernel_leftVertical_line {N : ℕ} 
         Complex.natCast_re, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
         div_self_mul_self', Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-    have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
     have hsre_neg : (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I).re < 0 := by
       rw [hsre]
-      linarith
+      have hApos : (0 : ℝ) < (A : ℝ) := by exact_mod_cast Nat.lt_of_lt_of_le (by decide : 0 < 2) hA
+      calc
+        -(A : ℝ) - 1 / 2 < 0 - 0 := sub_lt_sub (neg_lt_zero.mpr hApos) (by norm_num only)
+        _ = 0 := sub_self 0
     have hs0 : ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ 0 := by
       intro h
       rw [h, Complex.zero_re] at hsre_neg
-      linarith
+      exact (not_lt_of_ge (le_rfl : (0 : ℝ) ≤ 0)) hsre_neg
     have hs1 : ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ 1 := by
       intro h
       rw [h, Complex.one_re] at hsre_neg
-      linarith
+      exact (not_lt_of_ge (show (0 : ℝ) ≤ 1 from by norm_num only)) hsre_neg
     have hL := dirichletLFunction_ne_zero_leftVertical hprimitive hne hinv A hA t
     exact
       (differentiableAt_dirichletReciprocalContourKernel hx hne hs0 hs1
@@ -432,7 +436,7 @@ theorem tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N 
         ∫ t : ℝ,
           dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := lt_trans zero_lt_one hx
   obtain ⟨D, hDnn, hD⟩ :=
     exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general hprimitive hne hinv
   set r : ℝ := x⁻¹ with hr_def
@@ -449,7 +453,7 @@ theorem tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N 
   have hpoly_le : ∀ A : ℕ, ((A : ℝ) + 5) ^ 2 + 1 ≤ 26 * (((A : ℝ) + 1) ^ 2) := by
     intro A
     have hAnn : (0 : ℝ) ≤ (A : ℝ) := Nat.cast_nonneg A
-    nlinarith [sq_nonneg (A : ℝ)]
+    nlinarith only [hAnn, sq_nonneg (A : ℝ)]
   set K : ℝ := D * x ^ (-(3 : ℝ) / 2) * General.logQuadraticEnvelopeMass * 26 with hK_def
   have hbound :
     ∀ A : ℕ,
@@ -521,7 +525,7 @@ theorem quadraticTendsto_dirichletReciprocalContourKernel_leftVertical_integral_
         ∫ t : ℝ,
           dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := lt_trans zero_lt_one hx
   obtain ⟨D, hDnn, hD⟩ :=
     exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le hprimitive hne hquad
   have hMassnn : (0 : ℝ) ≤ General.logQuadraticEnvelopeMass :=
@@ -540,7 +544,7 @@ theorem quadraticTendsto_dirichletReciprocalContourKernel_leftVertical_integral_
   have hpoly_le : ∀ A : ℕ, ((A : ℝ) + 5) ^ 2 + 1 ≤ 26 * (((A : ℝ) + 1) ^ 2) := by
     intro A
     have hAnn : (0 : ℝ) ≤ (A : ℝ) := Nat.cast_nonneg A
-    nlinarith [sq_nonneg (A : ℝ)]
+    nlinarith only [hAnn, sq_nonneg (A : ℝ)]
   set K : ℝ := D * x ^ (-(3 : ℝ) / 2) * General.logQuadraticEnvelopeMass * 26 with hK_def
   have hKnn : (0 : ℝ) ≤ K := by
     rw [hK_def]

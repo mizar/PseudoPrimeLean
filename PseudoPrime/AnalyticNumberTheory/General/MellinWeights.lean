@@ -44,7 +44,7 @@ theorem hasMellin_mellinWeightOne {s : ℂ} (hs : 0 < s.re) :
     hasMellin_cpow_Ioc (1 : ℂ)
       (show (0 : ℝ) < s.re + (1 : ℂ).re by
         simp only [Complex.one_re]
-        linarith)
+        linarith only [hs])
   have hsub := hasMellin_sub h1.1 h2.1
   rw [h1.2, h2.2] at hsub
   have hs0 : s ≠ 0 := by
@@ -55,9 +55,10 @@ theorem hasMellin_mellinWeightOne {s : ℂ} (hs : 0 < s.re) :
     intro h
     have hre : s.re + 1 = 0 := by
       simpa only [Complex.add_re, Complex.one_re, Complex.zero_re] using congrArg Complex.re h
-    linarith
+    linarith only [hs, hre]
   have hval : (1 : ℂ) / s - 1 / (s + 1) = 1 / (s * (s + 1)) := by
-    field_simp (discharger := first | exact hs0 | exact hs1)
+    rw [div_sub_div (1 : ℂ) 1 hs0 hs1]
+    congr 1
     ring
   rw [hval] at hsub
   rwa [mellinWeightOne_eq_sub]
@@ -123,7 +124,8 @@ theorem hasMellin_mellinWeightTwo {s : ℂ} (hs : 0 < s.re) :
     HasMellin mellinWeightTwo s (1 / s ^ 2) := by
   obtain ⟨hconv, hderiv⟩ :=
     mellin_hasDerivAt_of_isBigO_rpow locallyIntegrableOn_mellinWeightZero
-      (isBigO_atTop_mellinWeightZero (s.re + 1)) (by linarith) isBigO_nhdsWithin_mellinWeightZero hs
+      (isBigO_atTop_mellinWeightZero (s.re + 1)) (by linarith only [hs])
+      isBigO_nhdsWithin_mellinWeightZero hs
   have hinv : HasDerivAt (fun z : ℂ ↦ z⁻¹) (-(s ^ 2)⁻¹) s :=
     hasDerivAt_inv
       (by
@@ -173,7 +175,7 @@ theorem min_sq_one_mul_le_norm_add_mul_I_sq (σ y : ℝ) :
   rw [norm_add_mul_I_sq, mul_add, mul_one]
   have h1 : min (σ ^ 2) 1 ≤ σ ^ 2 := min_le_left _ _
   have h2 : min (σ ^ 2) 1 * y ^ 2 ≤ y ^ 2 := mul_le_of_le_one_left (sq_nonneg y) (min_le_right _ _)
-  linarith
+  linarith only [h1, h2]
 
 /-- The logarithmic rational kernel `s ↦ s⁻² ` is vertically integrable off the imaginary axis. -/
 theorem verticalIntegrable_mellinLogKernel {σ : ℝ} (hσ0 : σ ≠ 0) :
@@ -197,7 +199,7 @@ theorem verticalIntegrable_mellinReciprocalKernel {σ : ℝ} (hσ0 : σ ≠ 0) (
   have hσ1' : σ + 1 ≠ 0 := by
     intro h
     apply hσ1
-    linarith
+    linarith only [h]
   have hc1 : (0 : ℝ) < min (σ ^ 2) 1 := lt_min (by positivity) one_pos
   have hc2 : (0 : ℝ) < min ((σ + 1) ^ 2) 1 := lt_min (by positivity) one_pos
   set c : ℝ := Real.sqrt (min (σ ^ 2) 1 * min ((σ + 1) ^ 2) 1) with hc_def
@@ -253,7 +255,7 @@ theorem mellinWeightOne_eq_ofReal_max {t : ℝ} (ht : 0 < t) :
   · have h1 : 1 < t := by
       by_contra hc
       exact h ⟨ht, not_lt.mp hc⟩
-    rw [mellinWeightOne, Set.indicator_of_notMem h, max_eq_right (by linarith)]
+    rw [mellinWeightOne, Set.indicator_of_notMem h, max_eq_right (sub_nonpos.mpr (le_of_lt h1))]
     simp only [Complex.ofReal_zero]
 
 /-- The reciprocal weight is continuous at every positive real. -/
@@ -315,7 +317,7 @@ theorem mellinInv_mellinWeightOne_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
         (by
           intro h
           rw [h] at hσ
-          linarith)
+          linarith only [hσ])
   have hmellinInv :=
     mellinInv_mellin_eq σ mellinWeightOne hx hconv hVI (continuousAt_mellinWeightOne hx)
   have hfun_eq :

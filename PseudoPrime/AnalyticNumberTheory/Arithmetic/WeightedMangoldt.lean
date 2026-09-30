@@ -103,7 +103,12 @@ theorem sum_log_div_prime_pow_le {p N : ℕ} (hp : p.Prime) :
     _ = Real.log p / (p - 1) := by
       have hp0 : (p : ℝ) ≠ 0 := ne_of_gt (zero_lt_one.trans hpcast)
       have hp1 : (p : ℝ) - 1 ≠ 0 := sub_ne_zero.mpr hpcast.ne'
-      field_simp
+      have hden : 1 - (p : ℝ)⁻¹ ≠ 0 := ne_of_gt (sub_pos.mpr hinv1)
+      have hfrac : (p : ℝ)⁻¹ / (1 - (p : ℝ)⁻¹) = 1 / ((p : ℝ) - 1) := by
+        rw [div_eq_div_iff hden hp1]
+        rw [mul_sub, inv_mul_cancel₀ hp0, mul_one, one_mul]
+      rw [hfrac]
+      rw [one_div, div_eq_mul_inv]
 
 /-- Closed form for the finite arithmetic sum occurring in the logarithmic estimate. -/
 theorem two_mul_sum_log_weight (a L : ℝ) (K : ℕ) :
@@ -114,7 +119,7 @@ theorem two_mul_sum_log_weight (a L : ℝ) (K : ℕ) :
     rw [h]
     simp only [Finset.sum_empty, Nat.cast_zero, zero_mul, mul_zero]
   | succ K ih =>
-    rw [Finset.sum_Icc_succ_top (by omega), mul_add, ih]
+    rw [Finset.sum_Icc_succ_top (Nat.succ_le_succ (Nat.zero_le K)), mul_add, ih]
     push_cast
     ring
 
@@ -122,8 +127,9 @@ theorem two_mul_sum_log_weight (a L : ℝ) (K : ℕ) :
 theorem sum_log_weight_le_half_sq (a L : ℝ) (K : ℕ) :
     ∑ k ∈ Finset.Icc 1 K, a * (L - k * a) ≤ L ^ 2 / 2 := by
   have hidentity := two_mul_sum_log_weight a L K
-  have hnonneg : 0 ≤ (L - K * a) ^ 2 + K * a ^ 2 := by positivity
-  nlinarith
+  have hnonneg : 0 ≤ (L - K * a) ^ 2 + K * a ^ 2 :=
+    add_nonneg (sq_nonneg _) (mul_nonneg (Nat.cast_nonneg K) (sq_nonneg _))
+  nlinarith only [hidentity, hnonneg]
 
 /-- A finite sum over prime powers can be reindexed with the prime as its outer variable. -/
 theorem sum_primePow_eq_sum_primesLE (f : ℕ → ℝ) (n : ℕ) :
@@ -142,8 +148,9 @@ theorem sum_primePow_eq_sum_primesLE (f : ℕ → ℝ) (n : ℕ) :
         obtain ⟨p, ⟨⟨hp1, hpn⟩, hp⟩, k, ⟨hk1, hklog⟩, rfl⟩ := hq
         exact
           ⟨⟨Nat.one_le_of_lt (Nat.pow_pos (Nat.zero_lt_one.trans_le hp1)),
-              Nat.pow_le_of_le_log (by omega) hklog⟩,
-            hp.prime.isPrimePow.pow (by omega)⟩
+              Nat.pow_le_of_le_log
+                (Nat.ne_of_gt (lt_of_lt_of_le (lt_of_lt_of_le Nat.zero_lt_one hp1) hpn)) hklog⟩,
+            hp.prime.isPrimePow.pow (Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one hk1))⟩
       · exfalso
         apply hqnot
         simp only [Finset.mem_biUnion, Finset.mem_filter, Finset.mem_Icc, Finset.mem_image]
@@ -158,7 +165,14 @@ theorem sum_primePow_eq_sum_primesLE (f : ℕ → ℝ) (n : ℕ) :
       by
       rw [Finset.sum_biUnion]
       rw [Finset.pairwiseDisjoint_iff]
-      grind [Nat.Prime.pow_inj']
+      intro i hi j hj h
+      simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_Icc] at hi hj
+      obtain ⟨q, hq⟩ := h
+      simp only [Finset.mem_inter, Finset.mem_image, Finset.mem_Icc] at hq
+      rcases hq with ⟨⟨ki, hki, hpowi⟩, ⟨kj, hkj, hpowj⟩⟩
+      exact
+        (Nat.Prime.pow_inj' hi.2 hj.2 (Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one hki.1))
+            (Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one hkj.1)) (hpowi.trans hpowj.symm)).1
     _ = ∑ p ∈ Nat.primesLE n, ∑ k ∈ Finset.Icc 1 (p.log n), f (p ^ k) := by
       refine Finset.sum_congr (Nat.primesLE_eq_filter_Icc_one n).symm fun p hp ↦ ?_
       exact
@@ -224,8 +238,10 @@ theorem reciprocalWeightedMangoldtTerm_prime_pow_le {x : ℝ} {p k : ℕ} (hx : 
     (hk : k ≠ 0) : reciprocalWeightedMangoldtTerm x (p ^ k) ≤ Real.log p / (p : ℝ) ^ k := by
   rw [reciprocalWeightedMangoldtTerm_prime_pow hp hk]
   have hlog : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hp.one_le)
-  have hcoeff : 0 ≤ Real.log p / (p : ℝ) ^ k := div_nonneg hlog (by positivity)
-  exact mul_le_of_le_one_right hcoeff (sub_le_self 1 (by positivity))
+  have hcoeff : 0 ≤ Real.log p / (p : ℝ) ^ k := div_nonneg hlog (pow_nonneg (Nat.cast_nonneg p) k)
+  exact
+    mul_le_of_le_one_right hcoeff
+      (sub_le_self 1 (div_nonneg (pow_nonneg (Nat.cast_nonneg p) k) hx.le))
 
 /-- The complete initial logarithmic prime-power contribution is at most half `log(x) ^ 2`. -/
 theorem sum_logWeightedMangoldtTerm_prime_pow_le {x : ℝ} {p K : ℕ} (hx : x ≠ 0) (hp : p.Prime) :
@@ -314,7 +330,7 @@ theorem commonFactorLogWeightedSum_le {m : ℕ} (hm0 : m ≠ 0) {x : ℝ} (hx : 
         have hpdata := Finset.mem_filter.mp hp
         exact Nat.mem_primeFactors.mpr ⟨Nat.prime_of_mem_primesLE hpdata.1, hpdata.2, hm0⟩
       · intro p hp hpmissing
-        positivity
+        exact div_nonneg (sq_nonneg (Real.log x)) (by norm_num only : (0 : ℝ) ≤ 2)
     _ = (1 / 2 : ℝ) * m.primeFactors.card * (Real.log x) ^ 2 := by
       simp only [Finset.sum_const, nsmul_eq_mul]
       ring
@@ -361,7 +377,9 @@ theorem commonFactorReciprocalWeightedSum_le_primeFactors {m : ℕ} (hm0 : m ≠
             ⟨(Finset.mem_filter.mp hp).2.1, (Finset.mem_filter.mp hp).2.2, hm0⟩
       · intro p hp hpmissing
         have hpprime : p.Prime := (Nat.mem_primeFactors.mp hp).1
-        exact div_nonneg (Real.log_nonneg (by exact_mod_cast hpprime.one_le)) (by positivity)
+        exact
+          div_nonneg (Real.log_nonneg (by exact_mod_cast hpprime.one_le))
+            (pow_nonneg (Nat.cast_nonneg p) k)
 
 /--
 For `m ≠ 0` and `x > 0`, the reciprocal common-factor weighted sum is at most

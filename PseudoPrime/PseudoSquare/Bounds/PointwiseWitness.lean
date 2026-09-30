@@ -33,7 +33,8 @@ theorem primeWitness_elementary_bound_explicit
           ℝ) ≤
         (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 3) ^ 2 := by
   have hmem : n ∈ NumberTheory.admissibleFinset n :=
-    NumberTheory.mem_admissibleFinset_iff.mpr ⟨by omega, le_rfl, hn, hns⟩
+    NumberTheory.mem_admissibleFinset_iff.mpr
+      ⟨lt_of_lt_of_le (by norm_num only : 0 < 3) hn3, le_rfl, hn, hns⟩
   exact
     ⟨Nat.cast_le.mpr
         (NumberTheory.primeNeOneWitness_le_primeNegOneWitness n
@@ -77,12 +78,20 @@ theorem exists_prime_ne_one_witness_of_grh
     exact hns ⟨1, by simp only⟩
   have hn3 : 3 ≤ n := by
     obtain ⟨k, hk⟩ := hn
-    omega
+    have hk0 : 0 < k := by
+      by_contra hnot
+      have hkz : k = 0 := Nat.eq_zero_of_not_pos hnot
+      exact hn1 (by simp only [hk, hkz, Nat.mul_zero, Nat.zero_add])
+    calc
+      3 = 2 * 1 + 1 := by norm_num only
+      _ ≤ 2 * k + 1 := Nat.add_le_add_right (Nat.mul_le_mul_left 2 (Nat.succ_le_of_lt hk0)) 1
+      _ = n := hk.symm
   have hmemNe := NumberTheory.primeNeOneWitness_mem n hne
   refine ⟨NumberTheory.primeNeOneWitness n hne, hmemNe.1, hmemNe.2.1, ?_, hmemNe.2.2⟩
   by_cases hn11 : 11 ≤ n
   · exact (primeNeOneWitness_cast_le_log_sq_of_11_le hGRH hn11 hn hns).trans (le_max_right _ _)
-  · have hsmall := primeNeOneWitness_le_five_of_lt_sixteen hn hns (by omega)
+  · have hn16 : n < 16 := lt_of_lt_of_le (Nat.lt_of_not_ge hn11) (by norm_num only : 11 ≤ 16)
+    have hsmall := primeNeOneWitness_le_five_of_lt_sixteen hn hns hn16
     exact (Nat.cast_le.mpr hsmall).trans (le_max_left _ _)
 
 /--
@@ -108,7 +117,14 @@ theorem exists_prime_neg_one_witness_of_grh
     exact hns ⟨1, by simp only⟩
   have hn3 : 3 ≤ n := by
     obtain ⟨k, hk⟩ := hn
-    omega
+    have hk0 : 0 < k := by
+      by_contra hnot
+      have hkz : k = 0 := Nat.eq_zero_of_not_pos hnot
+      exact hn1 (by simp only [hk, hkz, Nat.mul_zero, Nat.zero_add])
+    calc
+      3 = 2 * 1 + 1 := by norm_num only
+      _ ≤ 2 * k + 1 := Nat.add_le_add_right (Nat.mul_le_mul_left 2 (Nat.succ_le_of_lt hk0)) 1
+      _ = n := hk.symm
   have hbound := (primeWitness_elementary_bound_explicit hGRH hn3 hn hns).2
   have hmemNeg := NumberTheory.primeNegOneWitness_mem n hneg
   exact ⟨NumberTheory.primeNegOneWitness n hneg, hmemNeg.1, hmemNeg.2.1, hbound, hmemNeg.2.2⟩

@@ -219,7 +219,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch {q : ℕ}
     have hN1 : χ.conductor ≠ 1 :=
       AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
     have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
-    omega
+    exact (Nat.one_lt_iff_ne_zero_and_ne_one).mpr ⟨ne_of_gt hNpos, hN1⟩
   have hlower :=
     characterLogWeightedSum_re_ge_riemann_lower_sub_half_log_sq_of_eq_zero (y ^ 2) χ hriemann
       ((by norm_num only : (2 : ℝ) ≤ 64).trans (Analysis.sq_ge_64_of_ge_8 hy)) hodd h2
@@ -280,7 +280,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch {q : ℕ}
     have hN1 : χ.conductor ≠ 1 :=
       AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
     have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
-    omega
+    exact (Nat.one_lt_iff_ne_zero_and_ne_one).mpr ⟨ne_of_gt hNpos, hN1⟩
   have hlower :=
     characterLogWeightedSum_re_ge_riemann_lower_sub_half_log_sq_of_eq_one (y ^ 2) χ hquad hriemann
       ((by norm_num only : (2 : ℝ) ≤ 64).trans (Analysis.sq_ge_64_of_ge_8 hy)) hodd h2
@@ -1060,10 +1060,10 @@ theorem qNeOneUpperBoundZeroStar_lt_of_affine_B {y C : ℝ} (hy : 12 ≤ y)
     Real.one_half_lt_eulerMascheroniConstant.le
   have hpi : Real.pi ^ 2 / 24 ≤ (2 / 3 : ℝ) := by
     have hprodpi : 0 < (4 - Real.pi) * (4 + Real.pi) :=
-      mul_pos (by linarith [Real.pi_lt_d4]) (by positivity)
+      mul_pos (by linarith only [Real.pi_lt_d4]) (by positivity)
     have hsq : Real.pi ^ 2 < 16 := by
       rw [show (4 - Real.pi) * (4 + Real.pi) = 16 - Real.pi ^ 2 by ring] at hprodpi
-      linarith
+      exact sub_pos.mp hprodpi
     have hsqdiv : Real.pi ^ 2 / 24 < (16 : ℝ) / 24 := div_lt_div_of_pos_right hsq (by norm_num only)
     exact hsqdiv.le.trans_eq (by norm_num only)
   have hE :
@@ -1074,7 +1074,8 @@ theorem qNeOneUpperBoundZeroStar_lt_of_affine_B {y C : ℝ} (hy : 12 ≤ y)
       rw [Real.log_pow]
       norm_num only
     rw [hlogpow]
-    have heuler0 : 0 ≤ Real.eulerMascheroniConstant := by linarith
+    have heuler0 : 0 ≤ Real.eulerMascheroniConstant :=
+      le_trans (by norm_num only : (0 : ℝ) ≤ 1 / 2) heuler
     calc
       Real.pi ^ 2 / 24 - (Real.eulerMascheroniConstant / 2) * (2 * Real.log y) -
             (1 / 2) * (2 * Real.log y) ^ 2 ≤
@@ -1110,7 +1111,8 @@ theorem qNeOneUpperBoundZeroStar_lt_of_affine_B {y C : ℝ} (hy : 12 ≤ y)
         2 * (Real.log y) ^ 2 := by
     unfold qNeOneUpperBoundZeroStar
     rw [Analysis.primitiveLogEvenMainError]
-    rw [show Real.log (y ^ 2) = 2 * Real.log y by
+    rw [show Real.log (y ^ 2) = 2 * Real.log y
+        by
         rw [Real.log_pow]
         norm_num only]
     have hcondscaled :
@@ -1122,7 +1124,8 @@ theorem qNeOneUpperBoundZeroStar_lt_of_affine_B {y C : ℝ} (hy : 12 ≤ y)
           by ring
         _ ≤ (y + 2 / 5) * Real.log y := hcondupper
     have hE' := hE
-    rw [show Real.log (y ^ 2) = 2 * Real.log y by
+    rw [show Real.log (y ^ 2) = 2 * Real.log y
+        by
         rw [Real.log_pow]
         norm_num only] at hE'
     have hsum := add_le_add (add_le_add hprod hcondscaled) hE'
@@ -1148,9 +1151,9 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twelve_thirteen {y 
   unfold qNeOneAnalyticLowerBound
   ring_nf at ⊢
   have hLpos : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only) hy)
-  have hyl := mul_le_mul_of_nonneg_right hloglower (by linarith : (0 : ℝ) ≤ y)
+  have hyl := mul_le_mul_of_nonneg_right hloglower (by linarith only [hy] : (0 : ℝ) ≤ y)
   have hL2 := mul_le_mul_of_nonneg_right hloglower hLpos
-  linarith [hyl, hL2, sq_nonneg (y - 12), sq_nonneg (y - 13)]
+  linarith only [hyl, hL2, sq_nonneg (y - 12), sq_nonneg (y - 13), hy, hy13, hloglower, hB, hLpos]
 
 /-! The remaining compact intervals use the same cleared separation inequality. -/
 
@@ -1188,7 +1191,8 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirteen_sixteen {y
   have hLpos : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only) hy)
   have hyl := mul_le_mul_of_nonneg_right hloglower (le_trans (by norm_num only) hy)
   have hL2 := mul_le_mul_of_nonneg_right hloglower hLpos
-  linarith [hyl, hL2, sq_nonneg (y - 13), sq_nonneg (y - 16)]
+  linarith only [hyl, hL2, sq_nonneg (y - 13), sq_nonneg (y - 16), hy, hy16, hloglower, hB, hLpos,
+    hlog13]
 
 theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_sixteen_twenty_four {y : ℝ}
     (hy : 16 ≤ y) (hy24 : y ≤ 24) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
@@ -1212,7 +1216,8 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_sixteen_twenty_four
   have hLpos : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only) hy)
   have hyl := mul_le_mul_of_nonneg_right hloglower (le_trans (by norm_num only) hy)
   have hL2 := mul_le_mul_of_nonneg_right hloglower hLpos
-  linarith [hyl, hL2, sq_nonneg (y - 16), sq_nonneg (y - 24)]
+  linarith only [hyl, hL2, sq_nonneg (y - 16), sq_nonneg (y - 24), hy, hy24, hloglower, hB, hLpos,
+    hlog16]
 
 theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twenty_four_thirty_two {y : ℝ}
     (hy : 24 ≤ y) (hy32 : y ≤ 32) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
@@ -1239,7 +1244,8 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twenty_four_thirty_
   have hLpos : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only) hy)
   have hyl := mul_le_mul_of_nonneg_right hloglower (le_trans (by norm_num only) hy)
   have hL2 := mul_le_mul_of_nonneg_right hloglower hLpos
-  linarith [hyl, hL2, sq_nonneg (y - 24), sq_nonneg (y - 32)]
+  linarith only [hyl, hL2, sq_nonneg (y - 24), sq_nonneg (y - 32), hy, hy32, hloglower, hB, hLpos,
+    hlog24]
 
 theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirty_two_forty_eight {y : ℝ}
     (hy : 32 ≤ y) (hy48 : y ≤ 48) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
@@ -1407,7 +1413,9 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound {y : ℝ} (hy : 48 
 theorem qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound {y : ℝ} (hy : 48 ≤ y) :
     qNeOneCommonUpperBound y < qNeOneAnalyticLowerBound y := by
   have hzero := qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound hy
-  have hone := qNeOneAnalyticUpperBoundOne_lt_qNeOneAnalyticLowerBound (y := y) (by linarith)
+  have hone :=
+    qNeOneAnalyticUpperBoundOne_lt_qNeOneAnalyticLowerBound (y := y)
+      (le_trans (by norm_num only : (8 : ℝ) ≤ 48) hy)
   unfold qNeOneCommonUpperBound
   exact max_lt hzero hone
 
@@ -1417,15 +1425,13 @@ theorem qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound_of_twelve {y : ℝ} (
     qNeOneCommonUpperBound y < qNeOneAnalyticLowerBound y := by
   by_cases hy48 : y ≤ 48
   · exact qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound_twelve_forty_eight hy hy48
-  · exact qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound (by linarith)
+  · exact qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound (le_of_lt (lt_of_not_ge hy48))
 
 /-! Any sandwich by the common numerical upper envelope is impossible in the bound range. -/
 
 theorem qNeOne_common_sandwich_false {y z : ℝ} (hy : 48 ≤ y)
     (hlower : qNeOneAnalyticLowerBound y ≤ z) (hupper : z ≤ qNeOneCommonUpperBound y) : False := by
-  exact
-    (not_lt_of_ge (hlower.trans hupper))
-      (qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound (by linarith))
+  exact (not_lt_of_ge (hlower.trans hupper)) (qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound hy)
 
 /-! The same common sandwich contradiction is now available from `y ≥ 12`. -/
 
@@ -1464,8 +1470,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_star {q :
   have hB :=
     primitiveQuadraticBRe_le_of_qneOne_zero_branch_even_at_square_log_four_strong χ hne hquad heven
       hGRH hy hlogD hriemannReciprocal hodd h2
-  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (by linarith)
-  have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith
+  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 8) hy)
+  have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith only [hy, hlogy]
   have hmul := mul_le_mul_of_nonneg_left hB hcoef
   constructor
   · exact hbounds.1
@@ -1482,7 +1488,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_star {q :
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         by
         rw [qNeOneBUpperBoundZeroStar]
-        linarith
+        linarith only [hmul]
       _ = qNeOneUpperBoundZeroStar y := by rfl
 
 /-! The c=0 exact/B-free bounds lift to the three-branch common upper envelope. -/
@@ -1543,8 +1549,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_star {
   have hB :=
     primitiveQuadraticBRe_le_of_qneOne_neg_one_branch_at_square_le χ hne hquad heven hGRH hy hlogD
       hriemannReciprocal hodd h2
-  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (by linarith)
-  have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith
+  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 8) hy)
+  have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith only [hy, hlogy]
   have hmul := mul_le_mul_of_nonneg_left hB hcoef
   constructor
   · exact hbounds.1
@@ -1561,7 +1567,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_even_star {
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
         by
         rw [qNeOneBUpperBoundNegOneStar]
-        linarith
+        linarith only [hmul]
       _ = qNeOneUpperBoundNegOneStar y := by rfl
 
 /-!
@@ -1582,7 +1588,8 @@ theorem qNeOneUpperBoundZeroStar_sub_negOneStar_add_delta_eq {y : ℝ} (hy : 8 �
     have hpos : 0 < 1 - 1 / y := by
       apply sub_pos.mpr
       apply (div_lt_iff₀ hypos).2
-      linarith
+      have hy1 : (1 : ℝ) < y := lt_of_lt_of_le (by norm_num only) hy
+      simpa only [one_mul] using hy1
     positivity
   have hB := qNeOneBUpperBoundZeroStar_sub_negOneStar_eq hy
   rw [qNeOneUpperBoundZeroStar, qNeOneUpperBoundNegOneStar, Analysis.logTwoSquareCorrection, hlog4]
@@ -1637,24 +1644,26 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_corrected_s
       hlogD hriemann hriemannReciprocal hodd h2
   have hdiff := qNeOneUpperBoundZeroStar_sub_negOneStar_add_delta_eq hy
   constructor
-  · linarith
+  · exact sub_le_iff_le_add.mp hlow
   · have hypos : 0 < y := lt_of_lt_of_le (by norm_num only) hy
     have hsqpos : 0 < y ^ 2 := sq_pos_of_pos hypos
     have hfactor : 0 ≤ 2 / 3 - 1 / y ^ 2 := by
       apply sub_nonneg.mpr
       apply (div_le_iff₀ hsqpos).2
       have hy2 : (64 : ℝ) ≤ y ^ 2 := by
-        have h := mul_le_mul hy hy (by norm_num only : (0 : ℝ) ≤ 8) (by linarith : (0 : ℝ) ≤ y)
+        have h :=
+          mul_le_mul hy hy (by norm_num only : (0 : ℝ) ≤ 8) (by linarith only [hy] : (0 : ℝ) ≤ y)
         norm_num only at h
         simpa only [pow_two] using h
       calc
         (1 : ℝ) ≤ (2 / 3 : ℝ) * 64 := by norm_num only
         _ ≤ (2 / 3 : ℝ) * y ^ 2 := mul_le_mul_of_nonneg_left hy2 (by norm_num only)
     have hdenpos : 0 < (1 - 1 / y) ^ 2 :=
-      sq_pos_of_pos (sub_pos.mpr ((div_lt_one hypos).2 (by linarith)))
+      sq_pos_of_pos
+        (sub_pos.mpr ((div_lt_one hypos).2 (lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 8) hy)))
     have hlog2pos : 0 < Real.log 2 := Real.log_pos (by norm_num only)
-    have hlogy : 0 ≤ Real.log y := Real.log_nonneg (by linarith)
-    have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith
+    have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 8) hy)
+    have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith only [hy, hlogy]
     have hgap :
       0 ≤
         (2 * y + 2 + 2 * Real.log y) * (Real.log 2 * (2 / 3 - 1 / y ^ 2) / (1 - 1 / y) ^ 2) +
@@ -1736,8 +1745,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_log_four_ev
   have hB :=
     primitiveQuadraticBRe_le_of_qneOne_neg_one_branch_at_square χ hne hquad heven hGRH hy hlogD
       hriemannReciprocal hodd h2
-  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (by linarith)
-  have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith
+  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 8) hy)
+  have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith only [hy, hlogy]
   have hmul := mul_le_mul_of_nonneg_left hB hcoef
   constructor
   · exact hbounds.1
@@ -1755,7 +1764,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_log_four_ev
                 (1 - 1 / y) ^ 2) +
             (1 / 2) * (y - Real.log 4 - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
-        by linarith
+        by linarith only [hmul]
       _ = qNeOneAnalyticUpperBoundNegOneLogFour y := by
         unfold qNeOneAnalyticUpperBoundNegOneLogFour
         rw [Analysis.primitiveLogEvenMainError]
@@ -1859,8 +1868,8 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_analytic {
   have hB :=
     primitiveQuadraticBRe_le_of_qneOne_one_branch_at_square_simple χ hne hquad heven hGRH hy hlogD
       hriemannReciprocal hodd h2
-  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (by linarith)
-  have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith
+  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 8) hy)
+  have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith only [hy, hlogy]
   have hmul := mul_le_mul_of_nonneg_left hB hcoef
   constructor
   · exact hbounds.1
@@ -1875,7 +1884,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_analytic {
           (2 * y + 2 + 2 * Real.log y) * ((1 + 5 / (2 * y)) * (y / 2 - 2 * Real.log y + 1)) +
             (1 / 2) * (y - Real.log Real.pi) * (2 * Real.log y) +
             Analysis.primitiveLogEvenMainError (y ^ 2) :=
-        by linarith
+        by linarith only [hmul]
       _ = qNeOneAnalyticUpperBoundOne y := by
         unfold qNeOneAnalyticUpperBoundOne
         rw [Analysis.primitiveLogEvenMainError]
@@ -1926,7 +1935,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_false_com
     (h2 : χ.primitiveCharacter 2 = 0) : False := by
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_common χ hne hquad heven hGRH
-      (by linarith) hlogD hriemann hriemannReciprocal hodd h2
+      (le_trans (by norm_num only : (8 : ℝ) ≤ 12) hy) hlogD hriemann hriemannReciprocal hodd h2
   exact qNeOne_common_sandwich_false_of_twelve hy hbounds.1 hbounds.2
 
 theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_common {q : ℕ} [NeZero q]
@@ -1943,7 +1952,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_commo
     (h2 : χ.primitiveCharacter 2 = -1) : False := by
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_corrected_common χ hne hquad heven
-      hGRH (by linarith) hlogD hriemann hriemannReciprocal hodd h2
+      hGRH (le_trans (by norm_num only : (8 : ℝ) ≤ 12) hy) hlogD hriemann hriemannReciprocal hodd h2
   exact qNeOne_common_sandwich_false_of_twelve hy hbounds.1 hbounds.2
 
 theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common {q : ℕ} [NeZero q]
@@ -1960,7 +1969,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common {q
     (h2 : χ.primitiveCharacter 2 = 1) : False := by
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_common χ hne hquad heven hGRH
-      (by linarith) hlogD hriemann hriemannReciprocal hodd h2
+      (le_trans (by norm_num only : (8 : ℝ) ≤ 12) hy) hlogD hriemann hriemannReciprocal hodd h2
   exact qNeOne_common_sandwich_false_of_twelve hy hbounds.1 hbounds.2
 
 /-! Conductor-traded c=1 form used by the numerical stage. -/
@@ -1986,7 +1995,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_traded {q : ℕ
           11 / 4 := by
   have hbase :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch χ hne hquad hGRH hy hriemann hodd h2
-  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (by linarith)
+  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 8) hy)
   have hmass : AnalyticNumberTheory.RiemannXi.riemannZeroMass ≤ (3 / 20 : ℝ) :=
     AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_three_twentieths
   have hleft :
@@ -1997,7 +2006,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_traded {q : ℕ
         (2 * Real.log y) ^ 2 / 2 := by
     have hmassscaled :
       2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) ≤ (3 / 10 : ℝ) * (y + 1) := by
-      have h := mul_le_mul_of_nonneg_right hmass (by linarith : (0 : ℝ) ≤ y + 1)
+      have h := mul_le_mul_of_nonneg_right hmass (by linarith only [hy] : (0 : ℝ) ≤ y + 1)
       calc
         2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1) =
             2 * (AnalyticNumberTheory.RiemannXi.riemannZeroMass * (y + 1)) :=
@@ -2181,25 +2190,26 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_candidate
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_traded χ hne hquad heven hGRH hy
       hlogD hriemann hriemannReciprocal hodd h2
-  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (by linarith)
+  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 8) hy)
   have hlogpi : 1 ≤ Real.log Real.pi := by
     have h3pi :=
       Real.strictMonoOn_log.monotoneOn (show 0 < (3 : ℝ) by norm_num only)
         (show 0 < Real.pi by positivity) (le_of_lt Real.pi_gt_three)
-    linarith [Real.log_three_gt_d9]
-  have hlog2pi : Real.log (2 * Real.pi) ≤ 2 := by linarith [Analysis.log_two_mul_pi_lt]
+    linarith only [Real.log_three_gt_d9, h3pi]
+  have hlog2pi : Real.log (2 * Real.pi) ≤ 2 := by linarith only [Analysis.log_two_mul_pi_lt]
   constructor
   · have hprod : 2 * Real.log (2 * Real.pi) * Real.log y ≤ 4 * Real.log y := by
       have hmul :=
-        mul_le_mul_of_nonneg_right (show 2 * Real.log (2 * Real.pi) ≤ 4 by linarith) hlogy
-      linarith
+        mul_le_mul_of_nonneg_right (show 2 * Real.log (2 * Real.pi) ≤ 4 by linarith only [hlog2pi])
+          hlogy
+      exact hmul
     unfold qNeOneLowerBound
-    linarith [hbounds.1]
+    linarith only [hbounds.1, hprod, hlogy, hlogpi, hlog2pi]
   · have hprod : (y - Real.log Real.pi) * Real.log y ≤ (y - 1) * Real.log y := by
       have hmul := mul_le_mul_of_nonneg_right (sub_le_sub_left hlogpi y) hlogy
-      linarith
+      exact hmul
     unfold qNeOneUpperBound
-    linarith [hbounds.2]
+    linarith only [hbounds.2, hprod, hlogy, hlogpi, hlog2pi]
 
 /-! The c=0 candidate sandwich contradicts the two-interval numerical separation. -/
 
@@ -2236,15 +2246,15 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_false {q 
           (mul_le_mul_of_nonneg_left hlog2pi (by norm_num only : (0 : ℝ) ≤ 2)) hlogy
       exact hmul.trans_eq (by ring)
     unfold qNeOneLowerBound
-    linarith [hbounds.1]
+    linarith only [hbounds.1, hprod, hlogy, hlogpi, hlog2pi]
   have hupper :
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
       qNeOneUpperBound y := by
     have hprod : (y - Real.log Real.pi) * Real.log y ≤ (y - 1) * Real.log y := by
       have := mul_le_mul_of_nonneg_right (sub_le_sub_left hlogpi y) hlogy
-      linarith
+      exact this
     unfold qNeOneUpperBound
-    linarith [hbounds.2]
+    linarith only [hbounds.2, hprod, hlogy, hlogpi, hlog2pi]
   exact (not_le_of_gt (qNeOneLowerBound_gt_upperBound hy)) (hlower.trans hupper)
 
 /-! The c=1 candidate sandwich contradicts the same two-interval numerical separation. -/
@@ -2264,30 +2274,32 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_false {q :
   have hbounds :=
     primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_even_traded χ hne hquad heven hGRH hy
       hlogD hriemann hriemannReciprocal hodd h2
-  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (by linarith)
+  have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 8) hy)
   have hlogpi : 1 ≤ Real.log Real.pi := by
     have h3pi :=
       Real.strictMonoOn_log.monotoneOn (show 0 < (3 : ℝ) by norm_num only)
         (show 0 < Real.pi by positivity) (le_of_lt Real.pi_gt_three)
-    linarith [Real.log_three_gt_d9]
-  have hlog2pi : Real.log (2 * Real.pi) ≤ 2 := by linarith [Analysis.log_two_mul_pi_lt]
+    linarith only [Real.log_three_gt_d9, h3pi]
+  have hlog2pi : Real.log (2 * Real.pi) ≤ 2 := by linarith only [Analysis.log_two_mul_pi_lt]
   have hlower :
     qNeOneLowerBound y ≤
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2)
           χ.primitiveCharacter).re := by
     have hprod : 2 * Real.log (2 * Real.pi) * Real.log y ≤ 4 * Real.log y := by
-      have := mul_le_mul_of_nonneg_right (show 2 * Real.log (2 * Real.pi) ≤ 4 by linarith) hlogy
-      linarith
+      have :=
+        mul_le_mul_of_nonneg_right (show 2 * Real.log (2 * Real.pi) ≤ 4 by linarith only [hlog2pi])
+          hlogy
+      exact this
     unfold qNeOneLowerBound
-    linarith [hbounds.1]
+    linarith only [hbounds.1, hprod, hlogy, hlogpi, hlog2pi]
   have hupper :
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
       qNeOneUpperBound y := by
     have hprod : (y - Real.log Real.pi) * Real.log y ≤ (y - 1) * Real.log y := by
       have := mul_le_mul_of_nonneg_right (sub_le_sub_left hlogpi y) hlogy
-      linarith
+      exact this
     unfold qNeOneUpperBound
-    linarith [hbounds.2]
+    linarith only [hbounds.2, hprod, hlogy, hlogpi, hlog2pi, hlower]
   exact (not_le_of_gt (qNeOneLowerBound_gt_upperBound hy)) (hlower.trans hupper)
 
 end PseudoPrime.LLS.Extensions

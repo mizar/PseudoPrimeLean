@@ -29,15 +29,16 @@ namespace PseudoPrime.PrimeTest.APRCL
 
 /-- The fixed-`J₁,₁` APR-CL restriction on an odd auxiliary prime: `2^(p-1)` is not `1` modulo
 `p^2`. This is a parameter condition, not a condition on the input being tested. -/
-def aprclB2Condition (p : ℕ) : Prop := 2 ^ (p - 1) % p ^ 2 ≠ 1
+def aprclB2Condition (p : ℕ) : Prop :=
+  2 ^ (p - 1) % p ^ 2 ≠ 1
 
 /-- Executable Boolean test for the fixed-`J₁,₁` APR-CL B2 parameter condition. -/
-def aprclB2Check (p : ℕ) : Bool := decide (2 ^ (p - 1) % p ^ 2 ≠ 1)
+def aprclB2Check (p : ℕ) : Bool :=
+  decide (2 ^ (p - 1) % p ^ 2 ≠ 1)
 
 /-- The B2 Boolean accepts exactly when the auxiliary-prime parameter satisfies its proposition.
 -/
-theorem aprclB2Check_eq_true_iff (p : ℕ) :
-    aprclB2Check p = true ↔ aprclB2Condition p := by
+theorem aprclB2Check_eq_true_iff (p : ℕ) : aprclB2Check p = true ↔ aprclB2Condition p := by
   simp only [aprclB2Check, decide_eq_true_eq, aprclB2Condition]
 
 /-- Every prime-modulus unit group has a primitive root of order `q - 1`. This existence lemma
@@ -47,8 +48,7 @@ theorem exists_primitiveRoot_unit_of_prime {q : ℕ} (hq : Nat.Prime q) :
     ∃ a : (ZMod q)ˣ, IsPrimitiveRoot a (q - 1) := by
   have : Fact (Nat.Prime q) := ⟨hq⟩
   obtain ⟨a, ha⟩ := IsCyclic.exists_ofOrder_eq_natCard (α := (ZMod q)ˣ)
-  have hcard : Nat.card (ZMod q)ˣ = q - 1 := by
-    rw [Nat.card_eq_fintype_card, ZMod.card_units]
+  have hcard : Nat.card (ZMod q)ˣ = q - 1 := by rw [Nat.card_eq_fintype_card, ZMod.card_units]
   refine ⟨a, ?_⟩
   rw [IsPrimitiveRoot.iff_orderOf]
   exact ha.trans hcard
@@ -59,17 +59,14 @@ The result is Boolean so the candidate search below does not depend on noncomput
 -/
 def primitiveRootCandidateTest (q a : ℕ) : Bool :=
   decide ((a : ZMod q) ^ (q - 1) = 1) &&
-    (List.range (q - 1)).all
-      (fun l => decide (l = 0 ∨ (a : ZMod q) ^ l ≠ 1))
+    (List.range (q - 1)).all (fun l => decide (l = 0 ∨ (a : ZMod q) ^ l ≠ 1))
 
 /-- The finite power test accepts exactly the primitive roots of order `q - 1` modulo a prime.
 The proof uses the minimal-period characterization and the complete list of smaller exponents.
 -/
 theorem primitiveRootCandidateTest_eq_true_iff {q a : ℕ} (hq : Nat.Prime q) :
-    primitiveRootCandidateTest q a = true ↔
-      IsPrimitiveRoot (a : ZMod q) (q - 1) := by
-  rw [primitiveRootCandidateTest, Bool.and_eq_true, decide_eq_true_eq,
-    List.all_eq_true]
+    primitiveRootCandidateTest q a = true ↔ IsPrimitiveRoot (a : ZMod q) (q - 1) := by
+  rw [primitiveRootCandidateTest, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true]
   constructor
   · rintro ⟨hpow, hsmall⟩
     apply IsPrimitiveRoot.mk_of_lt (a : ZMod q) (Nat.sub_pos_of_lt hq.one_lt) hpow
@@ -98,8 +95,7 @@ def primitiveRootSearch (q : ℕ) : Option ℕ :=
 
 /-- A successful primitive-root search returns an in-range genuine primitive root. -/
 theorem primitiveRootSearch_some_spec {q a : ℕ} (hq : Nat.Prime q)
-    (h : primitiveRootSearch q = some a) :
-    a < q ∧ IsPrimitiveRoot (a : ZMod q) (q - 1) := by
+    (h : primitiveRootSearch q = some a) : a < q ∧ IsPrimitiveRoot (a : ZMod q) (q - 1) := by
   rw [primitiveRootSearch, List.find?_range_eq_some] at h
   rcases h with ⟨htest, hmem, _⟩
   exact ⟨List.mem_range.mp hmem, (primitiveRootCandidateTest_eq_true_iff hq).mp htest⟩
@@ -109,21 +105,21 @@ The primitive-root power condition proves nonzeroness, so this lift is valid eve
 executable search itself enumerates natural representatives. -/
 theorem primitiveRootSearch_some_unit_spec {q a : ℕ} (hq : Nat.Prime q)
     (hsearch : primitiveRootSearch q = some a) :
-    ∃ g : (ZMod q)ˣ, (g : ZMod q) = (a : ZMod q) ∧
-      IsPrimitiveRoot g (q - 1) := by
+    ∃ g : (ZMod q)ˣ, (g : ZMod q) = (a : ZMod q) ∧ IsPrimitiveRoot g (q - 1) := by
   obtain ⟨_, hroot⟩ := primitiveRootSearch_some_spec hq hsearch
   have hne : q - 1 ≠ 0 := Nat.sub_ne_zero_of_lt hq.one_lt
   have hunit : IsUnit (a : ZMod q) := hroot.isUnit hne
   refine ⟨hunit.unit, hunit.unit_spec, ?_⟩
-  exact (IsPrimitiveRoot.coe_units_iff).mp (by
-    rw [hunit.unit_spec]
-    exact hroot)
+  exact
+    (IsPrimitiveRoot.coe_units_iff).mp
+      (by
+        rw [hunit.unit_spec]
+        exact hroot)
 
 /-- Search failure is equivalent to rejection of every candidate in the specified residue range.
 -/
 theorem primitiveRootSearch_none_iff (q : ℕ) :
-    primitiveRootSearch q = none ↔
-      ∀ a, a < q → primitiveRootCandidateTest q a = false := by
+    primitiveRootSearch q = none ↔ ∀ a, a < q → primitiveRootCandidateTest q a = false := by
   rw [primitiveRootSearch, List.find?_range_eq_none]
   simp only [Bool.not_eq_true_eq_eq_false]
 
@@ -162,40 +158,34 @@ def discreteLogSearch {q : ℕ} (g x : (ZMod q)ˣ) : Option ℕ :=
 /-- A successful discrete-log search returns an exponent in range with the required power value.
 This is the soundness contract consumed by the APR-CL logarithm table. -/
 theorem discreteLogSearch_some_spec {q e : ℕ} {g x : (ZMod q)ˣ}
-    (h : discreteLogSearch g x = some e) :
-    e < q - 1 ∧ g ^ e = x := by
+    (h : discreteLogSearch g x = some e) : e < q - 1 ∧ g ^ e = x := by
   rw [discreteLogSearch, List.find?_range_eq_some] at h
   rcases h with ⟨htest, hmem, _⟩
   exact ⟨List.mem_range.mp hmem, of_decide_eq_true htest⟩
 
 /-- Search failure means that no exponent in the bounded table represents the target unit. -/
 theorem discreteLogSearch_none_iff {q : ℕ} (g x : (ZMod q)ˣ) :
-    discreteLogSearch g x = none ↔
-      ∀ e, e < q - 1 → g ^ e ≠ x := by
+    discreteLogSearch g x = none ↔ ∀ e, e < q - 1 → g ^ e ≠ x := by
   rw [discreteLogSearch, List.find?_range_eq_none]
   simp only [Bool.not_eq_true_eq_eq_false, decide_eq_false_iff_not]
 
 /-- For a prime modulus, a unit-group primitive root represents every unit in the bounded exponent
 range. Fermat's theorem places the target unit among the `(q - 1)`-st roots of unity; the
 primitive-root theorem then supplies the exponent, proving this executable search cannot fail. -/
-theorem discreteLogSearch_isSome_of_prime {q : ℕ} (hq : Nat.Prime q)
-    (g x : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) :
-    (discreteLogSearch g x).isSome = true := by
+theorem discreteLogSearch_isSome_of_prime {q : ℕ} (hq : Nat.Prime q) (g x : (ZMod q)ˣ)
+    (hg : IsPrimitiveRoot g (q - 1)) : (discreteLogSearch g x).isSome = true := by
   have hfact : Fact (Nat.Prime q) := ⟨hq⟩
   have hne : q - 1 ≠ 0 := Nat.sub_ne_zero_of_lt hq.one_lt
   have hneZero : NeZero (q - 1) := ⟨hne⟩
-  have hpowval : (x : ZMod q) ^ (q - 1) = 1 :=
-    ZMod.pow_card_sub_one_eq_one (Units.ne_zero x)
+  have hpowval : (x : ZMod q) ^ (q - 1) = 1 := ZMod.pow_card_sub_one_eq_one (Units.ne_zero x)
   have hpow : x ^ (q - 1) = 1 := by
     apply Units.ext
     rw [Units.val_pow_eq_pow_val, Units.val_one]
     exact hpowval
   have hroot := (mem_rootsOfUnity (q - 1) x).2 hpow
   obtain ⟨e, he, heq⟩ :=
-    @IsPrimitiveRoot.eq_pow_of_mem_rootsOfUnity (ZMod q) _ _ (q - 1)
-      hneZero g x hg hroot
-  exact (List.find?_isSome).2
-    ⟨e, List.mem_range.mpr he, decide_eq_true_eq.mpr heq⟩
+    @IsPrimitiveRoot.eq_pow_of_mem_rootsOfUnity (ZMod q) _ _ (q - 1) hneZero g x hg hroot
+  exact (List.find?_isSome).2 ⟨e, List.mem_range.mpr he, decide_eq_true_eq.mpr heq⟩
 
 /-- Materialize the bounded power-to-exponent table for a proposed generator. Every row stores
 the unit `g ^ e` together with its exponent, in increasing exponent order; duplicate powers are
@@ -222,26 +212,27 @@ theorem discreteLogTableSearch_eq_discreteLogSearch {q : ℕ} (g x : (ZMod q)ˣ)
 
 /-- A successful table lookup returns an in-range exponent whose power is the target unit. -/
 theorem discreteLogTableSearch_some_spec {q e : ℕ} {g x : (ZMod q)ˣ}
-    (h : discreteLogTableSearch g x = some e) :
-    e < q - 1 ∧ g ^ e = x := by
+    (h : discreteLogTableSearch g x = some e) : e < q - 1 ∧ g ^ e = x := by
   rw [discreteLogTableSearch_eq_discreteLogSearch] at h
   exact discreteLogSearch_some_spec h
 
 /-- The materialized table contains every unit when its modulus is prime and its generator is
 primitive, so the table lookup has a successful `Option` result. -/
-theorem discreteLogTableSearch_isSome_of_prime {q : ℕ} (hq : Nat.Prime q)
-    (g x : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) :
-    (discreteLogTableSearch g x).isSome = true := by
+theorem discreteLogTableSearch_isSome_of_prime {q : ℕ} (hq : Nat.Prime q) (g x : (ZMod q)ˣ)
+    (hg : IsPrimitiveRoot g (q - 1)) : (discreteLogTableSearch g x).isSome = true := by
   rw [discreteLogTableSearch_eq_discreteLogSearch]
   exact discreteLogSearch_isSome_of_prime hq g x hg
 
 /-- The root search and materialized power table compose: every prime modulus supplies a searched
 primitive root and every target unit then has a returned exponent from its finite table. -/
-theorem primitiveRootSearch_discreteLogTableSearch_exists_of_prime {q : ℕ}
-    (hq : Nat.Prime q) (x : (ZMod q)ˣ) :
-    ∃ a, ∃ g : (ZMod q)ˣ, ∃ e, primitiveRootSearch q = some a ∧
-      (g : ZMod q) = (a : ZMod q) ∧ IsPrimitiveRoot g (q - 1) ∧
-      discreteLogTableSearch g x = some e := by
+theorem primitiveRootSearch_discreteLogTableSearch_exists_of_prime {q : ℕ} (hq : Nat.Prime q)
+    (x : (ZMod q)ˣ) :
+    ∃ a,
+      ∃ g : (ZMod q)ˣ,
+        ∃ e,
+          primitiveRootSearch q = some a ∧
+            (g : ZMod q) = (a : ZMod q) ∧
+            IsPrimitiveRoot g (q - 1) ∧ discreteLogTableSearch g x = some e := by
   obtain ⟨a, hsearch⟩ := primitiveRootSearch_exists_of_prime hq
   obtain ⟨g, hcast, hroot⟩ := primitiveRootSearch_some_unit_spec hq hsearch
   have hsome := discreteLogTableSearch_isSome_of_prime hq g x hroot
@@ -282,14 +273,12 @@ def modulus (t : ℕ) : ℕ :=
 Each indexed factor is a positive prime power, so its finite product is nonzero. This bound
 supplies the modulus lower bound used by the final divisor-orbit criterion. -/
 theorem modulus_pos (t : ℕ) : 0 < modulus t := by
-  have hblocks : ∀ q ∈ auxiliaryPrimes t,
-      q ^ (1 + Nat.factorization t q) ≠ 0 := by
+  have hblocks : ∀ q ∈ auxiliaryPrimes t, q ^ (1 + Nat.factorization t q) ≠ 0 := by
     intro q hq
     have hqprime : Nat.Prime q := (Finset.mem_filter.mp hq).2
     exact (Nat.pow_pos hqprime.pos).ne'
   unfold modulus
-  exact Nat.mul_pos (by norm_num only) (Nat.pos_of_ne_zero
-    (Finset.prod_ne_zero_iff.mpr hblocks))
+  exact Nat.mul_pos (by norm_num only) (Nat.pos_of_ne_zero (Finset.prod_ne_zero_iff.mpr hblocks))
 
 /-- Membership in the auxiliary-prime set exposes the divisor that generated the prime. -/
 theorem mem_auxiliaryPrimes_iff {t q : ℕ} (ht : t ≠ 0) :
@@ -320,12 +309,11 @@ theorem two_mem_auxiliaryPrimes {t : ℕ} (ht : t ≠ 0) : 2 ∈ auxiliaryPrimes
   exact ⟨Nat.prime_two, one_dvd t⟩
 
 /-- Each prime-power block contributes to the 2-adic valuation only when its prime is `2`. -/
-private theorem auxiliaryPrimePower_factorization_two {t q : ℕ}
-    (ht : t ≠ 0) (hq : q ∈ auxiliaryPrimes t) :
+private theorem auxiliaryPrimePower_factorization_two {t q : ℕ} (ht : t ≠ 0)
+    (hq : q ∈ auxiliaryPrimes t) :
     (q ^ (1 + Nat.factorization t q)).factorization 2 =
       if q = 2 then 1 + Nat.factorization t q else 0 := by
-  rcases (mem_auxiliaryPrimes_iff (t := t) (q := q) ht).mp hq with
-    ⟨d, _, hqeq, hprime⟩
+  rcases (mem_auxiliaryPrimes_iff (t := t) (q := q) ht).mp hq with ⟨d, _, hqeq, hprime⟩
   rw [Nat.Prime.factorization_pow hprime]
   by_cases hq2 : q = 2
   · subst q
@@ -340,50 +328,42 @@ private theorem auxiliaryPrimePower_factorization_two {t q : ℕ}
     simp only [Finsupp.single_apply, hq2]
 
 /-- A prime-power block has a nonzero valuation only at its own auxiliary prime. -/
-private theorem auxiliaryPrimePower_factorization {t r p : ℕ}
-    (ht : t ≠ 0) (hr : r ∈ auxiliaryPrimes t) :
+private theorem auxiliaryPrimePower_factorization {t r p : ℕ} (ht : t ≠ 0)
+    (hr : r ∈ auxiliaryPrimes t) :
     (r ^ (1 + Nat.factorization t r)).factorization p =
       if r = p then 1 + Nat.factorization t r else 0 := by
-  rcases (mem_auxiliaryPrimes_iff (t := t) (q := r) ht).mp hr with
-    ⟨d, _, hreq, hrprime⟩
+  rcases (mem_auxiliaryPrimes_iff (t := t) (q := r) ht).mp hr with ⟨d, _, hreq, hrprime⟩
   rw [Nat.Prime.factorization_pow hrprime]
   by_cases hrp : r = p <;> simp only [hrp, Finsupp.single_apply]
 
 /-- The prime factorization of the APR-CL modulus is exactly the leading factor `2`
 plus the prime-power blocks indexed by `Q(t)`. -/
 theorem factorization_modulus {t : ℕ} (ht : t ≠ 0) :
-    (modulus t).factorization = Finsupp.single 2 1 +
-      ∑ q ∈ auxiliaryPrimes t,
-        Finsupp.single q (1 + Nat.factorization t q) := by
-  have hprod :
-      ∀ q ∈ auxiliaryPrimes t, q ^ (1 + Nat.factorization t q) ≠ 0 := by
+    (modulus t).factorization =
+      Finsupp.single 2 1 +
+        ∑ q ∈ auxiliaryPrimes t, Finsupp.single q (1 + Nat.factorization t q) := by
+  have hprod : ∀ q ∈ auxiliaryPrimes t, q ^ (1 + Nat.factorization t q) ≠ 0 := by
     intro q hq
-    rcases (mem_auxiliaryPrimes_iff (t := t) (q := q) ht).mp hq with
-      ⟨d, _, _, hqprime⟩
+    rcases (mem_auxiliaryPrimes_iff (t := t) (q := q) ht).mp hq with ⟨d, _, _, hqprime⟩
     exact (Nat.pow_pos hqprime.pos).ne'
   have hfactorization_two : Nat.factorization 2 = Finsupp.single 2 1 := by
-    simpa only [pow_one] using
-      (Nat.Prime.factorization_pow (p := 2) (k := 1) Nat.prime_two)
+    simpa only [pow_one] using (Nat.Prime.factorization_pow (p := 2) (k := 1) Nat.prime_two)
   rw [modulus, Nat.factorization_mul (by norm_num only) (Finset.prod_ne_zero_iff.mpr hprod),
     Nat.factorization_prod hprod]
   rw [hfactorization_two]
   congr 1
   apply Finset.sum_congr rfl
   intro q hq
-  rcases (mem_auxiliaryPrimes_iff (t := t) (q := q) ht).mp hq with
-    ⟨d, _, _, hqprime⟩
+  rcases (mem_auxiliaryPrimes_iff (t := t) (q := q) ht).mp hq with ⟨d, _, _, hqprime⟩
   rw [Nat.Prime.factorization_pow hqprime]
 
 /-- The prime factorization exponent of any auxiliary prime in the full modulus is
 its block exponent, with one extra factor of `2` for the leading modulus factor. -/
-theorem factorization_modulus_auxiliaryPrime {t q : ℕ} (ht : t ≠ 0)
-    (hq : q ∈ auxiliaryPrimes t) :
-    (modulus t).factorization q = (if q = 2 then 1 else 0) +
-      (1 + Nat.factorization t q) := by
+theorem factorization_modulus_auxiliaryPrime {t q : ℕ} (ht : t ≠ 0) (hq : q ∈ auxiliaryPrimes t) :
+    (modulus t).factorization q = (if q = 2 then 1 else 0) + (1 + Nat.factorization t q) := by
   have hblocks :
-      ∑ r ∈ auxiliaryPrimes t,
-        (r ^ (1 + Nat.factorization t r)).factorization q =
-          1 + Nat.factorization t q := by
+    ∑ r ∈ auxiliaryPrimes t, (r ^ (1 + Nat.factorization t r)).factorization q =
+      1 + Nat.factorization t q := by
     rw [Finset.sum_eq_single q]
     · rw [auxiliaryPrimePower_factorization ht hq]
       simp only [reduceIte]
@@ -392,22 +372,21 @@ theorem factorization_modulus_auxiliaryPrime {t q : ℕ} (ht : t ≠ 0)
       simp only [hrne, reduceIte]
     · intro hnot
       exact (hnot hq).elim
-  have hprod :
-      ∀ r ∈ auxiliaryPrimes t, r ^ (1 + Nat.factorization t r) ≠ 0 := by
+  have hprod : ∀ r ∈ auxiliaryPrimes t, r ^ (1 + Nat.factorization t r) ≠ 0 := by
     intro r hr
-    rcases (mem_auxiliaryPrimes_iff (t := t) (q := r) ht).mp hr with
-      ⟨d, _, _, hrprime⟩
+    rcases (mem_auxiliaryPrimes_iff (t := t) (q := r) ht).mp hr with ⟨d, _, _, hrprime⟩
     exact (Nat.pow_pos hrprime.pos).ne'
   rw [modulus, Nat.factorization_mul (by norm_num only) (Finset.prod_ne_zero_iff.mpr hprod)]
-  have hfactorprod := Nat.factorization_prod_apply
-    (p := q) (S := auxiliaryPrimes t)
-    (g := fun r => r ^ (1 + Nat.factorization t r)) hprod
-  change (Nat.factorization 2) q +
-      ((auxiliaryPrimes t).prod (fun r => r ^ (1 + Nat.factorization t r))).factorization q = _
+  have hfactorprod :=
+    Nat.factorization_prod_apply (p := q) (S := auxiliaryPrimes t) (g := fun r =>
+      r ^ (1 + Nat.factorization t r)) hprod
+  change
+    (Nat.factorization 2) q +
+        ((auxiliaryPrimes t).prod (fun r => r ^ (1 + Nat.factorization t r))).factorization q =
+      _
   rw [hfactorprod, hblocks]
   have hfactorization_two : Nat.factorization 2 = Finsupp.single 2 1 := by
-    simpa only [pow_one] using
-      (Nat.Prime.factorization_pow (p := 2) (k := 1) Nat.prime_two)
+    simpa only [pow_one] using (Nat.Prime.factorization_pow (p := 2) (k := 1) Nat.prime_two)
   rw [hfactorization_two]
   simp only [Finsupp.single_apply, eq_comm]
 
@@ -417,9 +396,8 @@ theorem factorization_modulus_two {t : ℕ} (ht : t ≠ 0) :
     (modulus t).factorization 2 = 2 + Nat.factorization t 2 := by
   have htwo : 2 ∈ auxiliaryPrimes t := two_mem_auxiliaryPrimes ht
   have hblocks :
-      ∑ q ∈ auxiliaryPrimes t,
-        (q ^ (1 + Nat.factorization t q)).factorization 2 =
-          1 + Nat.factorization t 2 := by
+    ∑ q ∈ auxiliaryPrimes t, (q ^ (1 + Nat.factorization t q)).factorization 2 =
+      1 + Nat.factorization t 2 := by
     rw [Finset.sum_eq_single 2]
     · rw [Nat.Prime.factorization_pow Nat.prime_two]
       simp only [Finsupp.single_add, Finsupp.coe_add, Pi.add_apply, Finsupp.single_eq_same]
@@ -428,29 +406,28 @@ theorem factorization_modulus_two {t : ℕ} (ht : t ≠ 0) :
       simp only [hqne, reduceIte]
     · intro hnot
       exact (hnot htwo).elim
-  have hprod :
-      ∀ q ∈ auxiliaryPrimes t, q ^ (1 + Nat.factorization t q) ≠ 0 := by
+  have hprod : ∀ q ∈ auxiliaryPrimes t, q ^ (1 + Nat.factorization t q) ≠ 0 := by
     intro q hq
-    rcases (mem_auxiliaryPrimes_iff (t := t) (q := q) ht).mp hq with
-      ⟨d, _, _, hqprime⟩
+    rcases (mem_auxiliaryPrimes_iff (t := t) (q := q) ht).mp hq with ⟨d, _, _, hqprime⟩
     have hqpos := Nat.Prime.pos hqprime
     exact (Nat.pow_pos hqpos).ne'
   rw [modulus, Nat.factorization_mul (by norm_num only) (Finset.prod_ne_zero_iff.mpr hprod)]
-  have hfactorprod := Nat.factorization_prod_apply
-    (p := 2) (S := auxiliaryPrimes t)
-    (g := fun q => q ^ (1 + Nat.factorization t q)) hprod
-  change (Nat.factorization 2) 2 +
-      ((auxiliaryPrimes t).prod (fun q => q ^ (1 + Nat.factorization t q))).factorization 2 = _
+  have hfactorprod :=
+    Nat.factorization_prod_apply (p := 2) (S := auxiliaryPrimes t) (g := fun q =>
+      q ^ (1 + Nat.factorization t q)) hprod
+  change
+    (Nat.factorization 2) 2 +
+        ((auxiliaryPrimes t).prod (fun q => q ^ (1 + Nat.factorization t q))).factorization 2 =
+      _
   rw [hfactorprod, hblocks]
   have hfactorization_two : Nat.factorization 2 = Finsupp.single 2 1 := by
-    simpa only [pow_one] using
-      (Nat.Prime.factorization_pow (p := 2) (k := 1) Nat.prime_two)
+    simpa only [pow_one] using (Nat.Prime.factorization_pow (p := 2) (k := 1) Nat.prime_two)
   rw [hfactorization_two]
   simp only [Finsupp.single_eq_same]
   simp only [← Nat.add_assoc, Nat.reduceAdd]
 
 /-- The integer `4` is not prime, as it has a proper divisor. -/
-private theorem notPrimeFour : ¬ Nat.Prime 4 := by
+private theorem notPrimeFour : ¬Nat.Prime 4 := by
   intro h
   rcases Nat.prime_def_lt.mp h with ⟨_, hdiv⟩
   have hh := hdiv 2 (by norm_num only) (by norm_num only)
@@ -521,53 +498,48 @@ private theorem auxiliaryPrimes_twelve : auxiliaryPrimes 12 = {2, 3, 5, 7, 13} :
 
 /-- The prime factorization of `2` is the singleton factor at `2`. -/
 private theorem factorization_two : Nat.factorization 2 = Finsupp.single 2 1 := by
-  simpa only [pow_one] using
-    (Nat.Prime.factorization_pow (p := 2) (k := 1) Nat.prime_two)
+  simpa only [pow_one] using (Nat.Prime.factorization_pow (p := 2) (k := 1) Nat.prime_two)
 
 /-- The prime factorization of `12` is `2² * 3`. -/
 private theorem factorization_twelve :
     Nat.factorization 12 = Finsupp.single 2 2 + Finsupp.single 3 1 := by
   rw [show 12 = 2 ^ 2 * 3 ^ 1 by norm_num only,
     Nat.factorization_mul (by norm_num only) (by norm_num only),
-    Nat.Prime.factorization_pow Nat.prime_two,
-    Nat.Prime.factorization_pow Nat.prime_three]
+    Nat.Prime.factorization_pow Nat.prime_two, Nat.Prime.factorization_pow Nat.prime_three]
 
 /-- The full APR-CL modulus at `t = 2` is `24`. -/
 theorem modulus_two : modulus 2 = 24 := by
   rw [modulus, auxiliaryPrimes_two]
-  have h2 : Nat.factorization 2 2 = 1 := by
-    simp only [factorization_two, Finsupp.single_eq_same]
+  have h2 : Nat.factorization 2 2 = 1 := by simp only [factorization_two, Finsupp.single_eq_same]
   have h3 : Nat.factorization 2 3 = 0 := by
     simp only [factorization_two, Finsupp.single_eq_of_ne (by decide : 3 ≠ 2)]
-  simp only [Finset.mem_singleton, Nat.reduceEqDiff, not_false_eq_true,
-    Finset.prod_insert, Finset.prod_singleton]
+  simp only [Finset.mem_singleton, Nat.reduceEqDiff, not_false_eq_true, Finset.prod_insert,
+    Finset.prod_singleton]
   norm_num only [h2, h3]
 
 /-- The full APR-CL modulus at `t = 12` is `65520`. -/
 theorem modulus_twelve : modulus 12 = 65520 := by
   rw [modulus, auxiliaryPrimes_twelve]
   have h2 : Nat.factorization 12 2 = 2 := by
-    simp only [factorization_twelve, Finsupp.coe_add, Pi.add_apply,
-      Finsupp.single_eq_same, Finsupp.single_eq_of_ne (by decide : 2 ≠ 3),
-      Nat.add_zero]
+    simp only [factorization_twelve, Finsupp.coe_add, Pi.add_apply, Finsupp.single_eq_same,
+      Finsupp.single_eq_of_ne (by decide : 2 ≠ 3), Nat.add_zero]
   have h3 : Nat.factorization 12 3 = 1 := by
-    simp only [factorization_twelve, Finsupp.coe_add, Pi.add_apply,
-      Finsupp.single_eq_same, Finsupp.single_eq_of_ne (by decide : 3 ≠ 2),
-      Nat.zero_add]
+    simp only [factorization_twelve, Finsupp.coe_add, Pi.add_apply, Finsupp.single_eq_same,
+      Finsupp.single_eq_of_ne (by decide : 3 ≠ 2), Nat.zero_add]
   have h5 : Nat.factorization 12 5 = 0 := by
     simp only [factorization_twelve, Finsupp.coe_add, Pi.add_apply,
-      Finsupp.single_eq_of_ne (by decide : 5 ≠ 2),
-      Finsupp.single_eq_of_ne (by decide : 5 ≠ 3), Nat.add_zero]
+      Finsupp.single_eq_of_ne (by decide : 5 ≠ 2), Finsupp.single_eq_of_ne (by decide : 5 ≠ 3),
+      Nat.add_zero]
   have h7 : Nat.factorization 12 7 = 0 := by
     simp only [factorization_twelve, Finsupp.coe_add, Pi.add_apply,
-      Finsupp.single_eq_of_ne (by decide : 7 ≠ 2),
-      Finsupp.single_eq_of_ne (by decide : 7 ≠ 3), Nat.add_zero]
+      Finsupp.single_eq_of_ne (by decide : 7 ≠ 2), Finsupp.single_eq_of_ne (by decide : 7 ≠ 3),
+      Nat.add_zero]
   have h13 : Nat.factorization 12 13 = 0 := by
     simp only [factorization_twelve, Finsupp.coe_add, Pi.add_apply,
-      Finsupp.single_eq_of_ne (by decide : 13 ≠ 2),
-      Finsupp.single_eq_of_ne (by decide : 13 ≠ 3), Nat.add_zero]
-  simp only [Finset.mem_insert, Nat.reduceEqDiff, Finset.mem_singleton, or_self,
-    not_false_eq_true, Finset.prod_insert, Finset.prod_singleton]
+      Finsupp.single_eq_of_ne (by decide : 13 ≠ 2), Finsupp.single_eq_of_ne (by decide : 13 ≠ 3),
+      Nat.add_zero]
+  simp only [Finset.mem_insert, Nat.reduceEqDiff, Finset.mem_singleton, or_self, not_false_eq_true,
+    Finset.prod_insert, Finset.prod_singleton]
   norm_num only [h2, h3, h5, h7, h13]
 
 /-- Every auxiliary prime-power block is a divisor of the full APR-CL modulus. -/
@@ -577,19 +549,18 @@ theorem auxiliaryPrimePower_dvd_modulus {t q : ℕ} (hq : q ∈ auxiliaryPrimes 
   exact dvd_mul_of_dvd_right (Finset.dvd_prod_of_mem _ hq) 2
 
 /-- Every auxiliary prime itself divides the full APR-CL modulus. -/
-theorem auxiliaryPrime_dvd_modulus {t q : ℕ} (hq : q ∈ auxiliaryPrimes t) :
-  q ∣ modulus t := by
-  apply dvd_trans (dvd_pow_self q (n := 1 + Nat.factorization t q)
-    (Nat.ne_of_gt (Nat.lt_of_lt_of_le (Nat.zero_lt_succ 0)
-      (Nat.le_add_right 1 _))))
+theorem auxiliaryPrime_dvd_modulus {t q : ℕ} (hq : q ∈ auxiliaryPrimes t) : q ∣ modulus t := by
+  apply
+    dvd_trans
+      (dvd_pow_self q (n := 1 + Nat.factorization t q)
+        (Nat.ne_of_gt (Nat.lt_of_lt_of_le (Nat.zero_lt_succ 0) (Nat.le_add_right 1 _))))
   exact auxiliaryPrimePower_dvd_modulus hq
 
 /-- Coprimality with the full APR-CL modulus implies coprimality with each
 auxiliary prime. This supplies the coefficient-modulus condition for the
 cyclotomic substitution denominator. -/
-theorem auxiliaryPrime_coprime_left_of_modulus {t q n : ℕ}
-    (hq : q ∈ auxiliaryPrimes t) (hn : Nat.Coprime n (modulus t)) :
-    Nat.Coprime q n :=
+theorem auxiliaryPrime_coprime_left_of_modulus {t q n : ℕ} (hq : q ∈ auxiliaryPrimes t)
+    (hn : Nat.Coprime n (modulus t)) : Nat.Coprime q n :=
   Nat.Coprime.of_dvd_left (auxiliaryPrime_dvd_modulus hq) hn.symm
 
 /-- The leading factor `2` is always retained in the APR-CL modulus. -/
@@ -598,28 +569,23 @@ theorem two_dvd_modulus (t : ℕ) : 2 ∣ modulus t := by
   exact ⟨(auxiliaryPrimes t).prod (fun q => q ^ (1 + Nat.factorization t q)), rfl⟩
 
 /-- The Euler exponent of an auxiliary prime-power block divides the parameter `t`. -/
-theorem auxiliaryPrimePower_totient_dvd {t q : ℕ} (ht : t ≠ 0)
-    (hq : q ∈ auxiliaryPrimes t) :
+theorem auxiliaryPrimePower_totient_dvd {t q : ℕ} (ht : t ≠ 0) (hq : q ∈ auxiliaryPrimes t) :
     (q ^ (1 + Nat.factorization t q)).totient ∣ t := by
   have hmem := (mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq
   obtain ⟨hqprime, hqsub⟩ := hmem
   let v := Nat.factorization t q
-  have hqp : q ^ v ∣ t :=
-    (Nat.Prime.pow_dvd_iff_le_factorization hqprime ht).2 (by rfl)
+  have hqp : q ^ v ∣ t := (Nat.Prime.pow_dvd_iff_le_factorization hqprime ht).2 (by rfl)
   have hqcop : Nat.Coprime q (q - 1) := by
     apply hqprime.coprime_iff_not_dvd.mpr
     intro hdiv
     have hqge := hqprime.two_le
-    have hpos : 0 < q - 1 :=
-      Nat.sub_pos_of_lt (lt_of_lt_of_le (by decide : 1 < 2) hqge)
+    have hpos : 0 < q - 1 := Nat.sub_pos_of_lt (lt_of_lt_of_le (by decide : 1 < 2) hqge)
     have hle := Nat.le_of_dvd hpos hdiv
-    have hqpos : 0 < q :=
-      Nat.zero_lt_of_lt (Nat.lt_of_lt_of_le (Nat.lt_succ_self 1) hqge)
+    have hqpos : 0 < q := Nat.zero_lt_of_lt (Nat.lt_of_lt_of_le (Nat.lt_succ_self 1) hqge)
     have hsub : q - 1 < q := Nat.sub_lt hqpos (Nat.lt_succ_self 0)
     exact Nat.not_le_of_gt hsub hle
   have hpowcop : Nat.Coprime (q ^ v) (q - 1) := Nat.Coprime.pow_left v hqcop
-  have hprod : q ^ v * (q - 1) ∣ t :=
-    Nat.Coprime.mul_dvd_of_dvd_of_dvd hpowcop hqp hqsub
+  have hprod : q ^ v * (q - 1) ∣ t := Nat.Coprime.mul_dvd_of_dvd_of_dvd hpowcop hqp hqsub
   rw [Nat.totient_prime_pow hqprime (Nat.add_pos_left (by decide : 0 < 1) v)]
   have hexp : 1 + v - 1 = v := Nat.add_sub_cancel_left 1 v
   rw [hexp]
@@ -627,9 +593,8 @@ theorem auxiliaryPrimePower_totient_dvd {t q : ℕ} (ht : t ≠ 0)
 
 /-- A unit modulo an auxiliary prime is one modulo its prescribed prime-power block
 after raising it to the APR-CL parameter `t`. -/
-theorem pow_modEq_one_auxiliaryPrimePower {t q a : ℕ} (ht : t ≠ 0)
-    (hq : q ∈ auxiliaryPrimes t) (ha : Nat.Coprime a q) :
-    a ^ t ≡ 1 [MOD q ^ (1 + Nat.factorization t q)] := by
+theorem pow_modEq_one_auxiliaryPrimePower {t q a : ℕ} (ht : t ≠ 0) (hq : q ∈ auxiliaryPrimes t)
+    (ha : Nat.Coprime a q) : a ^ t ≡ 1 [MOD q ^ (1 + Nat.factorization t q)] := by
   let m := q ^ (1 + Nat.factorization t q)
   have ham : Nat.Coprime a m := by
     dsimp only [m]
@@ -645,36 +610,34 @@ theorem pow_modEq_one_auxiliaryPrimePower {t q a : ℕ} (ht : t ≠ 0)
 Inputs are coprime moduli and two congruences with the same endpoints. The conclusion is the
 corresponding congruence modulo the product; the proof combines the two divisibility statements.
 This is the CRT interface used to assemble APR-CL's local unit periods. -/
-theorem modEq_mul_of_coprime_moduli {m n a b : ℕ} (hmn : Nat.Coprime m n)
-    (ha : Nat.ModEq m a b) (hb : Nat.ModEq n a b) : Nat.ModEq (m * n) a b := by
+theorem modEq_mul_of_coprime_moduli {m n a b : ℕ} (hmn : Nat.Coprime m n) (ha : Nat.ModEq m a b)
+    (hb : Nat.ModEq n a b) : Nat.ModEq (m * n) a b := by
   rw [Nat.modEq_iff_dvd] at ha hb ⊢
   exact IsCoprime.mul_dvd (Nat.Coprime.cast hmn) ha hb
 
 /-- Local congruences at distinct odd auxiliary prime-power blocks combine over their product.
 The finite set is a subset of the APR-CL auxiliary primes other than two. -/
-theorem modEq_auxiliaryPrimePowerProduct_of_local {t a b : ℕ} (ht : t ≠ 0)
-    (S : Finset ℕ) (hS : S ⊆ (auxiliaryPrimes t).erase 2)
+theorem modEq_auxiliaryPrimePowerProduct_of_local {t a b : ℕ} (ht : t ≠ 0) (S : Finset ℕ)
+    (hS : S ⊆ (auxiliaryPrimes t).erase 2)
     (hlocal : ∀ q ∈ S, Nat.ModEq (q ^ (1 + Nat.factorization t q)) a b) :
     Nat.ModEq (S.prod (fun q => q ^ (1 + Nat.factorization t q))) a b := by
   induction S using Finset.induction_on with
-  | empty =>
-    simp only [Finset.prod_empty, Nat.ModEq, Nat.mod_one]
-  | @insert q S hqnot ih =>
+  | empty => simp only [Finset.prod_empty, Nat.ModEq, Nat.mod_one]
+  | @insert q S hqnot
+    ih =>
     have hS' : S ⊆ (auxiliaryPrimes t).erase 2 := by
       intro r hr
       exact hS (Finset.mem_insert_of_mem hr)
-    have hlocal' : ∀ r ∈ S,
-        Nat.ModEq (r ^ (1 + Nat.factorization t r)) a b := by
+    have hlocal' : ∀ r ∈ S, Nat.ModEq (r ^ (1 + Nat.factorization t r)) a b := by
       intro r hr
       exact hlocal r (Finset.mem_insert_of_mem hr)
     have hprev := ih hS' hlocal'
-    have hqerase : q ∈ (auxiliaryPrimes t).erase 2 :=
-      hS (Finset.mem_insert_self q S)
+    have hqerase : q ∈ (auxiliaryPrimes t).erase 2 := hS (Finset.mem_insert_self q S)
     have hqmem : q ∈ auxiliaryPrimes t := (Finset.mem_erase.mp hqerase).2
     have hqprime := (mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hqmem |>.1
     have hblockscoprime :
-        (q ^ (1 + Nat.factorization t q)).Coprime
-          (S.prod (fun r => r ^ (1 + Nat.factorization t r))) := by
+      (q ^ (1 + Nat.factorization t q)).Coprime
+        (S.prod (fun r => r ^ (1 + Nat.factorization t r))) := by
       apply Nat.Coprime.prod_right
       intro r hr
       have hrErase : r ∈ (auxiliaryPrimes t).erase 2 := hS' hr
@@ -691,8 +654,8 @@ theorem modEq_auxiliaryPrimePowerProduct_of_local {t a b : ℕ} (ht : t ≠ 0)
         have heq : r = q := (Nat.Prime.dvd_iff_eq hrprime hqNeOne).mp hdiv
         exact hqrne heq.symm
       exact (Nat.Coprime.pow_left _ hqr).pow_right _
-    have hcombined := modEq_mul_of_coprime_moduli hblockscoprime
-      (hlocal q (Finset.mem_insert_self q S)) hprev
+    have hcombined :=
+      modEq_mul_of_coprime_moduli hblockscoprime (hlocal q (Finset.mem_insert_self q S)) hprev
     simpa only [Finset.prod_insert hqnot] using hcombined
 
 /-- Local auxiliary-prime-power periods combine across any finite set of distinct
@@ -700,9 +663,8 @@ odd auxiliary primes. Inputs are a positive parameter, a finite subset of `Q(t) 
 coprimality of the base with every indexed prime. The conclusion gives period `t` modulo the
 product of the selected blocks. Distinctness follows from primality; CRT combines the local
 Euler periods. This is the odd-part consumer for the full APR-CL modulus theorem. -/
-theorem pow_modEq_one_auxiliaryPrimePowerProduct {t a : ℕ} (ht : t ≠ 0)
-    (S : Finset ℕ) (hS : S ⊆ (auxiliaryPrimes t).erase 2)
-    (ha : ∀ q ∈ S, Nat.Coprime a q) :
+theorem pow_modEq_one_auxiliaryPrimePowerProduct {t a : ℕ} (ht : t ≠ 0) (S : Finset ℕ)
+    (hS : S ⊆ (auxiliaryPrimes t).erase 2) (ha : ∀ q ∈ S, Nat.Coprime a q) :
     Nat.ModEq (S.prod (fun q => q ^ (1 + Nat.factorization t q))) (a ^ t) 1 := by
   apply modEq_auxiliaryPrimePowerProduct_of_local ht S hS
   intro q hq
@@ -713,36 +675,32 @@ theorem pow_modEq_one_auxiliaryPrimePowerProduct {t a : ℕ} (ht : t ≠ 0)
 the odd auxiliary-prime-power blocks. For positive `t`, the result identifies the exact modulus
 factors; `two_mem_auxiliaryPrimes` inserts the `q = 2` block and exponent arithmetic absorbs the
 leading factor 2. This decomposition is used by the global CRT period proof. -/
-theorem modulus_eq_twoPrimary_mul_oddAuxiliaryPrimePowerProduct {t : ℕ}
-    (ht : t ≠ 0) :
-    modulus t = 2 ^ (2 + Nat.factorization t 2) *
-      ((auxiliaryPrimes t).erase 2).prod
-        (fun q => q ^ (1 + Nat.factorization t q)) := by
+theorem modulus_eq_twoPrimary_mul_oddAuxiliaryPrimePowerProduct {t : ℕ} (ht : t ≠ 0) :
+    modulus t =
+      2 ^ (2 + Nat.factorization t 2) *
+        ((auxiliaryPrimes t).erase 2).prod (fun q => q ^ (1 + Nat.factorization t q)) := by
   have htwo := two_mem_auxiliaryPrimes ht
   have hnot : 2 ∉ (auxiliaryPrimes t).erase 2 := by
     intro hmem
     exact (Finset.mem_erase.mp hmem).1 rfl
   have hprod :
-      (auxiliaryPrimes t).prod (fun q => q ^ (1 + Nat.factorization t q)) =
-        2 ^ (1 + Nat.factorization t 2) *
-          ((auxiliaryPrimes t).erase 2).prod
-            (fun q => q ^ (1 + Nat.factorization t q)) := by
+    (auxiliaryPrimes t).prod (fun q => q ^ (1 + Nat.factorization t q)) =
+      2 ^ (1 + Nat.factorization t 2) *
+        ((auxiliaryPrimes t).erase 2).prod (fun q => q ^ (1 + Nat.factorization t q)) := by
     calc
-      _ = (insert 2 ((auxiliaryPrimes t).erase 2)).prod
-          (fun q => q ^ (1 + Nat.factorization t q)) := by
-            rw [Finset.insert_erase htwo]
-      _ = 2 ^ (1 + Nat.factorization t 2) *
-          ((auxiliaryPrimes t).erase 2).prod
-            (fun q => q ^ (1 + Nat.factorization t q)) := by
-            rw [Finset.prod_insert hnot]
+      _ =
+          (insert 2 ((auxiliaryPrimes t).erase 2)).prod
+            (fun q => q ^ (1 + Nat.factorization t q)) :=
+        by rw [Finset.insert_erase htwo]
+      _ =
+          2 ^ (1 + Nat.factorization t 2) *
+            ((auxiliaryPrimes t).erase 2).prod (fun q => q ^ (1 + Nat.factorization t q)) :=
+        by rw [Finset.prod_insert hnot]
   rw [modulus, hprod]
-  have hpow : 2 * 2 ^ (1 + Nat.factorization t 2) =
-      2 ^ (2 + Nat.factorization t 2) := by
-    rw [show 1 + Nat.factorization t 2 = Nat.factorization t 2 + 1 by
-        exact Nat.add_comm 1 _,
-      pow_succ, show 2 + Nat.factorization t 2 = Nat.factorization t 2 + 2 by
-        exact Nat.add_comm 2 _,
-      pow_add]
+  have hpow : 2 * 2 ^ (1 + Nat.factorization t 2) = 2 ^ (2 + Nat.factorization t 2) := by
+    rw [show 1 + Nat.factorization t 2 = Nat.factorization t 2 + 1 by exact Nat.add_comm 1 _,
+      pow_succ,
+      show 2 + Nat.factorization t 2 = Nat.factorization t 2 + 2 by exact Nat.add_comm 2 _, pow_add]
     norm_num only
     ring
   rw [← Nat.mul_assoc, hpow]
@@ -751,20 +709,18 @@ theorem modulus_eq_twoPrimary_mul_oddAuxiliaryPrimePowerProduct {t : ℕ}
 congruence modulo the complete APR-CL modulus. This is the local-to-global A6 interface. -/
 theorem modEq_modulus_of_local {t a b : ℕ} (ht : t ≠ 0)
     (htwo : Nat.ModEq (2 ^ (2 + Nat.factorization t 2)) a b)
-    (hodd : ∀ q ∈ (auxiliaryPrimes t).erase 2,
-      Nat.ModEq (q ^ (1 + Nat.factorization t q)) a b) :
+    (hodd : ∀ q ∈ (auxiliaryPrimes t).erase 2, Nat.ModEq (q ^ (1 + Nat.factorization t q)) a b) :
     Nat.ModEq (modulus t) a b := by
   have hoddBlocks :
-      Nat.ModEq (((auxiliaryPrimes t).erase 2).prod
-        (fun q => q ^ (1 + Nat.factorization t q))) a b :=
-    modEq_auxiliaryPrimePowerProduct_of_local ht
-      ((auxiliaryPrimes t).erase 2) (by
+    Nat.ModEq (((auxiliaryPrimes t).erase 2).prod (fun q => q ^ (1 + Nat.factorization t q))) a b :=
+    modEq_auxiliaryPrimePowerProduct_of_local ht ((auxiliaryPrimes t).erase 2)
+      (by
         intro q hq
-        exact hq) hodd
+        exact hq)
+      hodd
   have hcop :
-      Nat.Coprime (2 ^ (2 + Nat.factorization t 2))
-        (((auxiliaryPrimes t).erase 2).prod
-          (fun q => q ^ (1 + Nat.factorization t q))) := by
+    Nat.Coprime (2 ^ (2 + Nat.factorization t 2))
+      (((auxiliaryPrimes t).erase 2).prod (fun q => q ^ (1 + Nat.factorization t q))) := by
     apply Nat.Coprime.prod_right
     intro q hq
     have hqmem : q ∈ auxiliaryPrimes t := (Finset.mem_erase.mp hq).2
@@ -773,8 +729,7 @@ theorem modEq_modulus_of_local {t a b : ℕ} (ht : t ≠ 0)
     have h2q : Nat.Coprime 2 q := by
       rw [Nat.prime_two.coprime_iff_not_dvd]
       intro hdiv
-      have hqeq : q = 2 :=
-        (Nat.Prime.dvd_iff_eq hqprime (by decide : 2 ≠ 1)).mp hdiv
+      have hqeq : q = 2 := (Nat.Prime.dvd_iff_eq hqprime (by decide : 2 ≠ 1)).mp hdiv
       exact hqne2 hqeq
     exact (Nat.Coprime.pow_left _ h2q).pow_right _
   have hcombined := modEq_mul_of_coprime_moduli hcop htwo hoddBlocks
@@ -788,8 +743,7 @@ This is the exact local/global interface for prime-factor orbit conditions. -/
 theorem modEq_modulus_iff_local {t a b : ℕ} (ht : t ≠ 0) :
     Nat.ModEq (modulus t) a b ↔
       Nat.ModEq (2 ^ (2 + Nat.factorization t 2)) a b ∧
-      ∀ q ∈ (auxiliaryPrimes t).erase 2,
-        Nat.ModEq (q ^ (1 + Nat.factorization t q)) a b := by
+        ∀ q ∈ (auxiliaryPrimes t).erase 2, Nat.ModEq (q ^ (1 + Nat.factorization t q)) a b := by
   constructor
   · intro hfull
     have hmod := modulus_eq_twoPrimary_mul_oddAuxiliaryPrimePowerProduct ht
@@ -797,9 +751,9 @@ theorem modEq_modulus_iff_local {t a b : ℕ} (ht : t ≠ 0) :
     · apply Nat.ModEq.of_dvd _ hfull
       exact ⟨_, hmod⟩
     · intro q hq
-      have hqprod : q ^ (1 + Nat.factorization t q) ∣
-          ((auxiliaryPrimes t).erase 2).prod
-            (fun r => r ^ (1 + Nat.factorization t r)) :=
+      have hqprod :
+        q ^ (1 + Nat.factorization t q) ∣
+          ((auxiliaryPrimes t).erase 2).prod (fun r => r ^ (1 + Nat.factorization t r)) :=
         Finset.dvd_prod_of_mem _ hq
       obtain ⟨k, hk⟩ := hqprod
       apply Nat.ModEq.of_dvd _ hfull
@@ -813,33 +767,33 @@ theorem modEq_modulus_iff_local {t a b : ℕ} (ht : t ≠ 0) :
 the finite Chinese remainder theorem chooses a single exponent `i < t` with
 those residues modulo the full prime-power factors of `t`. The input function
 records the local exponents; the result is used by the APR-CL orbit assembly. -/
-theorem exists_commonExponent_mod_primePowers {t : ℕ} (ht : t ≠ 0)
-    (a : ℕ → ℕ) :
-    ∃ i, i < t ∧ ∀ p ∈ t.primeFactors,
-      Nat.ModEq (p ^ Nat.factorization t p) i (a p) := by
+theorem exists_commonExponent_mod_primePowers {t : ℕ} (ht : t ≠ 0) (a : ℕ → ℕ) :
+    ∃ i, i < t ∧ ∀ p ∈ t.primeFactors, Nat.ModEq (p ^ Nat.factorization t p) i (a p) := by
   have hnz : ∀ p ∈ t.primeFactors, p ^ Nat.factorization t p ≠ 0 := by
     intro p hp
     exact pow_ne_zero _ (Nat.prime_of_mem_primeFactors hp).ne_zero
-  have hpair : (↑t.primeFactors : Set ℕ).Pairwise
+  have hpair :
+    (↑t.primeFactors : Set ℕ).Pairwise
       (Function.onFun Nat.Coprime (fun p => p ^ Nat.factorization t p)) := by
     intro p hp q hq hpq
-    exact Nat.Coprime.pow _ _ ((Nat.coprime_primes
-      (Nat.prime_of_mem_primeFactors hp)
-      (Nat.prime_of_mem_primeFactors hq)).mpr hpq)
-  let i := Nat.chineseRemainderOfFinset a
-    (fun p => p ^ Nat.factorization t p) t.primeFactors hnz hpair
+    exact
+      Nat.Coprime.pow _ _
+        ((Nat.coprime_primes (Nat.prime_of_mem_primeFactors hp)
+              (Nat.prime_of_mem_primeFactors hq)).mpr
+          hpq)
+  let i :=
+    Nat.chineseRemainderOfFinset a (fun p => p ^ Nat.factorization t p) t.primeFactors hnz hpair
   refine ⟨i, ?_, ?_⟩
   · calc
       (i : ℕ) < ∏ p ∈ t.primeFactors, p ^ Nat.factorization t p :=
-        Nat.chineseRemainderOfFinset_lt_prod a
-          (fun p => p ^ Nat.factorization t p) hnz hpair
+        Nat.chineseRemainderOfFinset_lt_prod a (fun p => p ^ Nat.factorization t p) hnz hpair
       _ = t := (Nat.prod_primeFactors_pow_factorization ht).symm
   · intro p hp
     exact i.property p hp
 
 /-- Squaring a residue congruent to one modulo an even modulus doubles the modulus. -/
-theorem modEq_square_double_of_even_modulus {m x : ℕ} (hm : Even m)
-    (hxm : Nat.ModEq m x 1) : Nat.ModEq (2 * m) (x ^ 2) 1 := by
+theorem modEq_square_double_of_even_modulus {m x : ℕ} (hm : Even m) (hxm : Nat.ModEq m x 1) :
+    Nat.ModEq (2 * m) (x ^ 2) 1 := by
   rcases hm with ⟨j, hj⟩
   by_cases hj0 : j = 0
   · subst j
@@ -855,14 +809,14 @@ theorem modEq_square_double_of_even_modulus {m x : ℕ} (hm : Even m)
     have hmpos : 1 < j + j := Nat.lt_of_lt_of_le (by decide) hsum
     rw [hj] at hxm ⊢
     simp only [Nat.ModEq] at hxm ⊢
-    have hxmod : x % (j + j) = 1 := by
-      simpa only [Nat.mod_eq_of_lt hmpos] using hxm
+    have hxmod : x % (j + j) = 1 := by simpa only [Nat.mod_eq_of_lt hmpos] using hxm
     have hx : x = (j + j) * (x / (j + j)) + 1 := by
       have hdecomp := Nat.mod_add_div x (j + j)
       rw [hxmod] at hdecomp
       exact hdecomp.symm.trans (Nat.add_comm _ _)
     rw [hx]
-    have hpow : ((j + j) * (x / (j + j)) + 1) ^ 2 =
+    have hpow :
+      ((j + j) * (x / (j + j)) + 1) ^ 2 =
         2 * (j + j) * (j * (x / (j + j)) ^ 2 + x / (j + j)) + 1 := by
       ring
     rw [hpow]
@@ -870,8 +824,7 @@ theorem modEq_square_double_of_even_modulus {m x : ℕ} (hm : Even m)
 
 /-- Every odd natural number has square congruent to one modulo eight. This is the
 base case for the extra 2-adic modulus factor in `e(t)`. -/
-theorem odd_square_modEq_eight {a : ℕ} (ha : Odd a) :
-    Nat.ModEq 8 (a ^ 2) 1 := by
+theorem odd_square_modEq_eight {a : ℕ} (ha : Odd a) : Nat.ModEq 8 (a ^ 2) 1 := by
   rcases ha with ⟨k, hk⟩
   rw [hk]
   rcases Nat.even_or_odd k with ⟨m, hm⟩ | ⟨m, hm⟩
@@ -890,54 +843,54 @@ theorem odd_square_modEq_eight {a : ℕ} (ha : Odd a) :
 valuation: an odd base satisfies `a^(2^v) = 1` modulo `2^(v+2)` for `v ≥ 1`. -/
 theorem odd_pow_two_modEq_one {a v : ℕ} (ha : Odd a) (hv : 1 ≤ v) :
     Nat.ModEq (2 ^ (v + 2)) (a ^ (2 ^ v)) 1 := by
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero
-    (Nat.ne_of_gt (Nat.lt_of_lt_of_le (Nat.zero_lt_succ 0) hv))
+  obtain ⟨k, rfl⟩ :=
+    Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt (Nat.lt_of_lt_of_le (Nat.zero_lt_succ 0) hv))
   induction k with
   | zero =>
-      change Nat.ModEq 8 (a ^ 2) 1
-      exact odd_square_modEq_eight ha
-  | succ k ih =>
-      have hEven : Even (2 ^ (k + 3)) := by
-        refine ⟨2 ^ (k + 2), ?_⟩
-        rw [pow_succ]
-        rw [Nat.mul_two]
-      have hstep := modEq_square_double_of_even_modulus hEven
-        (ih (Nat.zero_lt_succ k))
-      convert hstep using 1
-      · simp only [pow_succ, Nat.mul_assoc]
-        calc
-          _ = (2 ^ k * 2) * (2 * (2 * 2)) := by rw [Nat.mul_assoc]
-          _ = (2 * 2 ^ k) * (2 * (2 * 2)) := by rw [Nat.mul_comm (2 ^ k) 2]
-          _ = 2 * (2 ^ k * (2 * (2 * 2))) := by rw [Nat.mul_assoc]
-      · calc
-          a ^ (2 ^ (k + 1).succ) = a ^ (2 ^ k.succ * 2) := by rw [Nat.pow_succ]
-          _ = (a ^ (2 ^ k.succ)) ^ 2 := Nat.pow_mul a (2 ^ k.succ) 2
+    change Nat.ModEq 8 (a ^ 2) 1
+    exact odd_square_modEq_eight ha
+  | succ k
+    ih =>
+    have hEven : Even (2 ^ (k + 3)) := by
+      refine ⟨2 ^ (k + 2), ?_⟩
+      rw [pow_succ]
+      rw [Nat.mul_two]
+    have hstep := modEq_square_double_of_even_modulus hEven (ih (Nat.zero_lt_succ k))
+    convert hstep using 1
+    · simp only [pow_succ, Nat.mul_assoc]
+      calc
+        _ = (2 ^ k * 2) * (2 * (2 * 2)) := by rw [Nat.mul_assoc]
+        _ = (2 * 2 ^ k) * (2 * (2 * 2)) := by rw [Nat.mul_comm (2 ^ k) 2]
+        _ = 2 * (2 ^ k * (2 * (2 * 2))) := by rw [Nat.mul_assoc]
+    · calc
+        a ^ (2 ^ (k + 1).succ) = a ^ (2 ^ k.succ * 2) := by rw [Nat.pow_succ]
+        _ = (a ^ (2 ^ k.succ)) ^ 2 := Nat.pow_mul a (2 ^ k.succ) 2
 
 /-- An odd base raised to any positive parameter `t` is one modulo the full
 2-primary block of `e(t)`, whose exponent is `2 + v₂(t)`. -/
-theorem pow_modEq_one_twoPrimaryBlock {t a : ℕ} (ht : t ≠ 0)
-    (hv : 0 < Nat.factorization t 2) (ha : Odd a) :
-    Nat.ModEq (2 ^ (2 + Nat.factorization t 2)) (a ^ t) 1 := by
+theorem pow_modEq_one_twoPrimaryBlock {t a : ℕ} (ht : t ≠ 0) (hv : 0 < Nat.factorization t 2)
+    (ha : Odd a) : Nat.ModEq (2 ^ (2 + Nat.factorization t 2)) (a ^ t) 1 := by
   obtain ⟨v, hvEq⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hv)
   have hdiv : 2 ^ v.succ ∣ t := by
     apply (Nat.Prime.pow_dvd_iff_le_factorization Nat.prime_two ht).2
     rw [hvEq]
   obtain ⟨k, hk⟩ := hdiv
-  have hlocal := odd_pow_two_modEq_one ha
-    (Nat.succ_le_iff.mpr (Nat.zero_lt_succ v))
+  have hlocal := odd_pow_two_modEq_one ha (Nat.succ_le_iff.mpr (Nat.zero_lt_succ v))
   rw [hvEq]
   calc
     a ^ t = (a ^ (2 ^ v.succ)) ^ k := by rw [hk, pow_mul]
-    _ ≡ 1 ^ k [MOD 2 ^ (2 + v.succ)] := by
-      simpa only [Nat.add_comm] using hlocal.pow k
+    _ ≡ 1 ^ k [MOD 2 ^ (2 + v.succ)] := by simpa only [Nat.add_comm] using hlocal.pow k
     _ = 1 := by exact one_pow k
 
 /-- If `v₂(t) = 1`, an odd base has its `t`-th power equal to one modulo
 the full 2-primary block `2^(2 + v₂(t)) = 8`. -/
-theorem pow_modEq_one_twoBlock_of_factorization_eq_one {t a : ℕ}
-    (ht : t ≠ 0) (hv : Nat.factorization t 2 = 1) (ha : Odd a) :
-    Nat.ModEq 8 (a ^ t) 1 := by
-  have hmain := pow_modEq_one_twoPrimaryBlock ht (by rw [hv]; norm_num only) ha
+theorem pow_modEq_one_twoBlock_of_factorization_eq_one {t a : ℕ} (ht : t ≠ 0)
+    (hv : Nat.factorization t 2 = 1) (ha : Odd a) : Nat.ModEq 8 (a ^ t) 1 := by
+  have hmain :=
+    pow_modEq_one_twoPrimaryBlock ht
+      (by
+        rw [hv]; norm_num only)
+      ha
   simpa only [hv, Nat.reduceAdd, Nat.reducePow] using hmain
 
 /-- A unit raised to a positive even parameter is one modulo the full APR-CL modulus.
@@ -947,20 +900,20 @@ lemma and finite odd-block product are combined by CRT. This is the unit-period 
 theorem pow_modEq_one_modulus_of_factorization_pos {t a : ℕ} (ht : t ≠ 0)
     (hv : 0 < Nat.factorization t 2) (ha : Nat.Coprime a (modulus t)) :
     Nat.ModEq (modulus t) (a ^ t) 1 := by
-  have hodd : Odd a := Nat.Coprime.odd_of_right
-    (Nat.Coprime.of_dvd_right (two_dvd_modulus t) ha)
+  have hodd : Odd a := Nat.Coprime.odd_of_right (Nat.Coprime.of_dvd_right (two_dvd_modulus t) ha)
   have htwo := pow_modEq_one_twoPrimaryBlock ht hv hodd
-  have hoddBlocks := pow_modEq_one_auxiliaryPrimePowerProduct ht
-    ((auxiliaryPrimes t).erase 2) (by
-      intro q hq
-      exact hq) (by
-      intro q hq
-      have hqmem : q ∈ auxiliaryPrimes t := (Finset.mem_erase.mp hq).2
-      exact Nat.Coprime.of_dvd_right (auxiliaryPrime_dvd_modulus hqmem) ha)
+  have hoddBlocks :=
+    pow_modEq_one_auxiliaryPrimePowerProduct ht ((auxiliaryPrimes t).erase 2)
+      (by
+        intro q hq
+        exact hq)
+      (by
+        intro q hq
+        have hqmem : q ∈ auxiliaryPrimes t := (Finset.mem_erase.mp hq).2
+        exact Nat.Coprime.of_dvd_right (auxiliaryPrime_dvd_modulus hqmem) ha)
   have hcop :
-      Nat.Coprime (2 ^ (2 + Nat.factorization t 2))
-        (((auxiliaryPrimes t).erase 2).prod
-          (fun q => q ^ (1 + Nat.factorization t q))) := by
+    Nat.Coprime (2 ^ (2 + Nat.factorization t 2))
+      (((auxiliaryPrimes t).erase 2).prod (fun q => q ^ (1 + Nat.factorization t q))) := by
     apply Nat.Coprime.prod_right
     intro q hq
     have hqmem : q ∈ auxiliaryPrimes t := (Finset.mem_erase.mp hq).2
@@ -969,8 +922,7 @@ theorem pow_modEq_one_modulus_of_factorization_pos {t a : ℕ} (ht : t ≠ 0)
     have h2q : Nat.Coprime 2 q := by
       rw [Nat.prime_two.coprime_iff_not_dvd]
       intro hdiv
-      have hqeq : q = 2 :=
-        (Nat.Prime.dvd_iff_eq hqprime (by decide : 2 ≠ 1)).mp hdiv
+      have hqeq : q = 2 := (Nat.Prime.dvd_iff_eq hqprime (by decide : 2 ≠ 1)).mp hdiv
       exact hqne2 hqeq
     exact (Nat.Coprime.pow_left _ h2q).pow_right _
   have hcombined := modEq_mul_of_coprime_moduli hcop htwo hoddBlocks
@@ -989,7 +941,7 @@ theorem pow_modEq_one_modulus_of_even {t a : ℕ} (ht : t ≠ 0) (heven : Even t
     exact hk.trans (Nat.two_mul k).symm
   have hpow : 2 ^ 1 ∣ t := by simpa only [Nat.reducePow] using hdiv
   have hvle := (Nat.Prime.pow_dvd_iff_le_factorization Nat.prime_two ht).mp hpow
-  exact pow_modEq_one_modulus_of_factorization_pos ht
-    (Nat.lt_of_lt_of_le (Nat.zero_lt_succ 0) hvle) ha
+  exact
+    pow_modEq_one_modulus_of_factorization_pos ht (Nat.lt_of_lt_of_le (Nat.zero_lt_succ 0) hvle) ha
 
 end PseudoPrime.PrimeTest.APRCL

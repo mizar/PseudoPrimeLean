@@ -79,7 +79,7 @@ theorem logDeriv_riemannXi_zero_eq :
   have hsavoid : ∀ n : ℕ, (0 : ℂ) ≠ -2 * (n + 1) := by
     intro n hcontra
     have hcontra' : (0 : ℝ) = -2 * ((n : ℝ) + 1) := by exact_mod_cast hcontra
-    nlinarith [Nat.cast_nonneg (α := ℝ) n]
+    nlinarith only [hcontra', Nat.cast_nonneg (α := ℝ) n]
   have heqf :
     RiemannXi.riemannXi =ᶠ[nhds (0 : ℂ)] fun z : ℂ =>
       ((1 / 2 : ℂ) * (z - 1) * (2 * (Real.pi : ℂ) ^ (-z / 2) * Complex.Gamma (z / 2 + 1))) *
@@ -124,17 +124,17 @@ theorem logDeriv_riemannXi_zero_eq :
       Complex.log_mul (by norm_num only) (mul_ne_zero (by norm_num only) hpiC)
         (by
           rw [harg2, hargtwopi]
-          constructor <;> nlinarith [Real.pi_pos]),
+          constructor <;> nlinarith only [Real.pi_pos]),
       Complex.log_mul (by norm_num only) hpiC
         (by
           rw [harg2, hargpi]
-          constructor <;> nlinarith [Real.pi_pos])]
+          constructor <;> nlinarith only [Real.pi_pos])]
     ring_nf
   rw [show Complex.log (2 * Real.pi) = Complex.log 2 + Complex.log (Real.pi : ℂ) from by
       rw [Complex.log_mul (by norm_num only) hpiC
           (by
             rw [harg2, hargpi]
-            constructor <;> nlinarith [Real.pi_pos])]]
+            constructor <;> nlinarith only [Real.pi_pos])]]
   rw [hpi4]
   have hpi0 : (Real.pi : ℂ) ^ (0 : ℂ) = 1 := Complex.cpow_zero _
   simp only [hpi0, Pi.mul_apply, Complex.Gamma_one, neg_zero, zero_div, one_mul, mul_one, zero_sub,
@@ -187,7 +187,7 @@ theorem tsum_riemannXiZeroMultiplicity_invNormSq_eq_two_mul_riemannZeroMass_of_r
     · exact le_refl 0
   rw [hHreal] at hnonneg ⊢
   unfold riemannZeroMass
-  rw [abs_of_nonpos (by linarith)]
+  rw [abs_of_nonpos (by linarith only [hnonneg])]
   ring
 
 /-!
@@ -364,7 +364,7 @@ theorem deriv_logDeriv_riemannXi_zero_eq :
   have hsavoid : ∀ n : ℕ, (0 : ℂ) ≠ -2 * (n + 1) := by
     intro n hcontra
     have hcontra' : (0 : ℝ) = -2 * ((n : ℝ) + 1) := by exact_mod_cast hcontra
-    nlinarith [Nat.cast_nonneg (α := ℝ) n]
+    nlinarith only [hcontra', Nat.cast_nonneg (α := ℝ) n]
   have heqf := riemannXi_eventuallyEq_mul_riemannZeta hs1 hsavoid
   have hloc_all := heqf.eventuallyEq_nhds
   have hζne : riemannZeta 0 ≠ 0 := by
@@ -558,7 +558,7 @@ theorem re_qMinusOneRiemannZetaSecondLogDerivAtZero_le (hRH : RiemannHypothesis)
     change (24 : ℝ) = 24
     rfl
   rw [h24] at hbridge_re
-  linarith
+  linarith only [hre, hbridge_re]
 
 /-- The explicit `π²/24` term and the trivial-zero tail combine into the constant
 `1 + 2 * PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannZeroMass`
@@ -568,6 +568,6 @@ theorem re_qMinusOne_add_logTrivialZeroSeries_le (hRH : RiemannHypothesis) {x : 
       1 + 2 * riemannZeroMass := by
   have hq := re_qMinusOneRiemannZetaSecondLogDerivAtZero_le hRH
   have ht := RiemannZeta.riemannZetaLogTrivialZeroSeries_le_pi_sq_div_twenty_four hx
-  linarith
+  linarith only [hq, ht]
 
 end PseudoPrime.AnalyticNumberTheory.RiemannXi

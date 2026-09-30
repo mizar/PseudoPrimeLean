@@ -31,7 +31,7 @@ theorem complexQuadraticCharacter_isEven (n : ℕ) (hn : Odd n) :
   unfold DirichletCharacter.Even
   have hnpos : 0 < n := Odd.pos hn
   let a := 4 * n - 1
-  have ha : 1 ≤ 4 * n := by omega
+  have ha : 1 ≤ 4 * n := Nat.succ_le_iff.mpr (Nat.mul_pos (show 0 < 4 by norm_num only) hnpos)
   have hcop : Nat.Coprime a (4 * n) := by
     rw [Nat.coprime_comm, Nat.coprime_self_sub_right ha]
     exact Nat.coprime_one_right _
@@ -55,14 +55,32 @@ theorem complexQuadraticCharacter_isEven (n : ℕ) (hn : Odd n) :
   rw [hj, jacobiSym.at_neg_one hn]
   have ha_mod : a % 4 = 3 := by
     dsimp only [a]
-    omega
+    calc
+      (4 * n - 1) % 4 = 4 - (0 % 4 + 1) :=
+        Nat.mul_sub_mod (Nat.mul_pos (by norm_num only : 0 < 4) hnpos)
+      _ = 3 := by norm_num only
   have ha_even : a % 2 = 1 := by
     dsimp only [a]
-    omega
+    have hmul : 4 * n = 2 * (2 * n) := by ring
+    rw [hmul]
+    calc
+      (2 * (2 * n) - 1) % 2 = 2 - (0 % 2 + 1) :=
+        Nat.mul_sub_mod
+          (Nat.mul_pos (by norm_num only : 0 < 2) (Nat.mul_pos (by norm_num only : 0 < 2) hnpos))
+      _ = 1 := by norm_num only
   have hn_odd : n % 2 = 1 := Nat.odd_iff.mp hn
   by_cases h : n % 4 = 1
   · simp only [h, ↓reduceIte, ZMod.χ₄_nat_one_mod_four h, Int.cast_one]
-  · have hnmod : n % 4 = 3 := by omega
+  · have hnmod : n % 4 = 3 := by
+      have hmod2 : (n % 4) % 2 = 1 := by
+        rw [Nat.mod_mod_of_dvd n (by norm_num only : 2 ∣ 4)]
+        exact hn_odd
+      have hlt : n % 4 < 4 := Nat.mod_lt n (by norm_num only : 0 < 4)
+      interval_cases n % 4
+      · norm_num only at hmod2
+      · exact False.elim (h rfl)
+      · norm_num only at hmod2
+      · rfl
     rw [ZMod.χ₄_nat_eq_if_mod_four, ZMod.χ₄_nat_eq_if_mod_four]
     simp only [hnmod, OfNat.ofNat_ne_one, ↓reduceIte, hn_odd, one_ne_zero, Int.reduceNeg, ha_even,
       ha_mod, mul_neg, mul_one, neg_neg, Int.cast_one]

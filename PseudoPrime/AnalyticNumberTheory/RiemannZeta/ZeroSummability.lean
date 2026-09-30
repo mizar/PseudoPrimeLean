@@ -63,7 +63,8 @@ theorem exists_riemannZeta_zero_ledger_of_compact {D : Set ℂ} (hD : IsCompact 
     apply hune
     have hcast := Int.toNat_of_nonneg (hdivnn u)
     rw [h0] at hcast
-    omega
+    rw [Nat.cast_zero] at hcast
+    exact hcast.symm
   exact
     ⟨S, m, hmpos, fun u hu => ((hSsupp u).mp hu).1, fun u hu => ((hSsupp u).mp hu).2,
       fun u huD hu0 => (hSsupp u).mpr ⟨huD, hu0⟩, (Set.Finite.coe_toFinset hfin).symm, hmeq⟩
@@ -99,7 +100,7 @@ theorem exists_jensenBall_zero_ledger {T : ℝ} (hT : 8 ≤ T) :
         ((∑ u ∈ S, m u : ℕ) : ℝ) ≤ jensenLogConst * Real.log (T + 2) := by
   set D : Set ℂ := Metric.closedBall (jensenCenter T) (37 / 10) with hD_def
   have hAn : AnalyticOnNhd ℂ riemannZeta D :=
-    (jensen_analyticOnNhd (by linarith : (4 : ℝ) ≤ T)).mono
+    (jensen_analyticOnNhd (le_trans (by norm_num only : (4 : ℝ) ≤ 8) hT)).mono
       (Metric.closedBall_subset_closedBall (by norm_num only))
   obtain ⟨S, m, hmpos, hSD, hSzero, hDzero, hsupp_eq, hmeq⟩ :=
     exists_riemannZeta_zero_ledger_of_compact (isCompact_closedBall _ _) hAn
@@ -126,7 +127,7 @@ theorem exists_jensenBall_zero_ledger_with_analyticMultiplicity {T : ℝ} (hT : 
         ((∑ u ∈ S, riemannZetaZeroMultiplicity u : ℕ) : ℝ) ≤ jensenLogConst * Real.log (T + 2) := by
   set D : Set ℂ := Metric.closedBall (jensenCenter T) (37 / 10) with hD_def
   have hAn : AnalyticOnNhd ℂ riemannZeta D :=
-    (jensen_analyticOnNhd (by linarith : (4 : ℝ) ≤ T)).mono
+    (jensen_analyticOnNhd (le_trans (by norm_num only : (4 : ℝ) ≤ 8) hT)).mono
       (Metric.closedBall_subset_closedBall (by norm_num only))
   obtain ⟨S, m, hmpos, hSD, hSzero, hDzero, hsupp_eq, hmeq⟩ :=
     exists_riemannZeta_zero_ledger_of_compact (isCompact_closedBall _ _) hAn
@@ -191,8 +192,8 @@ theorem exists_jensenBall_zero_ledger_neg {T : ℝ} (hT : T ≤ -8) :
   have hAn : AnalyticOnNhd ℂ riemannZeta D :=
     jensen_analyticOnNhd_of_abs (T := T)
         (by
-          rw [abs_of_neg (by linarith : T < 0)]
-          linarith) |>.mono
+          rw [abs_of_neg (lt_of_le_of_lt hT (by norm_num only : (-8 : ℝ) < 0))]
+          linarith only [hT]) |>.mono
       (Metric.closedBall_subset_closedBall (by norm_num only))
   obtain ⟨S, m, hmpos, hSD, hSzero, hDzero, hsupp_eq, hmeq⟩ :=
     exists_riemannZeta_zero_ledger_of_compact (isCompact_closedBall _ _) hAn
@@ -221,8 +222,8 @@ theorem exists_jensenBall_zero_ledger_neg_with_analyticMultiplicity {T : ℝ} (h
   have hAn : AnalyticOnNhd ℂ riemannZeta D :=
     jensen_analyticOnNhd_of_abs (T := T)
         (by
-          rw [abs_of_neg (by linarith : T < 0)]
-          linarith) |>.mono
+          rw [abs_of_neg (lt_of_le_of_lt hT (by norm_num only : (-8 : ℝ) < 0))]
+          linarith only [hT]) |>.mono
       (Metric.closedBall_subset_closedBall (by norm_num only))
   obtain ⟨S, m, hmpos, hSD, hSzero, hDzero, hsupp_eq, hmeq⟩ :=
     exists_riemannZeta_zero_ledger_of_compact (isCompact_closedBall _ _) hAn
@@ -288,7 +289,8 @@ theorem summable_jensenLogConst_mul_log_div_sq :
       have h := (isLittleO_log_rpow_atTop (show (0 : ℝ) < 1 / 2 by norm_num only)).eventuallyLE
       filter_upwards [h, Filter.eventually_gt_atTop (1 : ℝ)] with t ht ht1
       have hlogpos : 0 ≤ Real.log t := Real.log_nonneg ht1.le
-      have hrpow_pos : 0 ≤ t ^ (1 / 2 : ℝ) := Real.rpow_nonneg (by linarith) _
+      have hrpow_pos : 0 ≤ t ^ (1 / 2 : ℝ) :=
+        Real.rpow_nonneg (le_trans (by norm_num only : (0 : ℝ) ≤ 1) ht1.le) _
       rwa [Real.norm_of_nonneg hlogpos, Real.norm_of_nonneg hrpow_pos] at ht
     have htendsto : Filter.Tendsto (fun n : ℕ => (n : ℝ) + 2) Filter.atTop Filter.atTop :=
       Filter.tendsto_atTop_add_const_right Filter.atTop 2 tendsto_natCast_atTop_atTop
@@ -296,14 +298,18 @@ theorem summable_jensenLogConst_mul_log_div_sq :
     apply Asymptotics.IsBigO.of_bound (4 * jensenLogConst)
     filter_upwards [hev, Filter.eventually_ge_atTop (2 : ℕ)] with n hn hn2
     have hn2R : (2 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn2
-    have hn2pos : (0 : ℝ) < (n : ℝ) + 2 := by linarith
+    have hn2pos : (0 : ℝ) < (n : ℝ) + 2 :=
+      lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) (by linarith only [hn2R])
     have hLCnn : (0 : ℝ) ≤ jensenLogConst := jensenLogConst_pos.le
-    have hlognn : (0 : ℝ) ≤ Real.log ((n : ℝ) + 2) := Real.log_nonneg (by linarith)
-    rw [Real.norm_of_nonneg (by positivity), Real.norm_of_nonneg (by positivity)]
+    have hlognn : (0 : ℝ) ≤ Real.log ((n : ℝ) + 2) :=
+      Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 2) (by linarith only [hn2R]))
+    rw [Real.norm_of_nonneg
+        (div_nonneg (mul_nonneg hLCnn hlognn) (add_nonneg (by norm_num only) (sq_nonneg _))),
+      Real.norm_of_nonneg (div_nonneg (by norm_num only) (Real.rpow_nonneg hn2pos.le _))]
     have hrpow_eq :
       ((n : ℝ) + 2) ^ (1 / 2 : ℝ) * ((n : ℝ) + 2) ^ (3 / 2 : ℝ) = ((n : ℝ) + 2) ^ (2 : ℕ) := by
       rw [← Real.rpow_add hn2pos, show (1 / 2 : ℝ) + 3 / 2 = 2 by norm_num only, Real.rpow_two]
-    have hpoly : ((n : ℝ) + 2) ^ (2 : ℕ) ≤ 4 * (1 + (n : ℝ) ^ 2) := by nlinarith
+    have hpoly : ((n : ℝ) + 2) ^ (2 : ℕ) ≤ 4 * (1 + (n : ℝ) ^ 2) := by nlinarith only [hn2R]
     have hrpow32pos : (0 : ℝ) < ((n : ℝ) + 2) ^ (3 / 2 : ℝ) := Real.rpow_pos_of_pos hn2pos _
     have hstep :
       Real.log ((n : ℝ) + 2) * ((n : ℝ) + 2) ^ (3 / 2 : ℝ) ≤
@@ -311,10 +317,12 @@ theorem summable_jensenLogConst_mul_log_div_sq :
       mul_le_mul_of_nonneg_right hn hrpow32pos.le
     have hkey : Real.log ((n : ℝ) + 2) * ((n : ℝ) + 2) ^ (3 / 2 : ℝ) ≤ 4 * (1 + (n : ℝ) ^ 2) := by
       rw [hrpow_eq] at hstep
-      linarith
+      exact le_trans hstep hpoly
     have hmain : Real.log ((n : ℝ) + 2) / (1 + (n : ℝ) ^ 2) ≤ 4 / ((n : ℝ) + 2) ^ (3 / 2 : ℝ) := by
-      rw [div_le_div_iff₀ (by positivity) hrpow32pos]
-      linarith [hkey]
+      rw [div_le_div_iff₀
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) (le_add_of_nonneg_right (sq_nonneg _)))
+          hrpow32pos]
+      exact hkey
     have hgoal :
       jensenLogConst * (Real.log ((n : ℝ) + 2) / (1 + (n : ℝ) ^ 2)) ≤
         jensenLogConst * (4 / ((n : ℝ) + 2) ^ (3 / 2 : ℝ)) :=
@@ -342,7 +350,7 @@ theorem sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand {j : ℕ
     rw [hfloor] at hfloor_le hfloor_lt
     apply riemannZeta_zero_mem_jensenBall hjR hzero
     rw [abs_le]
-    constructor <;> linarith
+    constructor <;> linarith only [hfloor_le, hfloor_lt]
   have hzero : ∀ s ∈ U, riemannZeta s = 0 := fun s hs => (hU s hs).1
   have hsum := sum_riemannZetaZeroMultiplicity_le_jensenBall_bound hjR hball hzero
   have hterm :
@@ -353,8 +361,11 @@ theorem sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand {j : ℕ
     obtain ⟨_, _, _, him, hfloor⟩ := hU s hs
     have hfloor_le := Nat.floor_le him
     rw [hfloor] at hfloor_le
-    apply div_le_div_of_nonneg_left (by positivity) (by positivity)
-    nlinarith
+    apply
+      div_le_div_of_nonneg_left (Nat.cast_nonneg _)
+        (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) (le_add_of_nonneg_right (sq_nonneg _)))
+    have hpow := mul_le_mul hfloor_le hfloor_le (le_trans (by norm_num only : (0 : ℝ) ≤ 8) hjR) him
+    simpa only [pow_two, add_comm] using add_le_add_left hpow 1
   calc
     ∑ s ∈ U, (riemannZetaZeroMultiplicity s : ℝ) / (1 + s.im ^ 2) ≤
         ∑ s ∈ U, (riemannZetaZeroMultiplicity s : ℝ) / (1 + (j : ℝ) ^ 2) :=
@@ -366,7 +377,9 @@ theorem sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand {j : ℕ
       intro s _
       ring
     _ ≤ (1 / (1 + (j : ℝ) ^ 2)) * (jensenLogConst * Real.log ((j : ℝ) + 2)) := by
-      exact mul_le_mul_of_nonneg_left hsum (by positivity)
+      exact
+        mul_le_mul_of_nonneg_left hsum
+          (div_nonneg (by norm_num only) (add_nonneg (by norm_num only) (sq_nonneg _)))
     _ = jensenLogConst * Real.log ((j : ℝ) + 2) / (1 + (j : ℝ) ^ 2) := by ring
 
 /-- A negative high-height band of nontrivial zeta-zeros has the corresponding
@@ -383,12 +396,12 @@ theorem sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand_neg {j :
     have hfloor_le := Nat.floor_le (neg_nonneg.mpr (le_of_lt him))
     have hfloor_lt := Nat.lt_floor_add_one (-s.im)
     rw [hfloor] at hfloor_le hfloor_lt
-    apply riemannZeta_zero_mem_jensenBall_neg (by linarith) hzero
+    apply riemannZeta_zero_mem_jensenBall_neg (neg_le_neg hjR) hzero
     rw [abs_le]
-    constructor <;> linarith
+    constructor <;> linarith only [hfloor_le, hfloor_lt]
   have hzero : ∀ s ∈ U, riemannZeta s = 0 := fun s hs => (hU s hs).1
   have hsum :=
-    sum_riemannZetaZeroMultiplicity_le_jensenBall_bound_neg (T := -(j : ℝ)) (by linarith) hball
+    sum_riemannZetaZeroMultiplicity_le_jensenBall_bound_neg (T := -(j : ℝ)) (neg_le_neg hjR) hball
       hzero
   simp only [neg_neg] at hsum
   have hterm :
@@ -399,8 +412,13 @@ theorem sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand_neg {j :
     obtain ⟨_, _, _, him, hfloor⟩ := hU s hs
     have hfloor_le := Nat.floor_le (neg_nonneg.mpr (le_of_lt him))
     rw [hfloor] at hfloor_le
-    apply div_le_div_of_nonneg_left (by positivity) (by positivity)
-    nlinarith
+    apply
+      div_le_div_of_nonneg_left (Nat.cast_nonneg _)
+        (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) (le_add_of_nonneg_right (sq_nonneg _)))
+    have hjnn : (0 : ℝ) ≤ (j : ℝ) := le_trans (by norm_num only : (0 : ℝ) ≤ 8) hjR
+    have himnn : (0 : ℝ) ≤ -s.im := neg_nonneg.mpr him.le
+    have hpow := mul_le_mul hfloor_le hfloor_le hjnn himnn
+    nlinarith only [hpow]
   calc
     ∑ s ∈ U, (riemannZetaZeroMultiplicity s : ℝ) / (1 + s.im ^ 2) ≤
         ∑ s ∈ U, (riemannZetaZeroMultiplicity s : ℝ) / (1 + (j : ℝ) ^ 2) :=
@@ -412,7 +430,9 @@ theorem sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand_neg {j :
       intro s _
       ring
     _ ≤ (1 / (1 + (j : ℝ) ^ 2)) * (jensenLogConst * Real.log ((j : ℝ) + 2)) := by
-      exact mul_le_mul_of_nonneg_left hsum (by positivity)
+      exact
+        mul_le_mul_of_nonneg_left hsum
+          (div_nonneg (by norm_num only) (add_nonneg (by norm_num only) (sq_nonneg _)))
     _ = jensenLogConst * Real.log ((j : ℝ) + 2) / (1 + (j : ℝ) ^ 2) := by ring
 
 /-- The nontrivial zeta zeros with `0 ≤ Im s < 8` form a finite set.
@@ -437,8 +457,9 @@ theorem lowBand_zeros_finite :
       Complex.I_re, mul_zero, add_zero, zero_add]
   rw [hre_eq, him_eq, show (5 : ℝ) = Real.sqrt (5 ^ 2) from (Real.sqrt_sq (by norm_num only)).symm]
   apply Real.sqrt_le_sqrt
-  nlinarith [mul_nonneg hre0 (show (0 : ℝ) ≤ 1 - s.re by linarith),
-    mul_nonneg him0 (show (0 : ℝ) ≤ 8 - s.im by linarith)]
+  have hrealprod : 0 ≤ s.re * (1 - s.re) := mul_nonneg hre0 (by linarith only [hre1])
+  have himagprod : 0 ≤ s.im * (8 - s.im) := mul_nonneg him0 (by linarith only [him8])
+  nlinarith only [hrealprod, himagprod]
 
 /-- The mirror of `PseudoPrime.AnalyticNumberTheory.RiemannZeta.lowBand_zeros_finite`
 for `-8 < Im s < 0`. -/
@@ -461,8 +482,10 @@ theorem lowBand_zeros_finite_neg :
       Complex.I_re, mul_zero, add_zero, zero_sub, sub_neg_eq_add]
   rw [hre_eq, him_eq, show (5 : ℝ) = Real.sqrt (5 ^ 2) from (Real.sqrt_sq (by norm_num only)).symm]
   apply Real.sqrt_le_sqrt
-  nlinarith [mul_nonneg hre0 (show (0 : ℝ) ≤ 1 - s.re by linarith),
-    mul_nonneg (show (0 : ℝ) ≤ s.im + 8 by linarith) (show (0 : ℝ) ≤ -s.im by linarith)]
+  have hrealprod : 0 ≤ s.re * (1 - s.re) := mul_nonneg hre0 (by linarith only [hre1])
+  have himagprod : 0 ≤ (s.im + 8) * -s.im :=
+    mul_nonneg (by linarith only [him0]) (by linarith only [him8])
+  nlinarith only [hrealprod, himagprod]
 
 /-- The multiplicity-weighted positive-height reciprocal-square summand for nontrivial zeta
 zeros. This is the summand needed by the infinite xi Hadamard product. -/
@@ -475,7 +498,13 @@ noncomputable def nontrivialZetaZeroMultiplicityWeight (s : ℂ) : ℝ :=
 theorem nontrivialZetaZeroMultiplicityWeight_nonneg (s : ℂ) :
     0 ≤ nontrivialZetaZeroMultiplicityWeight s := by
   unfold nontrivialZetaZeroMultiplicityWeight
-  split <;> positivity
+  split
+  · exact
+      div_nonneg (Nat.cast_nonneg _)
+        (le_of_lt
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1)
+            (le_add_of_nonneg_right (sq_nonneg s.im))))
+  · exact le_refl 0
 
 /-- The zero-weight summand (multiplicity ignored): `1/(1+Im s²)` at a nontrivial zero of `ζ` with
 `0 ≤ Im s`, and `0` elsewhere. -/
@@ -485,7 +514,11 @@ noncomputable def nontrivialZetaZeroWeight (s : ℂ) : ℝ :=
 theorem nontrivialZetaZeroWeight_nonneg (s : ℂ) : 0 ≤ nontrivialZetaZeroWeight s := by
   unfold nontrivialZetaZeroWeight
   split
-  · positivity
+  · exact
+      div_nonneg (by norm_num only)
+        (le_of_lt
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1)
+            (le_add_of_nonneg_right (sq_nonneg s.im))))
   · exact le_refl 0
 
 /-- The multiplicity-weighted negative-height reciprocal-square summand for nontrivial zeta
@@ -499,7 +532,13 @@ noncomputable def nontrivialZetaZeroMultiplicityWeightNeg (s : ℂ) : ℝ :=
 theorem nontrivialZetaZeroMultiplicityWeightNeg_nonneg (s : ℂ) :
     0 ≤ nontrivialZetaZeroMultiplicityWeightNeg s := by
   unfold nontrivialZetaZeroMultiplicityWeightNeg
-  split <;> positivity
+  split
+  · exact
+      div_nonneg (Nat.cast_nonneg _)
+        (le_of_lt
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1)
+            (le_add_of_nonneg_right (sq_nonneg s.im))))
+  · exact le_refl 0
 
 /-- The reciprocal-square height weight is summable over nontrivial zeta zeros
 with `Im ρ ≥ 0`, ignoring multiplicity. -/
@@ -515,9 +554,9 @@ theorem summable_nontrivialZetaZeroWeight : Summable nontrivialZetaZeroWeight :=
       Real.log_nonneg
         (by
           have := Nat.cast_nonneg (α := ℝ) n
-          linarith)
+          linarith only [this])
     simp only [hg_def]
-    positivity
+    exact div_nonneg (mul_nonneg h1 h2) (add_nonneg (by norm_num only) (sq_nonneg _))
   refine summable_of_sum_le nontrivialZetaZeroWeight_nonneg (c := L + ∑' n, g n) fun u => ?_
   rw [← Finset.sum_filter_add_sum_filter_not u (fun s => s.im < 8)]
   have hlow : ∑ s ∈ u.filter (fun s => s.im < 8), nontrivialZetaZeroWeight s ≤ L := by
@@ -535,8 +574,11 @@ theorem summable_nontrivialZetaZeroWeight : Summable nontrivialZetaZeroWeight :=
           have hmemLow : s ∈ lowBand_zeros_finite.toFinset := by
             rw [Set.Finite.mem_toFinset]
             exact ⟨hcond.1, hcond.2.1, hcond.2.2.1, hcond.2.2.2, hs.2⟩
-          rw [ite_eq_left hmemLow, div_le_one (by positivity)]
-          nlinarith [sq_nonneg s.im]
+          rw [ite_eq_left hmemLow,
+            div_le_one
+              (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1)
+                (le_add_of_nonneg_right (sq_nonneg s.im)))]
+          exact le_add_of_nonneg_right (sq_nonneg s.im)
         · rw [ite_eq_right hcond]
           split_ifs <;> norm_num only
       _ =
@@ -571,7 +613,7 @@ theorem summable_nontrivialZetaZeroWeight : Summable nontrivialZetaZeroWeight :=
         obtain ⟨hsuh, hsfl⟩ := hs
         rw [huh_def, Finset.mem_filter] at hsuh
         push Not at hsuh
-        have hsim0 : (0 : ℝ) ≤ s.im := by linarith [hsuh.2]
+        have hsim0 : (0 : ℝ) ≤ s.im := le_trans (by norm_num only : (0 : ℝ) ≤ 8) hsuh.2
         have hfl_le := Nat.floor_le hsim0
         have hfl_lt := Nat.lt_floor_add_one s.im
         rw [hsfl] at hfl_le hfl_lt
@@ -580,15 +622,22 @@ theorem summable_nontrivialZetaZeroWeight : Summable nontrivialZetaZeroWeight :=
         · rw [ite_eq_left hcond]
           have him2 : |s.im - (j : ℝ)| ≤ 2 := by
             rw [abs_le]
-            constructor <;> linarith
+            constructor <;> linarith only [hfl_le, hfl_lt]
           have hmemD : s ∈ Metric.closedBall (jensenCenter (j : ℝ)) (37 / 10) :=
             riemannZeta_zero_mem_jensenBall hj8R hcond.1 him2
           have hmemS : s ∈ S := hDzero s hmemD hcond.1
           rw [ite_eq_left hmemS]
-          apply div_le_div_of_nonneg_left (by norm_num only) (by positivity)
-          nlinarith
+          apply
+            div_le_div_of_nonneg_left (by norm_num only)
+              (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1)
+                (le_add_of_nonneg_right (sq_nonneg _)))
+          have hpow :=
+            mul_le_mul hfl_le hfl_le (le_trans (by norm_num only : (0 : ℝ) ≤ 8) hj8R) hsim0
+          simpa only [pow_two, add_comm] using add_le_add_left hpow 1
         · rw [ite_eq_right hcond]
-          split_ifs <;> positivity
+          split_ifs
+          · exact div_nonneg (by norm_num only) (add_nonneg (by norm_num only) (sq_nonneg _))
+          · exact le_refl 0
       calc
         ∑ s ∈ uh.filter (fun s => ⌊s.im⌋₊ = j), nontrivialZetaZeroWeight s ≤
             ∑ s ∈ uh.filter (fun s => ⌊s.im⌋₊ = j),
@@ -606,7 +655,9 @@ theorem summable_nontrivialZetaZeroWeight : Summable nontrivialZetaZeroWeight :=
               ((uh.filter (fun s => ⌊s.im⌋₊ = j)).filter (fun s => s ∈ S)).card :=
           by rw [← Finset.mul_sum, Finset.sum_boole]
         _ ≤ (1 / (1 + (j : ℝ) ^ 2)) * (∑ u ∈ S, m u) := by
-          apply mul_le_mul_of_nonneg_left _ (by positivity)
+          apply
+            mul_le_mul_of_nonneg_left _
+              (div_nonneg (by norm_num only) (add_nonneg (by norm_num only) (sq_nonneg _)))
           calc
             (((uh.filter (fun s => ⌊s.im⌋₊ = j)).filter (fun s => s ∈ S)).card : ℝ) ≤
                 (S.card : ℝ) :=
@@ -618,7 +669,9 @@ theorem summable_nontrivialZetaZeroWeight : Summable nontrivialZetaZeroWeight :=
                   _ ≤ ∑ u ∈ S, m u := Finset.sum_le_sum (fun u hu => hmpos u hu)
               exact_mod_cast this
         _ ≤ (1 / (1 + (j : ℝ) ^ 2)) * (jensenLogConst * Real.log ((j : ℝ) + 2)) := by
-          apply mul_le_mul_of_nonneg_left hmeq (by positivity)
+          apply
+            mul_le_mul_of_nonneg_left hmeq
+              (div_nonneg (by norm_num only) (add_nonneg (by norm_num only) (sq_nonneg _)))
         _ = g j := by
           simp only [hg_def]
           ring
@@ -628,7 +681,7 @@ theorem summable_nontrivialZetaZeroWeight : Summable nontrivialZetaZeroWeight :=
         (Finset.sum_fiberwise_of_maps_to hmaps nontrivialZetaZeroWeight).symm
       _ ≤ ∑ j ∈ t, g j := Finset.sum_le_sum hband
       _ ≤ ∑' n, g n := hgsum.sum_le_tsum t (fun n _ => hgnn n)
-  linarith [hlow, hhigh]
+  exact add_le_add hlow hhigh
 
 /-- The mirror of `PseudoPrime.AnalyticNumberTheory.RiemannZeta.nontrivialZetaZeroWeight`
 for `Im s < 0`. -/
@@ -638,7 +691,11 @@ noncomputable def nontrivialZetaZeroWeightNeg (s : ℂ) : ℝ :=
 theorem nontrivialZetaZeroWeightNeg_nonneg (s : ℂ) : 0 ≤ nontrivialZetaZeroWeightNeg s := by
   unfold nontrivialZetaZeroWeightNeg
   split
-  · positivity
+  · exact
+      div_nonneg (by norm_num only)
+        (le_of_lt
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1)
+            (le_add_of_nonneg_right (sq_nonneg s.im))))
   · exact le_refl 0
 
 /-- The reciprocal-square height weight is summable over nontrivial zeta zeros
@@ -653,11 +710,10 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
     have h1 := jensenLogConst_pos.le
     have h2 : (0 : ℝ) ≤ Real.log ((n : ℝ) + 2) :=
       Real.log_nonneg
-        (by
-          have := Nat.cast_nonneg (α := ℝ) n
-          linarith)
+        (le_trans (by norm_num only : (1 : ℝ) ≤ 2)
+          (le_add_of_nonneg_left (Nat.cast_nonneg (α := ℝ) n)))
     simp only [hg_def]
-    positivity
+    exact div_nonneg (mul_nonneg h1 h2) (add_nonneg (by norm_num only) (sq_nonneg _))
   refine summable_of_sum_le nontrivialZetaZeroWeightNeg_nonneg (c := L + ∑' n, g n) fun u => ?_
   rw [← Finset.sum_filter_add_sum_filter_not u (fun s => -8 < s.im)]
   have hlow : ∑ s ∈ u.filter (fun s => -8 < s.im), nontrivialZetaZeroWeightNeg s ≤ L := by
@@ -675,8 +731,11 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
           have hmemLow : s ∈ lowBand_zeros_finite_neg.toFinset := by
             rw [Set.Finite.mem_toFinset]
             exact ⟨hcond.1, hcond.2.1, hcond.2.2.1, hs.2, hcond.2.2.2⟩
-          rw [ite_eq_left hmemLow, div_le_one (by positivity)]
-          nlinarith [sq_nonneg s.im]
+          rw [ite_eq_left hmemLow,
+            div_le_one
+              (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1)
+                (le_add_of_nonneg_right (sq_nonneg s.im)))]
+          exact le_add_of_nonneg_right (sq_nonneg s.im)
         · rw [ite_eq_right hcond]
           split_ifs <;> norm_num only
       _ =
@@ -703,10 +762,10 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
         refine Nat.le_floor ?_
         have h := hs.2
         push_cast
-        linarith
+        simpa only [neg_neg] using neg_le_neg h
       have hj8R : (8 : ℝ) ≤ (j : ℝ) := by exact_mod_cast hj8
       obtain ⟨S, m, hmpos, hSD, hSzero, hDzero, hmeq⟩ :=
-        exists_jensenBall_zero_ledger_neg (T := -(j : ℝ)) (by linarith)
+        exists_jensenBall_zero_ledger_neg (T := -(j : ℝ)) (neg_le_neg hj8R)
       have hfilter_sub :
         ∀ s ∈ uh.filter (fun s => ⌊-s.im⌋₊ = j),
           nontrivialZetaZeroWeightNeg s ≤ (if s ∈ S then (1 : ℝ) / (1 + (j : ℝ) ^ 2) else 0) := by
@@ -715,7 +774,9 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
         obtain ⟨hsuh, hsfl⟩ := hs
         rw [huh_def, Finset.mem_filter] at hsuh
         push Not at hsuh
-        have hsim0 : (0 : ℝ) ≤ -s.im := by linarith [hsuh.2]
+        have hsim0 : (0 : ℝ) ≤ -s.im := by
+          have h8 : (8 : ℝ) ≤ -s.im := by simpa only [neg_neg] using neg_le_neg hsuh.2
+          exact le_trans (by norm_num only : (0 : ℝ) ≤ 8) h8
         have hfl_le := Nat.floor_le hsim0
         have hfl_lt := Nat.lt_floor_add_one (-s.im)
         rw [hsfl] at hfl_le hfl_lt
@@ -724,15 +785,22 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
         · rw [ite_eq_left hcond]
           have him2 : |s.im - (-(j : ℝ))| ≤ 2 := by
             rw [abs_le]
-            constructor <;> linarith
+            constructor <;> linarith only [hfl_le, hfl_lt]
           have hmemD : s ∈ Metric.closedBall (jensenCenter (-(j : ℝ))) (37 / 10) :=
-            riemannZeta_zero_mem_jensenBall_neg (by linarith) hcond.1 him2
+            riemannZeta_zero_mem_jensenBall_neg (neg_le_neg hj8R) hcond.1 him2
           have hmemS : s ∈ S := hDzero s hmemD hcond.1
           rw [ite_eq_left hmemS]
-          apply div_le_div_of_nonneg_left (by norm_num only) (by positivity)
-          nlinarith
+          apply
+            div_le_div_of_nonneg_left (by norm_num only)
+              (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1)
+                (le_add_of_nonneg_right (sq_nonneg _)))
+          have hjnn : (0 : ℝ) ≤ (j : ℝ) := le_trans (by norm_num only : (0 : ℝ) ≤ 8) hj8R
+          have hpow := mul_le_mul hfl_le hfl_le hjnn hsim0
+          nlinarith only [hpow]
         · rw [ite_eq_right hcond]
-          split_ifs <;> positivity
+          split_ifs
+          · exact div_nonneg (by norm_num only) (add_nonneg (by norm_num only) (sq_nonneg _))
+          · exact le_refl 0
       calc
         ∑ s ∈ uh.filter (fun s => ⌊-s.im⌋₊ = j), nontrivialZetaZeroWeightNeg s ≤
             ∑ s ∈ uh.filter (fun s => ⌊-s.im⌋₊ = j),
@@ -750,7 +818,9 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
               ((uh.filter (fun s => ⌊-s.im⌋₊ = j)).filter (fun s => s ∈ S)).card :=
           by rw [← Finset.mul_sum, Finset.sum_boole]
         _ ≤ (1 / (1 + (j : ℝ) ^ 2)) * (∑ u ∈ S, m u) := by
-          apply mul_le_mul_of_nonneg_left _ (by positivity)
+          apply
+            mul_le_mul_of_nonneg_left _
+              (div_nonneg (by norm_num only) (add_nonneg (by norm_num only) (sq_nonneg _)))
           calc
             (((uh.filter (fun s => ⌊-s.im⌋₊ = j)).filter (fun s => s ∈ S)).card : ℝ) ≤
                 (S.card : ℝ) :=
@@ -762,7 +832,9 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
                   _ ≤ ∑ u ∈ S, m u := Finset.sum_le_sum (fun u hu => hmpos u hu)
               exact_mod_cast this
         _ ≤ (1 / (1 + (j : ℝ) ^ 2)) * (jensenLogConst * Real.log ((j : ℝ) + 2)) := by
-          apply mul_le_mul_of_nonneg_left _ (by positivity)
+          apply
+            mul_le_mul_of_nonneg_left _
+              (div_nonneg (by norm_num only) (add_nonneg (by norm_num only) (sq_nonneg _)))
           simpa only [Nat.cast_sum, neg_neg] using hmeq
         _ = g j := by
           simp only [hg_def]
@@ -773,7 +845,7 @@ theorem summable_nontrivialZetaZeroWeightNeg : Summable nontrivialZetaZeroWeight
         (Finset.sum_fiberwise_of_maps_to hmaps nontrivialZetaZeroWeightNeg).symm
       _ ≤ ∑ j ∈ t, g j := Finset.sum_le_sum hband
       _ ≤ ∑' n, g n := hgsum.sum_le_tsum t (fun n _ => hgnn n)
-  linarith [hlow, hhigh]
+  exact add_le_add hlow hhigh
 
 /-- The full zero-weight summand, with no restriction on the sign of `Im s`. -/
 noncomputable def nontrivialZetaZeroWeightFull (s : ℂ) : ℝ :=
@@ -816,10 +888,11 @@ theorem summable_nontrivialZetaZeroMultiplicityWeight :
     have h2 : (0 : ℝ) ≤ Real.log ((n : ℝ) + 2) :=
       Real.log_nonneg
         (by
-          have := Nat.cast_nonneg (α := ℝ) n
-          linarith)
+          exact
+            le_trans (by norm_num only : (1 : ℝ) ≤ 2)
+              (le_add_of_nonneg_left (Nat.cast_nonneg (α := ℝ) n)))
     simp only [hg_def]
-    positivity
+    exact div_nonneg (mul_nonneg h1 h2) (add_nonneg (by norm_num only) (sq_nonneg _))
   refine
     summable_of_sum_le nontrivialZetaZeroMultiplicityWeight_nonneg (c := L + ∑' n, g n) fun u => ?_
   rw [← Finset.sum_filter_add_sum_filter_not u (fun s => s.im < 8)]
@@ -851,8 +924,8 @@ theorem summable_nontrivialZetaZeroMultiplicityWeight :
         intro s hs
         unfold nontrivialZetaZeroMultiplicityWeight
         rw [ite_eq_left]
-        · apply div_le_self (by positivity)
-          nlinarith [sq_nonneg s.im]
+        · apply div_le_self (Nat.cast_nonneg _)
+          exact le_add_of_nonneg_right (sq_nonneg s.im)
         · rw [hv_def, Finset.mem_filter] at hs
           exact hs.2
       _ ≤ ∑ s ∈ lowBand_zeros_finite.toFinset, (riemannZetaZeroMultiplicity s : ℝ) := by
@@ -864,7 +937,7 @@ theorem summable_nontrivialZetaZeroMultiplicityWeight :
           rw [Set.Finite.mem_toFinset]
           exact ⟨hcond.1, hcond.2.1, hcond.2.2.1, hcond.2.2.2, hs.2⟩
         · intro s _ _
-          positivity
+          exact Nat.cast_nonneg _
       _ = L := by exact hL_def.symm
   have hhigh :
     ∑ s ∈ u.filter (fun s => ¬s.im < 8), nontrivialZetaZeroMultiplicityWeight s ≤ ∑' n, g n := by
@@ -926,7 +999,7 @@ theorem summable_nontrivialZetaZeroMultiplicityWeight :
         (Finset.sum_fiberwise_of_maps_to hmaps nontrivialZetaZeroMultiplicityWeight).symm
       _ ≤ ∑ j ∈ t, g j := Finset.sum_le_sum hband
       _ ≤ ∑' n, g n := hgsum.sum_le_tsum t (fun n _ => hgnn n)
-  linarith [hlow, hhigh]
+  exact add_le_add hlow hhigh
 
 /-- The negative-height mirror of
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.summable_nontrivialZetaZeroMultiplicityWeight`. -/
@@ -942,10 +1015,11 @@ theorem summable_nontrivialZetaZeroMultiplicityWeightNeg :
     have h2 : (0 : ℝ) ≤ Real.log ((n : ℝ) + 2) :=
       Real.log_nonneg
         (by
-          have := Nat.cast_nonneg (α := ℝ) n
-          linarith)
+          exact
+            le_trans (by norm_num only : (1 : ℝ) ≤ 2)
+              (le_add_of_nonneg_left (Nat.cast_nonneg (α := ℝ) n)))
     simp only [hg_def]
-    positivity
+    exact div_nonneg (mul_nonneg h1 h2) (add_nonneg (by norm_num only) (sq_nonneg _))
   refine
     summable_of_sum_le nontrivialZetaZeroMultiplicityWeightNeg_nonneg (c := L + ∑' n, g n) fun u =>
       ?_
@@ -979,8 +1053,8 @@ theorem summable_nontrivialZetaZeroMultiplicityWeightNeg :
         intro s hs
         unfold nontrivialZetaZeroMultiplicityWeightNeg
         rw [ite_eq_left]
-        · apply div_le_self (by positivity)
-          nlinarith [sq_nonneg s.im]
+        · apply div_le_self (Nat.cast_nonneg _)
+          exact le_add_of_nonneg_right (sq_nonneg s.im)
         · rw [hv_def, Finset.mem_filter] at hs
           exact hs.2
       _ ≤ ∑ s ∈ lowBand_zeros_finite_neg.toFinset, (riemannZetaZeroMultiplicity s : ℝ) := by
@@ -992,7 +1066,7 @@ theorem summable_nontrivialZetaZeroMultiplicityWeightNeg :
           rw [Set.Finite.mem_toFinset]
           exact ⟨hcond.1, hcond.2.1, hcond.2.2.1, hs.2, hcond.2.2.2⟩
         · intro s _ _
-          positivity
+          exact Nat.cast_nonneg _
       _ = L := by exact hL_def.symm
   have hhigh :
     ∑ s ∈ u.filter (fun s => ¬(-8 < s.im)), nontrivialZetaZeroMultiplicityWeightNeg s ≤
@@ -1014,7 +1088,7 @@ theorem summable_nontrivialZetaZeroMultiplicityWeightNeg :
         refine Nat.le_floor ?_
         have h := hs.2
         push_cast
-        linarith
+        simpa only [neg_neg] using neg_le_neg h
       set v :=
         (uh.filter (fun s => ⌊-s.im⌋₊ = j)).filter
           (fun s => riemannZeta s = 0 ∧ 0 ≤ s.re ∧ s.re ≤ 1 ∧ s.im < 0) with
@@ -1060,7 +1134,7 @@ theorem summable_nontrivialZetaZeroMultiplicityWeightNeg :
         (Finset.sum_fiberwise_of_maps_to hmaps nontrivialZetaZeroMultiplicityWeightNeg).symm
       _ ≤ ∑ j ∈ t, g j := Finset.sum_le_sum hband
       _ ≤ ∑' n, g n := hgsum.sum_le_tsum t (fun n _ => hgnn n)
-  linarith [hlow, hhigh]
+  exact add_le_add hlow hhigh
 
 /-- The multiplicity-weighted reciprocal-square summand over all nontrivial zeta zeros. -/
 noncomputable def nontrivialZetaZeroMultiplicityWeightFull (s : ℂ) : ℝ :=

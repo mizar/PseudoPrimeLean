@@ -29,7 +29,7 @@ theorem continuous_dirichletReciprocalContourKernel_horizontalHeightSeq_of_grh {
   have hT := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
   have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := by
     have hk : (0 : ℝ) ≤ k := Nat.cast_nonneg k
-    linarith
+    linarith only [hT, hk]
   have hpt :
     ∀ s : ℂ,
       s.im = primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k ∨
@@ -314,7 +314,7 @@ theorem tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_horizontal_integra
       hprimitive hne hinv hx
   have hsplit := fun k : ℕ =>
     intervalIntegral_add_adjacent_dirichletReciprocalKernel_pair_of_grh A hN2 hGRH hprimitive hne
-      hinv (by linarith) k
+      hinv (by linarith only [hx]) k
   constructor
   · have h := hfar.1.add hcentral.1
     simpa only [add_zero] using h.congr (fun k => (hsplit k).1)
@@ -369,7 +369,7 @@ theorem tendsto_normalized_dirichletReciprocalBoundary_heightSeq_of_grh {N : ℕ
             ∫ t : ℝ,
               dirichletReciprocalContourKernel x χ
                 (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I))) := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := by linarith only [hx]
   have hcoeffI : (-Complex.I / (2 * (Real.pi : ℂ))) * Complex.I = ((2 * Real.pi : ℝ)⁻¹ : ℂ) := by
     rw [div_mul_eq_mul_div,
       show (-Complex.I) * Complex.I = 1 from by

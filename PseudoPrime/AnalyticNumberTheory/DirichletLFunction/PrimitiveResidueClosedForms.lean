@@ -53,7 +53,7 @@ theorem dirichletReciprocalResidueAt_zero_of_odd_eq {N : ℕ} [NeZero N] {χ : D
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   have hpow : (x : ℂ) ^ ((0 : ℂ) - 1) = (x : ℂ)⁻¹ := by rw [zero_sub, Complex.cpow_neg_one]
   rw [hpow]
-  field_simp
+  field_simp [hxC]
   ring
 
 /-! ### the residue evaluation (odd): the exact `r₀ + r₁` closed form -/
@@ -91,7 +91,10 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_odd_raw {N : ℕ} [NeZero
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
-        linarith)
+        have hneg : (0 : ℝ) < -(m : ℝ) := by
+          rw [← him]
+          norm_num only
+        exact (not_lt_of_ge hmnn) (neg_pos.mp hneg))
   have hΓ1ne : DirichletCharacter.gammaFactor χ 1 ≠ 0 :=
     gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd
       (by
@@ -99,7 +102,10 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_odd_raw {N : ℕ} [NeZero
         have him := congrArg Complex.re hm
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [add_self_div_two, Complex.one_re, Complex.neg_re, Complex.natCast_re] at him
-        linarith)
+        have hneg : (0 : ℝ) < -(m : ℝ) := by
+          rw [← him]
+          norm_num only
+        exact (not_lt_of_ge hmnn) (neg_pos.mp hneg))
   have hdΓ0 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 0 :=
     differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
       (by
@@ -109,7 +115,10 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_odd_raw {N : ℕ} [NeZero
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
-        linarith)
+        have hneg : (0 : ℝ) < -(m : ℝ) := by
+          rw [← him]
+          norm_num only
+        exact (not_lt_of_ge hmnn) (neg_pos.mp hneg))
   have hdΓ1 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 1 :=
     differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
       (by
@@ -117,7 +126,10 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_odd_raw {N : ℕ} [NeZero
         have him := congrArg Complex.re hm
         have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
         simp only [add_self_div_two, Complex.one_re, Complex.neg_re, Complex.natCast_re] at him
-        linarith)
+        have hneg : (0 : ℝ) < -(m : ℝ) := by
+          rw [← him]
+          norm_num only
+        exact (not_lt_of_ge hmnn) (neg_pos.mp hneg))
   have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
   have hF1ne : DirichletCharacter.completedLFunction χ 1 ≠ 0 :=
     completedLFunction_ne_zero_of_one_le_re hne (le_refl 1)

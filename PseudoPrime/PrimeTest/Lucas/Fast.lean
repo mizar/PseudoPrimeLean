@@ -48,7 +48,7 @@ theorem lucasCompanion_pow_succ (n : ℕ) (P Q : ℤ) :
     · simp only [Int.cast_one, Int.cast_zero, mul_one, mul_zero, Matrix.vecCons]
     · simp only [Int.cast_one, Int.cast_zero, mul_one, mul_zero, Matrix.vecCons]
   | succ k ih =>
-    rw [show k + 1 + 1 = (k + 1) + 1 by omega, pow_succ, ih]
+    rw [show k + 1 + 1 = (k + 1) + 1 by rfl, pow_succ, ih]
     have hrec3 : lucasU P Q (3 + k) = P * lucasU P Q (2 + k) - Q * lucasU P Q (1 + k) := by
       simpa only [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using lucasU_succ_succ P Q (k + 1)
     have hrec2 : lucasU P Q (2 + k) = P * lucasU P Q (1 + k) - Q * lucasU P Q k := by

@@ -38,7 +38,7 @@ theorem characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_sub_log_two_of
   have hcorr :=
     AnalyticNumberTheory.Arithmetic.twoAdicReciprocalCorrection_le_log_two_of_apply_two_eq_zero x χ
       (lt_of_lt_of_le (by norm_num only) hx) h2
-  linarith
+  linarith only [hζ, hexact, hcorr]
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 /-- The `χ̃(2)=0` branch gives the logarithmic lower bound after its correction loss. -/
@@ -53,14 +53,14 @@ theorem characterLogWeightedSum_re_ge_riemann_lower_sub_half_log_sq_of_eq_zero {
         2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (Real.sqrt x + 1) -
         (Real.log x) ^ 2 / 2 ≤
       (characterLogWeightedSum x χ.primitiveCharacter).re := by
-  have hζ := hriemann x (by linarith : 1 < x)
+  have hζ := hriemann x (by exact lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 2) hx)
   have hexact :=
     logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ
-      (by linarith) hodd
+      (by exact hx) hodd
   have hcorr :=
     twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_zero x χ
       (ne_of_gt (lt_of_lt_of_le (by norm_num only) hx)) h2
-  linarith
+  linarith only [hζ, hexact, hcorr]
 
 /-! In the `χ̃(2)=1` branch the reciprocal correction is zero, giving `log x - 8/5`. -/
 
@@ -83,7 +83,7 @@ theorem characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_of_eq_one {q :
     AnalyticNumberTheory.Arithmetic.twoAdicReciprocalCorrection_eq_zero_of_apply_two_eq_one x χ
       hquad h2
   rw [hcorr] at hexact
-  linarith
+  linarith only [hζ, hexact]
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 /-- For `χ̃(2)=1` the correction vanishes. This theorem deliberately retains the weaker
@@ -100,7 +100,7 @@ theorem characterLogWeightedSum_re_ge_riemann_lower_sub_half_log_sq_of_eq_one {q
         2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (Real.sqrt x + 1) -
         (Real.log x) ^ 2 / 2 ≤
       (characterLogWeightedSum x χ.primitiveCharacter).re := by
-  have hζ := hriemann x (by linarith : 1 < x)
+  have hζ := hriemann x (by exact lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 2) hx)
   have hexact :=
     logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ hx hodd
   have hcorr :=
@@ -110,7 +110,7 @@ theorem characterLogWeightedSum_re_ge_riemann_lower_sub_half_log_sq_of_eq_one {q
     twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_one x χ hquad
       (ne_of_gt (lt_of_lt_of_le (by norm_num only) hx)) h2
   rw [hcorr] at hexact
-  linarith [hcorrbound]
+  linarith only [hζ, hexact, hcorr, hcorrbound]
 
 /-! The c=-1 branch pays the full odd-tail square-log correction. -/
 
@@ -127,12 +127,12 @@ theorem characterLogWeightedSum_re_ge_riemann_lower_sub_three_half_log_sq_of_eq_
         2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (Real.sqrt x + 1) -
         (3 / 2) * (Real.log x) ^ 2 ≤
       (characterLogWeightedSum x χ.primitiveCharacter).re := by
-  have hζ := hriemann x (by linarith : 1 < x)
+  have hζ := hriemann x (by exact lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 2) hx)
   have hexact :=
     logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ hx hodd
   have hcorr := twoAdicLogCorrection_le_log_sq_of_apply_two_eq_neg_one x χ hquad hx h2
   have hlognonneg : 0 ≤ (Real.log x) ^ 2 := sq_nonneg _
-  linarith
+  linarith only [hζ, hexact, hcorr, hlognonneg]
 
 /-!
 The sharpened c=-1 logarithmic lower bound keeps the c=0 half-square envelope and pays only the
@@ -154,14 +154,14 @@ theorem characterLogWeightedSum_re_ge_riemann_lower_half_log_sq_sub_delta_of_eq_
         (Real.log x) ^ 2 / 2 -
         Real.log 2 * (Real.log x - Real.log 2) ≤
       (characterLogWeightedSum x χ.primitiveCharacter).re := by
-  have hζ := hriemann x (by linarith : 1 < x)
+  have hζ := hriemann x (by exact lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 4) hx)
   have hexact :=
     logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ
-      (by linarith) hodd
+      (by exact le_trans (by norm_num only : (2 : ℝ) ≤ 4) hx) hodd
   have hcorr :=
     twoAdicLogCorrection_le_half_log_sq_add_log_two_mul_log_half_of_apply_two_eq_neg_one x χ hquad
       hx h2
-  linarith
+  linarith only [hζ, hexact, hcorr]
 
 /-! The c=-1 reciprocal lower bound exposes the explicit odd-tail loss. -/
 
@@ -180,6 +180,6 @@ theorem characterReciprocalWeightedSum_re_ge_log_sub_cneg_one {q : ℕ} (x : ℝ
   have hexact := reciprocalWeightedSum_sub_re_eq_twoAdicCorrection_of_eq_one x χ hx hodd
   have hcorr :=
     twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_one x χ hquad hx h2
-  linarith
+  linarith only [hζ, hexact, hcorr]
 
 end PseudoPrime.LLS.Extensions

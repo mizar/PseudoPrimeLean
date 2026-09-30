@@ -57,7 +57,7 @@ theorem re_sum_llsPrimitiveLogResidueAt_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
             |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| +
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := by linarith only [hx]
   rw [AnalyticNumberTheory.DirichletLFunction.dirichletSplitLogSingularitySum x hne h1 h0,
     AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_one hne x]
   have hr0_bound :
@@ -78,6 +78,6 @@ theorem re_sum_llsPrimitiveLogResidueAt_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     AnalyticNumberTheory.DirichletLFunction.re_sum_erased_primitiveLogResidues_le hN2 hGRH
       hprimitive hne hinv hquad hxpos (z := z) (w := w)
   simp only [Complex.add_re, Complex.zero_re]
-  nlinarith [hr0_bound, herased]
+  nlinarith only [hr0_bound, herased]
 
 end PseudoPrime.LLS

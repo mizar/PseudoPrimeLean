@@ -59,7 +59,7 @@ theorem jensen_analyticOnNhd_of_abs {T : ℝ} (hT : 4 ≤ |T|) :
         ring,
       norm_neg]
     exact hw
-  linarith
+  linarith only [hT, hge, hle]
 
 /-- The mirror of `PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensen_f_bound` for `T ≤ -4`:
 the outer-sphere bound transports across
@@ -72,7 +72,7 @@ theorem jensen_f_bound_neg {T : ℝ} (hT : T ≤ -4) :
     rw [Metric.mem_sphere] at hz ⊢
     rw [← jensenCenter_conj T, Complex.dist_conj_conj]
     exact hz
-  have hb := jensen_f_bound (T := -T) (by linarith) _ hz'
+  have hb := jensen_f_bound (T := -T) (by linarith only [hT]) _ hz'
   rwa [norm_riemannZeta_conj] at hb
 
 /-- The mirror of `PseudoPrime.AnalyticNumberTheory.RiemannZeta.finsum_divisor_riemannZeta_le` for
@@ -85,23 +85,23 @@ theorem finsum_divisor_riemannZeta_le_neg {T : ℝ} (hT : T ≤ -4) :
         Real.log ((39 / 10) / (37 / 10)) := by
   have hrpos : (0 : ℝ) < |(37 / 10 : ℝ)| := by norm_num only
   have hrR : |(37 / 10 : ℝ)| < |(39 / 10 : ℝ)| := by norm_num only
-  have hT4 : (4 : ℝ) ≤ -T := by linarith
+  have hT4 : (4 : ℝ) ≤ -T := by simpa only [neg_neg] using neg_le_neg hT
   have hM : (1 : ℝ) ≤ jensenM (-T) := by
     unfold jensenM
     have h1 : (1 : ℝ) < (-T + 69 / 10) / (-T - 39 / 10) := by
-      rw [lt_div_iff₀ (by linarith)]
-      linarith
+      rw [lt_div_iff₀ (by linarith only [hT4])]
+      linarith only [hT4]
     have h2 : (0 : ℝ) ≤ (-T + 69 / 10) * (-T + 69 / 10 + 1) * sawtoothRemainderBound (-9 / 10) := by
       have := sawtoothRemainderBound_nonneg (-9 / 10)
-      positivity
-    linarith
+      exact mul_nonneg (mul_nonneg (by linarith only [hT4]) (by linarith only [hT4])) this
+    linarith only [h1, h2]
   have h1f : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall (jensenCenter T) |(39 / 10 : ℝ)|) := by
     rw [abs_of_pos (by norm_num only : (0 : ℝ) < 39 / 10)]
     exact
       jensen_analyticOnNhd_of_abs
         (by
-          rw [abs_of_neg (by linarith : T < 0)]
-          linarith)
+          rw [abs_of_neg (lt_of_le_of_lt hT (by norm_num only : (-4 : ℝ) < 0))]
+          exact hT4)
   have fbound :
     ∀ z ∈ Metric.sphere (jensenCenter T) |(39 / 10 : ℝ)|, ‖riemannZeta z‖ ≤ jensenM (-T) := by
     rw [abs_of_pos (by norm_num only : (0 : ℝ) < 39 / 10)]
@@ -120,49 +120,60 @@ theorem finsum_divisor_riemannZeta_le_explicit_neg {T : ℝ} (hT : T ≤ -8) :
           ℤ) :
         ℝ) ≤
       jensenLogConst * Real.log (-T + 2) := by
-  have hT4 : T ≤ (-4 : ℝ) := by linarith
+  have hT4 : T ≤ (-4 : ℝ) := le_trans hT (by norm_num only)
   have hres := finsum_divisor_riemannZeta_le_neg hT4
   rw [show (39 / 10 : ℝ) / (37 / 10) = 39 / 37 from by norm_num only] at hres
   have hzge : (1 : ℝ) / 2 ≤ ‖riemannZeta (jensenCenter T)‖ := jensen_center_norm_ge T
-  have hzpos : (0 : ℝ) < ‖riemannZeta (jensenCenter T)‖ := by linarith
-  have h8 : (8 : ℝ) ≤ -T := by linarith
+  have hzpos : (0 : ℝ) < ‖riemannZeta (jensenCenter T)‖ := lt_of_lt_of_le (by norm_num only) hzge
+  have h8 : (8 : ℝ) ≤ -T := by simpa only [neg_neg] using neg_le_neg hT
   have hMpos : (0 : ℝ) < jensenM (-T) := by
     have h1 : (1 : ℝ) < (-T + 69 / 10) / (-T - 39 / 10) := by
-      rw [lt_div_iff₀ (by linarith)]
-      linarith
+      rw [lt_div_iff₀ (by linarith only [h8])]
+      linarith only [h8]
     have h2 : (0 : ℝ) ≤ (-T + 69 / 10) * (-T + 69 / 10 + 1) * sawtoothRemainderBound (-9 / 10) := by
       have := sawtoothRemainderBound_nonneg (-9 / 10)
-      positivity
+      exact mul_nonneg (mul_nonneg (by linarith only [h8]) (by linarith only [h8])) this
     unfold jensenM
-    linarith
+    linarith only [h1, h2]
   have hratio : jensenM (-T) / ‖riemannZeta (jensenCenter T)‖ ≤ 2 * jensenM (-T) := by
     rw [div_le_iff₀ hzpos]
-    nlinarith [hzge, hMpos]
+    nlinarith only [hzge, hMpos]
   have hB0 : (0 : ℝ) ≤ sawtoothRemainderBound (-9 / 10) := sawtoothRemainderBound_nonneg _
-  have hDpos : (0 : ℝ) < 9 / 2 + 4 * sawtoothRemainderBound (-9 / 10) := by linarith
+  have hDpos : (0 : ℝ) < 9 / 2 + 4 * sawtoothRemainderBound (-9 / 10) :=
+    lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 9 / 2)
+      (le_add_of_nonneg_right (mul_nonneg (by norm_num only) hB0))
   have hbound2 : 2 * jensenM (-T) ≤ (9 + 8 * sawtoothRemainderBound (-9 / 10)) * (-T) ^ 2 := by
     have := jensenM_le h8
-    nlinarith [this]
+    nlinarith only [this]
   have hpos1 : (0 : ℝ) < jensenM (-T) / ‖riemannZeta (jensenCenter T)‖ := div_pos hMpos hzpos
   have hpos2 : (0 : ℝ) < (9 + 8 * sawtoothRemainderBound (-9 / 10)) * (-T) ^ 2 := by
-    have hTpos : (0 : ℝ) < -T := by linarith
-    positivity
+    have hTpos : (0 : ℝ) < -T := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) h8
+    exact
+      mul_pos (add_pos_of_pos_of_nonneg (by norm_num only) (mul_nonneg (by norm_num only) hB0))
+        (pow_pos hTpos 2)
   have hlog1 :
     Real.log (jensenM (-T) / ‖riemannZeta (jensenCenter T)‖) ≤
       Real.log ((9 + 8 * sawtoothRemainderBound (-9 / 10)) * (-T) ^ 2) :=
     Real.log_le_log hpos1 (hratio.trans hbound2)
-  have hTpos : (0 : ℝ) < -T := by linarith
+  have hTpos : (0 : ℝ) < -T := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) h8
   have hlog2 :
     Real.log ((9 + 8 * sawtoothRemainderBound (-9 / 10)) * (-T) ^ 2) =
       Real.log (9 + 8 * sawtoothRemainderBound (-9 / 10)) + 2 * Real.log (-T) := by
-    rw [Real.log_mul (by positivity) (by positivity), Real.log_pow]
+    rw [Real.log_mul
+        (ne_of_gt
+          (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 9)
+            (le_add_of_nonneg_right (mul_nonneg (by norm_num only) hB0))))
+        (pow_ne_zero 2 (ne_of_gt hTpos)),
+      Real.log_pow]
     push_cast
     ring
-  have hlogT : Real.log (-T) ≤ Real.log (-T + 2) := Real.log_le_log hTpos (by linarith)
-  have hlogT10 : Real.log 10 ≤ Real.log (-T + 2) := Real.log_le_log (by norm_num only) (by linarith)
+  have hlogT : Real.log (-T) ≤ Real.log (-T + 2) :=
+    Real.log_le_log hTpos (le_add_of_nonneg_right (by norm_num only))
+  have hlogT10 : Real.log 10 ≤ Real.log (-T + 2) :=
+    Real.log_le_log (by norm_num only) (by linarith only [h8])
   have hlog10pos : (0 : ℝ) < Real.log 10 := Real.log_pos (by norm_num only)
   have hlogDnn : (0 : ℝ) ≤ Real.log (9 + 8 * sawtoothRemainderBound (-9 / 10)) :=
-    Real.log_nonneg (by linarith)
+    Real.log_nonneg (by linarith only [hB0])
   have hlog3 :
     Real.log (9 + 8 * sawtoothRemainderBound (-9 / 10)) ≤
       (Real.log (9 + 8 * sawtoothRemainderBound (-9 / 10)) / Real.log 10) * Real.log (-T + 2) := by
@@ -181,7 +192,7 @@ theorem finsum_divisor_riemannZeta_le_explicit_neg {T : ℝ} (hT : T ≤ -8) :
           ((Real.log (9 + 8 * sawtoothRemainderBound (-9 / 10)) / Real.log 10) *
               Real.log (-T + 2)) +
             2 * Real.log (-T + 2) :=
-        add_le_add hlog3 (by linarith [hlogT])
+        add_le_add hlog3 (mul_le_mul_of_nonneg_left hlogT (by norm_num only))
       _ =
           ((Real.log (9 + 8 * sawtoothRemainderBound (-9 / 10)) / Real.log 10) + 2) *
             Real.log (-T + 2) :=
@@ -195,7 +206,7 @@ theorem finsum_divisor_riemannZeta_le_explicit_neg {T : ℝ} (hT : T ≤ -8) :
         ((Real.log (9 + 8 * sawtoothRemainderBound (-9 / 10)) / Real.log 10) + 2) *
           Real.log (-T + 2) := by
       unfold jensenLogConst
-      field_simp
+      field_simp [ne_of_gt hlog10pos, ne_of_gt hlog39_37]
     rw [heq]
     exact hchain
   exact hres.trans hfinal
@@ -206,7 +217,7 @@ theorem riemannZeta_zero_mem_jensenBall_neg {H : ℝ} (hH : H ≤ -8) {ρ : ℂ}
     (him : |ρ.im - H| ≤ 2) : ρ ∈ Metric.closedBall (jensenCenter H) (37 / 10) := by
   have himneg : ρ.im < 0 := by
     have h1 := (abs_le.mp him).2
-    linarith
+    linarith only [hH, h1]
   have hre0 : 0 ≤ ρ.re := riemannZeta_zero_re_nonneg_of_im_ne_zero hζ himneg.ne
   have hre1 : ρ.re ≤ 1 := riemannZeta_zero_re_le_one hζ
   simp only [Metric.mem_closedBall, dist_eq_norm]
@@ -216,8 +227,8 @@ theorem riemannZeta_zero_mem_jensenBall_neg {H : ℝ} (hH : H ≤ -8) {ρ : ℂ}
   rw [hre_eq, him_eq]
   rw [show (37 / 10 : ℝ) = Real.sqrt ((37 / 10) ^ 2) from (Real.sqrt_sq (by norm_num only)).symm]
   apply Real.sqrt_le_sqrt
-  have h1 : (ρ.re - 3) ^ 2 ≤ 9 := by nlinarith [hre0, hre1]
-  have h2 : (ρ.im - H) ^ 2 ≤ 4 := by nlinarith [abs_le.mp him]
-  nlinarith [h1, h2]
+  have h1 : (ρ.re - 3) ^ 2 ≤ 9 := by nlinarith only [hre0, hre1]
+  have h2 : (ρ.im - H) ^ 2 ≤ 4 := by nlinarith only [(abs_le.mp him).1, (abs_le.mp him).2]
+  nlinarith only [h1, h2]
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

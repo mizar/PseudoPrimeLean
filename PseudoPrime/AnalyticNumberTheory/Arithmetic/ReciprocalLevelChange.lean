@@ -152,7 +152,7 @@ theorem primitiveReciprocalLevelChangeCorrection_eq_sum_of_isQuadratic {q : ℕ}
   intro p hp
   have hkpos : k ≠ 0 := by
     have := (Finset.mem_Icc.mp hk).1
-    omega
+    exact Nat.ne_of_gt this
   have hpprime : p.Prime := (Finset.mem_filter.mp hp).2.1
   rw [characterReciprocalWeightedTerm_primitive_re_prime_pow_of_isQuadratic x χ hχ hpprime hkpos]
   by_cases hodd : Odd k
@@ -191,7 +191,7 @@ theorem quadraticReciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : �
     intro k hk
     have hk0 : k ≠ 0 := by
       have := (Finset.mem_Icc.mp hk).1
-      omega
+      exact Nat.ne_of_gt this
     exact characterReciprocalWeightedTerm_primitive_re_prime_pow x χ hp hk0
   rw [Finset.sum_congr rfl heach]
   rcases hχ (p : ZMod χ.conductor) with h0 | h1 | hm1
@@ -201,7 +201,7 @@ theorem quadraticReciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : �
       intro k hk
       have hk0 : k ≠ 0 := by
         have := (Finset.mem_Icc.mp hk).1
-        omega
+        exact Nat.ne_of_gt this
       rw [h0, zero_pow hk0]
       simp only [Complex.zero_re, mul_zero]
     rw [Finset.sum_congr rfl hzero, Finset.sum_const_zero]
@@ -239,7 +239,7 @@ theorem quadraticReciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : �
         rw [hcast, ← Complex.ofReal_pow, Complex.ofReal_re]
       rw [hre]
       have hpkpos : (0 : ℝ) < (p : ℝ) ^ k := pow_pos (by exact_mod_cast hp.pos) k
-      field_simp
+      field_simp [ne_of_gt hpkpos, ne_of_gt hxpos]
     have hSflip :
       ∑ k ∈ Finset.Icc 1 K, (-1 : ℝ) ^ k * (1 / (p : ℝ) ^ k - 1 / x) =
         -(∑ k ∈ Finset.Icc 1 K, (-1 : ℝ) ^ (k + 1) * (1 / (p : ℝ) ^ k - 1 / x)) := by
@@ -288,7 +288,7 @@ theorem re_sum_reciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : ℝ
   set c : ℝ := 1 / x with hcdef
   have hr0 : 0 < r := by
     rw [hrdef]
-    positivity
+    exact one_div_pos.mpr hppos
   have hr1 : r < 1 := by
     rw [hrdef, div_lt_one hppos]
     exact hp1
@@ -297,8 +297,8 @@ theorem re_sum_reciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : ℝ
     exact one_div_le_one_div_of_le hxpos hKup
   have hc2 : c ≤ r ^ K := by
     rw [hrdef, hcdef, one_div_pow]
-    exact one_div_le_one_div_of_le (by positivity) hKle
-  have hpk0 : ∀ k : ℕ, ((p : ℝ) ^ k) ≠ 0 := fun k => by positivity
+    exact one_div_le_one_div_of_le (pow_pos hppos K) hKle
+  have hpk0 : ∀ k : ℕ, ((p : ℝ) ^ k) ≠ 0 := fun k => pow_ne_zero k hppos.ne'
   have heach :
     ∀ k ∈ Finset.Icc 1 K,
       (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
@@ -306,11 +306,11 @@ theorem re_sum_reciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : ℝ
     intro k hk
     have hk0 : k ≠ 0 := by
       have := (Finset.mem_Icc.mp hk).1
-      omega
+      exact Nat.ne_of_gt this
     rw [characterReciprocalWeightedTerm_primitive_re_prime_pow x χ hp hk0]
     have hcoef : Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) = Real.log p * (r ^ k - c) := by
       rw [hrdef, hcdef, one_div_pow]
-      field_simp
+      field_simp [hpk0 k, hxpos.ne']
     rw [hcoef]
   have hfejer :=
     re_sum_reciprocalWeight_ge_neg_half (r := r) (c := c) (K := K) (z := z) hz hr0 hr1 hc1 hc2
@@ -422,10 +422,10 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient_of_isQ
     (hqd : q / χ.conductor ≠ 0) :
     -(1 / 2 * (1 - 1 / x) * Real.log ((q / χ.conductor : ℕ) : ℝ)) ≤
       primitiveReciprocalLevelChangeCorrection x χ := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
   have hxfrac : 0 ≤ 1 - 1 / x := by
     rw [sub_nonneg, div_le_one hxpos]
-    linarith
+    exact le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx
   rw [primitiveReciprocalLevelChangeCorrection_eq_sum_prime_divisors]
   set S := (Nat.primesLE ⌊x⌋₊).filter fun p ↦ p ∣ q / χ.conductor with hSdef
   have hstep :
@@ -437,7 +437,8 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient_of_isQ
     have hpprime : p.Prime := Nat.prime_of_mem_primesLE (Finset.mem_filter.mp hp).1
     have hple : p ≤ ⌊x⌋₊ := Nat.le_of_mem_primesLE (Finset.mem_filter.mp hp).1
     have hK1 : 1 ≤ p.log ⌊x⌋₊ := Nat.log_pos hpprime.one_lt hple
-    have hxfloor : ⌊x⌋₊ ≠ 0 := (Nat.floor_pos.mpr (by linarith)).ne'
+    have hxfloor : ⌊x⌋₊ ≠ 0 :=
+      (Nat.floor_pos.mpr (le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx)).ne'
     have hKnat : p ^ p.log ⌊x⌋₊ ≤ ⌊x⌋₊ := Nat.pow_log_le_self p hxfloor
     have hKnatR : (p : ℝ) ^ (p.log ⌊x⌋₊) ≤ (⌊x⌋₊ : ℝ) := by exact_mod_cast hKnat
     have hKle : (p : ℝ) ^ (p.log ⌊x⌋₊) ≤ x := hKnatR.trans (Nat.floor_le hxpos.le)
@@ -458,7 +459,7 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient_of_isQ
   calc
     -(1 / 2 * (1 - 1 / x) * Real.log ((q / χ.conductor : ℕ) : ℝ)) ≤
         -(1 / 2 * (1 - 1 / x) * ∑ p ∈ S, Real.log p) :=
-      by nlinarith [mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hxfrac, hbudget]
+      by nlinarith only [mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hxfrac, hbudget]
     _ = ∑ p ∈ S, -(1 / 2 * (1 - 1 / x) * Real.log p) := by
       rw [Finset.mul_sum, ← Finset.sum_neg_distrib]
     _ ≤
@@ -502,7 +503,7 @@ theorem primitiveReciprocalConductorAbsorption_of_isQuadratic {q : ℕ} [NeZero 
       -(1 / 2 * (1 - 1 / x) * Real.log ((q / χ.conductor : ℕ) : ℝ)) := by
     rw [← hlogsum]
     ring
-  linarith [hbound, hgoal_equiv]
+  linarith only [hbound, hgoal_equiv]
 
 /--
 Input/assumptions: a level-`q` character (no quadratic hypothesis) and a cutoff `x ≥ 2`, with
@@ -526,10 +527,10 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient {q : �
     (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x) (hqd : q / χ.conductor ≠ 0) :
     -(1 / 2 * (1 - 1 / x) * Real.log ((q / χ.conductor : ℕ) : ℝ)) ≤
       primitiveReciprocalLevelChangeCorrection x χ := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
   have hxfrac : 0 ≤ 1 - 1 / x := by
     rw [sub_nonneg, div_le_one hxpos]
-    linarith
+    exact le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx
   rw [primitiveReciprocalLevelChangeCorrection_eq_sum_prime_divisors]
   set S := (Nat.primesLE ⌊x⌋₊).filter fun p ↦ p ∣ q / χ.conductor with hSdef
   have hstep :
@@ -553,18 +554,19 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient {q : �
         intro k hk
         have hk0 : k ≠ 0 := by
           have := (Finset.mem_Icc.mp hk).1
-          omega
+          exact Nat.ne_of_gt this
         rw [characterReciprocalWeightedTerm_primitive_re_prime_pow x χ hpprime hk0, hz0,
           zero_pow hk0]
         simp only [Complex.zero_re, mul_zero]
       rw [Finset.sum_congr rfl heach, Finset.sum_const_zero]
-      nlinarith [mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hxfrac) hlogp]
+      nlinarith only [mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hxfrac) hlogp]
     · have hunit : IsUnit ((p : ℕ) : ZMod χ.conductor) :=
         (ZMod.isUnit_prime_iff_not_dvd hpprime).mpr hdvd
+      have hxfloor : ⌊x⌋₊ ≠ 0 :=
+        (Nat.floor_pos.mpr (le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx)).ne'
       have hz : ‖χ.primitiveCharacter p‖ = 1 := by
         have hval := χ.primitiveCharacter.unit_norm_eq_one hunit.unit
         rwa [hunit.unit_spec] at hval
-      have hxfloor : ⌊x⌋₊ ≠ 0 := (Nat.floor_pos.mpr (by linarith)).ne'
       have hKnat : p ^ p.log ⌊x⌋₊ ≤ ⌊x⌋₊ := Nat.pow_log_le_self p hxfloor
       have hKnatR : (p : ℝ) ^ (p.log ⌊x⌋₊) ≤ (⌊x⌋₊ : ℝ) := by exact_mod_cast hKnat
       have hKle : (p : ℝ) ^ (p.log ⌊x⌋₊) ≤ x := hKnatR.trans (Nat.floor_le hxpos.le)
@@ -574,7 +576,7 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient {q : �
         have hcast : ((⌊x⌋₊ : ℕ) : ℝ) + 1 ≤ (p : ℝ) ^ (p.log ⌊x⌋₊ + 1) := by
           have : ⌊x⌋₊ + 1 ≤ p ^ (p.log ⌊x⌋₊ + 1) := hlt
           exact_mod_cast this
-        linarith
+        exact le_of_lt (lt_of_lt_of_le hltR hcast)
       exact re_sum_reciprocalPrimePowerCorrection_neg_le_half_log x χ hpprime hz hx hK1 hKle hKup
   have hbudget : ∑ p ∈ S, Real.log p ≤ Real.log ((q / χ.conductor : ℕ) : ℝ) := by
     apply le_trans _ (sum_log_primeFactors_le_log hqd)
@@ -592,7 +594,7 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient {q : �
   calc
     -(1 / 2 * (1 - 1 / x) * Real.log ((q / χ.conductor : ℕ) : ℝ)) ≤
         -(1 / 2 * (1 - 1 / x) * ∑ p ∈ S, Real.log p) :=
-      by nlinarith [mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hxfrac, hbudget]
+      by nlinarith only [mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hxfrac, hbudget]
     _ = ∑ p ∈ S, -(1 / 2 * (1 - 1 / x) * Real.log p) := by
       rw [Finset.mul_sum, ← Finset.sum_neg_distrib]
     _ ≤
@@ -632,7 +634,7 @@ theorem primitiveReciprocalConductorAbsorption {q : ℕ} [NeZero q] (x : ℝ)
       -(1 / 2 * (1 - 1 / x) * Real.log ((q / χ.conductor : ℕ) : ℝ)) := by
     rw [← hlogsum]
     ring
-  linarith [hbound, hgoal_equiv]
+  linarith only [hbound, hgoal_equiv]
 
 /--
 Input/assumptions: a cutoff and a level-`q` character.
@@ -709,6 +711,6 @@ theorem primitiveReciprocalLevelChangeCorrection_le {q : ℕ} [NeZero q] (x : �
     Complex.re_le_norm
       (characterReciprocalWeightedSum x χ.primitiveCharacter - characterReciprocalWeightedSum x χ)
   rw [Complex.sub_re, norm_sub_rev] at hre
-  linarith
+  linarith only [hexact, hnorm, hre]
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

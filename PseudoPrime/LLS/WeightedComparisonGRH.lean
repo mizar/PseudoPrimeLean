@@ -59,7 +59,7 @@ theorem weightedComparisonCore_of_trivialBelow {q : ℕ} [NeZero q] (χ : Dirich
   have hf : 2 ≤ χ.conductor := by
     have h0 := NeZero.pos χ.conductor
     have h1 := AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hp
-    omega
+    exact Nat.succ_le_iff.mpr (Nat.lt_of_le_of_ne h0 (Ne.symm h1))
   have ht := characterTrivialBelow_primitiveCharacter htrivial
   have hx : 0 < X := lt_of_lt_of_le (by norm_num only) hX
   exact

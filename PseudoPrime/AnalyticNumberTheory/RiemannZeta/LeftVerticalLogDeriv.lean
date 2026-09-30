@@ -24,13 +24,13 @@ theorem exists_norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le_uniform :
     push_cast
     ring
   rw [heq, abs_neg] at hGammaB
-  have h2m2 : (2 : ℝ) ≤ 2 * (m : ℝ) + 2 := by linarith [Nat.cast_nonneg (α := ℝ) m]
+  have h2m2 : (2 : ℝ) ≤ 2 * (m : ℝ) + 2 := by linarith only [Nat.cast_nonneg (α := ℝ) m]
   have hsum_le :=
     tsum_vonMangoldt_div_rpow_antitone (x := 2) (y := 2 * (m : ℝ) + 2) (by norm_num only) h2m2
   have hcast : ((2 * m + 2 : ℕ) : ℝ) = 2 * (m : ℝ) + 2 := by
     push_cast
     ring
-  linarith [hbase, hGammaB, hsum_le]
+  linarith only [hbase, hGammaB, hsum_le]
 
 /-- A concrete witness constant, following the `.choose`/`.choose_spec` idiom. -/
 noncomputable def qMinusOneLeftVerticalConst : ℝ :=

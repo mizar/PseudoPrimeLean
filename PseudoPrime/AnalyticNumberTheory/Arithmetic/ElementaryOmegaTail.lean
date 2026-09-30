@@ -78,12 +78,11 @@ noncomputable def elementaryF (t : ℝ) : ℝ :=
 theorem hasDerivAt_elementaryA {t : ℝ} (ht : 0 < t) : HasDerivAt elementaryA (1 / t) t := by
   have hlin : HasDerivAt (fun s : ℝ => 2 * s) 2 t := by
     simpa only [id_eq, mul_one] using (hasDerivAt_id t).const_mul 2
-  have hne : (2 * t : ℝ) ≠ 0 := by positivity
+  have hne : (2 * t : ℝ) ≠ 0 := mul_ne_zero (by norm_num only : (2 : ℝ) ≠ 0) ht.ne'
   have hlog := hlin.log hne
   have hsub : HasDerivAt (fun s : ℝ => Real.log (2 * s) - 1) (2 / (2 * t)) t := hlog.sub_const 1
   have heq : (2 : ℝ) / (2 * t) = 1 / t := by
-    field_simp (discharger := first | exact hne | exact ht.ne' |
-      exact (by norm_num only : (2 : ℝ) ≠ 0))
+    field_simp [hne, ht.ne', (by norm_num only : (2 : ℝ) ≠ 0)]
   rwa [heq] at hsub
 
 theorem hasDerivAt_elementaryU {t : ℝ} (ht : 0 < t) :
@@ -91,8 +90,7 @@ theorem hasDerivAt_elementaryU {t : ℝ} (ht : 0 < t) :
   have hid : HasDerivAt (fun s : ℝ => s) (1 : ℝ) t := hasDerivAt_id t
   have ha := hasDerivAt_elementaryA ht
   have hmul := hid.mul ha
-  have heq : 1 * elementaryA t + t * (1 / t) = elementaryA t + 1 := by
-    field_simp (discharger := exact ht.ne')
+  have heq : 1 * elementaryA t + t * (1 / t) = elementaryA t + 1 := by field_simp [ht.ne']
   rwa [heq] at hmul
 
 /-- `a(t) ≥ 2` for `t ≥ 11`, using `e³ < 22 ≤ 2t`. -/
@@ -126,7 +124,7 @@ theorem hasDerivAt_elementaryH {t : ℝ} (ht : 11 ≤ t) : ∃ d, HasDerivAt ele
   have huval : elementaryU t = t * elementaryA t := rfl
   have hupos : (0 : ℝ) < elementaryU t := by
     rw [huval]
-    positivity
+    exact mul_pos ht0 hapos
   have hlogu := hu.log hupos.ne'
   have hdiv := hlogu.div ha hapos.ne'
   refine ⟨_, hdiv, ?_⟩
@@ -141,13 +139,15 @@ theorem hasDerivAt_elementaryH {t : ℝ} (ht : 11 ≤ t) : ∃ d, HasDerivAt ele
     ((elementaryA t + 1) / elementaryU t * elementaryA t - L * (1 / t)) / elementaryA t ^ 2 =
       Real.log (2 / elementaryA t) / (t * elementaryA t ^ 2) := by
     rw [huval, hLeq, haeq, Real.log_div (by norm_num only) hapos.ne']
-    field_simp
+    field_simp [ht0.ne', hapos.ne']
     ring
   rw [hnum_eq]
   have hloghalf : Real.log (2 / elementaryA t) ≤ 0 := by
-    rw [Real.log_nonpos_iff (by positivity), div_le_one hapos]
+    rw [Real.log_nonpos_iff (div_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hapos.le),
+      div_le_one hapos]
     exact elementaryA_ge_two ht
-  have hden : (0 : ℝ) ≤ t * elementaryA t ^ 2 := by positivity
+  have hA_sq_nonneg : (0 : ℝ) ≤ elementaryA t ^ 2 := sq_nonneg (elementaryA t)
+  have hden : (0 : ℝ) ≤ t * elementaryA t ^ 2 := mul_nonneg ht0.le hA_sq_nonneg
   exact div_nonpos_iff.mpr (Or.inr ⟨hloghalf, hden⟩)
 
 theorem elementaryH_antitoneOn : AntitoneOn elementaryH (Set.Ici (11 : ℝ)) := by
@@ -189,7 +189,9 @@ theorem elementaryF_antitoneOn : AntitoneOn elementaryF (Set.Ici (11 : ℝ)) := 
   have hc1 : (1 + 1 / t2 : ℝ) ≤ 1 + 1 / t1 := by
     have : (1 : ℝ) / t2 ≤ 1 / t1 := one_div_le_one_div_of_le (by linarith only [h1]) h12
     linarith only [this]
-  have hc1pos : (0 : ℝ) ≤ 1 + 1 / t1 := by positivity
+  have ht1pos : (0 : ℝ) < t1 := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 11) h1
+  have hrecip_nonneg : (0 : ℝ) ≤ 1 / t1 := div_nonneg (by norm_num only : (0 : ℝ) ≤ 1) ht1pos.le
+  have hc1pos : (0 : ℝ) ≤ 1 + 1 / t1 := add_nonneg (by norm_num only : (0 : ℝ) ≤ 1) hrecip_nonneg
   calc
     (1 + 1 / t2) * elementaryH t2 ≤ (1 + 1 / t1) * elementaryH t2 :=
       mul_le_mul_of_nonneg_right hc1 hh2nn
@@ -241,16 +243,16 @@ nonnegative tail `(log m + log(2π))/2` (nonnegative since `2πm ≥ 1`). -/
 theorem log_factorial_ge {m : ℕ} (hm1 : 1 ≤ m) :
     (m : ℝ) * Real.log m - m ≤ Real.log (Nat.factorial m) := by
   have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast hm1
-  have hstirling := Stirling.le_log_factorial_stirling (n := m) (by omega)
+  have hstirling := Stirling.le_log_factorial_stirling (n := m) (Nat.one_le_iff_ne_zero.mp hm1)
   have htail : (0 : ℝ) ≤ Real.log m / 2 + Real.log (2 * Real.pi) / 2 := by
     have hm1' : (1 : ℝ) ≤ m := by exact_mod_cast hm1
     have hpi3 : (3 : ℝ) ≤ Real.pi := Real.pi_gt_three.le
     have h2 : (1 : ℝ) ≤ 2 * Real.pi * m := by
       nlinarith only [mul_le_mul hpi3 hm1' (by norm_num only : (0 : ℝ) ≤ 1)
-          (by linarith : (0 : ℝ) ≤ Real.pi)]
+          (le_trans (by norm_num only : (0 : ℝ) ≤ 3) hpi3)]
     have h3 : (0 : ℝ) ≤ Real.log (2 * Real.pi * m) := Real.log_nonneg h2
     have h4 : Real.log (2 * Real.pi * m) = Real.log (2 * Real.pi) + Real.log m := by
-      rw [Real.log_mul (by positivity) hmpos.ne']
+      rw [Real.log_mul (mul_ne_zero (by norm_num only : (2 : ℝ) ≠ 0) Real.pi_ne_zero) hmpos.ne']
     linarith only [h3, h4]
   linarith only [hstirling, htail]
 
@@ -259,17 +261,19 @@ combining `log(2^m·m!) = m·log2 + log(m!)`
 with `PseudoPrime.AnalyticNumberTheory.Arithmetic.log_factorial_ge`. -/
 theorem log_ge_elementaryU_of_pow_mul_factorial_le {n m : ℕ} (hm1 : 1 ≤ m)
     (hn : 2 ^ m * Nat.factorial m ≤ n) : elementaryU (m : ℝ) ≤ Real.log n := by
-  have hnpos : (0 : ℝ) < n := by
-    have : 0 < 2 ^ m * Nat.factorial m := by positivity
-    exact_mod_cast this.trans_le hn
+  have hprodpos : 0 < 2 ^ m * Nat.factorial m :=
+    Nat.mul_pos (Nat.pow_pos (by norm_num only : 0 < 2)) (Nat.factorial_pos m)
+  have hnpos : (0 : ℝ) < n := by exact_mod_cast hprodpos.trans_le hn
   have hstep1 : Real.log (2 ^ m * Nat.factorial m : ℝ) ≤ Real.log n := by
-    apply Real.log_le_log (by positivity)
+    apply Real.log_le_log (by exact_mod_cast hprodpos)
     exact_mod_cast hn
   have hmpos : (0 : ℝ) < (m : ℝ) := by exact_mod_cast hm1
   have hsplit :
     Real.log ((2 : ℝ) ^ m * Nat.factorial m) =
       (m : ℝ) * Real.log 2 + Real.log (Nat.factorial m) := by
-    rw [Real.log_mul (by positivity) (by positivity), Real.log_pow]
+    have hpowpos : (0 : ℝ) < (2 : ℝ) ^ m := pow_pos (by norm_num only : (0 : ℝ) < 2) m
+    have hfactpos : (0 : ℝ) < (Nat.factorial m : ℝ) := by exact_mod_cast Nat.factorial_pos m
+    rw [Real.log_mul hpowpos.ne' hfactpos.ne', Real.log_pow]
   have hfact := log_factorial_ge hm1
   have hUeq : elementaryU (m : ℝ) = (m : ℝ) * (Real.log 2 + Real.log m - 1) := by
     unfold elementaryU elementaryA
@@ -295,7 +299,7 @@ theorem elementaryOmegaStatement_tail {n : ℕ} (hn : Odd n) (hm163 : 163 ≤ n.
     rcases Nat.eq_zero_or_pos n with h0 | h0
     · exact absurd (h0 ▸ hn) (by decide)
     · exact h0
-  have hm1 : 1 ≤ m := by omega
+  have hm1 : 1 ≤ m := Nat.le_trans (by norm_num only : 1 ≤ 163) hm163
   have hnpowfact : 2 ^ m * Nat.factorial m ≤ n := pow_mul_factorial_le_of_card_primeFactors hn
   have hlogn_ge : elementaryU (m : ℝ) ≤ Real.log n :=
     log_ge_elementaryU_of_pow_mul_factorial_le hm1 hnpowfact
@@ -331,15 +335,17 @@ theorem elementaryOmegaStatement_tail {n : ℕ} (hn : Odd n) (hm163 : 163 ≤ n.
     unfold elementaryF elementaryH
     rw [hUeq2]
     have hmpos : (0 : ℝ) < (m : ℝ) := by linarith only [hm11R]
-    field_simp
+    field_simp [hmpos.ne', hApos.ne']
   have hlogq_pos : (0 : ℝ) < Real.log (NumberTheory.characterModulus n) := by
     linarith only [hU_ge_e, hlogq_ge, Real.exp_pos 1]
   have hloglogq_ge1 : (1 : ℝ) ≤ Real.log (Real.log (NumberTheory.characterModulus n)) := by
     have hge : Real.exp 1 ≤ Real.log (NumberTheory.characterModulus n) := hU_ge_e.trans hlogq_ge
     have hh := Real.log_le_log (Real.exp_pos 1) hge
     rwa [Real.log_exp] at hh
-  have hloglogq_pos : (0 : ℝ) < Real.log (Real.log (NumberTheory.characterModulus n)) := by linarith
-  have hmR_nonneg : (0 : ℝ) ≤ (m : ℝ) + 1 := by positivity
+  have hloglogq_pos : (0 : ℝ) < Real.log (Real.log (NumberTheory.characterModulus n)) :=
+    lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hloglogq_ge1
+  have hmR_nonneg : (0 : ℝ) ≤ (m : ℝ) + 1 :=
+    add_nonneg (Nat.cast_nonneg m) (by norm_num only : (0 : ℝ) ≤ 1)
   have hstep1 :
     ((m : ℝ) + 1) *
         (Real.log (Real.log (NumberTheory.characterModulus n)) /
@@ -371,7 +377,7 @@ theorem elementaryOmegaStatement_tail {n : ℕ} (hn : Odd n) (hm163 : 163 ≤ n.
             Real.log (NumberTheory.characterModulus n)) *
           Real.log (NumberTheory.characterModulus n) =
         ((m : ℝ) + 1) * Real.log (Real.log (NumberTheory.characterModulus n)) := by
-      field_simp
+      field_simp [hlogq_pos.ne']
     rwa [heq] at hmul
   linarith only [hchain2]
 
@@ -396,6 +402,6 @@ theorem elementaryOmegaStatement_of_finite (hfin : ElementaryOmegaFiniteStatemen
   intro n hn hn750
   by_cases hm : 163 ≤ n.primeFactors.card
   · exact elementaryOmegaStatement_tail hn hm
-  · exact hfin n hn hn750 (by omega)
+  · exact hfin n hn hn750 (Nat.lt_of_not_ge hm)
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

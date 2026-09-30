@@ -73,8 +73,8 @@ theorem norm_hasDerivAt_sub_le_of_re_le {h F : ℂ → ℂ} {R : ℝ} (hR : 0 < 
             ring
       exact
         lt_of_le_of_lt
-          (le_trans hle
-            (le_trans (by simpa only [add_comm] using add_le_add_right hu ‖w0‖) hle2)) hρR
+          (le_trans hle (le_trans (by simpa only [add_comm] using add_le_add_right hu ‖w0‖) hle2))
+          hρR
     have hw0mem : w0 ∈ Metric.ball (0 : ℂ) R := by
       rw [Metric.mem_ball, dist_zero_right]
       exact lt_of_le_of_lt hw0 (lt_of_le_of_lt hdR2 (half_lt_self hR))
@@ -112,9 +112,9 @@ theorem norm_hasDerivAt_sub_le_of_re_le {h F : ℂ → ℂ} {R : ℝ} (hR : 0 < 
         have h3 : ‖u‖ * (R - ρ) ≤ ρ * (R - ρ) := mul_le_mul_of_nonneg_right hu_norm_le h1.le
         have hρnn : (0 : ℝ) ≤ ρ := by
           rw [hρ_def]
-          linarith
+          exact div_nonneg (add_nonneg hR.le hd0) (by norm_num only)
         have h4 : ρ * (R - ρ) ≤ ρ * (R - ‖u‖) :=
-          mul_le_mul_of_nonneg_left (by linarith [hu_norm_le]) hρnn
+          mul_le_mul_of_nonneg_left (sub_le_sub_left hu_norm_le R) hρnn
         nlinarith only [h3, h4, hM'pos]
       exact (hBC u hu_mem).trans hmono
     have hcauchy :=
@@ -143,7 +143,7 @@ theorem norm_hasDerivAt_sub_le_of_re_le {h F : ℂ → ℂ} {R : ℝ} (hR : 0 < 
           exact (mul_le_mul_of_nonneg_right hb1 (norm_nonneg s)).trans_eq (one_mul _)
     have hxmem : x ∈ Metric.ball (0 : ℂ) R := by
       rw [Metric.mem_ball, dist_zero_right]
-      linarith
+      exact lt_of_le_of_lt hxnorm hdR
     exact (hFDiffOn x hxmem).differentiableAt (Metric.isOpen_ball.mem_nhds hxmem)
   have hFbound : ∀ x ∈ segment ℝ (0 : ℂ) s, ‖deriv F x‖ ≤ 2 * C / r0 ^ 2 := by
     intro x hx
@@ -165,7 +165,7 @@ theorem norm_hasDerivAt_sub_le_of_re_le {h F : ℂ → ℂ} {R : ℝ} (hR : 0 < 
     have hRd_pos : (0 : ℝ) < R - d := sub_pos.mpr hdR
     have hRd_ne : R - d ≠ 0 := hRd_pos.ne'
     rw [hC_def, hρ_def, hr0_def, show R - (R + d) / 2 = (R - d) / 2 from by ring]
-    field_simp (discharger := first | exact hRd_ne | exact (by norm_num only : (2 : ℝ) ≠ 0))
+    field_simp [hRd_ne, (by norm_num only : (2 : ℝ) ≠ 0)]
     ring
   rw [hfactor] at hmvt
   rwa [hM'_def]
@@ -260,7 +260,7 @@ theorem norm_canonicalCorrection_le {R : ℝ} {ρ s : ℂ} (hρ : ‖ρ‖ < R) 
     (starRingEnd ℂ) ρ / ((R : ℂ) ^ 2 - (starRingEnd ℂ) ρ * s) - (starRingEnd ℂ) ρ / (R : ℂ) ^ 2 =
       (starRingEnd ℂ) ρ * (starRingEnd ℂ) ρ * s /
         (((R : ℂ) ^ 2 - (starRingEnd ℂ) ρ * s) * (R : ℂ) ^ 2) := by
-    field_simp (discharger := first | exact hdenomne | exact hRne)
+    field_simp [hdenomne, pow_ne_zero 2 hRne]
     ring
   rw [heq]
   simp only [norm_div, norm_mul, RCLike.norm_conj, hRsqNorm]

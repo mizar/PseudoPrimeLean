@@ -132,21 +132,46 @@ theorem qNeOne_crt {n M p r a b : ℕ} (hco : M.Coprime p) (hM : n % M = r) (hp 
 theorem qNeOne_two_lifts {n M r : ℕ} (hn : n < 2 * M) (hr : n % M = r) : n = r ∨ n = r + M := by
   by_cases h : n < M
   · exact Or.inl ((Nat.mod_eq_of_lt h).symm.trans hr)
-  · rw [Nat.mod_eq_sub_mod (by omega : M ≤ n), Nat.mod_eq_of_lt (by omega : n - M < M)] at hr
-    exact Or.inr (by omega)
+  · have hle : M ≤ n := Nat.le_of_not_gt h
+    have hsum : M + (n - M) = n := Nat.add_sub_of_le hle
+    have hsublt : n - M < M := by
+      have hlt : M + (n - M) < M + M := by
+        calc
+          M + (n - M) = n := hsum
+          _ < 2 * M := hn
+          _ = M + M := two_mul M
+      exact (Nat.add_lt_add_iff_left).mp hlt
+    rw [Nat.mod_eq_sub_mod hle, Nat.mod_eq_of_lt hsublt] at hr
+    right
+    calc
+      n = M + (n - M) := hsum.symm
+      _ = M + r := by rw [hr]
+      _ = r + M := Nat.add_comm _ _
 
 /-- A progression below its second representative has only its initial representative. -/
 theorem qNeOne_unique_lift {n M r : ℕ} (hn : n < r + M) (hr : n % M = r) : n = r := by
   by_cases h : n < M
   · exact (Nat.mod_eq_of_lt h).symm.trans hr
-  · have hle := Nat.mod_le (n - M) M
-    rw [← Nat.mod_eq_sub_mod (by omega : M ≤ n)] at hle
-    omega
+  · have hbase : M ≤ n := Nat.le_of_not_gt h
+    have hsum : n - M + M = n := Nat.sub_add_cancel hbase
+    have hmodle : (n - M) % M ≤ n - M := Nat.mod_le (n - M) M
+    rw [← Nat.mod_eq_sub_mod hbase] at hmodle
+    rw [hr] at hmodle
+    have hge : r + M ≤ n :=
+      calc
+        r + M ≤ (n - M) + M := Nat.add_le_add_right hmodle M
+        _ = n := hsum
+    exact False.elim ((Nat.not_lt_of_ge hge) hn)
 
 /-- A residue at or above the cutoff cannot represent a smaller natural number. -/
 theorem qNeOne_impossible_lift {n M r B : ℕ} (hn : n < B) (hrB : B ≤ r) (hr : n % M = r) :
     False := by
   have hle := Nat.mod_le n M
-  omega
+  have hge : B ≤ n :=
+    calc
+      B ≤ r := hrB
+      _ = n % M := hr.symm
+      _ ≤ n := hle
+  exact (Nat.not_lt_of_ge hge) hn
 
 end PseudoPrime.PseudoSquare

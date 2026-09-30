@@ -31,14 +31,14 @@ theorem FirstStopNegOneSet.subset_firstStopNeOneSet {C : ℕ → Prop} {n : ℕ}
       intro hgcd
       rw [hgcd] at hgcdvd
       have hnle : n ≤ 1 := Nat.le_of_dvd Nat.one_pos hgcdvd
-      omega
-    let _ : NeZero n := ⟨by omega⟩
+      exact (not_le_of_gt hn) hnle
+    let _ : NeZero n := ⟨Nat.ne_of_gt (Nat.lt_trans Nat.zero_lt_one hn)⟩
     have hzero : jacobiSym (selfridgeD i) n = 0 := jacobiSym.eq_zero_iff_not_coprime.mpr hgcdne
     rw [hi.2] at hzero
-    omega
+    exact Int.noConfusion hzero
   · intro hone
     rw [hi.2] at hone
-    omega
+    exact Int.noConfusion hone
 
 /-- A nonempty pure `-1` stopping set yields a nonempty factor-detecting set. -/
 theorem firstStopNeOneSet_nonempty_of_negOne {C : ℕ → Prop} {n : ℕ} (hn : 1 < n)
@@ -94,7 +94,7 @@ theorem firstStopNegOne_ne_input_of_prime {C : ℕ → Prop} {n : ℕ} (hnprime 
   have hzero : jacobiSym (selfridgeD (firstStopNegOne C n hneg)) n = 0 :=
     jacobiSym.eq_zero_iff_not_coprime.mpr hgcdne
   rw [hstop.2] at hzero
-  omega
+  exact Int.noConfusion hzero
 
 /-- Mutual inclusion of stopping sets implies equality of their pure `-1` first-stops. -/
 theorem firstStopNegOne_eq_of_mutual_subset {C₁ C₂ : ℕ → Prop} {n : ℕ}

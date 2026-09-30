@@ -7,6 +7,7 @@ import PseudoPrime.NumberTheory.Factorization.PrimeLeafPolicy
 import PseudoPrime.NumberTheory.Factorization.Partial
 import PseudoPrime.NumberTheory.Factorization.PollardRho.Budget
 import PseudoPrime.NumberTheory.Factorization.PollardRho.Search
+
 /-!
 # Bounded factor supply with caller-supplied leaf certification
 
@@ -16,11 +17,10 @@ Rho budgets count search rounds only; the cost of the certification policy is se
 namespace PseudoPrime.NumberTheory.Factorization
 
 namespace PollardRho
+
 /-- Recursively split a natural number with a bounded rho schedule, returning only prime leaves.
 The fuel is a maximum split depth: every internal node receives that many rho rounds. -/
-def primeFactorListFuel (policy : PrimeLeafPolicy) (params :
-    Params) :
-    ℕ → ℕ → Option (List ℕ)
+def primeFactorListFuel (policy : PrimeLeafPolicy) (params : Params) : ℕ → ℕ → Option (List ℕ)
   | 0, n => if policy.accepts n then some [n] else none
   | fuel + 1, n =>
     if policy.accepts n then some [n]
@@ -29,27 +29,26 @@ def primeFactorListFuel (policy : PrimeLeafPolicy) (params :
       | none => none
       | some d =>
         match primeFactorListFuel policy params fuel d,
-            primeFactorListFuel policy params fuel (n / d) with
+          primeFactorListFuel policy params fuel (n / d) with
         | some left, some right => some (left ++ right)
         | _, _ => none
 termination_by fuel _ => fuel
 
 /-- On an even composite input above two, positive split depth factors by the immediate factor two
 branch. This exposes the exact recursive result without unfolding any rho trajectory. -/
-theorem primeFactorListFuel_even_eq_split {policy : PrimeLeafPolicy} {params : Params}
-    {fuel n : ℕ} (hn : 2 < n) (hprime : ¬ policy.accepts n) (heven : n % 2 = 0) :
+theorem primeFactorListFuel_even_eq_split {policy : PrimeLeafPolicy} {params : Params} {fuel n : ℕ}
+    (hn : 2 < n) (hprime : ¬policy.accepts n) (heven : n % 2 = 0) :
     primeFactorListFuel policy params (fuel + 1) n =
       (match primeFactorListFuel policy params fuel 2,
-          primeFactorListFuel policy params fuel (n / 2) with
-        | some left, some right => some (left ++ right)
-        | _, _ => none) := by
+        primeFactorListFuel policy params fuel (n / 2) with
+      | some left, some right => some (left ++ right)
+      | _, _ => none) := by
   simp only [primeFactorListFuel, ite_eq_right hprime,
-    findFactor_eq_some_two_of_even params (Nat.succ_pos fuel)
-        hn heven]
+    findFactor_eq_some_two_of_even params (Nat.succ_pos fuel) hn heven]
 
 /-- At zero split depth, success is exactly policy acceptance and the singleton factor list. -/
-theorem primeFactorListFuel_zero_iff {policy : PrimeLeafPolicy} {params :
-    Params} {n : ℕ} {factors : List ℕ} :
+theorem primeFactorListFuel_zero_iff {policy : PrimeLeafPolicy} {params : Params} {n : ℕ}
+    {factors : List ℕ} :
     primeFactorListFuel policy params 0 n = some factors ↔ policy.accepts n ∧ factors = [n] := by
   simp only [primeFactorListFuel]
   by_cases hn : policy.accepts n
@@ -66,17 +65,15 @@ theorem primeFactorListFuel_zero_iff {policy : PrimeLeafPolicy} {params :
     exact h.elim
 
 /-- An accepted input is returned immediately at every split-depth bound. -/
-theorem primeFactorListFuel_of_accepts {policy : PrimeLeafPolicy} {params :
-    Params} {fuel n : ℕ}
+theorem primeFactorListFuel_of_accepts {policy : PrimeLeafPolicy} {params : Params} {fuel n : ℕ}
     (hn : policy.accepts n) : primeFactorListFuel policy params fuel n = some [n] := by
   cases fuel with
   | zero => simp only [primeFactorListFuel, hn, ite_true]
   | succ fuel => simp only [primeFactorListFuel, hn, ite_true]
 
 /-- A successful recursive rho factorization consists of primes whose product is the input. -/
-theorem primeFactorListFuel_sound {policy : PrimeLeafPolicy} {params :
-    Params} {fuel n : ℕ} {factors : List ℕ}
-    (hn : 1 < n) (h : primeFactorListFuel policy params fuel n = some factors) :
+theorem primeFactorListFuel_sound {policy : PrimeLeafPolicy} {params : Params} {fuel n : ℕ}
+    {factors : List ℕ} (hn : 1 < n) (h : primeFactorListFuel policy params fuel n = some factors) :
     (∀ p, p ∈ factors → Nat.Prime p) ∧ factors.prod = n := by
   induction fuel generalizing n factors with
   | zero =>
@@ -98,22 +95,23 @@ theorem primeFactorListFuel_sound {policy : PrimeLeafPolicy} {params :
         simpa only [primeFactorListFuel, hp, ite_true] using h
       have hEq : factors = [n] := Option.some.inj hsome.symm
       rw [hEq]
-      exact ⟨by
-        intro p hp
-        simp only [List.mem_singleton] at hp
-        subst p
-        exact policy.sound n ‹policy.accepts n›,
-        by simp only [List.prod_cons, List.prod_nil, mul_one]⟩
-    · cases hfind : findFactor
-        n params (fuel + 1) with
-      | none =>
-        simp only [primeFactorListFuel, hp, hfind, ite_false, reduceCtorEq] at h
-      | some d =>
+      exact
+        ⟨by
+          intro p hp
+          simp only [List.mem_singleton] at hp
+          subst p
+          exact policy.sound n ‹policy.accepts n›, by
+          simp only [List.prod_cons, List.prod_nil, mul_one]⟩
+    · cases hfind : findFactor n params (fuel + 1) with
+      | none => simp only [primeFactorListFuel, hp, hfind, ite_false, reduceCtorEq] at h
+      | some
+        d =>
         have hroot :
-            (match primeFactorListFuel policy params fuel d,
-                primeFactorListFuel policy params fuel (n / d) with
-              | some left, some right => some (left ++ right)
-              | _, _ => none) = some factors := by
+          (match primeFactorListFuel policy params fuel d,
+              primeFactorListFuel policy params fuel (n / d) with
+            | some left, some right => some (left ++ right)
+            | _, _ => none) =
+            some factors := by
           simpa only [primeFactorListFuel, hp, hfind, ite_false] using h
         have hsplit := findFactor_sound hfind
         change 1 < d ∧ d < n ∧ d ∣ n at hsplit
@@ -122,14 +120,12 @@ theorem primeFactorListFuel_sound {policy : PrimeLeafPolicy} {params :
           by_contra hzero
           have hz : n / d = 0 := Nat.eq_zero_of_not_pos hzero
           rw [hz, mul_zero] at hmul
-          have hnpos : 0 < n :=
-            Nat.lt_trans Nat.zero_lt_one (lt_trans hsplit.1 hsplit.2.1)
+          have hnpos : 0 < n := Nat.lt_trans Nat.zero_lt_one (lt_trans hsplit.1 hsplit.2.1)
           exact (Nat.ne_of_gt hnpos) hmul.symm
         have hrgt : 1 < n / d := by
           by_contra hsmall
           have hone : n / d = 1 :=
-            Nat.le_antisymm (Nat.le_of_not_gt hsmall)
-              (Nat.succ_le_iff.mpr hrpos)
+            Nat.le_antisymm (Nat.le_of_not_gt hsmall) (Nat.succ_le_iff.mpr hrpos)
           rw [hone, mul_one] at hmul
           exact (Nat.ne_of_lt hsplit.2.1) hmul
         have hrlt : n / d < n := by
@@ -138,8 +134,7 @@ theorem primeFactorListFuel_sound {policy : PrimeLeafPolicy} {params :
           exact hlt
         cases hleft : primeFactorListFuel policy params fuel d with
         | none =>
-          have hnone : (none : Option (List ℕ)) = some factors := by
-            simpa only [hleft] using hroot
+          have hnone : (none : Option (List ℕ)) = some factors := by simpa only [hleft] using hroot
           cases hnone
         | some left =>
           cases hright : primeFactorListFuel policy params fuel (n / d) with
@@ -147,7 +142,8 @@ theorem primeFactorListFuel_sound {policy : PrimeLeafPolicy} {params :
             have hnone : (none : Option (List ℕ)) = some factors := by
               simpa only [hleft, hright] using hroot
             cases hnone
-          | some right =>
+          | some
+            right =>
             have hconcat : left ++ right = factors := by
               have hsome : some (left ++ right) = some factors := by
                 simpa only [hleft, hright] using hroot
@@ -179,11 +175,12 @@ termination_by fuel _ => fuel
 
 /-- Every retained factor is prime, and the known factors times the residual cofactor equal the
 input. The identity remains valid when rho stops at any unresolved composite leaf. -/
-theorem partialPrimeFactorSupply_sound (policy : PrimeLeafPolicy) (params : Params)
-    (fuel : ℕ) : ∀ n : ℕ,
-    (∀ p, p ∈ (partialPrimeFactorSupply policy params fuel n).factors → Nat.Prime p) ∧
-      (partialPrimeFactorSupply policy params fuel n).factors.prod *
-        (partialPrimeFactorSupply policy params fuel n).remainder = n := by
+theorem partialPrimeFactorSupply_sound (policy : PrimeLeafPolicy) (params : Params) (fuel : ℕ) :
+    ∀ n : ℕ,
+      (∀ p, p ∈ (partialPrimeFactorSupply policy params fuel n).factors → Nat.Prime p) ∧
+        (partialPrimeFactorSupply policy params fuel n).factors.prod *
+            (partialPrimeFactorSupply policy params fuel n).remainder =
+          n := by
   induction fuel with
   | zero =>
     intro n
@@ -218,8 +215,7 @@ theorem partialPrimeFactorSupply_sound (policy : PrimeLeafPolicy) (params : Para
       | some divisor =>
         have hdivisor := findFactor_sound hfind
         change 1 < divisor ∧ divisor < n ∧ divisor ∣ n at hdivisor
-        have hsplit : divisor * (n / divisor) = n :=
-          Nat.mul_div_cancel' hdivisor.2.2
+        have hsplit : divisor * (n / divisor) = n := Nat.mul_div_cancel' hdivisor.2.2
         have hleft := ih divisor
         have hright := ih (n / divisor)
         simp only [partialPrimeFactorSupply, ite_eq_right hprime, hfind, List.prod_append]
@@ -230,21 +226,20 @@ theorem partialPrimeFactorSupply_sound (policy : PrimeLeafPolicy) (params : Para
           · exact hright.1 p hp
         · calc
             (partialPrimeFactorSupply policy params fuel divisor).factors.prod *
-                (partialPrimeFactorSupply policy params fuel (n / divisor)).factors.prod *
-                ((partialPrimeFactorSupply policy params fuel divisor).remainder *
-                  (partialPrimeFactorSupply policy params fuel (n / divisor)).remainder) =
+                  (partialPrimeFactorSupply policy params fuel (n / divisor)).factors.prod *
+                  ((partialPrimeFactorSupply policy params fuel divisor).remainder *
+                    (partialPrimeFactorSupply policy params fuel (n / divisor)).remainder) =
                 ((partialPrimeFactorSupply policy params fuel divisor).factors.prod *
                     (partialPrimeFactorSupply policy params fuel divisor).remainder) *
                   ((partialPrimeFactorSupply policy params fuel (n / divisor)).factors.prod *
-                    (partialPrimeFactorSupply policy params fuel (n / divisor)).remainder) := by
-              ac_rfl
+                    (partialPrimeFactorSupply policy params fuel (n / divisor)).remainder) :=
+              by ac_rfl
             _ = divisor * (n / divisor) := by rw [hleft.2, hright.2]
             _ = n := hsplit
 
 /-- Execute a partial factor supply according to an explicit whole-tree budget. -/
 def partialPrimeFactorSupplyByTree (policy : PrimeLeafPolicy) (params : Params) :
-    RhoBudgetTree → ℕ →
-      PartialPrimeFactorSupply
+    RhoBudgetTree → ℕ → PartialPrimeFactorSupply
   | .leaf, n => if policy.accepts n then ⟨[n], 1⟩ else ⟨[], n⟩
   | .split fuel left right, n =>
     if policy.accepts n then ⟨[n], 1⟩
@@ -254,15 +249,16 @@ def partialPrimeFactorSupplyByTree (policy : PrimeLeafPolicy) (params : Params) 
       | some d =>
         let leftSupply := partialPrimeFactorSupplyByTree policy params left d
         let rightSupply := partialPrimeFactorSupplyByTree policy params right (n / d)
-        ⟨leftSupply.factors ++ rightSupply.factors,
-          leftSupply.remainder * rightSupply.remainder⟩
+        ⟨leftSupply.factors ++ rightSupply.factors, leftSupply.remainder * rightSupply.remainder⟩
 
 /-- A tree-guided supply retains only prime leaves and preserves the represented input exactly. -/
 theorem partialPrimeFactorSupplyByTree_sound (policy : PrimeLeafPolicy) (params : Params)
-    (tree : RhoBudgetTree) : ∀ n : ℕ,
-    (∀ p, p ∈ (partialPrimeFactorSupplyByTree policy params tree n).factors → Nat.Prime p) ∧
-      (partialPrimeFactorSupplyByTree policy params tree n).factors.prod *
-        (partialPrimeFactorSupplyByTree policy params tree n).remainder = n := by
+    (tree : RhoBudgetTree) :
+    ∀ n : ℕ,
+      (∀ p, p ∈ (partialPrimeFactorSupplyByTree policy params tree n).factors → Nat.Prime p) ∧
+        (partialPrimeFactorSupplyByTree policy params tree n).factors.prod *
+            (partialPrimeFactorSupplyByTree policy params tree n).remainder =
+          n := by
   induction tree with
   | leaf =>
     intro n
@@ -297,12 +293,10 @@ theorem partialPrimeFactorSupplyByTree_sound (policy : PrimeLeafPolicy) (params 
       | some divisor =>
         have hdivisor := findFactor_sound hfind
         change 1 < divisor ∧ divisor < n ∧ divisor ∣ n at hdivisor
-        have hsplit : divisor * (n / divisor) = n :=
-          Nat.mul_div_cancel' hdivisor.2.2
+        have hsplit : divisor * (n / divisor) = n := Nat.mul_div_cancel' hdivisor.2.2
         have hleft := ihLeft divisor
         have hright := ihRight (n / divisor)
-        simp only [partialPrimeFactorSupplyByTree, ite_eq_right hprime,
-          hfind, List.prod_append]
+        simp only [partialPrimeFactorSupplyByTree, ite_eq_right hprime, hfind, List.prod_append]
         constructor
         · intro p hp
           rcases List.mem_append.mp hp with hp | hp
@@ -310,15 +304,14 @@ theorem partialPrimeFactorSupplyByTree_sound (policy : PrimeLeafPolicy) (params 
           · exact hright.1 p hp
         · calc
             (partialPrimeFactorSupplyByTree policy params left divisor).factors.prod *
-                (partialPrimeFactorSupplyByTree policy params right (n / divisor)).factors.prod *
-                ((partialPrimeFactorSupplyByTree policy params left divisor).remainder *
-                  (partialPrimeFactorSupplyByTree policy params right (n / divisor)).remainder) =
+                  (partialPrimeFactorSupplyByTree policy params right (n / divisor)).factors.prod *
+                  ((partialPrimeFactorSupplyByTree policy params left divisor).remainder *
+                    (partialPrimeFactorSupplyByTree policy params right (n / divisor)).remainder) =
                 ((partialPrimeFactorSupplyByTree policy params left divisor).factors.prod *
                     (partialPrimeFactorSupplyByTree policy params left divisor).remainder) *
                   ((partialPrimeFactorSupplyByTree policy params right (n / divisor)).factors.prod *
-                    (partialPrimeFactorSupplyByTree policy params right (n /
-                      divisor)).remainder) := by
-              ac_rfl
+                    (partialPrimeFactorSupplyByTree policy params right (n / divisor)).remainder) :=
+              by ac_rfl
             _ = divisor * (n / divisor) := by rw [hleft.2, hright.2]
             _ = n := hsplit
 
@@ -332,27 +325,26 @@ def partialPrimeFactorSupplyByTreeRounds (policy : PrimeLeafPolicy) (params : Pa
       let used := findFactorRounds n params fuel
       match findFactor n params fuel with
       | none => used
-      | some d => used + partialPrimeFactorSupplyByTreeRounds policy params left d +
+      | some d =>
+        used + partialPrimeFactorSupplyByTreeRounds policy params left d +
           partialPrimeFactorSupplyByTreeRounds policy params right (n / d)
 
 /-- Actual Floyd rounds at every reached node sum to no more than all allowances in the tree. -/
-theorem partialPrimeFactorSupplyByTreeRounds_le (policy : PrimeLeafPolicy) (params :
-    Params)
+theorem partialPrimeFactorSupplyByTreeRounds_le (policy : PrimeLeafPolicy) (params : Params)
     (tree : RhoBudgetTree) (n : ℕ) :
     partialPrimeFactorSupplyByTreeRounds policy params tree n ≤ tree.totalFuel := by
   induction tree generalizing n with
-  | leaf =>
-    exact Nat.zero_le _
-  | split fuel left right ihLeft ihRight =>
+  | leaf => exact Nat.zero_le _
+  | split fuel left right ihLeft
+    ihRight =>
     by_cases hprime : policy.accepts n
-    · simp only [partialPrimeFactorSupplyByTreeRounds,
-        RhoBudgetTree.totalFuel, ite_eq_left hprime,
-          Nat.zero_le]
+    · simp only [partialPrimeFactorSupplyByTreeRounds, RhoBudgetTree.totalFuel, ite_eq_left hprime,
+        Nat.zero_le]
     · cases hfind : findFactor n params fuel with
       | none =>
         have hused := findFactorRounds_le n params fuel
-        simp only [partialPrimeFactorSupplyByTreeRounds,
-          RhoBudgetTree.totalFuel, ite_eq_right hprime, hfind]
+        simp only [partialPrimeFactorSupplyByTreeRounds, RhoBudgetTree.totalFuel,
+          ite_eq_right hprime, hfind]
         calc
           _ ≤ fuel := hused
           _ ≤ fuel + left.totalFuel := Nat.le_add_right _ _
@@ -361,9 +353,10 @@ theorem partialPrimeFactorSupplyByTreeRounds_le (policy : PrimeLeafPolicy) (para
         have hused := findFactorRounds_le n params fuel
         have hleft := ihLeft divisor
         have hright := ihRight (n / divisor)
-        simp only [partialPrimeFactorSupplyByTreeRounds,
-          RhoBudgetTree.totalFuel, ite_eq_right hprime, hfind]
+        simp only [partialPrimeFactorSupplyByTreeRounds, RhoBudgetTree.totalFuel,
+          ite_eq_right hprime, hfind]
         exact Nat.add_le_add (Nat.add_le_add hused hleft) hright
 
 end PollardRho
+
 end PseudoPrime.NumberTheory.Factorization

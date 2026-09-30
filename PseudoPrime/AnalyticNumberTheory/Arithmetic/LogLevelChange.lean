@@ -67,7 +67,7 @@ theorem characterLogWeightedSum_re_primitive_eq_add_levelChangeCorrection {q : �
     simp only [Complex.zero_re]
   rw [Finset.sum_sub_distrib, hzero] at hre
   rw [primitiveLogLevelChangeCorrection]
-  linarith
+  linarith only [hre, hzero]
 
 /--
 Input/assumptions: a cutoff `x ≥ 0` and a level-`q` character.
@@ -123,7 +123,7 @@ theorem primitiveLogLevelChangeCorrection_eq_sum_of_isQuadratic {q : ℕ} (x : �
   intro p hp
   have hkpos : k ≠ 0 := by
     have := (Finset.mem_Icc.mp hk).1
-    omega
+    exact Nat.ne_of_gt (Nat.lt_of_lt_of_le Nat.zero_lt_one this)
   have hpprime : p.Prime := (Finset.mem_filter.mp hp).2.1
   rw [characterLogWeightedTerm_primitive_re_prime_pow_of_isQuadratic x χ hχ hx.ne' hpprime hkpos]
   by_cases hodd : Odd k
@@ -153,9 +153,10 @@ theorem quadraticLogPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : 
     (hKlt : Real.log x < (K + 1 : ℝ) * Real.log p) :
     -(1 / 2 * Real.log p * Real.log x) ≤
       ∑ k ∈ Finset.Icc 1 K, (characterLogWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
   have hlogp : 0 < Real.log p := Real.log_pos (by exact_mod_cast hp.one_lt)
-  have hlogx : 0 ≤ Real.log x := Real.log_nonneg (by linarith)
+  have hlogx : 0 ≤ Real.log x :=
+    Real.log_nonneg (by exact le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx)
   have heach :
     ∀ k ∈ Finset.Icc 1 K,
       (characterLogWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
@@ -163,7 +164,7 @@ theorem quadraticLogPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : 
     intro k hk
     have hk0 : k ≠ 0 := by
       have := (Finset.mem_Icc.mp hk).1
-      omega
+      exact Nat.ne_of_gt (Nat.lt_of_lt_of_le Nat.zero_lt_one this)
     exact characterLogWeightedTerm_primitive_re_prime_pow x χ hxpos.ne' hp hk0
   rw [Finset.sum_congr rfl heach]
   rcases hχ (p : ZMod χ.conductor) with h0 | h1 | hm1
@@ -173,11 +174,11 @@ theorem quadraticLogPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : 
       intro k hk
       have hk0 : k ≠ 0 := by
         have := (Finset.mem_Icc.mp hk).1
-        omega
+        exact Nat.ne_of_gt (Nat.lt_of_lt_of_le Nat.zero_lt_one this)
       rw [h0, zero_pow hk0]
       simp only [Complex.zero_re, mul_zero]
     rw [Finset.sum_congr rfl hzero, Finset.sum_const_zero]
-    nlinarith [mul_nonneg hlogp.le hlogx]
+    nlinarith only [mul_nonneg hlogp.le hlogx]
   · have hone :
       ∀ k ∈ Finset.Icc 1 K,
         Real.log p * (Real.log x - k * Real.log p) * (χ.primitiveCharacter p ^ k).re =
@@ -192,8 +193,8 @@ theorem quadraticLogPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : 
       have hkK : k ≤ K := (Finset.mem_Icc.mp hk).2
       have hkbound : (k : ℝ) * Real.log p ≤ (K : ℝ) * Real.log p :=
         mul_le_mul_of_nonneg_right (by exact_mod_cast hkK) hlogp.le
-      nlinarith [hKle]
-    nlinarith [mul_nonneg hlogp.le hlogx]
+      exact mul_nonneg hlogp.le (sub_nonneg.mpr (le_trans hkbound hKle))
+    nlinarith only [mul_nonneg hlogp.le hlogx, hnonneg]
   · have hcast : χ.primitiveCharacter p = ((-1 : ℝ) : ℂ) := by
       rw [hm1]
       simp only [Complex.ofReal_neg, Complex.ofReal_one]
@@ -211,18 +212,18 @@ theorem quadraticLogPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : 
       ring
     rw [hSeq]
     rcases Nat.even_or_odd K with ⟨m, hm⟩ | ⟨m, hm⟩
-    · obtain rfl : K = 2 * m := by omega
+    · obtain rfl : K = 2 * m := by simpa only [two_mul] using hm
       rw [sum_neg_one_pow_succ_mul_affine_even]
       have hmb : (m : ℝ) * Real.log p ≤ 1 / 2 * Real.log x := by
         push_cast at hKle
-        nlinarith [hKle]
-      nlinarith [mul_le_mul_of_nonneg_left hmb hlogp.le]
+        nlinarith only [hKle]
+      nlinarith only [mul_le_mul_of_nonneg_left hmb hlogp.le]
     · obtain rfl : K = 2 * m + 1 := hm
       rw [sum_neg_one_pow_succ_mul_affine_odd]
       have hmb : 1 / 2 * Real.log x ≤ (m + 1 : ℝ) * Real.log p := by
         push_cast at hKlt
-        nlinarith [hKlt]
-      nlinarith [mul_le_mul_of_nonneg_left hmb hlogp.le]
+        nlinarith only [hKlt]
+      nlinarith only [mul_le_mul_of_nonneg_left hmb hlogp.le]
 
 /--
 Input/assumptions: a cutoff `x ≥ 2`, a level-`q` character, a prime `p`
@@ -244,20 +245,20 @@ theorem re_sum_logPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : �
     (hKlt : Real.log x < (K + 1 : ℝ) * Real.log p) :
     -(1 / 2 * Real.log p * Real.log x) ≤
       ∑ k ∈ Finset.Icc 1 K, (characterLogWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
   have hlogp : 0 < Real.log p := Real.log_pos (by exact_mod_cast hp.one_lt)
   set z : ℂ := χ.primitiveCharacter p with hzdef
   set θ : ℝ := Real.log x / Real.log p - (K : ℝ) with hθdef
   have hlogX : Real.log x = ((K : ℝ) + θ) * Real.log p := by
     rw [hθdef]
-    field_simp
+    field_simp [hlogp.ne']
     ring
   have hθ0 : 0 ≤ θ := by
     rw [hθdef, sub_nonneg, le_div_iff₀ hlogp]
-    linarith [hKle]
+    linarith only [hKle]
   have hθ1 : θ ≤ 1 := by
     rw [hθdef, sub_le_iff_le_add, div_le_iff₀ hlogp]
-    linarith [hKlt]
+    linarith only [hKlt]
   have heach :
     ∀ k ∈ Finset.Icc 1 K,
       (characterLogWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
@@ -265,7 +266,7 @@ theorem re_sum_logPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : �
     intro k hk
     have hk0 : k ≠ 0 := by
       have := (Finset.mem_Icc.mp hk).1
-      omega
+      exact Nat.ne_of_gt (Nat.lt_of_lt_of_le Nat.zero_lt_one this)
     rw [characterLogWeightedTerm_primitive_re_prime_pow x χ hxpos.ne' hp hk0, mul_assoc]
   have hfejer :=
     re_sum_logWeight_ge_neg_half (logX := Real.log x) (logP := Real.log p) (θ := θ) (K := K) (z :=
@@ -285,7 +286,7 @@ theorem re_sum_logPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : �
   rw [Finset.sum_congr rfl heach, ← Finset.mul_sum]
   have hlogp0 : 0 ≤ Real.log p := hlogp.le
   have := mul_le_mul_of_nonneg_left hfejer hlogp0
-  nlinarith [this]
+  nlinarith only [this]
 
 /--
 Input/assumptions: a cutoff and a level-`q` character.
@@ -382,8 +383,9 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log_of_is
     (hqd : q / χ.conductor ≠ 0) :
     -(1 / 2 * Real.log ((q / χ.conductor : ℕ) : ℝ) * Real.log x) ≤
       primitiveLogLevelChangeCorrection x χ := by
-  have hxpos : (0 : ℝ) < x := by linarith
-  have hlogx : 0 ≤ Real.log x := Real.log_nonneg (by linarith)
+  have hxpos : (0 : ℝ) < x := by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
+  have hlogx : 0 ≤ Real.log x :=
+    Real.log_nonneg (by exact le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx)
   rw [primitiveLogLevelChangeCorrection_eq_sum_prime_divisors]
   set S := (Nat.primesLE ⌊x⌋₊).filter fun p ↦ p ∣ q / χ.conductor with hSdef
   have hstep :
@@ -394,7 +396,7 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log_of_is
     intro p hp
     have hpprime : p.Prime := Nat.prime_of_mem_primesLE (Finset.mem_filter.mp hp).1
     have hple : p ≤ ⌊x⌋₊ := Nat.le_of_mem_primesLE (Finset.mem_filter.mp hp).1
-    have hxfloor : ⌊x⌋₊ ≠ 0 := (Nat.floor_pos.mpr (by linarith)).ne'
+    have hxfloor : ⌊x⌋₊ ≠ 0 := (Nat.floor_pos.mpr ((Real.log_nonneg_iff hxpos).mp hlogx)).ne'
     have hKnat : p ^ p.log ⌊x⌋₊ ≤ ⌊x⌋₊ := Nat.pow_log_le_self p hxfloor
     have hKlt' : ⌊x⌋₊ < p ^ (p.log ⌊x⌋₊).succ := Nat.lt_pow_succ_log_self hpprime.one_lt ⌊x⌋₊
     have hKle : (p.log ⌊x⌋₊ : ℝ) * Real.log p ≤ Real.log x := by
@@ -408,14 +410,14 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log_of_is
         pow_pos (by exact_mod_cast hpprime.pos) _
       have hstepNat : ⌊x⌋₊ + 1 ≤ p ^ (p.log ⌊x⌋₊ + 1) := by
         simp only [← Nat.succ_eq_add_one] at hKlt' ⊢
-        omega
+        exact Nat.succ_le_of_lt hKlt'
       have hstepR : (⌊x⌋₊ : ℝ) + 1 ≤ (p : ℝ) ^ (p.log ⌊x⌋₊ + 1) := by exact_mod_cast hstepNat
       have hfloor := Nat.lt_floor_add_one x
-      have hR : x < (p : ℝ) ^ (p.log ⌊x⌋₊ + 1) := by linarith
+      have hR : x < (p : ℝ) ^ (p.log ⌊x⌋₊ + 1) := by exact lt_of_lt_of_le hfloor hstepR
       have hlog := Real.log_lt_log hxpos hR
       rw [Real.log_pow] at hlog
       push_cast at hlog
-      linarith [hlog]
+      exact hlog
     exact quadraticLogPrimePowerCorrection_neg_le_half_log_mul_log x χ hχ hpprime hx hKle hKlt
   have hbudget : ∑ p ∈ S, Real.log p ≤ Real.log ((q / χ.conductor : ℕ) : ℝ) := by
     apply le_trans _ (sum_log_primeFactors_le_log hqd)
@@ -433,7 +435,7 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log_of_is
   calc
     -(1 / 2 * Real.log ((q / χ.conductor : ℕ) : ℝ) * Real.log x) ≤
         -(1 / 2 * (∑ p ∈ S, Real.log p) * Real.log x) :=
-      by nlinarith [mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hlogx, hbudget]
+      by nlinarith only [mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hlogx, hbudget]
     _ = ∑ p ∈ S, -(1 / 2 * Real.log p * Real.log x) := by
       rw [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_neg_distrib]
     _ ≤
@@ -464,8 +466,9 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log {q : 
     (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x) (hqd : q / χ.conductor ≠ 0) :
     -(1 / 2 * Real.log ((q / χ.conductor : ℕ) : ℝ) * Real.log x) ≤
       primitiveLogLevelChangeCorrection x χ := by
-  have hxpos : (0 : ℝ) < x := by linarith
-  have hlogx : 0 ≤ Real.log x := Real.log_nonneg (by linarith)
+  have hxpos : (0 : ℝ) < x := by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
+  have hlogx : 0 ≤ Real.log x :=
+    Real.log_nonneg (by exact le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx)
   rw [primitiveLogLevelChangeCorrection_eq_sum_prime_divisors]
   set S := (Nat.primesLE ⌊x⌋₊).filter fun p ↦ p ∣ q / χ.conductor with hSdef
   have hstep :
@@ -477,7 +480,7 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log {q : 
     have hpprime : p.Prime := Nat.prime_of_mem_primesLE (Finset.mem_filter.mp hp).1
     have hple : p ≤ ⌊x⌋₊ := Nat.le_of_mem_primesLE (Finset.mem_filter.mp hp).1
     have hlogp : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hpprime.one_le)
-    have hxfloor : ⌊x⌋₊ ≠ 0 := (Nat.floor_pos.mpr (by linarith)).ne'
+    have hxfloor : ⌊x⌋₊ ≠ 0 := (Nat.floor_pos.mpr ((Real.log_nonneg_iff hxpos).mp hlogx)).ne'
     have hKnat : p ^ p.log ⌊x⌋₊ ≤ ⌊x⌋₊ := Nat.pow_log_le_self p hxfloor
     have hKlt' : ⌊x⌋₊ < p ^ (p.log ⌊x⌋₊).succ := Nat.lt_pow_succ_log_self hpprime.one_lt ⌊x⌋₊
     by_cases hdvd : p ∣ χ.conductor
@@ -491,12 +494,12 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log {q : 
         intro k hk
         have hk0 : k ≠ 0 := by
           have := (Finset.mem_Icc.mp hk).1
-          omega
+          exact Nat.ne_of_gt (Nat.lt_of_lt_of_le Nat.zero_lt_one this)
         rw [characterLogWeightedTerm_primitive_re_prime_pow x χ hxpos.ne' hpprime hk0, hz0,
           zero_pow hk0]
         simp only [Complex.zero_re, mul_zero]
       rw [Finset.sum_congr rfl heach, Finset.sum_const_zero]
-      nlinarith [mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hlogp) hlogx]
+      nlinarith only [mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hlogp) hlogx]
     · have hunit : IsUnit ((p : ℕ) : ZMod χ.conductor) :=
         (ZMod.isUnit_prime_iff_not_dvd hpprime).mpr hdvd
       have hz : ‖χ.primitiveCharacter p‖ = 1 := by
@@ -513,14 +516,14 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log {q : 
           pow_pos (by exact_mod_cast hpprime.pos) _
         have hstepNat : ⌊x⌋₊ + 1 ≤ p ^ (p.log ⌊x⌋₊ + 1) := by
           simp only [← Nat.succ_eq_add_one] at hKlt' ⊢
-          omega
+          exact Nat.succ_le_of_lt hKlt'
         have hstepR : (⌊x⌋₊ : ℝ) + 1 ≤ (p : ℝ) ^ (p.log ⌊x⌋₊ + 1) := by exact_mod_cast hstepNat
         have hfloor := Nat.lt_floor_add_one x
-        have hR : x < (p : ℝ) ^ (p.log ⌊x⌋₊ + 1) := by linarith
+        have hR : x < (p : ℝ) ^ (p.log ⌊x⌋₊ + 1) := by exact lt_of_lt_of_le hfloor hstepR
         have hlog := Real.log_lt_log hxpos hR
         rw [Real.log_pow] at hlog
         push_cast at hlog
-        linarith [hlog]
+        exact hlog
       exact re_sum_logPrimePowerCorrection_neg_le_half_log_mul_log x χ hpprime hz hx hKle hKlt
   have hbudget : ∑ p ∈ S, Real.log p ≤ Real.log ((q / χ.conductor : ℕ) : ℝ) := by
     apply le_trans _ (sum_log_primeFactors_le_log hqd)
@@ -538,7 +541,7 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log {q : 
   calc
     -(1 / 2 * Real.log ((q / χ.conductor : ℕ) : ℝ) * Real.log x) ≤
         -(1 / 2 * (∑ p ∈ S, Real.log p) * Real.log x) :=
-      by nlinarith [mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hlogx, hbudget]
+      by nlinarith only [mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hlogx, hbudget]
     _ = ∑ p ∈ S, -(1 / 2 * Real.log p * Real.log x) := by
       rw [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_neg_distrib]
     _ ≤
@@ -580,7 +583,7 @@ theorem primitiveLogConductorAbsorption_of_isQuadratic {q : ℕ} [NeZero q] (x :
       -(1 / 2 * Real.log ((q / χ.conductor : ℕ) : ℝ) * Real.log x) := by
     rw [← hlogsum]
     ring
-  linarith [hbound, hgoal_equiv]
+  linarith only [hbound, hgoal_equiv]
 
 /--
 Input/assumptions: `q ≠ 0`, a level-`q` character (no quadratic hypothesis), a cutoff `x ≥ 2`,
@@ -611,7 +614,7 @@ theorem primitiveLogConductorAbsorption {q : ℕ} [NeZero q] (x : ℝ) (χ : Dir
       -(1 / 2 * Real.log ((q / χ.conductor : ℕ) : ℝ) * Real.log x) := by
     rw [← hlogsum]
     ring
-  linarith [hbound, hgoal_equiv]
+  linarith only [hbound, hgoal_equiv]
 
 /--
 Input/assumptions: a positive cutoff and a level-`q` character with `q ≠ 0`.
@@ -633,6 +636,6 @@ theorem primitiveLogLevelChangeCorrection_ge_neg {q : ℕ} [NeZero q] (x : ℝ)
     Complex.re_le_norm
       (characterLogWeightedSum x χ - characterLogWeightedSum x χ.primitiveCharacter)
   rw [Complex.sub_re] at hre
-  linarith
+  linarith only [hexact, hnorm, hre]
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

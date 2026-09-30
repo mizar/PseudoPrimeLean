@@ -35,11 +35,11 @@ theorem norm_fejerPartialPowerSum_one_sq {z : ℂ} (hz : ‖z‖ = 1) :
     have h := Complex.normSq_eq_norm_sq z
     rw [hz] at h
     rw [Complex.normSq_apply] at h
-    nlinarith
+    nlinarith only [h]
   simp only [fejerPartialPowerSum, Nat.reduceAdd, geom_sum_two, ← Complex.normSq_eq_norm_sq,
     Complex.normSq_apply, Complex.add_re, Complex.one_re, Complex.add_im, Complex.one_im, add_zero]
   ring_nf
-  nlinarith [hzsq]
+  nlinarith only [hzsq]
 
 /-- Successive Fejér partial sums differ by their newly added power. -/
 theorem fejerPartialPowerSum_succ (z : ℂ) (j : ℕ) :
@@ -249,7 +249,7 @@ theorem fejer_general_identity {a : ℕ → ℝ} {z : ℂ} (hz : ‖z‖ = 1) (K
     have hstep :
       (Finset.sum (Finset.Icc 1 (K + 1)) fun k => (a k : ℂ) * z ^ k) =
         (Finset.sum (Finset.Icc 1 K) fun k => (a k : ℂ) * z ^ k) + (a (K + 1) : ℂ) * z ^ (K + 1) :=
-      Finset.sum_Icc_succ_top (by omega) _
+      Finset.sum_Icc_succ_top (Nat.succ_le_succ (Nat.zero_le K)) _
     have hsecond := fejerNormSqShift_secondDiff hz K
     have hsecond2 :
       a (K + 1) *
@@ -260,7 +260,7 @@ theorem fejer_general_identity {a : ℕ → ℝ} {z : ℂ} (hz : ‖z‖ = 1) (K
     have hre : ((a (K + 1) : ℂ) * z ^ (K + 1)).re = a (K + 1) * (z ^ (K + 1)).re := by
       simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
     rw [hstep, Complex.add_re, hre, Finset.sum_range_succ, fejerNormSqShift_succ]
-    nlinarith [ih, hsecond2]
+    nlinarith only [ih, hsecond2]
 
 /--
 The general Fejér SOS lower bound, without assuming a vanishing tail.
@@ -331,8 +331,10 @@ theorem re_sum_logWeight_ge_neg_half {logX logP : ℝ} {θ : ℝ} {K : ℕ} {z :
       | zero => rw [fejerNormSqShift_zero]
       | succ n =>
         rw [fejerNormSqShift_succ]
-        positivity
-    positivity
+        exact sq_nonneg _
+    exact
+      mul_nonneg hlogP.le
+        (add_nonneg (mul_nonneg (sub_nonneg.mpr hθ1) hshift_nonneg) (mul_nonneg hθ0 (sq_nonneg _)))
   have hbound := re_sum_ge_neg_half_head_of_fejer_general (a := a) hz hconv htail
   simpa only [zero_mul, sub_zero, Complex.ofReal_sub, Complex.ofReal_mul, Complex.ofReal_natCast,
     Complex.re_sum, Complex.mul_re, Complex.sub_re, Complex.ofReal_re, Complex.natCast_re,
@@ -351,7 +353,7 @@ under the stated range hypothesis on `c`. Thus the real part of the weighted sum
 `-(1-c)/2`, without a character assumption.
 -/
 theorem re_sum_reciprocalWeight_ge_neg_half {r c : ℝ} {K : ℕ} {z : ℂ} (hz : ‖z‖ = 1) (hr0 : 0 < r)
-    (hr1 : r < 1) (hc1 : r ^ (K + 1) ≤ c) (hc2 : c ≤ r ^ K) :
+    (_hr1 : r < 1) (hc1 : r ^ (K + 1) ≤ c) (hc2 : c ≤ r ^ K) :
     -((1 - c) / 2) ≤ (Finset.sum (Finset.Icc 1 K) fun k => ((r ^ k - c : ℝ) : ℂ) * z ^ k).re := by
   set a : ℕ → ℝ := fun k => r ^ k - c with ha
   have hsecdiff : ∀ j, a j - 2 * a (j + 1) + a (j + 2) = r ^ j * (1 - r) ^ 2 := by
@@ -380,19 +382,19 @@ theorem re_sum_reciprocalWeight_ge_neg_half {r c : ℝ} {K : ℕ} {z : ℂ} (hz 
     apply Finset.sum_nonneg
     intro j _
     rw [hsecdiff]
-    positivity
+    exact mul_nonneg (mul_nonneg (pow_nonneg hr0.le j) (sq_nonneg (1 - r))) (sq_nonneg _)
   have hshift_nonneg : 0 ≤ fejerNormSqShift z K := by
     cases K with
     | zero => rw [fejerNormSqShift_zero]
     | succ n =>
       rw [fejerNormSqShift_succ]
-      positivity
+      exact sq_nonneg _
   have htail_nonneg :
     0 ≤
       (r ^ K - c) * ‖fejerPartialPowerSum z K‖ ^ 2 + (c - r ^ (K + 1)) * fejerNormSqShift z K := by
-    have h1 : 0 ≤ r ^ K - c := by linarith
-    have h2 : 0 ≤ c - r ^ (K + 1) := by linarith
-    positivity
+    have h1 : 0 ≤ r ^ K - c := sub_nonneg.mpr hc2
+    have h2 : 0 ≤ c - r ^ (K + 1) := sub_nonneg.mpr hc1
+    exact add_nonneg (mul_nonneg h1 (sq_nonneg _)) (mul_nonneg h2 hshift_nonneg)
   have hRHS_nonneg :
     0 ≤
       (Finset.sum (Finset.range (K + 1)) fun j =>
@@ -401,14 +403,14 @@ theorem re_sum_reciprocalWeight_ge_neg_half {r c : ℝ} {K : ℕ} {z : ℂ} (hz 
         a (K + 2) * ‖fejerPartialPowerSum z K‖ ^ 2 := by
     rw [hrange_split]
     have := hcombine
-    nlinarith [hinterior_nonneg, htail_nonneg, this]
+    nlinarith only [hinterior_nonneg, htail_nonneg, this]
   have ha0 : a 0 = 1 - c := by simp only [ha, pow_zero]
   rw [ha0] at hid
   have : 0 ≤ (1 - c) + 2 * (Finset.sum (Finset.Icc 1 K) fun k => (a k : ℂ) * z ^ k).re := by
     rw [hid]
     exact hRHS_nonneg
   have hgoal : -((1 - c) / 2) ≤ (Finset.sum (Finset.Icc 1 K) fun k => (a k : ℂ) * z ^ k).re := by
-    linarith
+    linarith only [this]
   simpa only [Complex.ofReal_sub, Complex.ofReal_pow, Complex.re_sum, Complex.mul_re,
     Complex.sub_re, Complex.ofReal_re, Complex.sub_im, Complex.ofReal_im, sub_zero,
     Finset.sum_sub_distrib, neg_le_sub_iff_le_add, ge_iff_le, ha] using hgoal

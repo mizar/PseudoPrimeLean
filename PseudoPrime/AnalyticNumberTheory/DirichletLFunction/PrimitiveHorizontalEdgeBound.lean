@@ -48,7 +48,7 @@ theorem norm_dirichletReciprocalContourKernel_horizontal_le {N : ℕ} [NeZero N]
     simp only [hs_def, Complex.sub_im, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
       Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add,
       Complex.one_im, sub_zero]
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := lt_of_lt_of_le zero_lt_one hx
   have hxs : ‖(x : ℂ) ^ (s - 1)‖ = x ^ (σ - 1) := by
     rw [Complex.norm_cpow_eq_rpow_re_of_pos hxpos, Complex.sub_re, hsre, Complex.one_re]
   have hxσpos : (0 : ℝ) < x ^ (σ - 1) := Real.rpow_pos_of_pos hxpos (σ - 1)
@@ -56,8 +56,10 @@ theorem norm_dirichletReciprocalContourKernel_horizontal_le {N : ℕ} [NeZero N]
     have h1 : x ^ (σ - 1) ≤ x ^ (1 : ℝ) :=
       Real.rpow_le_rpow_of_exponent_le hx
         (by
-          have := abs_le.mp hσ
-          linarith)
+          have this := abs_le.mp hσ
+          calc
+            σ - 1 ≤ 2 - 1 := sub_le_sub_right this.2 1
+            _ = 1 := by norm_num only)
     rwa [Real.rpow_one] at h1
   have htabs_pos : (0 : ℝ) < |T| := abs_pos.mpr hT
   have hsnorm_ge : |T| ≤ ‖s‖ := by
@@ -140,8 +142,8 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_bound {N : ℕ} [Ne
     have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv hquad k
     have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
     rw [hT_def]
-    linarith
-  have hTk_ne : T k ≠ 0 := by linarith
+    linarith only [h, hk0]
+  have hTk_ne : T k ≠ 0 := ne_of_gt (lt_of_lt_of_le zero_lt_one hTk_ge1)
   refine ⟨norm_dirichletReciprocalContourKernel_horizontal_le hx hσ hTk_ne (hη k σ hσ).1, ?_⟩
   have hform : (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I := by
     push_cast
@@ -188,8 +190,8 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_bound_of_grh {N : �
     have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
     have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
     rw [hT_def]
-    linarith
-  have hTk_ne : T k ≠ 0 := by linarith
+    linarith only [h, hk0]
+  have hTk_ne : T k ≠ 0 := ne_of_gt (lt_of_lt_of_le zero_lt_one hTk_ge1)
   refine ⟨norm_dirichletReciprocalContourKernel_horizontal_le hx hσ hTk_ne (hη k σ hσ).1, ?_⟩
   have hform : (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I := by
     push_cast

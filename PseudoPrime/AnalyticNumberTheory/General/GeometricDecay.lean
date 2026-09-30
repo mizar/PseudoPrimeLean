@@ -29,21 +29,27 @@ theorem tendsto_add_one_pow_mul_pow_of_lt_one (k : ℕ) {r : ℝ} (hr : 0 ≤ r)
     Filter.Tendsto (fun m : ℕ => (2 : ℝ) ^ k * ((m : ℝ) ^ k * r ^ m + r ^ m)) Filter.atTop
       (nhds 0) := by
     simpa only [add_zero, mul_zero] using (h1.add h2).const_mul ((2 : ℝ) ^ k)
-  apply squeeze_zero (fun m => by positivity) (fun m => ?_) h3
+  apply
+    squeeze_zero
+      (fun m =>
+        mul_nonneg (pow_nonneg (add_nonneg (Nat.cast_nonneg m) (by norm_num only)) k)
+          (pow_nonneg hr m))
+      (fun m => ?_) h3
   rcases Nat.eq_zero_or_pos m with hm0 | hmpos
   · subst hm0
     simp only [Nat.cast_zero, zero_add, one_pow, pow_zero, mul_one]
     have h0k : (0 : ℝ) ≤ (0 : ℝ) ^ k := pow_nonneg le_rfl k
     have h2k : (1 : ℝ) ≤ (2 : ℝ) ^ k := one_le_pow₀ (by norm_num only)
-    nlinarith
+    nlinarith only [h0k, h2k]
   · have hm1 : (1 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hmpos
-    have hle : (m : ℝ) + 1 ≤ 2 * (m : ℝ) := by linarith
-    have hpow_le : ((m : ℝ) + 1) ^ k ≤ (2 * (m : ℝ)) ^ k := pow_le_pow_left₀ (by positivity) hle k
+    have hle : (m : ℝ) + 1 ≤ 2 * (m : ℝ) := by linarith only [hm1]
+    have hpow_le : ((m : ℝ) + 1) ^ k ≤ (2 * (m : ℝ)) ^ k :=
+      pow_le_pow_left₀ (add_nonneg (Nat.cast_nonneg m) (by norm_num only)) hle k
     rw [mul_pow] at hpow_le
-    have hrm_nonneg : (0 : ℝ) ≤ r ^ m := by positivity
+    have hrm_nonneg : (0 : ℝ) ≤ r ^ m := pow_nonneg hr m
     have hprod_le : ((m : ℝ) + 1) ^ k * r ^ m ≤ 2 ^ k * (m : ℝ) ^ k * r ^ m :=
       mul_le_mul_of_nonneg_right hpow_le hrm_nonneg
-    nlinarith [hprod_le, mul_nonneg (pow_nonneg (by norm_num only : (0 : ℝ) ≤ 2) k) hrm_nonneg]
+    nlinarith only [hprod_le, mul_nonneg (pow_nonneg (by norm_num only : (0 : ℝ) ≤ 2) k) hrm_nonneg]
 
 /-- For `0 ≤ r < 1`, `(m + 1)^2 * r^m` tends to zero. This degree-two specialization
 of `tendsto_add_one_pow_mul_pow_of_lt_one` is used for quadratic growth bounds. -/

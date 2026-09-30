@@ -98,7 +98,7 @@ theorem exists_nat_one_modEq_and_jacobiSym_eq_neg_one {d c : ℕ} (hdodd : Odd d
     have hpow : Squarefree (x ^ 2) := by simpa only [pow_two, ← hx] using hrsq
     have hiff := Nat.squarefree_pow_iff hxne (by decide : 2 ≠ 0)
     have hbad : (2 : ℕ) = 1 := (hiff.mp hpow).2
-    omega
+    norm_num only at hbad
   obtain ⟨b, hb⟩ := exists_nat_neg_one_numerator hrodd hrsns
   let k := Nat.chineseRemainder hcop.symm 1 b
   refine ⟨k, k.prop.1, ?_⟩
@@ -162,7 +162,7 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_coprime {d c s : ℕ} 
     norm_num only at hj
   obtain ⟨p, hpgt, hp, hpk⟩ :=
     Nat.forall_exists_prime_gt_and_modEq (max s 2) (Odd.pos hdodd).ne' hcopd
-  have hpodd : Odd p := hp.odd_of_ne_two (by omega)
+  have hpodd : Odd p := hp.odd_of_ne_two (Nat.ne_of_gt (lt_of_le_of_lt (le_max_right s 2) hpgt))
   have hpc : p ≡ 1 [MOD c] := by exact (Nat.ModEq.of_dvd hc hpk).trans hk
   have hpjac : jacobiSym (p : ℤ) d = -1 := by
     have hmod : (p : ℤ) % d = (k : ℤ) % d := by exact_mod_cast hpk
@@ -172,7 +172,7 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_coprime {d c s : ℕ} 
   apply hp.coprime_iff_not_dvd.mpr
   intro hps
   have hple : p ≤ s := Nat.le_of_dvd hs hps
-  omega
+  exact Nat.not_lt_of_ge (Nat.le_trans hple (le_max_left s 2)) hpgt
 
 /-- When the odd part of a proper divisor of `4*d` is proper, a prime-AP lift gives
 an odd representative that is `1` modulo the full divisor and has Jacobi value `-1`. -/
@@ -212,7 +212,8 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_of_dvd_four_mul_coprim
   obtain ⟨p, hpgt, hp, hpr⟩ :=
     Nat.forall_exists_prime_gt_and_modEq (max (max c s) 2)
       (Nat.mul_ne_zero (by norm_num only) (Odd.pos hdodd).ne') hcopr4d
-  have hpodd : Odd p := hp.odd_of_ne_two (by omega)
+  have hpodd : Odd p :=
+    hp.odd_of_ne_two (Nat.ne_of_gt (lt_of_le_of_lt (le_max_right (max c s) 2) hpgt))
   have hp4 : p ≡ 1 [MOD 4] := (Nat.ModEq.of_dvd (dvd_mul_right 4 d) hpr).trans hr4
   have hpd : p ≡ k [MOD d] := (Nat.ModEq.of_dvd (dvd_mul_left d 4) hpr).trans hrd
   have hpe : p ≡ 1 [MOD e] := (Nat.ModEq.of_dvd hed hpd).trans hk
@@ -229,7 +230,9 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_of_dvd_four_mul_coprim
     apply hp.coprime_iff_not_dvd.mpr
     intro hps
     have hple : p ≤ s := Nat.le_of_dvd hs hps
-    omega
+    exact
+      Nat.not_lt_of_ge
+        (Nat.le_trans hple (Nat.le_trans (le_max_right c s) (le_max_left (max c s) 2))) hpgt
   exact ⟨p, hpodd, hp4, hpc, hpj, hps⟩
 
 /-- The odd representative for a proper divisor of `4*d`, without an extra coprimality target. -/
@@ -252,7 +255,8 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul {d c s 
     have hr4 : r ≡ 3 [MOD 4] := by
       change r % 4 = 3 % 4
       dsimp only [r, Nat.reduceMod]
-      omega
+      clear * - hd4
+      rw [Nat.add_mod, Nat.mul_mod, hd4]
     have hrd : r ≡ 1 [MOD d] := by
       have hz : 2 * d ≡ 0 [MOD d] := Dvd.dvd.modEq_zero_nat ⟨2, by ring⟩
       dsimp only [r]
@@ -266,7 +270,8 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul {d c s 
     obtain ⟨p, hpgt, hp, hpr⟩ :=
       Nat.forall_exists_prime_gt_and_modEq (max (max d s) 2)
         (Nat.mul_ne_zero (by norm_num only) (Odd.pos hdodd).ne') (hcopr4.mul_right hcoprd)
-    have hpodd : Odd p := hp.odd_of_ne_two (by omega)
+    have hpodd : Odd p :=
+      hp.odd_of_ne_two (Nat.ne_of_gt (lt_of_le_of_lt (le_max_right (max d s) 2) hpgt))
     have hpd : p ≡ 1 [MOD d] := (Nat.ModEq.of_dvd (⟨4, by ring⟩ : d ∣ 4 * d) hpr).trans hrd
     have hpj : jacobiSym (p : ℤ) d = 1 := by
       have hm : (p : ℤ) % d = (1 : ℤ) % d := by exact_mod_cast hpd
@@ -279,14 +284,17 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul {d c s 
         (by
           intro hps
           have hple : p ≤ s := Nat.le_of_dvd hs hps
-          omega)
+          exact
+            Nat.not_lt_of_ge
+              (Nat.le_trans hple (Nat.le_trans (le_max_right d s) (le_max_left (max d s) 2))) hpgt)
     exact ⟨p, hpodd, hpd, hpj, hp4, hps⟩
   · subst c
     let r := 1 + 2 * d
     have hr4 : r ≡ 3 [MOD 4] := by
       change r % 4 = 3 % 4
       dsimp only [r, Nat.reduceMod]
-      omega
+      clear * - hd4
+      rw [Nat.add_mod, Nat.mul_mod, hd4]
     have hr2d : r ≡ 1 [MOD 2 * d] := by
       have hz : 2 * d ≡ 0 [MOD 2 * d] := Nat.modulus_modEq_zero
       dsimp only [r]
@@ -302,7 +310,8 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul {d c s 
     obtain ⟨p, hpgt, hp, hpr⟩ :=
       Nat.forall_exists_prime_gt_and_modEq (max (max (2 * d) s) 2)
         (Nat.mul_ne_zero (by norm_num only) (Odd.pos hdodd).ne') (hcopr4.mul_right hcoprd)
-    have hpodd : Odd p := hp.odd_of_ne_two (by omega)
+    have hpodd : Odd p :=
+      hp.odd_of_ne_two (Nat.ne_of_gt (lt_of_le_of_lt (le_max_right (max (2 * d) s) 2) hpgt))
     have hpc : p ≡ 1 [MOD 2 * d] := (Nat.ModEq.of_dvd (⟨2, by ring⟩ : 2 * d ∣ 4 * d) hpr).trans hr2d
     have hpd : p ≡ 1 [MOD d] := Nat.ModEq.of_dvd (⟨2, by ring⟩ : d ∣ 2 * d) hpc
     have hpj : jacobiSym (p : ℤ) d = 1 := by
@@ -316,7 +325,11 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul {d c s 
         (by
           intro hps
           have hple : p ≤ s := Nat.le_of_dvd hs hps
-          omega)
+          exact
+            Nat.not_lt_of_ge
+              (Nat.le_trans hple
+                (Nat.le_trans (le_max_right (2 * d) s) (le_max_left (max (2 * d) s) 2)))
+              hpgt)
     exact ⟨p, hpodd, hpc, hpj, hp4, hps⟩
 
 /-- A proper divisor of `4*d` is either missing an odd factor, or is `d` or `2*d`. -/
@@ -331,7 +344,7 @@ theorem eq_squarefreePart_or_two_mul_of_dvd_four_mul_of_dvd {d c : ℕ} (hdodd :
       d * (k * l) = (d * k) * l := by ring
       _ = c * l := by rw [← hkc]
       _ = 4 * d := hl.symm
-      _ = d * 4 := by omega
+      _ = d * 4 := (Nat.mul_comm d 4).symm
   have hkdvd : k ∣ 4 := ⟨l, hkl.symm⟩
   have hk_le : k ≤ 4 := Nat.le_of_dvd (by norm_num only) hkdvd
   by_cases hk4 : k = 4
@@ -339,8 +352,22 @@ theorem eq_squarefreePart_or_two_mul_of_dvd_four_mul_of_dvd {d c : ℕ} (hdodd :
     exfalso
     apply hproper
     refine ⟨1, ?_⟩
-    omega
+    calc
+      c = d * 4 := hkc
+      _ = 4 * d := Nat.mul_comm d 4
+      _ = 4 * d * 1 := (Nat.mul_one (4 * d)).symm
   · have hklt : k < 4 := Nat.lt_of_le_of_ne hk_le hk4
-    interval_cases k <;> omega
+    clear * - hkc hkl hk_le hk4 hklt
+    interval_cases k
+    · have hzero : (0 : ℕ) = 4 := by simpa only [Nat.zero_mul] using hkl
+      norm_num only at hzero
+    · left
+      simpa only [Nat.mul_one] using hkc
+    · right
+      rw [hkc]
+      exact Nat.mul_comm d 2
+    · have hdiv : 3 ∣ 4 := ⟨l, hkl.symm⟩
+      have hmod : 4 % 3 = 0 := (Nat.dvd_iff_mod_eq_zero).mp hdiv
+      norm_num only at hmod
 
 end PseudoPrime.NumberTheory

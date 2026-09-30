@@ -41,14 +41,15 @@ theorem re_deriv_llsPrimitiveLogMellinZeroRegularization_zero_of_odd_le {N : ℕ
     (deriv (dirichletLogMellinZeroRegularization x χ) 0).re ≤
       (2 + Real.log x) * |primitiveBRe χ| + (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := (by norm_num only : (0 : ℝ) < 64).trans_le hx
   rw [re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw hN2 hGRH hprimitive hne hinv
       hquad hodd hxpos]
   have hD := neg_re_deriv_logDeriv_completedLFunction_zero_le hGRH hprimitive hne hinv hquad hN2
   have hE := llsPrimitiveLogOddMainError_le_neg_eleven_fourths hx
   unfold Analysis.primitiveLogOddMainError at hE
-  have hlogx_nn : (0 : ℝ) ≤ Real.log x := Real.log_nonneg (by linarith)
-  nlinarith [hD, hE, mul_le_mul_of_nonneg_right hD hlogx_nn]
+  have hlogx_nn : (0 : ℝ) ≤ Real.log x :=
+    Real.log_nonneg ((by norm_num only : (1 : ℝ) ≤ 64).trans hx)
+  nlinarith only [hD, hE, mul_le_mul_of_nonneg_right hD hlogx_nn]
 
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 /--
@@ -72,13 +73,14 @@ theorem re_iteratedDeriv_two_llsPrimitiveLogEvenZeroRegularization_zero_div_two_
           2).re ≤
       (2 + Real.log x) * |primitiveBRe χ| + (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
-  have hxpos : (0 : ℝ) < x := by linarith
+  have hxpos : (0 : ℝ) < x := (by norm_num only : (0 : ℝ) < 64).trans_le hx
   rw [re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_raw hN2 hGRH hprimitive
       hne hinv hquad hxpos]
   have hD := neg_re_deriv_logDeriv_completedLFunction_zero_le hGRH hprimitive hne hinv hquad hN2
   have hE := llsPrimitiveLogEvenMainError_le_neg_eleven_fourths hx
   unfold Analysis.primitiveLogEvenMainError at hE
-  have hlogx_nn : (0 : ℝ) ≤ Real.log x := Real.log_nonneg (by linarith)
-  nlinarith [hD, hE, mul_le_mul_of_nonneg_right hD hlogx_nn]
+  have hlogx_nn : (0 : ℝ) ≤ Real.log x :=
+    Real.log_nonneg ((by norm_num only : (1 : ℝ) ≤ 64).trans hx)
+  nlinarith only [hD, hE, mul_le_mul_of_nonneg_right hD hlogx_nn]
 
 end PseudoPrime.LLS
