@@ -44,3 +44,23 @@ MSYS2 の初期化が完了してシェルのプロンプトが表示された�
 各コマンドは `pacman -Syu --needed --noconfirm` により MSYS2 全体を更新し、対応する toolchain と Boost をインストールする。`--noconfirm` により確認には既定の回答を使用し、パッケージグループは全選択となるため、手動の確認応答は不要である。MSYS2 の基幹更新により終了した場合は、同じコマンドを再実行して更新とインストールを完了する。
 
 パッケージ名は MSYS2 の [MINGW64 toolchain](https://packages.msys2.org/groups/mingw-w64-x86_64-toolchain)・[CLANG64 toolchain](https://packages.msys2.org/groups/mingw-w64-clang-x86_64-toolchain) に対応する。更新手順は [Updating MSYS2](https://www.msys2.org/docs/updating/) を参照。
+
+## C++ のビルドコマンド例
+
+toolchain の導入後、`lakefile.toml` のある `PseudoPrime` ディレクトリを作業ディレクトリとして、PowerShell で実行する。出力先の `.work` を作成し、C++17・最適化・警告オプションを指定して static ビルドする。使用するコンパイラに応じて、次のいずれかを実行する。
+
+### g++（MINGW64）
+
+```powershell
+New-Item -ItemType Directory -Force .work | Out-Null
+.\examples\bpsw\g++-static.cmd -std=c++17 -O2 -Wall -Wextra -pedantic examples/bpsw/baillie_psw_strengthened.cpp -o .work/bpsw-gcc-static.exe
+```
+
+### clang++（CLANG64）
+
+```powershell
+New-Item -ItemType Directory -Force .work | Out-Null
+.\examples\bpsw\clang++-static.cmd -std=c++17 -O2 -Wall -Wextra -pedantic examples/bpsw/baillie_psw_strengthened.cpp -o .work/bpsw-clang-static.exe
+```
+
+ビルド後の実行方法と入出力は [BPSW 参考実装の解説](../../doc/BPSWImplementations.md) を参照。
