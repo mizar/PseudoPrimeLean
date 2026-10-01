@@ -38,18 +38,18 @@ $$
 
 | 公開定理 | 保証 |
 |---|---|
-| `exists_prime_ne_one_witness_of_grh` | $p \le \max\left\lbrace 5, (\ln n)^2 \right\rbrace$ かつ $\bigl(\frac{n}{p}\bigr) \ne 1$ |
+| `exists_prime_ne_one_witness_of_grh` | $p \le \max\left\lbrace 5, (\ln\mathrel{} n)^2 \right\rbrace$ かつ $\bigl(\frac{n}{p}\bigr) \ne 1$ |
 | `exists_prime_neg_one_witness_of_grh` | $p \le R(n)$ かつ $\bigl(\frac{n}{p}\bigr) = -1$ |
 
 有限最大についても次を証明している。
 
 | 公開定理 | 前提と結論 |
 |---|---|
-| `QNeOne_le_log_sq_of_grh` | GRH、 $B \ge 10$ なら $\mathrm{QNeOne}(B) \le (\ln B)^2$ |
+| `QNeOne_le_log_sq_of_grh` | GRH、 $B \ge 10$ なら $\mathrm{QNeOne}(B) \le (\ln\mathrel{} B)^2$ |
 | `QNeOne_le_greatestOddPrimeLE_of_grh` | 同じ前提で、 $\mathrm{QNeOne}(B)$ はその半径以下の最大奇素数以下 |
 | `elementary_formula_explicit` | GRH、 $B \ge 3$ なら $\mathrm{QNeOne}(B) \le \mathrm{QNegOne}(B)$ かつ $\mathrm{QNegOne}(B) \le R(B)$（実数に変換して比較） |
 
-`primeNeOneWitness_cast_le_log_sq_of_11_le` は、奇数かつ非平方数 $n \ge 11$ の最小証人について直接 $(\ln n)^2$ 以下を示す。公開の存在定理では小さい入力を定数 $5$ と対数二乗上界の最大値でまとめる。
+`primeNeOneWitness_cast_le_log_sq_of_11_le` は、奇数かつ非平方数 $n \ge 11$ の最小証人について直接 $(\ln\mathrel{} n)^2$ 以下を示す。公開の存在定理では小さい入力を定数 $5$ と対数二乗上界の最大値でまとめる。
 
 ## LLS の役割
 

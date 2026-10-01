@@ -11,9 +11,9 @@
 | [LogTaylorBounds.lean](../PseudoPrime/Analysis/LogTaylorBounds.lean) | Taylor 展開と剰余評価から対数の上下界を得る。有限数値証明の基盤 |
 | [RealLog.lean](../PseudoPrime/Analysis/RealLog.lean) | $\ln(y^2)$ の変形と、正の実数に対する対数の比較 |
 | [EulerMascheroniBounds.lean](../PseudoPrime/Analysis/EulerMascheroniBounds.lean)・[ElementaryBounds.lean](../PseudoPrime/Analysis/ElementaryBounds.lean) | Euler–Mascheroni 定数の有理数評価、平方根・対数の初等評価 |
-| [NumericalLogBounds.lean](../PseudoPrime/Analysis/NumericalLogBounds.lean) | $\ln 12$ 等の具体的な有理数評価、 $q \ge 3000$ から $\ln q > 8$ を得る定理 |
+| [NumericalLogBounds.lean](../PseudoPrime/Analysis/NumericalLogBounds.lean) | $\ln\mathrel{} 12$ 等の具体的な有理数評価、 $q \ge 3000$ から $\ln\mathrel{} q > 8$ を得る定理 |
 | [LogarithmicRatios.lean](../PseudoPrime/Analysis/LogarithmicRatios.lean) | 対数比の微分と単調性 |
-| [LogarithmicConstants.lean](../PseudoPrime/Analysis/LogarithmicConstants.lean) | $\ln\pi$、 $\ln 4$、 $\ln 48$ と分母の正値性の評価 |
+| [LogarithmicConstants.lean](../PseudoPrime/Analysis/LogarithmicConstants.lean) | $\ln\mathrel{}\pi$、 $\ln\mathrel{} 4$、 $\ln\mathrel{} 48$ と分母の正値性の評価 |
 | [LogarithmicMainTerms.lean](../PseudoPrime/Analysis/LogarithmicMainTerms.lean) | 偶・奇指標に対応する対数/逆数重みの誤差項の実数式 |
 | [QNeOneElementaryBounds.lean](../PseudoPrime/Analysis/QNeOneElementaryBounds.lean) | `QNeOne` の比較で使う実変数の多項式・対数不等式 |
 | [IntegralLimits.lean](../PseudoPrime/Analysis/IntegralLimits.lean) | 積分経路の極限に使う実変数の補助極限 |
@@ -28,12 +28,12 @@ $$
 
 対応する定理は `twenty_seven_fiftieths_lt_eulerMascheroniConstant` と `eulerMascheroniConstant_lt_twentyNine_fiftieths`。
 
-`logLinearRatio` が表す $(2\ln y + 1)/y$ と、 `logSquareRatio` が表す $(\ln y)^2/y$ は、ともに $y \ge 8$ で狭義単調減少する。 `strictAntiOn_logLinearRatio` と `strictAntiOn_logSquareRatio` により、無限区間の比較を端点での評価へ帰着できる。
+`logLinearRatio` が表す $(2\ln\mathrel{} y + 1)/y$ と、 `logSquareRatio` が表す $(\ln\mathrel{} y)^2/y$ は、ともに $y \ge 8$ で狭義単調減少する。 `strictAntiOn_logLinearRatio` と `strictAntiOn_logSquareRatio` により、無限区間の比較を端点での評価へ帰着できる。
 
 偶指標の対数誤差項は
 
 $$
-E_{\mathrm{even}}(x) = \frac{\pi^2}{24} - \frac{\gamma}{2}\ln x - \frac{1}{2}(\ln x)^2
+E_{\mathrm{even}}(x) = \frac{\pi^2}{24} - \frac{\gamma}{2}\ln\mathrel{} x - \frac{1}{2}(\ln\mathrel{} x)^2
 $$
 
 として `primitiveLogEvenMainError` に定義されている。この層で定義するのは実数式であり、この誤差項を用いた L 関数の重み付き和の上界は [AnalyticNumberTheory](AnalyticNumberTheory.md)・[LLS](LLS.md) 側で証明する。式を粗い定数へ丸める一般評価と、式を保持する偶指標の精密評価の双方に再利用される。

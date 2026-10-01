@@ -9,7 +9,7 @@
 $$
 n \text{ が素数}
 \iff
-\text{すべての素数底 }p \le (\ln n)^2\text{ が強 Miller–Rabin 条件を満たす}
+\text{すべての素数底 }p \le (\ln\mathrel{} n)^2\text{ が強 Miller–Rabin 条件を満たす}
 $$
 
 具体的には、一意な分解を
@@ -34,7 +34,7 @@ $$
 n \text{ が合成数}
 \iff
 \exists p \text{ 素数},\quad
-p \le (\ln n)^2
+p \le (\ln\mathrel{} n)^2
 \land p^d \not\equiv 1 \pmod n
 \land \forall j \in \mathbb{N},\quad
 j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n
@@ -95,9 +95,9 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 
 ### 3. 大きい範囲に S2 を適用
 
-$n \ge 3000$ に対し、 $p < (\ln n)^2$ を満たす素因数があれば、第 1 節の性質によりその $p$ を証人にする。そのような素因数がなければ、[LLS の S2](LLS.md) を第 2 節で構成した真部分群へ適用する。 S2 は $p \le (\ln n)^2$ で剰余が $H$ の像に入らない素数を与えるため、その底は合格できない。
+$n \ge 3000$ に対し、 $p < (\ln\mathrel{} n)^2$ を満たす素因数があれば、第 1 節の性質によりその $p$ を証人にする。そのような素因数がなければ、[LLS の S2](LLS.md) を第 2 節で構成した真部分群へ適用する。 S2 は $p \le (\ln\mathrel{} n)^2$ で剰余が $H$ の像に入らない素数を与えるため、その底は合格できない。
 
-S2 の適用には $p < (\ln n)^2$ を満たす素数 $p$ が $n$ を割らないことを用い、結論の証人には $p \le (\ln n)^2$ を要求する。等号端点で証人が単元になるという追加仮定は用いない。これが `exists_prime_millerRabin_witness_le_log_sq_of_s2` の証明である。最終段階で `PseudoPrime.LLS.llsTheorem11S2_of_grh` により GRH から S2 を供給する。
+S2 の適用には $p < (\ln\mathrel{} n)^2$ を満たす素数 $p$ が $n$ を割らないことを用い、結論の証人には $p \le (\ln\mathrel{} n)^2$ を要求する。等号端点で証人が単元になるという追加仮定は用いない。これが `exists_prime_millerRabin_witness_le_log_sq_of_s2` の証明である。最終段階で `PseudoPrime.LLS.llsTheorem11S2_of_grh` により GRH から S2 を供給する。
 
 ### 4. 小さい範囲の有限証明
 
@@ -105,7 +105,7 @@ S2 の適用には $p < (\ln n)^2$ を満たす素数 $p$ が $n$ を割らな�
 
 証明は奇数 $n = 2k + 1$、 $0 \le k < 1500$ を 256 要素の 5 ブロックと 220 要素の最終ブロックで被覆する。素数性と、明示分解・高速冪の不一致を Lean カーネルで検証し、checker の健全性を通じて既存の Strong Miller–Rabin 判定へ移す。外部の整数探索結果を証明根拠には使わない。
 
-奇合成数 $n > 1$ なら $n \ge 9$ なので $3 \le (\ln n)^2$ が成立する。 [SmallLogBound.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallLogBound.lean) は対数評価を有限分類へ接続し、小範囲の素数証人定理を与える。有限分類だけを使う場合は `PseudoPrime.PrimeTest.MillerRabin.Computation.Small`、対数上界も使う場合は `PseudoPrime.PrimeTestBounds.MillerRabin.SmallLogBound` を import する。
+奇合成数 $n > 1$ なら $n \ge 9$ なので $3 \le (\ln\mathrel{} n)^2$ が成立する。 [SmallLogBound.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallLogBound.lean) は対数評価を有限分類へ接続し、小範囲の素数証人定理を与える。有限分類だけを使う場合は `PseudoPrime.PrimeTest.MillerRabin.Computation.Small`、対数上界も使う場合は `PseudoPrime.PrimeTestBounds.MillerRabin.SmallLogBound` を import する。
 
 ## 証明依存
 

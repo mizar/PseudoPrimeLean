@@ -40,9 +40,9 @@ $$
 | 公開定理 | 入力範囲と結論 |
 |---|---|
 | `classicalSelfridgeD_elementary_bound_explicit` | $n \ge 3$ で $\lvert g_{\ne 1}(n) \rvert \le \lvert g_{-1}(n) \rvert \le R(n)$ |
-| `classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le` | $n \ge 13$ で $\lvert g_{\ne 1}(n) \rvert \le (\ln n)^2$ |
-| `classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq` | 奇数かつ非平方数の入力で $\lvert g_{\ne 1}(n) \rvert \le \max\left\lbrace 13, (\ln n)^2 \right\rbrace$ |
-| `classicalNeOneMaximum_cast_le_log_sq_of_751_le` | $B \ge 751$ で因子検出停止値の最大が $(\ln B)^2$ 以下 |
+| `classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le` | $n \ge 13$ で $\lvert g_{\ne 1}(n) \rvert \le (\ln\mathrel{} n)^2$ |
+| `classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq` | 奇数かつ非平方数の入力で $\lvert g_{\ne 1}(n) \rvert \le \max\left\lbrace 13, (\ln\mathrel{} n)^2 \right\rbrace$ |
+| `classicalNeOneMaximum_cast_le_log_sq_of_751_le` | $B \ge 751$ で因子検出停止値の最大が $(\ln\mathrel{} B)^2$ 以下 |
 
 名前に `log_sq` を含む既存定理でも、純粋 $-1$ 側には右辺が $R(n)$ のものがある。利用時は名前だけでなく定理の型を確認する。
 

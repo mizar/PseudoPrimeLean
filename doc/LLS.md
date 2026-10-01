@@ -9,13 +9,13 @@ Lamzouri–Li–Soundararajan の Theorem 1.1 に対応する S1・S2 を扱う�
 [Statement.lean](../PseudoPrime/LLS/Statement.lean) の定義に従い、
 
 $$
-A(q) = \max\Bigl(0, 2\ln(\ln q) - \frac{8}{5} - \sum_{p \mid q}\frac{\ln p}{p - 1}\Bigr),
+A(q) = \max\Bigl(0, 2\ln(\ln\mathrel{} q) - \frac{8}{5} - \sum_{p \mid q}\frac{\ln\mathrel{} p}{p - 1}\Bigr),
 $$
 
 $$
-B(q) = \max\Bigl(0, 2\ln(\ln q) + 3 +
-\frac{2\omega(q)(\ln(\ln q))^2}{\ln q} - 2A(q)\Bigr),\qquad
-X_1(q) = (\ln q + B(q))^2
+B(q) = \max\Bigl(0, 2\ln(\ln\mathrel{} q) + 3 +
+\frac{2\omega(q)(\ln(\ln\mathrel{} q))^2}{\ln\mathrel{} q} - 2A(q)\Bigr),\qquad
+X_1(q) = (\ln\mathrel{} q + B(q))^2
 $$
 
 とする。素因数和は異なる素因数についての和。 $A(q)$ は `llsAuxiliaryTerm`、 $B(q)$ は `llsCorrectionTerm` に対応する。
@@ -36,14 +36,14 @@ GRH、 $q \ge 3000$ のもとで次が証明されている。
 `llsTheorem11S2_of_grh` は [Theorem11S2.lean](../PseudoPrime/LLS/Theorem11S2.lean) にある。公開仕様 `llsTheorem11S2` は、 $q \ge 3000$ と
 
 $$
-\text{素数 }r < (\ln q)^2\Longrightarrow r \nmid q
+\text{素数 }r < (\ln\mathrel{} q)^2\Longrightarrow r \nmid q
 $$
 
-を前提とし、真部分群 $H$ に対して、 $p \le (\ln q)^2$ でその剰余が $H$ の像に入らない素数を与える。小素因数を除外する前提の不等号は狭義であり、証人の上界の不等号は広義である。結論には $p \nmid q$ が含まれず、等号端点の非単元も許すため、S1 の単元としての結論とは区別する。
+を前提とし、真部分群 $H$ に対して、 $p \le (\ln\mathrel{} q)^2$ でその剰余が $H$ の像に入らない素数を与える。小素因数を除外する前提の不等号は狭義であり、証人の上界の不等号は広義である。結論には $p \nmid q$ が含まれず、等号端点の非単元も許すため、S1 の単元としての結論とは区別する。
 
 証明途中の `exists_prime_not_one_le_log_sq` は、非自明指標の値が $1$ でない素数を与える。ここでは値 $0$ も許される。この中間定理自体には小素因数排除の前提がなく、公開 S2 はその結果を用いて元の仕様を満たす。
 
-この S2 は [Miller–Rabin の素数判定同値と素数底証人上界](MillerRabinBoundGrh.md) にも使われる。合格底を含む真部分群を無条件に構成し、小素因数があればその底で不合格、なければ S2 で得た部分群の像の外の素数底で不合格とする。有限区間の証明と合わせることで、GRH の下ですべての奇合成数 $n > 1$ を対象とする $p \le (\ln n)^2$ の上界が得られる。
+この S2 は [Miller–Rabin の素数判定同値と素数底証人上界](MillerRabinBoundGrh.md) にも使われる。合格底を含む真部分群を無条件に構成し、小素因数があればその底で不合格、なければ S2 で得た部分群の像の外の素数底で不合格とする。有限区間の証明と合わせることで、GRH の下ですべての奇合成数 $n > 1$ を対象とする $p \le (\ln\mathrel{} n)^2$ の上界が得られる。
 
 ## 証明を支える構成
 

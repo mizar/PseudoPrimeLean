@@ -57,7 +57,7 @@ Method A は $P = 1,\quad Q = (1 - D)/4$。 `Method A*` は $D = 5$ の場合に
 
 公開定理 `prime_iff_millerRabin_for_all_primes_le_log_sq` は、奇数 $n > 1$ について、GRH の下で「上界内の全素数底が合格」と素数性が同値であることを示す。
 
-GRH の下で、任意の奇合成数 $n > 1$ に対して $p \le (\ln n)^2$ を満たし、標準分解に対する強 Miller–Rabin の不合格条件を満たす素数底 $p$ が存在する。この冪不等式は `not_strongMillerRabinPass_iff` により強 Miller–Rabin 合格条件の否定と同値であり、さらに `strongMillerRabinWithBase_eq_false_iff_not_pass` により `strongMillerRabinWithBase n p = false` と同値である。詳しい主張と利用例は [MillerRabinBoundGrh](MillerRabinBoundGrh.md) を参照する。この上界の入口は `PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS` である。
+GRH の下で、任意の奇合成数 $n > 1$ に対して $p \le (\ln\mathrel{} n)^2$ を満たし、標準分解に対する強 Miller–Rabin の不合格条件を満たす素数底 $p$ が存在する。この冪不等式は `not_strongMillerRabinPass_iff` により強 Miller–Rabin 合格条件の否定と同値であり、さらに `strongMillerRabinWithBase_eq_false_iff_not_pass` により `strongMillerRabinWithBase n p = false` と同値である。詳しい主張と利用例は [MillerRabinBoundGrh](MillerRabinBoundGrh.md) を参照する。この上界の入口は `PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS` である。
 
 無条件の基盤は [MillerRabin/Composite.lean](../PseudoPrime/PrimeTest/MillerRabin/Composite.lean) の真部分群存在定理と、 [MillerRabin/Computation/Small.lean](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) の $1 < n < 3000$ における底 2 または底 3 の不合格定理である。分解 $n - 1 = 2^s d$（ $s, d \in \mathbb{N}$、 $d$ は奇数）と実行用判定の接続は [Decomposition.lean](../PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) にある。
 

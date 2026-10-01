@@ -12,7 +12,7 @@ The analytic development follows the work of Lamzouri, Li, and Soundararajan, [*
 
 The project has two main results:
 
-1. Under GRH, an odd integer $n > 1$ is prime if and only if it passes the strong Miller–Rabin conditions for every prime base $p \le (\ln n)^2$.
+1. Under GRH, an odd integer $n > 1$ is prime if and only if it passes the strong Miller–Rabin conditions for every prime base $p \le (\ln\mathrel{} n)^2$.
 2. Under GRH, every positive odd nonsquare $n$ has odd-prime witnesses of two kinds, each with an explicit upper bound. For one kind, the Legendre symbol $\bigl(\frac{n}{p}\bigr)$ is different from $1$; for the other, it is equal to $-1$.
 
 Here and throughout, $\ln$ denotes the natural logarithm (base $e$), represented by `Real.log` in Lean.
@@ -25,7 +25,7 @@ $$
 \boxed{
 n \text{ is prime}
 \iff
-\text{every prime }p \le (\ln n)^2
+\text{every prime }p \le (\ln\mathrel{} n)^2
 \text{ passes the strong Miller–Rabin conditions for }n
 }
 $$
@@ -41,7 +41,7 @@ Then
 $$
 n \text{ is prime}
 \iff
-\forall p \text{ prime},\quad p \le (\ln n)^2
+\forall p \text{ prime},\quad p \le (\ln\mathrel{} n)^2
 \Longrightarrow \bigl(p^d \equiv 1 \pmod n
 \lor
 \exists j \in \mathbb{N},\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
@@ -53,7 +53,7 @@ $$
 n \text{ is composite}
 \iff
 \exists p \text{ prime},\quad
-p \le (\ln n)^2
+p \le (\ln\mathrel{} n)^2
 \land
 p^d \not\equiv 1 \pmod n
 \land
@@ -97,7 +97,7 @@ Let $n > 0$ be odd and not a perfect square.
 Assuming GRH, there exists an odd prime $p$ such that
 
 $$
-p \le \max\left\lbrace 5, (\ln n)^2 \right\rbrace,\qquad
+p \le \max\left\lbrace 5, (\ln\mathrel{} n)^2 \right\rbrace,\qquad
 \boxed{\Bigl(\frac{n}{p}\Bigr) \ne 1}
 $$
 

@@ -12,7 +12,7 @@
 
 主な結果は次の二つである。
 
-1. GRH の下で、奇数 $n > 1$ が素数であることと、すべての素数底 $p \le (\ln n)^2$ に対する強 Miller–Rabin 条件を満たすことは同値である。
+1. GRH の下で、奇数 $n > 1$ が素数であることと、すべての素数底 $p \le (\ln\mathrel{} n)^2$ に対する強 Miller–Rabin 条件を満たすことは同値である。
 2. GRH の下で、任意の正の奇数かつ非平方数 $n$ に対し、2 種類の奇素数証人 $p$ の存在を示し、それぞれに明示的上界を与える。一つは Legendre 記号 $\bigl(\frac{n}{p}\bigr)$ が $1$ と異なるもの、もう一つは $-1$ となるものである。
 
 以下、 $\ln$ は底が $e$ の自然対数を表す。Lean では `Real.log` に対応する。
@@ -25,7 +25,7 @@ $$
 \boxed{
 n \text{ が素数}
 \iff
-\text{すべての素数 }p \le (\ln n)^2 \text{ が } n \text{ に対する強 Miller–Rabin 条件を満たす}
+\text{すべての素数 }p \le (\ln\mathrel{} n)^2 \text{ が } n \text{ に対する強 Miller–Rabin 条件を満たす}
 }
 $$
 
@@ -40,7 +40,7 @@ $$
 $$
 n \text{ が素数}
 \iff
-\forall p \text{ 素数},\quad p \le (\ln n)^2
+\forall p \text{ 素数},\quad p \le (\ln\mathrel{} n)^2
 \Longrightarrow \bigl(p^d \equiv 1 \pmod n
 \lor
 \exists j \in \mathbb{N},\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
@@ -52,21 +52,21 @@ $$
 n \text{ が合成数}
 \iff
 \exists p \text{ 素数},\quad
-p \le (\ln n)^2
+p \le (\ln\mathrel{} n)^2
 \land
 p^d \not\equiv 1 \pmod n
 \land
 \forall j \in \mathbb{N},\quad j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n.
 $$
 
-つまり、奇数 $n > 1$ の合成数性は、それを棄却する素数底 $p \le (\ln n)^2$ の存在と同値である。
+つまり、奇数 $n > 1$ の合成数性は、それを棄却する素数底 $p \le (\ln\mathrel{} n)^2$ の存在と同値である。
 
 ここで $\mathbb{N} = \lbrace 0, 1, 2, \ldots \rbrace$ とし、Lean の `ℕ` に合わせる。
 
 同値の二つの向きでは、仮定の役割が異なる。
 
 - $\text{Prime} \to (\text{all pass})$ の向きに GRH は不要である。 $n$ が素数なら、指定の上界以下の各素数底が合格する。
-- $(\text{all pass}) \to \text{Prime}$ の向きに GRH を用いる。奇合成数 $n > 1$ には、 $n$ を棄却する素数底 $p \le (\ln n)^2$ が存在する。
+- $(\text{all pass}) \to \text{Prime}$ の向きに GRH を用いる。奇合成数 $n > 1$ には、 $n$ を棄却する素数底 $p \le (\ln\mathrel{} n)^2$ が存在する。
 
 Lean では $n - 1$ の分解を $n$ から標準的に定める。値 $s$、値 $d$、及び分解の等式は、この公開定理における追加仮定ではない。
 
@@ -96,7 +96,7 @@ theorem prime_iff_millerRabin_for_all_primes_le_log_sq
 GRH の下で、次を満たす奇素数 $p$ が存在する。
 
 $$
-p \le \max\left\lbrace 5, (\ln n)^2 \right\rbrace,\qquad
+p \le \max\left\lbrace 5, (\ln\mathrel{} n)^2 \right\rbrace,\qquad
 \boxed{\Bigl(\frac{n}{p}\Bigr) \ne 1}
 $$
 
