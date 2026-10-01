@@ -2,7 +2,7 @@
 
 対象: [`PseudoPrime/PrimeTest`](../PseudoPrime/PrimeTest)。公開入口は [`PseudoPrime/PrimeTest.lean`](../PseudoPrime/PrimeTest.lean)、名前空間は `PseudoPrime.PrimeTest`。
 
-この領域はBoolean値を返す素数性テスト、その数学的仕様、素数を受理する証明、Selfridgeパラメータ探索を実装する。
+この領域は Boolean 値を返す素数性テスト、その数学的仕様、素数を受理する証明、Selfridge パラメータ探索を実装する。
 
 ## 構成
 
@@ -10,82 +10,64 @@
 |---|---|
 | [Basic.lean](../PseudoPrime/PrimeTest/Basic.lean) | `PrimalityTest` と `PrimalityTestSpec` |
 | [Precheck.lean](../PseudoPrime/PrimeTest/Precheck.lean) | 小さい入力・偶数・平方数の事前判定 |
-| [EulerJacobi](../PseudoPrime/PrimeTest/EulerJacobi) | 自然数底・整数底のEuler–Jacobi合同式 |
-| [MillerRabin](../PseudoPrime/PrimeTest/MillerRabin) | Strong Miller–Rabin、底2、素数完全性 |
-| [Lucas](../PseudoPrime/PrimeTest/Lucas) | パラメータ、整数列、ZMod上の列、高速評価、有限体による証明 |
-| [StrongLucas](../PseudoPrime/PrimeTest/StrongLucas) | Strong Lucasの有限選言と実行結果の対応 |
-| [LucasV](../PseudoPrime/PrimeTest/LucasV) | Jacobi `-1` 枝の `V_(n+1) = 2Q` 判定 |
-| [Selfridge](../PseudoPrime/PrimeTest/Selfridge) | 候補、数学的停止値、昇順探索、Method A/A*、探索上界 |
+| [EulerJacobi](../PseudoPrime/PrimeTest/EulerJacobi) | 自然数底・整数底の Euler–Jacobi 合同式 |
+| [MillerRabin](../PseudoPrime/PrimeTest/MillerRabin) | Strong Miller–Rabin、底 2、素数完全性 |
+| [Lucas](../PseudoPrime/PrimeTest/Lucas) | パラメータ、整数列、ZMod 上の列、高速評価、有限体による証明 |
+| [StrongLucas](../PseudoPrime/PrimeTest/StrongLucas) | Strong Lucas の有限選言と実行結果の対応 |
+| [LucasV](../PseudoPrime/PrimeTest/LucasV) | Jacobi $-1$ 枝の $V_{n+1} = 2Q$ 判定 |
+| [Selfridge](../PseudoPrime/PrimeTest/Selfridge) | 候補、数学的停止値、昇順探索、Method A / `A*`、探索上界 |
 | [BPSW](../PseudoPrime/PrimeTest/BPSW) | 通常版・強化版の組合せとトップレベル仕様 |
 | [Regression.lean](../PseudoPrime/PrimeTest/Regression.lean) | 擬素数、大整数、平方数などの実行回帰 |
 
-## 証明付き判定・証明書・解析境界
+## 証明付き判定・証明書・解析的上界
 
-`Result.lean` の `Decision` は素数・非素数の証明と `unknown` を区別する。
-[Execution.lean](../PseudoPrime/PrimeTest/Execution.lean) が方式別の判定を接続し、
-APR-CLの局所数論核が未証明の証明書はpendingのまま保持する。
-底2・3の有限確定は [MillerRabin/Finite.lean](../PseudoPrime/PrimeTest/MillerRabin/Finite.lean)
-にあり、保証範囲は3000未満。一般のMiller–Rabin・Lucas・BPSWの通過だけで素数とは確定しない。
+`Result.lean` の `Decision` は素数・非素数の証明と `unknown` を区別する。 [Execution.lean](../PseudoPrime/PrimeTest/Execution.lean) が方式別の判定を接続し、 APR-CL の局所数論核が未証明の証明書は pending のまま保持する。底 2・3 の有限確定は [MillerRabin/Finite.lean](../PseudoPrime/PrimeTest/MillerRabin/Finite.lean) にあり、保証範囲は 3000 未満。一般の Miller–Rabin・Lucas・BPSW の通過だけで素数とは確定しない。
 
-BLSの入口は責務別に分かれる。
+BLS の入口は責務別に分かれる。
 
 | 入口 | 役割 |
 |---|---|
-| [Certificate.lean](../PseudoPrime/PrimeTest/BLS/Certificate.lean) | square・cube・BLS5の外部証明書検証と健全性 |
-| [CertificateJson.lean](../PseudoPrime/PrimeTest/BLS/CertificateJson.lean) | JSON復号・符号化・検証（生成器に非依存） |
+| [Certificate.lean](../PseudoPrime/PrimeTest/BLS/Certificate.lean) | square・cube・BLS5 の外部証明書検証と健全性 |
+| [CertificateJson.lean](../PseudoPrime/PrimeTest/BLS/CertificateJson.lean) | JSON 復号・符号化・検証（生成器に非依存） |
 | [Search.lean](../PseudoPrime/PrimeTest/BLS/Search.lean) | 予算付き探索、証人生成、素数・合成数の結果 |
 | [CertificateGenerate.lean](../PseudoPrime/PrimeTest/BLS/CertificateGenerate.lean) | 検証済み外部証明書の生成 |
-| [CertificateGenerateJson.lean](../PseudoPrime/PrimeTest/BLS/CertificateGenerateJson.lean) | JSON生成 |
+| [CertificateGenerateJson.lean](../PseudoPrime/PrimeTest/BLS/CertificateGenerateJson.lean) | JSON 生成 |
 
-因数分解器は `NumberTheory.Factorization`、葉の素数確認方針との接続は `FactorizationPolicy` にある。
-`PrimeTest` のimport閉包にはプロジェクト固有の解析・GRH層を含めない。
-解析的上界の総合入口は [PrimeTestBounds.lean](../PseudoPrime/PrimeTestBounds.lean)。
-Selfridgeの無条件の評価とGRH付き評価は[上界ガイド](SelfridgeBoundGrh.md)を参照する。
+因数分解器は `NumberTheory.Factorization`、葉の素数確認方針との接続は `FactorizationPolicy` にある。 `PrimeTest` の import 閉包にはプロジェクト固有の解析・GRH 層を含めない。解析的上界の総合入口は [PrimeTestBounds.lean](../PseudoPrime/PrimeTestBounds.lean)。 Selfridge の無条件の評価と GRH 付き評価は [上界ガイド](SelfridgeBoundGrh.md) を参照する。
 
-JSONの自然数は共通の `CertificateJson.readNat` で十進文字列から復号する。
-CLIの `Tools.CertificateIO.readFileBounded` は上限超過を復号前に拒否する。
-入力バイト制限は、数学的検証の時間・総メモリ上限を保証するものではない。
+JSON の自然数は共通の `CertificateJson.readNat` で十進文字列から復号する。 CLI の `Tools.CertificateIO.readFileBounded` は上限超過を復号前に拒否する。入力バイト制限は、数学的検証の時間・総メモリ上限を保証するものではない。
 
 ## 実行順序
 
-`bailliePSW` と `strengthenedBPSW` は共通の `primalityPrecheck` を呼ぶ。`n < 2` はfalse、2はtrue、その他の偶数と平方数はfalseになる。平方数チェックは `Nat.sqrt n ^ 2 == n` であり、Selfridge探索より前に実行する。
+`bailliePSW` と `strengthenedBPSW` は共通の `primalityPrecheck` を呼ぶ。 $n < 2$ は false、2 は true、その他の偶数と平方数は false になる。平方数チェックは `Nat.sqrt n ^ 2 == n` であり、Selfridge 探索より前に実行する。
 
-残る入力では `selfridgeClassicalMethodAStarParamsWithinTwoMul` により昇順探索し、成功後に底2 Strong Miller–RabinとStrong Lucasを評価する。強化版はさらにLucas-Vと、整数底 `Q` のEuler–Jacobiを評価する。現行探索は純粋なJacobi `-1` 探索で、Jacobi `0` による因子検出付き早期停止やMR先行の制御フローは実装していない。
+残る入力では `selfridgeClassicalMethodAStarParamsWithinTwoMul` により昇順探索し、成功後に底 2 Strong Miller–Rabin と Strong Lucas を評価する。強化版はさらに Lucas-V と、整数底 $Q$ の Euler–Jacobi を評価する。現行探索は純粋な Jacobi $-1$ 探索で、Jacobi $0$ による因子検出付き早期停止や MR 先行の制御フローは実装していない。
 
-探索fuelは `n - 2`。内部の探索は `Option` で成功・失敗を区別し、トップレベルでは探索失敗をfalseにする。Wheel30・素数候補のみを用いる `bailliePSWWheel30Ascending`、`bailliePSWPrimeAscending` は明示的fuelを受け取り、`Option Bool` を返す。
+探索 `fuel` は `n - 2`。内部の探索は `Option` で成功・失敗を区別し、トップレベルでは探索失敗を false にする。Wheel30・素数候補のみを用いる `bailliePSWWheel30Ascending`、 `bailliePSWPrimeAscending` は明示的な `fuel` を受け取り、 `Option Bool` を返す。
 
-## Selfridgeと証明の範囲
+## Selfridge と証明の範囲
 
-Method Aは `P = 1, Q = (1-D)/4`。Method A*は `D = 5` の場合に `P = Q = 5` を用い、それ以外はMethod Aと一致する。
+Method A は $P = 1,\quad Q = (1 - D)/4$。 `Method A*` は $D = 5$ の場合に $P = Q = 5$ を用い、それ以外は Method A と一致する。
 
-[MethodAStarEquivalence.lean](../PseudoPrime/PrimeTest/Selfridge/MethodAStarEquivalence.lean) の `strongLucasMethodAStar_eq_methodA` は、同じ `D`、奇数 `n`、`(1-D) % 4 = 0`、`jacobiSym D n = -1` のもとでStrong Lucasの結果一致を示す。合成数にも適用でき、D=5も含む。強化版のLucas-V／Euler–JacobiまでをMethod Aへ置換する同値ではない。
+[MethodAStarEquivalence.lean](../PseudoPrime/PrimeTest/Selfridge/MethodAStarEquivalence.lean) の `strongLucasMethodAStar_eq_methodA` は、同じ $D$、奇数 $n$、 $1 - D \equiv 0 \pmod 4$、 `jacobiSym D n = -1` のもとで Strong Lucas の結果一致を示す。合成数にも適用でき、 $D = 5$ も含む。強化版の Lucas-V／Euler–Jacobi までを Method A へ置換する同値ではない。
 
-`firstStopNegOne` と `firstStopNeOne` は数学的な最小停止候補で、実行用探索と区別する。後者は `¬ n ∣ i` とJacobi値 `≠ 1` を要求して因子検出も扱う。
+`firstStopNegOne` と `firstStopNeOne` は数学的な最小停止候補で、実行用探索と区別する。後者は $n \nmid i$ と Jacobi 値が $1$ と異なることを要求して因子検出も扱う。
 
-## Miller–Rabinの素数底証人
+## Miller–Rabin の素数判定同値と素数底証人
 
-GRHの下で、任意の奇合成数 $n>1$ に対して $p\le(\log n)^2$ を満たす素数底が存在し、
-`strongMillerRabinWithBase n p = false` となることも証明されている。
-詳しい主張と利用例は [MillerRabinBoundGrh](MillerRabinBoundGrh.md) を参照する。
-この上界の入口は `PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS` である。
+公開定理 `prime_iff_millerRabin_for_all_primes_le_log_sq` は、奇数 $n > 1$ について、GRH の下で「上界内の全素数底が合格」と素数性が同値であることを示す。
 
-無条件の基盤は [MillerRabin/Composite.lean](../PseudoPrime/PrimeTest/MillerRabin/Composite.lean)
-の真部分群存在定理と、
-[MillerRabin/Computation/Small.lean](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean)
-の $1 < n < 3000$ における底2または3の不合格定理である。
-分解 $n-1=2^s d$（ $s,d\in\mathbb N$、 $d$ は奇数）と実行用判定の接続は
-[Decomposition.lean](../PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) にある。
+GRH の下で、任意の奇合成数 $n > 1$ に対して $p \le (\ln n)^2$ を満たし、標準分解に対する強 Miller–Rabin の不合格条件を満たす素数底 $p$ が存在する。この冪不等式は `not_strongMillerRabinPass_iff` により強 Miller–Rabin 合格条件の否定と同値であり、さらに `strongMillerRabinWithBase_eq_false_iff_not_pass` により `strongMillerRabinWithBase n p = false` と同値である。詳しい主張と利用例は [MillerRabinBoundGrh](MillerRabinBoundGrh.md) を参照する。この上界の入口は `PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS` である。
+
+無条件の基盤は [MillerRabin/Composite.lean](../PseudoPrime/PrimeTest/MillerRabin/Composite.lean) の真部分群存在定理と、 [MillerRabin/Computation/Small.lean](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) の $1 < n < 3000$ における底 2 または底 3 の不合格定理である。分解 $n - 1 = 2^s d$（ $s, d \in \mathbb{N}$、 $d$ は奇数）と実行用判定の接続は [Decomposition.lean](../PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) にある。
 
 ## 保証と利用例
 
-`PrimalityTestSpec.prime_true` は「素数ならtrue」という完全性を表す。`bailliePSW_spec_unconditional` と `strengthenedBPSW_spec_unconditional` は探索成功も含めてこの仕様を証明し、GRHを仮定しない。逆の「trueなら素数」はこの仕様に含まれない。
+`PrimalityTestSpec.prime_true` は「素数なら true」という完全性を表す。 `bailliePSW_spec_unconditional` と `strengthenedBPSW_spec_unconditional` は探索成功も含めてこの仕様を証明し、GRH を仮定しない。逆の「true なら素数」はこの仕様に含まれない。
 
-仕様には0・1の棄却、2の受理、2以外の偶数の棄却も含まれる。
-`bailliePSW_of_prime_of_search` などの探索成功を仮定した段階と、
-`bailliePSW_spec_unconditional` の無条件のトップレベル保証が接続されている。
-したがって、GRH上界を実行時の停止保証に組み込む必要はない。
+仕様には $0$ と $1$ の棄却、2 の受理、2 以外の偶数の棄却も含まれる。 `bailliePSW_of_prime_of_search` などの探索成功を仮定した段階と、 `bailliePSW_spec_unconditional` の無条件のトップレベル保証が接続されている。したがって、GRH 上界を実行時の停止保証に組み込む必要はない。
 
-Euler–Jacobiや明示パラメータのStrong Lucasはrawな合同式チェックで、共通precheckを自動適用しない。パラメータ付き素数完全性定理には判別式条件やJacobi条件がある。
+Euler–Jacobi や明示パラメータの Strong Lucas は 前処理を伴わない合同式チェックで、共通 precheck を自動適用しない。パラメータ付き素数完全性定理には判別式条件や Jacobi 条件がある。
 
 ```lean
 import PseudoPrime.PrimeTest
@@ -96,16 +78,12 @@ import PseudoPrime.PrimeTest
 #check PseudoPrime.PrimeTest.strongLucasMethodAStar_eq_methodA
 ```
 
-依存は主に [NumberTheory](NumberTheory.md) とmathlibである。ただし `Selfridge/Finite.lean` は `PseudoSquare/Computation/SmallN.lean` の有限証明書をimportするため、PseudoSquareと完全に独立したimport構成ではない。
+依存は主に [NumberTheory](NumberTheory.md) と mathlib である。ただし `Selfridge/Finite.lean` は `PseudoSquare/Computation/SmallN.lean` の有限証明書を import するため、PseudoSquare と完全に独立した import 構成ではない。
 
-回帰テストは公開入口とは別に、Leanプロジェクト直下で `lake build PseudoPrime/PrimeTest/Regression.lean` を実行する。回帰の `native_decide` assertionは、公開定理の数学的証明とは区別する。
+回帰テストは公開入口とは別に、Lean プロジェクト直下で `lake build PseudoPrime/PrimeTest/Regression.lean` を実行する。回帰テストの `native_decide` による検査 は、公開定理の数学的証明とは区別する。
 
-## C++・Pythonの参考実装
+## C++・Python の参考実装
 
-[examples/bpsw](../examples/bpsw) に通常版・強化版BPSWのC++・Python実装を配置している。
-[実行方法とLeanとの対応](BPSWImplementations.md)を参照する。
-これらはMR先行・Wheel30・因子検出付き探索を用いるため、上記のLeanトップレベルと
-制御フローが一致するコードではない。Leanから抽出したプログラムではなく、言語間の
-プログラム同値性を証明したものでもない。
+[examples/bpsw](../examples/bpsw) に通常版・強化版 BPSW の C++・Python 実装を配置している。 [実行方法と Lean との対応](BPSWImplementations.md) を参照する。これらは MR 先行・Wheel30・因子検出付き探索を用いるため、上記の Lean トップレベルと制御フローが一致するコードではない。Lean から抽出したプログラムではなく、言語間のプログラム同値性を証明したものでもない。
 
 [構成全体へ](README.md)

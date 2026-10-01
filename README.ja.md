@@ -1,445 +1,178 @@
 # PseudoPrime
 
-> このプロジェクトは AI の支援を受けて開発された。
+> このプロジェクトは AI の支援を受けて開発されました。
 
-[公開モジュールの構成と成果](doc/README.md) ·
-[C++・PythonのBPSW参考実装](doc/BPSWImplementations.md)
+[English](README.md) · [モジュール案内と成果](doc/README.md) · [C++ / Python による BPSW 実装例](doc/BPSWImplementations.md)
 
-## GRH 下の素数底 Miller–Rabin 証人上界
+## 概要
 
-一般化リーマン予想（GRH）の下で、任意の奇合成数 $n>1$ に対して、
-Strong Miller–Rabin 判定を不合格にする素数底 $p\le(\log n)^2$ が存在することを証明した。
-$\log$ は自然対数である。 $n-1=2^s d$（ $s,d\in\mathbb N$、 $d$ は奇数）と
-一意に分解すると、この証人は次を満たす。
+このプロジェクトは、**一般化リーマン予想（GRH）** の下での素数判定と二次指標の証人に対する明示的上界を Lean で形式化している。
+
+解析的な展開は、Lamzouri、Li、Soundararajan の論文 [*Conditional bounds for the least quadratic non-residue and related problems*](https://arxiv.org/abs/1309.3595) に沿っている。これらの上界に必要な部分を、有限範囲の議論及び代数的議論とともに Lean で形式化している。
+
+主な結果は次の二つである。
+
+1. GRH の下で、奇数 $n > 1$ が素数であることと、すべての素数底 $p \le (\ln n)^2$ に対する強 Miller–Rabin 条件を満たすことは同値である。
+2. GRH の下で、任意の正の奇数かつ非平方数 $n$ に対し、2 種類の奇素数証人 $p$ の存在を示し、それぞれに明示的上界を与える。一つは Legendre 記号 $\bigl(\frac{n}{p}\bigr)$ が $1$ と異なるもの、もう一つは $-1$ となるものである。
+
+以下、 $\ln$ は底が $e$ の自然対数を表す。Lean では `Real.log` に対応する。
+
+## GRH の下での強 Miller–Rabin 素数判定条件
+
+奇数 $n > 1$ をとる。このプロジェクトでは、GRH の下で次を証明する。
 
 $$
-p^d\not\equiv1\pmod n,\qquad
-\forall j\in\mathbb N,\quad j < s\Longrightarrow p^{2^j d}\not\equiv-1\pmod n.
+\boxed{
+n \text{ が素数}
+\iff
+\text{すべての素数 }p \le (\ln n)^2 \text{ が } n \text{ に対する強 Miller–Rabin 条件を満たす}
+}
 $$
 
-平方合成数やその他の完全冪も対象に含み、証人は $2$ や $n$ の素因数でもよい。
-GRH は明示的な仮定として受け取る。証明は、合格底を含む真部分群の無条件の構成、
-$1 < n < 3000$ のカーネル検証による有限証明、LLS Theorem 1.1(2) の GRH 定理を組み合わせる。
+具体的には、一意な分解を
 
-公開定理は
-[`PrimeTestBounds/MillerRabin/FromLLS.lean`](PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) にある。
+$$
+n - 1 = 2^s d,\qquad s, d \in \mathbb{N},\quad d \text{ は奇数}
+$$
+
+と書くと、
+
+$$
+n \text{ が素数}
+\iff
+\forall p \text{ 素数},\quad p \le (\ln n)^2
+\Longrightarrow \bigl(p^d \equiv 1 \pmod n
+\lor
+\exists j \in \mathbb{N},\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
+$$
+
+前提が $n > 1$ なので、同じ GRH の仮定の下で、次のように同値に言い換えられる。
+
+$$
+n \text{ が合成数}
+\iff
+\exists p \text{ 素数},\quad
+p \le (\ln n)^2
+\land
+p^d \not\equiv 1 \pmod n
+\land
+\forall j \in \mathbb{N},\quad j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n.
+$$
+
+つまり、奇数 $n > 1$ の合成数性は、それを棄却する素数底 $p \le (\ln n)^2$ の存在と同値である。
+
+ここで $\mathbb{N} = \lbrace 0, 1, 2, \ldots \rbrace$ とし、Lean の `ℕ` に合わせる。
+
+同値の二つの向きでは、仮定の役割が異なる。
+
+- $\text{Prime} \to (\text{all pass})$ の向きに GRH は不要である。 $n$ が素数なら、指定の上界以下の各素数底が合格する。
+- $(\text{all pass}) \to \text{Prime}$ の向きに GRH を用いる。奇合成数 $n > 1$ には、 $n$ を棄却する素数底 $p \le (\ln n)^2$ が存在する。
+
+Lean では $n - 1$ の分解を $n$ から標準的に定める。値 $s$、値 $d$、及び分解の等式は、この公開定理における追加仮定ではない。
+
+公開定理は名前空間 `PseudoPrime.PrimeTestBounds.MillerRabin` の [FromLLS.lean](PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) にある。以下の宣言抜粋では証明本体を省略している。
 
 ```lean
-import PseudoPrime
-
-namespace PseudoPrime.PrimeTestBounds.MillerRabin
-
-#check exists_prime_millerRabin_witness_le_log_sq
-#check prime_iff_millerRabin_for_all_primes_le_log_sq
-#check exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
-
-end PseudoPrime.PrimeTestBounds.MillerRabin
+theorem prime_iff_millerRabin_for_all_primes_le_log_sq
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
+    (hnOdd : Odd n) :
+    let s := padicValNat 2 (n - 1)
+    let d := Nat.divMaxPow (n - 1) 2
+    (∀ p : ℕ,
+        Nat.Prime p →
+          (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 →
+          ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
+      Nat.Prime n
 ```
 
-順に、奇合成数に対する素数底の証人定理、
-GRH の下で奇数入力の素数性と上界内の全素数底について明示された冪条件との同値、および
-標準分解の冪不等式を直接述べる証人系である。最後の定理は最初の証人定理から従う。
-前提・宣言の対応と証明の流れは [Miller–Rabin 証人上界の解説](doc/MillerRabinBoundGrh.md) を参照。
+連鎖する含意 `Nat.Prime p → (p : ℝ) ≤ ... → ...` は、任意の底 `p` が素数であり、かつ上界以下であるときに Miller–Rabin 条件を要求する。この明示的な冪合同条件は、実行用判定 `PrimeTest.strongMillerRabinWithBase n p` が `true` を返すことと同値であり、 [`strongMillerRabinWithBase_eq_true_iff_pass`](PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) で証明している。
 
-## 非 1 ヤコビ目撃者と Selfridge 境界
+## GRH の下での Legendre 記号の証人
 
-このプロジェクトは、ヤコビ目撃者（Jacobi witness）と Selfridge 停止値に関する
-境界を Lean で形式化する。
+正の奇数かつ非平方数 $n$ をとる。
 
-### 基本定義
+### Legendre 記号が $1$ でない素数証人
 
-以下を通じて、 $\log$ は自然対数を表し、 $\mathbb P_{\mathrm{odd}}$ は奇素数の
-集合を表す。整数 $a$ と奇素数 $p$ に対して、Legendre 記号は次で定義される。
+GRH の下で、次を満たす奇素数 $p$ が存在する。
 
 $$
-\left(\frac{a}{p}\right)=
-\begin{cases}
-0 & a\equiv0\pmod p,\\
-1 & a\not\equiv0\pmod p\text{ かつ } a\text{ が }p\text{ を法とする平方剰余のとき},\\
--1 & a\text{ が }p\text{ を法とする平方非剰余のとき}.
-\end{cases}
+p \le \max\left\lbrace 5, (\ln n)^2 \right\rbrace,\qquad
+\boxed{\Bigl(\frac{n}{p}\Bigr) \ne 1}
 $$
 
-Euler の規準により、すべての奇素数 $p$ について
-
-$$
-\left(\frac{a}{p}\right)\equiv a^{(p-1)/2}\pmod p.
-$$
-
-正の奇分母 $n=\prod_p p^{e_p}$ に対して、Jacobi 記号は
-$\left(\frac an\right)=\prod_p\left(\frac ap\right)^{e_p}$ で定義される。
-分母が素数のときは Legendre 記号と一致する。
-
-### GRH と RH の関係
-
-GRH は一般化リーマン予想（generalized Riemann hypothesis）、RH はリーマン予想
-（Riemann hypothesis）の略である。
-
-以下の解析的境界は GRH 単独の仮定で得られる。停止値の比較自体は無条件である。
-
-mathlib における RH の定義は次のとおりである。
-
-```lean
-def RiemannHypothesis : Prop :=
-  ∀ (s : ℂ) (_ : riemannZeta s = 0) (_ : ¬∃ n : ℕ, s = -2 * (n + 1))
-    (_ : s ≠ 1), s.re = 1 / 2
-```
-
-本プロジェクトでは GRH を次のように定義する。
-
-```lean
-noncomputable def dirichletTrivialZeros {q : ℕ} (χ : DirichletCharacter ℂ q) : Set ℤ :=
-  by
-    classical
-    exact if q = 1 then {z | ∃ n : ℕ, z = -2 * ((n : ℤ) + 1)} else
-      if χ.Odd then {z | ∃ n : ℕ, z = -2 * (n : ℤ) - 1} else
-        {z | ∃ n : ℕ, z = -2 * (n : ℤ)}
-
-def DirichletRiemannHypothesis {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) : Prop :=
-  ∀ s : ℂ, χ.LFunction s = 0 →
-    s ∉ (Int.cast : ℤ → ℂ) '' dirichletTrivialZeros χ → s.re = (1 : ℝ) / 2
-
-def GeneralizedRiemannHypothesis : Prop :=
-  ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q),
-    χ.IsPrimitive → DirichletRiemannHypothesis χ
-```
-
-`DirichletRiemannHypothesis χ` は、`dirichletTrivialZeros χ` として指定した自明零点集合に
-属さないすべての $L(s,\chi)$ の零点が $\Re(s)=1/2$ 上にあると主張する。自明な零点は
-整数として定義して複素数へ cast しており、法1では負の偶数、
-奇指標では負の奇数、法1以外の偶指標では非正の偶数とする。
-
-この `GeneralizedRiemannHypothesis` は、
-[Formal Conjectures の指定版（6fbb54f24ccc2e64dcfaffc28c58950e377110d2）](https://github.com/google-deepmind/formal-conjectures/blob/6fbb54f24ccc2e64dcfaffc28c58950e377110d2/FormalConjectures/Millennium/RiemannHypothesis.lean)
-の `GRH.generalized_riemann_hypothesis` と同一の命題である。
-どちらも、非零の法 `q` と原始 Dirichlet 指標 `χ : DirichletCharacter ℂ q` のすべてを対象に、
-同じ整数値の自明零点集合を `ℂ` へ埋め込んで除外し、残るすべての `χ.LFunction` の零点に
-`s.re = 1 / 2` を要求する。零点の量化範囲を開臨界帯に限定する条件も、
-指標を二次指標に限定する条件もない。法1の分岐条件は `q = 1` である。
-
-違いは命題の扱いにある。Formal Conjectures は未解決予想を `sorry` を含む theorem として
-記載し、本プロジェクトは
-[`GRH/Definition.lean`](PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) で
-`Prop` として定義して明示的な仮定に用いる。どちらも GRH を証明したものではない。
-指定版の自明零点の定義と theorem の型を本プロジェクトの Lean 環境で再現すると、
-自明零点集合の等しさと GRH 全体の命題の同値性を検証できる。
-必要なのは定義の展開と集合内包表記に現れる等式の向きの交換だけであり、
-外部の予想を証明として使用していない。
-
-法1の指標に対する主張は、mathlib の `RiemannHypothesis` と同値である。
-
-```lean
-theorem dirichletRiemannHypothesis_one_iff :
-    DirichletRiemannHypothesis (1 : DirichletCharacter ℂ 1) ↔ RiemannHypothesis := by
-  have htriv (s : ℂ) :
-      s ∉ (Int.cast : ℤ → ℂ) ''
-          ({z : ℤ | ∃ n : ℕ, z = -2 * ((n : ℤ) + 1)} : Set ℤ) ↔
-        ¬∃ n : ℕ, s = -2 * ((n : ℂ) + 1) := by
-    constructor
-    · intro hs h
-      rcases h with ⟨n, hn⟩
-      apply hs
-      refine ⟨-2 * ((n : ℤ) + 1), ⟨n, rfl⟩, ?_⟩
-      calc
-        ((-2 * ((n : ℤ) + 1) : ℤ) : ℂ) = -2 * ((n : ℂ) + 1) := by
-          norm_num [Int.cast_neg, Int.cast_mul, Int.cast_add]
-        _ = s := hn.symm
-    · intro hs h
-      rcases h with ⟨z, ⟨n, hn⟩, hz⟩
-      apply hs
-      refine ⟨n, ?_⟩
-      calc
-        s = (z : ℂ) := hz.symm
-        _ = ((-2 * ((n : ℤ) + 1) : ℤ) : ℂ) := by rw [← hn]
-        _ = -2 * ((n : ℂ) + 1) := by
-          norm_num [Int.cast_neg, Int.cast_mul, Int.cast_add]
-  simp only [DirichletRiemannHypothesis, DirichletCharacter.LFunction_modOne_eq,
-    dirichletTrivialZeros, RiemannHypothesis, ite_eq_left]
-  simp only [htriv]
-  constructor
-  · intro h s hs ht _; exact h s hs ht
-  · intro h s hs ht; exact h s hs ht (fun he => riemannZeta_one_ne_zero (he ▸ hs))
-```
-
-この同値を用いて GRH → RH を導く。GRH の仮定 `hGRH` から、
-RH を `hGRH.riemann` で供給できる。逆向きの RH → GRH は主張していない。
-
-```lean
-theorem GeneralizedRiemannHypothesis.riemann (h : GeneralizedRiemannHypothesis) :
-    RiemannHypothesis := by
-  exact dirichletRiemannHypothesis_one_iff.mp
-    (h 1 1 DirichletCharacter.isPrimitive_one_level_one)
-```
-
-### 奇素数目撃者の点ごとの境界
-
-正の奇数かつ非平方数の `n` に対する二つの存在主張は、
-`exists_prime_ne_one_witness_of_grh` と
-`exists_prime_neg_one_witness_of_grh` に分けて与えられている。
+公開定理は名前空間 `PseudoPrime.PseudoSquare` の [PointwiseWitness.lean](PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) にある。
 
 ```lean
 theorem exists_prime_ne_one_witness_of_grh
-    (hGRH : GeneralizedRiemannHypothesis)
-    {n : ℕ} (hnpos : 0 < n) (hn : Odd n) (hns : ¬ IsSquare n) :
-    ∃ p : ℕ, p.Prime ∧ Odd p ∧
-      (p : ℝ) ≤ max 5 (Real.log (n : ℝ) ^ 2) ∧ jacobiSym n p ≠ 1
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hnpos : 0 < n)
+    (hn : Odd n) (hns : ¬IsSquare n) :
+    ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ max 5 (Real.log (n : ℝ) ^ 2) ∧ jacobiSym n p ≠ 1
 ```
+
+### 平方非剰余となる素数の証人
+
+GRH の下で、次を満たす奇素数 $p$ も存在する。
+
+$$
+p \le \Bigl(\ln(4n) + \frac{24}{5}\ln(\ln(4n)) + 3\Bigr)^2,\qquad
+\boxed{\Bigl(\frac{n}{p}\Bigr) = -1}
+$$
+
+対応する公開定理も、同じ名前空間・ファイルにある。
 
 ```lean
 theorem exists_prime_neg_one_witness_of_grh
-    (hGRH : GeneralizedRiemannHypothesis)
-    {n : ℕ} (hnpos : 0 < n) (hn : Odd n) (hns : ¬ IsSquare n) :
-    ∃ p : ℕ, p.Prime ∧ Odd p ∧
-      (p : ℝ) ≤
-        (Real.log (4 * (n : ℝ)) +
-          (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 3) ^ 2 ∧
-      jacobiSym n p = -1
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hnpos : 0 < n)
+    (hn : Odd n) (hns : ¬IsSquare n) :
+    ∃ p : ℕ,
+      p.Prime ∧
+        Odd p ∧
+        (p : ℝ) ≤
+          (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 3) ^ 2 ∧
+        jacobiSym n p = -1
 ```
 
-任意の正の奇非平方数 $n$ に対して、GRH の下では、条件を満たす奇素数
-$p_{\ne1}$ と $p_{-1}$ がそれぞれ存在し、
+Lean の定理では `jacobiSym n p` を用いる。分母 $p$ は奇素数なので、これは Legendre 記号 $\bigl(\frac{n}{p}\bigr)$ と一致する。
 
-$$
-p_{\ne1}\le\max\left(5,(\log n)^2\right),\quad
-\left(\frac n{p_{\ne1}}\right)\ne1,
-$$
+最初の結果は $\bigl(\frac{n}{p}\bigr) = 0$ または $\bigl(\frac{n}{p}\bigr) = -1$ を許す。前者は $p \mid n$ と同値であり、後者は $n$ が $p$ を法として平方非剰余であることを意味する。第 2 の定理は後者を保証する。
 
-かつ
+## GRH の仮定の位置付け
 
-$$
-p_{-1}\le\left(\log(4n)+\frac{24}{5}\log(\log(4n))+3\right)^2,\quad
-\left(\frac n{p_{-1}}\right)=-1
-$$
+上記の条件付き結果では、GRH を明示的な仮定とする。Lean では、名前空間 `PseudoPrime` 内の [`AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis`](PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) として定義している。
 
-が成り立つ。Lean では Jacobi 記号を `jacobiSym n p` で表す。
+このプロジェクトは **GRH 自体を証明しない**。GRH から、LLS Theorem 1.1 の関連する部分に対応する結果を Lean 内で導出する。これには [`LLS.llsTheorem11S1_of_grh`](PseudoPrime/LLS/Theorem11S1GRH.lean) と [`LLS.llsTheorem11S2_of_grh`](PseudoPrime/LLS/Theorem11S2.lean) が含まれる。これらをプロジェクトの代数的・数論的議論及び有限範囲の議論と組み合わせ、上記の明示的上界を得る。
 
-上の二つの目撃者定理は、LLS Theorem 1.1 の interface とは分けて扱う。
-`ne_one` 定理は因子検出経路、`neg_one` 定理は古典的 Selfridge 探索で用いる
-純粋な Jacobi 値 $-1$ の経路である。一般の LLS の組立ては
-`LLS/Theorem11S1GRH.lean` にあり、Jacobi 値 $-1$ の評価はこの一般S1を法 $4n$ に適用する。
-本プロジェクト独自の $Q\ne1$ 経路は、中間の重み付き評価と二次指標の精密評価を用いる。
+## 詳細な資料
 
-### Selfridge 因子検出停止
-
-古典的な Selfridge のパラメータ選択は Lucas–Selfridge 素数判定、特に
-Baillie–PSW（BPSW）素数判定法などで用いられる。歴史的な参考文献は
-[`Baillie–PSW 及び Lucas–Selfridge 素数判定法`](#bailliepsw-及び-lucasselfridge-素数判定法)
-に示す。
-
-古典的な候補述語と符号付き Selfridge 値は
-[`PrimeTest/Selfridge/Candidates.lean`](PseudoPrime/PrimeTest/Selfridge/Candidates.lean)
-で定義される。
-
-```lean
-def selfridgeD (i : ℕ) : ℤ :=
-  if i % 4 = 1 then (i : ℤ) else -(i : ℤ)
-
-def isClassicalCandidate (i : ℕ) : Prop :=
-  5 ≤ i ∧ Odd i
-```
-
-古典的な Selfridge 数列は数学的には次のように書かれる。
-
-$$
-D(k)=(-1)^k(2k+5)\qquad(k\ge0).
-$$
-
-正の奇非平方数 $n$ に対して、純粋な $-1$ 停止と因子検出停止では
-Jacobi 記号を用い、次のように表される。
-
-$$
-g_{-1}(n)=D\left(\min\left\lbrace k\in\mathbb N\mathrel{}\middle\vert\mathrel{}
-\left(\frac{D(k)}{n}\right)=-1\right\rbrace\right),
-$$
-
-$$
-g_{\ne1}(n)=D\left(\min\left\lbrace k\in\mathbb N\mathrel{}\middle\vert\mathrel{}
-n\nmid\left\lvert D(k)\right\rvert\ \text{かつ}\ \left(\frac{D(k)}{n}\right)\ne1\right\rbrace\right).
-$$
-
-条件 $n\nmid\left\lvert D(k)\right\rvert$ は、入力の倍数を候補絶対値から
-除外するものであり、
-[`PrimeTest/Selfridge/FirstStop.lean`](PseudoPrime/PrimeTest/Selfridge/FirstStop.lean)
-の `FirstStopNeOneSet` に対応する。
-Lean では `selfridgeD` は候補絶対値を引数に取るため、 $D(k)$ は
-`selfridgeD (2 * k + 5)` に対応する。式
-`firstStopNegOne isClassicalCandidate n ...` と
-`firstStopNeOne isClassicalCandidate n ...` は、数列の添字 $k$ ではなく、
-最小の停止候補絶対値そのものを返す。`selfridgeD` を適用するとそれぞれ
-$g_{-1}(n)$ と $g_{\ne1}(n)$ になり、`natAbs` によりそれらの絶対値が得られる。
-
-### Selfridge 停止に対する点ごとの初等半径境界
-
-点ごとの Selfridge 走査については、無条件の比較
-
-```lean
-theorem firstStopNeOne_le_firstStopNegOne_same_candidates
-    {C : ℕ → Prop} {n : ℕ} (hn : 1 < n)
-    (hneg : (FirstStopNegOneSet C n).Nonempty) :
-    firstStopNeOne C n (firstStopNeOneSet_nonempty_of_negOne hn hneg) ≤
-      firstStopNegOne C n hneg
-```
-
-が
-[`PrimeTest/Selfridge/Coincidence.lean`](PseudoPrime/PrimeTest/Selfridge/Coincidence.lean)
-で証明されている。
-
-Method A と Method A* の Strong Lucas 判定結果も、例外的な $D=5$ の分岐を
-含めて一致する。この証明は、
-[`PrimeTest/Selfridge/MethodAStarEquivalence.lean`](PseudoPrime/PrimeTest/Selfridge/MethodAStarEquivalence.lean)
-の `strongLucasMethodAStar_eq_methodA` とその逆向きの定理で与えられる。
-
-Method A と A* が用いる共通の古典的 D 選択走査については、 $B\ge751$ に対する
-対応する集約境界が、
-[`SelfridgeBoundGrh/LogSqMaximum.lean`](PseudoPrime/PrimeTestBounds/Selfridge/LogSqMaximum.lean)
-の `classicalNeOneMaximum_cast_le_log_sq_of_751_le` として証明されている。
-
-点ごとの初等半径境界は GRH の下で、
-[`SelfridgeBoundGrh/ElementaryRadius.lean`](PseudoPrime/PrimeTestBounds/Selfridge/ElementaryRadius.lean)
-で証明される。
-
-```lean
-theorem classicalSelfridgeD_elementary_bound_explicit
-    (hGRH : GeneralizedRiemannHypothesis)
-    {n : ℕ} (hn3 : 3 ≤ n) (hn : Odd n) (hns : ¬ IsSquare n) :
-    ((selfridgeD (firstStopNeOne isClassicalCandidate n
-      (classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs : ℝ) ≤
-        ((selfridgeD (firstStopNegOne isClassicalCandidate n
-          (classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs : ℝ) ∧
-      ((selfridgeD (firstStopNegOne isClassicalCandidate n
-        (classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs : ℝ) ≤
-        (Real.log (4 * (n : ℝ)) +
-          (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 3) ^ 2
-```
-
-ここで
-
-$$
-R(n)=\left(\log(4n)+\frac{24}{5}\log(\log(4n))+3\right)^2
-$$
-
-であり、正の奇非平方数 $n$ に対して GRH の下でこれは以下を証明する。
-
-$$
-\left\lvert g_{\ne1}(n)\right\rvert\le\left\lvert g_{-1}(n)\right\rvert\le R(n)
-$$
-
-この定理は、無条件の停止値比較と GRH の解析的境界を併用する。
-その公理依存は `propext`、`Classical.choice`、`Quot.sound` であり、
-GRH は明示的な仮定であり、RH はそこから導かれる。
-
-これと対になる純粋な `-1` 停止値についても、GRH の下で公開する。
-すべての
-
-$$
-n\ge3,\qquad n\text{ は奇数},\qquad n\text{ は非平方数}
-$$
-
-に対して、
-
-$$
-\left\lvert g_{-1}(n)\right\rvert\le R(n)
-$$
-
-が成り立ち、さらに奇素数 $p_{-1}$ が存在して
-
-$$
-p_{-1}\le R(n),\qquad
-\left(\frac n{p_{-1}}\right)=-1
-$$
-
-となる。ここで
-
-$$
-R(n)=\left(\log(4n)+\frac{24}{5}\log(\log(4n))+3\right)^2.
-$$
-
-Lean では、 $g_{-1}(n)$ の絶対値を、符号付き `selfridgeD` に
-`firstStopNegOne` を適用した値の `natAbs` で表す。
-
-### Selfridge 停止に対する対数境界
-
-因子検出停止の対数境界は
-[`PrimeTestBounds/Selfridge/LogGRH.lean`](PseudoPrime/PrimeTestBounds/Selfridge/LogGRH.lean)
-で証明される。
-
-```lean
-theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le
-    (hGRH : GeneralizedRiemannHypothesis)
-    {n : ℕ} (hn13 : 13 ≤ n) (hn : Odd n) (hns : ¬ IsSquare n) :
-    ((selfridgeD (firstStopNeOne isClassicalCandidate n
-      (classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs : ℝ) ≤
-        Real.log (n : ℝ) ^ 2
-```
-
-正の奇非平方数 $n\ge13$ に対して、GRH の下でこれは以下を証明する。
-
-$$
-\left\lvert g_{\ne1}(n)\right\rvert\le(\log n)^2
-$$
-
-この境界は、すべての正の奇非平方数 $n$ に対して次の系へ拡張される。
-
-```lean
-theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq
-    (hGRH : GeneralizedRiemannHypothesis)
-    {n : ℕ} (hnpos : 0 < n) (hn : Odd n) (hns : ¬ IsSquare n) :
-    ((selfridgeD (firstStopNeOne isClassicalCandidate n
-      (classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs : ℝ) ≤
-        max 13 (Real.log (n : ℝ) ^ 2)
-```
-
-したがって、GRH の下で、すべての正の奇非平方数 $n$ について
-
-$$
-\left\lvert g_{\ne1}(n)\right\rvert\le\max\left(13,(\log n)^2\right)
-$$
-
-が成り立つ。
-
-同じファイルには Wheel30 移送定理
-`wheel30SelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le` も含まれる。
+- [Miller–Rabin の上界](doc/MillerRabinBoundGrh.md)
+- [LLS の解析的上界](doc/LLS.md)
+- [疑似平方数と素数の証人](doc/PseudoSquare.md)
+- [Selfridge 探索の上界](doc/SelfridgeBoundGrh.md)
 
 ## 参考文献
 
-### 最小非剰余に対する LLS 境界
+### 最小非剰余に対する LLS 上界
 
-対数的な目撃者境界に用いられる解析的入力は、次の文献に基づく。
+証人の対数的上界に用いる解析的結果は、次の文献に基づく。
 
 > Youness Lamzouri, Xiannan Li, and Kannan Soundararajan, “Conditional bounds for the least quadratic non-residue and related problems,” *Mathematics of Computation* **84** (2015), no. 295, 2391–2412. [DOI: 10.1090/S0025-5718-2015-02925-1](https://doi.org/10.1090/S0025-5718-2015-02925-1), [arXiv:1309.3595](https://arxiv.org/abs/1309.3595).
 
-証明計画は、対数的目撃者境界の解析的基盤として Theorem 1.1(2) を、
-このプロジェクトの算術的・有限範囲的な還元とともに用いる。
+本形式化は、この論文の関連する結果と解析的評価を、プロジェクトの算術的議論及び有限範囲の議論と組み合わせて用いる。対応する形式化済みの結果については [LLS のモジュール解説](doc/LLS.md) を参照。
 
 ### Baillie–PSW 及び Lucas–Selfridge 素数判定法
 
-Lucas probable prime と Baillie–PSW テストの原典は次の通り。
+Lucas–Selfridge と Baillie–PSW の背景となる歴史的文献として、次が挙げられる。
 
 > Robert Baillie and Samuel S. Wagstaff, Jr., “Lucas pseudoprimes,” *Mathematics of Computation* **35** (1980), no. 152, 1391–1417. [DOI: 10.1090/S0025-5718-1980-0583518-6](https://doi.org/10.1090/S0025-5718-1980-0583518-6).
 
-> Carl Pomerance, John L. Selfridge, and Samuel S. Wagstaff, Jr., “The pseudoprimes to
-> $25\cdot10^9$,” *Mathematics of Computation* **35** (1980), no. 151, 1003–1026.
-> [DOI: 10.1090/S0025-5718-1980-0572872-7](https://doi.org/10.1090/S0025-5718-1980-0572872-7).
+> Carl Pomerance, John L. Selfridge, and Samuel S. Wagstaff, Jr., “The pseudoprimes to $25\cdot10^9$,” *Mathematics of Computation* **35** (1980), no. 151, 1003–1026. [DOI: 10.1090/S0025-5718-1980-0572872-7](https://doi.org/10.1090/S0025-5718-1980-0572872-7).
 
-これらの論文は、強基底 2 プラス Lucas–Selfridge の Baillie–PSW テスト、および
-このプロジェクトにおいて `selfridgeD`、`firstStopNegOne`、`firstStopNeOne` が
-表現する Selfridge パラメータ選択の文脈に関する歴史的な参考文献である。
-Baillie–PSW テストの後の強化については、Robert Baillie, Andrew Fiori, and
-Samuel S. Wagstaff, Jr., “[Strengthening the Baillie-PSW primality test](https://arxiv.org/abs/2006.14425v2),”
-arXiv:2006.14425v2 を参照。
+これらの論文は、Baillie–PSW テストに関連する底 2 の強 Miller–Rabin と Lucas–Selfridge の構成要素、及びこのプロジェクトにおいて `selfridgeD`、 `firstStopNegOne`、 `firstStopNeOne` が表現する Selfridge パラメータ選択の文脈に関する歴史的な参考文献である。Baillie–PSW テストの後年の強化については、Robert Baillie, Andrew Fiori, and Samuel S. Wagstaff, Jr., “[Strengthening the Baillie-PSW primality test](https://arxiv.org/abs/2006.14425v2),” arXiv:2006.14425v2 を参照。
 
-本プロジェクトの実行用 `bailliePSW` と `strengthenedBPSW` は、Selfridge の
-Jacobi 値 $-1$ だけを用いる昇順探索の変種である。共通の事前判定、Selfridge
-判別式の探索、探索成功後の底2 Miller–Rabin と Lucas 系判定の順で実行する。
-探索中に Jacobi 値 $0$ を因子検出として扱う早期停止は、歴史的アルゴリズムの
-説明とは異なり、この実行用探索には実装していない。
+本プロジェクトの実行用 `bailliePSW` と `strengthenedBPSW` は、Jacobi 記号が $-1$ となる判別式に限定した Selfridge 昇順探索の変種である。共通の事前判定、Selfridge 判別式の探索、探索成功後の底 2 Miller–Rabin と Lucas 系判定の順で実行する。歴史的な因子検出付き変種とは異なり、この実行用探索では Jacobi 値 $0$ を因子検出による早期停止として用いない。
 
 ### 疑似平方数に関する参考文献
 
-背景となる用語と数値データについては、[OEIS A002189 —
-Pseudosquares](https://oeis.org/A002189) を参照。OEIS A002189 は古典的な
-定義、すなわち $1\pmod 8$ に合同で、最初のいくつかの奇素数を法として
-非零平方剰余となる最小の正の非平方整数を用いている。
+背景となる用語と数値データについては、[OEIS A002189 — Pseudosquares](https://oeis.org/A002189) を参照。OEIS A002189 は、奇素数列の各初期部分に対し、 $1 \pmod 8$ に合同で、その初期部分に含まれるすべての奇素数を法として非零平方剰余となる最小の正の非平方整数を記録する。
 
-本プロジェクトは、Selfridge/LLS 目撃者定理において、より広い
-$1\pmod 2$ （奇数）非平方数の定義域を用いる。OEIS のエントリは参考情報としてのみ扱う。
+本プロジェクトは、Selfridge/LLS 証人定理において、より広い正の奇数かつ非平方数の定義域を用いる。OEIS のエントリは参考資料として挙げるにとどめる。
