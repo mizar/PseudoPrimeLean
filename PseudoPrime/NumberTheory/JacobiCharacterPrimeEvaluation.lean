@@ -157,8 +157,8 @@ theorem quadraticCharacter_ne_one_of_not_square (n : ℕ) (hn : Odd n) (hns : ¬
     have hne : (1 : ZMod 5) ≠ 3 ^ ((5 - 1) / 2) := by
       intro hmod
       have hval := congrArg ZMod.val hmod
-      change 1 = 4 at hval
-      norm_num only at hval
+      rw [@ZMod.val_one 5 ⟨by norm_num only⟩] at hval
+      norm_num only [ZMod.val_ofNat] at hval
     exact hne hpow
   · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ := oddNonsquareHasSmallerNegOneWitness hn hn3 hns
     let _ : NeZero q := ⟨hqprime.ne_zero⟩

@@ -35,8 +35,8 @@ theorem jacobiSym_three_five_eq_neg_one : jacobiSym 3 5 = -1 := by
     have hne : (1 : ZMod 5) ≠ 3 ^ ((5 - 1) / 2) := by
       intro hmod
       have hval := congrArg ZMod.val hmod
-      change 1 = 4 at hval
-      norm_num only at hval
+      rw [@ZMod.val_one 5 ⟨by norm_num only⟩] at hval
+      norm_num only [ZMod.val_ofNat] at hval
     exact (hne hpow).elim
   · exact hneg
 

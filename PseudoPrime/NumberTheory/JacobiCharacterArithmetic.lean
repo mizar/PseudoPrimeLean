@@ -993,8 +993,9 @@ theorem jacobiSym_five_three_ne_one : jacobiSym 5 3 ≠ 1 := by
   have hne : (1 : ZMod 3) ≠ 5 := by
     intro hmod
     have hval := congrArg ZMod.val hmod
-    change 1 = 2 at hval
-    norm_num only at hval
+    rw [@ZMod.val_one 3 ⟨by norm_num only⟩] at hval
+    norm_num only [ZMod.val_ofNat] at hval
+  norm_num only [Nat.div, Nat.sub] at hpow
   exact hne hpow
 
 /-- The prime `5` witnesses `jacobiSym 7 5 ≠ 1`, by its Legendre-symbol power identity. -/
