@@ -1,6 +1,6 @@
 # 公開モジュールの構成と成果
 
-この文書群は、現在の Lean ソースで公開されている主な定義・定理と、その接続を説明する。数式の $\ln$ は自然対数を表し、Lean の `Real.log` に対応する。自然数の量を実数の上界と比較するときは、Lean では実数への型変換を伴う。
+この文書群では、現在の Lean ソースが公開する主な定義・定理と、それらの関係を説明する。数式の $\ln$ は自然対数を表し、Lean の `Real.log` に対応する。自然数を実数の上界と比較する箇所では、Lean 上で実数への型変換を行う。
 
 ## 8 つの公開領域
 
@@ -17,7 +17,7 @@
 
 ## 成果の接続
 
-次の図は主な数学的な接続を示す。全 import 辺を列挙した図ではない。
+次の図は、主な数学的関係を示す。すべての import 関係を列挙したものではない。
 
 ```mermaid
 flowchart TD
@@ -39,13 +39,13 @@ flowchart TD
 
 ## 読み方と利用方法
 
-最終的な数学的上界は [PseudoSquare](PseudoSquare.md) と [PrimeTestBounds.Selfridge](SelfridgeBoundGrh.md)、 [PrimeTestBounds.MillerRabin](MillerRabinBoundGrh.md)、その解析的な根拠は [LLS](LLS.md) を参照する。実行用の素数性テストを利用する場合は [PrimeTest](PrimeTest.md) から読む。 [C++・Python の参考実装](BPSWImplementations.md) には実行方法と Lean 版との相違をまとめている。
+最終的な数学的上界については [PseudoSquare](PseudoSquare.md)、[PrimeTestBounds.Selfridge](SelfridgeBoundGrh.md)、[PrimeTestBounds.MillerRabin](MillerRabinBoundGrh.md) を参照する。その解析的な根拠は [LLS](LLS.md) で説明する。実行用の素数性テストを使う場合は [PrimeTest](PrimeTest.md) から読み進める。[C++・Python の参考実装](BPSWImplementations.md) には、実行方法と Lean 版との違いをまとめている。
 
 ```lean
 import PseudoPrime
 ```
 
-これにより表の 8 領域と `PseudoPrime.LLS.Extensions` が読み込まれる。必要な領域だけなら、例えば `import PseudoPrime.LLS` のように選択できる。 Miller–Rabin の素数判定同値・証人上界の個別入口は `import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS`。各ページ末尾の `#check` は公開 API を確認する例である。
+これにより、表に示した8領域と `PseudoPrime.LLS.Extensions` を読み込む。必要な領域だけを使う場合は、たとえば `import PseudoPrime.LLS` のように個別に選べる。Miller–Rabin の素数判定同値と証人上界には、`import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS` を使う。各ページ末尾の `#check` は、公開 API を確認する例である。
 
 GRH は明示的に受け取る仮定であり、プロジェクトが GRH を証明したという意味ではない。また、BPSW の「素数なら受理する」と「受理したなら素数」は異なる主張である。有限証明書、数学的な最小元、実行可能な探索の違いは各ページで説明する。
 

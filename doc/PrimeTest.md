@@ -2,7 +2,7 @@
 
 対象: [`PseudoPrime/PrimeTest`](../PseudoPrime/PrimeTest)。公開入口は [`PseudoPrime/PrimeTest.lean`](../PseudoPrime/PrimeTest.lean)、名前空間は `PseudoPrime.PrimeTest`。
 
-この領域は Boolean 値を返す素数性テスト、その数学的仕様、素数を受理する証明、Selfridge パラメータ探索を実装する。
+この領域では、Boolean 値を返す素数性テストとその数学的仕様、素数を受理する証明、Selfridge パラメータ探索を実装する。
 
 ## 構成
 
@@ -21,7 +21,7 @@
 
 ## 証明付き判定・証明書・解析的上界
 
-`Result.lean` の `Decision` は素数・非素数の証明と `unknown` を区別する。 [Execution.lean](../PseudoPrime/PrimeTest/Execution.lean) が方式別の判定を接続し、 APR-CL の局所数論核が未証明の証明書は pending のまま保持する。底 2・3 の有限確定は [MillerRabin/Finite.lean](../PseudoPrime/PrimeTest/MillerRabin/Finite.lean) にあり、保証範囲は 3000 未満。一般の Miller–Rabin・Lucas・BPSW の通過だけで素数とは確定しない。
+`Result.lean` の `Decision` は、素数・非素数の証明と `unknown` を区別する。[Execution.lean](../PseudoPrime/PrimeTest/Execution.lean) は方式ごとの判定を接続する。APR-CL の局所数論核が未証明の証明書は `pending` のまま保持する。底2・3による有限範囲の確定は [MillerRabin/Finite.lean](../PseudoPrime/PrimeTest/MillerRabin/Finite.lean) にあり、保証範囲は3000未満である。一般の Miller–Rabin・Lucas・BPSW は、テストを通過しただけでは素数と確定しない。
 
 BLS の入口は責務別に分かれる。
 
@@ -39,9 +39,9 @@ JSON の自然数は共通の `CertificateJson.readNat` で十進文字列から
 
 ## 実行順序
 
-`bailliePSW` と `strengthenedBPSW` は共通の `primalityPrecheck` を呼ぶ。 $n < 2$ は false、2 は true、その他の偶数と平方数は false になる。平方数チェックは `Nat.sqrt n ^ 2 == n` であり、Selfridge 探索より前に実行する。
+`bailliePSW` と `strengthenedBPSW` は、共通の `primalityPrecheck` を呼ぶ。$n < 2$ は false、2 は true、その他の偶数と平方数は false になる。平方数は `Nat.sqrt n ^ 2 == n` で判定し、Selfridge 探索より前に除外する。
 
-残る入力では `selfridgeClassicalMethodAStarParamsWithinTwoMul` により昇順探索し、成功後に底 2 Strong Miller–Rabin と Strong Lucas を評価する。強化版はさらに Lucas-V と、整数底 $Q$ の Euler–Jacobi を評価する。現行探索は純粋な Jacobi $-1$ 探索で、Jacobi $0$ による因子検出付き早期停止や MR 先行の制御フローは実装していない。
+それ以外の入力では `selfridgeClassicalMethodAStarParamsWithinTwoMul` が候補を昇順に調べる。探索に成功すると、底2 Strong Miller–Rabin と Strong Lucas を評価する。強化版ではさらに Lucas-V と整数底 $Q$ の Euler–Jacobi を評価する。現在の探索は Jacobi 値が $-1$ となる候補を探す。Jacobi 値 $0$ による因子検出で早期停止する処理や、Miller–Rabin を先に実行する制御フローは実装していない。
 
 探索 `fuel` は `n - 2`。内部の探索は `Option` で成功・失敗を区別し、トップレベルでは探索失敗を false にする。Wheel30・素数候補のみを用いる `bailliePSWWheel30Ascending`、 `bailliePSWPrimeAscending` は明示的な `fuel` を受け取り、 `Option Bool` を返す。
 
@@ -65,9 +65,9 @@ GRH の下で、任意の奇合成数 $n > 1$ に対して $p \le (\ln\mathrel{}
 
 `PrimalityTestSpec.prime_true` は「素数なら true」という完全性を表す。 `bailliePSW_spec_unconditional` と `strengthenedBPSW_spec_unconditional` は探索成功も含めてこの仕様を証明し、GRH を仮定しない。逆の「true なら素数」はこの仕様に含まれない。
 
-仕様には $0$ と $1$ の棄却、2 の受理、2 以外の偶数の棄却も含まれる。 `bailliePSW_of_prime_of_search` などの探索成功を仮定した段階と、 `bailliePSW_spec_unconditional` の無条件のトップレベル保証が接続されている。したがって、GRH 上界を実行時の停止保証に組み込む必要はない。
+仕様には、$0$ と $1$ の棄却、2 の受理、2 以外の偶数の棄却も含まれる。`bailliePSW_of_prime_of_search` などの探索成功を仮定する段階を、`bailliePSW_spec_unconditional` が無条件のトップレベル保証へつなぐ。そのため、GRH による上界を実行時の停止保証に組み込む必要はない。
 
-Euler–Jacobi や明示パラメータの Strong Lucas は 前処理を伴わない合同式チェックで、共通 precheck を自動適用しない。パラメータ付き素数完全性定理には判別式条件や Jacobi 条件がある。
+Euler–Jacobi や明示パラメータを使う Strong Lucas は、前処理を伴わない合同式の検査である。共通の precheck は自動適用しない。パラメータ付き素数完全性定理には判別式や Jacobi 記号の条件がある。
 
 ```lean
 import PseudoPrime.PrimeTest
@@ -80,7 +80,7 @@ import PseudoPrime.PrimeTest
 
 依存は主に [NumberTheory](NumberTheory.md) と mathlib である。ただし `Selfridge/Finite.lean` は `PseudoSquare/Computation/SmallN.lean` の有限証明書を import するため、PseudoSquare と完全に独立した import 構成ではない。
 
-回帰テストは公開入口とは別に、Lean プロジェクト直下で `lake build PseudoPrime/PrimeTest/Regression.lean` を実行する。回帰テストの `native_decide` による検査 は、公開定理の数学的証明とは区別する。
+回帰テストは公開入口とは別に、Lean プロジェクト直下で `lake build PseudoPrime/PrimeTest/Regression.lean` を実行する。回帰テストで `native_decide` が行う検査は、公開定理の数学的証明とは区別する。
 
 ## C++・Python の参考実装
 

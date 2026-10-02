@@ -6,14 +6,14 @@
 
 ## 概要
 
-このプロジェクトは、**一般化リーマン予想（GRH）** の下での素数判定と二次指標の証人に対する明示的上界を Lean で形式化している。
+このプロジェクトでは、**一般化リーマン予想（GRH）**の下で成り立つ素数判定と、二次指標の証人に対する明示的な上界を Lean で形式化している。
 
-解析的な展開は、Lamzouri、Li、Soundararajan の論文 [*Conditional bounds for the least quadratic non-residue and related problems*](https://arxiv.org/abs/1309.3595) に沿っている。これらの上界に必要な部分を、有限範囲の議論及び代数的議論とともに Lean で形式化している。
+解析的な議論は、Lamzouri、Li、Soundararajan の論文 [*Conditional bounds for the least quadratic non-residue and related problems*](https://arxiv.org/abs/1309.3595) に沿っている。上界の証明に必要な部分を、有限範囲および代数的な議論とともに Lean で形式化している。
 
 主な結果は次の二つである。
 
-1. GRH の下で、奇数 $n > 1$ が素数であることと、すべての素数底 $p \le (\ln\mathrel{} n)^2$ に対する強 Miller–Rabin 条件を満たすことは同値である。
-2. GRH の下で、任意の正の奇数かつ非平方数 $n$ に対し、2 種類の奇素数証人 $p$ の存在を示し、それぞれに明示的上界を与える。一つは Legendre 記号 $\bigl(\frac{n}{p}\bigr)$ が $1$ と異なるもの、もう一つは $-1$ となるものである。
+1. GRH の下で、奇数 $n > 1$ が素数であることと、上界 $p \le (\ln\mathrel{} n)^2$ を満たすすべての素数底で強 Miller–Rabin 条件を満たすことは同値である。
+2. GRH の下で、正の奇数かつ非平方数 $n$ に対して、2 種類の奇素数証人 $p$ の存在と、それぞれの明示的な上界を示す。一方は Legendre 記号 $\bigl(\frac{n}{p}\bigr)$ が $1$ でない証人、もう一方は記号が $-1$ となる証人である。
 
 以下、 $\ln$ は底が $e$ の自然対数を表す。Lean では `Real.log` に対応する。
 

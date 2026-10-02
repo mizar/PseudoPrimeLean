@@ -2,7 +2,7 @@
 
 公開入口: [LLS.lean](../PseudoPrime/LLS.lean)。名前空間は `PseudoPrime.LLS`。
 
-Lamzouri–Li–Soundararajan の Theorem 1.1 に対応する S1・S2 を扱う。 `Statement.lean` にある命題の定義と、GRH からそれを証明する定理を区別する。一般指標の解析評価・GRH による証明は LLS 本体にあり、Extensions を import しない。
+Lamzouri–Li–Soundararajan の Theorem 1.1 に対応する S1・S2 を扱う。`Statement.lean` では命題を定義し、別の定理で GRH からその命題を証明する。一般指標の解析評価と GRH による証明は LLS 本体にあり、Extensions は import しない。
 
 ## S1: 一般指標版と真部分群版
 
@@ -27,7 +27,7 @@ GRH、 $q \ge 3000$ のもとで次が証明されている。
 | `llsTheorem11S1Character` | 非自明な複素 Dirichlet 指標 $\chi$ に対し、素数 $p \nmid q$、 $\chi(p) \ne 1$、 $p \le X_1(q)$ が存在 | `llsTheorem11S1Character_of_grh` |
 | `llsTheorem11S1` | 任意の真部分群 $H < (\mathbb{Z}/q\mathbb{Z})^\times$ に対し、法 $q$ を割らず、単元剰余が $H$ の外にあり、 $p \le X_1(q)$ を満たす素数 $p$ が存在 | `llsTheorem11S1_of_grh` |
 
-一般指標版は二次性も、元の指標の原始性も要求しない。解析では原始指標へ移り、導手と法変更の補正を処理する。 `llsTheorem11S1_of_character` は、商群の非自明指標を引き戻して指標版から真部分群版を得る。同一結論の別名ではなく、対象と結論が異なる二つの仕様である。
+一般指標版は、指標の二次性も原始性も要求しない。解析では原始指標に移し、導手と法の変更に伴う補正を扱う。`llsTheorem11S1_of_character` は商群の非自明指標を引き戻し、指標版から真部分群版を導く。二つは同じ結論の別名ではなく、対象と結論が異なる仕様である。
 
 `exists_least_prime_outside_subgroup_of_grh` はさらに最小素数を与える。最小性の比較対象は、上界内に限定せず `PrimeOutsideSubgroup q H` を満たすすべての素数である。これらの GRH 定理は [Theorem11S1GRH.lean](../PseudoPrime/LLS/Theorem11S1GRH.lean) にある。
 

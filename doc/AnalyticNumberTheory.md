@@ -2,7 +2,7 @@
 
 公開入口: [AnalyticNumberTheory.lean](../PseudoPrime/AnalyticNumberTheory.lean)。主な名前空間は `PseudoPrime.AnalyticNumberTheory` とその下位名前空間。
 
-この層は算術的な有限和、導手による法変更、Riemann の $\zeta$ 関数・ $\xi$ 関数と Dirichlet L 関数、矩形輪郭積分、零点和の極限を接続する。[LLS](LLS.md) 固有の最終半径と数値分離は LLS 側に置く。この入口から LLS や PseudoSquare への逆向きの import はない。
+この層では、算術的な有限和、導手に伴う法の変更、Riemann の $\zeta$ 関数・$\xi$ 関数と Dirichlet L 関数、矩形輪郭積分、零点和の極限を扱う。[LLS](LLS.md) 固有の最終半径と数値分離は LLS 側に置く。この入口は LLS や PseudoSquare を逆向きに import しない。
 
 ## 構成
 
@@ -34,7 +34,7 @@ $$
 
 [Definition.lean](../PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) の `GeneralizedRiemannHypothesis` は、法 $1$ を含むすべての原始複素 Dirichlet 指標について、所定の自明零点以外の L 関数の零点の実部が $1/2$ であるという命題である。 `GeneralizedRiemannHypothesis.riemann` が法 $1$ から RH を導く。したがって後続の GRH 定理に独立した RH 仮定を追加する必要はない。
 
-解析証明では、有限矩形の境界積分を留数和に変換し、良い高さ列に沿って水平辺を消し、さらに左辺を遠方へ移す。一般指標用の [PrimitiveGenericLogLeftVertical.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/PrimitiveGenericLogLeftVertical.lean) などがこの極限を供給する。有限輪郭の条件と極限の条件を個別の定理で確認する構成である。 RH・GRH が必要な零点評価は、それぞれの定理の引数として受け取る。
+解析証明では、有限矩形の境界積分を留数和に変換する。次に、適切な高さ列に沿って水平辺の積分を消し、左辺を遠方へ移す。一般指標用の [PrimitiveGenericLogLeftVertical.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/PrimitiveGenericLogLeftVertical.lean) などが、この極限を与える。有限輪郭と極限に必要な条件は、それぞれ個別の定理で確認する。RH・GRH に基づく零点評価は各定理の引数として受け取る。
 
 偶原始二次指標については [EvenLogWeightedUpper.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/EvenLogWeightedUpper.lean) の `primitiveLogWeightedUpper_of_grh_even_exact` が、 $x \ge 64$ で偶指標の誤差項を保持した $\mathrm{Re} S(x,\chi)$ の上界を与える。一般の偶指標すべてを対象とする型ではなく、現状は二次性も要求する。
 
@@ -46,7 +46,7 @@ $$
 \omega(4n) \le \frac{7}{5}\frac{\ln(4n)}{\ln(\ln(4n))}
 $$
 
-を与える。ここで $\omega(m)$ は正整数 $m$ の異なる素因数の個数を表す。有限証明書と解析的な尾部評価を組み合わせた無条件の結果であり、Robin 評価を仮定しない。 LLS の補正項を PseudoSquare の明示的な初等半径に直す際に使う。
+を与える。ここで $\omega(m)$ は正整数 $m$ の異なる素因数の個数を表す。有限証明書と解析的な尾部評価を組み合わせた無条件の結果であり、Robin 評価を仮定しない。この評価を使い、LLS の補正項を PseudoSquare の明示的な初等半径に置き換える。
 
 ## 利用例
 

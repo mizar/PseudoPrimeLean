@@ -2,7 +2,7 @@
 
 対象: [`PseudoPrime/PrimeTestBounds/Selfridge`](../PseudoPrime/PrimeTestBounds/Selfridge)。公開入口は [`PseudoPrime/PrimeTestBounds.lean`](../PseudoPrime/PrimeTestBounds.lean)、上界の名前空間は `PseudoPrime.PrimeTestBounds.Selfridge`。離散的な候補列・試行回数・証人比較は `PseudoPrime.PrimeTest` に属する。
 
-この領域は [PrimeTest](PrimeTest.md) の数学的な Selfridge 停止値と、[PseudoSquare](PseudoSquare.md) の Jacobi 証人上界を接続する。入口はルートの `import PseudoPrime` からも到達できる。
+この領域では、[PrimeTest](PrimeTest.md) の数学的な Selfridge 停止値を [PseudoSquare](PseudoSquare.md) の Jacobi 証人上界に接続する。ルートの `import PseudoPrime` からも、この入口を利用できる。
 
 ## 構成
 
@@ -21,9 +21,9 @@
 
 ## 停止値の意味
 
-古典候補は大きさ $5, 7, 9, 11, \ldots$ を昇順に並べ、 `selfridgeD` が符号付き判別式 $5, -7, 9, -11, \ldots$ に変換する。
+古典候補は大きさ $5, 7, 9, 11, \ldots$ の順に並ぶ。`selfridgeD` はこれらを符号付き判別式 $5, -7, 9, -11, \ldots$ に変換する。
 
-`firstStopNegOne` は Jacobi 値が $-1$ になる最初の候補の大きさ。 `firstStopNeOne` は $n \nmid i$ を満たし、Jacobi 値が $1$ と異なる最初の候補の大きさで、非自明因子検出も含める。いずれも非空性の証明を受け取る数学的最小元である。
+`firstStopNegOne` は Jacobi 値が $-1$ になる最初の候補の大きさを表す。`firstStopNeOne` は $n \nmid i$ かつ Jacobi 値が $1$ でない最初の候補の大きさを表し、非自明因子の検出も含む。どちらも、集合の非空性の証明を受け取る数学的な最小元である。
 
 対応する符号付き停止値を $g_{-1}(n)$ と $g_{\ne 1}(n)$ と書くと、絶対値は候補の大きさに等しい。この領域の上界はこれらの数学的停止値について述べる。現行 BPSW の実行用探索に Jacobi 値 $0$ による早期停止を追加するものではない。
 
@@ -58,7 +58,7 @@ $$
 
 具体的には GRH と $B \ge 751$ のもとで、因子検出の試行回数最大は純粋 $-1$ の試行回数最大以下、後者は $R(B) / 2 + 1$ 以下となる。
 
-ここで数えるのは Jacobi 記号の試行回数である。1 回の Jacobi 計算の費用、平方数チェック、Miller–Rabin、Lucas 評価を含むビット計算量や実測時間そのものではない。また、GRH を仮定する上界と、PrimeTest の素数完全性に用いる無条件の有限探索成功は別の結果である。
+ここで数えるのは Jacobi 記号の試行回数である。1回の Jacobi 計算にかかる費用や、平方数チェック、Miller–Rabin、Lucas 評価を含むビット計算量・実測時間は評価しない。また、GRH を仮定する上界と、PrimeTest の素数完全性に使う無条件の有限探索成功は別の結果である。
 
 ## 利用方法
 

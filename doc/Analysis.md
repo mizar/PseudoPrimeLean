@@ -2,7 +2,7 @@
 
 公開入口: [Analysis.lean](../PseudoPrime/Analysis.lean)。名前空間は `PseudoPrime.Analysis`。
 
-この層は対数、Euler–Mascheroni 定数、対数比、明示公式に現れる実数の誤差項を扱う。 LLS や Jacobi 証人を前提にせず、後続の数値比較を既存の実解析定理から証明できる形にする。 RH・GRH は仮定しない。
+この層では、対数、Euler–Mascheroni 定数、対数比、明示公式に現れる実数の誤差項を扱う。LLS や Jacobi 証人には依存せず、後続の数値比較を既存の実解析定理から証明できるようにする。RH・GRH は仮定しない。
 
 ## 主な構成と成果
 
@@ -36,7 +36,7 @@ $$
 E_{\mathrm{even}}(x) = \frac{\pi^2}{24} - \frac{\gamma}{2}\ln\mathrel{} x - \frac{1}{2}(\ln\mathrel{} x)^2
 $$
 
-として `primitiveLogEvenMainError` に定義されている。この層で定義するのは実数式であり、この誤差項を用いた L 関数の重み付き和の上界は [AnalyticNumberTheory](AnalyticNumberTheory.md)・[LLS](LLS.md) 側で証明する。式を粗い定数へ丸める一般評価と、式を保持する偶指標の精密評価の双方に再利用される。
+として `primitiveLogEvenMainError` に定義されている。この層で定義するのは実数式である。この誤差項を使った L 関数の重み付き和の上界は、[AnalyticNumberTheory](AnalyticNumberTheory.md) と [LLS](LLS.md) で証明する。定義した式は、粗い定数に丸める一般評価と、式を保つ偶指標の精密評価の両方で再利用する。
 
 ## 利用例
 

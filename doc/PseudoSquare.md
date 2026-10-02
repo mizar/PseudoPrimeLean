@@ -2,7 +2,7 @@
 
 対象: [`PseudoPrime/PseudoSquare`](../PseudoPrime/PseudoSquare)。公開入口は [`PseudoPrime/PseudoSquare.lean`](../PseudoPrime/PseudoSquare.lean)、名前空間は `PseudoPrime.PseudoSquare`。
 
-この領域は、奇数かつ非平方数に対する最小 Jacobi 証人の最大値を定義し、有限計算と Dirichlet 指標・ L 関数の解析を組み合わせて上界を証明する。実行用の BPSW 本体は [PrimeTest](PrimeTest.md)、Selfridge 固有の上界への接続は [SelfridgeBoundGrh](SelfridgeBoundGrh.md) が担当する。
+この領域では、奇数かつ非平方数に対する最小 Jacobi 証人の最大値を定義する。有限計算と Dirichlet 指標・L 関数の解析を組み合わせて、その上界を証明する。実行用の BPSW 本体は [PrimeTest](PrimeTest.md)、Selfridge 固有の上界への接続は [SelfridgeBoundGrh](SelfridgeBoundGrh.md) で扱う。
 
 ## 構成
 
@@ -22,7 +22,7 @@
 - $\mathrm{QNeOne}(B)$： $\bigl(\frac{n}{p}\bigr) \ne 1$ を満たす最小奇素数の最大値。
 - $\mathrm{QNegOne}(B)$： $\bigl(\frac{n}{p}\bigr) = -1$ を満たす最小奇素数の最大値。
 
-証人そのものは [NumberTheory](NumberTheory.md) の定義を使用する。許容集合が空の場合の最大値は $0$ で、定義は `noncomputable`。 `QNeOne_le_QNegOne` が両者の比較を与える。許容入力は奇数かつ非平方数であり、古典的 pseudosquare の $n \equiv 1 \pmod 8$ という条件だけに限定した定義ではない。
+証人には [NumberTheory](NumberTheory.md) で定義したものを使う。許容集合が空なら最大値は $0$ とし、定義は `noncomputable` である。`QNeOne_le_QNegOne` は両者を比較する。許容入力は奇数かつ非平方数であり、古典的な pseudosquare の条件 $n \equiv 1 \pmod 8$ に限定していない。
 
 ## GRH と主要な結果
 

@@ -26,7 +26,7 @@ Lean 側の仕様・証明については [PrimeTest](PrimeTest.md) を参照す
 
 トップレベル 2 関数は、2 を受理し、2 未満と 2 以外の偶数を棄却する。 `true` / `True` はこのテストの受理を意味し、任意精度の整数に対する素数証明書ではない。下位関数には奇数・正値等の前提があるため、汎用の判定にはトップレベル関数を使う。
 
-Selfridge 候補は接頭部 $5, 7, 9, 11, 13, 15, 17, 19, 23, 29$ の後、 $30$ と互いに素な剰余を使って増加する。探索時には平方数を先に除外し、 `i == n` の候補を飛ばす。返り値 `(D, -1)` はパラメータ選択成功、 `(D, 0)` は因子検出、 `(0, 0)` は平方数である。これは `fuel` による回数制限を持つ探索 API ではない。
+Selfridge 候補は $5, 7, 9, 11, 13, 15, 17, 19, 23, 29$ から始まり、その後は $30$ と互いに素な剰余を使って増加する。探索前に平方数を除外し、`i == n` に当たる候補は飛ばす。返り値 `(D, -1)` はパラメータ選択の成功、`(D, 0)` は因子の検出、`(0, 0)` は平方数を表す。この探索 API は `fuel` による回数制限を持たない。
 
 ## Python で実行
 
@@ -38,19 +38,19 @@ python -c "from examples.bpsw.baillie_psw_strengthened import isprime_bpsw, ispr
 
 出力は `True False`。
 
-スクリプトを直接起動した場合は、判定結果を 1 行ずつ返す CLI ではなく、比較集計用のドライバになる。各行に 3 以上の奇数を 1 個ずつ入力する。空行または EOF で終了する。
+スクリプトを直接起動すると、判定結果を1行ずつ返す CLI ではなく、比較結果を集計するドライバとして動作する。各行に3以上の奇数を1個ずつ入力し、空行または EOF で終了する。
 
 ```powershell
 @('7', '9', '11', '15', '2047') | python examples/bpsw/baillie_psw_strengthened.py
 ```
 
-出力は `5 3 2 2 2 2 2`。左から入力数、底 2 MR、7 底 MR、13 底 MR、Strong Lucas、通常 BPSW、強化 BPSW の受理数である。7 底・13 底 MR は比較用であり、BPSW の返り値に追加される条件ではない。両 MR リストが受理して強化 BPSW が棄却した場合は、集計の前に診断行も出力する。 2・偶数・負数の境界入力を試す場合は、このドライバではなくトップレベル関数を呼ぶ。
+出力例は `5 3 2 2 2 2 2` である。左から、入力数、底2 MR、底7 MR、底13 MR、Strong Lucas、通常 BPSW、強化 BPSW の受理数を示す。底7・13 MR は比較用であり、BPSW の判定条件には含まれない。両方の MR が入力を受理し、強化 BPSW が棄却した場合は、集計の前に診断行も出力する。2・偶数・負数を試す場合は、このドライバではなくトップレベル関数を呼ぶ。
 
 ## C++ を static ビルドして実行
 
-C++17 以降、Boost のヘッダ、MSYS2 の MINGW64 または CLANG64 ツールチェーンを使用する。同梱の cmd は `%USERPROFILE%\scoop\apps\msys2\current` 配下を参照し、対応する bin をビルドプロセスの PATH に加え、コンパイラに `-static` を渡す。この配置と異なる環境では cmd 内の MSYS2 パスを合わせる。
+C++17 以降と Boost のヘッダ、MSYS2 の MINGW64 または CLANG64 ツールチェーンを使う。同梱の cmd は `%USERPROFILE%\scoop\apps\msys2\current` 配下を参照し、対応する bin をビルドプロセスの PATH に追加して、コンパイラに `-static` を渡す。配置が異なる環境では、cmd 内の MSYS2 パスを変更する。
 
-動的ランタイム DLL の探索による実行への影響を避けるため、Windows では次の static ビルドを使う。
+Windows では、動的ランタイム DLL の探索が実行に影響しないよう、次の手順で static ビルドする。
 
 ```powershell
 New-Item -ItemType Directory -Force .work | Out-Null
@@ -65,7 +65,7 @@ Clang の場合は次の通り。
 @('7', '9', '11', '15', '2047') | .\.work\bpsw-clang-static.exe
 ```
 
-どちらも上記 Python ドライバと同じ列順で集計する。別の C++ プログラムへ組み込む場合は `BPSW_STRENGTHENED_NO_MAIN` を定義するとドライバの main を除ける。入力の整数型は `bpsw_strengthened::bigint`。
+どちらの実行ファイルも、上記 Python ドライバと同じ列順で集計する。別の C++ プログラムに組み込む場合は `BPSW_STRENGTHENED_NO_MAIN` を定義すると、ドライバの `main` を除外できる。入力には `bpsw_strengthened::bigint` 型を使う。
 
 ## Lean との対応と相違
 
@@ -100,6 +100,6 @@ print("Python: -10 <= n <= 4096 matched trial division")
 ```
 
 
-Python、および両 cmd で static ビルドした C++ 版について、 $-10 \le n \le 4096$ の通常版・強化版の結果を独立した試し割りと照合した。また、 $(2^{127} - 1)^2$ と $2(2^{127} - 1)$ の棄却、上記集計例の一致を確認した。C++ は `-Wall -Wextra -pedantic` で診断なし。
+Python 版と、両 cmd で static ビルドした C++ 版について、$-10 \le n \le 4096$ の通常版・強化版の結果を独立した試し割りと照合した。また、$(2^{127} - 1)^2$ と $2(2^{127} - 1)$ の棄却、および上記の集計例との一致を確認した。C++ のビルドでは `-Wall -Wextra -pedantic` による診断はなかった。
 
 [PrimeTest へ](PrimeTest.md) · [構成全体へ](README.md)
