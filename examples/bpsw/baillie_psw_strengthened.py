@@ -8,6 +8,12 @@ from collections.abc import Iterable
 from typing import Optional
 
 
+def v2(x: int) -> int:
+    """Return the 2-adic valuation of a positive integer x."""
+    assert x > 0
+    return (x & -x).bit_length() - 1
+
+
 def isprime_miller_bases(n: int, bases: Iterable[int]) -> bool:
     """
     Miller-Rabin probable-prime test for all the specified bases.
@@ -17,21 +23,21 @@ def isprime_miller_bases(n: int, bases: Iterable[int]) -> bool:
     """
     assert n > 2 and (n & 1) == 1, 'value must be 3 or greater odd integer'
     n1 = n - 1
-    s = (n1 & -n1).bit_length() - 1
+    s = v2(n1)
     d = n1 >> s
     for a in bases:
         a %= n
         if a == 0:
             continue
         t = pow(a, d, n)
-        if t == 1 or t == n1:
+        if t == 1:
             continue
-        for _ in range(s - 1):
-            t = pow(t, 2, n)
+        for j in range(s):
             if t == n1:
                 break
-        else:
-            return False
+            if j == s - 1:
+                return False
+            t = pow(t, 2, n)
     return True
 
 
@@ -59,9 +65,9 @@ def isqrt(n: int) -> int:
 def issq(n: int) -> bool:
     """
     Return whether n is a perfect square. Reject negative values, apply a
-    quadratic-residue filter modulo 32, then test r * r == n for the integer square root r.
+    quadratic-residue filter modulo 8, then test r * r == n for the integer square root r.
     """
-    return n >= 0 and ((0x02030213 >> (n & 31)) & 1) > 0 and isqrt(n) ** 2 == n
+    return n >= 0 and ((0x13 >> (n & 7)) & 1) > 0 and isqrt(n) ** 2 == n
 
 
 def jacobi_symbol(a: int, n: int) -> int:
@@ -132,7 +138,7 @@ def kronecker_symbol(a: int, n: int) -> int:
             j = -j
 
     # Extract the power-of-two factor from the denominator.
-    t = (n & -n).bit_length() - 1
+    t = v2(n)
     if t != 0:
         if (a & 1) == 0:
             return 0
@@ -178,9 +184,29 @@ def lucas_selfridge_scan(n: int) -> tuple[int, int]:
     if issq(n):
         return 0, 0
 
+    # Here n >= 3 is odd and nonsquare. The relevant stop is firstStopNeOne:
+    # the least candidate i with n not dividing i and Jacobi(D/n) != 1.
+    # Lean: PrimeTest/Selfridge/WitnessBounds.lean,
+    # classicalFirstStopNeOne_lt_of_odd_nonsquare_of_fifteen_lt gives i < n
+    # unconditionally for n > 15. The remaining inputs 3, 5, 7, 11, 13, 15
+    # stop at 5, 7, 5, 13, 5, 5, respectively, so i < 2*n holds throughout.
+    # PrimeTest/Selfridge/Wheel30.lean: firstStopNeOne_wheel30_eq_classical
+    # preserves this mathematical first stop, including factor detection.
+    # PrimeTest/Selfridge/Composite.lean:
+    # composite_minimal_classical_neOne_eq_nine_or_fifteen shows that a composite
+    # first stopping candidate must be 9 or 15. Thus a stop with i > 15 is prime;
+    # no composite candidate above 15 can be the first stop of this scan.
+    # Accordingly, for i > 30 the generator skips residues modulo 30 that are
+    # divisible by 2, 3, or 5 and hence composite. It tests only residues
+    # 1, 7, 11, 13, 17, 19, 23, 29; the initial prefix retains 9 and 15.
+    # Under GRH, PrimeTestBounds/Selfridge/LogGRH.lean:
+    # classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq_of_grh
+    # gives i <= max(13, (log n)^2); for n >= 13 the bound is (log n)^2.
+    # log is natural. These bounds concern i = |D|, not the iteration count.
+    # This scan uses no GRH assumption or numerical cutoff; equivalence of these
+    # Python/C++ programs to the Lean first-stop specification is not formalized.
     for i in selfridge_abs_candidates():
-        # The termination theorem guarantees that the scan stops before i reaches 2n.
-        # For 0 < i < 2n, gcd(i, n) == n iff n divides i iff i == n,
+        # For 0 < i < 2*n, gcd(i, n) == n iff n divides i iff i == n,
         # so checking only i == n excludes every case with gcd(i, n) == n.
         # BFW states the general n-does-not-divide-|D| check; this simplification
         # relies on the separate first-stop bound, also preserved by Wheel30.
@@ -194,7 +220,7 @@ def lucas_selfridge_scan(n: int) -> tuple[int, int]:
             return d, -1
 
         if j == 0:
-            # The termination theorem places the stopping candidate below 2n. Since i != n,
+            # The unconditional bound places the stopping candidate below 2*n. Since i != n,
             # Jacobi == 0 implies 1 < gcd(i, n) < n.
             return d, 0
 
@@ -269,7 +295,7 @@ def lucas_uvq_mod(n: int, p: int, q: int, k: int) -> tuple[int, int, int]:
     if k == 0:
         return 0, 2 % n, 1 % n
 
-    d = p * p - 4 * q
+    disc = p * p - 4 * q
 
     # Initialize the values corresponding to the leading 1 bit of the index.
     # U_1 = 1, V_1 = P, Q^1 = Q
@@ -277,6 +303,7 @@ def lucas_uvq_mod(n: int, p: int, q: int, k: int) -> tuple[int, int, int]:
 
     # The leading bit has already been processed; start with the next bit.
     for bit in range(k.bit_length() - 2, -1, -1):
+        # For the processed binary prefix m, (u, v, qk) = (U_m, V_m, Q^m) mod n.
         # Double the index.
         u, v, qk = (
             u * v % n,
@@ -286,12 +313,11 @@ def lucas_uvq_mod(n: int, p: int, q: int, k: int) -> tuple[int, int, int]:
 
         # If the current bit is 1, increment the index.
         if (k >> bit) & 1:
-            old_u = u
-            old_v = v
-
-            u = div2_mod_odd(p * old_u + old_v, n)
-            v = div2_mod_odd(d * old_u + p * old_v, n)
-            qk = qk * q % n
+            u, v, qk = (
+                div2_mod_odd(p * u + v, n),
+                div2_mod_odd(disc * u + p * v, n),
+                qk * q % n,
+            )
 
     return u, v, qk
 
@@ -302,25 +328,27 @@ def isprime_lucas_strong_pq(n: int, p: int, q: int) -> bool:
     # for the BFW interpretation: delta(n) is then n + 1. This helper checks only
     # the congruences; it neither selects parameters nor verifies that hypothesis.
     # The prime-input guarantee also assumes gcd(n, Q) == 1, as in BFW Section 2.3.
+    # s = v_2(n + 1) is the 2-adic valuation of n + 1.
     # n + 1 = odd_part * 2^s, where d = odd_part is odd.
     delta = n + 1
-    s = (delta & -delta).bit_length() - 1
+    s = v2(delta)
     # Compute U_d, V_d, and Q^d.
     u, v, qk = lucas_uvq_mod(n, p, q, delta >> s)
 
-    # The strong Lucas condition holds if U_d == 0 or V_d == 0.
-    if u == 0 or v == 0:
+    # The strong Lucas condition holds if U_d == 0.
+    if u == 0:
         return True
 
-    # Test the remaining V_{d 2^r} values for 1 <= r < s.
-    for _ in range(s - 1):
+    # Test V_{d 2^r} for 0 <= r < s before doubling the index.
+    for r in range(s):
+        if v == 0:
+            return True
+        if r == s - 1:
+            return False
         v, qk = (
             (v * v - 2 * qk) % n,
             qk * qk % n,
         )
-        if v == 0:
-            return True
-
     return False
 
 
@@ -363,12 +391,14 @@ def isprime_lucas_strengthened(n: int) -> bool:
 
     p, q = params
 
-    # n + 1 = odd_part * 2^s, where d = odd_part is odd.
+    # s = v_2(n + 1) is the 2-adic valuation of n + 1.
+    # n + 1 = odd_part * 2^s, with odd_part odd and s >= 1.
     delta = n + 1
-    s = (delta & -delta).bit_length() - 1
+    s = v2(delta)
+    odd_part = delta >> s
 
-    # Compute U_d, V_d, and Q^d.
-    u, v, qk = lucas_uvq_mod(n, p, q, delta >> s)
+    # Compute U_d, V_d, and Q^d, where d = odd_part.
+    u, v, qk = lucas_uvq_mod(n, p, q, odd_part)
 
     # Strong Lucas condition:
     #
@@ -379,28 +409,22 @@ def isprime_lucas_strengthened(n: int) -> bool:
     # V_{d 2^r} == 0
     strong_ok = (u == 0)
 
-    q_half = 0
-
     # Do not return immediately on strong Lucas success: steps 4 and 5 still
     # need V_{n+1} and Q^{(n+1)/2}. All congruences use residues modulo n.
     for r in range(s):
-        # The current index is odd_part * 2^r.
+        # At entry: v = V_(d * 2^r), qk = Q^(d * 2^r) mod n, d = odd_part.
+        # strong_ok records U_d == 0 or a zero V at an earlier index d * 2^j, j < r.
         if v == 0:
             strong_ok = True
 
-        # When r == s - 1, the current index is (n + 1) / 2.
-        # Save this power before the final doubling to index n + 1.
+        # Double V first; retain the half-index Q power on the final iteration.
+        v = (v * v - 2 * qk) % n
         if r == s - 1:
-            q_half = qk
+            break
+        qk = qk * qk % n
 
-        # Double the index.
-        u, v, qk = (
-            u * v % n,
-            (v * v - 2 * qk) % n,
-            qk * qk % n,
-        )
-
-    # The index is now n + 1.
+    # At exit: v = V_(n + 1), qk = Q^((n + 1) / 2) mod n.
+    # strong_ok includes exactly the V checks for 0 <= r < s, excluding V_(n + 1).
     if not strong_ok:
         return False
 
@@ -414,7 +438,7 @@ def isprime_lucas_strengthened(n: int) -> bool:
     #
     # Q^((n+1)/2) == Q * (Q/n) mod n
     # Use BFW's multiplied form directly; do not divide by Q modulo n.
-    if q_half != (q * jacobi_symbol(q, n)) % n:
+    if qk != (q * jacobi_symbol(q, n)) % n:
         return False
 
     return True
