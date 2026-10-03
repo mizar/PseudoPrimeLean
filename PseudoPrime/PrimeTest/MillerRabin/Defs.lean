@@ -3,6 +3,7 @@ Copyright (c) 2026 Mizar. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
+
 import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Data.ZMod.Basic

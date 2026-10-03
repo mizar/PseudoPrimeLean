@@ -3,6 +3,7 @@ Copyright (c) 2026 Mizar. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
+
 import Mathlib.NumberTheory.MulChar.Basic
 import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.QuadraticFunctionalEquation
