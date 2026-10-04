@@ -57,6 +57,8 @@ import PseudoPrime.PrimeTest.BPSW.Selfridge
 import PseudoPrime.PrimeTest.BPSW.Top
 import PseudoPrime.PrimeTest.StrongLucas.NoGcd
 import PseudoPrime.PrimeTest.Lucas.ReferenceProcedure
+import PseudoPrime.PrimeTest.ReferenceArithmetic
+import PseudoPrime.PrimeTest.JacobiFuel
 import PseudoPrime.PrimeTest.LucasV.Spec
 import PseudoPrime.PrimeTest.LucasV.Prime
 import PseudoPrime.PrimeTest.Lucas.Factor
