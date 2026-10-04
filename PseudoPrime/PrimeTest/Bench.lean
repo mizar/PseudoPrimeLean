@@ -67,7 +67,7 @@ private def timeLucasLargest : IO Unit := do
 
 private def timeStrengthenedBPSW : IO Unit := do
   let start ← IO.monoMsNow
-  let results := all (fun n => strengthenedBPSW n = false) falseCases
+  let results := all (fun n => strengthenedBPSWWheel30 n = false) falseCases
   let elapsed := (← IO.monoMsNow) - start
   IO.println s!"strengthened BPSW: result={results}, elapsed_ms={elapsed}"
 

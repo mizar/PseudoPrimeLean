@@ -38,7 +38,6 @@ import PseudoPrime.PrimeTest.EulerJacobi.Decision
 import PseudoPrime.PrimeTest.Lucas.Decision
 import PseudoPrime.PrimeTest.LucasV.Decision
 import PseudoPrime.PrimeTest.StrongLucas.Decision
-import PseudoPrime.PrimeTest.BPSW.Decision
 import PseudoPrime.PrimeTest.Execution
 import PseudoPrime.PrimeTest.Precheck
 import PseudoPrime.PrimeTest.EulerJacobi.Prime
@@ -55,7 +54,10 @@ import PseudoPrime.PrimeTest.BPSW.Fast
 import PseudoPrime.PrimeTest.BPSW.Strengthened
 import PseudoPrime.PrimeTest.BPSW.Selfridge
 import PseudoPrime.PrimeTest.BPSW.Top
+import PseudoPrime.PrimeTest.BPSW.Exec
 import PseudoPrime.PrimeTest.StrongLucas.NoGcd
+import PseudoPrime.PrimeTest.BPSW.Wheel30
+import PseudoPrime.PrimeTest.BPSW.PaperSpec
 import PseudoPrime.PrimeTest.Lucas.ReferenceProcedure
 import PseudoPrime.PrimeTest.ReferenceArithmetic
 import PseudoPrime.PrimeTest.JacobiFuel
@@ -65,6 +67,7 @@ import PseudoPrime.PrimeTest.Lucas.Factor
 import PseudoPrime.PrimeTest.Selfridge.MethodA
 import PseudoPrime.PrimeTest.Selfridge.MethodAStar
 import PseudoPrime.PrimeTest.Selfridge.MethodAStarEquivalence
+import PseudoPrime.PrimeTest.Selfridge.MethodALists
 import PseudoPrime.PrimeTest.Selfridge.Candidates
 import PseudoPrime.PrimeTest.Selfridge.FirstStop
 import PseudoPrime.PrimeTest.Selfridge.Coincidence
@@ -73,6 +76,7 @@ import PseudoPrime.PrimeTest.Selfridge.Witness
 import PseudoPrime.PrimeTest.Selfridge.Nonempty
 import PseudoPrime.PrimeTest.Selfridge.Finite
 import PseudoPrime.PrimeTest.Selfridge.Wheel30
+import PseudoPrime.PrimeTest.Selfridge.Scan
 import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
 import PseudoPrime.PrimeTest.Selfridge.Bounded
 import PseudoPrime.PrimeTest.MillerRabin.WitnessBound

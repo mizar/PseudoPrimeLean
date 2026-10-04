@@ -10,7 +10,7 @@ import PseudoPrime.PrimeTest.EulerJacobi.Decision
 import PseudoPrime.PrimeTest.Lucas.Decision
 import PseudoPrime.PrimeTest.LucasV.Decision
 import PseudoPrime.PrimeTest.StrongLucas.Decision
-import PseudoPrime.PrimeTest.BPSW.Decision
+import PseudoPrime.PrimeTest.BPSW.Wheel30
 
 /-! # Individual probable-prime decision contracts -/
 
@@ -20,8 +20,8 @@ namespace PseudoPrime.PrimeTest.MethodDecisionTests
 def decisions (n : ℕ) : List (PrimeTest.Decision n) :=
   [MillerRabin.decideBase2 n, MillerRabin.decideWithBase n 2, EulerJacobi.decideWithBase n 2,
     EulerJacobi.decideWithIntBase n (-1), Lucas.decideWithParams n 5 1 (-1),
-    LucasV.decideWithParams n 5 1 (-1), StrongLucas.decideWithParams n 5 1 (-1), BPSW.decide n,
-    BPSW.decideStrengthened n]
+    LucasV.decideWithParams n 5 1 (-1), StrongLucas.decideWithParams n 5 1 (-1),
+    BPSW.decideWheel30 n false, BPSW.decideWheel30 n true]
 
 /-- Verify boundaries, parameter guards, pseudoprimes and the downstream execution consumer. -/
 def runTests : IO Unit := do

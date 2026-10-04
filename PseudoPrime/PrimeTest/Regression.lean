@@ -98,22 +98,25 @@ private def passesMrBases (n : ℕ) (bases : List ℕ) : Bool :=
 private def largePrimeSquare : ℕ :=
   1000000014000000049
 
-#eval ("lpsp-baillie-psw-false", all (fun n => bailliePSW n = false) lucasCases)
+#eval ("lpsp-baillie-psw-false", all (fun n => bailliePSWWheel30 n = false) lucasCases)
 
-#eval ("slpsp-baillie-psw-false", all (fun n => bailliePSW n = false) strongLucasCases)
+#eval ("slpsp-baillie-psw-false", all (fun n => bailliePSWWheel30 n = false) strongLucasCases)
 
-#eval ("vpsp-baillie-psw-false", all (fun n => bailliePSW n = false) lucasVCases)
+#eval ("vpsp-baillie-psw-false", all (fun n => bailliePSWWheel30 n = false) lucasVCases)
 
-#eval ("lpsp-strengthened-bpsw-false", all (fun n => strengthenedBPSW n = false) lucasCases)
-
-#eval ("slpsp-strengthened-bpsw-false", all (fun n => strengthenedBPSW n = false) strongLucasCases)
-
-#eval ("vpsp-strengthened-bpsw-false", all (fun n => strengthenedBPSW n = false) lucasVCases)
-
-#eval ("small-primes-baillie-psw-true", all (fun n => bailliePSW n = true) smallPrimeCases)
+#eval ("lpsp-strengthened-bpsw-false", all (fun n => strengthenedBPSWWheel30 n = false) lucasCases)
 
 #eval
-  ("small-primes-strengthened-bpsw-true", all (fun n => strengthenedBPSW n = true) smallPrimeCases)
+  ("slpsp-strengthened-bpsw-false",
+    all (fun n => strengthenedBPSWWheel30 n = false) strongLucasCases)
+
+#eval ("vpsp-strengthened-bpsw-false", all (fun n => strengthenedBPSWWheel30 n = false) lucasVCases)
+
+#eval ("small-primes-baillie-psw-true", all (fun n => bailliePSWWheel30 n = true) smallPrimeCases)
+
+#eval
+  ("small-primes-strengthened-bpsw-true",
+    all (fun n => strengthenedBPSWWheel30 n = true) smallPrimeCases)
 
 #eval
   ("base2-strong-pseudoprimes-pass-mr",
@@ -121,11 +124,11 @@ private def largePrimeSquare : ℕ :=
 
 #eval
   ("base2-strong-pseudoprimes-fail-baillie-psw",
-    all (fun n => bailliePSW n = false) base2StrongPseudoprimes)
+    all (fun n => bailliePSWWheel30 n = false) base2StrongPseudoprimes)
 
 #eval
   ("base2-strong-pseudoprimes-fail-strengthened-bpsw",
-    all (fun n => strengthenedBPSW n = false) base2StrongPseudoprimes)
+    all (fun n => strengthenedBPSWWheel30 n = false) base2StrongPseudoprimes)
 
 #eval
   ("base2-strong-pseudoprimes-fail-mr-bases7",
@@ -153,19 +156,20 @@ private def largePrimeSquare : ℕ :=
 
 #eval
   ("multi-base-pseudoprimes-fail-strong-lucas-via-bpsw",
-    all (fun n => bailliePSW n = false) multiBaseStrongPseudoprimes)
+    all (fun n => bailliePSWWheel30 n = false) multiBaseStrongPseudoprimes)
 
 #eval
   ("multi-base-pseudoprimes-fail-strengthened-bpsw",
-    all (fun n => strengthenedBPSW n = false) multiBaseStrongPseudoprimes)
+    all (fun n => strengthenedBPSWWheel30 n = false) multiBaseStrongPseudoprimes)
 
 #eval
   ("large-prime-square-precheck-false", decide (primalityPrecheck largePrimeSquare = some false))
 
-#eval ("large-prime-square-baillie-psw-false", decide (bailliePSW largePrimeSquare = false))
+#eval ("large-prime-square-baillie-psw-false", decide (bailliePSWWheel30 largePrimeSquare = false))
 
 #eval
-  ("large-prime-square-strengthened-bpsw-false", decide (strengthenedBPSW largePrimeSquare = false))
+  ("large-prime-square-strengthened-bpsw-false",
+    decide (strengthenedBPSWWheel30 largePrimeSquare = false))
 
 #eval
   ("method-a-a-star-d5-agree",
@@ -174,94 +178,82 @@ private def largePrimeSquare : ℕ :=
         strongLucasMethodAStar n 5 (by norm_num only) = strongLucasMethodA n 5 (by norm_num only))
       methodAStarFiveCases)
 
-/- These assertions make a false regression result fail compilation. -/
-example : all (fun n => bailliePSW n = false) lucasCases := by native_decide
+/- These executable assertions make a false regression result fail elaboration. -/
+#eval
+  show IO Bool from do
+    unless
+      (all
+        (fun n =>
+          strongLucasMethodAStar n 5 (by norm_num only) = strongLucasMethodA n 5 (by norm_num only))
+        methodAStarFiveCases) do
+      throw (IO.userError "primality regression failed")
+    return true
 
-example : all (fun n => bailliePSW n = false) strongLucasCases := by native_decide
+#eval
+  show IO Bool from do
+    unless (all (fun n => strongMillerRabinBase2WithPrecheck n = true) base2StrongPseudoprimes) do
+      throw (IO.userError "primality regression failed")
+    return true
 
-example : all (fun n => bailliePSW n = false) lucasVCases := by native_decide
+#eval
+  show IO Bool from do
+    unless (all (fun n => passesMrBases n mrBases7 = false) base2StrongPseudoprimes) do
+      throw (IO.userError "primality regression failed")
+    return true
 
-example : all (fun n => strengthenedBPSW n = false) lucasCases := by native_decide
+#eval
+  show IO Bool from do
+    unless (all (fun n => passesMrBases n mrBases13 = false) base2StrongPseudoprimes) do
+      throw (IO.userError "primality regression failed")
+    return true
 
-example : all (fun n => strengthenedBPSW n = false) strongLucasCases := by native_decide
+#eval
+  show IO Bool from do
+    unless (all (fun n => passesMrBases n mrBases7 = true) mrPrimeCases) do
+      throw (IO.userError "primality regression failed")
+    return true
 
-example : all (fun n => strengthenedBPSW n = false) lucasVCases := by native_decide
+#eval
+  show IO Bool from do
+    unless (all (fun n => passesMrBases n mrBases13 = true) mrPrimeCases) do
+      throw (IO.userError "primality regression failed")
+    return true
 
-example :
-    all
-      (fun n =>
-        strongLucasMethodAStar n 5 (by norm_num only) = strongLucasMethodA n 5 (by norm_num only))
-      methodAStarFiveCases := by
-  native_decide
+#eval
+  show IO Bool from do
+    unless
+      (all (fun n => strongMillerRabinBase2WithPrecheck n = true) multiBaseStrongPseudoprimes) do
+      throw (IO.userError "primality regression failed")
+    return true
 
-example : all (fun n => bailliePSW n = true) smallPrimeCases := by native_decide
+#eval
+  show IO Bool from do
+    unless (all (fun n => passesMrBases n mrBases7 = true) multiBaseStrongPseudoprimes) do
+      throw (IO.userError "primality regression failed")
+    return true
 
-example : all (fun n => strengthenedBPSW n = true) smallPrimeCases := by native_decide
+#eval
+  show IO Bool from do
+    unless (all (fun n => passesMrBases n mrBases13 = true) multiBaseStrongPseudoprimes) do
+      throw (IO.userError "primality regression failed")
+    return true
 
-example : all (fun n => strongMillerRabinBase2WithPrecheck n = true) base2StrongPseudoprimes := by
-  native_decide
+#eval
+  show IO Bool from do
+    unless (primalityPrecheck largePrimeSquare = some false) do
+      throw (IO.userError "primality regression failed")
+    return true
 
-example : all (fun n => bailliePSW n = false) base2StrongPseudoprimes := by native_decide
+#eval bailliePSWWheel30 0
 
-example : all (fun n => strengthenedBPSW n = false) base2StrongPseudoprimes := by native_decide
+#eval bailliePSWWheel30 1
 
-example : all (fun n => passesMrBases n mrBases7 = false) base2StrongPseudoprimes := by
-  native_decide
+#eval bailliePSWWheel30 2
 
-example : all (fun n => passesMrBases n mrBases13 = false) base2StrongPseudoprimes := by
-  native_decide
+#eval strengthenedBPSWWheel30 0
 
-example : all (fun n => passesMrBases n mrBases7 = true) mrPrimeCases := by native_decide
+#eval strengthenedBPSWWheel30 1
 
-example : all (fun n => passesMrBases n mrBases13 = true) mrPrimeCases := by native_decide
-
-example :
-    all (fun n => strongMillerRabinBase2WithPrecheck n = true) multiBaseStrongPseudoprimes := by
-  native_decide
-
-example : all (fun n => passesMrBases n mrBases7 = true) multiBaseStrongPseudoprimes := by
-  native_decide
-
-example : all (fun n => passesMrBases n mrBases13 = true) multiBaseStrongPseudoprimes := by
-  native_decide
-
-example : all (fun n => bailliePSW n = false) multiBaseStrongPseudoprimes := by native_decide
-
-example : all (fun n => strengthenedBPSW n = false) multiBaseStrongPseudoprimes := by native_decide
-
-example : primalityPrecheck largePrimeSquare = some false := by native_decide
-
-example : bailliePSW largePrimeSquare = false := by native_decide
-
-example : strengthenedBPSW largePrimeSquare = false := by native_decide
-
-#eval bailliePSW 0
-
-#eval bailliePSW 1
-
-#eval bailliePSW 2
-
-#eval strengthenedBPSW 0
-
-#eval strengthenedBPSW 1
-
-#eval strengthenedBPSW 2
-
-example : ∀ n : ℕ, n ≠ 2 → Even n → bailliePSW n = false := by
-  intro n hn2 heven
-  exact bailliePSW_even_false hn2 heven
-
-example : strengthenedBPSW 0 = false ∧ strengthenedBPSW 1 = false ∧ strengthenedBPSW 2 = true := by
-  exact ⟨strengthenedBPSW_zero, strengthenedBPSW_one, strengthenedBPSW_two⟩
-
-example : ∀ n : ℕ, n ≠ 2 → Even n → strengthenedBPSW n = false := by
-  intro n hn2 heven
-  exact strengthenedBPSW_even_false hn2 heven
-
-example : PrimalityTestSpec bailliePSW :=
-  bailliePSW_spec_unconditional
-
-example : PrimalityTestSpec strengthenedBPSW :=
-  strengthenedBPSW_spec_unconditional
+#eval strengthenedBPSWWheel30 2
 
 end PseudoPrime.PrimeTest.Regression

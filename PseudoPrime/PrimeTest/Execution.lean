@@ -5,7 +5,7 @@ Authors: Mizar
 -/
 
 import PseudoPrime.PrimeTest.Decision
-import PseudoPrime.PrimeTest.BPSW.Top
+import PseudoPrime.PrimeTest.BPSW.Wheel30
 import PseudoPrime.PrimeTest.BLS.Decision
 import PseudoPrime.PrimeTest.APRCL.Decision
 import PseudoPrime.PrimeTest.FactorWitness
@@ -49,16 +49,102 @@ def run (test : PrimalityTest) (spec : PrimalityTestSpec test) (smallLimit n : �
     (aprcl : Unit → APRCL.ExecutionResult n limits) : APRCL.ExecutionResult n limits :=
   runWithDecision smallLimit n (fun _ ↦ decideByTest test spec n) attempts bls aprcl
 
-/-- Instantiate the staged entry with the proved unconditional BPSW specification.
-BLS and APR-CL generators are supplied as thunks with their own explicit budgets.
-This is a finite execution interface, not a polynomial-time or success guarantee. -/
-def runBPSW (smallLimit n : ℕ) (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
-    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult n)
-    (aprcl : Unit → APRCL.ExecutionResult n limits) : APRCL.ExecutionResult n limits :=
-  run bailliePSW bailliePSW_spec_unconditional smallLimit n attempts bls aprcl
-
 /-- Inconclusive stages preserve the exact fallback result, including pending certificates. -/
 theorem continueWith_unknown {n : ℕ} {limits : APRCL.CertificateLimits}
     (next : Unit → APRCL.ExecutionResult n limits) : continueWith .unknown next = next () := by rfl
+
+/-- Run the unconditional factor-detecting ordinary or strengthened BPSW decision.
+Unknown acceptance continues to rho/BLS/APR-CL with the caller's original budgets and thunks.
+The finite Selfridge stop contract certifies rejection without introducing GRH. -/
+def runBPSWWheel30 (smallLimit n : ℕ) (strengthened : Bool)
+    (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult n)
+    (aprcl : Unit → APRCL.ExecutionResult n limits) : APRCL.ExecutionResult n limits :=
+  runWithDecision smallLimit n (fun _ ↦ BPSW.decideWheel30 n strengthened) attempts bls aprcl
+
+/-- Run staged certified execution for a signed ordinary or strengthened BPSW input.
+Results and caller-supplied fallback thunks are indexed by the nonnegative interpretation.
+Negative values enter the existing zero classification and cannot reach the fallbacks. -/
+def runBPSWWheel30Int (smallLimit : ℕ) (z : ℤ) (strengthened : Bool)
+    (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult z.toNat)
+    (aprcl : Unit → APRCL.ExecutionResult z.toNat limits) : APRCL.ExecutionResult z.toNat limits :=
+  runWithDecision smallLimit z.toNat (fun _ ↦ BPSW.decideWheel30Int z strengthened) attempts bls
+    aprcl
+
+/-- Signed execution preserves the complete natural staged result at toNat.
+The equality includes budgets, factor attempts, and both fallback thunks. -/
+theorem runBPSWWheel30Int_eq (smallLimit : ℕ) (z : ℤ) (strengthened : Bool)
+    (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult z.toNat)
+    (aprcl : Unit → APRCL.ExecutionResult z.toNat limits) :
+    runBPSWWheel30Int smallLimit z strengthened attempts bls aprcl =
+      runBPSWWheel30 smallLimit z.toNat strengthened attempts bls aprcl := by
+  simp only [runBPSWWheel30Int, BPSW.decideWheel30Int_eq, runBPSWWheel30]
+
+/-- Zero is rejected by the initial classification for every limit and fallback.
+No probable-prime, factor-search, BLS, or APR-CL stage is reached. -/
+theorem runWithDecision_zero (smallLimit : ℕ) (filter : Unit → Decision 0)
+    (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult 0)
+    (aprcl : Unit → APRCL.ExecutionResult 0 limits) :
+    runWithDecision smallLimit 0 filter attempts bls aprcl = .notPrime Nat.not_prime_zero := by
+  have ht : SmallInput.isPrimeUpTo (max 2 smallLimit) 0 = some false := by
+    simp only [SmallInput.isPrimeUpTo, Nat.zero_le, ↓reduceIte, Nat.reduceLeDiff, false_and,
+      decide_false]
+  have hc : SmallInput.classify (max 2 smallLimit) 0 = .notPrime Nat.not_prime_zero := by
+    unfold SmallInput.classify
+    split
+    · rename_i he
+      rw [ht] at he
+      cases he
+    · rename_i he
+      rw [ht] at he
+      cases he
+    · rfl
+  rw [runWithDecision, hc]
+  rfl
+
+/-- An input equal to zero produces a certified rejection independently of the thunks.
+The zero execution theorem transports the dependent result index. -/
+theorem runWithDecision_notPrime_of_zero (smallLimit n : ℕ) (hn : n = 0)
+    (filter : Unit → Decision n) (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult n)
+    (aprcl : Unit → APRCL.ExecutionResult n limits) :
+    ∃ hp : ¬n.Prime, runWithDecision smallLimit n filter attempts bls aprcl = .notPrime hp := by
+  subst n
+  exact ⟨Nat.not_prime_zero, runWithDecision_zero smallLimit filter attempts bls aprcl⟩
+
+/-- Negative signed inputs end in certified rejection at the small-input stage.
+The result is independent of the BPSW flag, budgets, factor attempts, and fallbacks. -/
+theorem runBPSWWheel30Int_negative (smallLimit : ℕ) (z : ℤ) (strengthened : Bool) (hz : z < 0)
+    (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult z.toNat)
+    (aprcl : Unit → APRCL.ExecutionResult z.toNat limits) :
+    ∃ hp : ¬z.toNat.Prime,
+      runBPSWWheel30Int smallLimit z strengthened attempts bls aprcl = .notPrime hp := by
+  exact
+    runWithDecision_notPrime_of_zero smallLimit z.toNat (Int.toNat_of_nonpos (Int.le_of_lt hz)) _
+      attempts bls aprcl
+
+/-- Run staged execution with the common precheck before the Wheel30 BPSW filter.
+Caller-supplied factor attempts and deferred BLS/APR-CL fallbacks retain their budgets. -/
+def runBPSWWheel30WithPrecheck (smallLimit n : ℕ) (strengthened : Bool)
+    (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult n)
+    (aprcl : Unit → APRCL.ExecutionResult n limits) : APRCL.ExecutionResult n limits :=
+  runWithDecision smallLimit n (fun _ ↦ BPSW.decideWheel30WithPrecheck n strengthened) attempts bls
+    aprcl
+
+/-- The precheck-first filter preserves the entire staged execution result on every input.
+The certified decision equality transports both rejection and all fallback outcomes. -/
+theorem runBPSWWheel30WithPrecheck_eq (smallLimit n : ℕ) (strengthened : Bool)
+    (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult n)
+    (aprcl : Unit → APRCL.ExecutionResult n limits) :
+    runBPSWWheel30WithPrecheck smallLimit n strengthened attempts bls aprcl =
+      runBPSWWheel30 smallLimit n strengthened attempts bls aprcl :=
+  congrArg (fun filter ↦ runWithDecision smallLimit n (fun _ ↦ filter) attempts bls aprcl)
+    (BPSW.decideWheel30WithPrecheck_eq n strengthened)
 
 end PseudoPrime.PrimeTest.Execution
