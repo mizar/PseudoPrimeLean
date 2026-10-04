@@ -246,7 +246,8 @@ theorem Gamma_two_mul_add_three_half_le (m : ℕ) :
       ring,
     show (((2 * m : ℕ) : ℝ) + 2) = 2 * (m : ℝ) + 2 from by
       push_cast
-      ring] at h
+      ring] at
+    h
 
 /-- `Γ(2m + 5/2) ≤ (2m + 3)^{2m+1} · Γ(3/2)`, a corollary of
 `PseudoPrime.AnalyticNumberTheory.Gamma.Gamma_three_half_add_nat_le` at
@@ -259,6 +260,7 @@ theorem Gamma_two_mul_add_five_half_le (m : ℕ) :
       ring,
     show (((2 * m + 1 : ℕ) : ℝ) + 2) = 2 * (m : ℝ) + 3 from by
       push_cast
-      ring] at h
+      ring] at
+    h
 
 end PseudoPrime.AnalyticNumberTheory.Gamma

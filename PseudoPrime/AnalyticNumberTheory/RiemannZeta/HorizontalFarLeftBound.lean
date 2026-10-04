@@ -144,8 +144,8 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (
         rw [Set.uIoc_of_le hlamtau]
         rintro σ ⟨hσ1, hσ2⟩
         exact norm_riemannZetaLogContourKernel_farLeft_le hx ⟨hσ1.le, hσ2⟩ ht)
-  rwa [abs_of_nonneg
-      (by linarith only [hlamtau] : (0 : ℝ) ≤ -1 / 2 - (-(2 * (m : ℝ) + 1)))] at hbound
+  rwa [abs_of_nonneg (by linarith only [hlamtau] : (0 : ℝ) ≤ -1 / 2 - (-(2 * (m : ℝ) + 1)))] at
+    hbound
 
 /-- The reciprocal-kernel analogue of
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.`
@@ -167,8 +167,8 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_farLeft_le {x :
         rw [Set.uIoc_of_le hlamtau]
         rintro σ ⟨hσ1, hσ2⟩
         exact norm_riemannZetaReciprocalContourKernel_farLeft_le hx ⟨hσ1.le, hσ2⟩ ht)
-  rwa [abs_of_nonneg
-      (by linarith only [hlamtau] : (0 : ℝ) ≤ -1 / 2 - (-(2 * (m : ℝ) + 1)))] at hbound
+  rwa [abs_of_nonneg (by linarith only [hlamtau] : (0 : ℝ) ≤ -1 / 2 - (-(2 * (m : ℝ) + 1)))] at
+    hbound
 
 /-- For fixed `x > 1`, the logarithmic-kernel integral over the growing
 segment `[-(2m+1),-1/2]+i*farLeftHeightSeq(m)` tends to zero. -/

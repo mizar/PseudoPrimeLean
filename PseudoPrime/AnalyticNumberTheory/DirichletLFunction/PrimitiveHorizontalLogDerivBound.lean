@@ -127,8 +127,8 @@ theorem exists_primitiveHorizontalLogDerivBound {N : ℕ} [NeZero N] (hN2 : 2 �
       exact norm_add_le _ _
     simp only [Complex.norm_real, Real.norm_eq_abs, norm_mul, Complex.norm_I, mul_one] at h1
     rwa [abs_of_nonneg
-        (show (0 : ℝ) ≤ T by
-          exact le_trans (by norm_num only : (0 : ℝ) ≤ 1) (le_trans hn hTge))] at h1
+        (show (0 : ℝ) ≤ T by exact le_trans (by norm_num only : (0 : ℝ) ≤ 1) (le_trans hn hTge))] at
+      h1
   have hs_le : ‖s‖ ≤ R / 2 := by linarith only [hsnorm_le, hσ, hTle, hRge, hn]
   have hsle16n : ‖s‖ ≤ 16 * n := by linarith only [hs_le, hRle, hn]
   have hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0 := by
@@ -263,8 +263,8 @@ theorem exists_primitiveHorizontalLogDerivBound_of_grh {N : ℕ} [NeZero N] (hN2
       exact norm_add_le _ _
     simp only [Complex.norm_real, Real.norm_eq_abs, norm_mul, Complex.norm_I, mul_one] at h1
     rwa [abs_of_nonneg
-        (show (0 : ℝ) ≤ T by
-          exact le_trans (by norm_num only : (0 : ℝ) ≤ 1) (le_trans hn hTge))] at h1
+        (show (0 : ℝ) ≤ T by exact le_trans (by norm_num only : (0 : ℝ) ≤ 1) (le_trans hn hTge))] at
+      h1
   have hs_le : ‖s‖ ≤ R / 2 := by linarith only [hsnorm_le, hσ, hTle, hRge, hn]
   have hsle16n : ‖s‖ ≤ 16 * n := by linarith only [hs_le, hRle, hn]
   have hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0 := by

@@ -435,6 +435,7 @@ theorem sum_logTrivialZeroTerm_le {x : ℝ} (hx : 1 < x) (S : Finset ℂ)
           (mul_nonneg (by norm_num only) (sq_nonneg ((k : ℝ) + 1))))
   rwa [show
       (∑' k : ℕ, x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2)) = riemannZetaLogTrivialZeroSeries x
-      from rfl] at hle
+      from rfl] at
+    hle
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

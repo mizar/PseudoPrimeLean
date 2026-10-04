@@ -97,6 +97,7 @@ theorem sum_reciprocalTrivialZeroTerm_le {x : ℝ} (hx : 1 < x) (S : Finset ℂ)
   rwa [show
       (∑' k : ℕ, x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1))) =
         riemannReciprocalTrivialZeroSeries x
-      from rfl] at hle
+      from rfl] at
+    hle
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta
