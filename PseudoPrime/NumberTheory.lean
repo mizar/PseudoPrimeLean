@@ -5,6 +5,8 @@ Authors: Mizar
 -/
 
 import PseudoPrime.NumberTheory.PrimeIndexing
+import PseudoPrime.NumberTheory.Fibonacci.Greatest
+import PseudoPrime.NumberTheory.Fibonacci.Euclid
 import PseudoPrime.NumberTheory.PrimeTable
 import PseudoPrime.NumberTheory.PrimorialCertificates
 import PseudoPrime.NumberTheory.JacobiCharacterCutoff
