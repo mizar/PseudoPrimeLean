@@ -8,6 +8,8 @@
 
 | モジュール | 内容 |
 |---|---|
+| [Fibonacci/Greatest.lean](../PseudoPrime/NumberTheory/Fibonacci/Greatest.lean) | 最大Fibonacci添字の二進探索と正当性 |
+| [Fibonacci/Euclid.lean](../PseudoPrime/NumberTheory/Fibonacci/Euclid.lean) | 互除法のFibonacci燃料、gcdの正当性、除数縮小付き遷移 |
 | [OddNonsquare.lean](../PseudoPrime/NumberTheory/OddNonsquare.lean) | 奇数かつ非平方数の許容入力と有限集合 |
 | [Factorization.lean](../PseudoPrime/NumberTheory/Factorization.lean) | 素因数分解から必要な素因数を取り出す補題 |
 | [Jacobi/Basic.lean](../PseudoPrime/NumberTheory/Jacobi/Basic.lean) | Jacobi 記号の基本的な算術 |
@@ -21,6 +23,8 @@
 | [JacobiCharacterCutoff.lean](../PseudoPrime/NumberTheory/JacobiCharacterCutoff.lean) | 無証人仮定から素数冪 cutoff 内の指標値 $1$ を導く |
 | [JacobiCongruence.lean](../PseudoPrime/NumberTheory/JacobiCongruence.lean)・[DirichletCharacter.lean](../PseudoPrime/NumberTheory/DirichletCharacter.lean) | Jacobi 合同式と一般指標の法変更 |
 | [PrimeIndexing.lean](../PseudoPrime/NumberTheory/PrimeIndexing.lean)・[PrimeTable.lean](../PseudoPrime/NumberTheory/PrimeTable.lean)・[PrimorialCertificates.lean](../PseudoPrime/NumberTheory/PrimorialCertificates.lean) | 素数列、最初の 163 素数の表、累積 primorial の有限証明書 |
+
+高速計算と停止上界の理論は [Fibonacci最大添字と互除法の燃料](FibonacciEuclid.md) にまとめている。Jacobi計算への接続に必要な残りの証明も同ページで説明する。
 
 ## 二種類の証人
 
