@@ -49,10 +49,14 @@ import PseudoPrime.PrimeTest.Lucas.FiniteField
 import PseudoPrime.PrimeTest.Lucas.ProbablePrime
 import PseudoPrime.PrimeTest.StrongLucas.Spec
 import PseudoPrime.PrimeTest.StrongLucas.Prime
+import PseudoPrime.PrimeTest.StrongLucas.Fast
 import PseudoPrime.PrimeTest.BPSW.Prime
+import PseudoPrime.PrimeTest.BPSW.Fast
 import PseudoPrime.PrimeTest.BPSW.Strengthened
 import PseudoPrime.PrimeTest.BPSW.Selfridge
 import PseudoPrime.PrimeTest.BPSW.Top
+import PseudoPrime.PrimeTest.StrongLucas.NoGcd
+import PseudoPrime.PrimeTest.Lucas.ReferenceProcedure
 import PseudoPrime.PrimeTest.LucasV.Spec
 import PseudoPrime.PrimeTest.LucasV.Prime
 import PseudoPrime.PrimeTest.Lucas.Factor

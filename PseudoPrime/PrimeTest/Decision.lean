@@ -24,6 +24,15 @@ Exact small-input decisions belong to the independent trial-division entry. -/
 def decideByTest (test : PrimalityTest) (spec : PrimalityTestSpec test) (n : ℕ) : Decision n :=
   if h : test n = false then .notPrime (spec.not_prime_of_false h) else .unknown
 
+/-- Equal Boolean tests produce the same certified decision for every input.
+The specification proofs are irrelevant after identifying the test functions.
+This transports an execution refactoring into existing decision consumers. -/
+theorem decideByTest_congr {test₁ test₂ : PrimalityTest} (spec₁ : PrimalityTestSpec test₁)
+    (spec₂ : PrimalityTestSpec test₂) (h : test₁ = test₂) (n : ℕ) :
+    decideByTest test₁ spec₁ n = decideByTest test₂ spec₂ n := by
+  cases h
+  rfl
+
 /-- Extract a negative conclusion from a comparison with a proved prime-pass implication.
 This weaker interface allows raw or guarded comparisons without claiming a full test spec.
 Acceptance remains unknown; any side conditions must be discharged by the caller. -/

@@ -6,6 +6,7 @@ Authors: Mizar
 
 import PseudoPrime.PrimeTest.Decision
 import PseudoPrime.PrimeTest.StrongLucas.Prime
+import PseudoPrime.PrimeTest.StrongLucas.Fast
 
 /-! # Certified one-sided StrongLucas decisions -/
 
@@ -17,8 +18,8 @@ Only a failed comparison with checked hypotheses proves non-primality. -/
 def StrongLucas.decideWithParams (n : ℕ) (D P Q : ℤ) : Decision n :=
   if hd : D = P * P - 4 * Q then
     if hj : jacobiSym D n = -1 then
-      decideByPrimePass n (strongLucasWithParams n D P Q)
-        (fun hp ↦ strongLucasWithParams_of_prime hp D P Q hd hj)
+      decideByPrimePass n (strongLucasWithParamsFast n D P Q)
+        (fun hp ↦ strongLucasWithParamsFast_of_prime hp D P Q hd hj)
     else .unknown
   else .unknown
 
