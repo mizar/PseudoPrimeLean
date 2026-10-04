@@ -16,8 +16,8 @@ rev = "v4.35.0-rc3"
 
 [[require]]
 name = "lean-fmt"
-git = "https://github.com/jcreinhold/lean-fmt"
-rev = "v4.34.0-rc2"
+git = "https://github.com/mizar/lean-fmt"
+rev = "dev/v4.34.0"
 
 [[lean_lib]]
 name = "PseudoPrime"
