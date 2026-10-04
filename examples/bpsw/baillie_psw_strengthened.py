@@ -2,6 +2,7 @@
 Python: Strengthening the Baillie-PSW primality test
 https://homes.cerias.purdue.edu/~ssw/bfw.pdf
 https://arxiv.org/abs/2006.14425
+BFW-* audit tasks are tracked in PseudoPrimeWork/BPSW_execution_alignment_plan.md.
 """
 import itertools
 from collections.abc import Iterable
@@ -33,6 +34,8 @@ def isprime_miller_bases(n: int, bases: Iterable[int]) -> bool:
         if t == 1:
             continue
         for j in range(s):
+            # BFW Section 2.2 checks only j < s for strong acceptance. Its extra
+            # square to exponent n-1 is unnecessary once this last check fails.
             if t == n1:
                 break
             if j == s - 1:
@@ -51,6 +54,7 @@ def isprime_miller_base2(n: int) -> bool:
 
 def isqrt(n: int) -> int:
     """Return floor(sqrt(n)) for nonnegative n."""
+    # Lean ReferenceArithmetic.newtonSqrt_eq proves this procedure equals Nat.sqrt.
     assert n >= 0, 'square root of negative number is not supported'
     if n < 2:
         return n
@@ -67,6 +71,7 @@ def issq(n: int) -> bool:
     Return whether n is a perfect square. Reject negative values, apply a
     quadratic-residue filter modulo 8, then test r * r == n for the integer square root r.
     """
+    # Lean ReferenceArithmetic.referenceSquare_eq proves the mask preserves the square test.
     return n >= 0 and ((0x13 >> (n & 7)) & 1) > 0 and isqrt(n) ** 2 == n
 
 
@@ -83,6 +88,7 @@ def jacobi_symbol(a: int, n: int) -> int:
     For composite n, a result of 1 does not necessarily imply a quadratic residue.
     """
     assert n > 0 and (n & 1) == 1, 'value must be positive odd integer'
+    # Lean ReferenceArithmetic.jacobiSigned_eq proves the signed reference recursion.
     j = 1
     # a is an integer; n is positive and odd.
     # (-a/n) = (-1/n)(a/n),
@@ -100,6 +106,8 @@ def jacobi_symbol(a: int, n: int) -> int:
         # (2/n) = -1 iff n ≡ 3, 5 (mod 8),
         # (2/n) =  1 iff n ≡ 1, 7 (mod 8)
         while (a & 1) == 0:
+            # C++ batches these steps with v2(a); only its parity affects the sign.
+            # Lean ReferenceArithmetic.jacobiPythonTwoSign_eq proves this bit-mask sign.
             a, j = (a >> 1), (-j if ((n + 2) & 5) == 5 else j)
 
         # Both a and n are positive and odd.
@@ -210,6 +218,8 @@ def lucas_selfridge_scan(n: int) -> tuple[int, int]:
         # so checking only i == n excludes every case with gcd(i, n) == n.
         # BFW states the general n-does-not-divide-|D| check; this simplification
         # relies on the separate first-stop bound, also preserved by Wheel30.
+        # Lean EqualityScan proves equality and divisibility exclusions agree for
+        # odd nonsquares at every fuel budget (BFW-L2); production keeps divisibility.
         if i == n:
             continue
 
@@ -268,6 +278,10 @@ def div2_mod_odd(x: int, n: int) -> int:
     Normalize the result to 0 <= r < n.
     """
     assert n > 0 and (n & 1) == 1
+    # The adjusted numerator is exactly even, including for negative x. Hence
+    # this arithmetic shift agrees with C++'s truncating division by 2.
+    # Lean Lucas/ReferenceProcedure.lean: signedHalf_eq proves the raw parity-adjusted half
+    # equals residue-first halving for odd n; signedHalf_division_modes covers negatives.
     return ((x + (x & 1) * n) >> 1) % n
 
 
@@ -299,6 +313,9 @@ def lucas_uvq_mod(n: int, p: int, q: int, k: int) -> tuple[int, int, int]:
 
     # Initialize the values corresponding to the leading 1 bit of the index.
     # U_1 = 1, V_1 = P, Q^1 = Q
+    # Lean lucasUVQ starts at index 0 and also processes the leading 1 bit.
+    # Lean Lucas/ReferenceProcedure.lean: leading_eq proves both triple initializations agree
+    # for odd n and every index, including 0 and 1 (BFW-L3).
     u, v, qk = 1 % n, p % n, q % n
 
     # The leading bit has already been processed; start with the next bit.
@@ -434,9 +451,18 @@ def isprime_lucas_strengthened(n: int) -> bool:
     if v != (2 * q) % n:
         return False
 
+    # With D = P*P - 4*Q and Jacobi(D, n) == -1, passing Lucas-V implies
+    # gcd(Q, n) == 1, even for composite n; no Strong assumption is needed.
+    # A common prime divisor ell would give Q == 0 mod ell and V_k == P^k
+    # for k > 0. The unit discriminant forces P != 0 mod ell, contradicting
+    # V_(n+1) == 2*Q == 0 mod ell. Thus no separate gcd check is needed here,
+    # and the multiplied Euler form is equivalent to the unmultiplied form.
+    # Lean: PseudoPrime.PrimeTest.lucasV_q_coprime (StrongLucas/NoGcd.lean).
     # Euler criterion for Q:
     #
     # Q^((n+1)/2) == Q * (Q/n) mod n
+    # BFW Section 6, suggestion 4: this adds no strength after base-2 MR when
+    # |Q| is a power of 2. Keep the check: this helper does not assume MR passed.
     # Use BFW's multiplied form directly; do not divide by Q modulo n.
     if qk != (q * jacobi_symbol(q, n)) % n:
         return False

@@ -1,6 +1,7 @@
 // C++: Strengthening the Baillie-PSW primality test
 // https://homes.cerias.purdue.edu/~ssw/bfw.pdf
 // https://arxiv.org/abs/2006.14425
+// BFW-* audit tasks are tracked in PseudoPrimeWork/BPSW_execution_alignment_plan.md.
 #include <boost/multiprecision/cpp_int.hpp>
 #include <boost/multiprecision/integer.hpp>
 
@@ -9,7 +10,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <limits>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -20,6 +23,7 @@ namespace mp = boost::multiprecision;
 using bigint = mp::cpp_int;
 
 // Return x modulo positive n, normalized to 0 <= r < n.
+// Lean ReferenceArithmetic.referenceNormalize_eq proves this normalization equals emod.
 bigint mod(bigint x, const bigint& n) {
     assert(n > 0);
     x %= n;
@@ -27,16 +31,30 @@ bigint mod(bigint x, const bigint& n) {
     return x;
 }
 
+// Guard before Boost computes limb_index * limb_bits in msb/lsb.
+// The supported domain requires this bound for every operand inspected for bits.
+// Exceeding it is an execution error, never a composite/probable-prime result.
+void require_bit_index_capacity(const bigint& x) {
+    constexpr std::size_t max_limbs =
+        std::numeric_limits<std::size_t>::max() / bigint::backend_type::limb_bits;
+    if (x.backend().size() > max_limbs) {
+        throw std::length_error("BPSW bit index exceeds size_t capacity");
+    }
+}
+
 // Return the bit length of nonnegative x, or 0 if x is zero.
-unsigned bit_length(const bigint& x) {
+// Boost msb/lsb and all reference bit counters use size_t without narrowing.
+std::size_t bit_length(const bigint& x) {
     assert(x >= 0);
-    return x == 0 ? 0U : static_cast<unsigned>(mp::msb(x) + 1);
+    require_bit_index_capacity(x);
+    return x == 0 ? 0 : mp::msb(x) + 1;
 }
 
 // Return the exponent of the largest power of 2 dividing positive x.
-unsigned v2(const bigint& x) {
+std::size_t v2(const bigint& x) {
     assert(x > 0);
-    return static_cast<unsigned>(mp::lsb(x));
+    require_bit_index_capacity(x);
+    return mp::lsb(x);
 }
 
 // Return whether integer x is odd, including negative values.
@@ -51,9 +69,10 @@ bool is_odd(const bigint& x) {
 template <class Range>
 bool isprime_miller_bases(const bigint& n, const Range& bases) {
     assert(n > 2 && is_odd(n));
+    require_bit_index_capacity(n);
 
     const bigint n1 = n - 1;
-    const unsigned s = v2(n1);
+    const std::size_t s = v2(n1);
     const bigint d = n1 >> s;
 
     for (const auto& base : bases) {
@@ -63,7 +82,9 @@ bool isprime_miller_bases(const bigint& n, const Range& bases) {
         bigint t = mp::powm(a, d, n);
         if (t == 1) continue;
 
-        for (unsigned r = 0;; ++r) {
+        for (std::size_t r = 0;; ++r) {
+            // BFW Section 2.2 checks only r < s for strong acceptance. Its extra
+            // square to exponent n-1 is unnecessary once this last check fails.
             if (t == n1) break;
             if (r == s - 1) return false;
             t = mod(t * t, n);
@@ -80,11 +101,15 @@ bool isprime_miller_base2(const bigint& n) {
 }
 
 // Return floor(sqrt(n)) for nonnegative n.
+// Lean ReferenceArithmetic.newtonSqrt_eq proves the Newton procedure equals Nat.sqrt.
 bigint isqrt(const bigint& n) {
     assert(n >= 0);
     if (n < 2) return n;
+    require_bit_index_capacity(n);
 
-    const unsigned k = (bit_length(n - 1) + 1) / 2;
+    const std::size_t bits = bit_length(n - 1);
+    // ceil(bits / 2), without forming bits + 1 at the finite-width boundary.
+    const std::size_t k = bits / 2 + bits % 2;
     bigint s = bigint(1) << k;
     bigint t = (s + (n >> k)) >> 1;
     while (s > t) {
@@ -96,6 +121,7 @@ bigint isqrt(const bigint& n) {
 
 // Return whether n is a perfect square. Reject negative values, apply a
 // quadratic-residue filter modulo 8, then test r * r == n for the integer square root r.
+// Lean ReferenceArithmetic.referenceSquare_eq proves the mask preserves the square test.
 bool issq(const bigint& n) {
     if (n < 0) return false;
     const unsigned residue8 = mod(n, bigint(8)).convert_to<unsigned>();
@@ -132,7 +158,10 @@ int jacobi_symbol(bigint a, bigint n) {
         //
         // (2/n) = -1 iff n ≡ 3, 5 (mod 8),
         // (2/n) =  1 iff n ≡ 1, 7 (mod 8)
-        const unsigned b = v2(a);
+        const std::size_t b = v2(a);
+        // Python removes one factor of 2 per iteration; this batches the same
+        // Jacobi(2, n)^b sign changes using only the parity of b.
+        // Lean ReferenceArithmetic.jacobiCppBatch_eq proves the factored-input identity.
         a >>= b;
 
         if ((b & 1U) != 0) {
@@ -176,7 +205,7 @@ int kronecker_symbol(bigint a, bigint n) {
     }
 
     // Extract the power-of-two factor from the denominator.
-    const unsigned t = v2(n);
+    const std::size_t t = v2(n);
     if (t != 0) {
         if (!is_odd(a)) return 0;
 
@@ -264,6 +293,8 @@ std::pair<bigint, int> lucas_selfridge_scan(const bigint& n) {
         // so checking only i == n excludes every case with gcd(i, n) == n.
         // BFW states the general n-does-not-divide-|D| check; this simplification
         // relies on the separate first-stop bound, also preserved by Wheel30.
+        // Lean EqualityScan proves equality and divisibility exclusions agree for
+        // odd nonsquares at every fuel budget (BFW-L2); production keeps divisibility.
         if (i == n) continue;
 
         const bigint d = (mod(i, bigint(4)) == 1) ? i : -i;
@@ -313,6 +344,10 @@ std::optional<std::pair<bigint, bigint>> lucas_params_a_star(const bigint& n) {
 bigint div2_mod_odd(bigint x, const bigint& n) {
     assert(n > 0 && is_odd(n));
     if (is_odd(x)) x += n;
+    // The numerator is now exactly even, including for negative x. Hence C++'s
+    // truncating division agrees with Python's arithmetic right shift here.
+    // Lean Lucas/ReferenceProcedure.lean: signedHalf_eq proves the raw parity-adjusted half
+    // equals residue-first halving for odd n; signedHalf_division_modes covers negatives.
     return mod(x / 2, n);
 }
 
@@ -338,6 +373,7 @@ LucasUVQ lucas_uvq_mod(const bigint& n, const bigint& p,
                        const bigint& q, const bigint& k) {
     assert(n > 0 && is_odd(n));
     assert(k >= 0);
+    require_bit_index_capacity(n);
 
     if (k == 0) {
         return {0, mod(2, n), mod(1, n)};
@@ -346,14 +382,19 @@ LucasUVQ lucas_uvq_mod(const bigint& n, const bigint& p,
     const bigint disc = p * p - 4 * q;
 
     // Initialize the values corresponding to the leading 1 bit of the index.
+    // Lean lucasUVQ starts at index 0 and also processes this leading bit.
+    // Lean Lucas/ReferenceProcedure.lean: leading_eq proves both triple initializations agree
+    // for odd n and every index, including 0 and 1 (BFW-L3).
     // U_1 = 1, V_1 = P, Q^1 = Q
     bigint u = mod(1, n);
     bigint v = mod(p, n);
     bigint qk = mod(q, n);
 
     // The leading bit has already been processed; start with the next bit.
-    const unsigned bits = bit_length(k);
-    for (std::int64_t bit = static_cast<std::int64_t>(bits) - 2; bit >= 0; --bit) {
+    // k > 0, so bits >= 1. Decrement before use: bits-2, ..., 0.
+    // No signed conversion or unsigned wrap is needed, including the k == 1 case.
+    for (std::size_t bit = bit_length(k) - 1; bit > 0;) {
+        --bit;
         // For the processed binary prefix m, (u, v, qk) = (U_m, V_m, Q^m) mod n.
         // Double the index.
         u = mod(u * v, n);
@@ -361,7 +402,7 @@ LucasUVQ lucas_uvq_mod(const bigint& n, const bigint& p,
         qk = mod(qk * qk, n);
 
         // If the current bit is 1, increment the index.
-        if (((k >> static_cast<unsigned>(bit)) & 1) != 0) {
+        if (((k >> bit) & 1) != 0) {
             const bigint old_u = u;
             const bigint old_v = v;
 
@@ -385,7 +426,7 @@ bool isprime_lucas_strong_pq(const bigint& n, const bigint& p, const bigint& q) 
     // s = v_2(n + 1) is the 2-adic valuation of n + 1.
     // n + 1 = odd_part * 2^s, where d = odd_part is odd.
     const bigint delta = n + 1;
-    const unsigned s = v2(delta);
+    const std::size_t s = v2(delta);
 
     // Compute U_d, V_d, and Q^d.
     auto [u, v, qk] = lucas_uvq_mod(n, p, q, delta >> s);
@@ -394,7 +435,7 @@ bool isprime_lucas_strong_pq(const bigint& n, const bigint& p, const bigint& q) 
     if (u == 0) return true;
 
     // Test V_{d 2^r} for 0 <= r < s before doubling the index.
-    for (unsigned r = 0;; ++r) {
+    for (std::size_t r = 0;; ++r) {
         if (v == 0) return true;
         if (r == s - 1) return false;
         v = mod(v * v - 2 * qk, n);
@@ -434,7 +475,7 @@ bool isprime_lucas_strengthened(const bigint& n) {
     // s = v_2(n + 1) is the 2-adic valuation of n + 1.
     // n + 1 = odd_part * 2^s, with odd_part odd and s >= 1.
     const bigint delta = n + 1;
-    const unsigned s = v2(delta);
+    const std::size_t s = v2(delta);
     const bigint odd_part = delta >> s;
 
     // Compute U_d, V_d, and Q^d, where d = odd_part.
@@ -446,7 +487,7 @@ bool isprime_lucas_strengthened(const bigint& n) {
 
     // Do not return immediately on strong Lucas success: steps 4 and 5 still
     // need V_{n+1} and Q^{(n+1)/2}. All congruences use residues modulo n.
-    for (unsigned r = 0;; ++r) {
+    for (std::size_t r = 0;; ++r) {
         // At entry: v = V_(d * 2^r), qk = Q^(d * 2^r) mod n, d = odd_part.
         // strong_ok records U_d == 0 or a zero V at an earlier index d * 2^j, j < r.
         if (v == 0) strong_ok = true;
@@ -463,7 +504,16 @@ bool isprime_lucas_strengthened(const bigint& n) {
     // Lucas-V probable-prime condition: V_{n+1} == 2Q mod n
     if (v != mod(2 * q, n)) return false;
 
+    // With D = P*P - 4*Q and Jacobi(D, n) == -1, passing Lucas-V implies
+    // gcd(Q, n) == 1, even for composite n; no Strong assumption is needed.
+    // A common prime divisor ell would give Q == 0 mod ell and V_k == P^k
+    // for k > 0. The unit discriminant forces P != 0 mod ell, contradicting
+    // V_(n+1) == 2*Q == 0 mod ell. Thus no separate gcd check is needed here,
+    // and the multiplied Euler form is equivalent to the unmultiplied form.
+    // Lean: PseudoPrime.PrimeTest.lucasV_q_coprime (StrongLucas/NoGcd.lean).
     // Euler criterion for Q: Q^((n+1)/2) == Q * (Q/n) mod n
+    // BFW Section 6, suggestion 4: this adds no strength after base-2 MR when
+    // |Q| is a power of 2. Keep the check: this helper does not assume MR passed.
     // Use BFW's multiplied form directly; do not divide by Q modulo n.
     if (qk != mod(q * jacobi_symbol(q, n), n)) return false;
 
@@ -530,6 +580,10 @@ int main() {
 
         bigint n(line);
         assert(n > 1 && is_odd(n));
+        // All success counters are bounded by count; reject before any can wrap.
+        if (count == std::numeric_limits<std::uint64_t>::max()) {
+            throw std::overflow_error("BPSW CLI input count exceeds uint64_t capacity");
+        }
 
         const bool f_base2 = isprime_miller_base2(n);
         const bool f_bases7 = isprime_miller_bases(n, BASES_7);
