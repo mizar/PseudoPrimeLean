@@ -39,7 +39,7 @@ flowchart TD
 
 ## 読み方と利用方法
 
-最終的な数学的上界については [PseudoSquare](PseudoSquare.md)、[PrimeTestBounds.Selfridge](SelfridgeBoundGrh.md)、[PrimeTestBounds.MillerRabin](MillerRabinBoundGrh.md) を参照する。その解析的な根拠は [LLS](LLS.md) で説明する。実行用の素数性テストを使う場合は [PrimeTest](PrimeTest.md) から読み進める。[C++・Python の参考実装](BPSWImplementations.md) には、実行方法と Lean 版との違いをまとめている。
+最終的な数学的上界については [PseudoSquare](PseudoSquare.md)、[PrimeTestBounds.Selfridge](SelfridgeBoundGrh.md)、[PrimeTestBounds.MillerRabin](MillerRabinBoundGrh.md) を参照する。その解析的な根拠は [LLS](LLS.md) で説明する。BPSWの定義・理論・判定手順は [BPSWと強化版の実装手順](BPSWAlgorithm.md) だけで読める。Leanの公開APIは [PrimeTest](PrimeTest.md)、C++・Pythonの実行方法とLean版との違いは [参考実装](BPSWImplementations.md) にまとめている。
 
 ```lean
 import PseudoPrime

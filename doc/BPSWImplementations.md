@@ -11,6 +11,8 @@
 
 Lean 側の仕様・証明については [PrimeTest](PrimeTest.md) を参照する。
 
+判定条件の定義、素数を受理する理論的背景、パラメータ探索、Lucasの共有計算は [BPSWと強化版の実装手順](BPSWAlgorithm.md) にまとめている。同ページには、ほかの文書を開かずに読める説明と単独で実行できるPython実装がある。
+
 ## 公開関数と処理
 
 両言語は次の主要関数を持つ。C++ では `bpsw_strengthened` 名前空間に置かれている。
@@ -73,11 +75,17 @@ Clang の場合は次の通り。
 
 | 観点 | Lean の公開トップレベル | C++・Python 参考実装 |
 |---|---|---|
-| 通常版 | `bailliePSW` | `isprime_bpsw` |
-| 強化版 | `strengthenedBPSW` | `isprime_strengthened_bpsw` |
-| 初期処理 | 小入力・偶数・平方数の precheck | 小入力・偶数を処理し、MR を先行。平方数は Lucas 側の探索前に処理 |
-| パラメータ探索 | 古典候補の昇順、純粋 Jacobi 値 $-1$、fuel `n - 2` | Wheel30、因子検出付き、明示 fuel なし |
+| 通常版 | `bailliePSWWheel30` | `isprime_bpsw` |
+| 強化版 | `strengthenedBPSWWheel30` | `isprime_strengthened_bpsw` |
+| 初期処理 | 小入力・偶数を処理し、MRの後に平方数を判定 | 小入力・偶数を処理し、MRを先行。平方数はLucas側の探索前に処理 |
+| パラメータ探索 | Wheel30、因子検出付き、無条件入口のfuelは `2 * n` | Wheel30、因子検出付き、明示fuelなし |
 | 証明 | 無条件の素数受理定理と個別仕様 | 実行用ソース。Lean とのプログラム同値性は未形式化 |
+
+実行用コードでは上表のWheel30入口を使う。証明付き判定には `BPSW.decideWheel30 n false`または `BPSW.decideWheel30 n true`、段階実行には `Execution.runBPSWWheel30`を使い、通常版か強化版かを明示する。
+
+平方数検査をMRより先に行う場合は、通常版に `bailliePSWWheel30WithPrecheck`、強化版に `strengthenedBPSWWheel30WithPrecheck`を使う。共通の `primalityPrecheck`で小入力・偶数・平方数を処理し、残った入力にMRとWheel30探索を実行する。平方数検査は一度だけ行う。元のWheel30版との全入力のBool結果の一致を証明済みであり、証明付き判定の `BPSW.decideWheel30WithPrecheck`と段階実行の `Execution.runBPSWWheel30WithPrecheck`も元の結果を保つ。
+
+事前判定付き版は平方数でMRの費用を省けるが、MRで直ちに合成数と判定できる入力にも平方数検査の費用が加わる。既定入口はMRを先に実行する。Euler省略入口は任意の最適化であり、通常のWheel30版はEuler条件を検査する。
 
 [NumberTheory](NumberTheory.md) の証人存在、PrimeTest の候補順序・停止値比較、 [SelfridgeBoundGrh](SelfridgeBoundGrh.md) の定量評価は、関連する数学的な根拠を与える。ただし、Lean の数学的停止値に関する証明と、これらの C++・Python 関数の実行意味論との対応を一括して証明したという意味ではない。有限の照合結果も、その形式的な同値証明とは区別する。
 

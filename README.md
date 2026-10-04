@@ -172,7 +172,7 @@ Historical sources underlying the Lucas–Selfridge and Baillie–PSW context in
 
 These papers provide historical background for the strong base-2 and Lucas–Selfridge components associated with the Baillie–PSW test, as well as the Selfridge parameter-selection context represented by `selfridgeD`, `firstStopNegOne`, and `firstStopNeOne` in this project. For a later strengthening of the Baillie–PSW test, see Robert Baillie, Andrew Fiori, and Samuel S. Wagstaff, Jr., “[Strengthening the Baillie-PSW primality test](https://arxiv.org/abs/2006.14425v2),” arXiv:2006.14425v2.
 
-The executable `bailliePSW` and `strengthenedBPSW` interfaces in this project use an ascending Selfridge search restricted to discriminants with Jacobi symbol $-1$. They perform the common precheck first, then search for a Selfridge discriminant, and only after a successful search evaluate the base-2 Miller–Rabin and Lucas tests. Unlike the historical factor-detecting variant, this search does not use a Jacobi-symbol $0$ result as an early factor-detection stop.
+Use `bailliePSWWheel30` and `strengthenedBPSWWheel30` for executable BPSW tests. They run base-2 Miller–Rabin first and use factor-detecting Wheel30 Selfridge selection. The strengthened entry agrees with the BFW five-stage specification. Use `BPSW.decideWheel30 n false` or `BPSW.decideWheel30 n true` for certified decisions, and `Execution.runBPSWWheel30` for staged execution. MR-before-square ordering can cost more on square inputs.
 
 ### Pseudosquare reference
 

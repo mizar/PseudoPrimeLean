@@ -169,7 +169,7 @@ Lucas–Selfridge と Baillie–PSW の背景となる歴史的文献として�
 
 これらの論文は、Baillie–PSW テストに関連する底 2 の強 Miller–Rabin と Lucas–Selfridge の構成要素、及びこのプロジェクトにおいて `selfridgeD`、 `firstStopNegOne`、 `firstStopNeOne` が表現する Selfridge パラメータ選択の文脈に関する歴史的な参考文献である。Baillie–PSW テストの後年の強化については、Robert Baillie, Andrew Fiori, and Samuel S. Wagstaff, Jr., “[Strengthening the Baillie-PSW primality test](https://arxiv.org/abs/2006.14425v2),” arXiv:2006.14425v2 を参照。
 
-本プロジェクトの実行用 `bailliePSW` と `strengthenedBPSW` は、Jacobi 記号が $-1$ となる判別式に限定した Selfridge 昇順探索の変種である。共通の事前判定、Selfridge 判別式の探索、探索成功後の底 2 Miller–Rabin と Lucas 系判定の順で実行する。歴史的な因子検出付き変種とは異なり、この実行用探索では Jacobi 値 $0$ を因子検出による早期停止として用いない。
+実行用BPSWには `bailliePSWWheel30`と `strengthenedBPSWWheel30`を使う。底2 Miller–Rabinを先に実行し、因子検出付きWheel30探索でSelfridgeパラメータを選ぶ。強化版はBFW論文の5段階仕様と一致する。証明付き判定には `BPSW.decideWheel30 n false`または `BPSW.decideWheel30 n true`、段階実行には `Execution.runBPSWWheel30`を使う。平方数ではMR先行の費用が増える場合がある。
 
 ### 疑似平方数に関する参考文献
 
