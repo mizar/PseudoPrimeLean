@@ -58,6 +58,10 @@ import PseudoPrime.PrimeTest.BPSW.Exec
 import PseudoPrime.PrimeTest.StrongLucas.NoGcd
 import PseudoPrime.PrimeTest.BPSW.Wheel30
 import PseudoPrime.PrimeTest.BPSW.PaperSpec
+import PseudoPrime.PrimeTest.BPSW.EulerRedundancy
+import PseudoPrime.PrimeTest.BPSW.EulerModEight
+import PseudoPrime.PrimeTest.BPSW.EulerBaseTwo
+import PseudoPrime.PrimeTest.BPSW.ConditionalEuler
 import PseudoPrime.PrimeTest.Lucas.ReferenceProcedure
 import PseudoPrime.PrimeTest.ReferenceArithmetic
 import PseudoPrime.PrimeTest.JacobiFuel

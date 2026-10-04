@@ -6,6 +6,7 @@ Authors: Mizar
 
 import PseudoPrime.PrimeTest.Decision
 import PseudoPrime.PrimeTest.BPSW.Wheel30
+import PseudoPrime.PrimeTest.BPSW.ConditionalEuler
 import PseudoPrime.PrimeTest.BLS.Decision
 import PseudoPrime.PrimeTest.APRCL.Decision
 import PseudoPrime.PrimeTest.FactorWitness
@@ -126,6 +127,47 @@ theorem runBPSWWheel30Int_negative (smallLimit : ℕ) (z : ℤ) (strengthened : 
   exact
     runWithDecision_notPrime_of_zero smallLimit z.toNat (Int.toNat_of_nonpos (Int.le_of_lt hz)) _
       attempts bls aprcl
+
+/-- Run staged execution with the optional conditional-Euler Wheel30 decision.
+Use the caller's factor attempts, BLS thunk, and APR-CL thunk after unknown acceptance.
+The new decision's all-input equality preserves all existing budgets and fallback outcomes. -/
+def runBPSWWheel30ReducedEuler (smallLimit n : ℕ) (strengthened : Bool)
+    (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult n)
+    (aprcl : Unit → APRCL.ExecutionResult n limits) : APRCL.ExecutionResult n limits :=
+  runWithDecision smallLimit n (fun _ ↦ BPSW.decideWheel30ReducedEuler n strengthened) attempts bls
+    aprcl
+
+/-- Conditional Euler omission preserves the entire natural staged execution result.
+Rewrite the certified decision inside runWithDecision, including the caller's searches
+and deferred fallback thunks. No performance assumption is needed for this equality. -/
+theorem runBPSWWheel30ReducedEuler_eq (smallLimit n : ℕ) (strengthened : Bool)
+    (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult n)
+    (aprcl : Unit → APRCL.ExecutionResult n limits) :
+    runBPSWWheel30ReducedEuler smallLimit n strengthened attempts bls aprcl =
+      runBPSWWheel30 smallLimit n strengthened attempts bls aprcl := by
+  simp only [runBPSWWheel30ReducedEuler, BPSW.decideWheel30ReducedEuler_eq, runBPSWWheel30]
+
+/-- Signed staged execution with the optional conditional-Euler Wheel30 decision.
+The result index and fallback thunks use toNat, as in the existing signed interface.
+Negative inputs retain certified small-input rejection before later searches. -/
+def runBPSWWheel30ReducedEulerInt (smallLimit : ℕ) (z : ℤ) (strengthened : Bool)
+    (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult z.toNat)
+    (aprcl : Unit → APRCL.ExecutionResult z.toNat limits) : APRCL.ExecutionResult z.toNat limits :=
+  runWithDecision smallLimit z.toNat (fun _ ↦ BPSW.decideWheel30ReducedEulerInt z strengthened)
+    attempts bls aprcl
+
+/-- For every integer input, conditional Euler omission preserves the existing staged result.
+The signed decision equality transports the result with all budgets and fallback thunks. -/
+theorem runBPSWWheel30ReducedEulerInt_eq (smallLimit : ℕ) (z : ℤ) (strengthened : Bool)
+    (attempts : List NumberTheory.Factorization.PollardRho.Attempt)
+    {limits : APRCL.CertificateLimits} (bls : Unit → BLS.BLSResult z.toNat)
+    (aprcl : Unit → APRCL.ExecutionResult z.toNat limits) :
+    runBPSWWheel30ReducedEulerInt smallLimit z strengthened attempts bls aprcl =
+      runBPSWWheel30Int smallLimit z strengthened attempts bls aprcl := by
+  simp only [runBPSWWheel30ReducedEulerInt, BPSW.decideWheel30ReducedEulerInt_eq, runBPSWWheel30Int]
 
 /-- Run staged execution with the common precheck before the Wheel30 BPSW filter.
 Caller-supplied factor attempts and deferred BLS/APR-CL fallbacks retain their budgets. -/
