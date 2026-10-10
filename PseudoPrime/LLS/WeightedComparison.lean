@@ -4,60 +4,58 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.LLS.Lemma21
-import PseudoPrime.LLS.Lemma23
+module
+
+public import PseudoPrime.LLS.Lemma21
+public import PseudoPrime.LLS.Lemma23
 
 /-!
-# The common weighted-comparison core (CP06 of the foundation extraction plan)
+# Comparing logarithmic and reciprocal weighted character sums
 
-This file assembles the four bounds `C1`-`C4` used by both the original-paper Part 2 branch and
-the independent `QNeOne` branch into a single reusable core, parameterized by an arbitrary
-nontrivial character `ψ` of level `f`, a cutoff `X`, a zero-mass witness `b`, and defect
-parameters `dS`, `dR`, `eS`. Neither `ψ`'s level `f` nor `X` is tied to any specific `q`; the two
-branches instantiate `X` differently (`(log q)²` for the paper branch, `(log d)²` for the
-independent branch).
+For a character ψ modulo a nonzero f and a cutoff X, the defects are the differences between
+weighted Mangoldt sums without a character and the real parts of the corresponding character
+sums. Bounds on these defects transfer the Riemann lower bounds to the character sums.
 
-* `C1` (`weightedLogDefect`, `weightedReciprocalDefect`): the character-free minus character-sum
-  defects. These are definitions, not hypotheses.
-* `C2` (`ReS_ge_of_defect`, `ReR_ge_of_defect`): the defects transport the general Riemann lower
-  bounds (`LLSRiemannWeightedLowerBound`, `LLSRiemannReciprocalLowerBound`) to lower bounds on
-  `Re S`, `Re R`.
-* `C3` (`primitiveReciprocalRaw_of_grh`, already proved in
-  `PrimitiveReciprocalWeightedBounds.lean`): the reciprocal zero-mass upper bound for `b`, stated
-  directly in terms of `Re R`.
-* `C4` (`primitiveGenericLogWeightedUpper_of_grh_generic`, already proved in
-  `PrimitiveLogWeightedBounds.lean`): the logarithmic upper bound for `Re S`, stated with the
-  generic error `eS = -11/4` valid for any nontrivial primitive character at `X ≥ 64`. A quadratic
-  branch supplying a sharper `eS` is a different input to the same bundle, not a different bundle.
+LLSWeightedComparisonCore records the two defect bounds, a reciprocal inequality involving
+an auxiliary zero-mass parameter b, and a logarithmic upper bound with error eS. The comparison
+theorem combines these four inputs with the Riemann lower bounds at the same cutoff.
+Nontriviality, primitivity, RH, and identification of b with zero mass are not assumptions of
+this algebraic interface; they are needed when supplying particular analytic inputs.
 
-The bundle `LLSWeightedComparisonCore` packages `C2`-`C4` for one `(ψ, X, b, dS, dR, eS)`; `C1`
-is not a hypothesis because it is a definition. `weightedComparisonCore_generic_of_grh` in
-`WeightedComparisonGRH.lean` supplies it under GRH from the two existing generic theorems,
-without any quadraticity hypothesis.
+The cutoff remains free for both the Part 2 and QNeOne applications. The final specialization
+uses X = (log q)² and zero defect bounds, as required by the Part 2 comparison.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 
-/-- `C1`: the Riemann log-weighted sum minus the real part of the character log-weighted sum. -/
+/-- For a character ψ modulo nonzero f and a real cutoff X, the logarithmic defect is the
+weighted Mangoldt sum without a character minus the real part of the character sum.
+An upper bound on this real-valued difference transfers a Riemann lower bound to that sum. -/
 noncomputable def weightedLogDefect {f : ℕ} [NeZero f] (ψ : DirichletCharacter ℂ f) (X : ℝ) : ℝ :=
   AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum X -
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum X ψ).re
 
-/-- `C1`: the Riemann reciprocal-weighted sum minus the real part of the character reciprocal
-sum. -/
+/-- For a character ψ modulo nonzero f and a real cutoff X, the reciprocal defect is the
+reciprocal weighted Mangoldt sum without a character minus the real part of the character sum.
+An upper bound on this real-valued difference transfers a Riemann lower bound to that sum. -/
 noncomputable def weightedReciprocalDefect {f : ℕ} [NeZero f] (ψ : DirichletCharacter ℂ f) (X : ℝ) :
     ℝ :=
   AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum X -
     (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum X ψ).re
 
-/-- The Riemann lower bound `Lζ(X)` from `LLSRiemannWeightedLowerBound`. -/
+/-- The expression X - log(2π) log X - 1 - 2β(√X + 1), where β is the Riemann zero mass.
+It is defined for every real X; LLSRiemannWeightedLowerBound asserts that it bounds the
+logarithmic weighted Mangoldt sum from below for X > 1. -/
 noncomputable def riemannLogLowerAt (X : ℝ) : ℝ :=
   X - Real.log (2 * Real.pi) * Real.log X - 1 -
     2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (Real.sqrt X + 1)
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
-/-- `C2`: a bounded log defect transports `LLSRiemannWeightedLowerBound` to a lower bound on
-`Re S`. -/
+/-- Given the Riemann logarithmic lower bound, X > 1, and logarithmic defect at most dS,
+the real part of the character sum is at least riemannLogLowerAt X - dS.
+The proof unfolds the defect and combines the two inequalities by linear arithmetic. -/
 theorem re_characterLogWeightedSum_ge_of_defect_le (h21 : LLSRiemannWeightedLowerBound) {f : ℕ}
     [NeZero f] (ψ : DirichletCharacter ℂ f) {X dS : ℝ} (hX : 1 < X)
     (hdS : weightedLogDefect ψ X ≤ dS) :
@@ -67,8 +65,9 @@ theorem re_characterLogWeightedSum_ge_of_defect_le (h21 : LLSRiemannWeightedLowe
   unfold riemannLogLowerAt
   linarith only [hdS, hriemann]
 
-/-- `C2`: a bounded reciprocal defect transports `LLSRiemannReciprocalLowerBound` to a lower
-bound on `Re R`. -/
+/-- Given the Riemann reciprocal lower bound, X ≥ 2, and reciprocal defect at most dR,
+the real part of the character sum is at least log X - 8/5 - dR.
+The proof unfolds the defect and combines the two inequalities by linear arithmetic. -/
 theorem re_characterReciprocalWeightedSum_ge_of_defect_le (h24 : LLSRiemannReciprocalLowerBound)
     {f : ℕ} [NeZero f] (ψ : DirichletCharacter ℂ f) {X dR : ℝ} (hX : 2 ≤ X)
     (hdR : weightedReciprocalDefect ψ X ≤ dR) :
@@ -78,39 +77,37 @@ theorem re_characterReciprocalWeightedSum_ge_of_defect_le (h24 : LLSRiemannRecip
   unfold weightedReciprocalDefect at hdR
   linarith only [hdR, hriemann]
 
-/--
-The common weighted-comparison core `C2`-`C4` for one nontrivial character `ψ` of level `f`, a
-cutoff `X`, a zero-mass witness `b`, log/reciprocal defect bounds `dS`, `dR`, and a logarithmic
-error term `eS`.
+/-- Four comparison inequalities for a character ψ modulo nonzero f at a common cutoff X.
+The parameters dS and dR bound the logarithmic and reciprocal defects, b is an auxiliary
+zero-mass parameter, and eS is the logarithmic error term. The first two fields supply the
+defect-transfer lemmas; the last two supply the analytic inequalities in the comparison.
 
-`C1` is not a field: `weightedLogDefect`/`weightedReciprocalDefect` are definitions, and
-`logDefect_le`/`reciprocalDefect_le` already state the `C1`-defect bound `C2` consumes.
--/
+The structure imposes no positivity or cutoff restrictions and does not identify b with zero
+mass. Such conditions belong to the constructors or to the theorem using this interface. -/
 structure LLSWeightedComparisonCore {f : ℕ} [NeZero f] (ψ : DirichletCharacter ℂ f)
     (X b dS dR eS : ℝ) : Prop where
-  /-- `C1`+`C2`, log side: the log defect is at most `dS`. -/
+  /-- Upper bound dS on the logarithmic defect at cutoff X. -/
   logDefect_le : weightedLogDefect ψ X ≤ dS
-  /-- `C1`+`C2`, reciprocal side: the reciprocal defect is at most `dR`. -/
+  /-- Upper bound dR on the reciprocal defect at cutoff X. -/
   reciprocalDefect_le : weightedReciprocalDefect ψ X ≤ dR
-  /-- `C3`: the reciprocal zero-mass upper bound for `b`, stated directly in terms of `Re R`. -/
+  /-- Bound on (1 - 1/√X)² b in terms of the reciprocal character sum and log(f/π). -/
   zeroMass_le :
     (1 - 1 / Real.sqrt X) ^ 2 * b ≤
       (1 / 2) * (1 - 1 / X) * Real.log ((f : ℝ) / Real.pi) -
         (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum X ψ).re -
         1 / 4
-  /-- `C4`: the logarithmic upper bound for `Re S`. -/
+  /-- Upper bound on the logarithmic character sum in terms of b, f, X, and error eS. -/
   logWeighted_le :
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum X ψ).re ≤
       (2 * Real.sqrt X + 2 + Real.log X) * b + (1 / 2) * Real.log ((f : ℝ) / Real.pi) * Real.log X +
         eS
 
 /--
-The common core, together with the general Riemann lower bounds, yields both headline
-consequences used by the two branches: a lower bound for `Re S` (from `C1`+`C2`) and the
-`C3`/`C4` bounds transported to the same `Re S`, `Re R` quantities. This is the "actually derive
-the Riemann-side lower bound, the character-side zero mass, and the log-sum upper bound" step:
-the three conclusions are stated together so a consumer cannot use the bundle as a mere triple of
-disconnected hypotheses.
+For `X > 1` and `X ≥ 2`, the common core and the two Riemann lower-bound interfaces give lower
+bounds for `Re S` and `Re R`, the zero-mass inequality, and the upper bound for `Re S`.
+The proof applies the two defect-transfer lemmas and retains the core's analytic fields.
+Both witness branches consume this four-part conclusion with the same cutoff and zero-mass
+parameter, keeping the Riemann and character comparisons aligned.
 -/
 theorem re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
     (h21 : LLSRiemannWeightedLowerBound) (h24 : LLSRiemannReciprocalLowerBound) {f : ℕ} [NeZero f]
@@ -132,26 +129,22 @@ theorem re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
     hcore.zeroMass_le, hcore.logWeighted_le⟩
 
 /-!
-### The zero-defect specialization
+## Comparison at the Part 2 cutoff
 
-The two consumers of this core use different cutoffs `X`: the paper branch (`S2`) sets
-`X = (log q)²` and supplies `dS = dR = 0` from strict-cutoff triviality; the independent
-branch (`SQ`) sets `X = (log d)²` and supplies `dS`, `dR` from the `χ(2) ∈ {0, 1, -1}`
-case split. `re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le` above already
-takes `X` as a free parameter, so the `SQ` branch applies it directly at `X = (log d)²` with no
-extra wrapper. The specialization below simplifies the zero defects. The actual primitive
-core is constructed in `WeightedComparisonGRH` and consumed in `Theorem11S2`;
-the three quadratic cores are constructed in `Extensions.QNeOneWeightedComparisonInputs`.
+At X = (log q)², nonpositive defects suffice to use the Riemann lower bounds without a loss.
+The specialization below takes both defect-bound parameters to be zero.
 -/
 
-/-- The paper branch's pair of zero-defect inequalities at `X = (log q)²`.
-`llsWeightedComparisonS2Defects_of_trivialBelow` supplies this predicate from the
-strict-cutoff character condition in `Theorem11S2SmallPrimeExclusion`. -/
+/-- For a character χ modulo nonzero q, both defects at X = (log q)² are nonpositive.
+This predicate supplies the defect fields of the Part 2 core with dS = dR = 0;
+it requires upper bounds by zero rather than equality of the defects to zero. -/
 def LLSWeightedComparisonS2Defects (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) : Prop :=
   weightedLogDefect χ ((Real.log q) ^ 2) ≤ 0 ∧ weightedReciprocalDefect χ ((Real.log q) ^ 2) ≤ 0
 
-/-- The paper branch's consequences follow from the common core with `dS = dR = 0`
-at `X = (log q)²`. The proof simplifies the two zero defects in the general conclusion. -/
+/-- Given the two Riemann lower bounds, 1 < (log q)², 2 ≤ (log q)², and a comparison core
+with zero defect bounds, obtain the logarithmic and reciprocal lower bounds, the inequality
+for b, and the logarithmic upper bound at the Part 2 cutoff. The proof specializes the general
+comparison and simplifies subtraction of the zero defect-bound parameters. -/
 theorem re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le_S2
     (h21 : LLSRiemannWeightedLowerBound) (h24 : LLSRiemannReciprocalLowerBound) {q : ℕ} [NeZero q]
     {χ : DirichletCharacter ℂ q} (hq1 : 1 < (Real.log q) ^ 2) (hq2 : 2 ≤ (Real.log q) ^ 2)

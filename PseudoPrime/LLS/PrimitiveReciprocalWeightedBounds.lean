@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveGenericHorizontalEdge
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveMultiplicityBridge
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveResidueClosedForms
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveEvenResidueClosedForm
-import PseudoPrime.LLS.PrimitiveReciprocalMainErrorBounds
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveGenericHorizontalEdge
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveMultiplicityBridge
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveResidueClosedForms
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveEvenResidueClosedForm
+public import PseudoPrime.Analysis.PrimitiveReciprocalMainErrorBounds
 
 /-! # Primitive reciprocal weighted-sum bounds under GRH
 
@@ -42,13 +44,13 @@ theorem re_add_llsPrimitiveReciprocalResidues_zero_one_le {N : ℕ} [NeZero N] (
   · have hraw :=
       re_add_dirichletReciprocalResidues_zero_one_of_even_raw hN2 hGRH hprimitive hne hinv heven
         hxpos
-    have herr := llsPrimitiveReciprocalEvenMainError_le_neg_quarter hx
+    have herr := Analysis.primitiveReciprocalEvenMainError_le_neg_quarter hx
     unfold Analysis.primitiveReciprocalEvenMainError at herr
     rw [hraw]
     nlinarith only [herr]
   · have hraw :=
       re_add_dirichletReciprocalResidues_zero_one_of_odd_raw hN2 hGRH hprimitive hne hinv hodd hxpos
-    have herr := llsPrimitiveReciprocalOddMainError_le_neg_quarter hx
+    have herr := Analysis.primitiveReciprocalOddMainError_le_neg_quarter hx
     unfold Analysis.primitiveReciprocalOddMainError at herr
     rw [hraw]
     nlinarith only [herr]
@@ -151,10 +153,10 @@ theorem re_sum_llsPrimitiveReciprocalResidueAt_le {N : ℕ} [NeZero N] (hN2 : 2 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 /-- Generic reciprocal bound after taking the common-height contour limit. -/
-theorem re_characterReciprocalWeightedSum_sub_leftVertical_le_of_grh {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) (A : ℕ) (hA : 2 ≤ A) :
+theorem re_characterReciprocalWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) (A : ℕ)
+    (hA : 2 ≤ A) :
     (characterReciprocalWeightedSum x χ).re -
         (2 * Real.pi)⁻¹ *
           (∫ t : ℝ,
@@ -164,30 +166,29 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_le_of_grh {N : ℕ} [
         (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
   have hx1 : (1 : ℝ) ≤ x := by linarith only [hx]
   have htend :=
-    tendsto_normalized_dirichletReciprocalBoundary_heightSeq_of_grh hN2 hGRH hprimitive hne hinv hx1
-      A hA
+    tendsto_normalized_dirichletReciprocalBoundary_heightSeq hN2 hGRH hprimitive hne hinv hx1 A hA
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   have hev :
     ∀ᶠ k : ℕ in Filter.atTop,
       ((-Complex.I / (2 * (Real.pi : ℂ))) *
             AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral
               (dirichletReciprocalContourKernel x χ)
-              (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
-              (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k)).re ≤
+              (primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k)
+              (primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k)).re ≤
         (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 1 / 4 -
           (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
     filter_upwards with k
     have hid :=
-      dirichletReciprocalFiniteContourIdentity_heightSeq_normalized_of_grh hN2 hGRH hprimitive hne
-        hinv (by linarith only [hx] : (0 : ℝ) < x) A k hA
-        (primitiveHeightSeq_singularities_mem_open_of_grh hN2 hGRH hprimitive hne hinv A k hA)
+      dirichletReciprocalFiniteContourIdentity_heightSeq_normalized hN2 hGRH hprimitive hne hinv
+        (by linarith only [hx] : (0 : ℝ) < x) A k hA
+        (primitiveHeightSeq_singularities_mem_open hN2 hGRH hprimitive hne hinv A k hA)
     obtain ⟨h0, h1⟩ :=
-      primitiveReciprocalMellinPoints_mem_singularities_heightSeq_of_grh hN2 hGRH hprimitive hne
-        hinv A k hA
+      primitiveReciprocalMellinPoints_mem_singularities_heightSeq hN2 hGRH hprimitive hne hinv A k
+        hA
     have hbound :=
       re_sum_llsPrimitiveReciprocalResidueAt_le hN2 hGRH hprimitive hne hinv hx (z :=
-        primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k) (w :=
-        primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k) h0 h1
+        primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k) (w :=
+        primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k) h0 h1
     rw [hid]
     exact hbound
   have hlimit := le_of_tendsto htendRe hev
@@ -213,7 +214,7 @@ open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 /-- Generic reciprocal raw bound obtained by removing the left-vertical term with the `A → ∞`
 limit. -/
-theorem primitiveReciprocalRaw_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+theorem primitiveReciprocalRaw {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) :
     (characterReciprocalWeightedSum x χ).re ≤
@@ -245,9 +246,7 @@ theorem primitiveReciprocalRaw_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ :
         (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 1 / 4 -
           (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
     filter_upwards [Filter.eventually_ge_atTop 2] with A hA
-    exact
-      re_characterReciprocalWeightedSum_sub_leftVertical_le_of_grh hN2 hGRH hprimitive hne hinv hx A
-        hA
+    exact re_characterReciprocalWeightedSum_sub_leftVertical_le hN2 hGRH hprimitive hne hinv hx A hA
   exact le_of_tendsto htendScaled hev
 
 end PseudoPrime.LLS

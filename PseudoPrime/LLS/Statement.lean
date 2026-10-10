@@ -4,8 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.JacobiCharacterInducedZeros
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
+public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
+public import PseudoPrime.NumberTheory.PrimitiveJacobiCharacter
+public import Mathlib.NumberTheory.DirichletCharacter.Bounds
+public import Mathlib.NumberTheory.LSeries.DirichletContinuation
 
 /-!
 # Statement of the Lamzouri--Li--Soundararajan bound

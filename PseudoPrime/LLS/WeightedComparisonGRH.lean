@@ -4,30 +4,35 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.LLS.WeightedComparison
-import PseudoPrime.LLS.Theorem11S2SmallPrimeExclusion
-import PseudoPrime.LLS.PrimitiveLogWeightedBounds
-import PseudoPrime.LLS.PrimitiveReciprocalWeightedBounds
+module
+
+public import PseudoPrime.LLS.WeightedComparison
+public import PseudoPrime.LLS.Theorem11S2SmallPrimeExclusion
+public import PseudoPrime.LLS.PrimitiveLogWeightedBounds
+public import PseudoPrime.LLS.PrimitiveReciprocalWeightedBounds
 
 /-!
-# Constructing the common weighted-comparison core from GRH
+# Weighted character-sum comparison under GRH
 
-The primitive logarithmic and reciprocal estimates supply the common core's analytic bounds.
-Both estimates are independent of the quadratic refinements and concrete witness applications.
-The constructor belongs to the LLS layer and is shared by S2 and the extension consumers.
+For a nontrivial primitive character and cutoff X ≥ 64, the logarithmic and reciprocal
+estimates under GRH construct LLSWeightedComparisonCore with b equal to the absolute real part
+of the primitive B constant and logarithmic error -11/4. The defect bounds are separate inputs.
+
+For a nontrivial character that is trivial on primes below X, this construction applies to
+its primitive inducing character: triviality transfers to that character and makes both
+weighted defects zero. This supplies the comparison core used in the Part 2 proof.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 
-/--
-The generic branch of the common core: under GRH, for any nontrivial primitive character `ψ` with
-`ψ⁻¹ ≠ 1` and any cutoff `X ≥ 64`, the witness `b := |primitiveBRe ψ|` and `eS := -11/4` satisfy
-`C3`-`C4`, using the already-proved generic theorems
-`PseudoPrime.LLS.primitiveReciprocalRaw_of_grh` and
-`PseudoPrime.LLS.primitiveGenericLogWeightedUpper_of_grh_generic`. No quadraticity
-hypothesis is used. `C1`/`C2` still need the log/reciprocal defect bounds `dS`, `dR` supplied
-separately (they depend on how `ψ` was constructed, not on the generic contour estimate).
--/
+/-- Under GRH, let ψ be a primitive character modulo f ≥ 2, with ψ ≠ 1 and ψ⁻¹ ≠ 1.
+For X ≥ 64 and supplied defect bounds dS and dR, construct the comparison core with
+b = |primitiveBRe ψ| and logarithmic error -11/4. The logarithmic and reciprocal estimates
+supply the two analytic fields after rewriting log(f/π); the defect fields use the inputs.
+This constructor provides a common analytic comparison for applications with different
+cutoffs and defect bounds. -/
 theorem weightedComparisonCore_generic_of_grh {f : ℕ} [NeZero f] (hf2 : 2 ≤ f)
     {ψ : DirichletCharacter ℂ f} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : ψ.IsPrimitive) (hne : ψ ≠ 1) (hinv : ψ⁻¹ ≠ 1) {X dS dR : ℝ} (hX : 64 ≤ X)
@@ -38,17 +43,20 @@ theorem weightedComparisonCore_generic_of_grh {f : ℕ} [NeZero f] (hf2 : 2 ≤ 
   logDefect_le := hdS
   reciprocalDefect_le := hdR
   zeroMass_le := by
-    have h := primitiveReciprocalRaw_of_grh hf2 hGRH hprimitive hne hinv hX
+    have h := primitiveReciprocalRaw hf2 hGRH hprimitive hne hinv hX
     rw [Real.log_div (by exact_mod_cast NeZero.ne f) Real.pi_ne_zero]
     linarith only [h]
   logWeighted_le := by
-    have h := primitiveGenericLogWeightedUpper_of_grh_generic hf2 hGRH hprimitive hne hinv hX
+    have h := primitiveGenericLogWeightedUpper hf2 hGRH hprimitive hne hinv hX
     rw [Real.log_div (by exact_mod_cast NeZero.ne f) Real.pi_ne_zero]
     exact h
 
-/-- The paper branch constructs the common core for the primitive inducing character.
-The original character need not be primitive: its strict-cutoff triviality transfers,
-forcing both primitive defects to vanish. All analytic fields follow from GRH. -/
+/-- Under GRH, a nontrivial character χ of nonzero conductor that is trivial on primes
+below X ≥ 64 yields a comparison core for its primitive inducing character, with both defect
+bounds zero, b = |primitiveBRe χ.primitiveCharacter|, and logarithmic error -11/4.
+The proof establishes nontriviality and conductor at least two, transfers the prime condition,
+and uses the resulting zero defects in the generic constructor. This supplies the analytic
+comparison for the Part 2 counterexample condition without assuming χ itself is primitive. -/
 theorem weightedComparisonCore_of_trivialBelow {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
     [NeZero χ.conductor] (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {X : ℝ} (hX : 64 ≤ X)

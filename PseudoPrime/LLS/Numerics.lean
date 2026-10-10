@@ -210,11 +210,13 @@ Nonnegativity of this function on `[8, ∞)` is equivalent to `LLSTradeoffRadius
 noncomputable def llsTradeoffMargin (y : ℝ) : ℝ :=
   Real.log 2 * (2 * y + 2 + 4 * Real.log y) - 4 * (Real.log y) ^ 2
 
-/-- The radius inequality at a positive input is exactly nonnegativity of the tradeoff margin. -/
-theorem tradeoff_radius_inequality_iff_margin_nonneg {y : ℝ} (hy : 0 < y) :
+/-- For every real input, the radius inequality is equivalent to nonnegativity of the tradeoff
+margin. Expand the logarithm of a square using `Real.log_pow` and normalize the polynomial
+terms; no positivity assumption is needed for this algebraic equivalence. -/
+theorem tradeoff_radius_inequality_iff_margin_nonneg {y : ℝ} :
     (Real.log (y ^ 2)) ^ 2 ≤ Real.log 2 * (2 * y + 2 + 2 * Real.log (y ^ 2)) ↔
       0 ≤ llsTradeoffMargin y := by
-  rw [Analysis.log_sq_eq_two_mul_log hy, llsTradeoffMargin]
+  rw [Real.log_pow, Nat.cast_ofNat, llsTradeoffMargin]
   constructor <;> intro h <;> nlinarith only [h]
 
 /-- The universal radius statement is equivalent to margin nonnegativity on `[8, ∞)`. -/
@@ -222,15 +224,9 @@ theorem tradeoffRadiusInequality_iff_margin :
     LLSTradeoffRadiusInequality ↔ ∀ y : ℝ, 8 ≤ y → 0 ≤ llsTradeoffMargin y := by
   constructor
   · intro h y hy
-    exact
-      (tradeoff_radius_inequality_iff_margin_nonneg
-            (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) hy)).mp
-        (h y hy)
+    exact tradeoff_radius_inequality_iff_margin_nonneg.mp (h y hy)
   · intro h y hy
-    exact
-      (tradeoff_radius_inequality_iff_margin_nonneg
-            (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) hy)).mpr
-        (h y hy)
+    exact tradeoff_radius_inequality_iff_margin_nonneg.mpr (h y hy)
 
 /-- The numerator controlling the sign of the derivative of `llsTradeoffMargin`. -/
 noncomputable def llsTradeoffDerivNumerator (y : ℝ) : ℝ :=

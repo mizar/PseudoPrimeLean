@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Analysis.ElementaryBounds
-import PseudoPrime.Analysis.LogarithmicMainTerms
-import PseudoPrime.LLS.PrimitiveReciprocalMainErrorBounds
+module
+
+public import PseudoPrime.Analysis.ElementaryBounds
+public import PseudoPrime.Analysis.LogarithmicMainTerms
+public import PseudoPrime.Analysis.PrimitiveReciprocalMainErrorBounds
 
 /-!
 # Odd/even parity main-error numerical bounds for the log kernel
@@ -14,13 +16,15 @@ import PseudoPrime.LLS.PrimitiveReciprocalMainErrorBounds
 Pure numerical (character-free) content: the two "main error" functions appearing in the odd/even
 `s = 0` log-kernel residue closed forms
 (`PrimitiveLogResidueClosedForms.lean`,
-`DirichletLFunction.re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw`,
-`DirichletLFunction.re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_raw`) are
+`DirichletLFunction.re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd`,
+`DirichletLFunction.re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two`) are
 `≤ -11/4` once
 `x ≥ 64`. Mirrors `PrimitiveReciprocalMainErrorBounds.lean`'s odd/even numerical bounds, but odd
 and even are *not* proved by a shared argument here: odd's margin is tight (`≈ 0.02`) and needs a
 sharper rational bound on `γ`, `log 2`, `π`; even's margin is ample and closes from coarse bounds.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

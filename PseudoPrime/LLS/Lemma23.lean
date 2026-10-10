@@ -217,7 +217,7 @@ theorem llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_riemann
     Real.log_le_log hlogq hroot
   have hlogX : 2 * Real.log (Real.log q) ≤ Real.log x := by
     rw [show Real.log x = 2 * Real.log (llsTheorem11S1RadiusRoot q) by
-        exact Analysis.log_sq_eq_two_mul_log hy]
+        exact Real.log_pow (llsTheorem11S1RadiusRoot q) 2]
     linarith only [hlogRoot]
   rw [LLSPart1PrimitiveReciprocalLowerAtWithQuotient]
   linarith only [hlogX, hriemann, hlower]
@@ -307,7 +307,7 @@ theorem llsPart1LevelReciprocalLowerAt_of_riemann (h24 : LLSRiemannReciprocalLow
     Real.log_le_log hlogq hroot
   have hlogX : 2 * Real.log (Real.log q) ≤ Real.log x := by
     rw [show Real.log x = 2 * Real.log (llsTheorem11S1RadiusRoot q) by
-        exact Analysis.log_sq_eq_two_mul_log hy]
+        exact Real.log_pow (llsTheorem11S1RadiusRoot q) 2]
     linarith only [hlogRoot]
   rw [LLSPart1LevelReciprocalLowerAt, llsAuxiliaryTerm]
   apply max_le hsumNonneg
@@ -334,7 +334,7 @@ level character.
 Conclusion: `LLSPart1PrimitiveReciprocalLowerWithLevelChangeAt χ` holds.
 Content: combine `llsPart1LevelReciprocalLowerAt_of_riemann` with the exact level-change identity.
 Role: supplies the analytic input for
-`PseudoPrime.AnalyticNumberTheory.Arithmetic.primitiveReciprocalConductorAbsorption_of_isQuadratic`.
+`PseudoPrime.AnalyticNumberTheory.Arithmetic.primitiveReciprocalConductorAbsorption`.
 -/
 theorem llsPart1PrimitiveReciprocalLowerWithLevelChangeAt_of_riemann
     (h24 : LLSRiemannReciprocalLowerBound) {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
@@ -397,7 +397,7 @@ theorem llsPart1PrimitiveReciprocalLowerAt_of_riemann_of_conductorPrimeSupport
     Real.log_le_log hlogq hroot
   have hlogX : 2 * Real.log (Real.log q) ≤ Real.log x := by
     rw [show Real.log x = 2 * Real.log (llsTheorem11S1RadiusRoot q) by
-        exact Analysis.log_sq_eq_two_mul_log hy]
+        exact Real.log_pow (llsTheorem11S1RadiusRoot q) 2]
     linarith only [hlogRoot]
   rw [LLSPart1PrimitiveReciprocalLowerAt, llsAuxiliaryTerm]
   apply max_le hsumNonneg
@@ -694,7 +694,7 @@ below keep the same `(1 - 1/y)⁻²`
 transport coefficient
 but leave the reciprocal correction itself as an abstract real parameter `δrec`, so that the
 exact quadratic `(k, p)` ledger
-(`Arithmetic.primitiveReciprocalLevelChangeCorrection_eq_sum_of_isQuadratic`)
+(`Arithmetic.primitiveReciprocalLevelChangeCorrection_eq_sum`)
 can be substituted for it
 once the analytic estimate supplies a concrete lower bound for the primitive reciprocal sum,
 without redoing this

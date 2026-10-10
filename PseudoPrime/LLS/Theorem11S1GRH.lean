@@ -4,12 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.LLS.ExplicitFormula
-import PseudoPrime.LLS.Theorem11S1Estimates
-import PseudoPrime.LLS.Lemma23
-import PseudoPrime.LLS.Theorem11S1Subgroup
-import PseudoPrime.LLS.RiemannLogResidueBound
-import PseudoPrime.LLS.RiemannReciprocalResidueBound
+module
+
+public import PseudoPrime.LLS.ExplicitFormula
+public import PseudoPrime.LLS.Theorem11S1Estimates
+public import PseudoPrime.LLS.Lemma23
+public import PseudoPrime.LLS.Theorem11S1Subgroup
+public import PseudoPrime.LLS.RiemannWeightedBounds
 
 /-!
 # Assembly of the analytic core for LLS Theorem 1.1
@@ -71,6 +72,10 @@ This bridge bypasses the coarse quotient branch: the lower side remains the esta
 Riemann weighted lower bound, while the upper side is the exact full-level chain.
 -/
 
+/-- Given the Riemann logarithmic and reciprocal lower bounds and GRH, construct the S1
+analytic sandwich with the real character weighted sum as witness.
+The lower side uses the Riemann comparison; the upper side uses exact conductor absorption.
+This supplies the analytic input consumed by numerical separation. -/
 theorem llsPart1AnalyticBounds_of_grh_generic (h21 : LLSRiemannWeightedLowerBound)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (h24 : LLSRiemannReciprocalLowerBound) : llsTheorem11S1AnalyticBounds := by
@@ -83,7 +88,9 @@ theorem llsPart1AnalyticBounds_of_grh_generic (h21 : LLSRiemannWeightedLowerBoun
   · exact (llsPart1WeightedLowerBounds_of_riemann h21) q χ hq hχ hsmall
   · exact characterLogWeightedSum_re_le_upper_of_grh_generic χ hq hχ hGRH h24 hsmall
 
-/- The generic analytic Part 1 input is consumed by the existing numerical separation theorem. -/
+/-- Combine the generic GRH analytic sandwich with the established numerical separation
+to obtain the nontrivial-character S1 bound. The supplied Riemann lower bounds feed
+the sandwich, and `llsTheorem11S1Character_of_bounds` supplies the final contradiction. -/
 theorem llsTheorem11S1Character_of_grh_generic_analytic (h21 : LLSRiemannWeightedLowerBound)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (h24 : LLSRiemannReciprocalLowerBound) : llsTheorem11S1Character := by
@@ -96,6 +103,10 @@ Intermediate generic full-level core.  This public interface retains the exact l
 reciprocal lower bound and absorbed zero-mass estimate with an explicit shared witness.
 -/
 
+/-- The S1 full-level shared-witness interface for a nonprincipal character at `q ≥ 3000`
+with no small exceptional prime. A nonnegative real witness must satisfy the primitive
+logarithmic upper bound and the absorbed full-level zero-mass bound, alongside the exact
+reciprocal lower bound with level change. This records the generic conductor-absorption route. -/
 def LLSPart1PrimitiveFullLevelCoreBounds : Prop :=
   ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q),
     3000 ≤ q →

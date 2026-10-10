@@ -4,14 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.LLS.WeightedComparisonGRH
-import PseudoPrime.LLS.Theorem11S2Numerics
-import PseudoPrime.LLS.Theorem11S1Subgroup
-import PseudoPrime.LLS.RiemannLogResidueBound
-import PseudoPrime.LLS.RiemannReciprocalResidueBound
-import PseudoPrime.Analysis.LogarithmicConstants
+module
+
+public import PseudoPrime.LLS.WeightedComparisonGRH
+public import PseudoPrime.LLS.Theorem11S2Numerics
+public import PseudoPrime.LLS.Theorem11S1Subgroup
+public import PseudoPrime.LLS.RiemannWeightedBounds
+public import PseudoPrime.Analysis.LogarithmicConstants
 
 /-! # Theorem 1.1 S2 from the common weighted comparison -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

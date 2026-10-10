@@ -18,20 +18,20 @@ This file uses the foundation's weighted-sum integral identities to convert vert
 lower bounds into the finite weighted-sum bounds used in LLS Lemmas 2.1 and 2.4. The two named
 propositions separate this conversion from the contour and residue proofs.
 
-The propositions `LLSRiemannLogVerticalIntegralLowerBound` and
-`LLSRiemannReciprocalVerticalIntegralLowerBound` are not remaining hypotheses of the final
-project: they are proved from RH in `RiemannLogResidueBound.lean` and
-`RiemannReciprocalResidueBound.lean`, respectively.  Keeping them as named interfaces makes the
-unconditional Mellin identities reusable and keeps the analytic dependency graph layered.
+The vertical-integral propositions are inputs to the general analytic core. The RH-specific
+proofs in RiemannWeightedBounds.lean
+instead use the Mellin identities at real part two directly.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 
 /--
 Vertical-integral lower-bound interface for the logarithmic kernel (LLS Lemma 2.1).
 
-`RiemannLogResidueBound.lean` proves this proposition from `RiemannHypothesis`; the definition is
-kept here so the Mellin identity and the contour proof remain separate layers.
+This proposition is a logarithmic contour input to the general analytic core.
+The definition separates that input from the Mellin identity converting it to a finite sum.
 -/
 def LLSRiemannLogVerticalIntegralLowerBound : Prop :=
   ∀ x : ℝ,
@@ -48,7 +48,7 @@ def LLSRiemannLogVerticalIntegralLowerBound : Prop :=
 /--
 Vertical-integral lower-bound interface for the reciprocal kernel (LLS Lemma 2.4).
 
-`RiemannReciprocalResidueBound.lean` proves this proposition from `RiemannHypothesis`; its shape
+This proposition is a reciprocal contour input to the general analytic core. Its shape
 matches the reciprocal kernel's poles and the explicit trivial-zero series.
 -/
 def LLSRiemannReciprocalVerticalIntegralLowerBound : Prop :=
