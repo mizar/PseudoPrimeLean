@@ -1,5 +1,6 @@
 !.github
 !.editorconfig
 .*
+!.vendor
 __pycache__
 *.log
