@@ -117,7 +117,12 @@ private theorem baseThreeRejects_2047 : strongMillerRabinWithBase 2047 3 = false
     exact hpow.2
 
 -- BEGIN GENERATED baseTwoClassifyBelow3000
-/-- Generated kernel-checked classification block for odd inputs. -/
+/--
+Classify the 256 odd inputs from 1 through 511 as one, rejected by the
+base-two certificate checker, prime, or 2047. Exhaust the finite index, prove direct arithmetic
+cases by normalization, and evaluate the unfolded decomposition and modular-power checks for
+remaining cases. The full classification selects this block by quotient and remainder.
+-/
 private theorem baseTwoClassifyBelow3000_block_0 :
     ∀ i : Fin 256,
       let n := 2 * (256 * 0 + i.val) + 1
@@ -128,7 +133,12 @@ private theorem baseTwoClassifyBelow3000_block_0 :
     | (norm_num only [or_true, true_or, or_false, false_or]; done)
     | (unfold baseTwoRejectCheck baseTwoRejectCheckData splitTwo; decide)
 
-/-- Generated kernel-checked classification block for odd inputs. -/
+/--
+Classify the 256 odd inputs from 513 through 1023 as one, rejected by the
+base-two certificate checker, prime, or 2047. Exhaust the finite index, prove direct arithmetic
+cases by normalization, and evaluate the unfolded decomposition and modular-power checks for
+remaining cases. The full classification selects this block by quotient and remainder.
+-/
 private theorem baseTwoClassifyBelow3000_block_1 :
     ∀ i : Fin 256,
       let n := 2 * (256 * 1 + i.val) + 1
@@ -139,7 +149,12 @@ private theorem baseTwoClassifyBelow3000_block_1 :
     | (norm_num only [or_true, true_or, or_false, false_or]; done)
     | (unfold baseTwoRejectCheck baseTwoRejectCheckData splitTwo; decide)
 
-/-- Generated kernel-checked classification block for odd inputs. -/
+/--
+Classify the 256 odd inputs from 1025 through 1535 as one, rejected by the
+base-two certificate checker, prime, or 2047. Exhaust the finite index, prove direct arithmetic
+cases by normalization, and evaluate the unfolded decomposition and modular-power checks for
+remaining cases. The full classification selects this block by quotient and remainder.
+-/
 private theorem baseTwoClassifyBelow3000_block_2 :
     ∀ i : Fin 256,
       let n := 2 * (256 * 2 + i.val) + 1
@@ -150,7 +165,12 @@ private theorem baseTwoClassifyBelow3000_block_2 :
     | (norm_num only [or_true, true_or, or_false, false_or]; done)
     | (unfold baseTwoRejectCheck baseTwoRejectCheckData splitTwo; decide)
 
-/-- Generated kernel-checked classification block for odd inputs. -/
+/--
+Classify the 256 odd inputs from 1537 through 2047 as one, rejected by the
+base-two certificate checker, prime, or 2047. Exhaust the finite index, prove direct arithmetic
+cases by normalization, and evaluate the unfolded decomposition and modular-power checks for
+remaining cases. The full classification selects this block by quotient and remainder.
+-/
 private theorem baseTwoClassifyBelow3000_block_3 :
     ∀ i : Fin 256,
       let n := 2 * (256 * 3 + i.val) + 1
@@ -161,7 +181,12 @@ private theorem baseTwoClassifyBelow3000_block_3 :
     | (norm_num only [or_true, true_or, or_false, false_or]; done)
     | (unfold baseTwoRejectCheck baseTwoRejectCheckData splitTwo; decide)
 
-/-- Generated kernel-checked classification block for odd inputs. -/
+/--
+Classify the 256 odd inputs from 2049 through 2559 as one, rejected by the
+base-two certificate checker, prime, or 2047. Exhaust the finite index, prove direct arithmetic
+cases by normalization, and evaluate the unfolded decomposition and modular-power checks for
+remaining cases. The full classification selects this block by quotient and remainder.
+-/
 private theorem baseTwoClassifyBelow3000_block_4 :
     ∀ i : Fin 256,
       let n := 2 * (256 * 4 + i.val) + 1
@@ -172,7 +197,12 @@ private theorem baseTwoClassifyBelow3000_block_4 :
     | (norm_num only [or_true, true_or, or_false, false_or]; done)
     | (unfold baseTwoRejectCheck baseTwoRejectCheckData splitTwo; decide)
 
-/-- Generated kernel-checked classification block for odd inputs. -/
+/--
+Classify the 220 odd inputs from 2561 through 2999 as one, rejected by the
+base-two certificate checker, prime, or 2047. Exhaust the finite index, prove direct arithmetic
+cases by normalization, and evaluate the unfolded decomposition and modular-power checks for
+remaining cases. The full classification selects this block by quotient and remainder.
+-/
 private theorem baseTwoClassifyBelow3000_block_5 :
     ∀ i : Fin 220,
       let n := 2 * (256 * 5 + i.val) + 1

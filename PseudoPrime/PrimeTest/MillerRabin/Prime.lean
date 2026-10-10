@@ -39,7 +39,11 @@ private theorem pow_two_adic_eq_one_or_neg_one {F : Type*} [Field F] (x : F) :
             ⟨r, List.mem_range.mpr (Nat.lt_trans (List.mem_range.mp hr) (Nat.lt_succ_self s)), hxr⟩
     · exact Or.inr ⟨s, List.mem_range.mpr (Nat.lt_succ_self s), hneg⟩
 
-/-- At a prime modulus, the computed exponent decomposition is `p - 1 = d * 2^s`. -/
+/--
+For every natural `p`, decompose `p-1` as its odd-part quotient times its power of
+two. No primality assumption is required for this identity. Commuting the standard decomposition
+puts it in the exponent order used by prime-modulus acceptance.
+-/
 theorem sub_eq_oddPart_mul_twoAdicPart {p : ℕ} :
     p - 1 = Nat.divMaxPow (p - 1) 2 * 2 ^ padicValNat 2 (p - 1) := by
   rw [Nat.mul_comm]

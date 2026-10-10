@@ -82,18 +82,6 @@ theorem isStrongPseudoprimeTo_of_half_pow_neg_one {n : ℕ} {bases : List ℕ} (
     strongMillerRabinWithBase_eq_true_iff.mp
       (strongMillerRabinWithBase_of_half_pow_neg_one hn hnOdd (hpow a ha))
 
-/-- The first component of the CRT equivalence is reduction modulo the first factor. -/
-private theorem crt_fst {p q : ℕ} (hc : p.Coprime q) (x : ZMod (p * q)) :
-    ((ZMod.chineseRemainder hc) x).1 = (x.cast : ZMod p) := by
-  change ((ZMod.castHom (Nat.lcm_dvd_mul p q) (ZMod p × ZMod q)) x).1 = _
-  rw [ZMod.castHom_apply, Prod.fst_zmod_cast]
-
-/-- The second component of the CRT equivalence is reduction modulo the second factor. -/
-private theorem crt_snd {p q : ℕ} (hc : p.Coprime q) (x : ZMod (p * q)) :
-    ((ZMod.chineseRemainder hc) x).2 = (x.cast : ZMod q) := by
-  change ((ZMod.castHom (Nat.lcm_dvd_mul p q) (ZMod p × ZMod q)) x).2 = _
-  rw [ZMod.castHom_apply, Prod.snd_zmod_cast]
-
 /-- A power is one modulo a coprime product exactly when it is one modulo both factors. -/
 theorem pow_mod_mul_eq_one_iff {p q : ℕ} (hc : p.Coprime q) (a d : ℕ) :
     ((a : ZMod (p * q)) ^ d = 1) ↔ (a : ZMod p) ^ d = 1 ∧ (a : ZMod q) ^ d = 1 := by
@@ -685,7 +673,12 @@ theorem arnault_three_factor_strongPseudoprime {p q r : ℕ} [Fact (Nat.Prime p)
     arnault_three_factor_strongPseudoprime_core hpq hpqr hpOdd hqOdd hrOdd hnOdd hpdiv hqdiv hrdiv
       hpval hqval hrval hleg
 
-/-- The corresponding condition for any pairwise coprime list of odd prime factors. -/
+/--
+For a pairwise coprime list of odd primes with composite product greater than one,
+Korselt divisibility, equal two-adic valuations, and nonresidue status of every supplied base
+at every factor, the product is a strong pseudoprime to all listed bases. The proof invokes
+the core Euler-criterion and CRT construction; compositeness is an explicit premise.
+-/
 theorem arnault_factors_strongPseudoprime (factors bases : List ℕ)
     (hpair : List.Pairwise Nat.Coprime factors) (hprimes : ∀ p ∈ factors, Nat.Prime p)
     (hodd : ∀ p ∈ factors, Odd p) (hn : 1 < factors.prod) (hnOdd : Odd factors.prod)
@@ -697,7 +690,12 @@ theorem arnault_factors_strongPseudoprime (factors bases : List ℕ)
     arnault_factors_strongPseudoprime_core factors bases hpair hprimes hodd hn hnOdd hcomp hdiv hval
       hleg
 
-/-- An odd semiprime passes exactly when both factors pass at the same canonical stage. -/
+/--
+For coprime factors whose product is odd and greater than one, global strong-test
+acceptance is equivalent to both factors having initial power one or both having minus one
+at the same canonical stage. Factor primality is unnecessary here. The proof obtains the
+global decomposition and applies the two-factor CRT power identities.
+-/
 theorem strongMillerRabinWithBase_mul_eq_true_iff {p q a : ℕ} (hc : p.Coprime q) (hn : 1 < p * q)
     (hnOdd : Odd (p * q)) :
     strongMillerRabinWithBase (p * q) a = true ↔

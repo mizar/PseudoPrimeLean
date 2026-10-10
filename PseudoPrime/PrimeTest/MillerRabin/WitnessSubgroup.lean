@@ -72,9 +72,10 @@ private theorem exists_prime_square_unit_outside {n q : ℕ} (hnNeZero : NeZero 
   exact ⟨u, huout⟩
 
 /--
-If a prime square divides `n`, the Fermat subgroup is proper. The proof uses `1 + q` modulo `q²`,
-whose order is `q`, then lifts the corresponding unit to modulus `n`. This is the square-factor
-case of the central theorem.
+For `n > 1` and an odd prime `q` with `q² ∣ n`, the Fermat subgroup is proper.
+The proof uses `1+q` modulo `q²`, whose order is `q`, and lifts its unit to modulus `n`.
+Its Fermat power cannot be one because `q` divides `n` rather than `n-1`. This supplies
+the square-factor branch of the composite subgroup theorem.
 -/
 theorem fermatSubgroup_ne_top_of_prime_square_dvd {n q : ℕ} (hn : 1 < n) (hq : Nat.Prime q)
     (hq2 : q ≠ 2) (hqdiv : q ^ 2 ∣ n) : fermatSubgroup n ≠ ⊤ := by
@@ -219,7 +220,11 @@ private theorem exists_prime_field_unit_order_two_power {q : ℕ} (hq : Nat.Prim
     exact Nat.mul_div_cancel_left (2 ^ t) hcpos
   exact ⟨hqdecomp, ⟨b, hbOrd⟩⟩
 
-/-- A negative power before level `t` is negative at the last level and positive below it. -/
+/--
+A minus-one power at stage `j < t` gives a sign at the last stage `t-1`: it remains
+minus one if `j=t-1`, and becomes one if `j<t-1` by raising to an even power. This supplies
+the global sign-subgroup inclusion after bounding the stage by a prime factor.
+-/
 private theorem negative_power_before_t_gives_sign {n t d j : ℕ} {x : ZMod n} (hjt : j < t)
     (hneg : x ^ (2 ^ j * d) = -1) : x ^ (2 ^ (t - 1) * d) = 1 ∨ x ^ (2 ^ (t - 1) * d) = -1 := by
   by_cases hlast : j = t - 1

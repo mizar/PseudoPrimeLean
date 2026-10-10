@@ -76,51 +76,101 @@ theorem exists_proper_subgroup_containing_strongMillerRabinPass {n : ℕ} (hn : 
     intro x hpass
     exact strongMillerRabinPass_mem_signSubgroup hn hnOdd hpass hq (hq.odd_of_ne_two hq2) hqdiv
 
+/--
+For modulus 9, the Fermat subgroup is proper because the odd prime square 3²
+divides it. Instantiate the prime-square theorem and verify the numerical premises by
+normalization; this exercises the square-factor subgroup branch.
+-/
 example : fermatSubgroup 9 ≠ ⊤ := by
   exact
     fermatSubgroup_ne_top_of_prime_square_dvd (n := 9) (q := 3) (by norm_num only)
       (by norm_num only) (by norm_num only) (by norm_num only)
 
+/--
+For modulus 25, the Fermat subgroup is proper because the odd prime square 5²
+divides it. Instantiate the prime-square theorem and verify the numerical premises by
+normalization; this exercises the square-factor subgroup branch.
+-/
 example : fermatSubgroup 25 ≠ ⊤ := by
   exact
     fermatSubgroup_ne_top_of_prime_square_dvd (n := 25) (q := 5) (by norm_num only)
       (by norm_num only) (by norm_num only) (by norm_num only)
 
+/--
+For modulus 49, the Fermat subgroup is proper because the odd prime square 7²
+divides it. Instantiate the prime-square theorem and verify the numerical premises by
+normalization; this exercises the square-factor subgroup branch.
+-/
 example : fermatSubgroup 49 ≠ ⊤ := by
   exact
     fermatSubgroup_ne_top_of_prime_square_dvd (n := 49) (q := 7) (by norm_num only)
       (by norm_num only) (by norm_num only) (by norm_num only)
 
+/--
+For modulus 121, the Fermat subgroup is proper because the odd prime square 11²
+divides it. Instantiate the prime-square theorem and verify the numerical premises by
+normalization; this exercises the square-factor subgroup branch.
+-/
 example : fermatSubgroup 121 ≠ ⊤ := by
   exact
     fermatSubgroup_ne_top_of_prime_square_dvd (n := 121) (q := 11) (by norm_num only)
       (by norm_num only) (by norm_num only) (by norm_num only)
 
+/--
+For odd modulus 15, the canonical sign subgroup selected by factor 3 is proper.
+The distinct primes 3 and 5 have product dividing the modulus; instantiate the
+distinct-prime theorem and normalize its arithmetic premises. This exercises the CRT branch.
+-/
 example : signSubgroup 15 (2 ^ (padicValNat 2 (3 - 1) - 1) * Nat.divMaxPow (15 - 1) 2) ≠ ⊤ := by
   exact
     signSubgroup_ne_top_of_distinct_prime_dvd (n := 15) (q := 3) (r := 5) (by norm_num only)
       (by norm_num only) (by norm_num only) (by norm_num only) (by norm_num only) (by norm_num only)
 
+/--
+For odd modulus 65, the canonical sign subgroup selected by factor 5 is proper.
+The distinct primes 5 and 13 have product dividing the modulus; instantiate the
+distinct-prime theorem and normalize its arithmetic premises. This exercises the CRT branch.
+-/
 example : signSubgroup 65 (2 ^ (padicValNat 2 (5 - 1) - 1) * Nat.divMaxPow (65 - 1) 2) ≠ ⊤ := by
   exact
     signSubgroup_ne_top_of_distinct_prime_dvd (n := 65) (q := 5) (r := 13) (by norm_num only)
       (by norm_num only) (by norm_num only) (by norm_num only) (by norm_num only) (by norm_num only)
 
+/--
+For odd modulus 341, the canonical sign subgroup selected by factor 11 is proper.
+The distinct primes 11 and 31 have product dividing the modulus; instantiate the
+distinct-prime theorem and normalize its arithmetic premises. This exercises the CRT branch.
+-/
 example : signSubgroup 341 (2 ^ (padicValNat 2 (11 - 1) - 1) * Nat.divMaxPow (341 - 1) 2) ≠ ⊤ := by
   exact
     signSubgroup_ne_top_of_distinct_prime_dvd (n := 341) (q := 11) (r := 31) (by norm_num only)
       (by norm_num only) (by norm_num only) (by norm_num only) (by norm_num only) (by norm_num only)
 
+/--
+For odd modulus 561, the canonical sign subgroup selected by factor 3 is proper.
+The distinct primes 3 and 11 have product dividing the modulus; instantiate the
+distinct-prime theorem and normalize its arithmetic premises. This exercises the CRT branch.
+-/
 example : signSubgroup 561 (2 ^ (padicValNat 2 (3 - 1) - 1) * Nat.divMaxPow (561 - 1) 2) ≠ ⊤ := by
   exact
     signSubgroup_ne_top_of_distinct_prime_dvd (n := 561) (q := 3) (r := 11) (by norm_num only)
       (by norm_num only) (by norm_num only) (by norm_num only) (by norm_num only) (by norm_num only)
 
+/--
+For odd modulus 1729, the canonical sign subgroup selected by factor 7 is proper.
+The distinct primes 7 and 13 have product dividing the modulus; instantiate the
+distinct-prime theorem and normalize its arithmetic premises. This exercises the CRT branch.
+-/
 example : signSubgroup 1729 (2 ^ (padicValNat 2 (7 - 1) - 1) * Nat.divMaxPow (1729 - 1) 2) ≠ ⊤ := by
   exact
     signSubgroup_ne_top_of_distinct_prime_dvd (n := 1729) (q := 7) (r := 13) (by norm_num only)
       (by norm_num only) (by norm_num only) (by norm_num only) (by norm_num only) (by norm_num only)
 
+/--
+For odd modulus 2047, the canonical sign subgroup selected by factor 23 is proper.
+The distinct primes 23 and 89 have product dividing the modulus; instantiate the
+distinct-prime theorem and normalize its arithmetic premises. This exercises the CRT branch.
+-/
 example :
     signSubgroup 2047 (2 ^ (padicValNat 2 (23 - 1) - 1) * Nat.divMaxPow (2047 - 1) 2) ≠ ⊤ := by
   exact
