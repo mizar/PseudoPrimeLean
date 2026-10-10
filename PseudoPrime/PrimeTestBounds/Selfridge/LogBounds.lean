@@ -4,19 +4,25 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.WitnessBridge
-import PseudoPrime.PseudoSquare.Computation.QNeOneFiniteLogSq
-import PseudoPrime.PseudoSquare.Computation.ResidueWheel
-import PseudoPrime.PrimeTest.Selfridge.Nonempty
-import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.WitnessBridge
+public import PseudoPrime.PseudoSquare.Computation.QNeOneFiniteLogSq
+public import PseudoPrime.PseudoSquare.Computation.ResidueWheel
+public import PseudoPrime.PrimeTest.Selfridge.Nonempty
+public import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
 
 /-!
 # Unconditional finite Selfridge logarithmic estimates
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTestBounds.Selfridge
 
-/-- A numerical logarithmic estimate used in the GRH assembly; no GRH is needed here. -/
+/-- For `n ≥ 49`, the real logarithmic square exceeds fifteen.
+Bound `log 36` from certified logarithms, add a lower bound for `log (49/36)`, and use log
+monotonicity. This absorbs the fixed classical first-stop overhead in the GRH assembly. -/
 theorem fifteen_lt_log_sq_of_forty_nine_le {n : ℕ} (hn : 49 ≤ n) :
     (15 : ℝ) < Real.log (n : ℝ) ^ 2 := by
   have h49 : (388 / 100 : ℝ) < Real.log 49 := by
@@ -39,6 +45,9 @@ theorem fifteen_lt_log_sq_of_forty_nine_le {n : ℕ} (hn : 49 ≤ n) :
       (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 49) hcast) hcast
   nlinarith only [h49, hmono, sq_nonneg (Real.log (n : ℝ) - (388 / 100 : ℝ))]
 
+/-- For `n ≥ 29`, the logarithmic square contains the candidate eleven.
+Combine `log 25 = 2 * log 5` with a lower bound on `log (29/25)` and log monotonicity; the finite
+Selfridge check at 29 uses this estimate after certifying its stopping candidate. -/
 private theorem eleven_le_log_sq_of_twenty_nine_le {n : ℕ} (hn : 29 ≤ n) :
     (11 : ℝ) ≤ Real.log (n : ℝ) ^ 2 := by
   have hlog25 : (2 * (1.6094379123 : ℝ)) < Real.log 25 := by
@@ -57,6 +66,9 @@ private theorem eleven_le_log_sq_of_twenty_nine_le {n : ℕ} (hn : 29 ≤ n) :
       (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 29) hcast) hcast
   nlinarith only [hlog29, hmono, sq_nonneg (Real.log (n : ℝ) - (33 / 10 : ℝ))]
 
+/-- For `n ≥ 29`, the logarithmic square contains the candidate nine.
+The lower bound for `2 * log 5 = log 25` and log monotonicity suffice; this closes the finite
+Selfridge case whose certified stopping candidate is nine. -/
 private theorem nine_le_log_sq_of_twenty_nine_le {n : ℕ} (hn : 29 ≤ n) :
     (9 : ℝ) ≤ Real.log (n : ℝ) ^ 2 := by
   have hlog25 : (2 * (1.6094379123 : ℝ)) < Real.log 25 := by
@@ -69,6 +81,10 @@ private theorem nine_le_log_sq_of_twenty_nine_le {n : ℕ} (hn : 29 ≤ n) :
       (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 25) hcast) hcast
   nlinarith only [hlog25, hmono, sq_nonneg (Real.log (n : ℝ) - 3)]
 
+/-- For odd nonsquares `13 ≤ n < 49`, the classical factor-detecting first stop is at most
+`(log n)²`. Enumerate the range, certify candidates five, seven, nine, or eleven by Jacobi
+evaluation, and absorb each candidate using numerical logarithmic bounds. This is the
+unconditional finite branch of the pointwise GRH bound. -/
 theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 {n : ℕ} (_hn13 : 13 ≤ n)
     (hn49 : n < 49) (hn : Odd n) (hns : ¬IsSquare n) :
     (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
@@ -117,6 +133,9 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 {n : ℕ} (_hn1
     exact (Nat.cast_le.mpr hle).trans (nine_le_log_sq_of_twenty_nine_le (by norm_num only))
   case «25» => exact (hns ⟨5, by norm_num only⟩).elim
 
+/-- For odd nonsquares `13 ≤ n < 49`, the classical factor-detecting first stop is at most fifteen.
+The least prime witness is at most seven below 64; the unconditional stop/witness comparison then
+bounds the stop by `max 15 witness`. This provides a natural-number bound independently of GRH. -/
 theorem classicalFirstStopNeOne_le_fifteen_of_13_le_of_lt_49 {n : ℕ} (_hn13 : 13 ≤ n)
     (hn49 : n < 49) (hn : Odd n) (hns : ¬IsSquare n) :
     PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n

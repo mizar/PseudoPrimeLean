@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.LLS.Extensions.RiemannBounds
-import PseudoPrime.LLS.Extensions.QNeOneLogWeightedBounds
+module
+
+public import PseudoPrime.LLS.RiemannWeightedBounds
+public import PseudoPrime.LLS.Extensions.PaperProofs
 
 /-!
 # Concrete quadratic bridge applications
@@ -15,14 +17,24 @@ with the Jacobi character and witness set attached to a concrete odd nonsquare `
 analytic estimates remain in `LLS/Extensions`.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PseudoSquare
 
 /-!
-The arithmetic bridge now supplies the exact primitive-character hypotheses required by the
+The arithmetic bridge supplies the exact primitive-character hypotheses required by the
 three analytic contradiction theorems. These wrappers keep the conductor equality and the
 root cutoff at the bridge boundary, so the analytic theorems themselves remain generic.
 -/
 
+/--
+For the arithmetic bridge of an odd nonsquare `n`, assume GRH, `y ≥ 12`,
+`log conductor ≤ y + log 4`, both Riemann weighted lower bounds, and no odd-prime Jacobi `≠ 1`
+witness up to `⌊y^2⌋₊`. If the primitive character takes value `0` at `2`, these
+assumptions contradict the corresponding generic log-weighted estimate.
+The proof transports conductor nonzeroness and derives the required odd-prime evaluations
+from the no-witness assumption. This supplies the concrete 0 branch.
+-/
 theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_of_bridge {n : ℕ}
     {hn : Odd n} {hns : ¬IsSquare n}
     [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
@@ -47,10 +59,18 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_o
         p.Prime → Odd p → bridge.character.primitiveCharacter p = 1 :=
     bridge.primitiveCharacter_eq_one_in_log_square_range (by linarith only [hy]) hno
   exact
-    LLS.Extensions.primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_even_false_common
-      bridge.character bridge.character_ne_one bridge.primitiveCharacter_isQuadratic
-      bridge.primitiveCharacter_even hGRH hy hlogD hriemann hriemannReciprocal hodd h2
+    LLS.Extensions.primitiveLogWeightedBounds_of_qneOne_zero_branch_even_false_common
+      bridge.character bridge.character_ne_one bridge.primitiveCharacter_even hGRH hy hlogD hriemann
+      hriemannReciprocal hodd h2
 
+/--
+For the arithmetic bridge of an odd nonsquare `n`, assume GRH, `y ≥ 12`,
+`log conductor ≤ y`, both Riemann weighted lower bounds, and no odd-prime Jacobi `≠ 1`
+witness up to `⌊y^2⌋₊`. If the primitive character takes value `-1` at `2`, these
+assumptions contradict the corresponding general-character log-weighted estimate.
+The proof transports conductor nonzeroness and derives the required odd-prime evaluations
+from the no-witness assumption. This supplies the concrete -1 branch.
+-/
 theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_common_of_bridge {n : ℕ}
     {hn : Odd n} {hns : ¬IsSquare n}
     [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
@@ -74,10 +94,18 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_commo
         p.Prime → Odd p → bridge.character.primitiveCharacter p = 1 :=
     bridge.primitiveCharacter_eq_one_in_log_square_range (by linarith only [hy]) hno
   exact
-    LLS.Extensions.primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_common
-      bridge.character bridge.character_ne_one bridge.primitiveCharacter_isQuadratic
-      bridge.primitiveCharacter_even hGRH hy hlogD hriemann hriemannReciprocal hodd h2
+    LLS.Extensions.primitiveLogWeightedBounds_of_qneOne_neg_one_branch_false_common bridge.character
+      bridge.character_ne_one bridge.primitiveCharacter_even hGRH hy hlogD hriemann
+      hriemannReciprocal hodd h2
 
+/--
+For the arithmetic bridge of an odd nonsquare `n`, assume GRH, `y ≥ 12`,
+`log conductor ≤ y`, both Riemann weighted lower bounds, and no odd-prime Jacobi `≠ 1`
+witness up to `⌊y^2⌋₊`. If the primitive character takes value `1` at `2`, these
+assumptions contradict the corresponding general-character log-weighted estimate.
+The proof transports conductor nonzeroness and derives the required odd-prime evaluations
+from the no-witness assumption. This supplies the concrete 1 branch.
+-/
 theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of_bridge {n : ℕ}
     {hn : Odd n} {hns : ¬IsSquare n}
     [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
@@ -101,10 +129,17 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of
         p.Prime → Odd p → bridge.character.primitiveCharacter p = 1 :=
     bridge.primitiveCharacter_eq_one_in_log_square_range (by linarith only [hy]) hno
   exact
-    LLS.Extensions.primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common
-      bridge.character bridge.character_ne_one bridge.primitiveCharacter_isQuadratic
-      bridge.primitiveCharacter_even hGRH hy hlogD hriemann hriemannReciprocal hodd h2
+    LLS.Extensions.primitiveLogWeightedBounds_of_qneOne_one_branch_false_common bridge.character
+      bridge.character_ne_one bridge.primitiveCharacter_even hGRH hy hlogD hriemann
+      hriemannReciprocal hodd h2
 
+/--
+Under GRH, `y ≥ 12`, `log conductor ≤ y + log 4`, and absence of odd-prime Jacobi `≠ 1` witnesses
+up to `⌊y^2⌋₊`, the arithmetic bridge cannot have primitive-character value `0` at `2`.
+The proof derives both Riemann weighted lower bounds from the Riemann hypothesis component
+of GRH and applies the concrete 0 branch. This removes the explicit Riemann inputs
+from the cutoff application.
+-/
 theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_of_bridge_of_rh
     {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
@@ -113,12 +148,19 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_o
     (hlogD : Real.log bridge.character.conductor ≤ y + Real.log 4)
     (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = 0) : False := by
-  obtain ⟨hriemann, hriemannReciprocal⟩ :=
-    LLS.Extensions.riemannBounds_of_riemannHypothesis hGRH.riemann
+  have hriemann := LLS.llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann
+  have hriemannReciprocal := LLS.llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann
   exact
     primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_of_bridge bridge hGRH hy
       hlogD hriemann hriemannReciprocal hno h2
 
+/--
+Under GRH, `y ≥ 12`, `log conductor ≤ y`, and absence of odd-prime Jacobi `≠ 1` witnesses
+up to `⌊y^2⌋₊`, the arithmetic bridge cannot have primitive-character value `-1` at `2`.
+The proof derives both Riemann weighted lower bounds from the Riemann hypothesis component
+of GRH and applies the concrete -1 branch. This removes the explicit Riemann inputs
+from the cutoff application.
+-/
 theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_common_of_bridge_of_rh
     {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
@@ -127,12 +169,19 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_commo
     (hlogD : Real.log bridge.character.conductor ≤ y)
     (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = -1) : False := by
-  obtain ⟨hriemann, hriemannReciprocal⟩ :=
-    LLS.Extensions.riemannBounds_of_riemannHypothesis hGRH.riemann
+  have hriemann := LLS.llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann
+  have hriemannReciprocal := LLS.llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann
   exact
     primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_common_of_bridge bridge hGRH
       hy hlogD hriemann hriemannReciprocal hno h2
 
+/--
+Under GRH, `y ≥ 12`, `log conductor ≤ y`, and absence of odd-prime Jacobi `≠ 1` witnesses
+up to `⌊y^2⌋₊`, the arithmetic bridge cannot have primitive-character value `1` at `2`.
+The proof derives both Riemann weighted lower bounds from the Riemann hypothesis component
+of GRH and applies the concrete 1 branch. This removes the explicit Riemann inputs
+from the cutoff application.
+-/
 theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of_bridge_of_rh
     {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
@@ -141,14 +190,21 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of
     (hlogD : Real.log bridge.character.conductor ≤ y)
     (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = 1) : False := by
-  obtain ⟨hriemann, hriemannReciprocal⟩ :=
-    LLS.Extensions.riemannBounds_of_riemannHypothesis hGRH.riemann
+  have hriemann := LLS.llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann
+  have hriemannReciprocal := LLS.llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann
   exact
     primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of_bridge bridge hGRH hy
       hlogD hriemann hriemannReciprocal hno h2
 
-/-! The c=±1 wrappers now manufacture their sharp `log conductor ≤ y` premise from the bridge. -/
+/-! The c=±1 branches derive their sharp `log conductor ≤ y` premise from the bridge. -/
 
+/--
+For a positive cutoff `N` with `12 ≤ log N` and `N ≤ bridge.squarefreePart`, GRH and
+absence of odd-prime Jacobi `≠ 1` witnesses up to `⌊bridge.y^2⌋₊` contradict primitive
+character value `-1` at `2`. Nonvanishing at `2` yields coprimality; conductor-discriminant
+comparison then identifies the discriminant with the squarefree part and supplies the sharp
+`log conductor ≤ bridge.y` bound. This is the negative branch of the cutoff contradiction.
+-/
 theorem qNeOneNegCutoffFalse {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
@@ -194,6 +250,13 @@ theorem qNeOneNegCutoffFalse {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_common_of_bridge_of_rh bridge
       hGRH hy hlogD hno h2
 
+/--
+For positive `N` with `12 ≤ log N` and `N ≤ bridge.squarefreePart`, assume GRH and no
+odd-prime Jacobi `≠ 1` witnesses up to `⌊bridge.y^2⌋₊`. Primitive-character value `1` at `2`
+is impossible: nonvanishing yields coprimality, the discriminant equals the squarefree part,
+and the resulting sharp conductor bound feeds the value-one contradiction.
+This supplies the positive branch without a separate conductor estimate.
+-/
 theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of_bridge_of_cutoff
     {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
@@ -240,6 +303,12 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of
     primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of_bridge_of_rh bridge
       hGRH hy hlogD hno h2
 
+/--
+For positive `N` with `12 ≤ log N` and `N ≤ bridge.squarefreePart`, GRH and no odd-prime
+Jacobi `≠ 1` witnesses up to `⌊bridge.y^2⌋₊` contradict primitive-character value `0` at `2`.
+The proof derives `bridge.y ≥ 12` from the cutoff and uses the bridge estimate
+`log conductor ≤ bridge.y + log 4` in the zero-branch theorem. This covers the ramified branch.
+-/
 theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_of_bridge_of_cutoff
     {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
@@ -256,6 +325,13 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_o
 
 /-! The cutoff contradiction dispatches the three possible primitive-character values at `2`. -/
 
+/--
+Given the arithmetic bridge, GRH, a positive `N` with `12 ≤ log N` below its squarefree
+part, and no odd-prime Jacobi `≠ 1` witness up to `⌊bridge.y^2⌋₊`, derive `False`.
+Quadraticity restricts the primitive character at `2` to `0`, `1`, or `-1`; the proof
+dispatches the three cutoff contradictions. This is the analytic no-witness elimination
+used with the explicit million cutoff.
+-/
 theorem qNeOneAnalyticFalse_of_bridge_of_cutoff {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
@@ -263,8 +339,10 @@ theorem qNeOneAnalyticFalse_of_bridge_of_cutoff {n : ℕ} {hn : Odd n} {hns : ¬
     (hN : 12 ≤ Real.log (N : ℝ)) (hNd : N ≤ bridge.squarefreePart)
     (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n) :
     False := by
-  rcases bridge.primitiveCharacter_isQuadratic (2 : ZMod bridge.character.conductor) with h2 | h2 |
-    h2
+  rcases
+    NumberTheory.isQuadratic_primitiveCharacter bridge.character bridge.character_quadratic
+      (2 : ZMod bridge.character.conductor) with
+    h2 | h2 | h2
   · exact
       primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_of_bridge_of_cutoff
         bridge hGRH hNpos hN hNd hno h2
@@ -273,16 +351,14 @@ theorem qNeOneAnalyticFalse_of_bridge_of_cutoff {n : ℕ} {hn : Odd n} {hns : ¬
         bridge hGRH hNpos hN hNd hno h2
   · exact qNeOneNegCutoffFalse bridge hGRH hNpos hN hNd hno h2
 
-/-!
-Input/assumptions: the arithmetic bridge, GRH, squarefree part `d ≥ 10^6`, and absence of
-odd-prime Jacobi `≠ 1` witnesses up to `⌊(log d)^2⌋₊`.
-Conclusion: the three-way analytic contradiction applies once the squarefree part dominates
-this concrete integer.
-Content: `log (10^6) = 6 log 10`, and `8 < 10` together with the checked lower bound
-for `log 2` gives `12 ≤ log (10^6)`.
-Role: supplies the analytic branch of `exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare`.
+/--
+For the arithmetic bridge of an odd nonsquare `n`, assume GRH, squarefree part
+`d ≥ 10^6`, and no odd-prime Jacobi `≠ 1` witnesses up to `⌊(log d)^2⌋₊`.
+These assumptions imply `False`. The proof rewrites `log(10^6) = 6 log 10` and uses
+the explicit lower bounds for `log 2` and `log 5` to obtain `12 ≤ log(10^6)`, then
+applies the three-branch cutoff contradiction. This supplies the analytic branch of
+the integrated logarithmic-square witness theorem.
 -/
-
 theorem qNeOneAnalyticFalse_of_bridge_of_explicit_cutoff {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)

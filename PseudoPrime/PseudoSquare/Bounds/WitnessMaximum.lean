@@ -18,11 +18,15 @@ witnesses on the admissible domain up to `B`. It compares these maxima and lifts
 nonnegative real pointwise bound to `QNegOne B`. No analytic bound is assumed here.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PseudoSquare
 
 /--
-The largest least odd-prime Jacobi `≠ 1` witness among admissible inputs up to `B`. Its value is
-`0` when the admissible domain is empty.
+The largest least odd-prime Jacobi `≠ 1` witness over the positive odd nonsquares
+`n ≤ B` in `admissibleFinset B`. The definition takes `Finset.sup` over the attached
+domain, obtaining witness-set nonemptiness from each member's oddness and nonsquareness.
+It returns `0` on an empty domain and is used to lift pointwise bounds to uniform maxima.
 -/
 noncomputable def QNeOne (B : ℕ) : ℕ := by
   classical
@@ -35,8 +39,10 @@ noncomputable def QNeOne (B : ℕ) : ℕ := by
             ((NumberTheory.mem_admissibleFinset_iff.mp n.property).not_isSquare)))
 
 /--
-The largest least odd-prime Jacobi `-1` witness among admissible inputs up to `B`.  Its value is
-`0` when the admissible domain is empty.
+The largest least odd-prime Jacobi `-1` witness over the positive odd nonsquares
+`n ≤ B` in `admissibleFinset B`. The definition takes `Finset.sup` over the attached
+domain, obtaining witness-set nonemptiness from each member's oddness and nonsquareness.
+It returns `0` on an empty domain and is used to lift pointwise bounds to uniform maxima.
 -/
 noncomputable def QNegOne (B : ℕ) : ℕ := by
   classical
@@ -47,7 +53,12 @@ noncomputable def QNegOne (B : ℕ) : ℕ := by
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).odd)
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).not_isSquare))
 
-/-- Every pointwise least `≠ 1` witness is bounded by the finite maximum `QNeOne`. -/
+/--
+For `n ∈ admissibleFinset B`, the least odd-prime Jacobi `≠ 1` witness of `n`
+is at most `QNeOne B`. The proof unfolds the finite maximum and uses `Finset.le_sup`
+for the attached member `⟨n, hn⟩`. This embeds pointwise witnesses into uniform bounds
+and supplies lower bounds when an explicit input attains a large witness.
+-/
 theorem primeNeOneWitness_le_QNeOne {B n : ℕ} (hn : n ∈ NumberTheory.admissibleFinset B) :
     NumberTheory.primeNeOneWitness n
         (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -66,7 +77,12 @@ theorem primeNeOneWitness_le_QNeOne {B n : ℕ} (hn : n ∈ NumberTheory.admissi
             ((NumberTheory.mem_admissibleFinset_iff.mp m.property).not_isSquare))))
       (Finset.mem_attach (NumberTheory.admissibleFinset B) ⟨n, hn⟩)
 
-/-- The maximal least `≠ 1` witness is no larger than the maximal least `-1` witness. -/
+/--
+For every cutoff `B`, `QNeOne B ≤ QNegOne B`: a negative-one witness is also a
+non-one witness, so the least non-one witness is no larger at each admissible input.
+The proof lifts this pointwise comparison through `Finset.sup_mono_fun`.
+This is the comparison component in both finite and analytic maximum bounds.
+-/
 theorem QNeOne_le_QNegOne (B : ℕ) : QNeOne B ≤ QNegOne B := by
   classical
   unfold QNeOne QNegOne
@@ -78,7 +94,12 @@ theorem QNeOne_le_QNegOne (B : ℕ) : QNeOne B ≤ QNegOne B := by
         ((NumberTheory.mem_admissibleFinset_iff.mp n.property).odd)
         ((NumberTheory.mem_admissibleFinset_iff.mp n.property).not_isSquare))
 
-/-- Every pointwise least `-1` witness is bounded by the finite maximum `QNegOne`. -/
+/--
+For `n ∈ admissibleFinset B`, the least odd-prime Jacobi `-1` witness of `n`
+is at most `QNegOne B`. The proof unfolds the finite maximum and uses `Finset.le_sup`
+for the attached member `⟨n, hn⟩`. This embeds pointwise witnesses into uniform bounds
+and supplies lower bounds when an explicit input attains a large witness.
+-/
 theorem primeNegOneWitness_le_QNegOne {B n : ℕ} (hn : n ∈ NumberTheory.admissibleFinset B) :
     NumberTheory.primeNegOneWitness n
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare
@@ -95,7 +116,12 @@ theorem primeNegOneWitness_le_QNegOne {B n : ℕ} (hn : n ∈ NumberTheory.admis
           ((NumberTheory.mem_admissibleFinset_iff.mp m.property).not_isSquare)))
       (Finset.mem_attach (NumberTheory.admissibleFinset B) ⟨n, hn⟩)
 
-/-- A common nonnegative real pointwise bound also bounds the cast of `QNegOne`. -/
+/--
+For real `R ≥ 0`, assume every admissible `n ≤ B` has least odd-prime Jacobi `-1`
+witness at most `R` after casting to the reals. Then `(QNegOne B : ℝ) ≤ R`.
+Supremum induction handles the empty value `0`, binary maxima by `Nat.cast_max`, and
+attached members by the supplied bound. This lifts real pointwise estimates to the maximum.
+-/
 theorem QNegOne_cast_le_of_forall {B : ℕ} {R : ℝ} (hR : 0 ≤ R)
     (hbound :
       ∀ n,

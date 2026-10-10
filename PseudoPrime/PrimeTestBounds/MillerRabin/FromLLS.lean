@@ -4,23 +4,30 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTestBounds.MillerRabin.SmallLogBound
-import PseudoPrime.AnalyticNumberTheory.GRH.Definition
-import PseudoPrime.PrimeTest.MillerRabin.WitnessBound
-import PseudoPrime.LLS.Theorem11S2
-import PseudoPrime.PrimeTest.MillerRabin.Composite
-import PseudoPrime.PrimeTest.MillerRabin.Prime
-import PseudoPrime.PrimeTest.MillerRabin.Decomposition
-import Mathlib.Analysis.SpecialFunctions.Log.Monotone
-import Mathlib.Analysis.Complex.ExponentialBounds
+module
+
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SmallLogBound
+public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
+public import PseudoPrime.PrimeTest.MillerRabin.WitnessBound
+public import PseudoPrime.LLS.Theorem11S2
+public import PseudoPrime.PrimeTest.MillerRabin.Composite
+public import PseudoPrime.PrimeTest.MillerRabin.Prime
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
+public import Mathlib.Analysis.SpecialFunctions.Log.Monotone
+public import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
 # Large-input and GRH assembly for the Miller–Rabin witness bound
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
-/-- The logarithmic-square cutoff is strictly below every odd prime modulus. -/
+/-- The logarithmic-square cutoff is strictly below every odd prime modulus.
+Check primes three, five, and seven using numerical log bounds, then use the decreasing
+`log x / sqrt x` ratio beyond `exp 2`. The inequality ensures that bounded candidate bases are
+coprime to a prime modulus when proving the converse witness criterion. -/
 private theorem log_sq_lt_of_odd_prime {n : ℕ} (hnPrime : Nat.Prime n) (hnOdd : Odd n) :
     (Real.log (n : ℝ)) ^ 2 < (n : ℝ) := by
   have hn3 : 3 ≤ n := by
@@ -197,8 +204,8 @@ theorem prime_iff_millerRabin_for_all_primes_le_log_sq
 
 /-- Under GRH, every odd composite `n > 1` has a prime base at most `(log n)^2` whose
 canonical odd-part power differs from `1` and whose every repeated-square power differs
-from `-1`. This records the former Boolean rejection result with its power conditions
-visible in the declaration; the witness theorem supplies the same conditions. -/
+from `-1`. The canonical witness theorem supplies these power conditions directly; this entry
+exposes the rejection certificate in the naming used by strong-test consumers. -/
 theorem exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
     (hnOdd : Odd n) (hnNotPrime : ¬Nat.Prime n) :

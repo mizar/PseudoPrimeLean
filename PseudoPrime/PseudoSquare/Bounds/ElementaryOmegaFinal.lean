@@ -22,29 +22,18 @@ The file also exports real-cutoff and fully expanded variants so users need not 
 internal `Arithmetic.greatestOddPrimeLE` or `elementaryRadius` wrappers.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PseudoSquare
 
 /--
-**The Robin-free boxed bound for every `B ≥ 3`, under GRH.**
-No Robin machinery of any kind is used anywhere in this route.
-
-The conclusion's right-hand side, `Arithmetic.greatestOddPrimeLE (elementaryRadius B)`, unfolds to:
-the
+Under GRH and `B ≥ 3`, `QNeOne B ≤ QNegOne B`, and `QNegOne B` is at most the
 greatest odd prime not exceeding
-
-```
-elementaryRadius B = (Real.log (4 * B) + (24 / 5) * Real.log (Real.log (4 * B)) + 3) ^ 2,
-```
-
-i.e. the boxed cutoff `(log(4B) + (24/5)·loglog(4B) + 3)²`. This bare form is used
-rather than the `max`-wrapped `elementaryUpperBound B`: for `B ≥ 3`, `elementaryUpperBound_eq_of_le`
-shows the `max 31 (...)` safety margin is redundant (`Arithmetic.greatestOddPrimeLE
-(elementaryRadius B)`
-is at least `31`, by `thirtyOne_le_greatestOddPrimeLE_elementaryRadius`).
-Every admissible `n < 750` is covered by the unconditional finite
-check `smallNegOneWitnessBound` (giving `≤ 31`, absorbed since `31` itself is below the bare
-`Arithmetic.greatestOddPrimeLE (elementaryRadius B)`), and `750 ≤ n ≤ B` is handled by LLS via
-`elementary_sq_le_radius`.
+`(log(4B) + (24/5) * loglog(4B) + 3)^2`.
+The proof combines pointwise witness comparison with supremum induction: inputs below
+`750` use the finite bound `31`, and larger inputs use LLS under GRH and the unconditional
+elementary omega estimate. The cutoff absorbs `31` for `B ≥ 3`. This is the public
+integer cutoff bound; the real and expanded variants follow from it.
 -/
 theorem elementary_formula (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B : ℕ}
     (hB : 3 ≤ B) :

@@ -33,10 +33,17 @@ unconditionally in `ElementaryOmegaFiniteCertificates.lean`; this file intention
 an interface so the envelope proof remains independent of certificate generation.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PseudoSquare
 
-/-- The elementary bound gives the simplified upper bound for the LLS correction term, with
-coefficient `2 + 2·(7/5) = 24/5`, for odd `n ≥ 750`. -/
+/--
+Assuming `ElementaryOmegaStatement`, odd `n ≥ 750` has LLS correction term at most
+`(24/5) * loglog(4n) + 3`. The proof uses `4n ≥ 3000` to obtain positive logarithms,
+bounds the prime-count contribution with the elementary omega estimate, and drops the
+nonnegative auxiliary term. Both branches of the correction-term maximum are bounded.
+This is the correction comparison used by the squared-radius theorem.
+-/
 theorem llsCorrectionTerm_le_elementary
     (hElem : AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement) {n : ℕ} (hn : Odd n)
     (hn750 : 750 ≤ n) :
@@ -58,15 +65,21 @@ theorem llsCorrectionTerm_le_elementary
   · nlinarith only [hy]
   · nlinarith only [hCeq, hcount, haux, hy]
 
-/-- The squared real cutoff `(log(4B) + (24/5)·loglog(4B) + 3)^2`. -/
+/--
+The real squared cutoff `(log(4B) + (24/5) * loglog(4B) + 3)^2` for a natural
+endpoint `B`. It packages the simplified LLS radius after the elementary omega bound.
+The square is nonnegative for every `B`; the envelope theorems use it to bound witnesses
+and finite maxima, while the explicit public theorem unfolds this definition.
+-/
 noncomputable def elementaryRadius (B : ℕ) : ℝ :=
   (Real.log (4 * B) + (24 / 5 : ℝ) * Real.log (Real.log (4 * B)) + 3) ^ 2
 
-/-- For `B ≥ 3`, `elementaryRadius B` already exceeds `31` on its own: `Real.log (4 * B) > 2`
-(from `4 * B ≥ 12 > exp 2`) and `Real.log (Real.log (4 * B)) > Real.log 2 > 0.6` (applying `log`
-monotonicity again), so the squared base already exceeds `7.88 ^ 2 > 31` with substantial room to
-spare. This makes the `max 31 (...)` safety margin in `elementaryUpperBound` unnecessary for
-`B ≥ 3`, as expressed by `elementaryUpperBound_eq_of_le`. -/
+/--
+For `B ≥ 3`, `31 < elementaryRadius B`. Since `4B ≥ 12 > exp 2`, the proof obtains
+`log(4B) > 2` and then `loglog(4B) > log 2`. The explicit logarithm constant makes
+the positive base exceed `7.88`, whose square exceeds `31`. This shows that the
+real radius includes the exceptional prime `31` and makes the maximum margin redundant.
+-/
 theorem thirtyOne_lt_elementaryRadius {B : ℕ} (hB : 3 ≤ B) : (31 : ℝ) < elementaryRadius B := by
   have h12B : (12 : ℝ) ≤ 4 * B := by
     have : (3 : ℝ) ≤ B := by exact_mod_cast hB
@@ -89,42 +102,62 @@ theorem thirtyOne_lt_elementaryRadius {B : ℕ} (hB : 3 ≤ B) : (31 : ℝ) < el
   unfold elementaryRadius
   nlinarith only [hbase]
 
-/-- The natural-number envelope: the maximum of `31` and the greatest odd prime below the radius. -/
+/--
+The natural envelope `max 31 (greatestOddPrimeLE (elementaryRadius B))`.
+The constant `31` covers the exceptional finite range, and the odd-prime cutoff rounds
+the real radius for larger witnesses. It is defined for every natural `B`; for `B ≥ 3`
+the cutoff already dominates `31`, so the maximum wrapper can be removed.
+-/
 noncomputable def elementaryUpperBound (B : ℕ) : ℕ :=
   max 31 (AnalyticNumberTheory.Arithmetic.greatestOddPrimeLE (elementaryRadius B))
 
-/-- The exceptional finite-range bound `31` is always included in the elementary envelope. -/
+/--
+For every natural `B`, `31 ≤ elementaryUpperBound B`. Unfolding the definition
+reduces the claim to the left bound of a maximum. This absorbs the unconditional
+small-range witness bound into the common elementary envelope.
+-/
 theorem thirty_one_le_elementaryUpperBound (B : ℕ) : 31 ≤ elementaryUpperBound B := by
   unfold elementaryUpperBound
   exact le_max_left _ _
 
-/-- For `B ≥ 3`, the `max 31 (...)` safety margin in `elementaryUpperBound` is never active:
-`Arithmetic.greatestOddPrimeLE (elementaryRadius B)` already dominates `31` on its own, since `31`
-is itself
-an odd prime not exceeding `elementaryRadius B` (`thirtyOne_lt_elementaryRadius`). -/
+/--
+For `B ≥ 3`, the greatest odd prime at most `elementaryRadius B` is at least `31`.
+The proof checks that `31` is an odd prime and applies the odd-prime cutoff interface
+to `31 < elementaryRadius B`. This removes the exceptional safety margin from the
+final bound on this domain.
+-/
 theorem thirtyOne_le_greatestOddPrimeLE_elementaryRadius {B : ℕ} (hB : 3 ≤ B) :
     31 ≤ AnalyticNumberTheory.Arithmetic.greatestOddPrimeLE (elementaryRadius B) :=
   AnalyticNumberTheory.Arithmetic.le_greatestOddPrimeLE (by decide) (by decide)
     (thirtyOne_lt_elementaryRadius hB).le
 
-/-- For `B ≥ 3`, `elementaryUpperBound B` is exactly `Arithmetic.greatestOddPrimeLE
-(elementaryRadius B)` —
-the `max 31 (...)` wrapper is redundant, since `31 ≤ Arithmetic.greatestOddPrimeLE
-(elementaryRadius B)`
-already. -/
+/--
+For `B ≥ 3`, `elementaryUpperBound B = greatestOddPrimeLE (elementaryRadius B)`.
+The cutoff already dominates `31`, so `max_eq_right` removes the finite-range margin.
+This identifies the common envelope with the bare odd-prime cutoff in the boxed theorem.
+-/
 theorem elementaryUpperBound_eq_of_le {B : ℕ} (hB : 3 ≤ B) :
     elementaryUpperBound B =
       AnalyticNumberTheory.Arithmetic.greatestOddPrimeLE (elementaryRadius B) := by
   unfold elementaryUpperBound
   exact max_eq_right (thirtyOne_le_greatestOddPrimeLE_elementaryRadius hB)
 
-/-- Every odd prime below the elementary radius is bounded by the elementary envelope. -/
+/--
+An odd prime `p` with `(p : ℝ) ≤ elementaryRadius B` satisfies
+`p ≤ elementaryUpperBound B`. The proof rounds the real bound through
+`le_greatestOddPrimeLE` and then includes that cutoff in the maximum envelope.
+This converts the large-input real witness estimate to the natural finite-maximum bound.
+-/
 theorem odd_prime_le_elementaryUpperBound {B p : ℕ} (hp : p.Prime) (hpodd : Odd p)
     (hpR : (p : ℝ) ≤ elementaryRadius B) : p ≤ elementaryUpperBound B :=
   (AnalyticNumberTheory.Arithmetic.le_greatestOddPrimeLE hp hpodd hpR).trans (le_max_right _ _)
 
-/-- For odd `750 ≤ n ≤ B`, the elementary omega estimate bounds the LLS squared radius at `4n`
-by `elementaryRadius B`. -/
+/--
+Assuming `ElementaryOmegaStatement` and odd `750 ≤ n ≤ B`, the squared corrected
+LLS radius at `4n` is at most `elementaryRadius B`. The proof compares both logarithms
+by monotonicity, substitutes the elementary correction bound, and checks nonnegativity
+of both bases before squaring. This transports the pointwise LLS radius to the endpoint.
+-/
 theorem elementary_sq_le_radius (hElem : AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement)
     {B n : ℕ} (hn : Odd n) (hnB : n ≤ B) (hn750 : 750 ≤ n) :
     (Real.log (NumberTheory.characterModulus n : ℝ) +
@@ -184,8 +217,13 @@ theorem elementary_sq_le_radius (hElem : AnalyticNumberTheory.Arithmetic.Element
   unfold elementaryRadius
   exact (sq_le_sq₀ hleft hright).mpr hbase
 
-/-- LLS and the elementary bound together bound each large admissible least witness by the
-endpoint radius. -/
+/--
+Assuming the LLS S1 bound and `ElementaryOmegaStatement`, an odd nonsquare
+`750 ≤ n ≤ B` has least odd-prime Jacobi `-1` witness, with nonemptiness proof `hw`,
+at most `elementaryRadius B` after real casting. The proof obtains `4n ≥ 3000`, applies
+the LLS least-witness bound, and composes it with the squared-radius comparison.
+This supplies the large-input branch of the final finite maximum theorem.
+-/
 theorem primeNegOneWitness_cast_le_elementaryRadius (hLLS : LLS.llsTheorem11S1Character)
     (hElem : AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement) {B n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hnB : n ≤ B) (hn750 : 750 ≤ n)

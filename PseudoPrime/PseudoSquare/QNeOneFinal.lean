@@ -18,9 +18,11 @@ analytic cutoff.  The squarefree transfer is kept explicit so that the finite an
 branches use the same witness notion.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PseudoSquare
 
-/-!
+/--
 Input/assumptions: GRH, an odd nonsquare `n ≥ 11`.
 Conclusion: the least odd-prime Jacobi `≠ 1` witness for `n` is at most `(log n)^2`.
 Content: dispatch the three small squarefree parts, the finite CRT range, and the analytic

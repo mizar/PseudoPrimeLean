@@ -4,16 +4,23 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTestBounds.Selfridge.LogBounds
-import PseudoPrime.PseudoSquare.Bounds.QNeOneLogSq
-import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaFinal
+module
+
+public import PseudoPrime.PrimeTestBounds.Selfridge.LogBounds
+public import PseudoPrime.PseudoSquare.Bounds.QNeOneLogSq
+public import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaFinal
 
 /-!
 # GRH Selfridge logarithmic bounds
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTestBounds.Selfridge
 
+/-- Under GRH, the classical factor-detecting first stop for an odd nonsquare `n ≥ 49` is at most
+`(log n)²`. Bound it by `max 15 witness`, use the GRH prime-witness estimate, and absorb fifteen
+by the numerical log bound. This supplies the infinite branch of the pointwise stopping estimate. -/
 theorem classicalFirstStopNeOne_cast_le_log_sq_of_49_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn49 : 49 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
@@ -37,6 +44,9 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_49_le
     simpa only [Nat.cast_max, Nat.cast_ofNat] using (max_le hlog hqR)
   exact hmaxR.trans hmaxlog
 
+/-- Under GRH, the absolute classical discriminant at the factor-detecting first stop is at most
+`(log n)²` for odd nonsquares `n ≥ 49`. Rewrite its absolute value as the stopping index and reuse
+the index bound; this is the discriminant form consumed by scan bounds. -/
 theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_49_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn49 : 49 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
@@ -48,6 +58,9 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_49_le
   simpa only [PrimeTest.selfridgeD_natAbs] using
     classicalFirstStopNeOne_cast_le_log_sq_of_49_le hGRH hn49 hn hns
 
+/-- Under GRH, every odd nonsquare `n ≥ 13` has classical factor-detecting first stop at most
+`(log n)²`. Split at 49 and combine the finite Jacobi certificate with the large-input witness
+comparison, giving one pointwise interface for the full stated range. -/
 theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn13 : 13 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
@@ -59,6 +72,9 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le
   · exact classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 hn13 hn49 hn hns
   · exact classicalFirstStopNeOne_cast_le_log_sq_of_49_le hGRH (Nat.le_of_not_lt hn49) hn hns
 
+/-- Under GRH, the absolute classical factor-detecting stopping discriminant for an odd nonsquare
+`n ≥ 13` is at most `(log n)²`. Its absolute value equals the first-stop index, so the preceding
+index estimate gives the discriminant bound directly. -/
 theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn13 : 13 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
@@ -70,6 +86,9 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le
   simpa only [PrimeTest.selfridgeD_natAbs] using
     classicalFirstStopNeOne_cast_le_log_sq_of_13_le hGRH hn13 hn hns
 
+/-- Under GRH, the absolute Wheel30 factor-detecting stopping discriminant for an odd nonsquare
+`n ≥ 13` is at most `(log n)²`. The Wheel30 and classical first stops agree; rewriting that
+identity transfers the classical bound to the executable scan's candidate family. -/
 theorem wheel30SelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn13 : 13 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
@@ -157,6 +176,9 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq
       simpa only [PrimeTest.selfridgeD_natAbs] using hstopR
     exact hsmallR.trans (le_max_left _ _)
 
+/-- GRH-labelled entry for the uniform classical bound `|D| ≤ max 13 (log n)²` on positive odd
+nonsquares. It reuses the pointwise bound with the finite small-input allowance, supplying the
+same hypotheses and conclusion to consumers that explicitly select a GRH interface. -/
 theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq_of_grh
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hnpos : 0 < n)
     (hn : Odd n) (hns : ¬IsSquare n) :

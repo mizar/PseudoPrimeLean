@@ -21,9 +21,13 @@ finite admissible domain.  Nonemptiness of every stopping set is supplied intern
 odd-nonsquare theorem, so the aggregate definitions need no proof arguments from callers.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTestBounds.Selfridge
 
-/-- The largest classical factor-detecting first-stop on the admissible domain up to `B`. -/
+/-- The largest classical factor-detecting first-stop on positive odd nonsquares up to `B`.
+The finite supremum is zero on an empty domain. Stop-set nonemptiness follows from each member's
+admissibility, so callers need no existence proofs when forming aggregate scan bounds. -/
 noncomputable def classicalNeOneMaximum (B : ℕ) : ℕ := by
   classical
     exact
@@ -33,7 +37,9 @@ noncomputable def classicalNeOneMaximum (B : ℕ) : ℕ := by
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).odd)
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).not_isSquare))
 
-/-- The largest factor-detecting Wheel30 first-stop on the admissible domain up to `B`. -/
+/-- The largest factor-detecting Wheel30 first-stop on positive odd nonsquares up to `B`.
+The finite supremum is zero on an empty domain; admissibility supplies stop-set nonemptiness.
+This is the Wheel30 aggregate compared with the classical maximum and `QNeOne`. -/
 noncomputable def wheel30NeOneMaximum (B : ℕ) : ℕ := by
   classical
     exact
@@ -232,6 +238,9 @@ theorem classicalNeOneMaximum_eq_QNeOne_of_751_le {B : ℕ} (hB : 751 ≤ B) :
     classicalNeOneMaximum B = PseudoSquare.QNeOne B := by
   exact classicalNeOneMaximum_eq_QNeOne_of_fifteen_lt (fifteen_lt_QNeOne_of_751_le hB)
 
+/-- For `B ≥ 751`, the Wheel30 factor-detecting maximum equals `QNeOne B`.
+The fixed input 751 makes `QNeOne` exceed the overhead fifteen, allowing the permanent equality
+criterion to identify the scan maximum with the least-prime-witness maximum. -/
 theorem wheel30NeOneMaximum_eq_QNeOne_of_751_le {B : ℕ} (hB : 751 ≤ B) :
     wheel30NeOneMaximum B = PseudoSquare.QNeOne B := by
   exact wheel30NeOneMaximum_eq_QNeOne_of_fifteen_lt (fifteen_lt_QNeOne_of_751_le hB)

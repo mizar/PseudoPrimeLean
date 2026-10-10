@@ -18,8 +18,16 @@ This file consumes the pointwise `log n` witness theorem and lifts it to the
 fixed radius `log B` used by the finite `QNeOne` maximum.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PseudoSquare
 
+/--
+For `B ≥ 10` and an admissible input `n` equal to `3`, `5`, or `7`, supply witness-set
+nonemptiness and bound the least odd-prime Jacobi `≠ 1` witness by `(log B)^2`.
+The proof uses explicit witnesses `5`, `3`, and `5`, respectively, and `5 < (log B)^2`.
+This handles the small-input branch of the uniform admissible-domain estimate.
+-/
 private lemma exists_primeNeOneWitness_cast_le_log_sq_of_small_admissible {B n : ℕ} (hB : 10 ≤ B)
     (hn : n ∈ NumberTheory.admissibleFinset B) (hn3 : n = 3 ∨ n = 5 ∨ n = 7) :
     ∃ hdn : (NumberTheory.PrimeNeOneWitnessSet n).Nonempty,
@@ -62,7 +70,7 @@ private lemma exists_primeNeOneWitness_cast_le_log_sq_of_small_admissible {B n :
     have hle5R : (NumberTheory.primeNeOneWitness 7 hdn : ℝ) ≤ 5 := by exact_mod_cast hle5
     exact hle5R.trans (le_of_lt (Analysis.five_lt_log_sq_of_ten_le hB))
 
-/-
+/--
 Input/assumptions: GRH, `B ≥ 10`, and `n` belongs to the admissible finite domain.
 Conclusion: the least odd-prime Jacobi-`≠ 1` witness for `n` is below the
 fixed radius `(log B)^2`.
@@ -122,7 +130,7 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_admissible
         exact (hn9 h9).elim
     exact exists_primeNeOneWitness_cast_le_log_sq_of_small_admissible hB hn hcases
 
-/-
+/--
 Input/assumptions: a nonnegative real pointwise bound for every admissible
 input up to `B`.
 Conclusion: the cast of the finite maximum `QNeOne B` satisfies the same
@@ -156,7 +164,7 @@ theorem QNeOne_cast_le_of_forall {B : ℕ} {R : ℝ} (hR : 0 ≤ R)
   · intro n _
     exact hbound n.val n.property
 
-/-
+/--
 Input/assumptions: GRH and `B ≥ 10`.
 Conclusion: `(QNeOne B : ℝ) ≤ (log B)^2`.
 Content: `exists_primeNeOneWitness_cast_le_log_sq_of_admissible` is lifted through the finite
@@ -171,7 +179,7 @@ theorem QNeOne_le_log_sq_of_grh (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiem
   intro n hn
   exact exists_primeNeOneWitness_cast_le_log_sq_of_admissible hGRH hB hn |>.choose_spec
 
-/-
+/--
 Input/assumptions: GRH and `B ≥ 10`.
 Conclusion: the natural maximum `QNeOne B` is below the greatest odd prime
 not exceeding the real radius `(log B)^2`.

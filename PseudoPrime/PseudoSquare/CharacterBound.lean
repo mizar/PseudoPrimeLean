@@ -20,16 +20,15 @@ prime with Jacobi value `-1`.  Minimality then transfers the explicit LLS bound 
 `PseudoPrime.NumberTheory.primeNegOneWitness`.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PseudoSquare
 
 /--
-The LLS prime for the quadratic character at level `4 * n` is an odd-prime Jacobi `-1` witness.
-
-The kernel-independent witness-extraction step
-`NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one` is now a generic lemma in
-`PseudoPrime/NumberTheory/JacobiCharacterPrimeEvaluation.lean`, since it depends only on
-`PseudoPrime.NumberTheory.complexQuadraticCharacter` and
-`NumberTheory.PrimeNegOneWitnessSet`, not on any LLS-specific contour kernel or constant.
+For odd nonsquare `n` with character modulus `4 * n ≥ 3000`, the assumed LLS S1 bound
+produces an odd prime with Jacobi value `-1` within its corrected logarithmic-square radius.
+The proof applies the character theorem at level `4 * n` and converts nontrivial character
+evaluation to membership in `PrimeNegOneWitnessSet n`. This supplies the least-witness bound.
 -/
 theorem exists_primeNegOneWitness_of_LLS (hLLS : LLS.llsTheorem11S1Character) (n : ℕ) (hn : Odd n)
     (hns : ¬IsSquare n) (hq : 3000 ≤ NumberTheory.characterModulus n) :
@@ -49,7 +48,12 @@ theorem exists_primeNegOneWitness_of_LLS (hLLS : LLS.llsTheorem11S1Character) (n
       hℓchar
   exact ⟨ℓ, hℓmem, by simpa only [NumberTheory.characterModulus] using hℓbound⟩
 
-/-- Under the LLS bound, the least odd-prime Jacobi `-1` witness satisfies its explicit bound. -/
+/--
+Assuming the LLS S1 character bound, odd nonsquare `n`, `4 * n ≥ 3000`, and witness-set
+nonemptiness `hw`, the least odd-prime Jacobi `-1` witness is bounded by the corrected LLS
+radius. Minimality bounds it by the prime from `exists_primeNegOneWitness_of_LLS`; casting
+and transitivity give the real estimate used by the elementary-radius envelope.
+-/
 theorem primeNegOneWitness_le_of_LLS (hLLS : LLS.llsTheorem11S1Character) (n : ℕ) (hn : Odd n)
     (hns : ¬IsSquare n) (hq : 3000 ≤ NumberTheory.characterModulus n)
     (hw : (NumberTheory.PrimeNegOneWitnessSet n).Nonempty) :
