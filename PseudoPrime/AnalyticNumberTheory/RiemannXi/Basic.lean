@@ -4,8 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCount
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCount
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
 
 /-!
 # The entire Riemann xi function
@@ -31,6 +34,9 @@ The definition uses the entire regularization `completedRiemannZeta₀`. -/
 noncomputable def riemannXi (s : ℂ) : ℂ :=
   (1 / 2 : ℂ) * s * (s - 1) * completedRiemannZeta₀ s + 1 / 2
 
+/-- The regularized xi function is complex differentiable everywhere. Its defining expression
+is a polynomial times the entire completed-zeta regularization plus a constant.
+This establishes the entire-function input for discreteness of zeros and Hadamard decompositions. -/
 theorem differentiable_riemannXi : Differentiable ℂ riemannXi := by
   unfold riemannXi
   exact
@@ -39,21 +45,32 @@ theorem differentiable_riemannXi : Differentiable ℂ riemannXi := by
           differentiable_completedZeta₀).add
       (differentiable_const _)
 
+/-- For every complex `s`, xi satisfies the functional equation `ξ(1 - s) = ξ(s)`.
+The completed-zeta regularization has this symmetry and the polynomial factor is invariant.
+The identity transfers right-half-plane nonvanishing to the left of the critical strip. -/
 theorem riemannXi_one_sub (s : ℂ) : riemannXi (1 - s) = riemannXi s := by
   unfold riemannXi
   rw [show completedRiemannZeta₀ (1 - s) = completedRiemannZeta₀ s from
       (completedRiemannZeta₀_one_sub s)]
   ring
 
+/-- The entire xi extension takes the value `1/2` at zero, since its polynomial factor vanishes.
+This fixed nonzero value rules out the identically zero function and normalizes finite
+Hadamard quotients at the origin. -/
 theorem riemannXi_zero : riemannXi 0 = 1 / 2 := by
   unfold riemannXi
   ring
 
+/-- Xi takes the value `1/2` at one. Apply its functional equation at zero and the known
+value there. This verifies nonvanishing at the point corresponding to zeta's pole. -/
 theorem riemannXi_one : riemannXi 1 = 1 / 2 := by
   have h := riemannXi_one_sub 0
   simpa only [sub_zero, riemannXi_zero] using h
 
-/-- `ξ` in terms of the numerator `N` from `riemannZeta_eq_mul_completedRiemannZeta₀`. -/
+/-- For `s ≠ 1`, xi equals `(s - 1)/2` times the numerator in
+`riemannZeta_eq_mul_completedRiemannZeta₀`. Clearing `1 - s` in the regularized formula
+proves the identity, including `s = 0`. It gives the common numerator for the xi/zeta
+zero correspondence and local factorization. -/
 theorem riemannXi_eq {s : ℂ} (hs : s ≠ 1) :
     riemannXi s = (1 / 2 : ℂ) * (s - 1) * (s * completedRiemannZeta₀ s - 1 - s / (1 - s)) := by
   unfold riemannXi
@@ -66,8 +83,10 @@ theorem riemannXi_eq {s : ℂ} (hs : s ≠ 1) :
       _ = -s := by rw [neg_mul, hcancel]
   linear_combination (1 / 2 : ℂ) * hprod
 
-/-- The denominator from `riemannZeta_eq_mul_completedRiemannZeta₀` is nonzero away from the
-trivial-zero locations `s = -2(n+1)`. -/
+/-- If `s` avoids all negative even integers `-2*(n+1)`, then
+`2 * π^(-s/2) * Gamma (s/2 + 1)` is nonzero. The power of the nonzero base pi never vanishes,
+and the argument of Gamma avoids its exceptional nonpositive integers.
+This permits cancellation of the denominator in xi/zeta identities. -/
 theorem riemannZetaDenom_ne_zero {s : ℂ} (hs : ∀ n : ℕ, s ≠ -2 * (n + 1)) :
     (2 : ℂ) * (Real.pi : ℂ) ^ (-s / 2) * Complex.Gamma (s / 2 + 1) ≠ 0 := by
   have hpiC : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
@@ -79,8 +98,9 @@ theorem riemannZetaDenom_ne_zero {s : ℂ} (hs : ∀ n : ℕ, s ≠ -2 * (n + 1)
     linear_combination 2 * hm
   exact mul_ne_zero (mul_ne_zero two_ne_zero h1) h2
 
-/-- A ball whose radius does not exceed the positive real part of its complex center avoids all
-nonpositive integer poles of `Gamma`. -/
+/-- If `0 < r ≤ Re c`, then the open ball about `c` of radius `r` contains no point `-m`
+for any natural `m`. The norm of `-m - c` dominates the absolute value of its real part,
+which is at least `Re c`. This constructs a pole-free neighborhood for Gamma analyticity. -/
 theorem ball_avoids_Gamma_poles_of_re_pos {c : ℂ} {r : ℝ} (hr : 0 < r) (hrc : r ≤ c.re) :
     ∀ w ∈ Metric.ball c r, ∀ m : ℕ, w ≠ -m := by
   intro w hw m hwm
@@ -127,8 +147,10 @@ theorem analyticAt_riemannXiZetaUnit {s : ℂ} (hs : 0 ≤ s.re) :
     ((analyticAt_const.mul (analyticAt_id.sub analyticAt_const)).mul
       ((analyticAt_const.mul hpow).mul hgamma))
 
-/-- The Mellin-pole denominator is continuous at every point away from its trivial-zero
-locations. -/
+/-- At any `s` avoiding negative even integers, the zeta denominator
+`2 * π^(-z/2) * Gamma (z/2 + 1)` is continuous. Continuity of the fixed-base complex power
+and of Gamma away from its exceptional arguments proves the claim.
+Together with its nonzero value, this supplies a locally nonvanishing factor for xi and zeta. -/
 theorem continuousAt_riemannZetaDenom {s : ℂ} (hs : ∀ n : ℕ, s ≠ -2 * (n + 1)) :
     ContinuousAt (fun z : ℂ => (2 : ℂ) * (Real.pi : ℂ) ^ (-z / 2) * Complex.Gamma (z / 2 + 1))
       s := by
@@ -148,7 +170,9 @@ theorem continuousAt_riemannZetaDenom {s : ℂ} (hs : ∀ n : ℕ, s ≠ -2 * (n
     rfl
   fun_prop
 
-/-- Around every nontrivial point, the Mellin-pole denominator remains nonzero. -/
+/-- If `s` avoids negative even integers, the zeta denominator is nonzero throughout some
+neighborhood of `s`. Continuity and its nonzero value give this eventual statement.
+It upgrades the pointwise xi/zeta identity to the local equality needed for analytic orders. -/
 theorem eventually_riemannZetaDenom_ne_zero {s : ℂ} (hs : ∀ n : ℕ, s ≠ -2 * (n + 1)) :
     Filter.Eventually
       (fun z : ℂ => (2 : ℂ) * (Real.pi : ℂ) ^ (-z / 2) * Complex.Gamma (z / 2 + 1) ≠ 0)
@@ -232,6 +256,9 @@ theorem analyticOrderAt_riemannXi_eq_riemannZeta {s : ℂ} (hre : 0 ≤ s.re) (h
     analyticOrderAt_mul hUanalytic hzeta
   rw [analyticOrderAt_congr heq, hmul, hUorder, zero_add]
 
+/-- Xi is nonzero at every `s` with `Re s > 1`. Such points avoid one and the negative
+even integers, so the xi/zeta zero correspondence and zeta's zero-free right half-plane
+exclude xi zeros. This also supplies nonvanishing at reflected trivial-zero locations. -/
 theorem riemannXi_ne_zero_of_one_lt_re {s : ℂ} (hs : 1 < s.re) : riemannXi s ≠ 0 := by
   have hs1 : s ≠ 1 := by
     intro h

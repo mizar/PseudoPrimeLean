@@ -47,17 +47,4 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_unifiedHeigh
           htau).comp
       tendsto_farLeftGoodHeightIndex_atTop
 
-/--
-The oriented far-left contribution for the logarithmic kernel.
-
-The first term is the upper horizontal segment from `-(2m+1)` to `-1/2`.  The second is the left
-vertical segment from `-Tₘ` to `Tₘ`, with the orientation factor from the rectangle boundary.
--/
-noncomputable def riemannZetaLogFarLeftContourContribution (x : ℝ) (m : ℕ) : ℂ :=
-  -(∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-        riemannZetaLogContourKernel x ((σ : ℂ) + (farLeftHeightSeq m : ℂ) * Complex.I)) -
-    Complex.I •
-      (∫ t in (-(farLeftHeightSeq m))..(farLeftHeightSeq m),
-        riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I))
-
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

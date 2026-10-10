@@ -18,18 +18,23 @@ using the functional equation. The resulting envelope satisfies
 `‖riemannXi s‖ ≤ xiOrderOneBound (‖s‖+1)` for every complex `s`.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.RiemannXi
 
-/-- The real-variable envelope majorizing `‖PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi s‖`
+/-- The real-variable envelope majorizing `‖riemannXi s‖`
 in terms of `‖s‖`, for `Re s ≥ 1/2`.
 The `1 +` head term makes the bound trivially cover the excluded point `s = 1`
-(`PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi_eq_gamma_mul_zetaEntire` needs `s ≠ 1`),
-where `‖PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi 1‖ = 1/2 ≤ 1`. -/
+(`AnalyticNumberTheory.RiemannXi.riemannXi_eq_gamma_mul_riemannZeta₁` needs `s ≠ 1`),
+where `‖riemannXi 1‖ = 1/2 ≤ 1`. -/
 noncomputable def xiOrderOneBound (x : ℝ) : ℝ :=
   1 +
     Real.pi ^ (-(1 : ℝ) / 4) * Real.exp ((x / 2 + 1) * Real.log (x / 2 + 1)) *
       (x + (x + 1) / 2 + x * (x + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2))
 
+/-- The xi growth envelope increases on nonnegative radii. Its polynomial factor
+is nonnegative and increasing, as is the exponential of `y log y` for `y ≥ 1`.
+This allows the reflected bound and uniform closed-ball estimates. -/
 theorem xiOrderOneBound_monotoneOn : MonotoneOn xiOrderOneBound (Set.Ici (0 : ℝ)) := by
   intro a ha b hb hab
   simp only [Set.mem_Ici] at ha hb
@@ -59,6 +64,8 @@ theorem xiOrderOneBound_monotoneOn : MonotoneOn xiOrderOneBound (Set.Ici (0 : �
   have hexpnonneg : 0 ≤ Real.exp ((a / 2 + 1) * Real.log (a / 2 + 1)) := (Real.exp_pos _).le
   gcongr
 
+/-- At any nonnegative radius the envelope is at least `1`, since its remaining
+factors are nonnegative. This covers the exceptional factorization point `s = 1`. -/
 theorem one_le_xiOrderOneBound {x : ℝ} (hx : 0 ≤ x) : 1 ≤ xiOrderOneBound x := by
   have h1 : 0 ≤ x + (x + 1) / 2 + x * (x + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2) := by
     have : 0 ≤ x * (x + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2) :=
@@ -73,16 +80,16 @@ theorem one_le_xiOrderOneBound {x : ℝ} (hx : 0 ≤ x) : 1 ≤ xiOrderOneBound 
   exact le_add_of_nonneg_right h2
 
 /-- **The order-1 growth bound on `Re s ≥ 1/2`.** Assembles the closed form
-`PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi_eq_gamma_mul_zetaEntire`
+`AnalyticNumberTheory.RiemannXi.riemannXi_eq_gamma_mul_riemannZeta₁`
 with the three factor-wise bounds `norm_cpow_eq_rpow_re_of_pos`
-(for `π^{-s/2}`), `PseudoPrime.AnalyticNumberTheory.RiemannZeta.norm_Gamma_le_Gamma_re` +
-`PseudoPrime.AnalyticNumberTheory.Gamma.log_Gamma_le_of_one_le` (for `Γ(s/2+1)`), and
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.norm_zetaEntire_le_of_reGt_neg_one` +
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.sawtoothRemainderBound_antitone`
-(for `PseudoPrime.AnalyticNumberTheory.RiemannZeta.zetaEntire`). The
+(for `π^{-s/2}`), `AnalyticNumberTheory.RiemannZeta.norm_Gamma_le_Gamma_re` +
+`AnalyticNumberTheory.Gamma.log_Gamma_le_of_one_le` (for `Γ(s/2+1)`), and
+`AnalyticNumberTheory.RiemannZeta.norm_riemannZeta₁_le_of_reGt_neg_one` +
+`AnalyticNumberTheory.RiemannZeta.sawtoothRemainderBound_antitone`
+(for `riemannZeta₁`). The
 point `s = 1` is excluded from the closed form and handled directly via
-`PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi_one` and
-`PseudoPrime.AnalyticNumberTheory.RiemannXi.one_le_xiOrderOneBound`. -/
+`AnalyticNumberTheory.RiemannXi.riemannXi_one` and
+`AnalyticNumberTheory.RiemannXi.one_le_xiOrderOneBound`. -/
 theorem norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 2 ≤ s.re) :
     ‖riemannXi s‖ ≤ xiOrderOneBound ‖s‖ := by
   rcases eq_or_ne s 1 with rfl | hs1
@@ -98,7 +105,7 @@ theorem norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 
     have hΓne : Complex.Gamma (s / 2 + 1) ≠ 0 := by
       apply Complex.Gamma_ne_zero_of_re_pos
       simpa only [Complex.add_re, Complex.div_ofNat_re, Complex.one_re] using hre_half_pos
-    rw [riemannXi_eq_gamma_mul_zetaEntire hs1 hΓne, norm_mul, norm_mul]
+    rw [riemannXi_eq_gamma_mul_riemannZeta₁ hs1 hΓne, norm_mul, norm_mul]
     have hsre_le : s.re ≤ ‖s‖ := (le_abs_self s.re).trans (Complex.abs_re_le_norm s)
     -- Factor 1: `‖π^(-s/2)‖ ≤ π^(-1/4)`.
     have hfac1 : ‖(Real.pi : ℂ) ^ (-s / 2)‖ ≤ Real.pi ^ (-(1 : ℝ) / 4) := by
@@ -144,18 +151,18 @@ theorem norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 
                 div_le_div_of_nonneg_right hsre_le (by norm_num only)
               simpa only [add_comm] using add_le_add_left hsre_le_norm_half 1)
       exact hstep1.trans (hstep2.trans hstep3)
-    -- Factor 3: `‖RiemannZeta.zetaEntire s‖` is polynomially bounded.
+    -- Factor 3: `‖riemannZeta₁ s‖` is polynomially bounded.
     have hfac3 :
-      ‖RiemannZeta.zetaEntire s‖ ≤
+      ‖riemannZeta₁ s‖ ≤
         ‖s‖ + (‖s‖ + 1) / 2 + ‖s‖ * (‖s‖ + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2) := by
       have hz :=
-        RiemannZeta.norm_zetaEntire_le_of_reGt_neg_one (s := s)
+        RiemannZeta.norm_riemannZeta₁_le_of_reGt_neg_one (s := s)
           (lt_of_lt_of_le (by norm_num only) hs)
       have hsaw_le :
         RiemannZeta.sawtoothRemainderBound s.re ≤ RiemannZeta.sawtoothRemainderBound (1 / 2) :=
         RiemannZeta.sawtoothRemainderBound_antitone (by norm_num only) hs
       calc
-        ‖RiemannZeta.zetaEntire s‖ ≤
+        ‖riemannZeta₁ s‖ ≤
             ‖s‖ + (‖s‖ + 1) / 2 + ‖s‖ * (‖s‖ + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound s.re :=
           hz
         _ ≤
@@ -163,7 +170,7 @@ theorem norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 
               ‖s‖ * (‖s‖ + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2) :=
           by gcongr
     have hcombine :
-      ‖(Real.pi : ℂ) ^ (-s / 2)‖ * ‖Complex.Gamma (s / 2 + 1)‖ * ‖RiemannZeta.zetaEntire s‖ ≤
+      ‖(Real.pi : ℂ) ^ (-s / 2)‖ * ‖Complex.Gamma (s / 2 + 1)‖ * ‖riemannZeta₁ s‖ ≤
         Real.pi ^ (-(1 : ℝ) / 4) * Real.exp ((‖s‖ / 2 + 1) * Real.log (‖s‖ / 2 + 1)) *
           (‖s‖ + (‖s‖ + 1) / 2 +
             ‖s‖ * (‖s‖ + 1) ^ 2 * RiemannZeta.sawtoothRemainderBound (1 / 2)) := by

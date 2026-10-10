@@ -4,9 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GoodHeight
-import Mathlib.Analysis.Meromorphic.FactorizedRational
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GoodHeight
+public import Mathlib.Analysis.Meromorphic.FactorizedRational
+public import PseudoPrime.Analysis.ComplexLogPrimitive
 
 /-!
 # Logarithmic derivatives at good heights
@@ -293,156 +296,6 @@ theorem divisor_riemannZeta_eq_of_analyticOnNhd {U₁ U₂ : Set ℂ}
   rw [MeromorphicOn.AnalyticOnNhd.divisor_apply h1 hu1,
     MeromorphicOn.AnalyticOnNhd.divisor_apply h2 hu2]
 
-/-- At a good height `T` (as produced by
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_good_height`), for any `σ` in the (shrunk)
-target range `[-1/2, 2]`, `ζ` factors locally around `z := σ + iT` and the resulting finite-sum
-part of `logDeriv ζ`'s decomposition is bounded by
-`4(PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenLogConst·log(H+2))²`: each of the
-`≤ PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenLogConst·log(H+2)` nearby zeros
-contributes a term of norm `≤ 1/margin`, where
-`margin = 1/(4·PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenLogConst·log(H+2))`. -/
-theorem exists_logDeriv_riemannZeta_eq_sum_add_logDeriv_of_good_height {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
-    (hT : T ∈ Set.Icc H (H + 1))
-    (hgood :
-      ∀ ρ : ℂ,
-        riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|)
-    {σ : ℝ} (_hσ1 : -(1 : ℝ) / 2 ≤ σ) (_hσ2 : σ ≤ 2) :
-    ∃ (S : Finset ℂ) (m : ℂ → ℕ) (g : ℂ → ℂ),
-      AnalyticOnNhd ℂ g (Metric.ball (σ + T * Complex.I) (2 / 5)) ∧
-        (∀ w ∈ Metric.ball (σ + T * Complex.I) (2 / 5), g w ≠ 0) ∧
-        logDeriv riemannZeta (σ + T * Complex.I) =
-          (∑ u ∈ S, (m u : ℂ) / ((σ + T * Complex.I) - u)) + logDeriv g (σ + T * Complex.I) ∧
-        ‖∑ u ∈ S, (m u : ℂ) / ((σ + T * Complex.I) - u)‖ ≤
-          4 * (jensenLogConst * Real.log (H + 2)) ^ 2 := by
-  set z : ℂ := σ + T * Complex.I with hz_def
-  have hzim : z.im = T := by
-    simp only [hz_def, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
-      Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
-  have hzre : z.re = σ := by
-    simp only [hz_def, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-      Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-  have hTpos : (0 : ℝ) < T := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) (le_trans hH hT.1)
-  have hz1 : ∀ w ∈ Metric.closedBall z (2 / 5 : ℝ), w ≠ 1 := by
-    intro w hw hw1
-    rw [Metric.mem_closedBall, Complex.dist_eq, hw1] at hw
-    have him : |(1 : ℂ).im - z.im| ≤ ‖(1 : ℂ) - z‖ := by
-      have h := Complex.abs_im_le_norm ((1 : ℂ) - z)
-      simpa only [Complex.one_im, zero_sub, abs_neg, ge_iff_le, Complex.sub_im] using h
-    rw [hzim, Complex.one_im, zero_sub, abs_neg, abs_of_nonneg hTpos.le] at him
-    linarith only [hH, hT.1, him, hw]
-  have hzgood : riemannZeta z ≠ 0 := by
-    intro hzero
-    have h1 : |z.im - H| ≤ 2 := by
-      rw [hzim]
-      rw [abs_le]
-      constructor <;> linarith only [hT.1, hT.2]
-    have h2 := hgood z hzero h1
-    rw [hzim, sub_self, abs_zero] at h2
-    have hLCpos := jensenLogConst_pos
-    have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith only [hH])
-    have : (0 : ℝ) < 1 / (4 * jensenLogConst * Real.log (H + 2)) :=
-      one_div_pos.mpr (mul_pos (mul_pos (by norm_num only) hLCpos) hlogpos)
-    exact not_le_of_gt this h2
-  obtain ⟨S, m, g, hgAn, hgne, hmpos, hSU, hSzero, hmeqSmall, _heqOn, hlog⟩ :=
-    exists_logDeriv_riemannZeta_eq_sum_add_logDeriv (R := 2 / 5) (by norm_num only) hz1 hzgood
-  refine ⟨S, m, g, hgAn, hgne, hlog, ?_⟩
-  -- Every zero in `S` has ordinate within `2` of `H`: reused for both the margin bound and the
-  -- containment in the zeta-side estimate disk.
-  have hu_im_H : ∀ u ∈ S, |u.im - H| ≤ 2 := by
-    intro u hu
-    have huU := hSU u hu
-    rw [Metric.mem_ball, Complex.dist_eq] at huU
-    have h := Complex.abs_im_le_norm (u - z)
-    rw [Complex.sub_im, hzim] at h
-    have h2 : |u.im - T| < 2 / 5 := lt_of_le_of_lt h huU
-    rw [abs_lt] at h2
-    rw [abs_le]
-    constructor <;> linarith only [h2.1, h2.2, hT.1, hT.2]
-  -- Bound each term's denominator away from 0 via the good-height margin.
-  have hmargin : ∀ u ∈ S, 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ ‖z - u‖ := by
-    intro u hu
-    have hmarg := hgood u (hSzero u hu) (hu_im_H u hu)
-    have hle : |T - u.im| ≤ ‖z - u‖ := by
-      have h := Complex.abs_im_le_norm (z - u)
-      rw [Complex.sub_im, hzim] at h
-      exact h
-    exact hmarg.trans hle
-  -- Bound the total multiplicity via the zeta-side estimate zero count.
-  have hAnSmall : AnalyticOnNhd ℂ riemannZeta (Metric.ball z (2 / 5 : ℝ)) := fun w hw =>
-    analyticOn_riemannZeta w (hz1 w (Metric.ball_subset_closedBall hw))
-  have hAnBig : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) :=
-    (jensen_analyticOnNhd (le_trans (by norm_num only : (4 : ℝ) ≤ 8) hH)).mono
-      (Metric.closedBall_subset_closedBall (by norm_num only))
-  have hSbig : ∀ u ∈ S, u ∈ Metric.closedBall (jensenCenter H) (37 / 10) := fun u hu =>
-    riemannZeta_zero_mem_jensenBall hH (hSzero u hu) (hu_im_H u hu)
-  have hfin :=
-    (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10))).finiteSupport
-      (isCompact_closedBall _ _)
-  have hmeqBig :
-    ∀ u ∈ S,
-      (m u : ℤ) =
-        MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :=
-    fun u hu =>
-    (hmeqSmall u hu).trans
-      (divisor_riemannZeta_eq_of_analyticOnNhd hAnSmall hAnBig (hSU u hu) (hSbig u hu))
-  have hSsub : S ⊆ hfin.toFinset := by
-    intro u hu
-    rw [Set.Finite.mem_toFinset, Function.mem_support]
-    rw [← hmeqBig u hu]
-    exact_mod_cast (hmpos u hu).ne'
-  have hsum_le : (∑ u ∈ S, (m u : ℝ)) ≤ jensenLogConst * Real.log (H + 2) := by
-    have hcongr :
-      ∑ u ∈ S, (m u : ℝ) =
-        ∑ u ∈ S,
-          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
-            ℝ) :=
-      Finset.sum_congr rfl (fun u hu => by exact_mod_cast hmeqBig u hu)
-    rw [hcongr]
-    have hcard1 :
-      ∑ u ∈ S,
-          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u : ℝ) ≤
-        ∑ u ∈ hfin.toFinset,
-          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
-            ℝ) := by
-      apply Finset.sum_le_sum_of_subset_of_nonneg hSsub
-      intro u _ _
-      exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAnBig u
-    have hcard2 :
-      ∑ u ∈ hfin.toFinset,
-          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u : ℝ) =
-        ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
-            ℤ) :
-          ℝ) := by
-      rw [finsum_eq_finsetSum_of_support_subset _ (s := hfin.toFinset)
-          (by rw [Set.Finite.coe_toFinset])]
-      push_cast
-      rfl
-    rw [hcard2] at hcard1
-    exact hcard1.trans (finsum_divisor_riemannZeta_le_explicit hH)
-  have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith only [hH])
-  have hLCpos := jensenLogConst_pos
-  have hmarginpos : (0 : ℝ) < 4 * jensenLogConst * Real.log (H + 2) :=
-    mul_pos (mul_pos (by norm_num only) hLCpos) hlogpos
-  calc
-    ‖∑ u ∈ S, (m u : ℂ) / (z - u)‖ ≤ ∑ u ∈ S, ‖(m u : ℂ) / (z - u)‖ := norm_sum_le _ _
-    _ = ∑ u ∈ S, (m u : ℝ) / ‖z - u‖ := by
-      apply Finset.sum_congr rfl
-      intro u _
-      rw [norm_div, Complex.norm_natCast]
-    _ ≤ ∑ u ∈ S, (m u : ℝ) * (4 * jensenLogConst * Real.log (H + 2)) := by
-      apply Finset.sum_le_sum
-      intro u hu
-      have hrecip : 1 / ‖z - u‖ ≤ 4 * jensenLogConst * Real.log (H + 2) := by
-        have h1 := one_div_le_one_div_of_le (one_div_pos.mpr hmarginpos) (hmargin u hu)
-        rwa [one_div_one_div] at h1
-      rw [div_eq_mul_one_div]
-      exact mul_le_mul_of_nonneg_left hrecip (Nat.cast_nonneg _)
-    _ = (∑ u ∈ S, (m u : ℝ)) * (4 * jensenLogConst * Real.log (H + 2)) := by rw [Finset.sum_mul]
-    _ ≤ (jensenLogConst * Real.log (H + 2)) * (4 * jensenLogConst * Real.log (H + 2)) := by
-      exact mul_le_mul_of_nonneg_right hsum_le (le_of_lt hmarginpos)
-    _ = 4 * (jensenLogConst * Real.log (H + 2)) ^ 2 := by ring
-
 /-!
 ### A logarithmic primitive on a zero-free disk
 
@@ -450,72 +303,6 @@ For an analytic nonvanishing function on a disk, construct a primitive of its
 logarithmic derivative with real part equal to the logarithm of its norm.
 This avoids choosing the principal complex logarithm.
 -/
-
-theorem exists_hasDerivAt_logDeriv_re_eq_log_norm {f : ℂ → ℂ} {c : ℂ} {r : ℝ} (hr : 0 < r)
-    (hfAn : AnalyticOnNhd ℂ f (Metric.ball c r)) (hfne : ∀ w ∈ Metric.ball c r, f w ≠ 0) :
-    ∃ h : ℂ → ℂ,
-      (∀ w ∈ Metric.ball c r, HasDerivAt h (logDeriv f w) w) ∧
-        ∀ w ∈ Metric.ball c r, (h w).re = Real.log ‖f w‖ := by
-  have hfDiffOn : DifferentiableOn ℂ f (Metric.ball c r) := fun w hw =>
-    (hfAn w hw).differentiableWithinAt
-  have hlogDerivEq : logDeriv f = fun w => deriv f w / f w := by
-    funext w
-    rw [logDeriv_apply]
-  have hlogDerivDiffOn : DifferentiableOn ℂ (logDeriv f) (Metric.ball c r) := by
-    rw [hlogDerivEq]
-    exact (hfDiffOn.deriv Metric.isOpen_ball).div hfDiffOn hfne
-  obtain ⟨h, hhc, hh'⟩ := (hlogDerivDiffOn.isExactOn_ball).with_val_at c (Complex.log (f c))
-  set G : ℂ → ℂ := fun w => Complex.exp (h w) * (f w)⁻¹ with hG_def
-  have hGhasDerivAt : ∀ w ∈ Metric.ball c r, HasDerivAt G 0 w := by
-    intro w hw
-    have hhw := hh' w hw
-    have hfnew := hfne w hw
-    have hderivf : deriv f w = logDeriv f w * f w := by
-      have hlog : logDeriv f w = deriv f w / f w := by rw [hlogDerivEq]
-      rw [hlog, div_mul_cancel₀]
-      exact hfnew
-    have hfHasDeriv : HasDerivAt f (logDeriv f w * f w) w := by
-      rw [← hderivf]
-      exact ((hfDiffOn w hw).differentiableAt (Metric.isOpen_ball.mem_nhds hw)).hasDerivAt
-    have hexpw : HasDerivAt (fun w => Complex.exp (h w)) (Complex.exp (h w) * logDeriv f w) w :=
-      hhw.cexp
-    have hinvw : HasDerivAt (fun w => (f w)⁻¹) (-(logDeriv f w * f w) / (f w) ^ 2) w :=
-      hfHasDeriv.inv hfnew
-    have hGw :
-      HasDerivAt G
-        (Complex.exp (h w) * logDeriv f w * (f w)⁻¹ +
-          Complex.exp (h w) * (-(logDeriv f w * f w) / (f w) ^ 2))
-        w :=
-      hexpw.mul hinvw
-    have hzero :
-      Complex.exp (h w) * logDeriv f w * (f w)⁻¹ +
-          Complex.exp (h w) * (-(logDeriv f w * f w) / (f w) ^ 2) =
-        0 := by
-      field_simp [hfnew]
-      ring
-    rw [hzero] at hGw
-    exact hGw
-  have hGDiffOn : DifferentiableOn ℂ G (Metric.ball c r) := fun w hw =>
-    (hGhasDerivAt w hw).differentiableAt.differentiableWithinAt
-  have hderiv0 : (Metric.ball c r).EqOn (deriv G) 0 := fun w hw => (hGhasDerivAt w hw).deriv
-  have hcmem : c ∈ Metric.ball c r := Metric.mem_ball_self hr
-  have hfnec := hfne c hcmem
-  have hGc : G c = 1 := by
-    change Complex.exp (h c) * (f c)⁻¹ = 1
-    rw [hhc, Complex.exp_log hfnec, mul_inv_cancel₀ hfnec]
-  have hconst := fun w (hw : w ∈ Metric.ball c r) =>
-    Metric.isOpen_ball.is_const_of_deriv_eq_zero (convex_ball c r).isPreconnected hGDiffOn hderiv0
-      hcmem hw
-  refine ⟨h, hh', fun w hw => ?_⟩
-  have hGw1 : G w = 1 := (hconst w hw).symm.trans hGc
-  have hfnew := hfne w hw
-  have hexpeq : Complex.exp (h w) = f w := by
-    have heq1 : Complex.exp (h w) * (f w)⁻¹ = 1 := hGw1
-    field_simp [hfnew] at heq1
-    exact heq1
-  have hnormeq : Real.exp (h w).re = ‖f w‖ := by rw [← Complex.norm_exp, hexpeq]
-  have hpos : (0 : ℝ) < ‖f w‖ := norm_pos_iff.mpr hfnew
-  rw [← hnormeq, Real.log_exp]
 
 /-! ### The "good radius" selection
 
@@ -543,416 +330,6 @@ theorem riemannZeta_analyticOrderAt_ne_top_of_center {c : ℂ} {R : ℝ}
     hAn.eqOn_zero_of_preconnected_of_eventuallyEq_zero hUconv hu (analyticOrderAt_eq_top.mp htop)
   exact hcgood (heq0 hcenter)
 
-/-- The two-sided form of `PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_good_radius`:
-`R` keeps every zero within distance `2/5` of
-`z` at margin `≥ c` from `R` on BOTH sides (not just from inside). This lets a downstream
-factorization radius be pushed slightly past `R` (into the resulting zero-free gap) while still
-capturing exactly the same zero set, which is what makes the extracted `g` continuous up to a
-closed ball boundary (see the discussion above
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_good_radius`). -/
-theorem exists_good_radius_twoSided {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T ∈ Set.Icc H (H + 1))
-    (hgood :
-      ∀ ρ : ℂ,
-        riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|)
-    (σ : ℝ) :
-    ∃ R ∈ Set.Icc (1 / 5 : ℝ) (3 / 10),
-      ∀ ρ : ℂ,
-        riemannZeta ρ = 0 →
-          ‖(σ + T * Complex.I) - ρ‖ < 2 / 5 →
-          1 / (40 * jensenLogConst * Real.log (H + 2)) ≤ |R - ‖(σ + T * Complex.I) - ρ‖| := by
-  set z : ℂ := σ + T * Complex.I with hz_def
-  have hzim : z.im = T := by
-    simp only [hz_def, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
-      Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
-  have hTpos : (0 : ℝ) < T := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) (le_trans hH hT.1)
-  have hz1 : ∀ w ∈ Metric.closedBall z (2 / 5 : ℝ), w ≠ 1 := by
-    intro w hw hw1
-    rw [Metric.mem_closedBall, Complex.dist_eq, hw1] at hw
-    have him : |(1 : ℂ).im - z.im| ≤ ‖(1 : ℂ) - z‖ := by
-      have h := Complex.abs_im_le_norm ((1 : ℂ) - z)
-      simpa only [Complex.one_im, zero_sub, abs_neg, ge_iff_le, Complex.sub_im] using h
-    rw [hzim, Complex.one_im, zero_sub, abs_neg, abs_of_nonneg hTpos.le] at him
-    linarith only [hH, hT.1, him, hw]
-  have hzgood : riemannZeta z ≠ 0 := by
-    intro hzero
-    have h1 : |z.im - H| ≤ 2 := by
-      rw [hzim]
-      rw [abs_le]
-      constructor <;> linarith only [hT.1, hT.2]
-    have h2 := hgood z hzero h1
-    rw [hzim, sub_self, abs_zero] at h2
-    have hLCpos := jensenLogConst_pos
-    have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith only [hH])
-    have : (0 : ℝ) < 1 / (4 * jensenLogConst * Real.log (H + 2)) :=
-      one_div_pos.mpr (mul_pos (mul_pos (by norm_num only) hLCpos) hlogpos)
-    exact (not_le_of_gt this) h2
-  have hAnClosed : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall z (2 / 5 : ℝ)) := fun w hw =>
-    analyticOn_riemannZeta w (hz1 w hw)
-  have hAnBall : AnalyticOnNhd ℂ riemannZeta (Metric.ball z (2 / 5 : ℝ)) := fun w hw =>
-    hAnClosed w (Metric.ball_subset_closedBall hw)
-  have hfin : (MeromorphicOn.divisor riemannZeta (Metric.ball z (2 / 5 : ℝ))).support.Finite :=
-    MeromorphicOn.divisor_ball_support_finite hAnClosed.meromorphicOn
-  set Sfin : Finset ℂ := hfin.toFinset with hSfin_def
-  set D : Finset ℝ := Sfin.image (fun ρ => ‖z - ρ‖) with hD_def
-  -- Bound `D`'s cardinality via the zeta-side estimate zero count (same subset-of-big-Jensen-disk
-  -- argument used in
-  -- `PseudoPrime.AnalyticNumberTheory.RiemannZeta.`
-  -- `exists_logDeriv_riemannZeta_eq_sum_add_logDeriv_of_good_height`).
-  have hu_im_H : ∀ u ∈ Sfin, |u.im - H| ≤ 2 := by
-    intro u hu
-    rw [hSfin_def, Set.Finite.mem_toFinset] at hu
-    have huU : u ∈ Metric.ball z (2 / 5 : ℝ) :=
-      (MeromorphicOn.divisor riemannZeta (Metric.ball z (2 / 5 : ℝ))).supportWithinDomain hu
-    rw [Metric.mem_ball, Complex.dist_eq] at huU
-    have h := Complex.abs_im_le_norm (u - z)
-    rw [Complex.sub_im, hzim] at h
-    have h2 : |u.im - T| < 2 / 5 := lt_of_le_of_lt h huU
-    rw [abs_lt] at h2
-    rw [abs_le]
-    constructor <;> linarith only [h2.1, h2.2, hT.1, hT.2]
-  have hSzero : ∀ u ∈ Sfin, riemannZeta u = 0 := by
-    intro u hu
-    have huU : u ∈ Metric.ball z (2 / 5 : ℝ) := by
-      rw [hSfin_def, Set.Finite.mem_toFinset] at hu
-      exact (MeromorphicOn.divisor riemannZeta (Metric.ball z (2 / 5 : ℝ))).supportWithinDomain hu
-    rw [hSfin_def, Set.Finite.mem_toFinset, Function.mem_support] at hu
-    by_contra hne
-    apply hu
-    rw [MeromorphicOn.AnalyticOnNhd.divisor_apply hAnBall huU]
-    rw [(hAnBall u huU).analyticOrderAt_eq_zero.mpr hne]
-    simp only [ENat.map_zero, CharP.cast_eq_zero, WithTop.coe_zero, WithTop.untop₀_zero]
-  have hAnBig : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) :=
-    (jensen_analyticOnNhd (le_trans (by norm_num only : (4 : ℝ) ≤ 8) hH)).mono
-      (Metric.closedBall_subset_closedBall (by norm_num only))
-  have hSbig : ∀ u ∈ Sfin, u ∈ Metric.closedBall (jensenCenter H) (37 / 10) := fun u hu =>
-    riemannZeta_zero_mem_jensenBall hH (hSzero u hu) (hu_im_H u hu)
-  have hfinBig :=
-    (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10))).finiteSupport
-      (isCompact_closedBall _ _)
-  have hSsub : Sfin ⊆ hfinBig.toFinset := by
-    intro u hu
-    rw [Set.Finite.mem_toFinset, Function.mem_support]
-    have huU : u ∈ Metric.ball z (2 / 5 : ℝ) := by
-      rw [hSfin_def, Set.Finite.mem_toFinset] at hu
-      exact (MeromorphicOn.divisor riemannZeta (Metric.ball z (2 / 5 : ℝ))).supportWithinDomain hu
-    rw [← divisor_riemannZeta_eq_of_analyticOnNhd hAnBall hAnBig huU (hSbig u hu)]
-    rw [hSfin_def, Set.Finite.mem_toFinset] at hu
-    exact hu
-  have hcard : (D.card : ℝ) ≤ jensenLogConst * Real.log (H + 2) := by
-    have h1 : D.card ≤ Sfin.card := Finset.card_image_le
-    have h2 : Sfin.card ≤ hfinBig.toFinset.card := Finset.card_le_card hSsub
-    have h3 :
-      (hfinBig.toFinset.card : ℝ) ≤
-        ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
-            ℤ) :
-          ℝ) := by
-      have heach :
-        ∀ u ∈ hfinBig.toFinset,
-          (1 : ℤ) ≤
-            MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u := by
-        intro u hu
-        rw [Set.Finite.mem_toFinset, Function.mem_support] at hu
-        have hnn :
-          (0 : ℤ) ≤
-            MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :=
-          MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAnBig u
-        exact Int.add_one_le_iff.mpr (lt_of_le_of_ne hnn (Ne.symm hu))
-      calc
-        (hfinBig.toFinset.card : ℝ) = ∑ _u ∈ hfinBig.toFinset, (1 : ℝ) := by
-          rw [Finset.sum_const, nsmul_eq_mul, mul_one]
-        _ ≤
-            ∑ u ∈ hfinBig.toFinset,
-              (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
-                ℝ) :=
-          by
-          apply Finset.sum_le_sum
-          intro u hu
-          exact_mod_cast heach u hu
-        _ =
-            ((∑ᶠ u,
-                  MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10))
-                    u :
-                ℤ) :
-              ℝ) :=
-          by
-          rw [finsum_eq_finsetSum_of_support_subset _ (s := hfinBig.toFinset)
-              (by rw [Set.Finite.coe_toFinset])]
-          push_cast
-          rfl
-    have h4 := finsum_divisor_riemannZeta_le_explicit hH
-    calc
-      (D.card : ℝ) ≤ (Sfin.card : ℝ) := by exact_mod_cast h1
-      _ ≤ (hfinBig.toFinset.card : ℝ) := by exact_mod_cast h2
-      _ ≤ _ := h3
-      _ ≤ jensenLogConst * Real.log (H + 2) := h4
-  set c : ℝ := 1 / (40 * jensenLogConst * Real.log (H + 2)) with hc_def
-  have hLCpos := jensenLogConst_pos
-  have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith only [hH])
-  have hc_pos : 0 < c := by
-    rw [hc_def]
-    exact one_div_pos.mpr (mul_pos (mul_pos (by norm_num only) hLCpos) hlogpos)
-  have hlen : 2 * c * (D.card : ℝ) < (1 / 10 : ℝ) := by
-    calc
-      2 * c * (D.card : ℝ) ≤ 2 * c * (jensenLogConst * Real.log (H + 2)) :=
-        mul_le_mul_of_nonneg_left hcard (mul_nonneg (by norm_num only) hc_pos.le)
-      _ = 1 / 20 := by
-        rw [hc_def]
-        field_simp [ne_of_gt hLCpos, ne_of_gt hlogpos]
-        norm_num only
-      _ < 1 / 10 := by norm_num only
-  obtain ⟨R, hR, hRgood⟩ :=
-    exists_avoiding_point_length (a := 1 / 5) hc_pos (by norm_num only : (0 : ℝ) < 1 / 10) hlen
-  have hR' : R ∈ Set.Icc (1 / 5 : ℝ) (3 / 10) := by
-    rw [show (1 / 5 : ℝ) + 1 / 10 = 3 / 10 from by norm_num only] at hR
-    exact hR
-  refine ⟨R, hR', ?_⟩
-  intro ρ hζ hlt
-  have hρmem : ρ ∈ Metric.ball z (2 / 5 : ℝ) := by
-    rw [Metric.mem_ball, Complex.dist_eq, norm_sub_rev]
-    exact hlt
-  have hmapinj :
-    ENat.map (Nat.cast : ℕ → ℤ) (analyticOrderAt riemannZeta ρ) = (⊤ : WithTop ℤ) ↔
-      analyticOrderAt riemannZeta ρ = ⊤ := by
-    rw [← ENat.map_top (Nat.cast : ℕ → ℤ)]
-    exact ENat.map_natCast_injective.eq_iff
-  have hd : ρ ∈ Sfin := by
-    rw [hSfin_def, Set.Finite.mem_toFinset, Function.mem_support,
-      MeromorphicOn.AnalyticOnNhd.divisor_apply hAnBall hρmem, ne_eq, WithTop.untop₀_eq_zero,
-      not_or]
-    refine ⟨?_, ?_⟩
-    · rw [ENat.map_natCast_eq_zero]
-      exact (hAnBall ρ hρmem).analyticOrderAt_ne_zero.mpr hζ
-    · rw [hmapinj]
-      exact
-        riemannZeta_analyticOrderAt_ne_top_of_center hz1 hzgood
-          (Metric.ball_subset_closedBall hρmem)
-  have hmem : ‖z - ρ‖ ∈ D := Finset.mem_image_of_mem _ hd
-  exact hRgood _ hmem
-
-/-- The "good radius" `R`: keeps every zero within distance `2/5` of `z := σ + iT` at margin
-`≥ c := 1/(40·PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenLogConst·log(H+2))` from `R`,
-on the *inside* (this is the form needed to
-bound `‖P‖` from below on the boundary sphere `sphere z R`). The two-sided version
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_good_radius_twoSided` additionally certifies
-a genuine zero-free gap `(R - c, R + c)`,
-so a factorization radius can safely be pushed slightly past `R` while capturing the same zero
-set — this is what gives the extracted `g` continuity up to the closed ball `closedBall z R`
-(via restriction from the larger open ball, rather than by extending `g` after the fact). -/
-theorem exists_good_radius {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T ∈ Set.Icc H (H + 1))
-    (hgood :
-      ∀ ρ : ℂ,
-        riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|)
-    (σ : ℝ) :
-    ∃ R ∈ Set.Icc (1 / 5 : ℝ) (3 / 10),
-      ∀ ρ : ℂ,
-        riemannZeta ρ = 0 →
-          ‖(σ + T * Complex.I) - ρ‖ < R →
-          1 / (40 * jensenLogConst * Real.log (H + 2)) ≤ R - ‖(σ + T * Complex.I) - ρ‖ := by
-  obtain ⟨R, hR, hRgood⟩ := exists_good_radius_twoSided hH hT hgood σ
-  refine ⟨R, hR, fun ρ hζ hlt => ?_⟩
-  have hthis := hRgood ρ hζ (by linarith only [hR.2, hlt] : ‖(σ + T * Complex.I) - ρ‖ < 2 / 5)
-  rw [abs_sub_comm] at hthis
-  rwa [abs_of_neg (sub_lt_zero.mpr hlt), neg_sub] at hthis
-
-/-! ### Local factorization at the good radius, with room to spare for continuity
-
-Combining `PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_good_radius_twoSided` with
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_riemannZeta_zeroFree_factorization`: factor
-`ζ` at a radius `R2` just past the good radius `R` (still inside the resulting zero-free gap),
-so that `g` is analytic and zero-free on `ball z R2`. Since the eventual max-modulus domain
-`ball z (R + δ/2)` has closure `closedBall z (R + δ/2) ⊆ ball z R2` (as `R + δ/2 < R2`), `g` (and
-anything built from it) is automatically continuous up to that closure by plain restriction —
-no separate boundary-extension argument is needed. -/
-
-theorem exists_riemannZeta_zeroFree_factorization_good_radius {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
-    (hT : T ∈ Set.Icc H (H + 1))
-    (hgood :
-      ∀ ρ : ℂ,
-        riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|)
-    (σ : ℝ) :
-    ∃ (R δ R2 : ℝ) (S : Finset ℂ) (m : ℂ → ℕ) (g : ℂ → ℂ),
-      0 < δ ∧
-        R ∈ Set.Icc (1 / 5 : ℝ) (3 / 10) ∧
-        R + δ / 2 < R2 ∧
-        R2 < 2 / 5 ∧
-        AnalyticOnNhd ℂ g (Metric.ball (σ + T * Complex.I) R2) ∧
-        (∀ w ∈ Metric.ball (σ + T * Complex.I) R2, g w ≠ 0) ∧
-        (∀ u ∈ S, 0 < m u) ∧
-        (∀ u ∈ S, riemannZeta u = 0) ∧
-        (∀ u ∈ S, ‖(σ + T * Complex.I) - u‖ ≤ R - δ) ∧
-        (∑ u ∈ S, (m u : ℝ)) ≤ jensenLogConst * Real.log (H + 2) ∧
-        Set.EqOn riemannZeta (fun w => (∏ u ∈ S, (w - u) ^ m u) * g w)
-          (Metric.ball (σ + T * Complex.I) R2) ∧
-        ‖∑ u ∈ S, (m u : ℂ) / ((σ + T * Complex.I) - u)‖ ≤
-          4 * (jensenLogConst * Real.log (H + 2)) ^ 2 ∧
-        logDeriv riemannZeta (σ + T * Complex.I) =
-          (∑ u ∈ S, (m u : ℂ) / ((σ + T * Complex.I) - u)) + logDeriv g (σ + T * Complex.I) := by
-  set z : ℂ := σ + T * Complex.I with hz_def
-  have hzim : z.im = T := by
-    simp only [hz_def, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
-      Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
-  have hTpos : (0 : ℝ) < T := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) (le_trans hH hT.1)
-  have hLCpos := jensenLogConst_pos
-  have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith only [hH])
-  set c : ℝ := 1 / (40 * jensenLogConst * Real.log (H + 2)) with hc_def
-  have hc_pos : 0 < c := by
-    rw [hc_def]
-    exact one_div_pos.mpr (mul_pos (mul_pos (by norm_num only) hLCpos) hlogpos)
-  set δ : ℝ := min c (1 / 20) with hδ_def
-  have hδ_pos : 0 < δ := lt_min hc_pos (by norm_num only)
-  have hδ_c : δ ≤ c := min_le_left _ _
-  have hδ_small : δ ≤ 1 / 20 := min_le_right _ _
-  obtain ⟨R, hR, hRgood⟩ := exists_good_radius_twoSided hH hT hgood σ
-  have hRgood' : ∀ ρ : ℂ, riemannZeta ρ = 0 → ‖z - ρ‖ < 2 / 5 → δ ≤ |R - ‖z - ρ‖| := fun ρ hζ hlt =>
-    le_trans hδ_c (hRgood ρ hζ hlt)
-  set R2 : ℝ := R + 3 * δ / 4 with hR2_def
-  have hR1R2 : R + δ / 2 < R2 := by
-    rw [hR2_def]
-    linarith only [hδ_pos]
-  have hR2small : R2 < 2 / 5 := by
-    rw [hR2_def]
-    nlinarith only [hR.2, hδ_small]
-  have hR2pos : (0 : ℝ) < R2 := by
-    rw [hR2_def]
-    linarith only [hR.1, hδ_pos]
-  have hz1 : ∀ w ∈ Metric.closedBall z (2 / 5 : ℝ), w ≠ 1 := by
-    intro w hw hw1
-    rw [Metric.mem_closedBall, Complex.dist_eq, hw1] at hw
-    have him : |(1 : ℂ).im - z.im| ≤ ‖(1 : ℂ) - z‖ := by
-      have h := Complex.abs_im_le_norm ((1 : ℂ) - z)
-      simpa only [Complex.one_im, zero_sub, abs_neg, ge_iff_le, Complex.sub_im] using h
-    rw [hzim, Complex.one_im, zero_sub, abs_neg, abs_of_nonneg hTpos.le] at him
-    linarith only [hH, hT.1, him, hw]
-  have hzgood : riemannZeta z ≠ 0 := by
-    intro hzero
-    have h1 : |z.im - H| ≤ 2 := by
-      rw [hzim]
-      rw [abs_le]
-      constructor <;> linarith only [hT.1, hT.2]
-    have h2 := hgood z hzero h1
-    rw [hzim, sub_self, abs_zero] at h2
-    have : (0 : ℝ) < 1 / (4 * jensenLogConst * Real.log (H + 2)) :=
-      one_div_pos.mpr (mul_pos (mul_pos (by norm_num only) hLCpos) hlogpos)
-    exact (not_le_of_gt this) h2
-  have hz1R2 : ∀ w ∈ Metric.closedBall z R2, w ≠ 1 := fun w hw =>
-    hz1 w (Metric.closedBall_subset_closedBall hR2small.le hw)
-  obtain ⟨S, m, g, hgAn, hgne, hmpos, hSU, hSzero, hmeqSmall, heqOn, hlog⟩ :=
-    exists_logDeriv_riemannZeta_eq_sum_add_logDeriv (R := R2) hR2pos hz1R2 hzgood
-  have hu_dist : ∀ u ∈ S, ‖z - u‖ ≤ R - δ := by
-    intro u hu
-    have huU := hSU u hu
-    rw [Metric.mem_ball, Complex.dist_eq] at huU
-    have hlt_R2 : ‖z - u‖ < R2 := by
-      rw [norm_sub_rev]
-      exact huU
-    have hlt25 : ‖z - u‖ < 2 / 5 := lt_trans hlt_R2 hR2small
-    have hthis := hRgood' u (hSzero u hu) hlt25
-    by_contra hcon
-    push Not at hcon
-    have hup : ‖z - u‖ < R + δ := by
-      rw [hR2_def] at hlt_R2
-      linarith only [hlt_R2, hδ_pos]
-    have habs : |R - ‖z - u‖| < δ := abs_lt.mpr ⟨by linarith only [hup], by linarith only [hcon]⟩
-    exact (not_lt_of_ge hthis) habs
-  have hAnSmall : AnalyticOnNhd ℂ riemannZeta (Metric.ball z R2) := fun w hw =>
-    analyticOn_riemannZeta w (hz1R2 w (Metric.ball_subset_closedBall hw))
-  have hu_im_H : ∀ u ∈ S, |u.im - H| ≤ 2 := by
-    intro u hu
-    have huU := hSU u hu
-    rw [Metric.mem_ball, Complex.dist_eq] at huU
-    have h := Complex.abs_im_le_norm (u - z)
-    rw [Complex.sub_im, hzim] at h
-    have h2 : |u.im - T| < R2 := lt_of_le_of_lt h huU
-    have h2' : |u.im - T| < 2 / 5 := lt_trans h2 hR2small
-    rw [abs_lt] at h2'
-    rw [abs_le]
-    constructor <;> linarith only [h2'.1, h2'.2, hT.1, hT.2]
-  have hAnBig : AnalyticOnNhd ℂ riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) :=
-    (jensen_analyticOnNhd (le_trans (by norm_num only : (4 : ℝ) ≤ 8) hH)).mono
-      (Metric.closedBall_subset_closedBall (by norm_num only))
-  have hSbig : ∀ u ∈ S, u ∈ Metric.closedBall (jensenCenter H) (37 / 10) := fun u hu =>
-    riemannZeta_zero_mem_jensenBall hH (hSzero u hu) (hu_im_H u hu)
-  have hfin :=
-    (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10))).finiteSupport
-      (isCompact_closedBall _ _)
-  have hmeqBig :
-    ∀ u ∈ S,
-      (m u : ℤ) =
-        MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :=
-    fun u hu =>
-    (hmeqSmall u hu).trans
-      (divisor_riemannZeta_eq_of_analyticOnNhd hAnSmall hAnBig (hSU u hu) (hSbig u hu))
-  have hSsub : S ⊆ hfin.toFinset := by
-    intro u hu
-    rw [Set.Finite.mem_toFinset, Function.mem_support]
-    rw [← hmeqBig u hu]
-    exact_mod_cast (hmpos u hu).ne'
-  have hsum_le : (∑ u ∈ S, (m u : ℝ)) ≤ jensenLogConst * Real.log (H + 2) := by
-    have hcongr :
-      ∑ u ∈ S, (m u : ℝ) =
-        ∑ u ∈ S,
-          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
-            ℝ) :=
-      Finset.sum_congr rfl (fun u hu => by exact_mod_cast hmeqBig u hu)
-    rw [hcongr]
-    have hcard1 :
-      ∑ u ∈ S,
-          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u : ℝ) ≤
-        ∑ u ∈ hfin.toFinset,
-          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
-            ℝ) := by
-      apply Finset.sum_le_sum_of_subset_of_nonneg hSsub
-      intro u _ _
-      exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAnBig u
-    have hcard2 :
-      ∑ u ∈ hfin.toFinset,
-          (MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u : ℝ) =
-        ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
-            ℤ) :
-          ℝ) := by
-      rw [finsum_eq_finsetSum_of_support_subset _ (s := hfin.toFinset)
-          (by rw [Set.Finite.coe_toFinset])]
-      push_cast
-      rfl
-    rw [hcard2] at hcard1
-    exact hcard1.trans (finsum_divisor_riemannZeta_le_explicit hH)
-  have hmargin : ∀ u ∈ S, 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ ‖z - u‖ := by
-    intro u hu
-    have hmarg := hgood u (hSzero u hu) (hu_im_H u hu)
-    have hle : |T - u.im| ≤ ‖z - u‖ := by
-      have h := Complex.abs_im_le_norm (z - u)
-      rw [Complex.sub_im, hzim] at h
-      exact h
-    exact hmarg.trans hle
-  have hnormsum_le :
-    ‖∑ u ∈ S, (m u : ℂ) / (z - u)‖ ≤ 4 * (jensenLogConst * Real.log (H + 2)) ^ 2 := by
-    have hmarginpos : (0 : ℝ) < 4 * jensenLogConst * Real.log (H + 2) :=
-      mul_pos (mul_pos (by norm_num only) hLCpos) hlogpos
-    calc
-      ‖∑ u ∈ S, (m u : ℂ) / (z - u)‖ ≤ ∑ u ∈ S, ‖(m u : ℂ) / (z - u)‖ := norm_sum_le _ _
-      _ = ∑ u ∈ S, (m u : ℝ) / ‖z - u‖ := by
-        apply Finset.sum_congr rfl
-        intro u _
-        rw [norm_div, Complex.norm_natCast]
-      _ ≤ ∑ u ∈ S, (m u : ℝ) * (4 * jensenLogConst * Real.log (H + 2)) := by
-        apply Finset.sum_le_sum
-        intro u hu
-        have hrecip : 1 / ‖z - u‖ ≤ 4 * jensenLogConst * Real.log (H + 2) := by
-          have h1 := one_div_le_one_div_of_le (one_div_pos.mpr hmarginpos) (hmargin u hu)
-          rwa [one_div_one_div] at h1
-        rw [div_eq_mul_one_div]
-        exact mul_le_mul_of_nonneg_left hrecip (Nat.cast_nonneg _)
-      _ = (∑ u ∈ S, (m u : ℝ)) * (4 * jensenLogConst * Real.log (H + 2)) := by rw [Finset.sum_mul]
-      _ ≤ (jensenLogConst * Real.log (H + 2)) * (4 * jensenLogConst * Real.log (H + 2)) := by
-        exact mul_le_mul_of_nonneg_right hsum_le (le_of_lt hmarginpos)
-      _ = 4 * (jensenLogConst * Real.log (H + 2)) ^ 2 := by ring
-  exact
-    ⟨R, δ, R2, S, m, g, hδ_pos, hR, hR1R2, hR2small, hgAn, hgne, hmpos, hSzero, hu_dist, hsum_le,
-      heqOn, hnormsum_le, hlog⟩
-
 /-!
 ### Zeta growth on a small disk around a good-height point
 
@@ -960,88 +337,17 @@ Use the sawtooth bound with norm, real-part, and pole-distance estimates on
 a disk of radius less than `2/5` around `σ+iT`.
 -/
 
-theorem norm_riemannZeta_le_on_good_radius_ball {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
-    (hT : T ∈ Set.Icc H (H + 1)) {σ : ℝ} (hσ1 : -(1 : ℝ) / 2 ≤ σ) (_hσ2 : σ ≤ 2) {R1 : ℝ}
-    (hR1 : 0 < R1) (hR1small : R1 < 2 / 5) :
-    ∀ w ∈ Metric.closedBall (σ + T * Complex.I) R1,
-      ‖riemannZeta w‖ ≤
-        (‖σ + T * Complex.I‖ + R1) / (T - R1) + 1 / 2 +
-          (‖σ + T * Complex.I‖ + R1) * (‖σ + T * Complex.I‖ + R1 + 1) *
-            sawtoothRemainderBound (-9 / 10) := by
-  set z : ℂ := σ + T * Complex.I with hz_def
-  have hzim : z.im = T := by
-    simp only [hz_def, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
-      Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
-  have hzre : z.re = σ := by
-    simp only [hz_def, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
-      Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-  have hTpos : (0 : ℝ) < T := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) (le_trans hH hT.1)
-  intro w hw
-  simp only [Metric.mem_closedBall, dist_eq_norm] at hw
-  have hwre : σ - R1 ≤ w.re := by
-    have h1 : |w.re - z.re| ≤ ‖w - z‖ := by
-      have h := Complex.abs_re_le_norm (w - z)
-      simpa only [ge_iff_le, Complex.sub_re] using h
-    rw [hzre] at h1
-    have := (abs_le.mp h1).1
-    linarith only [this, hw]
-  have hwim : T - R1 ≤ w.im := by
-    have h1 : |w.im - z.im| ≤ ‖w - z‖ := by
-      have h := Complex.abs_im_le_norm (w - z)
-      simpa only [ge_iff_le, Complex.sub_im] using h
-    rw [hzim] at h1
-    have := (abs_le.mp h1).1
-    linarith only [this, hw]
-  have hzmem : w ∈ ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) := by
-    refine ⟨?_, ?_⟩
-    · change (-1 : ℝ) < w.re
-      linarith only [hwre, hσ1, hR1small]
-    · simp only [Set.mem_singleton_iff]
-      intro hw1
-      rw [hw1, Complex.one_im] at hwim
-      linarith only [hH, hT.1, hR1small, hwim]
-  have hb := norm_riemannZeta_le_of_reGt_neg_one_diff_one hzmem
-  have hnw : ‖w‖ ≤ ‖z‖ + R1 := by
-    have h1 : ‖w‖ ≤ ‖z‖ + ‖w - z‖ := by
-      have h := norm_add_le z (w - z)
-      simpa only [ge_iff_le, add_sub_cancel] using h
-    exact h1.trans (by simpa only [add_comm] using add_le_add_left hw ‖z‖)
-  have hnw0 : (0 : ℝ) ≤ ‖w‖ := norm_nonneg _
-  have hwre9 : (-9 : ℝ) / 10 ≤ w.re := by linarith only [hwre, hσ1, hR1small]
-  have hwsub1 : T - R1 ≤ ‖w - 1‖ := by
-    have h1 : |(w - 1).im| ≤ ‖w - 1‖ := Complex.abs_im_le_norm (w - 1)
-    rw [Complex.sub_im, Complex.one_im, sub_zero] at h1
-    have h2 := le_abs_self w.im
-    exact le_trans (le_trans hwim h2) h1
-  have hwsub1_pos : (0 : ℝ) < T - R1 := by linarith only [hH, hT.1, hR1small]
-  have hwsub1_pos' : (0 : ℝ) < ‖w - 1‖ := lt_of_lt_of_le hwsub1_pos hwsub1
-  have hterm1 : ‖w‖ / ‖w - 1‖ ≤ (‖z‖ + R1) / (T - R1) := by
-    rw [div_le_div_iff₀ hwsub1_pos' hwsub1_pos]
-    have h1 : ‖w‖ * (T - R1) ≤ (‖z‖ + R1) * (T - R1) := mul_le_mul_of_nonneg_right hnw hwsub1_pos.le
-    have h2 : (‖z‖ + R1) * (T - R1) ≤ (‖z‖ + R1) * ‖w - 1‖ :=
-      mul_le_mul_of_nonneg_left hwsub1 (add_nonneg (norm_nonneg _) hR1.le)
-    exact h1.trans h2
-  have hterm3 :
-    ‖w‖ * (‖w‖ + 1) * sawtoothRemainderBound w.re ≤
-      (‖z‖ + R1) * (‖z‖ + R1 + 1) * sawtoothRemainderBound (-9 / 10) := by
-    have hanti : sawtoothRemainderBound w.re ≤ sawtoothRemainderBound (-9 / 10) :=
-      sawtoothRemainderBound_antitone (by norm_num only) hwre9
-    have hbndnn0 : (0 : ℝ) ≤ sawtoothRemainderBound w.re := sawtoothRemainderBound_nonneg w.re
-    have hzplus_nonneg : 0 ≤ ‖z‖ + R1 := add_nonneg (norm_nonneg _) hR1.le
-    have hwplus1_nonneg : 0 ≤ ‖w‖ + 1 := add_nonneg hnw0 (by norm_num only)
-    have hzplus1_nonneg : 0 ≤ ‖z‖ + R1 + 1 := add_nonneg hzplus_nonneg (by norm_num only)
-    have h1 : ‖w‖ * (‖w‖ + 1) ≤ (‖z‖ + R1) * (‖z‖ + R1 + 1) :=
-      mul_le_mul hnw (by simpa only [add_comm] using add_le_add_right hnw 1) hwplus1_nonneg
-        hzplus_nonneg
-    exact mul_le_mul h1 hanti hbndnn0 (mul_nonneg hzplus_nonneg hzplus1_nonneg)
-  linarith only [hb, hterm1, hterm3]
-
 /-! ### Extending a boundary bound on `Re h` to the whole region via the exponential trick
 
 A general, `ζ`-independent fact: if `h` is holomorphic on a bounded region and `Re h ≤ M` on its
 frontier, then `Re h ≤ M` throughout (apply the ordinary maximum modulus principle to
 `exp(h - M)`, whose norm is `exp(Re h - M)`). -/
 
+/--
+A function holomorphic on a bounded region and continuous on its closure has
+real part at most `M` on the closure if this holds on the frontier. Apply the maximum
+modulus principle to `exp(h-M)`; this extends logarithmic-factor boundary bounds.
+-/
 theorem re_le_of_forall_mem_frontier_re_le {h : ℂ → ℂ} {U : Set ℂ} (hU : Bornology.IsBounded U)
     (hd : DiffContOnCl ℂ h U) {M : ℝ} (hM : ∀ w ∈ frontier U, (h w).re ≤ M) {z : ℂ}
     (hz : z ∈ closure U) : (h z).re ≤ M := by
@@ -1068,148 +374,6 @@ theorem re_le_of_forall_mem_frontier_re_le {h : ℂ → ℂ} {U : Set ℂ} (hU :
   have := Real.exp_le_one_iff.mp hFz
   exact sub_nonpos.mp this
 
-/-! ### The boundary bound on `Re h`, extended to the whole disk
-
-Combining the `ζ`-growth bound
-(`PseudoPrime.AnalyticNumberTheory.RiemannZeta.norm_riemannZeta_le_on_good_radius_ball`)
-with the good-radius margin (`‖w - u‖ ≥ 3δ/2` on `sphere z R1` for each extracted zero `u`,
-since `u` sits at distance
-`≤ R - δ` from `z` while `R1 = R + δ/2`) gives `Re h ≤ M` on `sphere z R1 = frontier (ball z R1)`
-for an explicit `M`;
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.re_le_of_forall_mem_frontier_re_le`
-then extends this to all of
-`closedBall z R1`. Continuity of `h` up to that closed ball is automatic, since
-`closedBall z R1 ⊆ ball z R2` (as `R1 < R2`) and `h` already has a genuine derivative throughout
-`ball z R2`. -/
-
-theorem exists_bound_re_logDeriv_g_good_radius {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
-    (hT : T ∈ Set.Icc H (H + 1))
-    (hgood :
-      ∀ ρ : ℂ,
-        riemannZeta ρ = 0 →
-          |ρ.im - H| ≤ 2 → 1 / (4 * jensenLogConst * Real.log (H + 2)) ≤ |T - ρ.im|)
-    {σ : ℝ} (hσ1 : -(1 : ℝ) / 2 ≤ σ) (hσ2 : σ ≤ 2) :
-    ∃ (R1 R2 : ℝ) (S : Finset ℂ) (m : ℂ → ℕ) (g h : ℂ → ℂ) (M : ℝ),
-      0 < R1 ∧
-        R1 < R2 ∧
-        R2 < 2 / 5 ∧
-        (∀ w ∈ Metric.ball (σ + T * Complex.I) R2, HasDerivAt h (logDeriv g w) w) ∧
-        logDeriv riemannZeta (σ + T * Complex.I) =
-          (∑ u ∈ S, (m u : ℂ) / ((σ + T * Complex.I) - u)) + logDeriv g (σ + T * Complex.I) ∧
-        ‖∑ u ∈ S, (m u : ℂ) / ((σ + T * Complex.I) - u)‖ ≤
-          4 * (jensenLogConst * Real.log (H + 2)) ^ 2 ∧
-        (∀ w ∈ Metric.closedBall (σ + T * Complex.I) R1, (h w).re ≤ M) := by
-  obtain
-    ⟨R, δ, R2, S, m, g, hδ_pos, hR, hR1R2, hR2small, hgAn, hgne, hmpos, hSzero, hu_dist, hsum_le,
-      heqOn, hnormsum_le, hlog⟩ :=
-    exists_riemannZeta_zeroFree_factorization_good_radius hH hT hgood σ
-  set z : ℂ := σ + T * Complex.I with hz_def
-  set R1 : ℝ := R + δ / 2 with hR1_def
-  have hR1pos : (0 : ℝ) < R1 := by
-    rw [hR1_def]
-    linarith only [hR.1, hδ_pos]
-  have hR1lt25 : R1 < 2 / 5 := lt_trans hR1R2 hR2small
-  have hR2pos : (0 : ℝ) < R2 := lt_trans hR1pos hR1R2
-  obtain ⟨h, hh', hh_re⟩ :=
-    exists_hasDerivAt_logDeriv_re_eq_log_norm (f := g) (c := z) (r := R2) hR2pos hgAn hgne
-  have hR1subR2 : Metric.closedBall z R1 ⊆ Metric.ball z R2 := by
-    intro w hw
-    rw [Metric.mem_closedBall] at hw
-    rw [Metric.mem_ball]
-    exact lt_of_le_of_lt hw hR1R2
-  have hdiff : DifferentiableOn ℂ h (Metric.ball z R1) := fun w hw =>
-    (hh' w (hR1subR2 (Metric.ball_subset_closedBall hw))).differentiableAt.differentiableWithinAt
-  have hcont : ContinuousOn h (Metric.closedBall z R1) := fun w hw =>
-    (hh' w (hR1subR2 hw)).continuousAt.continuousWithinAt
-  have hR1ne : R1 ≠ 0 := hR1pos.ne'
-  have hclosure : closure (Metric.ball z R1) = Metric.closedBall z R1 := closure_ball z hR1ne
-  have hdcc : DiffContOnCl ℂ h (Metric.ball z R1) :=
-    ⟨hdiff, by
-      rw [hclosure]
-      exact hcont⟩
-  have hζbound := norm_riemannZeta_le_on_good_radius_ball hH hT hσ1 hσ2 hR1pos hR1lt25
-  set Mζ : ℝ :=
-    (‖z‖ + R1) / (T - R1) + 1 / 2 +
-      (‖z‖ + R1) * (‖z‖ + R1 + 1) * sawtoothRemainderBound (-9 / 10) with
-    hMζ_def
-  set Nmax : ℝ := jensenLogConst * Real.log (H + 2) with hNmax_def
-  set M : ℝ := Real.log Mζ - Nmax * Real.log (3 * δ / 2) with hM_def
-  have hδlt : δ < 2 / 5 := by
-    rw [hR1_def] at hR1R2
-    linarith only [hR.1, hR1R2, hR2small]
-  have h3δ2 : 3 * δ / 2 < 1 := by linarith only [hδlt]
-  have h3δ2pos : (0 : ℝ) < 3 * δ / 2 :=
-    div_pos (mul_pos (by norm_num only) hδ_pos) (by norm_num only)
-  have hlogneg : Real.log (3 * δ / 2) ≤ 0 := Real.log_nonpos h3δ2pos.le h3δ2.le
-  have hNmaxnn : (0 : ℝ) ≤ Nmax := by
-    have hLCpos := jensenLogConst_pos
-    have hlogpos : (0 : ℝ) < Real.log (H + 2) := Real.log_pos (by linarith only [hH])
-    rw [hNmax_def]
-    exact mul_nonneg hLCpos.le (Real.log_nonneg (by linarith only [hH]))
-  refine ⟨R1, R2, S, m, g, h, M, hR1pos, hR1R2, hR2small, hh', hlog, hnormsum_le, ?_⟩
-  have hMbound : ∀ w ∈ frontier (Metric.ball z R1), (h w).re ≤ M := by
-    intro w hwf
-    rw [frontier_ball z hR1ne, Metric.mem_sphere] at hwf
-    have hwR1 : w ∈ Metric.closedBall z R1 := by
-      rw [Metric.mem_closedBall]
-      exact hwf.le
-    have hwR2 : w ∈ Metric.ball z R2 := hR1subR2 hwR1
-    have hPlb : ∀ u ∈ S, 3 * δ / 2 ≤ ‖w - u‖ := by
-      intro u hu
-      have h1 : ‖z - u‖ ≤ R - δ := hu_dist u hu
-      have h3 : ‖w - z‖ = R1 := by
-        rw [← dist_eq_norm]
-        exact hwf
-      have htri : ‖w - z‖ ≤ ‖w - u‖ + ‖u - z‖ := by
-        have h := norm_add_le (w - u) (u - z)
-        simpa only [ge_iff_le, sub_add_sub_cancel] using h
-      rw [norm_sub_rev u z, h3] at htri
-      linarith only [htri, h1, hR1_def]
-    have hPfactor_pos : ∀ u ∈ S, (0 : ℝ) < ‖w - u‖ := fun u hu => lt_of_lt_of_le h3δ2pos (hPlb u hu)
-    have hPne : (∏ u ∈ S, (w - u) ^ m u) ≠ 0 := by
-      apply Finset.prod_ne_zero_iff.mpr
-      intro u hu
-      exact pow_ne_zero _ (norm_pos_iff.mp (hPfactor_pos u hu))
-    have hζval : riemannZeta w = (∏ u ∈ S, (w - u) ^ m u) * g w := heqOn hwR2
-    have hgval : g w = riemannZeta w / (∏ u ∈ S, (w - u) ^ m u) := by
-      rw [hζval, mul_div_cancel_left₀ (g w) hPne]
-    have hgw_ne : g w ≠ 0 := hgne w hwR2
-    have hnormg : ‖g w‖ = ‖riemannZeta w‖ / ‖∏ u ∈ S, (w - u) ^ m u‖ := by rw [hgval, norm_div]
-    have hnormP : ‖∏ u ∈ S, (w - u) ^ m u‖ = ∏ u ∈ S, ‖w - u‖ ^ m u := by
-      rw [norm_prod]
-      exact Finset.prod_congr rfl (fun u _ => norm_pow (w - u) (m u))
-    have hlogP : Real.log (∏ u ∈ S, ‖w - u‖ ^ m u) = ∑ u ∈ S, (m u : ℝ) * Real.log ‖w - u‖ := by
-      rw [Real.log_prod (fun u hu => (pow_pos (hPfactor_pos u hu) (m u)).ne')]
-      exact Finset.sum_congr rfl (fun u _ => Real.log_pow ‖w - u‖ (m u))
-    have hlogP_lb :
-      (∑ u ∈ S, (m u : ℝ)) * Real.log (3 * δ / 2) ≤ ∑ u ∈ S, (m u : ℝ) * Real.log ‖w - u‖ := by
-      rw [Finset.sum_mul]
-      apply Finset.sum_le_sum
-      intro u hu
-      have hlogle : Real.log (3 * δ / 2) ≤ Real.log ‖w - u‖ := Real.log_le_log h3δ2pos (hPlb u hu)
-      exact mul_le_mul_of_nonneg_left hlogle (Nat.cast_nonneg (m u))
-    have hNmax_le : Nmax * Real.log (3 * δ / 2) ≤ (∑ u ∈ S, (m u : ℝ)) * Real.log (3 * δ / 2) :=
-      mul_le_mul_of_nonpos_right hsum_le hlogneg
-    have hlogPw_ge : Nmax * Real.log (3 * δ / 2) ≤ Real.log ‖∏ u ∈ S, (w - u) ^ m u‖ := by
-      rw [hnormP, hlogP]
-      exact hNmax_le.trans hlogP_lb
-    have hζw_pos : (0 : ℝ) < ‖riemannZeta w‖ := by
-      rw [hζval]
-      exact norm_pos_iff.mpr (mul_ne_zero hPne hgw_ne)
-    have hPw_pos : (0 : ℝ) < ‖∏ u ∈ S, (w - u) ^ m u‖ := norm_pos_iff.mpr hPne
-    have hζw : ‖riemannZeta w‖ ≤ Mζ := hζbound w hwR1
-    have hloggw :
-      Real.log ‖g w‖ = Real.log ‖riemannZeta w‖ - Real.log ‖∏ u ∈ S, (w - u) ^ m u‖ := by
-      rw [hnormg, Real.log_div hζw_pos.ne' hPw_pos.ne']
-    rw [hh_re w hwR2, hloggw]
-    have hlogζ_le : Real.log ‖riemannZeta w‖ ≤ Real.log Mζ := Real.log_le_log hζw_pos hζw
-    rw [hM_def]
-    linarith only [hlogζ_le, hlogPw_ge]
-  intro w hw
-  refine re_le_of_forall_mem_frontier_re_le (Metric.isBounded_ball) hdcc hMbound ?_
-  rw [hclosure]
-  exact hw
-
 /-!
 ### Off-center derivative estimates
 
@@ -1218,6 +382,12 @@ control `F` at every interior point. Shift to the origin, apply
 Borel–Carathéodory, then use Cauchy's estimate on a circle about the evaluation point.
 -/
 
+/--
+For a primitive `h` of `F` on a disk, a real-part upper bound with strict center
+slack gives the displayed bound for `‖F z‖` at every interior point. Shift to the
+origin, apply Borel–Carathéodory, and use a Cauchy circle of radius half the remaining
+distance to the boundary. This bounds the zero-free factor logarithmic derivative.
+-/
 theorem norm_hasDerivAt_le_of_re_le {h F : ℂ → ℂ} {c : ℂ} {R : ℝ} (hR : 0 < R)
     (hh' : ∀ w ∈ Metric.ball c R, HasDerivAt h (F w) w) {M : ℝ} (hMc : (h c).re < M)
     (hRe_le : ∀ w ∈ Metric.ball c R, (h w).re ≤ M) {z : ℂ} (hz : z ∈ Metric.ball c R) :
@@ -1340,24 +510,12 @@ theorem norm_hasDerivAt_le_of_re_le {h F : ℂ → ℂ} {c : ℂ} {R : ℝ} (hR 
   rw [hM'_def] at hcauchy
   exact hcauchy
 
-/-! ### A Jensen-scale good radius, centered at `jensenCenter T`
-
-Mirrors `PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_good_radius_twoSided`,
-but centered at `PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter T` instead of
-the evaluation point, with the good radius near `37/10` instead of near `1/5`. Since
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter T` (real part `3`) is far enough
-from the target range `σ ∈ [-1/2, 2]` (distance up to `7/2`) that no small
-disk around the evaluation point can reach a point where `‖ζ‖` is known to be bounded away from
-`0`, the Borel–Carathéodory reference point must be
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter T` itself — reusing
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensen_center_norm_ge`.
-Since `37/10` already exceeds the needed `7/2` reach with room to
-spare, and `PseudoPrime.AnalyticNumberTheory.RiemannZeta.finsum_divisor_riemannZeta_le_explicit`
-is already generic in its height parameter
-(not tied to a separately-chosen `H`), this reuses the zeta-side estimate zero-count bound directly
-at `T`, with no need to extend it to a bigger radius or to embed via a separate
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter H` disk. -/
-
+/--
+For `T≥8`, a radius in `[71/20,73/20]` about the Jensen center is separated
+from every zero within radius `37/10` by the stated reciprocal-logarithmic margin.
+Bound the number of zero distances by Jensen and exclude short intervals around
+them; this selects a radius covering the full evaluation strip with a safe boundary.
+-/
 theorem exists_jensen_good_radius_twoSided {T : ℝ} (hT : 8 ≤ T) :
     ∃ R ∈ Set.Icc (71 / 20 : ℝ) (73 / 20),
       ∀ ρ : ℂ,
@@ -1450,7 +608,8 @@ theorem exists_jensen_good_radius_twoSided {T : ℝ} (hT : 8 ≤ T) :
         norm_num only
       _ < 1 / 10 := by norm_num only
   obtain ⟨R, hR, hRgood⟩ :=
-    exists_avoiding_point_length (a := 71 / 20) hc_pos (by norm_num only : (0 : ℝ) < 1 / 10) hlen
+    Analysis.exists_avoiding_point_length (a := 71 / 20) hc_pos
+      (by norm_num only : (0 : ℝ) < 1 / 10) hlen
   have hR' : R ∈ Set.Icc (71 / 20 : ℝ) (73 / 20) := by
     rw [show (71 / 20 : ℝ) + 1 / 10 = 73 / 20 from by norm_num only] at hR
     exact hR
@@ -1478,13 +637,12 @@ theorem exists_jensen_good_radius_twoSided {T : ℝ} (hT : 8 ≤ T) :
   have hmem : ‖z - ρ‖ ∈ D := Finset.mem_image_of_mem _ hd
   exact hRgood _ hmem
 
-/-! ### Jensen-scale local factorization, with room to spare for continuity
-
-Mirrors `PseudoPrime.AnalyticNumberTheory.RiemannZeta.`
-`exists_riemannZeta_zeroFree_factorization_good_radius`,
-but centered at `PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter T`
-with radius near `37/10` instead of centered at the evaluation point with radius near `1/5`. -/
-
+/--
+For `T≥8`, factor zeta about the Jensen center on a ball slightly larger than
+a radius in `[71/20,73/20]`. Extracted zeros lie `δ` inside it, with an explicit
+lower bound for `δ` and a Jensen multiplicity bound. Choose the larger radius within
+the zero-free radial gap; later closed-disk estimates then retain analyticity.
+-/
 theorem exists_riemannZeta_zeroFree_factorization_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
     ∃ (R δ R2 : ℝ) (S : Finset ℂ) (m : ℂ → ℕ) (g : ℂ → ℂ),
       0 < δ ∧
@@ -1608,27 +766,13 @@ theorem exists_riemannZeta_zeroFree_factorization_jensen_good_radius {T : ℝ} (
     ⟨R, δ, R2, S, m, g, hδ_pos, hδ_ge, hR, hR1R2, hR2small, hgAn, hgne, hmpos, hSzero, hu_dist,
       hsum_le, heqOn⟩
 
-/-! ### The boundary bound at the Jensen scale, with a strict bound at the center
-
-Mirrors `PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_bound_re_logDeriv_g_good_radius`,
-but centered at `PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter T`. The `ζ`-growth
-bound throughout the disk comes from
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensen_f_bound_ball` (a single constant `jensenM T`,
-not depending on the radius, unlike
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.norm_riemannZeta_le_on_good_radius_ball`'s
-`z`-dependent `Mζ`).  The genuinely new ingredient is the *strict* inequality at the center
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter T` itself, needed to invoke
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.norm_hasDerivAt_le_of_re_le`:
-every zero `u` of `ζ` satisfies `u.re ≤ 1`
-(`PseudoPrime.AnalyticNumberTheory.RiemannZeta.riemannZeta_zero_re_le_one`, unconditional) while
-`(PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter T).re = 3`, giving
-`‖PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter T - u‖ ≥ 2 > 1` for every zero — hence
-`‖P(PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter T)‖ ≥ 1` regardless of
-which zeros are extracted, giving
-`Re h(PseudoPrime.AnalyticNumberTheory.RiemannZeta.jensenCenter T) ≤ log(jensenM T) < M` directly
-(`M` being strictly larger due to the extra positive term from the boundary's zero-count penalty).
+/--
+For `T≥8`, construct a Jensen-centered factorization and logarithmic primitive
+with a uniform real-part bound on the inner closed disk, strict slack at the center,
+and explicit center and upper-bound estimates. Use the radial zero gap for the
+boundary product, Jensen growth, and the distance at least two from center to every
+zero. These certificates feed the off-center derivative and squared-log estimates.
 -/
-
 theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
     ∃ (R1 R2 : ℝ) (S : Finset ℂ) (m : ℂ → ℕ) (g h : ℂ → ℂ) (M : ℝ),
       (71 : ℝ) / 20 ≤ R1 ∧
@@ -1664,7 +808,7 @@ theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
   have hR1lt37 : R1 < 37 / 10 := lt_trans hR1R2 hR2small
   have hR2pos : (0 : ℝ) < R2 := lt_trans hR1pos hR1R2
   obtain ⟨h, hh', hh_re⟩ :=
-    exists_hasDerivAt_logDeriv_re_eq_log_norm (f := g) (c := z) (r := R2) hR2pos hgAn hgne
+    Analysis.exists_hasDerivAt_logDeriv_re_eq_log_norm (f := g) (c := z) (r := R2) hR2pos hgAn hgne
   have hR1subR2 : Metric.closedBall z R1 ⊆ Metric.ball z R2 := by
     intro w hw
     rw [Metric.mem_closedBall] at hw
@@ -1927,6 +1071,11 @@ noncomputable def qMinusOneZetaLogDerivConst : ℝ :=
               (Real.log (2 / 3) + Real.log 4 + Real.log (40 * jensenLogConst + 50) - 1)| +
         jensenLogConst)
 
+/--
+The fixed good-height logarithmic-derivative constant is nonnegative. Its defining
+terms are squares, absolute values, and positive Jensen constants; later majorant
+comparisons can multiply by it without reversing inequalities.
+-/
 theorem qMinusOneZetaLogDerivConst_nonneg : 0 ≤ qMinusOneZetaLogDerivConst := by
   unfold qMinusOneZetaLogDerivConst
   have hLCpos := jensenLogConst_pos
@@ -1935,6 +1084,12 @@ theorem qMinusOneZetaLogDerivConst_nonneg : 0 ≤ qMinusOneZetaLogDerivConst := 
       (mul_nonneg (by norm_num only)
         (add_nonneg (add_nonneg (abs_nonneg _) (abs_nonneg _)) hLCpos.le))
 
+/--
+Under the stated height, radius, center-slack, and semi-explicit bound hypotheses,
+`X` is at most `qMinusOneZetaLogDerivConst*log(T+2)²`. Bound the geometric derivative
+factor by `2880`, use the quadratic Jensen majorant, and absorb constant and linear
+logarithm terms into the square. This closes the numerical part of the zeta estimate.
+-/
 theorem le_qMinusOneZetaLogDerivConst_mul_log_sq_of_semi_explicit {H T R1 M gjc d X : ℝ}
     (hH : 8 ≤ H) (hT1 : H ≤ T) (_hT2 : T ≤ H + 1) (hR1big : 71 / 20 ≤ R1) (hR1lt37 : R1 < 37 / 10)
     (hd_le : d ≤ 7 / 2) (hMc : gjc < M)
@@ -2126,6 +1281,13 @@ estimate and the finite zero sum. Nearby zeros use the good-height margin;
 other zeros have ordinate distance greater than one.
 -/
 
+/--
+For the stated good height `T∈[H,H+1]`, `H≥8`, every nonvanishing point
+`σ+iT` with `-1/2≤σ≤2` has the fixed squared-logarithmic derivative bound.
+Evaluate the Jensen-scale factorization off center, control nearby zeros by the
+good-height margin and other zeros by distance one, then apply the semi-explicit
+numerical reduction. Horizontal contour estimates consume this uniform bound.
+-/
 theorem forall_norm_logDeriv_riemannZeta_le {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
     (hT : T ∈ Set.Icc H (H + 1))
     (hgood :

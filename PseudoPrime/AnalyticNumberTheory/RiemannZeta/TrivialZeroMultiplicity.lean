@@ -71,7 +71,11 @@ theorem riemannZeta_eq_mul_sin_eventually (n : ℕ) :
   rw [hs]
   ring
 
-/-- Every trivial zero `-2(n+1)` of `ζ` is a *simple* zero. -/
+/--
+Every trivial zero `-2(n+1)` has multiplicity one. The functional equation factors
+zeta into a nonvanishing analytic factor and a sine with nonzero derivative. Add their
+analytic orders; the residue formulas then have no unknown multiplicity factor.
+-/
 theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
     riemannZetaZeroMultiplicity (-2 * ((n : ℂ) + 1)) = 1 := by
   set w₀ : ℂ := -2 * ((n : ℂ) + 1) with hw₀_def
@@ -249,6 +253,11 @@ theorem riemannZetaReciprocalZeroContribution_neg_two_mul_nat_add_one {x : ℝ} 
 
 /-! The reciprocal trivial-zero summand is nonnegative for nonnegative `x`. -/
 
+/--
+For nonnegative `x`, each reciprocal trivial-zero term is nonnegative, including the
+totalized value at zero. Positivity of inverse powers and denominator factors proves
+the claim; finite-sum and infinite-series comparisons use it.
+-/
 theorem reciprocalTrivialZeroTerm_nonneg {x : ℝ} (hx : 0 ≤ x) (k : ℕ) :
     0 ≤ x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1)) := by
   have hk_nonneg : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
@@ -259,6 +268,11 @@ theorem reciprocalTrivialZeroTerm_nonneg {x : ℝ} (hx : 0 ≤ x) (k : ℕ) :
 
 /-! A reciprocal trivial-zero summand is bounded by a geometric summand on `x ≥ 2`. -/
 
+/--
+For `x≥2`, the reciprocal trivial-zero term at index `k` is at most
+`x⁻¹^3/6*(x⁻¹²)^k`. Bound the denominator below by six and split the power;
+this supplies a geometric majorant for residue sums.
+-/
 theorem reciprocalTrivialZeroTerm_le_geometric {x : ℝ} (hx : 2 ≤ x) (k : ℕ) :
     x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1)) ≤
       x⁻¹ ^ 3 / 6 * (x⁻¹ ^ 2) ^ k := by
@@ -296,9 +310,12 @@ theorem reciprocalTrivialZeroTerm_le_geometric_of_pos {x : ℝ} (hx : 0 < x) (k 
       rw [hexponent, pow_add, pow_mul]
       ring
 
-/-- The logarithmic-kernel analogue of `PseudoPrime.AnalyticNumberTheory.RiemannZeta.`
-`riemannZetaReciprocalZeroContribution_neg_two_mul_nat_add_one`: `ζ`'s logarithmic-kernel
-contribution at the `k`-th trivial zero `-2(k+1)` is `-x^{-2(k+1)}/(4(k+1)²)`. -/
+/--
+For positive `x`, the logarithmic-kernel contribution at `-2(k+1)` is
+`-x⁻¹^(2(k+1))/(4(k+1)²)`. Substitute simplicity, convert the negative complex
+power to an inverse natural power, and normalize the denominator; trivial-zero ledgers
+use this expression in their finite and infinite series.
+-/
 theorem riemannZetaLogZeroContribution_neg_two_mul_nat_add_one {x : ℝ} (hx : 0 < x) (k : ℕ) :
     riemannZetaLogZeroContribution x (-2 * ((k : ℂ) + 1)) =
       -((x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2) : ℝ) : ℂ) := by
@@ -328,15 +345,6 @@ theorem riemannZetaLogZeroContribution_neg_two_mul_nat_add_one {x : ℝ} (hx : 0
 are positive and the series converges. -/
 noncomputable def riemannZetaLogTrivialZeroSeries (x : ℝ) : ℝ :=
   ∑' k : ℕ, x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2)
-
-/-- The logarithmic trivial-zero series is nonnegative for `x ≥ 0`. -/
-theorem riemannZetaLogTrivialZeroSeries_nonneg {x : ℝ} (hx : 0 ≤ x) :
-    0 ≤ riemannZetaLogTrivialZeroSeries x := by
-  rw [riemannZetaLogTrivialZeroSeries]
-  exact
-    tsum_nonneg fun k =>
-      div_nonneg (pow_nonneg (inv_nonneg.mpr hx) _)
-        (mul_nonneg (by norm_num only) (sq_nonneg ((k : ℝ) + 1)))
 
 /-- The logarithmic trivial-zero series' summand sequence is summable for every `x > 1`. -/
 theorem summable_logTrivialZeroTerm {x : ℝ} (hx : 1 < x) :

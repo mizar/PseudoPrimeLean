@@ -4,19 +4,26 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveLogResidueClosedForms
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroContribution
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveMultiplicityBridge
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.QuadraticFunctionalConsequences
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ContourRegularity
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveLogResidueClosedForms
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroContribution
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveMultiplicityBridge
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFunctionalEquation
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ContourRegularity
 
 /-! General smoothed-contour identities and bounds. -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
-/-- The logarithmic-kernel residue at any point of the primitive singularity ledger: `s = 0`
-(parity-dependent), `s = 1` (always `0`, the log kernel has no pole there), or an ordinary
-`L`-zero. -/
+/-- Designated logarithmic residue contribution for a nontrivial character and real weight `x`.
+At zero use half the second derivative of the canonical even regularization with multiplicity
+one, or the derivative of the odd Mellin regularization; at one return zero; elsewhere use the
+ordinary zero contribution. The definition is total and imposes neither primitivity nor `x > 0`.
+The local boundary certificates identify these values with actual residues for primitive
+characters and positive `x`, and the finite contour identities sum them over the ledger. -/
 noncomputable def dirichletLogResidueAt {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (_hne : χ ≠ 1) (x : ℝ) (s : ℂ) : ℂ := by
   classical
@@ -260,27 +267,10 @@ theorem dirichletLogResidueAt_eq_zeroContribution_of_mem_erase {N : ℕ} [NeZero
   have hρ1 : ρ ≠ 1 := (Finset.mem_erase.mp (Finset.mem_of_mem_erase hρ)).1
   exact dirichletLogResidueAt_zero_ne_one hne x hρ0 hρ1
 
-/--
-Input/assumptions: `N ≥ 2`, `χ` primitive nontrivial quadratic mod `N`, GRH, `χ⁻¹ ≠ 1`, `x > 0`.
-Conclusion: `Re Σ_{ρ ∈ (S.erase 1).erase 0} r_log(ρ) ≤ 2√x |Re B(χ)|`, where `S` is the primitive
-singularity ledger of any rectangle `z, w`.
-Content: `Complex.re_sum` splits the real part of the sum; on the erased ledger,
-`DirichletLFunction.dirichletLogResidueAt_eq_zeroContribution_of_mem_erase`
-identifies each residue with its zero
-contribution; the pointwise bound
-(`DirichletLFunction.dirichletLFunctionLogZeroContribution_re_le_completedTerm_norm`)
-dominates each summand by the completed-zero term's norm; `Finset.sum_le_sum` plus the finite
-subset bound
-(`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.sum_norm_completedLogZeroTerm_le`) finishes.
-Mirrors
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.re_sum_erased_primitiveReciprocalResidues_le`.
-Role: the log-kernel erased-ledger bound, `A`,`k`-independent, feeding finite-contour residue-sum
-bounds.
--/
+/-- Generic erased-ledger estimate using the pair-system finite zero-mass bound. -/
 theorem re_sum_erased_primitiveLogResidues_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
-    (hx : 0 < x) {z w : ℂ} :
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {z w : ℂ} :
     (∑ ρ ∈ ((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0,
           dirichletLogResidueAt hne x ρ).re ≤
       2 * Real.sqrt x * |primitiveBRe χ| := by
@@ -304,6 +294,6 @@ theorem re_sum_erased_primitiveLogResidues_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
               ρ ^ 2‖ :=
       Finset.sum_le_sum hstep
     _ ≤ 2 * Real.sqrt x * |primitiveBRe χ| :=
-      sum_norm_completedLogZeroTerm_le hN2 hGRH hprimitive hne hinv hquad hx S
+      sum_norm_completedLogZeroTerm_le_abs_BRe hN2 hGRH hprimitive hne hinv hx S
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

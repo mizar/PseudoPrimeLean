@@ -4,14 +4,85 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMass
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.TrivialZeroMultiplicity
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMass
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.TrivialZeroMultiplicity
 
 /-!
 # Finite zeta zero-contribution bounds under RH
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+
+open PseudoPrime.AnalyticNumberTheory.RiemannXi in
+/-- Under RH, the inverse-norm-square multiplicity sum of a finite set of
+nontrivial zeta zeros is at most twice the Riemann zero mass. The summable
+xi-zero family supplies the bound used by both smoothed kernels. -/
+theorem sum_riemannZetaZeroMultiplicity_invNormSq_le (hRH : RiemannHypothesis) (S : Finset ℂ)
+    (hSzero : ∀ ρ ∈ S, riemannZeta ρ = 0) (hSre : ∀ ρ ∈ S, 0 ≤ ρ.re) :
+    (∑ ρ ∈ S, (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ) ≤ 2 * riemannZeroMass := by
+  have ht :=
+    (summable_riemannXiZeroMultiplicityInvNormSq_of_riemannHypothesis hRH).sum_le_tsum S
+      (fun ρ _ ↦ by
+        split <;> [exact div_nonneg (Nat.cast_nonneg _) (Complex.normSq_nonneg _); exact le_refl 0])
+  rw [tsum_riemannXiZeroMultiplicity_invNormSq_eq_two_mul_riemannZeroMass_of_riemannHypothesis
+      hRH] at ht
+  refine le_trans (le_of_eq (Finset.sum_congr rfl (fun ρ hρ ↦ ?_))) ht
+  have hz := riemannXi_eq_zero_of_riemannZeta_zero_re_nonneg (hSzero ρ hρ) (hSre ρ hρ)
+  rw [ite_eq_left hz, riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity_of_zero hz]
+
+/-- Under RH and x > 0, the logarithmic contributions of a finite set of zeta zeros
+with nonnegative real part have a sum of norm at most `2 * riemannZeroMass * sqrt x`.
+Use the triangle inequality, the critical-line norm identity, and the finite
+inverse-square multiplicity bound. This controls both signs of the real error. -/
+theorem norm_sum_riemannZetaLogZeroContribution_le (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 < x)
+    (S : Finset ℂ) (hSzero : ∀ ρ ∈ S, riemannZeta ρ = 0) (hSre : ∀ ρ ∈ S, 0 ≤ ρ.re) :
+    ‖∑ ρ ∈ S, riemannZetaLogZeroContribution x ρ‖ ≤
+      2 * RiemannXi.riemannZeroMass * Real.sqrt x := by
+  have heq :
+    (∑ ρ ∈ S, ‖riemannZetaLogZeroContribution x ρ‖) =
+      Real.sqrt x * ∑ ρ ∈ S, (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ := by
+    rw [Finset.mul_sum]
+    exact
+      Finset.sum_congr rfl fun ρ hρ ↦ by
+        rw [norm_riemannZetaLogZeroContribution_of_rh hRH hx (hSzero ρ hρ) (hSre ρ hρ),
+          mul_div_assoc]
+  have hb :=
+    mul_le_mul_of_nonneg_left (sum_riemannZetaZeroMultiplicity_invNormSq_le hRH S hSzero hSre)
+      (Real.sqrt_nonneg x)
+  calc
+    _ ≤ ∑ ρ ∈ S, ‖riemannZetaLogZeroContribution x ρ‖ := norm_sum_le _ _
+    _ ≤ 2 * RiemannXi.riemannZeroMass * Real.sqrt x := by
+      rw [heq]
+      exact hb.trans_eq (mul_comm _ _)
+
+/-- Under RH and x > 0, the reciprocal contributions of a finite set of zeta zeros
+with nonnegative real part have a sum of norm at most `2 * riemannZeroMass / sqrt x`.
+Apply the triangle inequality and the critical-line norm identity, then divide
+the finite inverse-square multiplicity bound by sqrt x. This gives the complex
+error estimate used in the reciprocal explicit formula. -/
+theorem norm_sum_riemannZetaReciprocalZeroContribution_le (hRH : RiemannHypothesis) {x : ℝ}
+    (hx : 0 < x) (S : Finset ℂ) (hSzero : ∀ ρ ∈ S, riemannZeta ρ = 0) (hSre : ∀ ρ ∈ S, 0 ≤ ρ.re) :
+    ‖∑ ρ ∈ S, riemannZetaReciprocalZeroContribution x ρ‖ ≤
+      2 * RiemannXi.riemannZeroMass / Real.sqrt x := by
+  have heq :
+    (∑ ρ ∈ S, ‖riemannZetaReciprocalZeroContribution x ρ‖) =
+      (∑ ρ ∈ S, (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ) / Real.sqrt x := by
+    rw [Finset.sum_div]
+    exact
+      Finset.sum_congr rfl fun ρ hρ ↦ by
+        rw [norm_riemannZetaReciprocalZeroContribution_of_rh hRH hx (hSzero ρ hρ) (hSre ρ hρ)]
+        ring
+  calc
+    _ ≤ ∑ ρ ∈ S, ‖riemannZetaReciprocalZeroContribution x ρ‖ := norm_sum_le _ _
+    _ ≤ 2 * RiemannXi.riemannZeroMass / Real.sqrt x := by
+      rw [heq]
+      exact
+        div_le_div_of_nonneg_right (sum_riemannZetaZeroMultiplicity_invNormSq_le hRH S hSzero hSre)
+          (Real.sqrt_nonneg x)
 
 open PseudoPrime.AnalyticNumberTheory.RiemannXi in
 /-- Under RH and for `x > 0`, the logarithmic-kernel contributions from any
@@ -21,53 +92,10 @@ theorem re_sum_riemannZetaLogZeroContribution_nontrivial_ge_of_riemannHypothesis
     (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 < x) (S : Finset ℂ)
     (hSzero : ∀ ρ ∈ S, riemannZeta ρ = 0) (hSre : ∀ ρ ∈ S, 0 ≤ ρ.re) :
     -(2 * riemannZeroMass * Real.sqrt x) ≤ (∑ ρ ∈ S, riemannZetaLogZeroContribution x ρ).re := by
-  classical
-  have hxsqrt_nonneg : 0 ≤ Real.sqrt x := Real.sqrt_nonneg x
-  rw [Complex.re_sum]
-  have hbound :
-    ∀ ρ ∈ S,
-      -(Real.sqrt x * (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ) ≤
-        (riemannZetaLogZeroContribution x ρ).re := by
-    intro ρ hρ
-    have h2 := abs_le.mp (Complex.abs_re_le_norm (riemannZetaLogZeroContribution x ρ))
-    rw [norm_riemannZetaLogZeroContribution_of_rh hRH hx (hSzero ρ hρ) (hSre ρ hρ)] at h2
-    linarith only [h2.1]
-  have hsum_bound :
-    -(∑ ρ ∈ S, Real.sqrt x * (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ) ≤
-      ∑ ρ ∈ S, (riemannZetaLogZeroContribution x ρ).re := by
-    rw [← Finset.sum_neg_distrib]
-    exact Finset.sum_le_sum hbound
-  refine le_trans ?_ hsum_bound
-  have hzm :=
-    tsum_riemannXiZeroMultiplicity_invNormSq_eq_two_mul_riemannZeroMass_of_riemannHypothesis hRH
-  have hxieq :
-    ∀ ρ ∈ S,
-      (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ =
-        if riemannXi ρ = 0 then (riemannXiZeroMultiplicity ρ : ℝ) / Complex.normSq ρ else 0 := by
-    intro ρ hρ
-    have hxi0 := riemannXi_eq_zero_of_riemannZeta_zero_re_nonneg (hSzero ρ hρ) (hSre ρ hρ)
-    rw [ite_eq_left hxi0, riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity_of_zero hxi0]
-  have hsum_eq :
-    (∑ ρ ∈ S, Real.sqrt x * (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ) =
-      Real.sqrt x *
-        ∑ ρ ∈ S,
-          if riemannXi ρ = 0 then (riemannXiZeroMultiplicity ρ : ℝ) / Complex.normSq ρ else 0 := by
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun ρ hρ => ?_
-    rw [← hxieq ρ hρ]
-    ring
-  rw [hsum_eq]
-  have hle_tsum :
-    (∑ ρ ∈ S, if riemannXi ρ = 0 then (riemannXiZeroMultiplicity ρ : ℝ) / Complex.normSq ρ else 0) ≤
-      2 * riemannZeroMass := by
-    rw [← hzm]
-    exact
-      (summable_riemannXiZeroMultiplicityInvNormSq_of_riemannHypothesis hRH).sum_le_tsum S
-        (fun ρ _ => by
-          split <;> [exact div_nonneg (Nat.cast_nonneg _) (Complex.normSq_nonneg _);
-            exact le_refl 0])
-  have hmul := mul_le_mul_of_nonneg_left hle_tsum hxsqrt_nonneg
-  linarith only [hmul]
+  exact
+    neg_le_of_abs_le
+      ((Complex.abs_re_le_norm _).trans
+        (norm_sum_riemannZetaLogZeroContribution_le hRH hx S hSzero hSre))
 
 /-- Under RH and for `x > 1`, a finite logarithmic-kernel zero sum has real
 part at least minus the logarithmic trivial-zero series minus

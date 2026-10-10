@@ -85,57 +85,6 @@ theorem norm_dirichletReciprocalContourKernel_leftVertical_le {N : ℕ} [NeZero 
 /-! ### Nonvanishing, continuity, and integrability of the kernel on the left-vertical line -/
 
 /--
-Input/assumptions: `χ` primitive nontrivial quadratic mod `N`, `x > 0`, `A : ℕ` with `2 ≤ A`.
-Conclusion: `t ↦ DirichletLFunction.dirichletReciprocalContourKernel x χ (s_A(t))` is continuous on
-`ℝ`.
-Content: nonvanishing of `L` at every `s_A(t)` (`quadraticDirichletLFunction_ne_zero_leftVertical`)
-plus `s_A(t) ≠ 0, 1` (its real
-part is `≤ -5/2 < 0`) gives pointwise `DifferentiableAt` of the kernel
-(`DirichletLFunction.differentiableAt_dirichletReciprocalContourKernel`), hence `ContinuousAt`;
-composing with the
-continuous affine map `t ↦ s_A(t)` finishes.
-Role: supplies the `AEStronglyMeasurable` input for the kernel's absolute integrability.
--/
-private theorem quadraticContinuousReciprocalKernel_leftVertical_line {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hquad : χ.IsQuadratic)
-    {x : ℝ} (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) :
-    Continuous
-      (fun t : ℝ ↦
-        dirichletReciprocalContourKernel x χ
-          (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
-  have hg : Continuous (fun t : ℝ ↦ ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) := by
-    fun_prop
-  have hOn :
-    ContinuousOn (dirichletReciprocalContourKernel x χ)
-      (Set.range (fun t : ℝ ↦ ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
-    rintro s ⟨t, rfl⟩
-    have hsre : (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I).re = -(A : ℝ) - 1 / 2 := by
-      simp only [one_div, Complex.ofReal_sub, Complex.ofReal_neg, Complex.ofReal_natCast,
-        Complex.ofReal_inv, Complex.ofReal_ofNat, Complex.add_re, Complex.sub_re, Complex.neg_re,
-        Complex.natCast_re, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
-        div_self_mul_self', Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero,
-        Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-    have hsre_neg : (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I).re < 0 := by
-      rw [hsre]
-      have hApos : (0 : ℝ) < (A : ℝ) := by exact_mod_cast Nat.lt_of_lt_of_le (by decide : 0 < 2) hA
-      calc
-        -(A : ℝ) - 1 / 2 < 0 - 0 := sub_lt_sub (neg_lt_zero.mpr hApos) (by norm_num only)
-        _ = 0 := sub_self 0
-    have hs0 : ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ 0 := by
-      intro h
-      rw [h, Complex.zero_re] at hsre_neg
-      exact (not_lt_of_ge (le_rfl : (0 : ℝ) ≤ 0)) hsre_neg
-    have hs1 : ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ 1 := by
-      intro h
-      rw [h, Complex.one_re] at hsre_neg
-      exact (not_lt_of_ge (show (0 : ℝ) ≤ 1 from by norm_num only)) hsre_neg
-    have hL := quadraticDirichletLFunction_ne_zero_leftVertical hprimitive hne hquad A hA t
-    exact
-      (differentiableAt_dirichletReciprocalContourKernel hx hne hs0 hs1
-          hL).continuousAt.continuousWithinAt
-  exact hOn.comp_continuous hg (fun t => Set.mem_range_self t)
-
-/--
 Input/assumptions: `x > 0`, `A ≥ 2`, `D ≥ 0` with the pointwise `L'/L` bound
 `‖logDeriv (LFunction χ) (s_A(t))‖ ≤ D ((A + 5)² + 1 + log(|t| + 2))` for every `t`.
 Conclusion: `‖K_x(s_A(t))‖ ≤ D x^{-A-3/2} ((A + 5)² + 1) · General.logQuadraticEnvelope t`.
@@ -180,41 +129,6 @@ theorem norm_dirichletReciprocalContourKernel_leftVertical_envelope_le {N : ℕ}
     _ = D * x ^ (-(A : ℝ) - 3 / 2) * BA * ((1 + Real.log (|t| + 2)) / (1 + t ^ 2)) := by ring
 
 /--
-Input/assumptions: `χ` primitive nontrivial quadratic mod `N`, `x > 0`, `A ≥ 2`.
-Conclusion: `t ↦ DirichletLFunction.dirichletReciprocalContourKernel x χ (s_A(t))` is integrable
-over `ℝ`.
-Content: `exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le` supplies the `L'/L` bound
-feeding `(K')`; the scaled envelope `D x^{-A-3/2} ((A+5)² + 1) • General.logQuadraticEnvelope` is
-integrable (`General.integrable_logQuadraticEnvelope.const_mul`); `Integrable.mono'` with the
-continuity-supplied `AEStronglyMeasurable` witness finishes.
-Role: the left-vertical integral argument kernel integrability, feeding both the whole-line
-integral norm bound (I) and the
-fixed-`A` truncation-to-whole-line limit.
--/
-private theorem quadraticIntegrableReciprocalKernel_leftVertical {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hquad : χ.IsQuadratic)
-    {x : ℝ} (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) :
-    MeasureTheory.Integrable
-      (fun t : ℝ ↦
-        dirichletReciprocalContourKernel x χ
-          (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
-  obtain ⟨D, hDnn, hD⟩ :=
-    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le hprimitive hne hquad
-  apply
-    MeasureTheory.Integrable.mono'
-      ((General.integrable_logQuadraticEnvelope.const_mul
-        (D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1))))
-  · exact
-      (quadraticContinuousReciprocalKernel_leftVertical_line hprimitive hne hquad hx
-          hA).aestronglyMeasurable
-  · filter_upwards with t
-    exact
-      norm_dirichletReciprocalContourKernel_leftVertical_envelope_le hx hA hDnn (fun t => hD A hA t)
-        t
-
-/-! ### The whole-line integral norm bound (I) -/
-
-/--
 Input/assumptions: `x > 0`, `A ≥ 2`, `D ≥ 0` with the pointwise `L'/L` bound
 `‖logDeriv (LFunction χ) (s_A(t))‖ ≤ D ((A + 5)² + 1 + log(|t| + 2))` for every `t`.
 Conclusion: `‖∫ t, K_x(s_A(t))‖ ≤ D x^{-A-3/2} ((A+5)² + 1) · General.logQuadraticEnvelopeMass`.
@@ -248,65 +162,6 @@ theorem norm_integral_dirichletReciprocalContourKernel_leftVertical_of_bound {N 
       (Filter.Eventually.of_forall fun t =>
         norm_dirichletReciprocalContourKernel_leftVertical_envelope_le hx hA hDnn hLbound t)
   rwa [MeasureTheory.integral_const_mul] at hbound
-
-/--
-Input/assumptions: `χ` primitive nontrivial quadratic mod `N`, `x > 0`, `A ≥ 2`.
-Conclusion: `T ↦ ∫ t in -T..T, K_x(s_A(t))` tends to `∫ t, K_x(s_A(t))` as `T → ∞`.
-Content: `MeasureTheory.intervalIntegral_tendsto_integral` fed by whole-line integrability
-(`quadraticIntegrableReciprocalKernel_leftVertical`), with the endpoint filters
-`-T → -∞` (`tendsto_neg_atTop_atBot'`) and `T → ∞` (`Filter.tendsto_id`).
-Role: connects the fixed-`A` left-vertical edge of a growing finite rectangle to the whole-line
-integral bounded by `(I)`.
--/
-private theorem quadraticTendsto_intervalIntegralReciprocalKernel_leftVertical {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hquad : χ.IsQuadratic)
-    {x : ℝ} (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) :
-    Filter.Tendsto
-      (fun T : ℝ ↦
-        ∫ t in (-T)..T,
-          dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
-      Filter.atTop
-      (nhds
-        (∫ t : ℝ,
-          dirichletReciprocalContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
-  MeasureTheory.intervalIntegral_tendsto_integral
-    (quadraticIntegrableReciprocalKernel_leftVertical hprimitive hne hquad hx hA)
-    Analysis.tendsto_neg_atTop_atBot' Filter.tendsto_id
-
-/--
-Input/assumptions: `N ≥ 2`, `χ` primitive nontrivial quadratic mod `N`, GRH, `χ⁻¹ ≠ 1`, `x > 0`,
-`A ≥ 2`.
-Conclusion: along the named height sequence `DirichletLFunction.primitiveHorizontalHeightSeq _ k`,
-the fixed-`A`
-truncated left-vertical integral tends to the fixed-`A` whole-line integral as `k → ∞`.
-Content: composes the generic `T → ∞` truncation limit with
-`DirichletLFunction.tendsto_primitiveHorizontalHeightSeq_atTop`, so that the same height sequence
-used for the
-horizontal edges (the horizontal argument) also drives the left-vertical edge's truncation,
-matching a single growing
-rectangle.
-Role: the named-height-sequence wrapper needed for the shared-height argument's contour assembly
-(all four edges of the
-same finite rectangle, indexed by the same `k`).
--/
-theorem quadraticTendsto_primitiveHorizontalHeightSeq_leftVertical_intervalIntegral {N : ℕ}
-    [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
-    (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) :
-    Filter.Tendsto
-      (fun k : ℕ ↦
-        ∫ t in
-          (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad
-              k))..(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv hquad k),
-          dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
-      Filter.atTop
-      (nhds
-        (∫ t : ℝ,
-          dirichletReciprocalContourKernel x χ
-            (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
-  (quadraticTendsto_intervalIntegralReciprocalKernel_leftVertical hprimitive hne hquad hx hA).comp
-    (tendsto_primitiveHorizontalHeightSeq_atTop hN2 hGRH hprimitive hne hinv hquad)
 
 /--
 Input/assumptions: `χ` primitive and nontrivial with nontrivial inverse, `x > 0`, and `A ≥ 2`.
@@ -418,8 +273,8 @@ theorem tendsto_primitiveHorizontalHeightSeq_leftVertical_intervalIntegral {N : 
     Filter.Tendsto
       (fun k : ℕ ↦
         ∫ t in
-          (-(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv
-              k))..(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k),
+          (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv
+              k))..(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k),
           dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop
       (nhds
@@ -428,11 +283,15 @@ theorem tendsto_primitiveHorizontalHeightSeq_leftVertical_intervalIntegral {N : 
             (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
   (tendsto_intervalIntegral_dirichletReciprocalContourKernel_leftVertical hprimitive hne hinv hx
         hA).comp
-    (tendsto_primitiveHorizontalHeightSeq_atTop_of_grh hN2 hGRH hprimitive hne hinv)
+    (tendsto_primitiveHorizontalHeightSeq_atTop hN2 hGRH hprimitive hne hinv)
 
 /-! ### `A → ∞`: the fixed-`A` whole-line integral vanishes — the left-edge argument's completion -/
 
-/-- Generic left-vertical whole-line integral vanishes as the left edge tends to `-∞`. -/
+/-- For a primitive nontrivial character with nontrivial inverse and `x > 1`, the
+whole reciprocal-kernel integral on `Re s = -A-1/2` tends to zero as `A → ∞`.
+A single logarithmic-derivative coefficient bounds its norm by a constant times
+`(A+1)²*(x⁻¹)^A`, which tends to zero by geometric decay. This removes the left edge
+from the general primitive-character explicit formula. -/
 theorem tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N : ℕ} [NeZero N]
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
     (hx : 1 < x) :
@@ -494,93 +353,6 @@ theorem tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N 
             (mul_le_mul_of_nonneg_left (hpoly_le A)
               (mul_nonneg hDnn (mul_nonneg hxpow_nn hrpow_nn)))
             hMassnn
-      _ = K * (((A : ℝ) + 1) ^ 2 * r ^ A) := by
-        rw [hK_def]
-        ring
-  have hgeom :
-    Filter.Tendsto (fun A : ℕ ↦ K * (((A : ℝ) + 1) ^ 2 * r ^ A)) Filter.atTop (nhds 0) := by
-    have h1 : Filter.Tendsto (fun A : ℕ ↦ ((A : ℝ) + 1) ^ 2 * r ^ A) Filter.atTop (nhds 0) :=
-      General.tendsto_add_one_pow_mul_pow_of_lt_one 2 hr0 hr1
-    simpa only [mul_zero] using h1.const_mul K
-  apply squeeze_zero_norm' (a := fun A : ℕ ↦ K * (((A : ℝ) + 1) ^ 2 * r ^ A))
-  · filter_upwards [Filter.eventually_ge_atTop 2] with A hA
-    exact hbound A hA
-  · exact hgeom
-
-/--
-Input/assumptions: `χ` primitive nontrivial quadratic mod `N`, `x > 1`.
-Conclusion: `A ↦ ∫ t, K_x(s_A(t))` tends to `0` as `A → ∞`.
-Content: `x^{-A-3/2} = x^{-3/2} (x⁻¹)^A` and `(A + 5)² + 1 ≤ 26 (A + 1)²` (both `A`-uniform
-algebraic facts) reduce the whole-line integral norm bound (I) to
-`‖∫ K‖ ≤ K₀ ((A + 1)² (x⁻¹)^A)` for a single `A`-independent constant `K₀ ≥ 0`; since `0 ≤ x⁻¹ < 1`
-(from `x > 1`), `General.tendsto_add_one_pow_mul_pow_of_lt_one` (the polynomial × geometric decay
-squeeze) gives `(A + 1)² (x⁻¹)^A → 0`, and `squeeze_zero_norm`
-finishes.
-Role: **the left-edge completion theorem** — the fixed-`A` left-vertical edge integral vanishes as
-the
-contour's left edge is pushed to `-∞`, matching the horizontal argument's horizontal-edge vanishing
-and the height-selection argument's central
-identification to close the primitive explicit-formula contour on the left.
--/
-theorem quadraticTendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N : ℕ}
-    [NeZero N] {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hquad : χ.IsQuadratic) {x : ℝ} (hx : 1 < x) :
-    Filter.Tendsto
-      (fun A : ℕ ↦
-        ∫ t : ℝ,
-          dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
-      Filter.atTop (nhds 0) := by
-  have hxpos : (0 : ℝ) < x := lt_trans zero_lt_one hx
-  obtain ⟨D, hDnn, hD⟩ :=
-    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le hprimitive hne hquad
-  have hMassnn : (0 : ℝ) ≤ General.logQuadraticEnvelopeMass :=
-    General.logQuadraticEnvelopeMass_nonneg
-  set r : ℝ := x⁻¹ with hr_def
-  have hr0 : (0 : ℝ) ≤ r := by
-    rw [hr_def]
-    positivity
-  have hr1 : r < 1 := by
-    rw [hr_def]
-    exact inv_lt_one_of_one_lt₀ hx
-  have hxpow_split : ∀ A : ℕ, x ^ (-(A : ℝ) - 3 / 2) = x ^ (-(3 : ℝ) / 2) * r ^ A := by
-    intro A
-    rw [hr_def, show -(A : ℝ) - 3 / 2 = -(3 : ℝ) / 2 + -(A : ℝ) from by ring, Real.rpow_add hxpos,
-      Real.rpow_neg hxpos.le, Real.rpow_natCast, ← inv_pow]
-  have hpoly_le : ∀ A : ℕ, ((A : ℝ) + 5) ^ 2 + 1 ≤ 26 * (((A : ℝ) + 1) ^ 2) := by
-    intro A
-    have hAnn : (0 : ℝ) ≤ (A : ℝ) := Nat.cast_nonneg A
-    nlinarith only [hAnn, sq_nonneg (A : ℝ)]
-  set K : ℝ := D * x ^ (-(3 : ℝ) / 2) * General.logQuadraticEnvelopeMass * 26 with hK_def
-  have hKnn : (0 : ℝ) ≤ K := by
-    rw [hK_def]
-    positivity
-  have hbound :
-    ∀ A : ℕ,
-      2 ≤ A →
-        ‖∫ t : ℝ,
-              dirichletReciprocalContourKernel x χ
-                (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-          K * (((A : ℝ) + 1) ^ 2 * r ^ A) := by
-    intro A hA
-    have hI :=
-      norm_integral_dirichletReciprocalContourKernel_leftVertical_of_bound hxpos hA hDnn
-        (fun t => hD A hA t)
-    have hxApow_nn : (0 : ℝ) ≤ x ^ (-(3 : ℝ) / 2) := Real.rpow_pos_of_pos hxpos _ |>.le
-    have hrApow_nn : (0 : ℝ) ≤ r ^ A := by positivity
-    calc
-      ‖∫ t : ℝ,
-              dirichletReciprocalContourKernel x χ
-                (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
-          D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) * General.logQuadraticEnvelopeMass :=
-        hI
-      _ =
-          D * (x ^ (-(3 : ℝ) / 2) * r ^ A) * (((A : ℝ) + 5) ^ 2 + 1) *
-            General.logQuadraticEnvelopeMass :=
-        by rw [hxpow_split A]
-      _ ≤
-          D * (x ^ (-(3 : ℝ) / 2) * r ^ A) * (26 * (((A : ℝ) + 1) ^ 2)) *
-            General.logQuadraticEnvelopeMass :=
-        mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (hpoly_le A) (by positivity)) hMassnn
       _ = K * (((A : ℝ) + 1) ^ 2 * r ^ A) := by
         rw [hK_def]
         ring

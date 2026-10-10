@@ -38,7 +38,9 @@ and all zeta zeros.
 def RiemannZetaRectangleIsRegular (z w : ℂ) : Prop :=
   (Set.uIcc z.re w.re ×ℂ Set.uIcc z.im w.im) ⊆ riemannZetaRegularSet
 
-/-- The regular locus is open. -/
+/-- The locus excluding zero, one, and zeta zeros is open. Zeta is continuous off one,
+so its nonzero preimage there is open; intersect with the complement of zero.
+This upgrades differentiability within the regular locus to pointwise differentiability. -/
 theorem isOpen_riemannZetaRegularSet : IsOpen riemannZetaRegularSet := by
   have hzeta : IsOpen (({1}ᶜ : Set ℂ) ∩ riemannZeta ⁻¹' ({0}ᶜ : Set ℂ)) :=
     differentiableOn_riemannZeta.continuousOn.isOpen_inter_preimage isOpen_compl_singleton
@@ -50,11 +52,6 @@ theorem isOpen_riemannZetaRegularSet : IsOpen riemannZetaRegularSet := by
       simp only [riemannZetaRegularSet, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_compl_iff,
         Set.mem_singleton_iff, Set.mem_preimage]]
   exact isOpen_compl_singleton.inter hzeta
-
-def centeredSquarePuncturedRegion (c : ℂ) (R ρ : ℝ) : Set ℂ :=
-  Rectangle.rectangleClosedBox (RectangleGeometry.centeredSquareLower c R)
-      (RectangleGeometry.centeredSquareUpper c R) \
-    Metric.ball c ρ
 
 /-- The finite singularity ledger for a contour rectangle: its zeta zeros together with zero and
 one whenever those lie in the rectangle. -/
@@ -219,15 +216,22 @@ structure RiemannZetaRegularCellLedger (z w : ℂ) where
       Disjoint (Rectangle.rectangleClosedBox cell.1 cell.2)
         (riemannZetaSingularitiesInRectangle z w : Set ℂ)
 
-/-- A cell contains a singularity catalogued in the enclosing rectangle. -/
+/-- For an outer rectangle with corners `z`, `w` and a cell given by two corners,
+some point of the outer finite singularity ledger lies in the cell's closed box.
+The cell need not be contained in the outer rectangle by definition. This predicate
+partitions a supplied cell list into singular and ledger-avoiding filters. -/
 def RiemannZetaCellContainsSingularity (z w : ℂ) (cell : ℂ × ℂ) : Prop :=
   ∃ s ∈ riemannZetaSingularitiesInRectangle z w, s ∈ Rectangle.rectangleClosedBox cell.1 cell.2
 
-/-- The cells avoiding every singularity of the enclosing rectangle. -/
+/-- Filter a supplied finite set of cells to those whose closed boxes avoid the outer
+rectangle's singularity ledger. Containment in the outer rectangle is a separate hypothesis
+when converting this filter into a certificate of regularity for contour integration. -/
 noncomputable def riemannZetaRegularCells (z w : ℂ) (cells : Finset (ℂ × ℂ)) : Finset (ℂ × ℂ) := by
   classical exact cells.filter fun cell ↦ ¬RiemannZetaCellContainsSingularity z w cell
 
-/-- The cells containing at least one singularity of the enclosing rectangle. -/
+/-- Filter a supplied finite set of cells to those containing at least one point of the
+outer rectangle's singularity ledger. This complementary filter indexes local residue
+contributions once a unique singularity assignment is provided. -/
 noncomputable def riemannZetaSingularCells (z w : ℂ) (cells : Finset (ℂ × ℂ)) : Finset (ℂ × ℂ) := by
   classical exact cells.filter fun cell ↦ RiemannZetaCellContainsSingularity z w cell
 
@@ -354,7 +358,10 @@ structure RiemannZetaGridInteriorSeparation (z w : ℂ) (cells : Finset (ℂ × 
     ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
       ∃ cell ∈ cells, s ∈ Rectangle.rectangleClosedBox cell.1 cell.2
 
-/-- Interior separation conditions imply the abstract grid/singularity separation certificate. -/
+/-- An interior-separation certificate gives the abstract grid/singularity separation
+certificate. A shared ledger point would lie in both cell interiors, contradicting their
+disjointness unless the cells agree; the other two invariants are inherited directly.
+This connects concrete grid geometry to the unique assignment construction. -/
 theorem RiemannZetaGridInteriorSeparation.toSeparation {z w : ℂ} {cells : Finset (ℂ × ℂ)}
     (interior : RiemannZetaGridInteriorSeparation z w cells) :
     RiemannZetaGridSingularitySeparation z w cells := by
@@ -366,7 +373,10 @@ theorem RiemannZetaGridInteriorSeparation.toSeparation {z w : ℂ} {cells : Fins
       (interior.point_mem_open s hs cell hcell hscell)
       (interior.point_mem_open s hs other hother hsother)
 
-/-- Geometric cell/singularity separation induces the singular-cell assignment ledger. -/
+/-- Given the three grid/singularity separation invariants, select a ledger point in each
+singular cell and package the resulting assignment. Unique points per cell, unique cells
+per point, and coverage certify the bijection; choices on nonsingular cells are unconstrained.
+This supplies the local centers and sum reindexing used in contour residue assembly. -/
 noncomputable def RiemannZetaGridSingularitySeparation.toAssignment {z w : ℂ}
     {cells : Finset (ℂ × ℂ)} (separation : RiemannZetaGridSingularitySeparation z w cells) :
     RiemannZetaSingularCellAssignment z w cells := by
@@ -402,24 +412,13 @@ noncomputable def RiemannZetaGridSingularitySeparation.toAssignment {z w : ℂ}
       (separation.cell_point_unique cell hcell s hs hscell (pointOfCell cell)
           (point_spec cell hcontains).1 (point_spec cell hcontains).2).symm
 
-/-- Interior grid separation directly supplies the singular-cell assignment. -/
+/-- Convert an interior grid-separation certificate to a singular-cell assignment by first
+deriving abstract separation and then selecting its unique ledger points.
+This is the entry point from cut geometry to the contour's local residue centers. -/
 noncomputable def RiemannZetaGridInteriorSeparation.toAssignment {z w : ℂ} {cells : Finset (ℂ × ℂ)}
     (interior : RiemannZetaGridInteriorSeparation z w cells) :
     RiemannZetaSingularCellAssignment z w cells :=
   interior.toSeparation.toAssignment
-
-/-- A certified singular cell contains exactly its assigned enclosing-ledger point. -/
-theorem RiemannZetaSingularCellAssignment.existsUnique_point_in_cell {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)} (assignment : RiemannZetaSingularCellAssignment z w cells)
-    {cell : ℂ × ℂ} (hcell : cell ∈ riemannZetaSingularCells z w cells) :
-    ∃! s : ℂ,
-      s ∈ riemannZetaSingularitiesInRectangle z w ∧
-        s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 := by
-  refine
-    ⟨assignment.pointOfCell cell,
-      ⟨assignment.point_mem_ledger cell hcell, assignment.point_mem_cell cell hcell⟩, ?_⟩
-  intro s hs
-  exact assignment.point_unique cell hcell s hs.1 hs.2
 
 /--
 A subrectangle of a singular cell is regular when it excludes the cell's assigned singularity.
@@ -456,26 +455,9 @@ theorem RiemannZetaSingularCellAssignment.mem_regular_of_mem_parent_of_ne {z w :
   intro hsledger
   exact hne (assignment.point_unique parent hparent s hsledger hs)
 
-/-- A centered square with a positive-radius central ball removed is regular in its parent cell. -/
-theorem RiemannZetaSingularCellAssignment.centeredSquarePuncturedRegion_subset_regularSet {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)} (assignment : RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ} (hparent : parent ∈ riemannZetaSingularCells z w cells)
-    (hparentSubset :
-      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
-    (hre : parent.1.re < parent.2.re) (him : parent.1.im < parent.2.im) {R ρ : ℝ} (hR : 0 < R)
-    (hρ : 0 < ρ)
-    (hball :
-      Metric.closedBall (assignment.pointOfCell parent) R ⊆
-        RectangleGeometry.rectangleOpenBox parent.1 parent.2) :
-    centeredSquarePuncturedRegion (assignment.pointOfCell parent) R ρ ⊆ riemannZetaRegularSet := by
-  intro s hs
-  apply assignment.mem_regular_of_mem_parent_of_ne hparent hparentSubset
-  · exact RectangleGeometry.centeredSquare_closedBox_subset_parent hre him hR hball hs.1
-  · intro heq
-    subst s
-    exact hs.2 (Metric.mem_ball_self hρ)
-
-/-- The rectangle boundary avoids every singularity of the two Riemann-zeta kernels. -/
+/-- For complex corners `z`, `w`, every point of the closed-box boundary lies in the
+regular locus, so it differs from zero and one and is not a zeta zero.
+This boundary predicate permits positive clearance for all interior ledger points. -/
 def RiemannZetaRectangleBoundaryIsRegular (z w : ℂ) : Prop :=
   RectangleGeometry.rectangleClosedBoxBoundary z w ⊆ riemannZetaRegularSet
 
@@ -641,35 +623,6 @@ theorem riemannZetaSingularityBoundaryClearance_lt_dist {z w s y : ℂ}
     linarith only [hpos]
   exact hhalf.trans_le (Metric.infDist_le_dist_of_mem hy)
 
-/-- A finite singularity ledger admits one positive clearance shared by all its points. -/
-theorem exists_common_riemannZetaSingularityBoundaryClearance {z w : ℂ}
-    (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
-    ∃ ε : ℝ,
-      0 < ε ∧
-        ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
-          ε < RectangleGeometry.rectangleClosedBoxBoundaryClearance s z w := by
-  classical
-  let S := riemannZetaSingularitiesInRectangle z w
-  by_cases hS : S.Nonempty
-  · let values := S.image fun s ↦ RectangleGeometry.rectangleClosedBoxBoundaryClearance s z w
-    have hvalues : values.Nonempty := Finset.image_nonempty.mpr hS
-    let m := values.min' hvalues
-    have hmpos : 0 < m := by
-      have hm := Finset.min'_mem values hvalues
-      rcases Finset.mem_image.mp hm with ⟨s, hs, hsm⟩
-      change 0 < values.min' hvalues
-      rw [← hsm]
-      exact riemannZetaSingularityBoundaryClearance_pos hregular hs
-    refine ⟨m / 2, div_pos hmpos (by norm_num only), ?_⟩
-    intro s hs
-    have hsvalues : RectangleGeometry.rectangleClosedBoxBoundaryClearance s z w ∈ values :=
-      Finset.mem_image.mpr ⟨s, hs, rfl⟩
-    have hmle := Finset.min'_le values _ hsvalues
-    linarith only [hmpos, hmle]
-  · refine ⟨1, zero_lt_one, ?_⟩
-    intro s hs
-    exact (hS ⟨s, hs⟩).elim
-
 /-- One radius separates the contour boundary and every pair of distinct singularities. -/
 theorem exists_pairwise_disjoint_riemannZetaSingularityRadius {z w : ℂ}
     (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
@@ -721,7 +674,10 @@ theorem exists_pairwise_disjoint_riemannZetaSingularityRadius {z w : ℂ}
     have hdist : 0 < dist s t := dist_pos.mpr hst
     linarith only [hmpos, hmle]
 
-/-- The closed rectangle with common-radius singularity balls removed. -/
+/-- For complex corners `z`, `w` and real `ε`, remove the union of closed balls of radius
+`ε` about all points of the rectangle's singularity ledger from its closed box.
+Nonnegative radii remove the singularities themselves, leaving a region in the regular locus
+for contour integration. -/
 noncomputable def riemannZetaPuncturedRectangle (z w : ℂ) (ε : ℝ) : Set ℂ :=
   Rectangle.rectangleClosedBox z w \
     ⋃ s ∈ (riemannZetaSingularitiesInRectangle z w : Set ℂ), Metric.closedBall s ε

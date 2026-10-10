@@ -154,6 +154,12 @@ Integrability on `Re s = τ > 1` allows application of
 `intervalIntegral_tendsto_integral` as `T` tends to infinity.
 -/
 
+/--
+For positive `x` and right line `τ > 1`, logarithmic-kernel integrals on `[-T,T]`
+converge to the full vertical integral as `T → ∞`. Absolute-convergence bounds give
+integrability, and the general interval-integral limit applies to endpoints tending to
+negative and positive infinity. This supplies the right-edge limit in contour passage.
+-/
 theorem tendsto_intervalIntegral_riemannZetaLogContourKernel {x : ℝ} (hx : 0 < x) {τ : ℝ}
     (hτ : 1 < τ) :
     Filter.Tendsto
@@ -162,8 +168,11 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel {x : ℝ} (hx : 0 <
   MeasureTheory.intervalIntegral_tendsto_integral (integrable_riemannZetaLogContourKernel hx hτ)
     Analysis.tendsto_neg_atTop_atBot' Filter.tendsto_id
 
-/-- The reciprocal-kernel analogue of
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.tendsto_intervalIntegral_riemannZetaLogContourKernel`.
+/--
+For positive `x` and right line `τ > 1`, reciprocal-kernel integrals on `[-T,T]`
+converge to the full vertical integral as `T → ∞`. Apply the general interval-integral limit
+to the established kernel integrability and the two escaping endpoints. This supplies the
+reciprocal contour argument with its right-edge limit.
 -/
 theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel {x : ℝ} (hx : 0 < x) {τ : ℝ}
     (hτ : 1 < τ) :

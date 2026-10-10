@@ -47,7 +47,13 @@ produce the residues at zero and one, while `x^(s-1)` produces the reciprocal Ma
 noncomputable def riemannZetaReciprocalContourKernel (x : ℝ) (s : ℂ) : ℂ :=
   -(deriv riemannZeta s / riemannZeta s) * (x : ℂ) ^ (s - 1) / (s * (s - 1))
 
-/-- The logarithmically weighted Riemann kernel used in the later estimate. -/
+/--
+The kernel `-(ζ′(s)/ζ(s)) * x^s / s^2` for logarithmic Mangoldt weights.
+
+`x` is the real cutoff and `s` is the complex contour variable. The Mellin factor
+`s^(-2)` yields the weight `log(x/n)` on `n < x`; the finite contour identity
+separates the Mellin poles at zero and one from the zeta-zero contributions.
+-/
 noncomputable def riemannZetaLogContourKernel (x : ℝ) (s : ℂ) : ℂ :=
   -(deriv riemannZeta s / riemannZeta s) * (x : ℂ) ^ s / s ^ 2
 
@@ -67,12 +73,26 @@ noncomputable def riemannZetaReciprocalOneRegularization (x : ℝ) (s : ℂ) : �
 noncomputable def riemannZetaLogOneRegularization (x : ℝ) (s : ℂ) : ℂ :=
   riemannZetaOneLogDerivativeRegularization s * (x : ℂ) ^ s / s ^ 2
 
-/-- The reciprocal kernel with a zeta-zero pole of multiplicity `m` removed at `ρ`. -/
+/--
+The candidate zeta-zero regularization with Mellin factor `x^(s-1)/(s*(s-1))`.
+
+For local factorization `ζ(s) = (s-ρ)^m * g(s)` with analytic, nonzero `g` near
+`ρ`, replacing `(s-ρ) * ζ′/ζ` by `m + (s-ρ) * logDeriv g` removes the zeta-zero
+pole. This definition accepts arbitrary `m` and `g`; the factorization and
+nonvanishing assumptions enter the later analyticity and residue theorems.
+-/
 noncomputable def riemannZetaReciprocalZetaZeroRegularization (x : ℝ) (ρ : ℂ) (m : ℕ) (g : ℂ → ℂ)
     (s : ℂ) : ℂ :=
   -((m : ℂ) + (s - ρ) * logDeriv g s) * (x : ℂ) ^ (s - 1) / (s * (s - 1))
 
-/-- The logarithmic kernel with a zeta-zero pole of multiplicity `m` removed at `ρ`. -/
+/--
+The candidate zeta-zero regularization with Mellin factor `x^s/s^2`.
+
+For local factorization `ζ(s) = (s-ρ)^m * g(s)` with analytic, nonzero `g` near
+`ρ`, replacing `(s-ρ) * ζ′/ζ` by `m + (s-ρ) * logDeriv g` removes the zeta-zero
+pole. This definition accepts arbitrary `m` and `g`; the factorization and
+nonvanishing assumptions enter the later analyticity and residue theorems.
+-/
 noncomputable def riemannZetaLogZetaZeroRegularization (x : ℝ) (ρ : ℂ) (m : ℕ) (g : ℂ → ℂ) (s : ℂ) :
     ℂ :=
   -((m : ℂ) + (s - ρ) * logDeriv g s) * (x : ℂ) ^ s / s ^ 2
@@ -176,13 +196,6 @@ theorem analyticAt_riemannZetaLogZeroRegularization {x : ℝ} (hx : 0 < x) :
   have hpow : AnalyticAt ℂ (fun s : ℂ ↦ (x : ℂ) ^ s) 0 := analyticAt_const.cpow analyticAt_id hxslit
   unfold riemannZetaLogZeroRegularization
   fun_prop
-
-/-- The regularized logarithmic kernel has the expected leading coefficient at zero. -/
-theorem riemannZetaLogZeroRegularization_zero (x : ℝ) :
-    riemannZetaLogZeroRegularization x 0 = -Complex.log (2 * Real.pi) := by
-  rw [riemannZetaLogZeroRegularization, deriv_riemannZeta_zero, riemannZeta_zero]
-  rw [Complex.cpow_zero, mul_one]
-  ring
 
 /-- The regularized reciprocal kernel has the expected residue coefficient at zero. -/
 theorem riemannZetaReciprocalZeroRegularization_zero (x : ℝ) :
@@ -953,29 +966,6 @@ structure RiemannZetaSingularCellBoundaryCertificate (x : ℝ) (z w : ℂ) (cell
       RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2 =
         ∮ u in C(assignment.pointOfCell cell, certificate.radius), riemannZetaLogContourKernel x u
 
-/--
-Add local boundary identities to a geometrically separated singular-cell grid.
-
-The separation certificate supplies the assignment automatically.  The two remaining hypotheses
-are precisely the reciprocal and logarithmic local boundary deformations for each singular cell.
--/
-noncomputable def riemannZetaSingularCellBoundaryCertificateOfSeparation {x : ℝ} {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)} {certificate : RiemannZetaPuncturedContourCertificate x z w}
-    (separation : RiemannZetaGridSingularitySeparation z w cells)
-    (hreciprocal :
-      ∀ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x) cell.1
-            cell.2 =
-          ∮ u in C(separation.toAssignment.pointOfCell cell, certificate.radius),
-            riemannZetaReciprocalContourKernel x u)
-    (hlog :
-      ∀ cell ∈ riemannZetaSingularCells z w cells,
-        RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) cell.1 cell.2 =
-          ∮ u in C(separation.toAssignment.pointOfCell cell, certificate.radius),
-            riemannZetaLogContourKernel x u) :
-    RiemannZetaSingularCellBoundaryCertificate x z w cells certificate := by
-  exact ⟨separation.toAssignment, hreciprocal, hlog⟩
-
 /-- Add local boundary identities directly to an interior-separated grid. -/
 noncomputable def riemannZetaSingularCellBoundaryCertificateOfInteriorSeparation {x : ℝ} {z w : ℂ}
     {cells : Finset (ℂ × ℂ)} {certificate : RiemannZetaPuncturedContourCertificate x z w}
@@ -1370,51 +1360,6 @@ def RiemannZetaReciprocalFiniteContourIdentity (x : ℝ) (z w : ℂ) : Prop :=
 def RiemannZetaLogFiniteContourIdentity (x : ℝ) (z w : ℂ) : Prop :=
   RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x) z w =
     2 * Real.pi * Complex.I * riemannZetaLogContourResidueLedger x z w
-
-/--
-The reciprocal finite-contour identity solved for its right vertical side.
-
-Input/assumptions: `hidentity` is the residue theorem on the rectangle from `z` to `w`.
-Conclusion: the oriented right-edge integral is the residue ledger, the two horizontal edges,
-and the left edge.  This is the algebraic form used when a sequence of regular rectangles tends
-to infinite height.
-Proof: unfold the four-edge boundary normalization and rearrange in `ℂ`.
-Role: it isolates the only finite-contour algebra needed by the reciprocal vertical-limit step.
--/
-theorem riemannZetaReciprocal_rightVertical_eq_of_finiteContourIdentity {x : ℝ} {z w : ℂ}
-    (hidentity : RiemannZetaReciprocalFiniteContourIdentity x z w) :
-    Complex.I •
-        (∫ y : ℝ in z.im..w.im, riemannZetaReciprocalContourKernel x (w.re + y * Complex.I)) =
-      2 * Real.pi * Complex.I * riemannZetaReciprocalContourResidueLedger x z w -
-          (∫ u : ℝ in z.re..w.re, riemannZetaReciprocalContourKernel x (u + z.im * Complex.I)) +
-        (∫ u : ℝ in z.re..w.re, riemannZetaReciprocalContourKernel x (u + w.im * Complex.I)) +
-        Complex.I •
-          (∫ y : ℝ in z.im..w.im, riemannZetaReciprocalContourKernel x (z.re + y * Complex.I)) := by
-  unfold RiemannZetaReciprocalFiniteContourIdentity at hidentity
-  unfold RectangleGeometry.rectangleBoundaryIntegral at hidentity
-  linear_combination hidentity
-
-/--
-The logarithmic finite-contour identity solved for its right vertical side.
-
-Input/assumptions: `hidentity` is the residue theorem on the rectangle from `z` to `w`.
-Conclusion: the oriented right-edge integral is the residue ledger, the two horizontal edges,
-and the left edge.  This is the finite algebraic precursor of the logarithmic vertical-limit
-estimate.
-Proof: unfold the four-edge boundary normalization and rearrange in `ℂ`.
-Role: it gives the exact identity to which horizontal and left-edge estimates will be applied.
--/
-theorem riemannZetaLog_rightVertical_eq_of_finiteContourIdentity {x : ℝ} {z w : ℂ}
-    (hidentity : RiemannZetaLogFiniteContourIdentity x z w) :
-    Complex.I • (∫ y : ℝ in z.im..w.im, riemannZetaLogContourKernel x (w.re + y * Complex.I)) =
-      2 * Real.pi * Complex.I * riemannZetaLogContourResidueLedger x z w -
-          (∫ u : ℝ in z.re..w.re, riemannZetaLogContourKernel x (u + z.im * Complex.I)) +
-        (∫ u : ℝ in z.re..w.re, riemannZetaLogContourKernel x (u + w.im * Complex.I)) +
-        Complex.I •
-          (∫ y : ℝ in z.im..w.im, riemannZetaLogContourKernel x (z.re + y * Complex.I)) := by
-  unfold RiemannZetaLogFiniteContourIdentity at hidentity
-  unfold RectangleGeometry.rectangleBoundaryIntegral at hidentity
-  linear_combination hidentity
 
 /-- The reciprocal kernel's residue at zero is `log(2π)/x`. -/
 theorem riemannZetaReciprocalResidueAtZero_eq (x : ℝ) :
@@ -1907,29 +1852,6 @@ theorem differentiableOn_riemannZetaLogContourKernel {x : ℝ} (hx : 0 < x) :
     DifferentiableAt.differentiableWithinAt
       (differentiableAt_riemannZetaLogContourKernel hx hs.1 hs.2.1 hs.2.2)
 
-/-- Both zeta kernels are differentiable on a cell-contained punctured centered square. -/
-theorem RiemannZetaSingularCellAssignment.differentiableOn_centeredSquarePuncturedRegion {x : ℝ}
-    (hx : 0 < x) {z w : ℂ} {cells : Finset (ℂ × ℂ)}
-    (assignment : RiemannZetaSingularCellAssignment z w cells) {parent : ℂ × ℂ}
-    (hparent : parent ∈ riemannZetaSingularCells z w cells)
-    (hparentSubset :
-      Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
-    (hre : parent.1.re < parent.2.re) (him : parent.1.im < parent.2.im) {R ρ : ℝ} (hR : 0 < R)
-    (hρ : 0 < ρ)
-    (hball :
-      Metric.closedBall (assignment.pointOfCell parent) R ⊆
-        RectangleGeometry.rectangleOpenBox parent.1 parent.2) :
-    DifferentiableOn ℂ (riemannZetaReciprocalContourKernel x)
-        (centeredSquarePuncturedRegion (assignment.pointOfCell parent) R ρ) ∧
-      DifferentiableOn ℂ (riemannZetaLogContourKernel x)
-        (centeredSquarePuncturedRegion (assignment.pointOfCell parent) R ρ) := by
-  have hsubset :=
-    assignment.centeredSquarePuncturedRegion_subset_regularSet hparent hparentSubset hre him hR hρ
-      hball
-  exact
-    ⟨(differentiableOn_riemannZetaReciprocalContourKernel hx).mono hsubset,
-      (differentiableOn_riemannZetaLogContourKernel hx).mono hsubset⟩
-
 /-- A regular rectangle has zero reciprocal-kernel boundary integral. -/
 theorem llsRectangleBoundaryIntegral_reciprocal_eq_zero {x : ℝ} (hx : 0 < x) {z w : ℂ}
     (hrect : RiemannZetaRectangleIsRegular z w) :
@@ -2341,8 +2263,15 @@ theorem exists_riemannZetaGeneratedGridBoundaryCertificate {x : ℝ} (hx : 0 < x
             (RiemannZetaSingularCellAssignment.reciprocal_log_boundary_eq_circle_of_certificate hx
                 interior.toAssignment certificate hcellsSubset hballs hcellOrder hcell).2)⟩⟩
 
-/-- For positive `x`, an ordered rectangle with regular boundary satisfies
-both finite zeta contour identities. Singularities inside the rectangle are allowed. -/
+/--
+For positive `x`, an ordered rectangle with regular boundary satisfies both
+finite zeta contour identities, including any singularities in its interior.
+
+Generate separating cuts and a puncture certificate, contract singular-cell
+boundaries using the matching square and circle residue formulas, and cancel
+regular cells by Cauchy--Goursat. The resulting finite identities feed the
+vertical contour-limit formulas.
+-/
 theorem riemannZetaFiniteContourIdentities_of_regular {x : ℝ} (hx : 0 < x) {z w : ℂ}
     (hre : z.re < w.re) (him : z.im < w.im) (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
     RiemannZetaReciprocalFiniteContourIdentity x z w ∧

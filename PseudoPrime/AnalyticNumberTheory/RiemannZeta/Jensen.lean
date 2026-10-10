@@ -57,6 +57,10 @@ theorem hasSum_inv_succ_mul_succ_succ : HasSum (fun n : ℕ => (1 : ℝ) / ((n +
     exact h
   simpa only [one_div, sub_zero] using tendsto_const_nhds.sub htend
 
+/--
+The total sum of `1/((n+1)(n+2))` is one. Extract the value from the
+telescoping HasSum proof; the zeta tail estimate uses this numerical majorant.
+-/
 theorem tsum_inv_succ_mul_succ_succ : ∑' n : ℕ, (1 : ℝ) / ((n + 1) * (n + 2)) = 1 :=
   hasSum_inv_succ_mul_succ_succ.tsum_eq
 
@@ -153,14 +157,26 @@ unconditionally). -/
 noncomputable def jensenCenter (T : ℝ) : ℂ :=
   (3 : ℂ) + (T : ℂ) * Complex.I
 
+/--
+The Jensen center has real part three. Expand complex addition and multiplication;
+this places the center in the zero-free half-plane and locates its disks.
+-/
 theorem jensenCenter_re (T : ℝ) : (jensenCenter T).re = 3 := by
   simp only [jensenCenter, Complex.add_re, Complex.re_ofNat, Complex.mul_re, Complex.ofReal_re,
     Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
 
+/--
+The Jensen center has imaginary part `T`. Expand the complex expression;
+nearby-ordinate zero counting uses this height coordinate.
+-/
 theorem jensenCenter_im (T : ℝ) : (jensenCenter T).im = T := by
   simp only [jensenCenter, Complex.add_im, Complex.im_ofNat, Complex.mul_im, Complex.ofReal_re,
     Complex.I_im, mul_one, Complex.ofReal_im, Complex.I_re, mul_zero, add_zero, zero_add]
 
+/--
+The center norm is at most `3+|T|`. Apply the triangle inequality and the norm of `i`;
+this bounds zeta throughout the outer Jensen disk.
+-/
 theorem norm_jensenCenter_le (T : ℝ) : ‖jensenCenter T‖ ≤ 3 + |T| := by
   calc
     ‖jensenCenter T‖ ≤ ‖(3 : ℂ)‖ + ‖(T : ℂ) * Complex.I‖ := norm_add_le _ _
@@ -168,6 +184,10 @@ theorem norm_jensenCenter_le (T : ℝ) : ‖jensenCenter T‖ ≤ 3 + |T| := by
       rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real, Real.norm_eq_abs]
       norm_num only [Complex.norm_ofNat]
 
+/--
+The center is at least `|T|` from the zeta pole at one. Its displacement has
+imaginary part `T`, whose absolute value is at most the norm; pole exclusion uses this.
+-/
 theorem norm_jensenCenter_sub_one_ge (T : ℝ) : |T| ≤ ‖jensenCenter T - 1‖ := by
   have him : (jensenCenter T - 1).im = T := by
     simp only [jensenCenter, Complex.sub_im, Complex.add_im, Complex.im_ofNat, Complex.mul_im,
@@ -204,16 +224,28 @@ theorem jensenBall_subset {T : ℝ} (hT : 4 ≤ T) :
     have : T ≤ 39 / 10 := (le_abs_self T).trans (hge.trans hle)
     linarith only [this, hT]
 
+/--
+For `T≥4`, zeta is analytic on a neighborhood of the outer closed Jensen disk.
+Restrict the pole-free analytic domain using the disk containment; Jensen needs this.
+-/
 theorem jensen_analyticOnNhd {T : ℝ} (hT : 4 ≤ T) :
     AnalyticOnNhd ℂ riemannZeta (Metric.closedBall (jensenCenter T) (39 / 10)) :=
   analyticOnNhd_riemannZeta_reGt_neg_one_diff_one.mono (jensenBall_subset hT)
 
+/--
+Zeta is nonzero at every Jensen center, since its real part is three.
+Apply the zero-free right-half-plane theorem; Jensen uses this nonvanishing center.
+-/
 theorem jensen_center_ne_zero (T : ℝ) : riemannZeta (jensenCenter T) ≠ 0 :=
   riemannZeta_ne_zero_of_one_lt_re
     (by
       rw [jensenCenter_re]
       norm_num only)
 
+/--
+Zeta has norm at least one half at every Jensen center. Substitute its real part
+into the half-plane lower bound; this controls the denominator in Jensen logarithms.
+-/
 theorem jensen_center_norm_ge (T : ℝ) : (1 : ℝ) / 2 ≤ ‖riemannZeta (jensenCenter T)‖ :=
   norm_riemannZeta_ge (by rw [jensenCenter_re])
 
@@ -226,6 +258,11 @@ noncomputable def jensenM (T : ℝ) : ℝ :=
   (T + 69 / 10) / (T - 39 / 10) + 1 / 2 +
     (T + 69 / 10) * (T + 69 / 10 + 1) * sawtoothRemainderBound (-9 / 10)
 
+/--
+For `T≥4`, zeta on the outer Jensen sphere is bounded by `jensenM T`.
+Control the norm, distance from one, and real part using disk geometry, then apply
+the sawtooth growth estimate; Jensen uses this boundary majorant.
+-/
 theorem jensen_f_bound {T : ℝ} (hT : 4 ≤ T) :
     ∀ z ∈ Metric.sphere (jensenCenter T) (39 / 10), ‖riemannZeta z‖ ≤ jensenM T := by
   intro z hz
@@ -398,6 +435,11 @@ For `T ≥ 8`, package the Jensen estimate as a fixed constant times `log(T+2)`
 for quantitative good-height selection.
 -/
 
+/--
+For `T≥8`, the outer-disk majorant is bounded by the stated fixed multiple of `T²`.
+Bound its rational part by four and each affine factor by `2T`; this converts
+Jensen logarithms into a uniform logarithmic zero-count estimate.
+-/
 theorem jensenM_le {T : ℝ} (hT : 8 ≤ T) :
     jensenM T ≤ (9 / 2 + 4 * sawtoothRemainderBound (-9 / 10)) * T ^ 2 := by
   unfold jensenM
@@ -427,6 +469,11 @@ theorem jensenM_le {T : ℝ} (hT : 8 ≤ T) :
 noncomputable def jensenLogConst : ℝ :=
   (Real.log (9 + 8 * sawtoothRemainderBound (-9 / 10)) / Real.log 10 + 2) / Real.log (39 / 37)
 
+/--
+The explicit Jensen logarithmic constant is positive. Its logarithm denominators
+are positive and its numerator contains the positive term two; good-height selection
+uses this positivity when choosing excluded-interval widths.
+-/
 theorem jensenLogConst_pos : 0 < jensenLogConst := by
   unfold jensenLogConst
   have h1 : (0 : ℝ) ≤ Real.log (9 + 8 * sawtoothRemainderBound (-9 / 10)) :=
@@ -441,6 +488,12 @@ theorem jensenLogConst_pos : 0 < jensenLogConst := by
   have h3 : (0 : ℝ) < Real.log (39 / 37) := Real.log_pos (by norm_num only)
   exact div_pos (add_pos_of_nonneg_of_pos (div_nonneg h1 h2.le) (by norm_num only)) h3
 
+/--
+For `T≥8`, the multiplicity count in the inner Jensen disk is at most
+`jensenLogConst*log(T+2)`. Combine Jensen with the quadratic majorant and center
+lower bound, then absorb fixed logarithms using `log(T+2)≥log 10`.
+Quantitative good-height selection consumes this local zero-count estimate.
+-/
 theorem finsum_divisor_riemannZeta_le_explicit {T : ℝ} (hT : 8 ≤ T) :
     ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter T) (37 / 10)) u :
           ℤ) :

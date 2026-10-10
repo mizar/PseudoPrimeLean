@@ -22,8 +22,15 @@ positive and yield a simple logarithmic-derivative pole. Compact sets, including
 closed rectangles, have finite zero ledgers. No contour kernel is assumed.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
+/--
+Zeta is meromorphic on the whole complex plane. Away from one use analyticity;
+at one use the analytic regularization and a power of `s-1`. The global divisor and
+finite zero-count APIs consume this meromorphicity proof.
+-/
 theorem meromorphic_riemannZeta : Meromorphic riemannZeta := by
   intro s
   by_cases hs : s = 1
@@ -139,39 +146,6 @@ theorem exists_eventuallyEq_logDeriv_riemannZeta_at_zero {ρ : ℂ} (hρ1 : ρ �
   · fun_prop
   · exact hsanalytic.differentiableAt
 
-/--
-At a finite-order zeta zero away from one, the zeta logarithmic derivative has a simple pole.
-
-The finite-order hypothesis rules out local identically-zero behavior.  It is kept explicit here
-so that the later zero ledger can discharge it once for every zero in a bounded contour.
--/
-theorem meromorphicOrderAt_logDeriv_riemannZeta_eq_neg_one {ρ : ℂ} (hρ1 : ρ ≠ 1)
-    (hzero : riemannZeta ρ = 0) (hfinite : meromorphicOrderAt riemannZeta ρ ≠ ⊤) :
-    meromorphicOrderAt (logDeriv riemannZeta) ρ = -1 := by
-  have hanalytic : AnalyticAt ℂ riemannZeta ρ := analyticOn_riemannZeta ρ hρ1
-  have horder : meromorphicOrderAt riemannZeta ρ ≠ 0 := by
-    intro horderZero
-    have hne := hanalytic.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff.mp horderZero
-    exact hne hzero
-  exact meromorphicOrderAt_logDeriv_eq_neg_one hanalytic.meromorphicAt horder hfinite
-
-/--
-The pointwise quotient `ζ'/ζ` has a simple pole at every finite-order zeta zero away from one.
--/
-theorem meromorphicOrderAt_riemannZeta_deriv_div_eq_neg_one {ρ : ℂ} (hρ1 : ρ ≠ 1)
-    (hzero : riemannZeta ρ = 0) (hfinite : meromorphicOrderAt riemannZeta ρ ≠ ⊤) :
-    meromorphicOrderAt (fun s ↦ deriv riemannZeta s / riemannZeta s) ρ = -1 := by
-  change meromorphicOrderAt (logDeriv riemannZeta) ρ = -1
-  exact meromorphicOrderAt_logDeriv_riemannZeta_eq_neg_one hρ1 hzero hfinite
-
-/-- The zeta zeros in a compact set avoiding one form a finite set. -/
-theorem finite_riemannZeta_zerosOn {K : Set ℂ} (hcompact : IsCompact K)
-    (hone : K ⊆ ({1}ᶜ : Set ℂ)) : (K ∩ riemannZeta ⁻¹' {0}).Finite := by
-  have hanalytic : AnalyticOnNhd ℂ riemannZeta K := analyticOn_riemannZeta.mono hone
-  have hnormal : MeromorphicNFOn riemannZeta K := hanalytic.meromorphicNFOn
-  rw [hnormal.zero_set_eq_divisor_support fun u ↦ meromorphicOrderAt_riemannZeta_ne_top u]
-  exact (MeromorphicOn.divisor riemannZeta K).finiteSupport hcompact
-
 /-- The zeta zeros in any compact set form a finite set, even when the set contains the pole. -/
 theorem finite_riemannZeta_zerosOn_compact {K : Set ℂ} (hcompact : IsCompact K) :
     (K ∩ riemannZeta ⁻¹' {0}).Finite := by
@@ -193,38 +167,14 @@ theorem finite_riemannZeta_zerosOn_compact {K : Set ℂ} (hcompact : IsCompact K
   · exact Set.mem_union_right _ (Set.mem_singleton_iff.mpr hs1)
   · exact Set.mem_union_left _ ⟨⟨hs.1, hs1⟩, hs.2⟩
 
-/-- The zeta zeros in a closed rectangle avoiding one form a finite set. -/
-theorem finite_riemannZeta_zerosInRectangle {z w : ℂ}
-    (hone : Rectangle.rectangleClosedBox z w ⊆ ({1}ᶜ : Set ℂ)) :
-    (Rectangle.rectangleClosedBox z w ∩ riemannZeta ⁻¹' {0}).Finite :=
-  finite_riemannZeta_zerosOn (Rectangle.isCompact_rectangleClosedBox z w) hone
-
 /-- The zeta zeros in an arbitrary closed rectangle form a finite set. -/
 theorem finite_riemannZeta_zerosInAnyRectangle (z w : ℂ) :
     (Rectangle.rectangleClosedBox z w ∩ riemannZeta ⁻¹' {0}).Finite :=
   finite_riemannZeta_zerosOn_compact (Rectangle.isCompact_rectangleClosedBox z w)
 
-/--
-The finite ledger of zeta zeros in a closed rectangle avoiding one.
-
-The proof argument certifies that the rectangle contains no pole of zeta.  Each ledger entry can be
-equipped with the local certificates proved above.
--/
-noncomputable def riemannZetaZerosInRectangle (z w : ℂ)
-    (hone : Rectangle.rectangleClosedBox z w ⊆ ({1}ᶜ : Set ℂ)) : Finset ℂ :=
-  (finite_riemannZeta_zerosInRectangle hone).toFinset
-
 /-- The finite zeta-zero ledger in an arbitrary closed rectangle. -/
 noncomputable def riemannZetaZerosInAnyRectangle (z w : ℂ) : Finset ℂ :=
   (finite_riemannZeta_zerosInAnyRectangle z w).toFinset
-
-/-- Membership in the rectangular zeta-zero ledger has the expected specification. -/
-theorem mem_riemannZetaZerosInRectangle_iff {z w ρ : ℂ}
-    {hone : Rectangle.rectangleClosedBox z w ⊆ ({1}ᶜ : Set ℂ)} :
-    ρ ∈ riemannZetaZerosInRectangle z w hone ↔
-      ρ ∈ Rectangle.rectangleClosedBox z w ∧ riemannZeta ρ = 0 := by
-  simp only [riemannZetaZerosInRectangle, Set.Finite.mem_toFinset, Set.mem_inter_iff,
-    Set.mem_preimage, Set.mem_singleton_iff]
 
 /-- Membership in the unrestricted rectangular zero ledger has the expected specification. -/
 theorem mem_riemannZetaZerosInAnyRectangle_iff {z w ρ : ℂ} :

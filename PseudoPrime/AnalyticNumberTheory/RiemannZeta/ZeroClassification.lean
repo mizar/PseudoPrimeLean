@@ -16,9 +16,14 @@ RH zero classification and natural-number indices for trivial zeros, independent
 of contour estimates and xi-zero transfer.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
-/-- Under RH, every zeta zero with nonnegative real part lies on `Re s = 1/2`. -/
+/-- Assuming RH, a zeta zero `ρ` with `Re ρ ≥ 0` has real part one half.
+Nonnegative real part excludes the negative even trivial zeros, while zeta's nonzero
+totalized value at one excludes that point. This supplies the critical-line form for zero weights.
+-/
 theorem riemannZeta_zero_re_eq_half_of_riemannHypothesis (hRH : RiemannHypothesis) {ρ : ℂ}
     (hρ : riemannZeta ρ = 0) (hre : 0 ≤ ρ.re) : ρ.re = 1 / 2 := by
   have hne1 : ρ ≠ 1 := by
@@ -35,7 +40,9 @@ theorem riemannZeta_zero_re_eq_half_of_riemannHypothesis (hRH : RiemannHypothesi
     nlinarith only [hre, Nat.cast_nonneg (α := ℝ) n]
   exact hRH ρ hρ hntrivial hne1
 
-/-- Under RH, a nontrivial zeta zero satisfies `normSq (ρ - 1) = normSq ρ`. -/
+/-- Assuming RH, a zeta zero with nonnegative real part satisfies
+`normSq (ρ - 1) = normSq ρ`. Expand both squared norms and substitute `Re ρ = 1/2`.
+This identifies the two denominator sizes in reciprocal contour zero contributions. -/
 theorem normSq_riemannZeta_zero_sub_one_eq_of_riemannHypothesis (hRH : RiemannHypothesis) {ρ : ℂ}
     (hρ : riemannZeta ρ = 0) (hre : 0 ≤ ρ.re) : Complex.normSq (ρ - 1) = Complex.normSq ρ := by
   have hhalf := riemannZeta_zero_re_eq_half_of_riemannHypothesis hRH hρ hre
@@ -43,19 +50,24 @@ theorem normSq_riemannZeta_zero_sub_one_eq_of_riemannHypothesis (hRH : RiemannHy
   rw [hhalf]
   ring
 
-/-- Every zeta zero with negative real part is a trivial zero `-2(k+1)`. -/
+/-- If `Re w < 0` and `ζ(w) = 0`, then `w = -2*(n+1)` for some natural `n`.
+Otherwise the zero-free negative-half-plane theorem away from trivial zeros contradicts
+the zero assertion. This separates the trivial-zero branch of finite residue ledgers. -/
 theorem exists_nat_eq_neg_two_mul_add_one_of_riemannZeta_zero_re_neg {w : ℂ} (hw : w.re < 0)
     (hz : riemannZeta w = 0) : ∃ n : ℕ, w = -2 * ((n : ℂ) + 1) := by
   by_contra h
   push Not at h
   exact riemannZeta_ne_zero_of_re_neg hw h hz
 
-/-- A choice of the natural-number index of a trivial zero; arbitrary away from trivial zeros. -/
+/-- For a complex `ρ`, choose `n` with `ρ = -2*(n+1)` when such an index exists, and
+return zero otherwise. The selected index reconstructs every known trivial zero via the
+specification theorem below, allowing its contribution to be indexed by naturals. -/
 noncomputable def trivialZeroIndex (ρ : ℂ) : ℕ := by
   classical exact if h : ∃ n : ℕ, ρ = -2 * ((n : ℂ) + 1) then h.choose else 0
 
-/-- The chosen `PseudoPrime.AnalyticNumberTheory.RiemannZeta.trivialZeroIndex` reconstructs
-any known trivial zero. -/
+/-- Given an index witnessing that `ρ` is a negative even trivial-zero location,
+`trivialZeroIndex ρ` reconstructs `ρ` as `-2*(index+1)`. Unfold the positive branch of the
+choice definition and use its witness specification. This justifies natural-index residue sums. -/
 theorem trivialZeroIndex_spec {ρ : ℂ} (h : ∃ n : ℕ, ρ = -2 * ((n : ℂ) + 1)) :
     ρ = -2 * ((trivialZeroIndex ρ : ℂ) + 1) := by
   unfold trivialZeroIndex

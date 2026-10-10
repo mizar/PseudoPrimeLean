@@ -638,65 +638,6 @@ theorem exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization {N : ℕ} 
   field_simp [hs0', hs1']
 
 /--
-Input/assumptions: a nontrivial even character and any real cutoff.
-Conclusion: local zero data makes `s³` times the logarithmic kernel equal its regularization.
-Content: substitute the logarithmic-derivative local factorization at the forced zero and cancel.
-Role: connects the even trivial zero to the triple-pole contour API.
--/
-theorem exists_eventuallyEq_dirichletLogEvenZeroRegularization {N : ℕ} [NeZero N] (x : ℝ)
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) (heven : χ.Even) :
-    ∃ g : ℂ → ℂ,
-      0 < dirichletLFunctionZeroMultiplicity χ 0 ∧
-        AnalyticAt ℂ g 0 ∧
-        g 0 ≠ 0 ∧
-        Filter.EventuallyEq (nhdsWithin 0 ({0}ᶜ : Set ℂ))
-          (fun s ↦ (s - 0) ^ 3 * dirichletLogContourKernel x χ s)
-          (dirichletLogEvenZeroRegularization x (dirichletLFunctionZeroMultiplicity χ 0) g) := by
-  obtain ⟨g, hpos, hganalytic, hgzero, hlog⟩ :=
-    exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero hne
-      (dirichletLFunction_zero_of_even hne heven)
-  refine ⟨g, hpos, hganalytic, hgzero, ?_⟩
-  filter_upwards [hlog, eventually_mem_nhdsWithin] with s hlogs hs0
-  have hlogs' :
-    deriv (DirichletCharacter.LFunction χ) s / DirichletCharacter.LFunction χ s =
-      (dirichletLFunctionZeroMultiplicity χ 0 : ℂ) / (s - 0) + logDeriv g s := by
-    rw [← logDeriv_apply]
-    exact hlogs
-  unfold dirichletLogContourKernel dirichletLogEvenZeroRegularization
-  rw [hlogs']
-  have hs0' : s ≠ 0 := Set.mem_compl_singleton_iff.mp hs0
-  simp only [sub_zero]
-  field_simp [hs0']
-
-/--
-Input/assumptions: an even nontrivial character and positive cutoff.
-Conclusion: some centered square at zero evaluates the reciprocal boundary integral.
-Content: the forced local zero yields a double-pole regularization, consumed by the square API.
-Role: completes the even reciprocal lower-Mellin local certificate.
--/
-theorem exists_dirichletRectangleBoundaryIntegral_reciprocal_zero_of_even {N : ℕ} [NeZero N] {x : ℝ}
-    (hx : 0 < x) {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) (heven : χ.Even) :
-    ∃ R : ℝ,
-      0 < R ∧
-        ∃ g : ℂ → ℂ,
-          RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ)
-              (RectangleGeometry.centeredSquareLower 0 R)
-              (RectangleGeometry.centeredSquareUpper 0 R) =
-            2 * Real.pi * Complex.I *
-              deriv
-                (dirichletReciprocalEvenZeroRegularization x
-                  (dirichletLFunctionZeroMultiplicity χ 0) g)
-                0 := by
-  obtain ⟨g, -, hganalytic, hgzero, heq⟩ :=
-    exists_eventuallyEq_dirichletReciprocalEvenZeroRegularization x hne heven
-  obtain ⟨R, hR, hboundary⟩ :=
-    RectangleGeometry.exists_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv
-      (analyticAt_dirichletReciprocalEvenZeroRegularization hx
-        (dirichletLFunctionZeroMultiplicity χ 0) hganalytic hgzero)
-      heq
-  exact ⟨R, hR, g, hboundary⟩
-
-/--
 Input/assumptions: positive `x`, a center away from `0,1`, and analytic nonvanishing local data.
 Conclusion: the reciprocal zero regularization is analytic at its center.
 Content: its log derivative, complex power, and nonzero Mellin denominator are all analytic there.
@@ -881,24 +822,11 @@ theorem exists_radius_forall_dirichletRectangleBoundaryIntegrals_eq_zeroContribu
   · rw [h2 r hr hR2', dirichletLogZeroRegularization_self]
 
 /--
-**the local residue step**: the reciprocal-kernel residue at any point of the primitive singularity
-ledger.
-Input/assumptions: a nontrivial character and any real `x`; the analytic residue
-interpretation at Mellin points is certified separately under the stated contour hypotheses.
-Conclusion: a single function on `ℂ` giving the reciprocal-kernel residue at `s = 0` (a
-parity-dependent combined residue, since an even character's forced zero at `0` coincides with the
-Mellin pole there), `s = 1` (the Mellin residue), and any other point (the ordinary `L`-zero
-contribution, `0` if `s` is not actually a zero).
-Content: `s = 0` branches on `χ.Even`/`χ.Odd`; the even branch fixes one witness `g` (via
-`Classical.choose`) for the local factorization and differentiates the shared double-pole
-regularization, matching
-`DirichletLFunction.exists_dirichletRectangleBoundaryIntegral_reciprocal_zero_of_even`'s
-existential exactly so the two agree pointwise
-(`DirichletLFunction.dirichletReciprocalResidueAt_zero_of_even`).
-Role: this is the `res` function fed to the generic finite residue theorem assembly
-(`RectangleGeometry.rectangleBoundaryIntegral_eq_sum_res`) once the primitive reciprocal finite
-contour identity is
-assembled.
+For a nontrivial character, define the designated reciprocal-kernel residue
+at zero, one, or an ordinary L-function zero. At zero, parity selects the
+combined Mellin and L-zero contribution; the even branch chooses a local
+factorization witness and differentiates its double-pole regularization.
+This function supplies the finite contour residue ledger.
 -/
 noncomputable def dirichletReciprocalResidueAt {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) (x : ℝ) (s : ℂ) : ℂ := by
@@ -1087,41 +1015,6 @@ theorem intervalIntegrable_dirichletKernels_vertical {N : ℕ} [NeZero N] {x : �
       simpa only [ne_eq, dirichletLFunctionContourRegularSet, Set.preimage_compl, Set.mem_inter_iff,
         Set.mem_compl_iff, Set.mem_singleton_iff, Set.mem_preimage] using hregular t ht
     exact (differentiableAt_dirichletLogContourKernel hx hχ hs'.1.1 hs'.2).continuousAt
-
-/--
-Input/assumptions: a nontrivial character and positive real `x`.
-Conclusion: the primitive reciprocal kernel is differentiable on its regular locus.
-Content: specialize the pointwise differentiability theorem to each regular point.
-Role: enables Cauchy--Goursat on every primitive regular rectangle.
--/
-theorem differentiableOn_dirichletReciprocalContourKernel {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
-    (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) :
-    DifferentiableOn ℂ (dirichletReciprocalContourKernel x χ)
-      (dirichletLFunctionContourRegularSet χ) := by
-  intro s hs
-  have hs' : (s ≠ 0 ∧ s ≠ 1) ∧ DirichletCharacter.LFunction χ s ≠ 0 := by
-    simpa only [ne_eq, dirichletLFunctionContourRegularSet, Set.preimage_compl, Set.mem_inter_iff,
-      Set.mem_compl_iff, Set.mem_singleton_iff, Set.mem_preimage] using hs
-  exact
-    DifferentiableAt.differentiableWithinAt
-      (differentiableAt_dirichletReciprocalContourKernel hx hχ hs'.1.1 hs'.1.2 hs'.2)
-
-/--
-Input/assumptions: a nontrivial character and positive real `x`.
-Conclusion: the primitive logarithmic kernel is differentiable on its regular locus.
-Content: specialize the pointwise differentiability theorem to each regular point.
-Role: enables the logarithmic Cauchy--Goursat identity on primitive regular rectangles.
--/
-theorem differentiableOn_dirichletLogContourKernel {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
-    (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) :
-    DifferentiableOn ℂ (dirichletLogContourKernel x χ) (dirichletLFunctionContourRegularSet χ) := by
-  intro s hs
-  have hs' : (s ≠ 0 ∧ s ≠ 1) ∧ DirichletCharacter.LFunction χ s ≠ 0 := by
-    simpa only [ne_eq, dirichletLFunctionContourRegularSet, Set.preimage_compl, Set.mem_inter_iff,
-      Set.mem_compl_iff, Set.mem_singleton_iff, Set.mem_preimage] using hs
-  exact
-    DifferentiableAt.differentiableWithinAt
-      (differentiableAt_dirichletLogContourKernel hx hχ hs'.1.1 hs'.2)
 
 /--
 **the integrability step**: coordinate avoidance makes the primitive reciprocal kernel integrable

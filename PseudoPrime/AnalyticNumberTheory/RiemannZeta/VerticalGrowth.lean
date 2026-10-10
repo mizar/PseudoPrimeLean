@@ -4,14 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.Analysis.Convex.PathConnected
-import Mathlib.Analysis.MellinTransform
-import Mathlib.MeasureTheory.Function.Floor
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-import Mathlib.NumberTheory.AbelSummation
-import Mathlib.NumberTheory.LSeries.RiemannZeta
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.Analysis.Convex.PathConnected
+public import Mathlib.Analysis.MellinTransform
+public import Mathlib.Analysis.PSeriesComplex
+public import Mathlib.MeasureTheory.Function.Floor
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.NumberTheory.AbelSummation
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
 
 /-!
 # Polynomial zeta growth from Euler–Maclaurin summation
@@ -36,12 +39,20 @@ function vanishing at every integer. -/
 def zetaSawtooth (t : ℝ) : ℝ :=
   Int.fract t * (Int.fract t - 1) / 2
 
+/--
+The sawtooth antiderivative has absolute value at most `1/8` everywhere.
+Use `0≤fract t<1` and complete the square; this dominates the remainder integrals.
+-/
 theorem abs_zetaSawtooth_le (t : ℝ) : |zetaSawtooth t| ≤ 1 / 8 := by
   have h0 : (0 : ℝ) ≤ Int.fract t := Int.fract_nonneg t
   have h1 : Int.fract t < 1 := Int.fract_lt_one t
   rw [zetaSawtooth, abs_le]
   constructor <;> nlinarith only [h0, h1, sq_nonneg (Int.fract t - 1 / 2)]
 
+/--
+On `[n,n+1)`, the sawtooth equals `(t-n)(t-n-1)/2`. Identify the floor with
+`n` and expand the fractional part; unit-interval integration by parts uses this polynomial.
+-/
 theorem zetaSawtooth_eq_of_mem_Ico {n : ℤ} {t : ℝ} (ht : t ∈ Set.Ico (n : ℝ) (n + 1)) :
     zetaSawtooth t = (t - n) * (t - n - 1) / 2 := by
   rw [zetaSawtooth, ← Int.self_sub_floor, Int.floor_eq_on_Ico n t ht]
@@ -86,6 +97,11 @@ theorem hasDerivAt_sawtoothIBP {s : ℂ} (hs : s ≠ -1) (n : ℤ) {t : ℝ} (ht
     ring
   rwa [heq2] at h3
 
+/--
+For positive `a`, the displayed sawtooth integration-by-parts derivative is continuous
+on `[a,a+1]`. Complex powers are continuous away from zero and the other factors
+are polynomials; the fundamental theorem of calculus uses its integrability.
+-/
 theorem continuousOn_sawtoothIBP_deriv {s : ℂ} (n : ℤ) {a : ℝ} (ha : 0 < a) :
     ContinuousOn
       (fun y : ℝ =>
@@ -111,6 +127,11 @@ theorem continuousOn_sawtoothIBP_deriv {s : ℂ} (n : ℤ) {a : ℝ} (ha : 0 < a
   · apply ContinuousOn.mul hcpow2
     exact Complex.continuous_ofReal.comp_continuousOn (by fun_prop)
 
+/--
+On an integer unit interval, the power-weighted quadratic and sawtooth integrands
+agree almost everywhere. Ignore the endpoint and use the fractional-part polynomial;
+this transfers polynomial integration to the periodic remainder.
+-/
 theorem ae_eq_of_mem_Ico_zetaSawtooth (n : ℤ) (s : ℂ) :
     ∀ᵐ t ∂(MeasureTheory.volume),
       t ∈ Set.uIoc (n : ℝ) (n + 1) →
@@ -124,6 +145,11 @@ theorem ae_eq_of_mem_Ico_zetaSawtooth (n : ℤ) (s : ℂ) :
   have ht₃ : t ∈ Set.Ico (n : ℝ) (n + 1) := ⟨ht₄.1.le, ht₄.2⟩
   rw [zetaSawtooth_eq_of_mem_Ico ht₃]
 
+/--
+On an integer unit interval, the power-weighted affine expression agrees almost
+everywhere with the centered fractional-part integrand. Remove the endpoint and
+identify the floor; integration by parts uses this integral congruence.
+-/
 theorem ae_eq_of_mem_Ico_fract (n : ℤ) (s : ℂ) :
     ∀ᵐ t ∂(MeasureTheory.volume),
       t ∈ Set.uIoc (n : ℝ) (n + 1) →
@@ -229,6 +255,11 @@ theorem integral_fract_sub_half_mul_cpow_eq {s : ℂ} (hs : s ≠ -1) (n : ℤ) 
   rw [hDeq] at hFTC
   linear_combination hFTC
 
+/--
+For integer `n≥1`, the power-weighted sawtooth is interval-integrable from `n`
+to `n+1` for every complex parameter. Transfer integrability from the continuous
+quadratic representative by almost-everywhere equality; finite interval sums use it.
+-/
 theorem intervalIntegrable_cpow_mul_sawtooth (n : ℤ) (hn : 1 ≤ n) (s : ℂ) :
     IntervalIntegrable (fun t => (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ))
       MeasureTheory.volume (n : ℝ) (n + 1) := by
@@ -250,6 +281,11 @@ theorem intervalIntegrable_cpow_mul_sawtooth (n : ℤ) (hn : 1 ≤ n) (s : ℂ) 
     hint1.congr_ae
       ((MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mpr (ae_eq_of_mem_Ico_zetaSawtooth n s))
 
+/--
+For integer `n≥1`, the power-weighted centered fractional part is interval-integrable
+on `[n,n+1]`. Use its almost-everywhere continuous affine representative; adjacent
+interval sums in Abel and Euler–Maclaurin identities consume this fact.
+-/
 theorem intervalIntegrable_cpow_mul_fract (n : ℤ) (hn : 1 ≤ n) (s : ℂ) :
     IntervalIntegrable (fun t => (t : ℂ) ^ (-s - 1) * ((Int.fract t - 1 / 2 : ℝ) : ℂ))
       MeasureTheory.volume (n : ℝ) (n + 1) := by
@@ -549,6 +585,12 @@ theorem re_detourPoint_gt {a b : ℂ} (ε : ℝ) :
     Complex.inv_im, Complex.im_ofNat, neg_zero, zero_div, Complex.mul_im, zero_add, Complex.sub_im]
   ring
 
+/--
+Any two points with real part greater than `-1`, both distinct from one, are joined
+inside the punctured half-plane. Use the straight segment if it avoids one; otherwise
+choose a small nonreal midpoint detour and concatenate two safe segments.
+This proves the connectedness needed by analytic continuation.
+-/
 theorem joinedIn_reGt_neg_one_diff_one {a b : ℂ} (ha : -1 < a.re) (ha1 : a ≠ 1) (hb : -1 < b.re)
     (hb1 : b ≠ 1) : JoinedIn ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) a b := by
   by_cases hab : a = b
@@ -702,12 +744,21 @@ viewed as a complex-valued function of `t > 0`. -/
 noncomputable def zetaSawtoothIndicator (t : ℝ) : ℂ :=
   if t ≤ 1 then 0 else ((zetaSawtooth t : ℝ) : ℂ)
 
+/--
+The truncated complex sawtooth is measurable. Split at the measurable set `t≤1`
+and compose the measurable real sawtooth with the complex embedding; Mellin integrals
+and local integrability use this.
+-/
 theorem measurable_zetaSawtoothIndicator : Measurable zetaSawtoothIndicator := by
   unfold zetaSawtoothIndicator
   exact
     Measurable.ite measurableSet_Iic measurable_const
       (Complex.measurable_ofReal.comp measurable_zetaSawtooth)
 
+/--
+The truncated sawtooth norm is at most `1/8` for every real input. Split its cutoff
+and use the real sawtooth bound; local integrability and growth estimates follow.
+-/
 theorem norm_zetaSawtoothIndicator_le (t : ℝ) : ‖zetaSawtoothIndicator t‖ ≤ 1 / 8 := by
   unfold zetaSawtoothIndicator
   split_ifs with h
@@ -715,16 +766,29 @@ theorem norm_zetaSawtoothIndicator_le (t : ℝ) : ‖zetaSawtoothIndicator t‖ 
   · rw [Complex.norm_real, Real.norm_eq_abs]
     exact abs_zetaSawtooth_le t
 
+/--
+The truncated sawtooth vanishes for `t≤1`, by its defining cutoff.
+This removes the near-zero part of the Mellin transform and gives arbitrary decay there.
+-/
 theorem zetaSawtoothIndicator_eq_zero_of_le_one {t : ℝ} (ht : t ≤ 1) :
     zetaSawtoothIndicator t = 0 := by
   unfold zetaSawtoothIndicator
   rw [ite_eq_left ht]
 
+/--
+Above one, the truncated sawtooth equals the complex embedding of the real sawtooth.
+Evaluate its cutoff; this identifies its Mellin transform with the remainder integral.
+-/
 theorem zetaSawtoothIndicator_eq_of_lt {t : ℝ} (ht : 1 < t) :
     zetaSawtoothIndicator t = ((zetaSawtooth t : ℝ) : ℂ) := by
   unfold zetaSawtoothIndicator
   rw [ite_eq_right (not_le.mpr ht)]
 
+/--
+The truncated sawtooth is locally integrable on positive reals. On each compact
+set, compare its measurable norm with the constant `1/8`; the Mellin differentiability
+criterion uses this local convergence.
+-/
 theorem locallyIntegrableOn_zetaSawtoothIndicator :
     MeasureTheory.LocallyIntegrableOn zetaSawtoothIndicator (Set.Ioi (0 : ℝ)) := by
   refine (MeasureTheory.locallyIntegrableOn_iff isOpen_Ioi.isLocallyClosed).mpr fun K _ hK ↦ ?_
@@ -734,6 +798,10 @@ theorem locallyIntegrableOn_zetaSawtoothIndicator :
   · exact measurable_zetaSawtoothIndicator.aestronglyMeasurable.restrict
   · exact Filter.Eventually.of_forall fun t => norm_zetaSawtoothIndicator_le t
 
+/--
+The truncated sawtooth is bounded at infinity, expressed as a big-O bound by
+`t^0`. Apply its uniform norm bound; this sets the Mellin transform upper strip threshold.
+-/
 theorem isBigO_atTop_zetaSawtoothIndicator :
     zetaSawtoothIndicator =O[Filter.atTop] fun t : ℝ => t ^ (-(0 : ℝ)) := by
   apply Asymptotics.IsBigO.of_bound (1 / 8)
@@ -741,6 +809,11 @@ theorem isBigO_atTop_zetaSawtoothIndicator :
   rw [neg_zero, Real.rpow_zero, norm_one, mul_one]
   exact norm_zetaSawtoothIndicator_le t
 
+/--
+Near zero within positive reals, the truncated sawtooth is big-O of `t^(-b)`
+for every real `b`, because it vanishes there. This lets Mellin differentiability
+use any required lower strip threshold.
+-/
 theorem isBigO_nhdsWithin_zetaSawtoothIndicator (b : ℝ) :
     zetaSawtoothIndicator =O[nhdsWithin (0 : ℝ) (Set.Ioi (0 : ℝ))] fun t : ℝ => t ^ (-b) := by
   have hev : zetaSawtoothIndicator =ᶠ[nhdsWithin (0 : ℝ) (Set.Ioi (0 : ℝ))] 0 := by
@@ -835,6 +908,10 @@ theorem differentiableAt_sawtoothRemainder {s : ℂ} (hs1 : -1 < s.re) :
 
 /-! ### Holomorphicity of `ζ` and of the target formula on the punctured half-plane -/
 
+/--
+The half-plane `Re s>-1` with one removed is open. Pull back the open real half-line
+and remove a closed singleton; analytic continuation works on this domain.
+-/
 theorem isOpen_reGt_neg_one_diff_one : IsOpen ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) :=
   (isOpen_Ioi.preimage Complex.continuous_re).sdiff isClosed_singleton
 
@@ -877,9 +954,18 @@ as required by `sum_mul_eq_sub_integral_mul₀`). -/
 noncomputable def oneFromOne (k : ℕ) : ℂ :=
   if k = 0 then 0 else 1
 
+/--
+The Abel coefficient at zero vanishes by definition. This meets the zero-index
+side condition of the finite Abel-summation theorem.
+-/
 theorem oneFromOne_zero : oneFromOne 0 = 0 :=
   ite_eq_left rfl
 
+/--
+The coefficient sum on natural indices `0,…,n` equals the complex cast of `n`.
+Subtract the indicator at zero from the constant-one sum; Abel summation therefore
+uses the ordinary floor counting function.
+-/
 theorem sum_oneFromOne (n : ℕ) : ∑ k ∈ Finset.Icc 0 n, oneFromOne k = (n : ℂ) := by
   have heq : ∀ k, oneFromOne k = 1 - (if k = 0 then (1 : ℂ) else 0) := by
     intro k
@@ -891,10 +977,20 @@ theorem sum_oneFromOne (n : ℕ) : ∑ k ∈ Finset.Icc 0 n, oneFromOne k = (n :
   simp only [Nat.card_Icc, tsub_zero, nsmul_eq_mul, Nat.cast_add, Nat.cast_one, mul_one,
     Finset.mem_Icc, Std.le_refl, zero_le, and_self, ↓reduceIte, add_sub_cancel_right]
 
+/--
+For nonzero complex `s` and nonzero real `t`, the derivative of `t^(-s)` is
+`-s*t^(-s-1)`. Apply the real-base complex-power derivative theorem; finite Abel
+summation uses this derivative.
+-/
 theorem hasDerivAt_cpow_neg {s : ℂ} (hs0 : s ≠ 0) {t : ℝ} (ht : t ≠ 0) :
     HasDerivAt (fun y : ℝ => (y : ℂ) ^ (-s)) (-s * (t : ℂ) ^ (-s - 1)) t :=
   hasDerivAt_ofReal_cpow_const ht (neg_ne_zero.mpr hs0)
 
+/--
+For positive lower endpoint `a`, the derivative expression `-s*t^(-s-1)` is
+continuous on `[a,b]`. Every base is nonzero there; this supplies the derivative
+integrability required by finite Abel summation.
+-/
 theorem continuousOn_deriv_cpow_neg (s : ℂ) {a b : ℝ} (ha : 0 < a) :
     ContinuousOn (fun t : ℝ => -s * (t : ℂ) ^ (-s - 1)) (Set.Icc a b) := by
   apply ContinuousOn.mul continuousOn_const
@@ -1266,6 +1362,11 @@ integrability in
 noncomputable def sawtoothRemainderBound (σ : ℝ) : ℝ :=
   ∫ t in Set.Ioi (1 : ℝ), (1 / 8 : ℝ) * t ^ (-(σ + 2))
 
+/--
+For `Re s>-1`, the remainder integral norm is at most `sawtoothRemainderBound s.re`.
+Move the norm inside the integral and dominate the sawtooth by `1/8`; the complex-power
+norm depends only on the real part. This yields the polynomial zeta growth estimate.
+-/
 theorem norm_sawtoothRemainder_le {s : ℂ} (hs : -1 < s.re) :
     ‖∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ)‖ ≤
       sawtoothRemainderBound s.re := by
@@ -1294,6 +1395,10 @@ theorem norm_sawtoothRemainder_le {s : ℂ} (hs : -1 < s.re) :
               (Real.rpow_nonneg (le_trans (by norm_num only : (0 : ℝ) ≤ 1) ht.le) _)
           _ = 1 / 8 * t ^ (-(s.re + 2)) := by ring
 
+/--
+The totalized remainder bound is nonnegative for every real parameter, because
+its defining integrand on `t>1` is nonnegative. Later growth estimates need this sign.
+-/
 theorem sawtoothRemainderBound_nonneg (σ : ℝ) : 0 ≤ sawtoothRemainderBound σ := by
   unfold sawtoothRemainderBound
   apply MeasureTheory.integral_nonneg_of_ae

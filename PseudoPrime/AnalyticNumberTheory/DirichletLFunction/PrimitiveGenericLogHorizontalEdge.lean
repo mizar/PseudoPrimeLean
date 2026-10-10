@@ -87,7 +87,7 @@ Content: applies the `hquad`-free ordinary logarithmic-derivative envelope to th
 bound above, using the same positive and negative heights as the contour API.
 Role: supplies the central horizontal integral estimate used by the generic log contour limit.
 -/
-theorem exists_primitiveHorizontalHeightSeq_logKernel_bound_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem exists_primitiveHorizontalHeightSeq_logKernel_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     ∃ η : ℕ → ℝ,
@@ -97,33 +97,30 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_bound_of_grh {N : ℕ} [Ne
             |σ| ≤ 2 →
               ‖dirichletLogContourKernel x χ
                       ((σ : ℂ) +
-                        primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k *
-                          Complex.I)‖ ≤
+                        primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)‖ ≤
                   x ^ 2 * η k ∧
                 ‖dirichletLogContourKernel x χ
                       ((σ : ℂ) -
-                        primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k *
-                          Complex.I)‖ ≤
+                        primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)‖ ≤
                   x ^ 2 * η k := by
   obtain ⟨η, hη_tendsto, hη⟩ :=
-    exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small_of_grh hN2 hGRH hprimitive hne hinv
+    exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small hN2 hGRH hprimitive hne hinv
   refine ⟨η, hη_tendsto, fun k σ hσ => ?_⟩
-  have hTk_ge1 : 1 ≤ primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := by
-    have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
+  have hTk_ge1 : 1 ≤ primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k := by
+    have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv k
     have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
     have hk1 : (1 : ℝ) ≤ 1 + (k : ℝ) := by simpa only [add_zero] using add_le_add_right hk0 1
     calc
       (1 : ℝ) ≤ 1 + (k : ℝ) := hk1
       _ = (k : ℝ) + 1 := by ring
-      _ ≤ primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := h
-  have hTk_ne : primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k ≠ 0 := by
+      _ ≤ primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k := h
+  have hTk_ne : primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k ≠ 0 := by
     exact ne_of_gt (lt_of_lt_of_le zero_lt_one hTk_ge1)
   refine ⟨norm_dirichletLogContourKernel_horizontal_le hx hσ hTk_ne (hη k σ hσ).1, ?_⟩
   have hform :
-    (σ : ℂ) - primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I =
+    (σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I =
       (σ : ℂ) +
-        (-(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k) : ℝ) *
-          Complex.I := by
+        (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k) : ℝ) * Complex.I := by
     push_cast
     ring
   rw [hform]
@@ -133,14 +130,14 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_bound_of_grh {N : ℕ} [Ne
 
 /--
 Input/assumptions: the hypotheses of
-`DirichletLFunction.exists_primitiveHorizontalHeightSeq_logKernel_bound_of_grh`.
+`DirichletLFunction.exists_primitiveHorizontalHeightSeq_logKernel_bound`.
 Conclusion: each central horizontal interval integral is bounded by `4 * x² * η k` for an
 envelope `η → 0`.
 Content: integrate the pointwise bound on `[-2, 2]` with the standard interval-integral norm
 estimate; the same envelope controls both orientations.
 Role: the central component of the generic logarithmic horizontal-edge vanishing theorem.
 -/
-theorem exists_primitiveHorizontalHeightSeq_logKernel_central_integral_le_of_grh {N : ℕ} [NeZero N]
+theorem exists_primitiveHorizontalHeightSeq_logKernel_central_integral_le {N : ℕ} [NeZero N]
     (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     ∃ η : ℕ → ℝ,
@@ -149,23 +146,20 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_central_integral_le_of_grh
           ‖∫ σ in (-2 : ℝ)..2,
                   dirichletLogContourKernel x χ
                     ((σ : ℂ) +
-                      primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k *
-                        Complex.I)‖ ≤
+                      primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)‖ ≤
               4 * (x ^ 2 * η k) ∧
             ‖∫ σ in (-2 : ℝ)..2,
                   dirichletLogContourKernel x χ
                     ((σ : ℂ) -
-                      primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k *
-                        Complex.I)‖ ≤
+                      primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)‖ ≤
               4 * (x ^ 2 * η k) := by
   obtain ⟨η, hη_tendsto, hη⟩ :=
-    exists_primitiveHorizontalHeightSeq_logKernel_bound_of_grh hN2 hGRH hprimitive hne hinv hx
+    exists_primitiveHorizontalHeightSeq_logKernel_bound hN2 hGRH hprimitive hne hinv hx
   refine ⟨η, hη_tendsto, fun k => ⟨?_, ?_⟩⟩
   · have hbound :=
       intervalIntegral.norm_integral_le_of_norm_le_const (a := (-2 : ℝ)) (b := 2) (f := fun σ : ℝ =>
         dirichletLogContourKernel x χ
-          ((σ : ℂ) +
-            primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I))
+          ((σ : ℂ) + primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         (C := x ^ 2 * η k)
         (by
           rw [Set.uIoc_of_le (by norm_num only : (-2 : ℝ) ≤ 2)]
@@ -175,17 +169,14 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_central_integral_le_of_grh
     calc
       ‖∫ (σ : ℝ) in -2..2,
               dirichletLogContourKernel x χ
-                (↑σ +
-                  ↑(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k) *
-                    Complex.I)‖ ≤
+                (↑σ + ↑(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k) * Complex.I)‖ ≤
           x ^ 2 * η k * 4 :=
         hbound
       _ = 4 * (x ^ 2 * η k) := by ring
   · have hbound :=
       intervalIntegral.norm_integral_le_of_norm_le_const (a := (-2 : ℝ)) (b := 2) (f := fun σ : ℝ =>
         dirichletLogContourKernel x χ
-          ((σ : ℂ) -
-            primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I))
+          ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         (C := x ^ 2 * η k)
         (by
           rw [Set.uIoc_of_le (by norm_num only : (-2 : ℝ) ≤ 2)]
@@ -195,34 +186,33 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_central_integral_le_of_grh
     calc
       ‖∫ (σ : ℝ) in -2..2,
               dirichletLogContourKernel x χ
-                (↑σ -
-                  ↑(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k) *
-                    Complex.I)‖ ≤
+                (↑σ - ↑(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k) * Complex.I)‖ ≤
           x ^ 2 * η k * 4 :=
         hbound
       _ = 4 * (x ^ 2 * η k) := by ring
 
-/-- The generic central horizontal logarithmic integrals converge to zero along GRH heights. -/
-theorem tendsto_primitiveHorizontalHeightSeq_logKernel_central_integral_of_grh {N : ℕ} [NeZero N]
+/-- For a primitive nontrivial character with nontrivial inverse at level `N ≥ 2`, GRH,
+and `x ≥ 1`, both logarithmic-kernel integrals over `[-2,2]` tend to zero along the
+selected heights. Squeeze their norms by the common envelope `4*x²*η k → 0`.
+This supplies the central part of the full horizontal-edge limit. -/
+theorem tendsto_primitiveHorizontalHeightSeq_logKernel_central_integral {N : ℕ} [NeZero N]
     (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     Filter.Tendsto
         (fun k : ℕ =>
           ∫ σ in (-2 : ℝ)..2,
             dirichletLogContourKernel x χ
-              ((σ : ℂ) +
-                primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I))
+              ((σ : ℂ) + primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         Filter.atTop (nhds 0) ∧
       Filter.Tendsto
         (fun k : ℕ =>
           ∫ σ in (-2 : ℝ)..2,
             dirichletLogContourKernel x χ
-              ((σ : ℂ) -
-                primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I))
+              ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         Filter.atTop (nhds 0) := by
   obtain ⟨η, hη_tendsto, hη⟩ :=
-    exists_primitiveHorizontalHeightSeq_logKernel_central_integral_le_of_grh hN2 hGRH hprimitive hne
-      hinv hx
+    exists_primitiveHorizontalHeightSeq_logKernel_central_integral_le hN2 hGRH hprimitive hne hinv
+      hx
   have htend : Filter.Tendsto (fun k : ℕ => 4 * (x ^ 2 * η k)) Filter.atTop (nhds 0) := by
     have h := hη_tendsto.const_mul (4 * x ^ 2)
     simpa only [mul_assoc, mul_zero] using h
@@ -294,8 +284,8 @@ Content: the generic far-left logarithmic-derivative envelope is integrated over
 its `(T+1)/T²` factor tends to zero.
 Role: far-left component of the generic logarithmic horizontal-edge limit.
 -/
-theorem exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le_of_grh (A : ℕ)
-    (hA : 2 ≤ A) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+theorem exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le (A : ℕ) (hA : 2 ≤ A)
+    {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
     (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
     (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     ∃ μ : ℕ → ℝ,
@@ -304,14 +294,12 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le_of_grh
           ‖∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
                   dirichletLogContourKernel x χ
                     ((σ : ℂ) +
-                      primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k *
-                        Complex.I)‖ ≤
+                      primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)‖ ≤
               μ k ∧
             ‖∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
                   dirichletLogContourKernel x χ
                     ((σ : ℂ) -
-                      primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k *
-                        Complex.I)‖ ≤
+                      primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)‖ ≤
               μ k := by
   have hAab : -(A : ℝ) - 1 / 2 ≤ -2 := by
     have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
@@ -320,9 +308,9 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le_of_grh
       _ ≤ -2 := by norm_num only
   obtain ⟨D, hDnonneg, hD⟩ :=
     exists_norm_logDeriv_dirichletLFunction_farLeft_le_general A hprimitive hne hinv
-  set T : ℕ → ℝ := primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv with hT_def
+  set T : ℕ → ℝ := primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv with hT_def
   have hT_tendsto : Filter.Tendsto T Filter.atTop Filter.atTop :=
-    tendsto_primitiveHorizontalHeightSeq_atTop_of_grh hN2 hGRH hprimitive hne hinv
+    tendsto_primitiveHorizontalHeightSeq_atTop hN2 hGRH hprimitive hne hinv
   set η : ℕ → ℝ := fun k => D * (T k + 1) / (T k) ^ 2 with hη_def
   set L : ℝ := |(-2 : ℝ) - (-(A : ℝ) - 1 / 2)| with hL_def
   set μ : ℕ → ℝ := fun k => η k * L with hμ_def
@@ -341,14 +329,14 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le_of_grh
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds h2D_tendsto hlower hupper
   refine ⟨μ, by simpa only [hμ_def, zero_mul] using hη_tendsto.mul_const L, fun k => ⟨?_, ?_⟩⟩
   · have hTk_ge1 : 1 ≤ T k := by
-      have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
+      have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
       rw [hT_def]
       have hk1 : (1 : ℝ) ≤ 1 + (k : ℝ) := by simpa only [add_zero] using add_le_add_right hk0 1
       calc
         (1 : ℝ) ≤ 1 + (k : ℝ) := hk1
         _ = (k : ℝ) + 1 := by ring
-        _ ≤ primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := h
+        _ ≤ primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k := h
     have hTk_pos : 0 < T k := lt_of_lt_of_le zero_lt_one hTk_ge1
     have hTksq_pos : 0 < (T k) ^ 2 := by positivity
     have hTk_ne : T k ≠ 0 := ne_of_gt hTk_pos
@@ -373,14 +361,14 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le_of_grh
           exact norm_dirichletLogContourKernel_farLeft_le hx hσ2 hTk_ne hL')
     rwa [hμ_def, hL_def]
   · have hTk_ge1 : 1 ≤ T k := by
-      have h := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
+      have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv k
       have hk0 : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
       rw [hT_def]
       have hk1 : (1 : ℝ) ≤ 1 + (k : ℝ) := by simpa only [add_zero] using add_le_add_right hk0 1
       calc
         (1 : ℝ) ≤ 1 + (k : ℝ) := hk1
         _ = (k : ℝ) + 1 := by ring
-        _ ≤ primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := h
+        _ ≤ primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k := h
     have hTk_pos : 0 < T k := lt_of_lt_of_le zero_lt_one hTk_ge1
     have hTksq_pos : 0 < (T k) ^ 2 := by positivity
     have hTk_ne : T k ≠ 0 := ne_of_gt hTk_pos
@@ -411,56 +399,58 @@ theorem exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le_of_grh
           exact norm_dirichletLogContourKernel_farLeft_le hx hσ2 (neg_ne_zero.mpr hTk_ne) hL2')
     rwa [hμ_def, hL_def]
 
-/-- The generic far-left logarithmic horizontal integrals converge to zero along the GRH heights. -/
-theorem tendsto_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_of_grh (A : ℕ) (hA : 2 ≤ A)
-    {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
+/-- Under the primitive-character GRH hypotheses, `A ≥ 2`, and `x ≥ 1`, both
+logarithmic-kernel integrals from `-A-1/2` to `-2` tend to zero at the selected heights.
+Squeeze their norms by the common vanishing envelope; this supplies the far-left part
+of the full horizontal-edge limit. -/
+theorem tendsto_primitiveHorizontalHeightSeq_logKernel_farLeft_integral (A : ℕ) (hA : 2 ≤ A) {N : ℕ}
+    [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     Filter.Tendsto
         (fun k : ℕ =>
           ∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
             dirichletLogContourKernel x χ
-              ((σ : ℂ) +
-                primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I))
+              ((σ : ℂ) + primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         Filter.atTop (nhds 0) ∧
       Filter.Tendsto
         (fun k : ℕ =>
           ∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
             dirichletLogContourKernel x χ
-              ((σ : ℂ) -
-                primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I))
+              ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         Filter.atTop (nhds 0) := by
   obtain ⟨μ, hμ_tendsto, hμ⟩ :=
-    exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le_of_grh A hA hN2 hGRH
-      hprimitive hne hinv hx
+    exists_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_le A hA hN2 hGRH hprimitive hne
+      hinv hx
   exact
     ⟨squeeze_zero_norm (fun k => (hμ k).1) hμ_tendsto,
       squeeze_zero_norm (fun k => (hμ k).2) hμ_tendsto⟩
 
-/-- The generic logarithmic kernel is continuous on each GRH horizontal height line. -/
-theorem continuous_dirichletLogContourKernel_horizontalHeightSeq_of_grh {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+/-- For a primitive nontrivial character with nontrivial inverse under GRH, `N ≥ 2`,
+and `x > 0`, the logarithmic kernel is continuous along both selected horizontal lines.
+Positive heights avoid the Mellin pole at zero, and good-height nonvanishing avoids
+L-function zeros, so differentiability gives continuity. This permits splitting edge integrals. -/
+theorem continuous_dirichletLogContourKernel_horizontalHeightSeq {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (k : ℕ) :
     Continuous
         (fun σ : ℝ =>
           dirichletLogContourKernel x χ
-            ((σ : ℂ) +
-              primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I)) ∧
+            ((σ : ℂ) + primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)) ∧
       Continuous
         (fun σ : ℝ =>
           dirichletLogContourKernel x χ
             ((σ : ℂ) -
-              primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I)) := by
-  have hTge := primitiveHorizontalHeightSeq_ge_of_grh hN2 hGRH hprimitive hne hinv k
-  have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k := by
+              primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)) := by
+  have hTge := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv k
+  have hTpos : (0 : ℝ) < primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k := by
     have hknn : (0 : ℝ) ≤ (k : ℝ) := Nat.cast_nonneg k
     have hk1 : (1 : ℝ) ≤ 1 + (k : ℝ) := by simpa only [add_zero] using add_le_add_right hknn 1
     have hk1' : (1 : ℝ) ≤ (k : ℝ) + 1 := by simpa only [add_comm] using hk1
     exact lt_of_lt_of_le zero_lt_one (hk1'.trans hTge)
   have hpt :
     ∀ s : ℂ,
-      s.im = primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k ∨
-          s.im = -(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k) →
+      s.im = primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k ∨
+          s.im = -(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k) →
         ContinuousAt (dirichletLogContourKernel x χ) s := by
     intro s hsim
     have hsimne : s.im ≠ 0 := by
@@ -475,24 +465,21 @@ theorem continuous_dirichletLogContourKernel_horizontalHeightSeq_of_grh {N : ℕ
           rw [h]
           simp only [Complex.zero_im])
     have hLne :=
-      dirichletLFunction_ne_zero_of_im_eq_primitiveHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k
-        hsim
+      dirichletLFunction_ne_zero_of_im_eq_primitiveHeightSeq hN2 hGRH hprimitive hne hinv k hsim
     exact (differentiableAt_dirichletLogContourKernel hx hne hs0 hLne).continuousAt
   constructor
   · have hg :
       Continuous
         (fun σ : ℝ =>
           (σ : ℂ) +
-            (primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k : ℂ) *
-              Complex.I) := by
+            (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k : ℂ) * Complex.I) := by
       fun_prop
     have hOn :
       ContinuousOn (dirichletLogContourKernel x χ)
         (Set.range
           (fun σ : ℝ =>
             (σ : ℂ) +
-              (primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k : ℂ) *
-                Complex.I)) := by
+              (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k : ℂ) * Complex.I)) := by
       rintro s ⟨σ, rfl⟩
       exact
         (hpt _
@@ -506,16 +493,14 @@ theorem continuous_dirichletLogContourKernel_horizontalHeightSeq_of_grh {N : ℕ
       Continuous
         (fun σ : ℝ =>
           (σ : ℂ) -
-            (primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k : ℂ) *
-              Complex.I) := by
+            (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k : ℂ) * Complex.I) := by
       fun_prop
     have hOn :
       ContinuousOn (dirichletLogContourKernel x χ)
         (Set.range
           (fun σ : ℝ =>
             (σ : ℂ) -
-              (primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k : ℂ) *
-                Complex.I)) := by
+              (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k : ℂ) * Complex.I)) := by
       rintro s ⟨σ, rfl⟩
       exact
         (hpt _
@@ -531,48 +516,41 @@ Under the primitive-character GRH hypotheses, with `A ≥ 2` and `x ≥ 1`, both
 horizontal logarithmic-kernel integrals tend to zero. Split each integral at `-2`,
 using continuity for interval integrability, then add the far-left and central limits.
 -/
-theorem tendsto_primitiveHorizontalHeightSeq_logKernel_horizontal_integral_of_grh (A : ℕ)
-    (hA : 2 ≤ A) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+theorem tendsto_primitiveHorizontalHeightSeq_logKernel_horizontal_integral (A : ℕ) (hA : 2 ≤ A)
+    {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
     (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
     (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     Filter.Tendsto
         (fun k : ℕ =>
           ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
             dirichletLogContourKernel x χ
-              ((σ : ℂ) +
-                primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I))
+              ((σ : ℂ) + primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         Filter.atTop (nhds 0) ∧
       Filter.Tendsto
         (fun k : ℕ =>
           ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
             dirichletLogContourKernel x χ
-              ((σ : ℂ) -
-                primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I))
+              ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         Filter.atTop (nhds 0) := by
   have hxpos : (0 : ℝ) < x := lt_of_lt_of_le zero_lt_one hx
   have hfarLeft :=
-    tendsto_primitiveHorizontalHeightSeq_logKernel_farLeft_integral_of_grh A hA hN2 hGRH hprimitive
-      hne hinv hx
-  have hcentral :=
-    tendsto_primitiveHorizontalHeightSeq_logKernel_central_integral_of_grh hN2 hGRH hprimitive hne
+    tendsto_primitiveHorizontalHeightSeq_logKernel_farLeft_integral A hA hN2 hGRH hprimitive hne
       hinv hx
+  have hcentral :=
+    tendsto_primitiveHorizontalHeightSeq_logKernel_central_integral hN2 hGRH hprimitive hne hinv hx
   have hcont := fun k : ℕ =>
-    continuous_dirichletLogContourKernel_horizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv
-      hxpos k
+    continuous_dirichletLogContourKernel_horizontalHeightSeq hN2 hGRH hprimitive hne hinv hxpos k
   have hsplit :
     ∀ k : ℕ,
       (∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
             dirichletLogContourKernel x χ
-              ((σ : ℂ) +
-                primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I)) +
+              ((σ : ℂ) + primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)) +
           ∫ σ in (-2 : ℝ)..(2 : ℝ),
             dirichletLogContourKernel x χ
-              ((σ : ℂ) +
-                primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I) =
+              ((σ : ℂ) + primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I) =
         ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
           dirichletLogContourKernel x χ
-            ((σ : ℂ) +
-              primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I) :=
+            ((σ : ℂ) + primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I) :=
     fun k =>
     intervalIntegral.integral_add_adjacent_intervals
       ((hcont k).1.intervalIntegrable (-(A : ℝ) - 1 / 2) (-2))
@@ -581,16 +559,13 @@ theorem tendsto_primitiveHorizontalHeightSeq_logKernel_horizontal_integral_of_gr
     ∀ k : ℕ,
       (∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
             dirichletLogContourKernel x χ
-              ((σ : ℂ) -
-                primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I)) +
+              ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)) +
           ∫ σ in (-2 : ℝ)..(2 : ℝ),
             dirichletLogContourKernel x χ
-              ((σ : ℂ) -
-                primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I) =
+              ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I) =
         ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
           dirichletLogContourKernel x χ
-            ((σ : ℂ) -
-              primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k * Complex.I) :=
+            ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I) :=
     fun k =>
     intervalIntegral.integral_add_adjacent_intervals
       ((hcont k).2.intervalIntegrable (-(A : ℝ) - 1 / 2) (-2))

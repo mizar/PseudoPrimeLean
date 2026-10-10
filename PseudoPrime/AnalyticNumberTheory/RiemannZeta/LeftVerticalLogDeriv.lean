@@ -50,6 +50,11 @@ noncomputable def qMinusOneLeftVerticalConst : ℝ :=
 noncomputable def leftVerticalZetaLogDerivBound (m : ℕ) (t : ℝ) : ℝ :=
   qMinusOneLeftVerticalConst + 4 * Real.pi * |t| + (2 * (m : ℝ) + 1)
 
+/--
+On the left line `Re s=-(2m+1)`, the zeta logarithmic derivative norm is at most
+`leftVerticalZetaLogDerivBound m t` for every real height `t`. Extract the bound from the
+chosen uniform constant; left-edge kernel estimates multiply it by the Mellin factor.
+-/
 theorem norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le_uniform (m : ℕ) (t : ℝ) :
     ‖logDeriv riemannZeta (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       leftVerticalZetaLogDerivBound m t :=

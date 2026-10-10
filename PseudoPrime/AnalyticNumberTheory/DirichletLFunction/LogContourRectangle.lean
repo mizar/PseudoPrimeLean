@@ -4,44 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveContourRectangle
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogResidueLedger
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveContourRectangle
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogResidueLedger
 
 /-! General smoothed-contour identities and bounds. -/
 
-namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
+@[expose] public section
 
-/--
-Input/assumptions: `x > 0`, a nontrivial character, and an `L`-zero `ρ ≠ 0`.
-Conclusion: some centered square has logarithmic boundary integral equal to `2πi` times that
-zero's designated contribution.
-Content: feed the local analytic regularization and scaled-kernel equality to the shared rectangle
-simple-pole theorem.
-Role: this is the local logarithmic residue certificate consumed by punctured-grid bookkeeping.
--/
-theorem exists_dirichletRectangleBoundaryIntegral_log_eq_two_pi_I_mul_zeroContribution {N : ℕ}
-    [NeZero N] {x : ℝ} (hx : 0 < x) {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) {ρ : ℂ} (hρ0 : ρ ≠ 0)
-    (hzero : DirichletCharacter.LFunction χ ρ = 0) :
-    ∃ R : ℝ,
-      0 < R ∧
-        RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ)
-            (RectangleGeometry.centeredSquareLower ρ R)
-            (RectangleGeometry.centeredSquareUpper ρ R) =
-          2 * Real.pi * Complex.I *
-            (-(dirichletLFunctionZeroMultiplicity χ ρ : ℂ) * (x : ℂ) ^ ρ / ρ ^ 2) := by
-  obtain ⟨g, -, hganalytic, hgzero, heq⟩ :=
-    exists_eventuallyEq_logKernel_dirichletLFunctionZeroRegularization x hχ hρ0 hzero
-  have hh :
-    AnalyticAt ℂ (dirichletLogZeroRegularization x ρ (dirichletLFunctionZeroMultiplicity χ ρ) g)
-      ρ :=
-    analyticAt_dirichletLogZeroRegularization hx hρ0 _ hganalytic hgzero
-  obtain ⟨R, hR, hRes⟩ := RectangleGeometry.exists_rectangleBoundaryIntegral_eq_two_pi_I_mul hh heq
-  refine ⟨R, hR, ?_⟩
-  simpa only [RectangleGeometry.rectangleBoundaryIntegral, smul_eq_mul, neg_mul] using
-    (hRes.trans
-      (by
-        rw [dirichletLogZeroRegularization_self]
-        ring))
+namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
 /--
 Coordinate avoidance makes the primitive logarithmic kernel integrable on every
@@ -238,32 +210,6 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
       (fun s ↦ 2 * Real.pi * Complex.I * dirichletLogResidueAt hne x s) S cells z w assignment hsum
       hdiff hsingular_res
 
-/--
-The height-sequence specialization of
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.dirichletLogFiniteContourIdentity`,
-mirroring
-`DirichletLFunction.dirichletReciprocalFiniteContourIdentity_heightSeq`.
--/
-theorem dirichletLogFiniteContourIdentity_heightSeq {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
-    (hx : 0 < x) (A k : ℕ) (hA : 2 ≤ A) :
-    RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ)
-        (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
-        (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k) =
-      ∑
-        s ∈
-          dirichletLFunctionSingularitiesInRectangle χ hne
-            (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
-            (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k),
-        2 * Real.pi * Complex.I * dirichletLogResidueAt hne x s := by
-  obtain ⟨_, _, _, _, hre, him⟩ :=
-    primitiveReciprocalCorners_facts hN2 hGRH hprimitive hne hinv hquad A k hA
-  exact
-    dirichletLogFiniteContourIdentity hx hprimitive hne hre him
-      (primitiveHorizontalHeightSeq_singularities_mem_open hN2 hGRH hprimitive hne hinv hquad A k
-        hA)
-
 /-- Normalized form of the generic logarithmic finite-contour identity. -/
 theorem dirichletLogFiniteContourIdentity_normalized {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {z w : ℂ}
@@ -293,66 +239,28 @@ theorem dirichletLogFiniteContourIdentity_normalized {N : ℕ} [NeZero N] {x : �
       rw [Complex.I_sq]; ring
 
 /--
-The normalized log-kernel height-sequence contour identity, mirroring
-`DirichletLFunction.dirichletReciprocalFiniteContourIdentity_heightSeq_normalized`.
--/
-theorem dirichletLogFiniteContourIdentity_heightSeq_normalized {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
-    (hx : 0 < x) (A k : ℕ) (hA : 2 ≤ A) :
-    (-Complex.I / (2 * Real.pi)) *
-        RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ)
-          (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
-          (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k) =
-      ∑
-        s ∈
-          dirichletLFunctionSingularitiesInRectangle χ hne
-            (primitiveReciprocalLowerCorner hN2 hGRH hprimitive hne hinv hquad A k)
-            (primitiveReciprocalUpperCorner hN2 hGRH hprimitive hne hinv hquad k),
-        dirichletLogResidueAt hne x s := by
-  rw [dirichletLogFiniteContourIdentity_heightSeq hN2 hGRH hprimitive hne hinv hquad hx A k hA,
-    Finset.mul_sum]
-  refine Finset.sum_congr rfl fun s _ => ?_
-  have h2pi : (2 * (Real.pi : ℂ)) ≠ 0 := by
-    simp only [ne_eq, mul_eq_zero, OfNat.ofNat_ne_zero, Complex.ofReal_eq_zero, Real.pi_ne_zero,
-      or_self, not_false_eq_true]
-  have hcoeff : (-Complex.I / (2 * (Real.pi : ℂ))) * (2 * (Real.pi : ℂ) * Complex.I) = 1 := by
-    rw [div_mul_eq_mul_div, mul_comm (2 * (Real.pi : ℂ)) Complex.I, ← mul_assoc,
-      show (-Complex.I) * Complex.I = 1 from by
-        rw [neg_mul, Complex.I_mul_I]
-        ring,
-      one_mul, div_self h2pi]
-  calc
-    (-Complex.I / (2 * (Real.pi : ℂ))) * (2 * Real.pi * Complex.I * dirichletLogResidueAt hne x s) =
-        ((-Complex.I / (2 * (Real.pi : ℂ))) * (2 * Real.pi * Complex.I)) *
-          dirichletLogResidueAt hne x s :=
-      by ring
-    _ = dirichletLogResidueAt hne x s := by rw [hcoeff, one_mul]
-
-/-!
 The normalized logarithmic contour identity on the generic
 GRH height-sequence rectangle.  This removes the quadratic-character restriction
 from the finite residue identity and is the interface used by the boundary limit.
 -/
-
-theorem dirichletLogFiniteContourIdentity_heightSeq_normalized_of_grh {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+theorem dirichletLogFiniteContourIdentity_heightSeq_normalized {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (A k : ℕ)
     (hA : 2 ≤ A) :
     (-Complex.I / (2 * Real.pi)) *
         RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ)
-          (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
-          (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k) =
+          (primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k)
+          (primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k) =
       ∑
         s ∈
           dirichletLFunctionSingularitiesInRectangle χ hne
-            (primitiveHeightSeqLowerCorner_of_grh hN2 hGRH hprimitive hne hinv A k)
-            (primitiveHeightSeqUpperCorner_of_grh hN2 hGRH hprimitive hne hinv k),
+            (primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k)
+            (primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k),
         dirichletLogResidueAt hne x s := by
   obtain ⟨_, _, _, _, hre, him⟩ :=
-    primitiveHeightSeqRectangleFacts_of_grh hN2 hGRH hprimitive hne hinv A k hA
+    primitiveHeightSeqRectangleFacts hN2 hGRH hprimitive hne hinv A k hA
   exact
     dirichletLogFiniteContourIdentity_normalized hx hprimitive hne hre him
-      (primitiveHeightSeq_singularities_mem_open_of_grh hN2 hGRH hprimitive hne hinv A k hA)
+      (primitiveHeightSeq_singularities_mem_open hN2 hGRH hprimitive hne hinv A k hA)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

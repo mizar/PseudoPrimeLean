@@ -108,6 +108,11 @@ noncomputable def farLeftZetaLogDerivBound (m : ℕ) (t : ℝ) : ℝ :=
   qMinusOneHorizontalFarLeftConst + farLeftBTerm m + 20 * Real.pi * |t| +
     Real.pi / 2 * Real.sqrt (1 + 1 / Real.sinh (Real.pi * t / 2) ^ 2)
 
+/--
+For nonzero height and real part in the stated far-left interval, the zeta logarithmic
+derivative satisfies the chosen explicit majorant. Extract the estimate from the
+uniform existence theorem; horizontal far-left contour bounds use it.
+-/
 theorem norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc {m : ℕ} {σ t : ℝ}
     (hσ : σ ∈ Set.Icc (-(2 * (m : ℝ) + 1)) (-1 / 2)) (ht : t ≠ 0) :
     ‖logDeriv riemannZeta ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤ farLeftZetaLogDerivBound m t :=
@@ -156,6 +161,10 @@ avoids all zeta zeros there. -/
 noncomputable def farLeftHeightSeq (m : ℕ) : ℝ :=
   ((m : ℝ) + 1) * (farLeftBTerm m + 1)
 
+/--
+The far-left height exceeds `m+1`. Expand its product definition and use positivity
+of the additional factor; this comparison proves divergence of the contour heights.
+-/
 theorem add_one_le_farLeftHeightSeq (m : ℕ) : (m : ℝ) + 1 ≤ farLeftHeightSeq m := by
   have h1 : (1 : ℝ) ≤ farLeftBTerm m + 1 := by linarith only [farLeftBTerm_pos m]
   calc
@@ -163,6 +172,10 @@ theorem add_one_le_farLeftHeightSeq (m : ℕ) : (m : ℝ) + 1 ≤ farLeftHeightS
     _ ≤ ((m : ℝ) + 1) * (farLeftBTerm m + 1) :=
       mul_le_mul_of_nonneg_left h1 (add_nonneg (Nat.cast_nonneg m) (by norm_num only : (0 : ℝ) ≤ 1))
 
+/--
+The far-left height dominates its logarithmic-derivative majorant. Expand the height
+and compare its positive factors; horizontal contour estimates use this domination.
+-/
 theorem farLeftBTerm_le_farLeftHeightSeq (m : ℕ) : farLeftBTerm m ≤ farLeftHeightSeq m := by
   have h1 : (1 : ℝ) ≤ (m : ℝ) + 1 := by linarith only [Nat.cast_nonneg (α := ℝ) m]
   have h2 : (0 : ℝ) ≤ farLeftBTerm m := (farLeftBTerm_pos m).le
@@ -172,17 +185,20 @@ theorem farLeftBTerm_le_farLeftHeightSeq (m : ℕ) : farLeftBTerm m ≤ farLeftH
     _ ≤ ((m : ℝ) + 1) * (farLeftBTerm m + 1) :=
       mul_le_mul_of_nonneg_left (by linarith only []) (by linarith only [h1])
 
+/--
+Every far-left contour height is positive. Compare it with the positive quantity
+`m+1`; this supplies nonzero heights in logarithmic-derivative estimates.
+-/
 theorem farLeftHeightSeq_pos (m : ℕ) : 0 < farLeftHeightSeq m :=
   lt_of_lt_of_le (add_pos_of_nonneg_of_pos (Nat.cast_nonneg m) (by norm_num only))
     (add_one_le_farLeftHeightSeq m)
 
+/--
+Every far-left contour height is at least one. Compose the lower bound by `m+1`
+with nonnegativity of the natural index; later reciprocal-height estimates use it.
+-/
 theorem one_le_farLeftHeightSeq (m : ℕ) : (1 : ℝ) ≤ farLeftHeightSeq m :=
   le_trans (by linarith only [Nat.cast_nonneg (α := ℝ) m]) (add_one_le_farLeftHeightSeq m)
-
-theorem tendsto_farLeftHeightSeq_atTop :
-    Filter.Tendsto farLeftHeightSeq Filter.atTop Filter.atTop := by
-  refine Filter.tendsto_atTop_mono add_one_le_farLeftHeightSeq ?_
-  exact Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_natCast_atTop_atTop
 
 /-- **`farLeftBTerm` grows at most quadratically in `m`** (a crude, fully explicit bound, obtained
 by applying `Real.log_le_sub_one_of_pos` to tame the `(2m+1)·log(2m+3)`-type term coming out of

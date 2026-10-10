@@ -295,10 +295,12 @@ theorem one_le_log_add_three {R : ℝ} (hR : 1 ≤ R) : 1 ≤ Real.log (R + 3) :
     exact Real.log_lt_log (Real.exp_pos 1) h1
   exact h2.le
 
-/-- **The exponential envelope**:
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedLFunctionBallBound N R ≤
-exp((4N+3)(R+3)log(R+3))`
-for `R ≥ 1`. -/
+/--
+For `N ≥ 2` and `R ≥ 1`, bound the ball envelope by
+`exp ((4N + 3) * ((R + 3) * log (R + 3)))`.
+The proof bounds the two growth terms and absorbs their sum into this exponential.
+This uniform envelope is used in Jensen bounds and the vanishing finite-radius error.
+-/
 theorem completedLFunctionBallBound_le_exp {N : ℕ} (hN2 : 2 ≤ N) {R : ℝ} (hR : 1 ≤ R) :
     completedLFunctionBallBound N R ≤
       Real.exp ((4 * (N : ℝ) + 3) * ((R + 3) * Real.log (R + 3))) := by
@@ -511,6 +513,11 @@ also absorbs the origin), and `PseudoPrime.AnalyticNumberTheory.DirichletLFuncti
 noncomputable def shellIdx (s : ℂ) : ℕ :=
   ⌊Real.logb 2 ‖s‖⌋₊
 
+/--
+If the dyadic shell index of `s` is zero, then `‖s‖ < 2`.
+The floor bound for the logarithm proves the claim, including the case `s = 0`.
+This controls the innermost shell in the zero-weight summability argument.
+-/
 theorem norm_lt_two_of_shellIdx_eq_zero {s : ℂ} (hs : shellIdx s = 0) : ‖s‖ < 2 := by
   rw [shellIdx, Nat.floor_eq_zero] at hs
   rcases (norm_nonneg s).eq_or_lt with h0 | h0
@@ -519,6 +526,11 @@ theorem norm_lt_two_of_shellIdx_eq_zero {s : ℂ} (hs : shellIdx s = 0) : ‖s�
   · rw [Real.logb_lt_iff_lt_rpow (by norm_num only) h0, Real.rpow_one] at hs
     exact hs
 
+/--
+For a nonzero shell index `k`, `shellIdx s = k` implies `2^k ≤ ‖s‖`.
+A nonzero index first gives positive norm; the floor lower bound for the base-two
+logarithm then gives the inequality. This supplies the shell denominator estimate.
+-/
 theorem two_pow_le_norm_of_shellIdx_eq {s : ℂ} {k : ℕ} (hk : k ≠ 0) (hs : shellIdx s = k) :
     (2 : ℝ) ^ k ≤ ‖s‖ := by
   have hpos : (0 : ℝ) < ‖s‖ := by
@@ -534,6 +546,11 @@ theorem two_pow_le_norm_of_shellIdx_eq {s : ℂ} {k : ℕ} (hk : k ≠ 0) (hs : 
   rw [Real.le_logb_iff_rpow_le (by norm_num only) hpos, Real.rpow_natCast] at hle
   exact hle
 
+/--
+If `shellIdx s = k`, then `‖s‖ < 2^(k + 1)`.
+The floor upper bound proves this for positive norm, and zero norm is immediate.
+This places every shell inside the ball used for its Jensen estimate.
+-/
 theorem norm_lt_two_pow_succ_of_shellIdx_eq {s : ℂ} {k : ℕ} (hs : shellIdx s = k) :
     ‖s‖ < (2 : ℝ) ^ (k + 1) := by
   rcases eq_or_ne ‖s‖ 0 with h0 | h0
@@ -605,12 +622,21 @@ theorem sum_le_finsum_divisor_completedLFunction {N : ℕ} [NeZero N] {χ : Diri
   rw [heq]
   exact hkey
 
-/-- The (regularized, multiplicity-weighted) reciprocal-square weight of a `completedLFunction`
-zero, using `Set.univ` so it is defined uniformly (no radius dependence). -/
+/--
+The divisor multiplicity at `s`, cast to `ℝ`, divided by `1 + ‖s‖²`.
+For a nontrivial character the completed L-function is entire, so this weight is
+nonnegative and supported on its zeros. The definition itself imposes no such hypothesis.
+Summability of these weights supplies a majorant for the genus-one series.
+-/
 noncomputable def completedLFunctionZeroWeight {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     (s : ℂ) : ℝ :=
   (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ s : ℝ) / (1 + ‖s‖ ^ 2)
 
+/--
+For a nontrivial character, the zero weight at every `s` is nonnegative.
+Entirety makes the divisor multiplicity nonnegative, and `1 + ‖s‖²` is positive.
+This allows bounded finite sums to establish summability of the zero weights.
+-/
 theorem completedLFunctionZeroWeight_nonneg {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) (s : ℂ) : 0 ≤ completedLFunctionZeroWeight χ s := by
   have hdiff := DirichletCharacter.differentiable_completedLFunction hne
@@ -1185,9 +1211,13 @@ theorem meromorphicOrderAt_dirichletCompletedLFunction_eq_zero_of_ne_zero {N : �
   rw [(hdiff.analyticAt i).meromorphicOrderAt_eq, analyticOrderAt_eq_zero.mpr (Or.inr hi)]
   rfl
 
-/-- The canonical-decomposition factor `g` is at least as large as `F` at the
-center `0` — each canonical-factor term `‖canonicalFactor R i 0‖ = R/‖i‖ ≥ 1` for an interior
-zero `i` (`‖i‖ < R`), so the boundary correction in `log_norm_eq` at `w = 0` is nonnegative. -/
+/--
+For a primitive nontrivial character, a positive radius, and a canonical decomposition
+whose boundary sphere is zero-free, the analytic factor at zero has norm at least
+that of the completed L-function at zero. Boundary terms vanish; each interior term
+has nonnegative multiplicity and `log (R / ‖ρ‖) ≥ 0`.
+This lower bound controls the normalized analytic factor in the logarithmic estimates.
+-/
 theorem norm_ecanonicalDecomp_zero_ge {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {R : ℝ} (hR : 0 < R) {g : ℂ → ℂ}
     (D : Complex.ECanonicalDecomp (DirichletCharacter.completedLFunction χ) g R)
@@ -1377,7 +1407,7 @@ theorem norm_logDeriv_ecanonicalDecomp_sub_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
   have hgne : ∀ w ∈ Metric.ball (0 : ℂ) R, g w ≠ 0 := fun w hw =>
     D.ne_zero w (Metric.ball_subset_closedBall hw)
   obtain ⟨hh, hh', hh_re⟩ :=
-    RiemannZeta.exists_hasDerivAt_logDeriv_re_eq_log_norm hR0 hanalyticBall hgne
+    Analysis.exists_hasDerivAt_logDeriv_re_eq_log_norm hR0 hanalyticBall hgne
   have hF0_pos : (0 : ℝ) < ‖DirichletCharacter.completedLFunction χ 0‖ :=
     norm_pos_iff.mpr (dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne)
   have h0R : ‖(0 : ℂ)‖ ≤ R := by
@@ -1584,17 +1614,31 @@ theorem completedLFunctionGoodRadius_spec {N : ℕ} [NeZero N] {χ : DirichletCh
   unfold completedLFunctionGoodRadius
   exact_mod_cast Classical.choose_spec (exists_zeroFree_sphere_radius hne (n + 2))
 
+/--
+For a nontrivial character, the chosen good radius at index `n` exceeds `n + 2`.
+This is the lower-bound component of `completedLFunctionGoodRadius_spec`.
+It ensures divergence of the radii and eventual inclusion of any fixed point.
+-/
 theorem completedLFunctionGoodRadius_gt {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) (n : ℕ) : (n : ℝ) + 2 < completedLFunctionGoodRadius hne n :=
   (completedLFunctionGoodRadius_spec hne n).1
 
+/--
+For a nontrivial character, its completed L-function is nonzero on the sphere
+of the chosen good radius. This projects the zero-free clause of the radius specification.
+It permits canonical decompositions without boundary zero contributions.
+-/
 theorem completedLFunctionGoodRadius_zeroFree {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) (n : ℕ) :
     ∀ ρ : ℂ,
       ‖ρ‖ = completedLFunctionGoodRadius hne n → DirichletCharacter.completedLFunction χ ρ ≠ 0 :=
   (completedLFunctionGoodRadius_spec hne n).2.2
 
-/-- The good-radius sequence tends to infinity, sandwiched between `n + 2` and `n + 3`. -/
+/--
+For a nontrivial character, the chosen good radii tend to infinity.
+Compare them from below with `n + 2`, using `completedLFunctionGoodRadius_gt`.
+This lets finite-radius estimates and truncated sums pass to the full series limit.
+-/
 theorem tendsto_completedLFunctionGoodRadius_atTop {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) :
     Filter.Tendsto (completedLFunctionGoodRadius hne) Filter.atTop Filter.atTop := by
@@ -1653,12 +1697,13 @@ theorem sphereFactor_eq_one_of_zeroFree {N : ℕ} [NeZero N] {χ : DirichletChar
     funext z
     simp only [Pi.pow_apply, zpow_ofNat, pow_zero, Pi.one_apply]
 
-/-- The right side of `ECanonicalDecomp.eventuallyEq` is
-`MeromorphicAt` at every point (needed as a hypothesis of
-`MeromorphicAt.eventuallyEq_nhdsNE_of_eventuallyEq_codiscreteWithin_preperfect`) — a finite
-product of canonical factors (each a rational function, hence meromorphic via `finprod`'s
-unconditional meromorphicity) times the (here identically-`1`, since zero-free) sphere factor,
-times the analytic `g`. -/
+/--
+For a nontrivial character and a canonical decomposition with zero-free boundary,
+the product expression on its right-hand side is meromorphic at each point of the closed ball.
+The canonical factors and their integer powers are meromorphic, the boundary product
+is one, and the analytic factor is meromorphic there.
+This supports extension of the decomposition identity from a codiscrete set.
+-/
 theorem meromorphicAt_ecanonicalDecompRHS {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) {R : ℝ} {g : ℂ → ℂ}
     (D : Complex.ECanonicalDecomp (DirichletCharacter.completedLFunction χ) g R)
@@ -1687,59 +1732,6 @@ theorem meromorphicAt_ecanonicalDecompRHS {N : ℕ} [NeZero N] {χ : DirichletCh
   have hgAt : MeromorphicAt g x := (D.analyticOnNhd x hx).meromorphicAt
   rw [hsphere1, mul_one]
   exact hprod.smul hgAt
-
-/-- The log-derivative of the canonical-factor product expands to
-the weighted sum of individual log-derivatives, away from a codiscrete subset of `ball 0 R` —
-a direct application of `MeromorphicOn.logDeriv_finprod_zpow_eventuallyEq`, requiring only that
-each `canonicalFactor` is meromorphic everywhere with finite order (both already available:
-`Complex.meromorphic_canonicalFactor`, `Complex.meromorphicOrderAt_canonicalFactor_ne_top`) and
-that the divisor of `F` on `ball 0 R` has finite support
-(`MeromorphicOn.divisor_ball_support_finite`). -/
-theorem logDeriv_canonicalFactorProduct_eventuallyEq {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
-    (hne : χ ≠ 1) {R : ℝ} (hR : 0 < R) :
-    logDeriv
-        (∏ᶠ u : ℂ,
-          (Complex.canonicalFactor R u) ^
-            (-MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
-                (Metric.ball (0 : ℂ) R) u)) =ᶠ[Filter.codiscreteWithin (Metric.ball (0 : ℂ) R)]
-      fun z =>
-      ∑ᶠ u : ℂ,
-        (-MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball (0 : ℂ) R)
-              u) •
-          logDeriv (Complex.canonicalFactor R u) z := by
-  have hdiff := DirichletCharacter.differentiable_completedLFunction hne
-  have hanalyticClosed :
-    AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) (Metric.closedBall (0 : ℂ) R) :=
-    fun z _ => hdiff.analyticAt z
-  have hfin :
-    (Function.support
-        (fun u : ℂ =>
-          -MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball (0 : ℂ) R)
-              u)).Finite := by
-    have hfin' := hanalyticClosed.meromorphicOn.divisor_ball_support_finite
-    have hset :
-      Function.support
-          (fun u : ℂ =>
-            -MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball (0 : ℂ) R)
-                u) =
-        Function.support
-          (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
-            (Metric.ball (0 : ℂ) R)) := by
-      ext u
-      simp only [Function.mem_support]
-      constructor
-      · intro h hz
-        apply h
-        rw [hz, neg_zero]
-      · intro h hz
-        apply h
-        exact neg_eq_zero.mp hz
-    rw [hset]
-    exact hfin'
-  exact
-    MeromorphicOn.logDeriv_finprod_zpow_eventuallyEq hfin
-      (fun u x _ => Complex.meromorphic_canonicalFactor R u x)
-      (fun u x _ => Complex.meromorphicOrderAt_canonicalFactor_ne_top u hR)
 
 /-! The continuity lemma `General.eq_of_eventuallyEq_nhdsNE_of_continuousAt`
 upgrades punctured-neighborhood equality to equality at the evaluation point. -/
@@ -2329,7 +2321,13 @@ single public bound. `g` and the `ECanonicalDecomp`
 are only ever `obtain`ed inside the proof — from here on, downstream statements only refer to
 `F`, `R`, `s`, and the truncated genus sum. -/
 
-/-- The genus-one sum, truncated to the zeros of `F` inside `ball 0 R` (with multiplicity). -/
+/--
+The finite algebraic sum of `mρ * (1 / (s - ρ) + 1 / ρ)` over the divisor on
+`ball 0 R`, where `mρ` is the integer multiplicity cast to `ℂ`.
+The definition uses Lean's total division and imposes no zero-avoidance hypothesis.
+It is the finite-radius approximation to the centered logarithmic derivative;
+for a nontrivial character, the divisor has finite support in each bounded ball.
+-/
 noncomputable def completedLFunctionTruncatedGenusSum {N : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) (R : ℝ) (s : ℂ) : ℂ :=
   ∑ᶠ ρ : ℂ,
@@ -2703,9 +2701,13 @@ theorem tendsto_two_mul_add_mul_log_div_sq_atTop :
   field_simp [hRne]
   ring
 
-/-- The finite-radius error term of
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.norm_centeredLogDeriv_sub_truncatedGenus_le`
-(specialized to `s = 1`) vanishes as `R → ∞`. -/
+/--
+For a primitive nontrivial character at level `N ≥ 2`, with nontrivial inverse,
+the Jensen correction `2/R² * log (max 1 (ballBound N (2R)) / ‖F(0)‖) / log 2`
+tends to zero as `R → ∞`. Positivity gives the lower bound, while the exponential
+envelope bounds it above by logarithmic growth divided by `R²`.
+This removes the divisor-count correction in the centered identity at `s = 1`.
+-/
 theorem tendsto_h9dError_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     Filter.Tendsto

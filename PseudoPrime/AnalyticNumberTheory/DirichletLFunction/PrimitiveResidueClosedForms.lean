@@ -159,16 +159,14 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_odd_raw {N : ℕ} [NeZero
       (-|primitiveBRe χ| - (1 / 2) * Real.log N) -
         (-Real.log Real.pi / 2 - Real.eulerMascheroniConstant / 2 - Real.log 2) := by
     rw [hL0re,
-      completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log_of_grh hN2 hGRH hprimitive hne
-        hinv,
+      completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv,
       logDeriv_gammaFactor_zero_re_of_odd hodd]
   have hL1final :
     (logDeriv (DirichletCharacter.LFunction χ) 1).re =
       (|primitiveBRe χ| - (1 / 2) * Real.log N) -
         (-Real.log Real.pi / 2 - Real.eulerMascheroniConstant / 2) := by
     rw [hL1re,
-      completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log_of_grh hN2 hGRH hprimitive hne
-        hinv,
+      completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv,
       logDeriv_gammaFactor_one_re_of_odd hodd]
   rw [hr0, hr1]
   simp only [Complex.add_re, Complex.neg_re]

@@ -59,19 +59,6 @@ theorem summable_reciprocalTrivialZeroTerm_of_one_lt {x : ℝ} (hx : 1 < x) :
     hmajor.of_nonneg_of_le (fun k => reciprocalTrivialZeroTerm_nonneg hxpos.le k)
       (reciprocalTrivialZeroTerm_le_geometric_of_pos hxpos)
 
-/-- The reciprocal trivial-zero contribution series has its expected sum for every `x > 1`. -/
-theorem hasSum_riemannZetaReciprocalZeroContribution_trivialZeros_of_one_lt {x : ℝ} (hx : 1 < x) :
-    HasSum (fun k : ℕ => riemannZetaReciprocalZeroContribution x (-2 * ((k : ℂ) + 1)))
-      (-(riemannReciprocalTrivialZeroSeries x : ℂ)) := by
-  have hxpos : 0 < x := lt_trans (by norm_num only) hx
-  have hsum :
-    HasSum (fun k : ℕ => x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1)))
-      (riemannReciprocalTrivialZeroSeries x) :=
-    (summable_reciprocalTrivialZeroTerm_of_one_lt hx).hasSum
-  have hcast := (Complex.hasSum_ofReal.mpr hsum).neg
-  simp_rw [riemannZetaReciprocalZeroContribution_neg_two_mul_nat_add_one hxpos]
-  exact hcast
-
 /-- Finite partial sums of reciprocal trivial-zero terms are bounded by the full positive series. -/
 theorem sum_reciprocalTrivialZeroTerm_le {x : ℝ} (hx : 1 < x) (S : Finset ℂ)
     (hS : ∀ ρ ∈ S, ∃ n : ℕ, ρ = -2 * ((n : ℂ) + 1)) :

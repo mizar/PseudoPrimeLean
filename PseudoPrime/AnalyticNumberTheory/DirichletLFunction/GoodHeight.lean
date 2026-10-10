@@ -94,8 +94,9 @@ theorem card_primitiveZeroOrdinatesInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
 /-- `completedLFunction χ` is not eventually zero at any point of `closedBall 0 R`: it is entire
 and nonzero at the center `0`
 (`DirichletLFunction.dirichletCompletedLFunction_zero_ne_zero_of_primitive`), so the
-identity theorem on the preconnected ball rules out vanishing identically near any interior
-point. -/
+identity theorem on the preconnected ball rules out vanishing identically near any point
+of the closed ball, including its boundary. This ensures finite zero orders in the divisor ledger.
+-/
 theorem completedLFunction_analyticOrderAt_ne_top {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {R : ℝ} (hR : 0 < R) {u : ℂ}
     (hu : u ∈ Metric.closedBall (0 : ℂ) R) :
@@ -138,134 +139,6 @@ theorem completedLFunction_zero_mem_divisorSupport {N : ℕ} [NeZero N] {χ : Di
     ENat.map_natCast_eq_zero, hmap_eq_top_iff]
   exact ⟨hordne0, hordnetop⟩
 
-/-- For a primitive nontrivial character at level `N > 1`, with `χ⁻¹ ≠ 1` and `n ≥ 1`,
-choose `T ∈ [n, 2n]` separated from every zero ordinate in `closedBall 0 (2n)` by the displayed
-positive margin. Apply the finite-set avoiding-point lemma to `primitiveZeroOrdinatesInBall`,
-using its Jensen cardinality bound at radius `2n` and growth envelope at radius `4n`.
-The resulting height protects a horizontal contour edge from zeros. -/
-theorem exists_primitiveGoodHeight {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : DirichletCharacter ℂ N}
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) :
-    ∃ T ∈ Set.Icc n (2 * n),
-      ∀ ρ : ℂ,
-        DirichletCharacter.completedLFunction χ ρ = 0 →
-          ‖ρ‖ ≤ 2 * n →
-          n /
-              (4 *
-                (Real.log
-                      (max 1 (completedLFunctionBallBound N (4 * n)) /
-                        ‖DirichletCharacter.completedLFunction χ 0‖) /
-                    Real.log 2 +
-                  1)) ≤
-            |T - ρ.im| := by
-  set B :=
-    Real.log
-        (max 1 (completedLFunctionBallBound N (4 * n)) /
-          ‖DirichletCharacter.completedLFunction χ 0‖) /
-      Real.log 2 with
-    hB_def
-  set c : ℝ := n / (4 * (B + 1)) with hc_def
-  have hR2n : (0 : ℝ) < 2 * n := by linarith only [hn]
-  have hcard_le : ((primitiveZeroOrdinatesInBall χ (2 * n)).card : ℝ) ≤ B := by
-    have hraw := card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv hR2n
-    rwa [show 2 * (2 * n) = 4 * n from by ring] at hraw
-  have hBnonneg : (0 : ℝ) ≤ B := le_trans (Nat.cast_nonneg _) hcard_le
-  have hc_pos : 0 < c := by
-    rw [hc_def]
-    positivity
-  have hc_eq : c * (4 * (B + 1)) = n := by
-    rw [hc_def]
-    field_simp [hc_def]
-  have hstep : c * (primitiveZeroOrdinatesInBall χ (2 * n)).card ≤ c * B :=
-    mul_le_mul_of_nonneg_left hcard_le hc_pos.le
-  have hlenbound : 2 * c * (primitiveZeroOrdinatesInBall χ (2 * n)).card < n := by
-    nlinarith only [hstep, hc_pos, hBnonneg, hc_eq]
-  obtain ⟨T, hT, hTgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos
-      (show (0 : ℝ) < n by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hn) hlenbound
-  refine ⟨T, by rwa [show n + n = 2 * n from by ring] at hT, fun ρ hζ hρ => ?_⟩
-  have hu : ρ ∈ Metric.closedBall (0 : ℂ) (2 * n) := by
-    rw [Metric.mem_closedBall, dist_zero_right]
-    exact hρ
-  have hordne := completedLFunction_zero_mem_divisorSupport hprimitive hne hR2n hu hζ
-  have hsupp :
-    ρ ∈
-      (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
-          (Metric.closedBall (0 : ℂ) (2 * n))).support :=
-    hordne
-  have himmem : ρ.im ∈ primitiveZeroOrdinatesInBall χ (2 * n) := by
-    unfold primitiveZeroOrdinatesInBall
-    rw [Finset.mem_image]
-    refine ⟨ρ, ?_, rfl⟩
-    rw [Set.Finite.mem_toFinset]
-    exact hsupp
-  exact hTgood ρ.im himmem
-
-/--
-Generalization of `DirichletLFunction.exists_primitiveGoodHeight`: the window is still `[n, 2n]`,
-but the zero-free
-protection extends to an independently chosen ball radius `Rmax ≥ 2n` instead of being tied to
-`2n` itself. Needed when the window and the protection radius must be decoupled — e.g. the strip
-argument's
-horizontal-edge instantiation, where the genus sum ranges over a ball much larger than the height
-window `[n, 2n]` itself.
--/
-theorem exists_primitiveGoodHeightRadius {N : ℕ} [NeZero N] (hN1 : 1 < N)
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ}
-    (hn : 1 ≤ n) {Rmax : ℝ} (hRmax : 2 * n ≤ Rmax) :
-    ∃ T ∈ Set.Icc n (2 * n),
-      ∀ ρ : ℂ,
-        DirichletCharacter.completedLFunction χ ρ = 0 →
-          ‖ρ‖ ≤ Rmax →
-          n /
-              (4 *
-                (Real.log
-                      (max 1 (completedLFunctionBallBound N (2 * Rmax)) /
-                        ‖DirichletCharacter.completedLFunction χ 0‖) /
-                    Real.log 2 +
-                  1)) ≤
-            |T - ρ.im| := by
-  set B :=
-    Real.log
-        (max 1 (completedLFunctionBallBound N (2 * Rmax)) /
-          ‖DirichletCharacter.completedLFunction χ 0‖) /
-      Real.log 2 with
-    hB_def
-  set c : ℝ := n / (4 * (B + 1)) with hc_def
-  have hRmaxpos : (0 : ℝ) < Rmax := by linarith only [hn, hRmax]
-  have hcard_le : ((primitiveZeroOrdinatesInBall χ Rmax).card : ℝ) ≤ B :=
-    card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv hRmaxpos
-  have hBnonneg : (0 : ℝ) ≤ B := le_trans (Nat.cast_nonneg _) hcard_le
-  have hc_pos : 0 < c := by
-    rw [hc_def]
-    positivity
-  have hc_eq : c * (4 * (B + 1)) = n := by
-    rw [hc_def]
-    field_simp [hc_def]
-  have hstep : c * (primitiveZeroOrdinatesInBall χ Rmax).card ≤ c * B :=
-    mul_le_mul_of_nonneg_left hcard_le hc_pos.le
-  have hlenbound : 2 * c * (primitiveZeroOrdinatesInBall χ Rmax).card < n := by
-    nlinarith only [hstep, hc_pos, hBnonneg, hc_eq]
-  obtain ⟨T, hT, hTgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos
-      (show (0 : ℝ) < n by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hn) hlenbound
-  refine ⟨T, by rwa [show n + n = 2 * n from by ring] at hT, fun ρ hζ hρ => ?_⟩
-  have hu : ρ ∈ Metric.closedBall (0 : ℂ) Rmax := by
-    rw [Metric.mem_closedBall, dist_zero_right]
-    exact hρ
-  have hordne := completedLFunction_zero_mem_divisorSupport hprimitive hne hRmaxpos hu hζ
-  have hsupp :
-    ρ ∈
-      (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
-          (Metric.closedBall (0 : ℂ) Rmax)).support :=
-    hordne
-  have himmem : ρ.im ∈ primitiveZeroOrdinatesInBall χ Rmax := by
-    unfold primitiveZeroOrdinatesInBall
-    rw [Finset.mem_image]
-    refine ⟨ρ, ?_, rfl⟩
-    rw [Set.Finite.mem_toFinset]
-    exact hsupp
-  exact hTgood ρ.im himmem
-
 /-- The symmetrized ledger: ordinates of zeros inside `closedBall 0 R`, together with their
 negations, so that a single avoiding-point selection protects both `+iT` and `-iT` horizontal
 lines simultaneously for simultaneous strip bounds. -/
@@ -299,17 +172,11 @@ theorem card_primitiveZeroOrdinatesInBallSymm_le {N : ℕ} [NeZero N] (hN1 : 1 <
   linarith only [hunion_le, himg_le, hcardR]
 
 /--
-Two-sided analogue of `DirichletLFunction.exists_primitiveGoodHeightRadius`: the same `T ∈ [n, 2n]`
-stays at margin `≥ n/(8(B+1))` from *both* the ordinate `ρ.im` and its negation `-ρ.im`, for every
-zero `ρ` inside `closedBall 0 Rmax` — i.e. `T` simultaneously protects the horizontal lines
-`Im s = T` and `Im s = -T`.
-Content: identical avoiding-point construction to
-`DirichletLFunction.exists_primitiveGoodHeightRadius`, applied to
-the symmetrized ledger `DirichletLFunction.primitiveZeroOrdinatesInBallSymm` (cardinality doubles,
-so the margin
-denominator doubles from `4` to `8` to keep the same `2c·card < n` pigeonhole bound).
-Role: supplies the single good height needed to bound both the top and bottom horizontal contour
-edges together in the horizontal-strip estimates.
+For a primitive nontrivial character with nontrivial inverse, `n ≥ 1`,
+and `2n ≤ Rmax`, choose `T ∈ [n,2n]` separated by the displayed margin from
+both signs of every zero ordinate in the radius-`Rmax` closed ball. Apply
+the finite avoiding-point argument to the symmetric ordinate ledger and its
+Jensen cardinality bound. This controls both horizontal contour edges at one height.
 -/
 theorem exists_primitiveGoodHeightRadius_twoSided {N : ℕ} [NeZero N] (hN1 : 1 < N)
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ}
@@ -358,7 +225,7 @@ theorem exists_primitiveGoodHeightRadius_twoSided {N : ℕ} [NeZero N] (hN1 : 1 
   have hlenbound : 2 * c * (primitiveZeroOrdinatesInBallSymm χ Rmax).card < n := by
     nlinarith only [hstep, hc_pos, hBnonneg, hc_eq]
   obtain ⟨T, hT, hTgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos
+    Analysis.exists_avoiding_point_length hc_pos
       (show (0 : ℝ) < n by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hn) hlenbound
   refine ⟨T, by rwa [show n + n = 2 * n from by ring] at hT, fun ρ hζ hρ => ?_⟩
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) Rmax := by
@@ -383,15 +250,6 @@ theorem exists_primitiveGoodHeightRadius_twoSided {N : ℕ} [NeZero N] (hN1 : 1 
   have hneg := hTgood (-ρ.im) hnegmem
   rwa [show T - -ρ.im = T + ρ.im from by ring] at hneg
 
-/-! ### the strip argument prerequisite: a "good radius" avoiding every zero norm
-
-`DirichletLFunction.norm_centeredLogDeriv_sub_truncatedGenus_le` in `HadamardLimit` needs a radius
-`R` with no zero of `completedLFunction χ` lying exactly on the sphere `‖ρ‖ = R`; this mirrors the
-good-height ledger above
-(`DirichletLFunction.primitiveZeroOrdinatesInBall`/`DirichletLFunction.exists_primitiveGoodHeight`)
-but tracks
-zero *norms* instead of *ordinates*. -/
-
 /-- The image under norm of the finite divisor support in `closedBall 0 R`.
 For primitive nontrivial characters it records all zero norms. -/
 noncomputable def primitiveZeroNormsInBall {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (R : ℝ) :
@@ -401,8 +259,10 @@ noncomputable def primitiveZeroNormsInBall {N : ℕ} [NeZero N] (χ : DirichletC
         (isCompact_closedBall (x := (0 : ℂ)) (r := R))).toFinset.image
     norm
 
-/-- The `norm`-tracking analogue of `DirichletLFunction.card_primitiveZeroOrdinatesInBall_le`;
-identical proof. -/
+/-- For a primitive nontrivial character at level `N > 1`, with nontrivial inverse and
+`R > 0`, the number of distinct zero norms in the closed ball is bounded by the displayed
+Jensen bound. Image cardinality is at most the support cardinality, which is at most the
+sum of positive zero multiplicities. This supplies the finite ledger for choosing good radii. -/
 theorem card_primitiveZeroNormsInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
     (hR : 0 < R) :
@@ -458,15 +318,11 @@ theorem card_primitiveZeroNormsInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
   exact_mod_cast Finset.card_image_le
 
 /--
-Input/assumptions: `1 < N`, a primitive nontrivial character with `χ⁻¹ ≠ 1`, and `n ≥ 1`.
-Conclusion: some `R ∈ [n, 2n]` stays at distance `≥ margin` from the norm of every zero of
-`completedLFunction χ` inside `closedBall 0 (2n)` — in particular no such zero has `‖ρ‖ = R`.
-Content: identical construction to `DirichletLFunction.exists_primitiveGoodHeight`, tracking
-`DirichletLFunction.primitiveZeroNormsInBall`
-in place of `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.primitiveZeroOrdinatesInBall`.
-Role: supplies the finite-radius estimate's
-(`DirichletLFunction.norm_centeredLogDeriv_sub_truncatedGenus_le`) zero-free-sphere hypothesis
-`hzf` for the strip argument horizontal-line log-derivative bound.
+For a primitive nontrivial character with nontrivial inverse and `n ≥ 1`,
+choose `R ∈ [n,2n]` with the displayed separation from the norms of all zeros
+in the radius-`2n` ball. Apply the finite avoiding-point argument to the zero
+norm ledger and its Jensen bound. This supplies a zero-free sphere for the
+truncated logarithmic derivative estimate.
 -/
 theorem exists_primitiveGoodRadius {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : DirichletCharacter ℂ N}
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) :
@@ -505,7 +361,7 @@ theorem exists_primitiveGoodRadius {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : Diri
   have hlenbound : 2 * c * (primitiveZeroNormsInBall χ (2 * n)).card < n := by
     nlinarith only [hstep, hc_pos, hBnonneg, hc_eq]
   obtain ⟨R, hR, hRgood⟩ :=
-    RiemannZeta.exists_avoiding_point_length hc_pos
+    Analysis.exists_avoiding_point_length hc_pos
       (show (0 : ℝ) < n by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hn) hlenbound
   refine ⟨R, by rwa [show n + n = 2 * n from by ring] at hR, fun ρ hζ hρ => ?_⟩
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) (2 * n) := by

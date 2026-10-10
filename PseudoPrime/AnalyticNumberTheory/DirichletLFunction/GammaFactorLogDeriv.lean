@@ -37,15 +37,9 @@ theorem half_ne_neg_nat_of_im_ne_zero {s : ℂ} (hs : s.im ≠ 0) (m : ℕ) : s 
     OfNat.ofNat_ne_zero, or_false] using h1
 
 /--
-Input/assumptions: `s : ℂ` with `s / 2` avoiding every nonpositive integer.
-Conclusion: `Complex.Gammaℝ s ≠ 0`.
-Content: `Complex.Gammaℝ_eq_zero_iff` says the zeros of `Gammaℝ` are exactly `s = -2n` (`n : ℕ`),
-i.e. `s / 2 = -n`; `hhalf` rules this out directly, with no reference to `s.im` at all.
-Role: the regular-point body of `Gammaℝ_ne_zero_of_im_ne_zero` — the `im ≠ 0` hypothesis was only
-ever used to derive this `hhalf` fact (via
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.half_ne_neg_nat_of_im_ne_zero`), so factoring
-it out
-lets the left-vertical line's `t = 0` point reuse the same nonvanishing proof.
+If `s/2` avoids every nonpositive integer, `Complex.Gammaℝ s` is nonzero.
+Exclude the zeros characterized by `Gammaℝ_eq_zero_iff`. This supplies
+nonvanishing at regular points, including real points on the left contour edge.
 -/
 theorem Gammaℝ_ne_zero_of_half_ne_neg_nat {s : ℂ} (hhalf : ∀ m : ℕ, s / 2 ≠ -(m : ℂ)) :
     Complex.Gammaℝ s ≠ 0 := by
@@ -55,11 +49,6 @@ theorem Gammaℝ_ne_zero_of_half_ne_neg_nat {s : ℂ} (hhalf : ∀ m : ℕ, s / 
   apply hhalf n
   rw [hn]
   ring
-
-/-- `Complex.Gammaℝ` never vanishes off the real axis: thin wrapper over
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Gammaℝ_ne_zero_of_half_ne_neg_nat`. -/
-theorem Gammaℝ_ne_zero_of_im_ne_zero {s : ℂ} (hs : s.im ≠ 0) : Complex.Gammaℝ s ≠ 0 :=
-  Gammaℝ_ne_zero_of_half_ne_neg_nat (half_ne_neg_nat_of_im_ne_zero hs)
 
 /--
 Input/assumptions: a complex Dirichlet character `χ.Even`, a point `s` with `s / 2` avoiding
@@ -111,13 +100,9 @@ theorem gammaFactor_ne_zero_of_im_ne_zero {N : ℕ} {χ : DirichletCharacter ℂ
 /-! ### Differentiability of the gamma factor at regular points -/
 
 /--
-Input/assumptions: `s : ℂ` with `s / 2` avoiding every nonpositive integer.
-Conclusion: `Complex.Gammaℝ` is complex-differentiable at `s`.
-Content: `Gammaℝ` is a product of the nowhere-vanishing entire function `z ↦ π^(-z/2)` and
-`z ↦ Complex.Gamma (z/2)`, the latter differentiable away from `Complex.Gamma`'s poles (`hhalf`
-rules those out).
-Role: the regular-point body of
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.differentiableAt_Gammaℝ_of_im_ne_zero`.
+If `s/2` avoids every nonpositive integer, `Complex.Gammaℝ` is differentiable
+at `s`. Differentiate the product of the entire power of π with `Gamma(s/2)`
+away from its poles. This supports the regular-point logarithmic derivative formula.
 -/
 theorem differentiableAt_Gammaℝ_of_half_ne_neg_nat {s : ℂ} (hhalf : ∀ m : ℕ, s / 2 ≠ -(m : ℂ)) :
     DifferentiableAt ℂ Complex.Gammaℝ s := by
@@ -127,12 +112,6 @@ theorem differentiableAt_Gammaℝ_of_half_ne_neg_nat {s : ℂ} (hhalf : ∀ m : 
       (differentiableAt_id.neg.div_const (2 : ℂ)).const_cpow
         (Or.inl (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero))
   · exact (Complex.differentiableAt_Gamma (s / 2) hhalf).comp s (differentiableAt_id.div_const 2)
-
-/-- `Complex.Gammaℝ` is complex-differentiable off the real axis: thin wrapper over
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.differentiableAt_Gammaℝ_of_half_ne_neg_nat`. -/
-theorem differentiableAt_Gammaℝ_of_im_ne_zero {s : ℂ} (hs : s.im ≠ 0) :
-    DifferentiableAt ℂ Complex.Gammaℝ s :=
-  differentiableAt_Gammaℝ_of_half_ne_neg_nat (half_ne_neg_nat_of_im_ne_zero hs)
 
 /-- The even-parity regular-point differentiability fact for `gammaFactor`. -/
 theorem differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat {N : ℕ} {χ : DirichletCharacter ℂ N}
@@ -176,18 +155,10 @@ theorem differentiableAt_gammaFactor_of_im_ne_zero {N : ℕ} {χ : DirichletChar
 /-! ### Exact logarithmic derivative of `Gammaℝ` at regular points -/
 
 /--
-Input/assumptions: `s : ℂ` with `s / 2` avoiding every nonpositive integer.
-Conclusion: `logDeriv Complex.Gammaℝ s = -(Complex.log π) / 2 + Complex.digamma (s / 2) / 2`.
-Content: `Gammaℝ s = π^(-s/2) * Gamma(s/2)` splits via `logDeriv_mul` into
-`logDeriv (z ↦ π^(-z/2)) s + logDeriv (z ↦ Gamma(z/2)) s`. The first term is computed directly from
-`HasDerivAt.const_cpow`; the second via `logDeriv_comp` (`Gamma` composed with `· / 2`), using
-`Complex.digamma := logDeriv Gamma` by definition.
-Role: the regular-point body of
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.logDeriv_Gammaℝ_of_im_ne_zero` — the exact
-archimedean
-log-derivative formula the horizontal argument's central-strip bound and the left-edge argument's
-logarithmic digamma bound both
-build on, now also usable at the left-vertical line's `t = 0` point.
+If `s/2` avoids every nonpositive integer, the logarithmic derivative of
+`Gammaℝ` is `-log π / 2 + digamma(s/2) / 2`. Apply the product and composition
+formulas to `π^(-s/2) * Gamma(s/2)`. This gives gamma estimates on horizontal
+and left vertical contour edges, including regular real points.
 -/
 theorem logDeriv_Gammaℝ_of_half_ne_neg_nat {s : ℂ} (hhalf : ∀ m : ℕ, s / 2 ≠ -(m : ℂ)) :
     logDeriv Complex.Gammaℝ s = -(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma (s / 2) / 2 := by
@@ -234,12 +205,6 @@ theorem logDeriv_Gammaℝ_of_half_ne_neg_nat {s : ℂ} (hhalf : ∀ m : ℕ, s /
       simp only [Pi.mul_apply],
     logDeriv_mul s hpow_ne hgam_ne hpow_diff hgamcomp_diff, hpow_logDeriv, hgam_comp_logDeriv]
 
-/-- `logDeriv Gammaℝ` off the real axis: thin wrapper over
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.logDeriv_Gammaℝ_of_half_ne_neg_nat`. -/
-theorem logDeriv_Gammaℝ_of_im_ne_zero {s : ℂ} (hs : s.im ≠ 0) :
-    logDeriv Complex.Gammaℝ s = -(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma (s / 2) / 2 :=
-  logDeriv_Gammaℝ_of_half_ne_neg_nat (half_ne_neg_nat_of_im_ne_zero hs)
-
 /-! ### Exact logarithmic derivative of the character gamma factor -/
 
 /-- Even-character regular-point case of
@@ -275,18 +240,22 @@ theorem logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat {N : ℕ} {χ : Dirich
       deriv_const', add_zero]
   rw [hderiv1, mul_one, logDeriv_Gammaℝ_of_half_ne_neg_nat hhalf]
 
-/-- Even-character case of
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.logDeriv_Gammaℝ_of_im_ne_zero` for
-`gammaFactor`: thin wrapper. -/
+/--
+For an even character and `Im s ≠ 0`, the gamma-factor logarithmic derivative
+is `-log π / 2 + digamma(s/2) / 2`. Specialize the regular-point formula
+using parity and the nonzero imaginary part; this supplies horizontal estimates.
+-/
 theorem logDeriv_gammaFactor_eq_of_even {N : ℕ} {χ : DirichletCharacter ℂ N} (hχ : χ.Even) {s : ℂ}
     (hs : s.im ≠ 0) :
     logDeriv (DirichletCharacter.gammaFactor χ) s =
       -(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma (s / 2) / 2 :=
   logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat hχ (half_ne_neg_nat_of_im_ne_zero hs)
 
-/-- Odd-character case of
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.logDeriv_Gammaℝ_of_im_ne_zero` for
-`gammaFactor`: thin wrapper. -/
+/--
+For an odd character and `Im s ≠ 0`, the gamma-factor logarithmic derivative
+is `-log π / 2 + digamma((s+1)/2) / 2`. Specialize the shifted regular-point
+formula using parity; this supplies horizontal estimates.
+-/
 theorem logDeriv_gammaFactor_eq_of_odd {N : ℕ} {χ : DirichletCharacter ℂ N} (hχ : χ.Odd) {s : ℂ}
     (hs : s.im ≠ 0) :
     logDeriv (DirichletCharacter.gammaFactor χ) s =

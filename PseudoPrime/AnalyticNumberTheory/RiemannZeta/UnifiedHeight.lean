@@ -25,11 +25,16 @@ that dominates the scale used by the far-left estimates.
 noncomputable def farLeftGoodHeightIndex (m : ℕ) : ℕ :=
   ⌈farLeftHeightSeq m⌉₊
 
-/-- The common good-height sequence for the four-edge contour limit. -/
+/-- At natural stage `m`, select the good zeta-avoiding height at index
+`ceil (farLeftHeightSeq m)`. It dominates the far-left height while remaining less than
+that height plus ten. This common sequence supports both horizontal-edge decay and
+far-left estimates in the four-edge contour limit. -/
 noncomputable def unifiedContourHeightSeq (m : ℕ) : ℝ :=
   goodHeightSeq (farLeftGoodHeightIndex m)
 
-/-- The selected good-height indices tend to infinity. -/
+/-- The indices `ceil (farLeftHeightSeq m)` tend to infinity with natural `m`.
+The far-left sequence dominates `m + 1`, and its natural ceiling dominates its value,
+so the selected index is at least `m`. This permits composition with the good-height limit. -/
 theorem tendsto_farLeftGoodHeightIndex_atTop :
     Filter.Tendsto farLeftGoodHeightIndex Filter.atTop Filter.atTop := by
   apply Filter.tendsto_atTop.2
@@ -42,12 +47,16 @@ theorem tendsto_farLeftGoodHeightIndex_atTop :
         (le_trans (by linarith only [add_one_le_farLeftHeightSeq m])
           (Nat.le_ceil (farLeftHeightSeq m))))
 
-/-- The unified contour heights tend to infinity. -/
+/-- The unified contour height tends to infinity with the stage index.
+Compose divergence of the good-height sequence with divergence of its selected indices.
+This supplies the growing-height hypothesis for contour limits on the common rectangles. -/
 theorem tendsto_unifiedContourHeightSeq_atTop :
     Filter.Tendsto unifiedContourHeightSeq Filter.atTop Filter.atTop := by
   exact tendsto_goodHeightSeq_atTop.comp tendsto_farLeftGoodHeightIndex_atTop
 
-/-- The unified height dominates the original far-left height at every stage. -/
+/-- At every natural stage `m`, `farLeftHeightSeq m ≤ unifiedContourHeightSeq m`.
+The ceiling dominates the original height, and the good height is at least its index plus
+eight. This transports the far-left estimates to the unified contour. -/
 theorem farLeftHeightSeq_le_unifiedContourHeightSeq (m : ℕ) :
     farLeftHeightSeq m ≤ unifiedContourHeightSeq m := by
   calc
@@ -55,7 +64,10 @@ theorem farLeftHeightSeq_le_unifiedContourHeightSeq (m : ℕ) :
     _ ≤ 8 + (farLeftGoodHeightIndex m : ℝ) := by linarith only []
     _ ≤ unifiedContourHeightSeq m := by exact (goodHeightSeq_mem (farLeftGoodHeightIndex m)).1
 
-/-- The unified height is at most a fixed additive enlargement of the far-left height. -/
+/-- At every natural stage `m`, the unified height is strictly less than
+`farLeftHeightSeq m + 10`. Its good-height interval gives the upper bound index plus nine,
+and the ceiling is less than the original height plus one.
+This controls the enlargement when reusing far-left decay estimates. -/
 theorem unifiedContourHeightSeq_lt_farLeftHeightSeq_add_ten (m : ℕ) :
     unifiedContourHeightSeq m < farLeftHeightSeq m + 10 := by
   have hgood := (goodHeightSeq_mem (farLeftGoodHeightIndex m)).2

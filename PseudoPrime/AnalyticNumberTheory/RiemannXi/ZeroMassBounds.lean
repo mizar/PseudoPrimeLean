@@ -49,4 +49,20 @@ theorem riemannZeroMass_le_one_sixteenth : riemannZeroMass ≤ (1 / 16 : ℝ) :=
       Real.one_half_lt_eulerMascheroniConstant,
       Analysis.eulerMascheroniConstant_lt_twentyNine_fiftieths]
 
+/-- The Riemann zero mass is at most `1/40`.
+Rational bounds for the Euler constant, pi, and elementary logarithms control both
+signs of its closed formula. This yields coefficient `1/20` in RH weighted-sum errors. -/
+theorem riemannZeroMass_le_one_fortieth : riemannZeroMass ≤ (1 / 40 : ℝ) := by
+  have hpi : Real.pi ≤ (22 / 7 : ℝ) := Real.pi_lt_d4.le.trans (by norm_num only)
+  have hlo :=
+    Analysis.log_gt_affine_of_anchor (a := (3 : ℝ)) (b := 22 / 7) (y := Real.pi) (L := 1.0986122885)
+      (by norm_num only) (by norm_num only) Real.pi_gt_three.le hpi Real.log_three_gt_d9
+  have hhi := Analysis.log_four_sub_log_pi_gt_twenty_four
+  rw [Real.log_four_eq] at hhi
+  rw [riemannZeroMass, abs_le, Real.log_mul (by norm_num only) Real.pi_ne_zero, Real.log_four_eq]
+  constructor <;>
+    nlinarith only [hlo, hhi, Real.pi_gt_d4, Real.log_two_gt_d9, Real.log_two_lt_d9,
+      Real.one_half_lt_eulerMascheroniConstant,
+      Analysis.eulerMascheroniConstant_lt_twentyNine_fiftieths]
+
 end PseudoPrime.AnalyticNumberTheory.RiemannXi

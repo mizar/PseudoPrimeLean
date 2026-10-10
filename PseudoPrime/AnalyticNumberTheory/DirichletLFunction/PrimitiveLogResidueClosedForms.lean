@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveResidueClosedForms
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveEvenZeroLocalFactor
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.QuadraticFunctionalConsequences
-import PseudoPrime.AnalyticNumberTheory.Gamma.TrigammaSpecialValues
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.OddZeroLogDeriv
-import PseudoPrime.AnalyticNumberTheory.General.PoleResidueCalculus
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveResidueClosedForms
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveEvenZeroLocalFactor
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFunctionalEquation
+public import PseudoPrime.AnalyticNumberTheory.Gamma.TrigammaSpecialValues
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.OddZeroLogDeriv
+public import PseudoPrime.AnalyticNumberTheory.General.PoleResidueCalculus
 
 /-!
 # Closed forms for logarithmic-kernel residues at zero
@@ -76,108 +78,6 @@ theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq {N : ℕ} [NeZ
       from rfl] at hval
   rw [hval]
   simp only [Complex.cpow_zero, mul_one]
-  ring
-
-/--
-Input/assumptions: `N ≥ 1`, `χ` primitive nontrivial odd mod `N`, `x > 0`.
-Conclusion:
-`deriv (PseudoPrime.AnalyticNumberTheory.DirichletLFunction.dirichletLogMellinZeroRegularization x
-χ) 0 = -(deriv (logDeriv F) 0) + π²/8 -
-(logDeriv F 0 - logDeriv Γ_χ 0) * log x`.
-Content: substitute
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.deriv_logDeriv_LFunction_zero_of_odd` (the
-`deriv(logDeriv L)0` term) and the
-pointwise completed-to-ordinary bridge at `s = 0`
-(`DirichletLFunction.logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular`)
-into the product-rule
-closed form.
-Role: the fully completed-side raw closed form for the odd `s = 0` log-kernel residue.
--/
-theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hodd : χ.Odd) {x : ℝ}
-    (hx : 0 < x) :
-    deriv (dirichletLogMellinZeroRegularization x χ) 0 =
-      -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0) + (Real.pi : ℂ) ^ 2 / 8 -
-        (logDeriv (DirichletCharacter.completedLFunction χ) 0 -
-            logDeriv (DirichletCharacter.gammaFactor χ) 0) *
-          Complex.log x := by
-  rw [deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq hprimitive hne hodd hx,
-    deriv_logDeriv_LFunction_zero_of_odd hprimitive hne hodd]
-  have hΓ0ne : DirichletCharacter.gammaFactor χ 0 ≠ 0 :=
-    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd
-      (by
-        intro m hm
-        have him := congrArg Complex.re hm
-        simp only [zero_add] at him
-        have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
-        simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
-          div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
-        linarith only [him])
-  have hdΓ0 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 0 :=
-    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
-      (by
-        intro m hm
-        have him := congrArg Complex.re hm
-        simp only [zero_add] at him
-        have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
-        simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat,
-          div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
-        linarith only [him])
-  have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
-  have hbridge0 :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF0ne hΓ0ne hdΓ0
-  rw [hbridge0]
-  ring
-
-/--
-Input/assumptions: `N ≥ 2`, `χ` primitive nontrivial quadratic odd mod `N`, GRH, `χ⁻¹ ≠ 1`,
-`x > 0`.
-Conclusion:
-`Re(residue) = -Re(deriv(logDeriv F) 0) + |Re B(χ)| log x + (1/2)(log N - log π) log x + π²/8 -
-(log 2 + γ/2) log x`.
-Content: take `.re` of
-`DirichletLFunction.deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw`,
-substituting
-(F0)
-(`DirichletLFunction.completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log`)
-and (G0)
-(`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.logDeriv_gammaFactor_zero_re_of_odd`);
-`Complex.log x = ((log x : ℝ) : ℂ)` for `x > 0`
-(`Complex.ofReal_log`) lets `Complex.re_ofReal_mul` extract the product's real part.
-Role: gives the odd `s = 0` log-kernel residue's real part, keeping
-`Re(deriv(logDeriv F) 0)` symbolic (bounded by `2|Re B(χ)|` separately) so the completed-side
-derivative bound from `QuadraticFunctionalConsequences` can be substituted later.
--/
-theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic)
-    (hodd : χ.Odd) {x : ℝ} (hx : 0 < x) :
-    (deriv (dirichletLogMellinZeroRegularization x χ) 0).re =
-      -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re +
-          |primitiveBRe χ| * Real.log x +
-          (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
-          (Real.pi : ℝ) ^ 2 / 8 -
-        (Real.log 2 + Real.eulerMascheroniConstant / 2) * Real.log x := by
-  rw [deriv_dirichletLogMellinZeroRegularization_zero_of_odd_raw hprimitive hne hodd hx]
-  have hF0re :=
-    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
-      hquad
-  have hG0re := logDeriv_gammaFactor_zero_re_of_odd hodd
-  have hlogxC : Complex.log (x : ℂ) = ((Real.log x : ℝ) : ℂ) := (Complex.ofReal_log hx.le).symm
-  have hAre :
-    ((logDeriv (DirichletCharacter.completedLFunction χ) 0 -
-            logDeriv (DirichletCharacter.gammaFactor χ) 0) *
-          Complex.log (x : ℂ)).re =
-      ((logDeriv (DirichletCharacter.completedLFunction χ) 0).re -
-          (logDeriv (DirichletCharacter.gammaFactor χ) 0).re) *
-        Real.log x := by
-    rw [hlogxC, mul_comm, Complex.re_ofReal_mul, Complex.sub_re, mul_comm]
-  have hpi8re : ((Real.pi : ℂ) ^ 2 / 8).re = (Real.pi : ℝ) ^ 2 / 8 := by
-    rw [show ((Real.pi : ℂ) ^ 2 / 8) = (((Real.pi : ℝ) ^ 2 / 8 : ℝ) : ℂ) from by
-        push_cast
-        ring,
-      Complex.ofReal_re]
-  rw [Complex.sub_re, Complex.add_re, Complex.neg_re, hpi8re, hAre, hF0re, hG0re]
   ring
 
 /-! ### The even-character logarithmic-kernel residue at zero -/
@@ -393,34 +293,13 @@ theorem iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq {N : ℕ} [
   ring
 
 /--
-Input/assumptions: `N ≥ 2`, `χ` primitive nontrivial quadratic mod `N`, GRH, `χ⁻¹ ≠ 1`,
-`x > 0`.
-Conclusion:
-`Re(iteratedDeriv 2 h 0 / 2) = -Re(deriv(logDeriv F) 0) + |Re B(χ)| log x +
-(1/2)(log N - log π) log x + π²/24 - (γ/2) log x - (1/2)(log x)²`,
-`h := PseudoPrime.AnalyticNumberTheory.DirichletLFunction.dirichletLogEvenZeroRegularization x 1
-G_χ`.
-Content: substitute (B)
-(`DirichletLFunction.deriv_logDeriv_dirichletEvenZeroLocalFactor_zero`)
-and (G0)
-(`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.logDeriv_dirichletEvenZeroLocalFactor_zero`)
-into
-`DirichletLFunction.iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq`,
-simplify the resulting complex
-identity via `ring`, then take `.re` using (F0)
-(`DirichletLFunction.completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log`)
-and `Complex.log x = ((log x :
-ℝ) : ℂ)` (`Complex.ofReal_log`).
-Role: gives half the second derivative of the canonical regularization. When the character
-is even, this is the cubic-pole residue (the second Taylor coefficient), via
-`PseudoPrime.AnalyticNumberTheory.General.dslope_dslope_same_eq_iteratedDeriv_two_div_two`; it
-keeps `Re(deriv(logDeriv F) 0)` symbolic for
-the same reason as the odd case.
+Generic replacement for the even zero-contribution closed form.  The regularization
+calculation is character-generic; only the completed-L value at zero is supplied by
+the pair-system functional equation API.
 -/
-theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_raw {N : ℕ} [NeZero N]
+theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two {N : ℕ} [NeZero N]
     (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
-    (hx : 0 < x) :
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
     (iteratedDeriv 2 (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) 0 /
           2).re =
       -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re +
@@ -434,7 +313,6 @@ theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_raw
     logDeriv_dirichletEvenZeroLocalFactor_zero hprimitive hne]
   have hF0re :=
     completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
-      hquad
   have hlogxC : Complex.log (x : ℂ) = ((Real.log x : ℝ) : ℂ) := (Complex.ofReal_log hx.le).symm
   have hcomplex :
     (-(2 * (deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0 - (Real.pi : ℂ) ^ 2 / 24) +
@@ -479,6 +357,75 @@ theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two_raw
         ring,
       Complex.ofReal_re]
   rw [hpi24re, hAre, hBre, hSqre, hF0re]
+  ring
+
+/-- For an odd primitive nontrivial character under GRH and `x > 0`, the exact real part
+of the logarithmic Mellin regularization's derivative at zero. -/
+theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hodd : χ.Odd) {x : ℝ}
+    (hx : 0 < x) :
+    (deriv (dirichletLogMellinZeroRegularization x χ) 0).re =
+      -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re +
+          |primitiveBRe χ| * Real.log x +
+          (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
+          (Real.pi : ℝ) ^ 2 / 8 -
+        (Real.log 2 + Real.eulerMascheroniConstant / 2) * Real.log x := by
+  rw [deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq hprimitive hne hodd hx,
+    deriv_logDeriv_LFunction_zero_of_odd hprimitive hne hodd]
+  have hΓ0ne : DirichletCharacter.gammaFactor χ 0 ≠ 0 :=
+    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd
+      (by
+        intro m hm
+        have him := congrArg Complex.re hm
+        simp only [zero_add] at him
+        have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
+        norm_num only [Complex.div_re, Complex.re_ofNat, Complex.im_ofNat, Complex.normSq_ofNat,
+          div_self_mul_self', mul_zero, zero_mul, add_zero, zero_add, sub_zero, neg_zero] at him
+        have hmneg : -(m : ℝ) ≤ 0 := neg_nonpos.mpr hmnn
+        have hhalf : (0 : ℝ) < (1 / 2 : ℝ) := by norm_num only
+        have him' : (1 / 2 : ℝ) = -(m : ℝ) := by
+          convert him using 1
+          norm_num only [Complex.one_re, one_mul]
+        exact (not_lt_of_ge hmneg) (him' ▸ hhalf))
+  have hdΓ0 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 0 :=
+    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
+      (by
+        intro m hm
+        have him := congrArg Complex.re hm
+        simp only [zero_add] at him
+        have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
+        norm_num only [Complex.div_re, Complex.re_ofNat, Complex.im_ofNat, Complex.normSq_ofNat,
+          div_self_mul_self', mul_zero, zero_mul, add_zero, zero_add, sub_zero, neg_zero] at him
+        have hmneg : -(m : ℝ) ≤ 0 := neg_nonpos.mpr hmnn
+        have hhalf : (0 : ℝ) < (1 / 2 : ℝ) := by norm_num only
+        have him' : (1 / 2 : ℝ) = -(m : ℝ) := by
+          convert him using 1
+          norm_num only [Complex.one_re, one_mul]
+        exact (not_lt_of_ge hmneg) (him' ▸ hhalf))
+  have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
+  have hbridge0 :=
+    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF0ne hΓ0ne hdΓ0
+  rw [hbridge0]
+  have hF0re :=
+    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
+  have hG0re := logDeriv_gammaFactor_zero_re_of_odd hodd
+  have hlogxC : Complex.log (x : ℂ) = ((Real.log x : ℝ) : ℂ) := (Complex.ofReal_log hx.le).symm
+  have hAre :
+    ((logDeriv (DirichletCharacter.completedLFunction χ) 0 -
+            logDeriv (DirichletCharacter.gammaFactor χ) 0) *
+          Complex.log (x : ℂ)).re =
+      ((logDeriv (DirichletCharacter.completedLFunction χ) 0).re -
+          (logDeriv (DirichletCharacter.gammaFactor χ) 0).re) *
+        Real.log x := by
+    rw [hlogxC, mul_comm, Complex.re_ofReal_mul, Complex.sub_re, mul_comm]
+  have hpi8re : ((Real.pi : ℂ) ^ 2 / 8).re = (Real.pi : ℝ) ^ 2 / 8 := by
+    rw [show ((Real.pi : ℂ) ^ 2 / 8) = (((Real.pi : ℝ) ^ 2 / 8 : ℝ) : ℂ) from by
+        push_cast
+        ring,
+      Complex.ofReal_re]
+  simp only [Complex.sub_re, Complex.neg_re]
+  rw [hpi8re, hAre, hF0re, hG0re]
   ring
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

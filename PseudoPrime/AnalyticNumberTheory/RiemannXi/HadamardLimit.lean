@@ -4,21 +4,24 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.Complex.AbsMax
-import Mathlib.Analysis.Complex.BorelCaratheodory
-import Mathlib.Analysis.Complex.CanonicalDecomposition
-import Mathlib.Analysis.Complex.Liouville
-import Mathlib.Analysis.Meromorphic.LogDeriv
-import Mathlib.Analysis.Meromorphic.NormalForm
-import Mathlib.Analysis.Normed.Group.Tannery
-import Mathlib.Analysis.Meromorphic.Order
-import Mathlib.Analysis.Meromorphic.RCLike
-import Mathlib.NumberTheory.Harmonic.EulerMascheroni
-import Mathlib.NumberTheory.Harmonic.ZetaAsymp
-import PseudoPrime.AnalyticNumberTheory.General.CanonicalDecomposition
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.OrderOneBound
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroFiniteness
-import PseudoPrime.AnalyticNumberTheory.Gamma.TrigammaSpecialValues
+module
+
+public import Mathlib.Analysis.Complex.AbsMax
+public import Mathlib.Analysis.Complex.BorelCaratheodory
+public import Mathlib.Analysis.Complex.CanonicalDecomposition
+public import Mathlib.Analysis.Complex.Liouville
+public import Mathlib.Analysis.Meromorphic.LogDeriv
+public import Mathlib.Analysis.Meromorphic.NormalForm
+public import Mathlib.Analysis.Normed.Group.Tannery
+public import Mathlib.Analysis.Meromorphic.Order
+public import Mathlib.Analysis.Meromorphic.RCLike
+public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import Mathlib.NumberTheory.Harmonic.ZetaAsymp
+public import PseudoPrime.AnalyticNumberTheory.General.CanonicalDecomposition
+public import PseudoPrime.AnalyticNumberTheory.General.DerivativeNorm
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.OrderOneBound
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroFiniteness
+public import PseudoPrime.AnalyticNumberTheory.Gamma.TrigammaSpecialValues
 
 /-!
 # Finite-radius xi factorization and its Hadamard limit
@@ -297,14 +300,20 @@ theorem riemannXiGoodRadius_spec (n : ℕ) :
   unfold riemannXiGoodRadius
   exact_mod_cast Classical.choose_spec (exists_riemannXi_zeroFree_radius (n + 2))
 
+/-- The chosen radius lies above `n + 2`, the lower endpoint in its choice
+specification. This gives the lower comparison needed for divergence to infinity. -/
 theorem riemannXiGoodRadius_gt (n : ℕ) : (n : ℝ) + 2 < riemannXiGoodRadius n :=
   (riemannXiGoodRadius_spec n).1
 
+/-- Every good radius exceeds `2`, since `n ≥ 0`. Thus the point `1` lies in
+the half-radius region used by the canonical-factor variation estimate. -/
 theorem riemannXiGoodRadius_gt_two (n : ℕ) : (2 : ℝ) < riemannXiGoodRadius n := by
   have h := riemannXiGoodRadius_gt n
   have hn : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
   linarith only [h, hn]
 
+/-- Xi has no zero on the sphere of the chosen good radius, directly from
+its choice specification. This removes the boundary divisor in finite factorizations. -/
 theorem riemannXi_ne_zero_on_goodRadius (n : ℕ) :
     ∀ ρ : ℂ, ‖ρ‖ = riemannXiGoodRadius n → riemannXi ρ ≠ 0 :=
   (riemannXiGoodRadius_spec n).2.2
@@ -528,7 +537,7 @@ theorem norm_logDeriv_ecanonicalDecomp_riemannXi_sub_zero_le {R : ℝ} (hR : 2 <
   have hgne : ∀ w ∈ Metric.ball (0 : ℂ) R, g w ≠ 0 := fun w hw =>
     D.ne_zero w (Metric.ball_subset_closedBall hw)
   obtain ⟨hh, hh', hh_re⟩ :=
-    RiemannZeta.exists_hasDerivAt_logDeriv_re_eq_log_norm hR0 hanalyticBall hgne
+    Analysis.exists_hasDerivAt_logDeriv_re_eq_log_norm hR0 hanalyticBall hgne
   have hF0_pos : (0 : ℝ) < ‖riemannXi 0‖ :=
     norm_pos_iff.mpr
       (by
@@ -1428,7 +1437,8 @@ theorem norm_riemannXi_centeredLogDeriv_one_sub_truncatedGenus_le {R : ℝ} (hR 
 -/
 
 /-- The truncated multiplicity finsum equals the corresponding tsum over the indicator function
-(both reduce to the same finite sum over the zero-free-boundary ledger). -/
+(both reduce to the finite zero ledger in the closed ball). No boundary
+nonvanishing assumption is needed for this identification. -/
 theorem riemannXiTruncatedMultiplicitySum_eq_tsum_indicator {R : ℝ} :
     riemannXiTruncatedMultiplicitySum R =
       ∑' ρ : ℂ, if ‖ρ‖ < R then (riemannXiZeroMultiplicity ρ : ℝ) else 0 := by
@@ -1533,6 +1543,9 @@ theorem tendsto_riemannXiGoodRadius_truncatedMultiplicity_div_sq :
 The elementary ratio `(R+4)*log(R+4)/R²` tends to zero.
 -/
 
+/-- The shifted growth ratio `(R+4) log(R+4)/R²` tends to zero at infinity.
+Factor it as `log(R+4)/(R+4)` times `((R+4)/R)²`, whose limits are `0` and `1`.
+This proves decay of the canonical-factor growth error. -/
 theorem tendsto_add_mul_log_div_sq_atTop_shift4 :
     Filter.Tendsto (fun R : ℝ => (R + 4) * Real.log (R + 4) / R ^ 2) Filter.atTop (nhds 0) := by
   have hlogdiv : Filter.Tendsto (fun t : ℝ => Real.log t / t) Filter.atTop (nhds 0) := by
@@ -2013,6 +2026,8 @@ theorem analyticAt_logDeriv_riemannXi_zero : AnalyticAt ℂ (logDeriv riemannXi)
   exact
     (differentiable_riemannXi.analyticAt 0).deriv.div (differentiable_riemannXi.analyticAt 0) h0ne
 
+/-- Analyticity of the xi logarithmic derivative at zero supplies its derivative
+there, used in the finite-radius slope-error estimate. -/
 theorem differentiableAt_logDeriv_riemannXi_zero : DifferentiableAt ℂ (logDeriv riemannXi) 0 :=
   analyticAt_logDeriv_riemannXi_zero.differentiableAt
 
@@ -2061,26 +2076,6 @@ theorem tendsto_riemannXiGoodRadius_H9eSlopeError_atTop :
   refine hsum.congr (fun n => ?_)
   unfold riemannXiH9eSlopeError
   ring
-
-/-- If a function has derivative `D` at zero, vanishes there, and locally satisfies
-`‖f s‖ ≤ C*‖s‖`, then `‖D‖ ≤ C`. This is a general derivative estimate. -/
-theorem norm_deriv_le_of_eventually_norm_le_mul_norm {f : ℂ → ℂ} {D : ℂ} {C : ℝ}
-    (hf : HasDerivAt f D 0) (hf0 : f 0 = 0)
-    (hbound : ∀ᶠ s : ℂ in nhdsWithin 0 ({0}ᶜ : Set ℂ), ‖f s‖ ≤ C * ‖s‖) : ‖D‖ ≤ C := by
-  have htend := hf.tendsto_slope
-  have htendNorm := (continuous_norm.tendsto D).comp htend
-  have hev : ∀ᶠ s : ℂ in nhdsWithin 0 ({0}ᶜ : Set ℂ), ‖slope f 0 s‖ ≤ C := by
-    filter_upwards [hbound, self_mem_nhdsWithin] with s hs hsne
-    have hsne' : s ≠ 0 := hsne
-    rw [slope_def_module, norm_smul]
-    have hnorm_inv : ‖(s - 0)⁻¹‖ = ‖s‖⁻¹ := by rw [sub_zero, norm_inv]
-    rw [hnorm_inv, hf0, sub_zero]
-    have hsnorm_pos : (0 : ℝ) < ‖s‖ := norm_pos_iff.mpr hsne'
-    calc
-      ‖s‖⁻¹ * ‖f s‖ ≤ ‖s‖⁻¹ * (C * ‖s‖) :=
-        mul_le_mul_of_nonneg_left hs (inv_nonneg.mpr hsnorm_pos.le)
-      _ = C := by field_simp [ne_of_gt hsnorm_pos]
-  exact le_of_tendsto htendNorm hev
 
 /-- The centered logarithmic derivative minus the truncated genus sum vanishes
 at zero and satisfies the finite-radius slope bound nearby. Applying the local
@@ -2166,6 +2161,8 @@ theorem analyticAt_logDeriv_riemannZeta_zero : AnalyticAt ℂ (logDeriv riemannZ
     norm_num only
   exact analyticAt_riemannZeta_zero.deriv.div analyticAt_riemannZeta_zero hne
 
+/-- Analyticity of the zeta logarithmic derivative at zero supplies its derivative
+there, retained in the second-log-derivative residue constant. -/
 theorem differentiableAt_logDeriv_riemannZeta_zero : DifferentiableAt ℂ (logDeriv riemannZeta) 0 :=
   analyticAt_logDeriv_riemannZeta_zero.differentiableAt
 

@@ -55,12 +55,11 @@ theorem norm_riemannXi_le_of_forall_one_half_le_re {bound : ℝ → ℝ}
           (Set.mem_Ici.mpr (add_nonneg (norm_nonneg s) (by norm_num only))) habs)
 
 /-- For `s ≠ 1` and `Γ(s/2+1) ≠ 0`, xi equals
-`π^(-s/2) Γ(s/2+1) zetaEntire(s)`. This form separates the three factors
+`π^(-s/2) Γ(s/2+1) riemannZeta₁(s)`. This form separates the three factors
 used in the right-half-plane growth bound. -/
-theorem riemannXi_eq_gamma_mul_zetaEntire {s : ℂ} (hs1 : s ≠ 1)
+theorem riemannXi_eq_gamma_mul_riemannZeta₁ {s : ℂ} (hs1 : s ≠ 1)
     (hΓne : Complex.Gamma (s / 2 + 1) ≠ 0) :
-    riemannXi s =
-      (Real.pi : ℂ) ^ (-s / 2) * Complex.Gamma (s / 2 + 1) * RiemannZeta.zetaEntire s := by
+    riemannXi s = (Real.pi : ℂ) ^ (-s / 2) * Complex.Gamma (s / 2 + 1) * riemannZeta₁ s := by
   have hdenom_ne : 2 * (Real.pi : ℂ) ^ (-s / 2) * Complex.Gamma (s / 2 + 1) ≠ 0 := by
     have hpow_ne : (Real.pi : ℂ) ^ (-s / 2) ≠ 0 :=
       Complex.cpow_ne_zero_iff.mpr (Or.inl (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero))
@@ -71,8 +70,8 @@ theorem riemannXi_eq_gamma_mul_zetaEntire {s : ℂ} (hs1 : s ≠ 1)
     (eq_div_iff hdenom_ne).mp (riemannZeta_eq_mul_completedRiemannZeta₀ s)
   have hxi := riemannXi_eq hs1
   rw [← hnum] at hxi
-  have hz : RiemannZeta.zetaEntire s = (s - 1) * riemannZeta s := by
-    simp only [RiemannZeta.zetaEntire, Function.update_of_ne hs1]
+  have hz : riemannZeta₁ s = (s - 1) * riemannZeta s := by
+    exact ((eq_inv_mul_iff_mul_eq₀ (sub_ne_zero.mpr hs1)).mp (riemannZeta_eq_inv_sub_mul hs1)).symm
   rw [hxi, hz]
   ring
 

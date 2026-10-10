@@ -550,11 +550,13 @@ theorem neg_log_norm_Gamma_add_add_mul_I_le_of_abs_le_half {a : ℝ} (ha : 1 ≤
   rw [hMeq, hGbound_def] at hre_ge
   linarith only [hre_ge]
 
-/-- **Full `f ∈ [0, 1)` case**, combining `PseudoPrime.AnalyticNumberTheory.RiemannZeta.`
-`neg_log_norm_Gamma_add_add_mul_I_le_of_abs_le_half`
-applied at the two centers `a = 1` (covering `f ∈ [0, 1/2]`) and `a = 2` (covering `f ∈ (1/2, 1)`,
-via the exact identity `Γ(2+it) = (1+it)·Γ(1+it)`, hence `‖Γ(2+it)‖ ≥ ‖Γ(1+it)‖`) into a single
-bound, entirely in terms of `-log‖Γ(1+it)‖`. -/
+/--
+For `0≤f<1` and any real height, the negative log-Gamma norm at `1+f+it` is
+bounded by five times its value at `1+it` plus the stated fixed Gamma correction.
+Use the radius-three-quarter primitive estimate at center one when `f≤1/2`, and
+at center two otherwise; recurrence compares the second center with the first.
+This supplies a bound for fractional shifts before extending to arbitrary nonnegative shifts.
+-/
 theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_lt_one {f t : ℝ} (hf0 : 0 ≤ f) (hf1 : f < 1) :
     -Real.log ‖Complex.Gamma (1 + (f : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       5 * (-Real.log ‖Complex.Gamma (1 + (t : ℂ) * Complex.I)‖) +

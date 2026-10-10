@@ -4,8 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GoodHeight
-import Mathlib.NumberTheory.Harmonic.ZetaAsymp
+module
+
+public import Mathlib.Analysis.Calculus.Deriv.Star
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GoodHeight
+public import Mathlib.NumberTheory.Harmonic.ZetaAsymp
 
 /-!
 # Jensen bounds at negative heights
@@ -16,15 +19,25 @@ multiplicity bound and inclusion of nearby zeros. Disk analyticity uses
 `|T| ≥ 4` to avoid the pole at one; the center is nonzero for every real `T`.
 -/
 
+@[expose] public section
+
 noncomputable section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
+/--
+Complex conjugation sends the Jensen center at height `T` to the center at `-T`.
+Expand the center and normalize conjugation; mirrored disk estimates use this identity.
+-/
 theorem jensenCenter_conj (T : ℝ) : (starRingEnd ℂ) (jensenCenter T) = jensenCenter (-T) := by
   simp only [jensenCenter, map_add, map_mul, map_ofNat, Complex.conj_I, Complex.conj_ofReal]
   push_cast
   ring
 
+/--
+Zeta has the same norm at conjugate arguments. Combine its conjugation identity
+with invariance of the complex norm; this transfers positive-height growth estimates.
+-/
 theorem norm_riemannZeta_conj (z : ℂ) : ‖riemannZeta ((starRingEnd ℂ) z)‖ = ‖riemannZeta z‖ := by
   rw [riemannZeta_conj, Complex.norm_conj]
 

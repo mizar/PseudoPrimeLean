@@ -49,7 +49,7 @@ its zero contribution and gives `ρ ≠ 0`; the pointwise bound
 (`DirichletLFunction.dirichletLFunctionReciprocalZeroContribution_re_le_completedTerm_norm`)
 dominates each summand
 by the completed-zero term's norm; `Finset.sum_le_sum` plus the finite subset bound
-(`sum_norm_completedReciprocalZeroTerm_le_abs_BRe_of_grh`) finishes.
+(`sum_norm_completedReciprocalZeroTerm_le_abs_BRe`) finishes.
 Role: **the zero-contribution completion** — the boxed `(Z)` bound `Re Σ_{ρ≠0,1} r(ρ) ≤ 2b/√x`,
 with an
 `A`,`k`-independent right-hand side, closing off the need for any infinite zero-ledger `Tendsto`
@@ -81,6 +81,6 @@ theorem re_sum_erased_primitiveReciprocalResidues_le {N : ℕ} [NeZero N] (hN2 :
               (ρ * (ρ - 1))‖ :=
       Finset.sum_le_sum hstep
     _ ≤ 2 * |primitiveBRe χ| / Real.sqrt x :=
-      sum_norm_completedReciprocalZeroTerm_le_abs_BRe_of_grh hN2 hGRH hprimitive hne hinv hx S
+      sum_norm_completedReciprocalZeroTerm_le_abs_BRe hN2 hGRH hprimitive hne hinv hx S
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

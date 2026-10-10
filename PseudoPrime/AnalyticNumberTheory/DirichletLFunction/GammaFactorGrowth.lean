@@ -4,8 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorLogDeriv
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorLogDeriv
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
+public import PseudoPrime.AnalyticNumberTheory.Gamma.UniformDigamma
 
 /-!
 # Central-strip growth of the gamma-factor log-derivative
@@ -172,20 +175,10 @@ theorem exists_norm_digamma_central_strip_le :
       nlinarith only [hC₁_le, hlogMΓ1_nonneg, hmax_nonneg, hprod_nonneg, Real.pi_pos]
 
 /--
-Input/assumptions: `χ : DirichletCharacter ℂ N` (any modulus, either parity).
-Conclusion: there is a fixed `C ≥ 0`, independent of `χ`'s modulus (depending only on parity, and
-`max`-ed over both), such that for every `σ T : ℝ` with `|σ| ≤ 2` and `1 ≤ |T|`,
-`‖logDeriv (gammaFactor χ) (σ + T * I)‖ ≤ C * (|T| + 1)`.
-Content: splits on `χ.even_or_odd`, rewrites `logDeriv (gammaFactor χ) s` via
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.logDeriv_gammaFactor_eq_of_even`/`_odd` as
-`-log π / 2 + digamma z / 2` with `z := s / 2`
-(even) or `z := (s + 1) / 2` (odd); in both cases `z.re ∈ [-1, 3 / 2]` from `|σ| ≤ 2` and
-`z.im = T / 2`, so `|z.im| ≥ 1 / 2` from `|T| ≥ 1`. Bounds `digamma z` via
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.exists_norm_digamma_central_strip_le` and
-combines with the constant `log π` term.
-Role: the character-level central-strip gamma-factor bound feeding the ordinary
-`L'/L` height-sequence envelope, combined with
-`exists_primitiveHorizontalHeightSeq_completedLogDeriv_small`.
+For every complex Dirichlet character, a uniform nonnegative constant bounds
+the gamma-factor logarithmic derivative by `C * (|T|+1)` when `|σ| ≤ 2`
+and `|T| ≥ 1`. Split by parity, express each derivative through digamma, and
+apply its central-strip estimate. This is the gamma contribution to horizontal bounds.
 -/
 theorem exists_norm_logDeriv_gammaFactor_horizontal_le :
     ∃ C : ℝ,
@@ -572,5 +565,71 @@ theorem exists_norm_logDeriv_gammaFactor_fixed_strip_le (A : ℕ) :
     exact
       hmain ((σ + 1) / 2) (T / 2) (by linarith only [hσ1, Nat.cast_nonneg (α := ℝ) A])
         (by linarith only [hσ2, Nat.cast_nonneg (α := ℝ) A]) rfl
+
+/-- In the central strip away from the real axis, digamma grows at most logarithmically
+in the imaginary part. Shift by two, apply the uniform right-half-plane digamma error,
+and bound the norm of the shifted argument by its real and imaginary parts.
+This sharpens the linear estimate for vertical Mellin integrability. -/
+theorem norm_digamma_central_strip_le_log {z : ℂ} (ha : -1 ≤ z.re) (hb : z.re ≤ 3 / 2)
+    (ht : 1 / 2 ≤ |z.im|) :
+    ‖Complex.digamma z‖ ≤ Real.log (7 / 2 + |z.im|) + Real.pi + Gamma.digammaLogErrorBound + 4 := by
+  have hr : 1 ≤ (z + 2).re := by
+    simp only [Complex.add_re, Complex.re_ofNat]
+    linarith only [ha]
+  have hn : 1 ≤ ‖z + 2‖ := hr.trans ((le_abs_self _).trans (Complex.abs_re_le_norm _))
+  have hup : ‖z + 2‖ ≤ 7 / 2 + |z.im| := by
+    have h := Complex.norm_le_abs_re_add_abs_im (z + 2)
+    simp only [Complex.add_re, Complex.add_im, Complex.re_ofNat, Complex.im_ofNat, add_zero] at h
+    rw [abs_of_nonneg (by linarith only [ha] : 0 ≤ z.re + 2)] at h
+    linarith only [h, hb]
+  have hs : 1 / 2 ≤ (z + 2).re := (by norm_num only : (1 : ℝ) / 2 ≤ 1).trans hr
+  have hl := Real.log_le_log (zero_lt_one.trans_le hn) hup
+  calc
+    _ ≤ ‖Complex.digamma (z + 2)‖ + 4 := norm_digamma_le_shift_two_add_four ht
+    _ ≤ (Real.log ‖z + 2‖ + Real.pi + Gamma.digammaLogErrorBound) + 4 :=
+      add_le_add_left (Gamma.norm_digamma_le_log_norm_add hs hn) 4
+    _ ≤ _ := by linarith only [hl]
+
+/-- For either character parity, in the strip with absolute real part at most two and
+absolute imaginary part at least one, the gamma-factor logarithmic derivative has
+a logarithmic upper bound with a universal additive constant. Apply the digamma
+strip estimate to the even or odd half-argument. This supplies a sublinear majorant
+when multiplied by a quadratically decaying Mellin kernel. -/
+theorem norm_logDeriv_gammaFactor_le_log {N : ℕ} (χ : DirichletCharacter ℂ N) {s : ℂ}
+    (hs : |s.re| ≤ 2) (ht : 1 ≤ |s.im|) :
+    ‖logDeriv χ.gammaFactor s‖ ≤
+      (Real.log (4 + |s.im|) + ‖Complex.log (Real.pi : ℂ)‖ + Real.pi + Gamma.digammaLogErrorBound +
+          4) /
+        2 := by
+  have him : s.im ≠ 0 := abs_pos.mp (zero_lt_one.trans_le ht)
+  have hmain (z : ℂ) (hz : -1 ≤ z.re ∧ z.re ≤ 3 / 2) (hi : z.im = s.im / 2) :
+    ‖-(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma z / 2‖ ≤
+      (Real.log (4 + |s.im|) + ‖Complex.log (Real.pi : ℂ)‖ + Real.pi + Gamma.digammaLogErrorBound +
+          4) /
+        2 := by
+    have hzi : 1 / 2 ≤ |z.im| := by
+      rw [hi, abs_div, abs_of_pos (by norm_num only : (0 : ℝ) < 2)]
+      linarith only [ht]
+    have hl : Real.log (7 / 2 + |z.im|) ≤ Real.log (4 + |s.im|) := by
+      apply Real.log_le_log
+      · linarith only [abs_nonneg z.im]
+      · rw [hi, abs_div, abs_of_pos (by norm_num only : (0 : ℝ) < 2)]
+        linarith only [abs_nonneg s.im]
+    have hd := norm_digamma_central_strip_le_log hz.1 hz.2 hzi
+    have hn := norm_add_le (-(Complex.log (Real.pi : ℂ)) / 2) (Complex.digamma z / 2)
+    simp only [norm_div, norm_neg] at hn
+    norm_num only [Complex.norm_ofNat] at hn
+    linarith only [hn, hd, hl]
+  rcases χ.even_or_odd with he | ho
+  · rw [logDeriv_gammaFactor_eq_of_even he him]
+    apply hmain (s / 2)
+    · simp only [Complex.div_ofNat_re]
+      constructor <;> linarith only [(abs_le.mp hs).1, (abs_le.mp hs).2]
+    · exact Complex.div_ofNat_im _ _
+  · rw [logDeriv_gammaFactor_eq_of_odd ho him]
+    apply hmain ((s + 1) / 2)
+    · simp only [Complex.div_ofNat_re, Complex.add_re, Complex.one_re]
+      constructor <;> linarith only [(abs_le.mp hs).1, (abs_le.mp hs).2]
+    · simp only [Complex.div_ofNat_im, Complex.add_im, Complex.one_im, add_zero]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

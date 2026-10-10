@@ -315,12 +315,18 @@ noncomputable def charPartialSumIndicator {N : ℕ} [NeZero N] (ψ : DirichletCh
     ℂ :=
   if t ≤ 1 then 0 else ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, ψ k
 
+/-- For any character of nonzero level, the truncated partial-sum indicator is measurable.
+Compose the discrete partial-sum function with the measurable natural floor and split
+at the measurable set `t ≤ 1`. This supplies measurability for the Mellin transform. -/
 theorem measurable_charPartialSumIndicator {N : ℕ} [NeZero N] (ψ : DirichletCharacter ℂ N) :
     Measurable (charPartialSumIndicator ψ) := by
   unfold charPartialSumIndicator
   have hmeas : Measurable (fun n : ℕ => ∑ k ∈ Finset.Icc 1 n, ψ k) := Measurable.of_discrete
   exact Measurable.ite measurableSet_Iic measurable_const (hmeas.comp Nat.measurable_floor)
 
+/-- For a nontrivial character, the indicator has norm at most its level `N` at every
+real `t`. Below the cutoff it is zero; above it, use the uniform partial-sum bound.
+This is the constant majorant for local integrability and growth at infinity. -/
 theorem norm_charPartialSumIndicator_le {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N} (hψ : ψ ≠ 1)
     (t : ℝ) : ‖charPartialSumIndicator ψ t‖ ≤ N := by
   unfold charPartialSumIndicator
@@ -329,16 +335,24 @@ theorem norm_charPartialSumIndicator_le {N : ℕ} [NeZero N] {ψ : DirichletChar
     exact Nat.cast_nonneg N
   · exact norm_sum_Icc_one_le hψ ⌊t⌋₊
 
+/-- For any character and `t ≤ 1`, the partial-sum indicator is zero by its defining
+cutoff. This removes the near-zero part of its Mellin integral. -/
 theorem charPartialSumIndicator_eq_zero_of_le_one {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
     {t : ℝ} (ht : t ≤ 1) : charPartialSumIndicator ψ t = 0 := by
   unfold charPartialSumIndicator
   rw [ite_eq_left ht]
 
+/-- For any character and `t > 1`, the indicator equals the sum of character values
+from `1` to the natural floor of `t`. Unfold the upper branch to identify its
+Mellin transform with the Abel integral. -/
 theorem charPartialSumIndicator_eq_of_lt {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N} {t : ℝ}
     (ht : 1 < t) : charPartialSumIndicator ψ t = ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, ψ k := by
   unfold charPartialSumIndicator
   rw [ite_eq_right (not_le.mpr ht)]
 
+/-- For a nontrivial character, the indicator is locally integrable on the positive
+real axis. Measurability and its constant norm bound give integrability on every
+compact set of finite measure. This supplies the Mellin holomorphicity criterion. -/
 theorem locallyIntegrableOn_charPartialSumIndicator {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
     (hψ : ψ ≠ 1) :
     MeasureTheory.LocallyIntegrableOn (charPartialSumIndicator ψ) (Set.Ioi (0 : ℝ)) := by
@@ -349,6 +363,9 @@ theorem locallyIntegrableOn_charPartialSumIndicator {N : ℕ} [NeZero N] {ψ : D
   · exact (measurable_charPartialSumIndicator ψ).aestronglyMeasurable.restrict
   · exact Filter.Eventually.of_forall fun t => norm_charPartialSumIndicator_le hψ t
 
+/-- For a nontrivial character, the indicator is `O(t^0)` as `t → ∞`. Its uniform
+norm bound by `N` gives the Big-O coefficient directly. This fixes the upper
+growth threshold in the Mellin holomorphicity criterion. -/
 theorem isBigO_atTop_charPartialSumIndicator {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
     (hψ : ψ ≠ 1) : charPartialSumIndicator ψ =O[Filter.atTop] fun t : ℝ => t ^ (-(0 : ℝ)) := by
   apply Asymptotics.IsBigO.of_bound (N : ℝ)
@@ -356,6 +373,10 @@ theorem isBigO_atTop_charPartialSumIndicator {N : ℕ} [NeZero N] {ψ : Dirichle
   rw [neg_zero, Real.rpow_zero, norm_one, mul_one]
   exact norm_charPartialSumIndicator_le hψ t
 
+/-- For any character and real exponent `b`, the indicator is `O(t^(-b))` as
+`t → 0` through positive values. It vanishes identically near zero, so eventual
+equality with zero proves the bound without nontriviality. This allows any
+near-zero threshold in the Mellin holomorphicity criterion. -/
 theorem isBigO_nhdsWithin_charPartialSumIndicator {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
     (b : ℝ) :
     charPartialSumIndicator ψ =O[nhdsWithin (0 : ℝ) (Set.Ioi (0 : ℝ))] fun t : ℝ => t ^ (-b) := by

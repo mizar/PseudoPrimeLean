@@ -4,8 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Jensen
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCount
+module
+
+public import PseudoPrime.Analysis.FinitePointAvoidance
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Jensen
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCount
 
 /-!
 # Quantitative good-height selection
@@ -13,86 +16,15 @@ import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCount
 Finite interval avoidance and the Jensen zero-count bound select a height
 `T ∈ [H,H+1]` a distance at least `1/(4*jensenLogConst*log(H+2))` from
 all zero ordinates within distance two of `H`, for `H ≥ 8`.
-The underlying avoidance lemma is independent of zeta: excluded intervals
+The underlying Analysis.FinitePointAvoidance lemma is independent of zeta: excluded intervals
 of total length less than a given interval cannot cover it.
 -/
+
+@[expose] public section
 
 noncomputable section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
-
-/-- If finitely many "forbidden" points `S` have total excluded length `2c·|S| < 1`, some point
-of `[a, a+1]` lies at distance `≥ c` from every point of `S`. -/
-theorem exists_avoiding_point {S : Finset ℝ} {c a : ℝ} (hc : 0 < c) (hlen : 2 * c * S.card < 1) :
-    ∃ T ∈ Set.Icc a (a + 1), ∀ y ∈ S, c ≤ |T - y| := by
-  by_contra hcon
-  push Not at hcon
-  have hsub : Set.Icc a (a + 1) ⊆ ⋃ y ∈ S, Set.Ioo (y - c) (y + c) := by
-    intro T hT
-    obtain ⟨y, hyS, hy⟩ := hcon T hT
-    simp only [Set.mem_iUnion]
-    rw [abs_lt] at hy
-    exact ⟨y, hyS, by constructor <;> linarith only [hy.1, hy.2]⟩
-  have hsum_eq :
-    ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) * S.card := by
-    have hterm : ∀ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) :=
-      fun y _ => by
-      rw [Real.volume_Ioo]
-      congr 1
-      ring
-    rw [Finset.sum_congr rfl hterm, Finset.sum_const, nsmul_eq_mul, mul_comm]
-  have hfinal : ENNReal.ofReal 1 ≤ ENNReal.ofReal (2 * c) * (S.card : ENNReal) := by
-    calc
-      ENNReal.ofReal (1 : ℝ) = MeasureTheory.volume (Set.Icc a (a + 1)) := by
-        rw [Real.volume_Icc]
-        congr 1
-        ring
-      _ ≤ MeasureTheory.volume (⋃ y ∈ S, Set.Ioo (y - c) (y + c)) := MeasureTheory.measure_mono hsub
-      _ ≤ ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) :=
-        MeasureTheory.measure_biUnion_finset_le S _
-      _ = ENNReal.ofReal (2 * c) * S.card := hsum_eq
-  rw [← ENNReal.ofReal_natCast S.card, ←
-    ENNReal.ofReal_mul (le_of_lt (mul_pos (by norm_num only) hc)),
-    ENNReal.ofReal_le_ofReal_iff
-      (mul_nonneg (le_of_lt (mul_pos (by norm_num only) hc)) (Nat.cast_nonneg _))] at hfinal
-  linarith only [hfinal, hlen]
-
-/-- Generalization of `PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_avoiding_point` to
-an interval `[a, a+L]` of arbitrary positive
-length `L` (not just `L = 1`). -/
-theorem exists_avoiding_point_length {S : Finset ℝ} {c a L : ℝ} (hc : 0 < c) (_hL : 0 < L)
-    (hlen : 2 * c * S.card < L) : ∃ T ∈ Set.Icc a (a + L), ∀ y ∈ S, c ≤ |T - y| := by
-  by_contra hcon
-  push Not at hcon
-  have hsub : Set.Icc a (a + L) ⊆ ⋃ y ∈ S, Set.Ioo (y - c) (y + c) := by
-    intro T hT
-    obtain ⟨y, hyS, hy⟩ := hcon T hT
-    simp only [Set.mem_iUnion]
-    rw [abs_lt] at hy
-    exact ⟨y, hyS, by constructor <;> linarith only [hy.1, hy.2]⟩
-  have hsum_eq :
-    ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) * S.card := by
-    have hterm : ∀ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) = ENNReal.ofReal (2 * c) :=
-      fun y _ => by
-      rw [Real.volume_Ioo]
-      congr 1
-      ring
-    rw [Finset.sum_congr rfl hterm, Finset.sum_const, nsmul_eq_mul, mul_comm]
-  have hfinal : ENNReal.ofReal L ≤ ENNReal.ofReal (2 * c) * (S.card : ENNReal) := by
-    calc
-      ENNReal.ofReal L = MeasureTheory.volume (Set.Icc a (a + L)) := by
-        rw [Real.volume_Icc]
-        congr 1
-        ring
-      _ ≤ MeasureTheory.volume (⋃ y ∈ S, Set.Ioo (y - c) (y + c)) := MeasureTheory.measure_mono hsub
-      _ ≤ ∑ y ∈ S, MeasureTheory.volume (Set.Ioo (y - c) (y + c)) :=
-        MeasureTheory.measure_biUnion_finset_le S _
-      _ = ENNReal.ofReal (2 * c) * S.card := hsum_eq
-  rw [← ENNReal.ofReal_natCast S.card, ←
-    ENNReal.ofReal_mul (le_of_lt (mul_pos (by norm_num only) hc)),
-    ENNReal.ofReal_le_ofReal_iff
-      (mul_nonneg (le_of_lt (mul_pos (by norm_num only) hc)) (Nat.cast_nonneg _))] at hfinal
-  linarith only [hfinal, hlen]
 
 /-! ### Connecting to `ζ`: zeros near a good height lie in the Jensen disk -/
 
@@ -114,6 +46,10 @@ theorem riemannZeta_zero_re_nonneg_of_im_ne_zero {ρ : ℂ} (hζ : riemannZeta �
       Complex.natCast_im, Complex.one_im, add_zero, mul_zero, Complex.im_ofNat, Complex.add_re,
       Complex.natCast_re, Complex.one_re, zero_mul, neg_zero]
 
+/--
+A genuine zeta zero has real part at most one. The zero-free right half-plane
+excludes larger real parts; this places nearby zeros inside the Jensen counting disk.
+-/
 theorem riemannZeta_zero_re_le_one {ρ : ℂ} (hζ : riemannZeta ρ = 0) : ρ.re ≤ 1 := by
   by_contra h
   push Not at h
@@ -152,6 +88,11 @@ noncomputable def zeroOrdinatesNear (H : ℝ) : Finset ℝ :=
         (isCompact_closedBall _ _)).toFinset.image
     Complex.im
 
+/--
+For height at least eight, the number of distinct nearby zero ordinates is bounded
+by the Jensen-disk zero count. Compare the image cardinality with support cardinality
+and then the positive multiplicity sum; the good-height construction uses this bound.
+-/
 theorem card_zeroOrdinatesNear_le {H : ℝ} (hH : 8 ≤ H) :
     (zeroOrdinatesNear H).card ≤
       ((∑ᶠ u, MeromorphicOn.divisor riemannZeta (Metric.closedBall (jensenCenter H) (37 / 10)) u :
@@ -255,7 +196,7 @@ theorem exists_good_height {H : ℝ} (hH : 8 ≤ H) :
         field_simp [hLpos.ne']
         norm_num only
       _ < 1 := by norm_num only
-  obtain ⟨T, hT, hTgood⟩ := exists_avoiding_point hc_pos hlenbound
+  obtain ⟨T, hT, hTgood⟩ := Analysis.exists_avoiding_point hc_pos hlenbound
   refine ⟨T, hT, fun ρ hζ him => ?_⟩
   have hmem : ρ ∈ Metric.closedBall (jensenCenter H) (37 / 10) :=
     riemannZeta_zero_mem_jensenBall hH hζ him

@@ -294,16 +294,4 @@ theorem riemannZetaGeneratedGridInteriorSeparation {z w : ℂ} (hre : z.re < w.r
       (riemannZetaGeneratedStrictGridCuts_avoidsCuts hre him hregular)
       (riemannZetaGeneratedStrictGridCuts_pairSeparated hre him hregular)
 
-/-- Every real cut of a strict grid belongs to the outer unordered interval. -/
-theorem RiemannZetaGrid.xcuts_mem_uIcc {z w : ℂ} (grid : RectangleGeometry.StrictGridCuts z w)
-    {u : ℝ} (hu : u ∈ grid.xcuts) : u ∈ Set.uIcc z.re w.re := by
-  exact
-    Set.mem_uIcc_of_le (le_of_lt (grid.xcuts_inside u hu).1) (le_of_lt (grid.xcuts_inside u hu).2)
-
-/-- Every imaginary cut of a strict grid belongs to the outer unordered interval. -/
-theorem RiemannZetaGrid.ycuts_mem_uIcc {z w : ℂ} (grid : RectangleGeometry.StrictGridCuts z w)
-    {v : ℝ} (hv : v ∈ grid.ycuts) : v ∈ Set.uIcc z.im w.im := by
-  exact
-    Set.mem_uIcc_of_le (le_of_lt (grid.ycuts_inside v hv).1) (le_of_lt (grid.ycuts_inside v hv).2)
-
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

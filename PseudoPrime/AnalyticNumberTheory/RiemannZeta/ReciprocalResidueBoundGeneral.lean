@@ -4,12 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMass
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroClassification
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ReciprocalTrivialZeroSeries
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ContourKernelConjugation
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMass
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FiniteZeroSums
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroClassification
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ReciprocalTrivialZeroSeries
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ContourKernelConjugation
 
 /-! General RH bounds for smoothed zeta zero sums and contour integrals. -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
@@ -24,7 +29,6 @@ theorem re_sum_riemannZetaReciprocalZeroContribution_ge_of_riemannHypothesis
       (∑ ρ ∈ S, riemannZetaReciprocalZeroContribution x ρ).re := by
   classical
   have hxpos : 0 < x := lt_trans zero_lt_one hx
-  have hxsqrtpos : 0 < Real.sqrt x := Real.sqrt_pos.mpr hxpos
   set St := S.filter (fun ρ => ρ.re < 0) with hSt_def
   set Sn := S.filter (fun ρ => ¬ρ.re < 0) with hSn_def
   have hsplit : St ∪ Sn = S := Finset.filter_union_filter_not_eq _ S
@@ -64,59 +68,11 @@ theorem re_sum_riemannZetaReciprocalZeroContribution_ge_of_riemannHypothesis
   have hnontriv :
     -(2 * riemannZeroMass / Real.sqrt x) ≤
       (∑ ρ ∈ Sn, riemannZetaReciprocalZeroContribution x ρ).re := by
-    rw [Complex.re_sum]
-    have hbound :
-      ∀ ρ ∈ Sn,
-        -((riemannZetaZeroMultiplicity ρ : ℝ) / (Real.sqrt x * Complex.normSq ρ)) ≤
-          (riemannZetaReciprocalZeroContribution x ρ).re := by
-      intro ρ hρ
-      have h1 := Complex.abs_re_le_norm (riemannZetaReciprocalZeroContribution x ρ)
-      have h2 := abs_le.mp h1
-      rw [norm_riemannZetaReciprocalZeroContribution_of_rh hRH hxpos (hSnz ρ hρ).1
-          (hSnz ρ hρ).2] at h2
-      exact h2.1
-    have hsum_bound :
-      -(∑ ρ ∈ Sn, (riemannZetaZeroMultiplicity ρ : ℝ) / (Real.sqrt x * Complex.normSq ρ)) ≤
-        ∑ ρ ∈ Sn, (riemannZetaReciprocalZeroContribution x ρ).re := by
-      rw [← Finset.sum_neg_distrib]
-      exact Finset.sum_le_sum hbound
-    refine le_trans ?_ hsum_bound
-    have hzm :=
-      tsum_riemannXiZeroMultiplicity_invNormSq_eq_two_mul_riemannZeroMass_of_riemannHypothesis hRH
-    have hxieq :
-      ∀ ρ ∈ Sn,
-        (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ =
-          if riemannXi ρ = 0 then (riemannXiZeroMultiplicity ρ : ℝ) / Complex.normSq ρ else 0 := by
-      intro ρ hρ
-      have hxi0 := riemannXi_eq_zero_of_riemannZeta_zero_re_nonneg (hSnz ρ hρ).1 (hSnz ρ hρ).2
-      rw [ite_eq_left hxi0, riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity_of_zero hxi0]
-    have hsum_eq :
-      (∑ ρ ∈ Sn, (riemannZetaZeroMultiplicity ρ : ℝ) / (Real.sqrt x * Complex.normSq ρ)) =
-        (Real.sqrt x)⁻¹ *
-          ∑ ρ ∈ Sn,
-            if riemannXi ρ = 0 then (riemannXiZeroMultiplicity ρ : ℝ) / Complex.normSq ρ
-            else 0 := by
-      rw [Finset.mul_sum]
-      apply Finset.sum_congr rfl
-      intro ρ hρ
-      rw [← hxieq ρ hρ]
-      field_simp [hxsqrtpos.ne']
-    rw [hsum_eq]
-    have hle_tsum :
-      (∑ ρ ∈ Sn,
-          if riemannXi ρ = 0 then (riemannXiZeroMultiplicity ρ : ℝ) / Complex.normSq ρ else 0) ≤
-        2 * riemannZeroMass := by
-      rw [← hzm]
-      exact
-        (summable_riemannXiZeroMultiplicityInvNormSq_of_riemannHypothesis hRH).sum_le_tsum Sn
-          (fun ρ _ => by
-            split <;> [exact div_nonneg (Nat.cast_nonneg _) (Complex.normSq_nonneg _);
-              exact le_refl 0])
-    have hinv_nonneg : (0 : ℝ) ≤ (Real.sqrt x)⁻¹ := inv_nonneg.mpr hxsqrtpos.le
-    have hmul := mul_le_mul_of_nonneg_left hle_tsum hinv_nonneg
-    have heq2 :
-      (2 : ℝ) * riemannZeroMass / Real.sqrt x = (Real.sqrt x)⁻¹ * (2 * riemannZeroMass) := by ring
-    linarith only [hmul, heq2]
+    exact
+      neg_le_of_abs_le
+        ((Complex.abs_re_le_norm _).trans
+          (norm_sum_riemannZetaReciprocalZeroContribution_le hRH hxpos Sn (fun ρ hρ ↦ (hSnz ρ hρ).1)
+            (fun ρ hρ ↦ (hSnz ρ hρ).2)))
   linarith only [htriv, hnontriv]
 
 /-- Under RH, combine the closed-form residues at zero and one with the finite

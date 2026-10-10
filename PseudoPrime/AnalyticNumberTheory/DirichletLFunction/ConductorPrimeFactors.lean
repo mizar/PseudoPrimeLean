@@ -33,10 +33,6 @@ theorem conductor_le_level {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) 
 theorem quotient_pos {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) : 0 < q / χ.conductor :=
   Nat.div_pos (conductor_le_level χ) (conductor_pos χ)
 
-/-- The complementary quotient is at most the original level. -/
-theorem quotient_le_level {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) : q / χ.conductor ≤ q :=
-  Nat.div_le_self q χ.conductor
-
 /-- The real logarithm of the conductor is at most the logarithm of the level. -/
 theorem log_conductor_le_log_level {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     Real.log χ.conductor ≤ Real.log q := by

@@ -158,10 +158,6 @@ theorem leftVerticalZetaLogDerivBound_unified_le (m : ℕ) :
 noncomputable def unifiedRectangleLower (m : ℕ) : ℂ :=
   ⟨-(2 * (m : ℝ) + 1), -(unifiedContourHeightSeq m)⟩
 
-/-- The upper-right corner of the unified far-left rectangle. -/
-noncomputable def unifiedRectangleUpper (m : ℕ) : ℂ :=
-  ⟨-1 / 2, unifiedContourHeightSeq m⟩
-
 /-- The upper-right corner of a unified rectangle whose right edge is `τ`. -/
 noncomputable def unifiedTauRectangleUpper (τ : ℝ) (m : ℕ) : ℂ :=
   ⟨τ, unifiedContourHeightSeq m⟩
@@ -286,29 +282,6 @@ theorem llsRiemannRectangleBoundaryIsRegular_unified_tau {τ : ℝ} (hτ : 1 < �
   exact
     RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne hre him hsbox hsleft hsright
       hslower hsupper
-
-/-- Both Mellin singularities lie inside every unified rectangle ending at `τ > 1`. -/
-theorem zero_one_mem_llsClosedRectangle_unified_tau {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
-    (0 : ℂ) ∈
-        Rectangle.rectangleClosedBox (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) ∧
-      (1 : ℂ) ∈
-        Rectangle.rectangleClosedBox (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) := by
-  have hUpos : 0 < unifiedContourHeightSeq m :=
-    (farLeftHeightSeq_pos m).trans_le (farLeftHeightSeq_le_unifiedContourHeightSeq m)
-  have hm : (0 : ℝ) ≤ m := Nat.cast_nonneg m
-  have hleft : -(2 * (m : ℝ) + 1) < τ := by linarith only [hτ, hm]
-  have hheight : -unifiedContourHeightSeq m < unifiedContourHeightSeq m := by linarith only [hUpos]
-  constructor
-  · change
-      (0 : ℝ) ∈ Set.uIcc (-(2 * (m : ℝ) + 1)) τ ∧
-        (0 : ℝ) ∈ Set.uIcc (-unifiedContourHeightSeq m) (unifiedContourHeightSeq m)
-    rw [Set.uIcc_of_lt hleft, Set.uIcc_of_lt hheight]
-    constructor <;> constructor <;> linarith only [hleft, hheight, hm, hτ]
-  · change
-      (1 : ℝ) ∈ Set.uIcc (-(2 * (m : ℝ) + 1)) τ ∧
-        (0 : ℝ) ∈ Set.uIcc (-unifiedContourHeightSeq m) (unifiedContourHeightSeq m)
-    rw [Set.uIcc_of_lt hleft, Set.uIcc_of_lt hheight]
-    constructor <;> constructor <;> linarith only [hleft, hheight, hm, hτ]
 
 /-- A point with real part in `[-(2m+1),τ]` and imaginary part in `[-H_m,H_m]`
 belongs to the corresponding unified rectangle. No separate assumption `τ > 1` is needed. -/

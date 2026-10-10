@@ -501,21 +501,6 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_neg_unifiedH
     exact intervalIntegral_riemannZetaReciprocalContourKernel_neg_height hx hlamtau
   · simp only [map_zero]
 
-/--
-The three vanishing far-left rectangle edges for the logarithmic kernel.
-
-The terms are respectively the lower horizontal edge, the oppositely oriented upper horizontal
-edge, and the left vertical edge with its factor `-I`.
--/
-noncomputable def riemannZetaLogThreeFarLeftEdges (x : ℝ) (m : ℕ) : ℂ :=
-  (∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-      riemannZetaLogContourKernel x ((σ : ℂ) - (farLeftHeightSeq m : ℂ) * Complex.I)) -
-    (∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-      riemannZetaLogContourKernel x ((σ : ℂ) + (farLeftHeightSeq m : ℂ) * Complex.I)) -
-    Complex.I •
-      (∫ t in (-(farLeftHeightSeq m))..(farLeftHeightSeq m),
-        riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I))
-
 /-- The lower growing logarithmic far-left segment vanishes on the unified sequence. -/
 theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_neg_unified_farLeft {x : ℝ}
     (hx : 1 < x) :
@@ -558,8 +543,11 @@ noncomputable def riemannZetaLogThreeUnifiedEdges (x : ℝ) (m : ℕ) : ℂ :=
       (∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
         riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I))
 
-/-- The reciprocal-kernel analogue of
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.riemannZetaLogThreeUnifiedEdges`. -/
+/--
+The reciprocal-kernel boundary terms other than the right edge: the lower horizontal
+integral minus the upper horizontal integral minus `I` times the left vertical integral.
+All use the same unified height and far-left real part; contour assembly uses their sum.
+-/
 noncomputable def riemannZetaReciprocalThreeUnifiedEdges (x : ℝ) (m : ℕ) : ℂ :=
   (∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
       riemannZetaReciprocalContourKernel x ((σ : ℂ) - unifiedContourHeightSeq m * Complex.I)) -
@@ -599,8 +587,11 @@ noncomputable def riemannZetaLogUnifiedBoundaryError (x τ : ℝ) (m : ℕ) : �
     (∫ σ in (-1 / 2)..τ,
       riemannZetaLogContourKernel x ((σ : ℂ) + unifiedContourHeightSeq m * Complex.I))
 
-/-- The reciprocal-kernel analogue of
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.riemannZetaLogUnifiedBoundaryError`. -/
+/--
+The reciprocal boundary error for right real part `τ`: the three far-left edges
+plus the lower segment from `-1/2` to `τ`, minus the corresponding upper segment.
+This collects all terms that vanish before the full right-line integral remains.
+-/
 noncomputable def riemannZetaReciprocalUnifiedBoundaryError (x τ : ℝ) (m : ℕ) : ℂ :=
   riemannZetaReciprocalThreeUnifiedEdges x m +
       (∫ σ in (-1 / 2)..τ,
@@ -699,77 +690,6 @@ theorem riemannZetaFiniteContourIdentities_unified_tau {x τ : ℝ} (hx : 0 < x)
     linarith only [hUpos]
   · exact llsRiemannRectangleBoundaryIsRegular_unified_tau hτ m
 
-/-- The logarithmic rectangle boundary splits into the three vanishing edges and the right edge. -/
-theorem rectangleBoundaryIntegral_log_unified_eq (x : ℝ) (m : ℕ) :
-    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
-        (unifiedRectangleLower m) (unifiedRectangleUpper m) =
-      riemannZetaLogThreeUnifiedEdges x m +
-        Complex.I •
-          (∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
-            riemannZetaLogContourKernel x ((-1 / 2 : ℝ) + (t : ℂ) * Complex.I)) := by
-  unfold RectangleGeometry.rectangleBoundaryIntegral
-  simp only [unifiedRectangleLower, unifiedRectangleUpper]
-  have hbottom :
-    (∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-        riemannZetaLogContourKernel x
-          ((σ : ℂ) + ((-(unifiedContourHeightSeq m) : ℝ) : ℂ) * Complex.I)) =
-      ∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-        riemannZetaLogContourKernel x ((σ : ℂ) - unifiedContourHeightSeq m * Complex.I) := by
-    apply intervalIntegral.integral_congr
-    intro σ _
-    apply congrArg (riemannZetaLogContourKernel x)
-    push_cast
-    ring
-  have hleft :
-    (∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
-        riemannZetaLogContourKernel x (((-(2 * (m : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * Complex.I)) =
-      ∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
-        riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I) := by
-    apply intervalIntegral.integral_congr
-    intro t _
-    apply congrArg (riemannZetaLogContourKernel x)
-    push_cast
-    ring
-  rw [hbottom, hleft]
-  unfold riemannZetaLogThreeUnifiedEdges
-  abel
-
-/-- The reciprocal rectangle boundary has the same four-edge decomposition. -/
-theorem rectangleBoundaryIntegral_reciprocal_unified_eq (x : ℝ) (m : ℕ) :
-    RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
-        (unifiedRectangleLower m) (unifiedRectangleUpper m) =
-      riemannZetaReciprocalThreeUnifiedEdges x m +
-        Complex.I •
-          (∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
-            riemannZetaReciprocalContourKernel x ((-1 / 2 : ℝ) + (t : ℂ) * Complex.I)) := by
-  unfold RectangleGeometry.rectangleBoundaryIntegral
-  simp only [unifiedRectangleLower, unifiedRectangleUpper]
-  have hbottom :
-    (∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-        riemannZetaReciprocalContourKernel x
-          ((σ : ℂ) + ((-(unifiedContourHeightSeq m) : ℝ) : ℂ) * Complex.I)) =
-      ∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
-        riemannZetaReciprocalContourKernel x ((σ : ℂ) - unifiedContourHeightSeq m * Complex.I) := by
-    apply intervalIntegral.integral_congr
-    intro σ _
-    apply congrArg (riemannZetaReciprocalContourKernel x)
-    push_cast
-    ring
-  have hleft :
-    (∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
-        riemannZetaReciprocalContourKernel x
-          (((-(2 * (m : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * Complex.I)) =
-      ∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
-        riemannZetaReciprocalContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I) := by
-    apply intervalIntegral.integral_congr
-    intro t _
-    apply congrArg (riemannZetaReciprocalContourKernel x)
-    push_cast
-    ring
-  rw [hbottom, hleft]
-  unfold riemannZetaReciprocalThreeUnifiedEdges
-  abel
-
 /-- Every non-right logarithmic boundary piece vanishes on the unified sequence. -/
 theorem tendsto_riemannZetaLogUnifiedBoundaryError_atTop {x : ℝ} (hx : 1 < x) {τ : ℝ} (hτ : 1 < τ)
     (hτ2 : τ ≤ 2) :
@@ -813,8 +733,11 @@ noncomputable def riemannZetaLogUnifiedContourAssembly (x τ : ℝ) (m : ℕ) : 
       (∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
         riemannZetaLogContourKernel x ((τ : ℂ) + (t : ℂ) * Complex.I))
 
-/-- The reciprocal-kernel analogue of
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.riemannZetaLogUnifiedContourAssembly`. -/
+/--
+The reciprocal contour assembly at index `m`: its unified boundary error plus
+`I` times the truncated right vertical integral at real part `τ`. The finite contour
+identity equates this expression with `2πi` times the residue ledger.
+-/
 noncomputable def riemannZetaReciprocalUnifiedContourAssembly (x τ : ℝ) (m : ℕ) : ℂ :=
   riemannZetaReciprocalUnifiedBoundaryError x τ m +
     Complex.I •

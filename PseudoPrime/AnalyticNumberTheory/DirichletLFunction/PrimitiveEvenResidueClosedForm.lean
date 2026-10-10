@@ -124,10 +124,9 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZer
     simp only [neg_sub, Complex.sub_re]
   -- assemble
   have hF0re :=
-    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log_of_grh hN2 hGRH hprimitive hne
-      hinv
+    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
   have hF1re :=
-    completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log_of_grh hN2 hGRH hprimitive hne hinv
+    completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
   have hG1re := logDeriv_gammaFactor_one_re_of_even heven
   rw [Complex.add_re, hr0re, hr1re, hF0re, hF1re, hG1re]
   ring

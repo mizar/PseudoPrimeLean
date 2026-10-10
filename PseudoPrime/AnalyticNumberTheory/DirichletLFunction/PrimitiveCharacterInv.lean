@@ -120,25 +120,4 @@ theorem DirichletCharacter.odd_inv_iff {N : ℕ} [NeZero N] {χ : DirichletChara
     rw [h]
     simp only [map_neg, map_one]
 
-/--
-Input/assumptions: a complex Dirichlet character of a nonzero level.
-Conclusion: quadraticity is invariant under inversion.
-Content: `MulChar.IsQuadratic.inv` identifies a quadratic character with its inverse, and the
-same identity applied to the inverse gives the converse transport.
-Role: supplies the general self-duality API used by quadratic specializations of the functional
-equation without importing an application-specific character construction.
--/
-theorem DirichletCharacter.isQuadratic_inv_iff {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} :
-    χ⁻¹.IsQuadratic ↔ χ.IsQuadratic := by
-  constructor
-  · intro h
-    have hi' : χ = χ⁻¹ := by simpa only [inv_inv] using h.inv
-    have hi : χ⁻¹ = χ := hi'.symm
-    rw [← hi]
-    exact h
-  · intro h
-    have hi : χ⁻¹ = χ := by simpa only [inv_inv] using h.inv
-    rw [hi]
-    exact h
-
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

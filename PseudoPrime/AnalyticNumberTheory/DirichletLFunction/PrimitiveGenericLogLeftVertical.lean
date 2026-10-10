@@ -4,9 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveQuadraticLogLeftVertical
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveLogLeftVerticalBound
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveLeftVerticalBound
 
 /-! Generic logarithmic left-vertical estimates and their height-sequence limits. -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
@@ -209,14 +214,14 @@ theorem tendsto_primitiveHorizontalHeightSeq_log_leftVertical_intervalIntegral {
     Filter.Tendsto
       (fun k : ℕ =>
         ∫ t in
-          (-(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv
-              k))..(primitiveHorizontalHeightSeq_of_grh hN2 hGRH hprimitive hne hinv k),
+          (-(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv
+              k))..(primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k),
           dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop
       (nhds
         (∫ t : ℝ,
           dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
   (tendsto_intervalIntegral_dirichletLogContourKernel_leftVertical hprimitive hne hinv hx hA).comp
-    (tendsto_primitiveHorizontalHeightSeq_atTop_of_grh hN2 hGRH hprimitive hne hinv)
+    (tendsto_primitiveHorizontalHeightSeq_atTop hN2 hGRH hprimitive hne hinv)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

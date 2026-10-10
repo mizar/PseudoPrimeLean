@@ -21,13 +21,23 @@ and elementary complex arithmetic; they do not reference any particular contour-
 construction.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
-/-- The reciprocal-kernel contribution attached to one zeta zero. -/
+/--
+Multiplicity-weighted reciprocal-kernel zero term
+`-m(ρ)*x^(ρ-1)/(ρ*(ρ-1))`, with complex powers and totalized division. At genuine zeros
+away from the Mellin poles, this is the contour residue. Finite zero ledgers sum these terms.
+-/
 noncomputable def riemannZetaReciprocalZeroContribution (x : ℝ) (ρ : ℂ) : ℂ :=
   -(riemannZetaZeroMultiplicity ρ : ℂ) * (x : ℂ) ^ (ρ - 1) / (ρ * (ρ - 1))
 
-/-- The logarithmic-kernel contribution attached to one zeta zero. -/
+/--
+Multiplicity-weighted logarithmic-kernel zero term `-m(ρ)*x^ρ/ρ²`, with complex
+powers and totalized division. At genuine zeros away from zero, this is the contour residue.
+The RH norm formula and finite zero ledgers consume this closed form.
+-/
 noncomputable def riemannZetaLogZeroContribution (x : ℝ) (ρ : ℂ) : ℂ :=
   -(riemannZetaZeroMultiplicity ρ : ℂ) * (x : ℂ) ^ ρ / ρ ^ 2
 

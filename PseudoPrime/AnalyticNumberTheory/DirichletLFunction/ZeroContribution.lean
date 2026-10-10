@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroCounting
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HadamardMultiplicityFactorization
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorMultiplicityBridge
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.QuadraticFunctionalConsequences
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroCounting
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HadamardMultiplicityFactorization
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorMultiplicityBridge
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFunctionalEquation
 
 /-!
 # Ordinary zero contributions and completed-zero bounds
@@ -109,108 +111,15 @@ theorem dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero {N :
   · exact hdenom_pos.le
 
 /--
-Input/assumptions: GRH, a nonzero level, a primitive nontrivial quadratic complex Dirichlet
-character, and
-a positive real `x`.
-Conclusion: `‖D_ρ x^ρ/ρ²‖ = (D_ρ/normSq ρ) · √x`, where `D_ρ` is the completed-`L` divisor at `ρ`.
-Content: extracted from `norm_tsum_logZeroContribution_le`'s pointwise identity, so both a
-whole-line `tsum` bound and a finite `Finset` bound below reuse the same computation.
-Role: a log-kernel analogue of `DirichletLFunction.norm_completedReciprocalZeroTerm_eq`.
--/
-theorem norm_completedLogZeroTerm_eq {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hquad : χ.IsQuadratic) {x : ℝ} (hx : 0 < x) (ρ : ℂ) :
-    ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
-            (x : ℂ) ^ ρ /
-          ρ ^ 2‖ =
-      Real.sqrt x *
-        (((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) /
-          Complex.normSq ρ) := by
-  set D := MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ with hD_def
-  by_cases hD0 : D = 0
-  · simp only [hD0, Int.cast_zero, zero_mul, zero_div, norm_zero, mul_zero]
-  · have hDnonneg : (0 : ℝ) ≤ (D : ℝ) := by
-      have hdiff := DirichletCharacter.differentiable_completedLFunction hne
-      have hanalytic : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ :=
-        fun z _ => hdiff.analyticAt z
-      exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic ρ
-    have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
-    have hre_half : ρ.re = (1 : ℝ) / 2 :=
-      completedLFunction_zero_re_eq_half_of_grh_quadratic hGRH hprimitive hne hquad hzero
-    have hnormsq : ‖ρ ^ 2‖ = Complex.normSq ρ := by rw [norm_pow, ← Complex.normSq_eq_norm_sq]
-    have hnormpow : ‖(x : ℂ) ^ ρ‖ = Real.sqrt x := by
-      rw [Complex.norm_cpow_eq_rpow_re_of_pos hx, hre_half, ← Real.sqrt_eq_rpow]
-    rw [norm_div, norm_mul, Complex.norm_intCast, abs_of_nonneg hDnonneg, hnormpow, hnormsq]
-    ring
-
-/--
-Input/assumptions: GRH, `2 ≤ N`, a primitive nontrivial quadratic complex Dirichlet character,
-`x > 0`, and an arbitrary `Finset ℂ`.
-Conclusion: `∑ ρ ∈ S, ‖D_ρ x^ρ/ρ²‖ ≤ 2√x |Re B(χ)|`.
-Content: `Summable.sum_le_tsum` (the term is pointwise nonnegative) plus the same calc chain as
-`norm_tsum_logZeroContribution_le` (`norm_completedLogZeroTerm_eq`, `tsum_mul_left`,
-`DirichletLFunction.tsum_divisor_inv_normSq_eq_two_mul_abs_BRe`) — the finite-sum bound follows the
-whole-line `tsum`
-bound without needing the norm-of-tsum triangle inequality.
-Role: a log-kernel analogue of `sum_norm_completedReciprocalZeroTerm_le`, uniform in `S`.
--/
-theorem sum_norm_completedLogZeroTerm_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
-    (hx : 0 < x) (S : Finset ℂ) :
-    ∑ ρ ∈ S,
-        ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
-              (x : ℂ) ^ ρ /
-            ρ ^ 2‖ ≤
-      2 * Real.sqrt x * |primitiveBRe χ| := by
-  have hsummableInv :=
-    summable_divisor_div_normSq_of_grh_quadratic hN2 hGRH hprimitive hne hinv hquad
-  have hpt := norm_completedLogZeroTerm_eq hGRH hprimitive hne hquad hx
-  have hsummableTerm :
-    Summable
-      (fun ρ : ℂ =>
-        ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
-              (x : ℂ) ^ ρ /
-            ρ ^ 2‖) :=
-    (hsummableInv.mul_left (Real.sqrt x)).congr (fun ρ => (hpt ρ).symm)
-  calc
-    ∑ ρ ∈ S,
-          ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
-                (x : ℂ) ^ ρ /
-              ρ ^ 2‖ ≤
-        ∑' ρ : ℂ,
-          ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
-                (x : ℂ) ^ ρ /
-              ρ ^ 2‖ :=
-      hsummableTerm.sum_le_tsum S (fun _ _ => norm_nonneg _)
-    _ =
-        ∑' ρ : ℂ,
-          Real.sqrt x *
-            (((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) :
-                ℝ) /
-              Complex.normSq ρ) :=
-      tsum_congr hpt
-    _ =
-        Real.sqrt x *
-          ∑' ρ : ℂ,
-            ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) /
-              Complex.normSq ρ :=
-      tsum_mul_left
-    _ = 2 * Real.sqrt x * |primitiveBRe χ| := by
-      rw [tsum_divisor_inv_normSq_eq_two_mul_abs_BRe hN2 hGRH hprimitive hne hinv hquad]
-      ring
-
-/--
 Input/assumptions: GRH, a primitive complex Dirichlet character with `χ ≠ 1` and `χ⁻¹ ≠ 1` (no
 quadratic hypothesis), and a positive real `x`.
 Conclusion: `‖D_ρ x^ρ/ρ²‖ = (D_ρ/normSq ρ) · √x`, where `D_ρ` is the completed-`L` divisor at `ρ`.
-Content: identical to `norm_completedLogZeroTerm_eq` but with the zero classification supplied by
-the `hquad`-free `DirichletLFunction.completedLFunction_zero_re_eq_half_of_grh`.
-Role: the generic application route, the `hquad`-free log-kernel analogue of
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.norm_completedReciprocalZeroTerm_eq_of_grh`.
+Proof: a nonzero divisor gives a completed-function zero; GRH places its real part at `1/2`.
+The nonnegative divisor, the norm of the complex power, and `‖ρ²‖ = normSq ρ` give the formula.
+Role: the log-kernel analogue of
+`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.norm_completedReciprocalZeroTerm_eq`.
 -/
-theorem norm_completedLogZeroTerm_eq_of_grh {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem norm_completedLogZeroTerm_eq {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
     (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (ρ : ℂ) :
     ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
@@ -230,7 +139,7 @@ theorem norm_completedLogZeroTerm_eq_of_grh {N : ℕ} [NeZero N] {χ : Dirichlet
     have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
       dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
     have hre_half : ρ.re = (1 : ℝ) / 2 :=
-      completedLFunction_zero_re_eq_half_of_grh hGRH hprimitive hne hinv hzero
+      completedLFunction_zero_re_eq_half hGRH hprimitive hne hinv hzero
     have hnormsq : ‖ρ ^ 2‖ = Complex.normSq ρ := by rw [norm_pow, ← Complex.normSq_eq_norm_sq]
     have hnormpow : ‖(x : ℂ) ^ ρ‖ = Real.sqrt x := by
       rw [Complex.norm_cpow_eq_rpow_re_of_pos hx, hre_half, ← Real.sqrt_eq_rpow]
@@ -238,21 +147,13 @@ theorem norm_completedLogZeroTerm_eq_of_grh {N : ℕ} [NeZero N] {χ : Dirichlet
     ring
 
 /--
-Input/assumptions: GRH, `2 ≤ N`, a primitive complex Dirichlet character with `χ ≠ 1` and
-`χ⁻¹ ≠ 1` (no quadratic hypothesis), `x > 0`, and an arbitrary `Finset ℂ`.
-Conclusion: `∑ ρ ∈ S, ‖D_ρ x^ρ/ρ²‖ ≤ 2√x Z_χ`, where `Z_χ` is the real zero mass
-`Σ' ρ, m_ρ(χ) Re(1/ρ)` of `χ` itself.
-Content: identical to `sum_norm_completedLogZeroTerm_le` but built on the `hquad`-free
-`DirichletLFunction.summable_divisor_div_normSq_of_grh`, `norm_completedLogZeroTerm_eq_of_grh`, and
-`DirichletLFunction.tsum_divisor_inv_normSq_eq_two_mul_zeroMass_of_grh` instead, with `Z_χ` as the
-witness.
-Role: the generic application route, the `hquad`-free log-kernel analogue of
-`sum_norm_completedReciprocalZeroTerm_le_of_grh`, uniform in `S`; the finite-`Finset` companion
-to the whole-line `tsum` bound (`DirichletLFunction.norm_tsum_logZeroContribution_le_of_grh`),
-needed since the
-whole-line bound alone cannot dominate an arbitrary finite subset sum.
+Under GRH, for a primitive nontrivial character with nontrivial inverse,
+`N ≥ 2`, `x > 0`, and any finite zero set, the summed logarithmic-kernel
+norms are at most `2 * sqrt x` times the completed zero mass. Bound the
+finite sum by the summable nonnegative family and use its inverse-norm-square
+identity. This controls arbitrary finite contour zero sums.
 -/
-theorem sum_norm_completedLogZeroTerm_le_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem sum_norm_completedLogZeroTerm_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x)
     (S : Finset ℂ) :
@@ -264,8 +165,8 @@ theorem sum_norm_completedLogZeroTerm_le_of_grh {N : ℕ} [NeZero N] (hN2 : 2 �
         (∑' ρ : ℂ,
           ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) *
             (1 / ρ).re) := by
-  have hsummableInv := summable_divisor_div_normSq_of_grh hN2 hGRH hprimitive hne hinv
-  have hpt := norm_completedLogZeroTerm_eq_of_grh hGRH hprimitive hne hinv hx
+  have hsummableInv := summable_divisor_div_normSq hN2 hGRH hprimitive hne hinv
+  have hpt := norm_completedLogZeroTerm_eq hGRH hprimitive hne hinv hx
   have hsummableTerm :
     Summable
       (fun ρ : ℂ =>
@@ -305,17 +206,13 @@ theorem sum_norm_completedLogZeroTerm_le_of_grh {N : ℕ} [NeZero N] (hN2 : 2 �
       rw [tsum_divisor_inv_normSq_eq_two_mul_zeroMass_of_grh hN2 hGRH hprimitive hne hinv]
       ring
 
-/--
-Input/assumptions: GRH, `2 ≤ N`, a primitive complex Dirichlet character with `χ ≠ 1` and
-`χ⁻¹ ≠ 1` (no quadratic hypothesis), `x > 0`, and an arbitrary `Finset ℂ`.
-Conclusion: `∑ ρ ∈ S, ‖D_ρ x^ρ/ρ²‖ ≤ 2√x |DirichletLFunction.primitiveBRe χ|`.
-Content: `sum_norm_completedLogZeroTerm_le_of_grh` rewritten via
-`DirichletLFunction.abs_primitiveBRe_eq_zeroMass_of_grh` from the `Z_χ` witness to the
-`|DirichletLFunction.primitiveBRe χ|` witness,
-matching the quadratic route's `sum_norm_completedLogZeroTerm_le` verbatim.
-Role: the finite-subset logarithmic bound in terms of the shared Hadamard constant.
--/
-theorem sum_norm_completedLogZeroTerm_le_abs_BRe_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+/-- Under GRH, let N ≥ 2 and let χ be primitive with χ ≠ 1 and χ⁻¹ ≠ 1.
+For x > 0 and any finite set S of complex points, the sum of norms of the
+completed-divisor logarithmic terms is at most `2 sqrt x abs (primitiveBRe χ)`.
+Rewrite the completed zero mass as the absolute Hadamard constant and apply
+the finite-subset norm bound. This expresses the logarithmic contour error
+in terms of the character's Hadamard constant. -/
+theorem sum_norm_completedLogZeroTerm_le_abs_BRe {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x)
     (S : Finset ℂ) :
@@ -324,8 +221,8 @@ theorem sum_norm_completedLogZeroTerm_le_abs_BRe_of_grh {N : ℕ} [NeZero N] (hN
               (x : ℂ) ^ ρ /
             ρ ^ 2‖ ≤
       2 * Real.sqrt x * |primitiveBRe χ| := by
-  rw [abs_primitiveBRe_eq_zeroMass_of_grh hN2 hGRH hprimitive hne hinv]
-  exact sum_norm_completedLogZeroTerm_le_of_grh hN2 hGRH hprimitive hne hinv hx S
+  rw [abs_primitiveBRe_eq_zeroMass hN2 hGRH hprimitive hne hinv]
+  exact sum_norm_completedLogZeroTerm_le hN2 hGRH hprimitive hne hinv hx S
 
 /--
 Input/assumptions: `N ≥ 1`, `χ ≠ 1`, `x > 0`, and `ρ ≠ 0`; no GRH,
@@ -440,75 +337,13 @@ theorem dirichletLFunctionReciprocalZeroContribution_re_nonpos_of_gammaFactor_ze
   · exact hdenom_pos.le
 
 /--
-Input/assumptions: GRH, `2 ≤ N`, a primitive nontrivial quadratic complex Dirichlet character,
-`x > 0`, and an arbitrary `Finset ℂ`.
-Conclusion: `∑ ρ ∈ S, ‖D_ρ x^{ρ-1}/(ρ(ρ-1))‖ ≤ 2|Re B(χ)|/√x`.
-Content: `Finset.sum_le_tsum` (the term is pointwise nonnegative) plus the same calc chain as
-`norm_tsum_reciprocalZeroContribution_le` (`DirichletLFunction.norm_completedReciprocalZeroTerm_eq`,
-`tsum_div_const`, `DirichletLFunction.tsum_divisor_inv_normSq_eq_two_mul_abs_BRe`) — the finite-sum
-bound follows the
-whole-line `tsum` bound without needing the norm-of-tsum triangle inequality at all.
-Role: a finite completed-zero subset bound, uniform in the choice of `S`.
+Under GRH, for a primitive nontrivial character with nontrivial inverse,
+`N ≥ 2`, `x > 0`, and any finite zero set, the summed reciprocal-kernel
+norms are at most twice the completed zero mass divided by `sqrt x`.
+Use the pointwise norm identity, summability, and the inverse-norm-square
+identity. This controls arbitrary finite contour zero sums.
 -/
 theorem sum_norm_completedReciprocalZeroTerm_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ}
-    (hx : 0 < x) (S : Finset ℂ) :
-    ∑ ρ ∈ S,
-        ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
-              (x : ℂ) ^ (ρ - 1) /
-            (ρ * (ρ - 1))‖ ≤
-      2 * |primitiveBRe χ| / Real.sqrt x := by
-  have hsummableInv :=
-    summable_divisor_div_normSq_of_grh_quadratic hN2 hGRH hprimitive hne hinv hquad
-  have hpt := norm_completedReciprocalZeroTerm_eq hGRH hprimitive hne hquad hx
-  have hsummableTerm :
-    Summable
-      (fun ρ : ℂ =>
-        ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
-              (x : ℂ) ^ (ρ - 1) /
-            (ρ * (ρ - 1))‖) :=
-    (hsummableInv.div_const (Real.sqrt x)).congr (fun ρ => (hpt ρ).symm)
-  calc
-    ∑ ρ ∈ S,
-          ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
-                (x : ℂ) ^ (ρ - 1) /
-              (ρ * (ρ - 1))‖ ≤
-        ∑' ρ : ℂ,
-          ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
-                (x : ℂ) ^ (ρ - 1) /
-              (ρ * (ρ - 1))‖ :=
-      hsummableTerm.sum_le_tsum S (fun _ _ => norm_nonneg _)
-    _ =
-        ∑' ρ : ℂ,
-          (((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) /
-              Complex.normSq ρ) /
-            Real.sqrt x :=
-      tsum_congr hpt
-    _ =
-        (∑' ρ : ℂ,
-            ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) /
-              Complex.normSq ρ) /
-          Real.sqrt x :=
-      tsum_div_const
-    _ = 2 * |primitiveBRe χ| / Real.sqrt x := by
-      rw [tsum_divisor_inv_normSq_eq_two_mul_abs_BRe hN2 hGRH hprimitive hne hinv hquad]
-
-/--
-Input/assumptions: GRH, `2 ≤ N`, a primitive complex Dirichlet character with `χ ≠ 1` and
-`χ⁻¹ ≠ 1` (no quadratic hypothesis), `x > 0`, and an arbitrary `Finset ℂ`.
-Conclusion: `∑ ρ ∈ S, ‖D_ρ x^{ρ-1}/(ρ(ρ-1))‖ ≤ 2 Z_χ / √x`, where `Z_χ` is the real zero mass
-`Σ' ρ, m_ρ(χ) Re(1/ρ)` of `χ` itself.
-Content: identical to `sum_norm_completedReciprocalZeroTerm_le` but built on the `hquad`-free
-`DirichletLFunction.summable_divisor_div_normSq_of_grh`,
-`DirichletLFunction.norm_completedReciprocalZeroTerm_eq_of_grh`, and
-`DirichletLFunction.tsum_divisor_inv_normSq_eq_two_mul_zeroMass_of_grh` instead, with `Z_χ` as the
-witness.
-Role: the generic application route, the `hquad`-free finite-`Finset` companion to the whole-line
-`tsum` bound
-(`DirichletLFunction.norm_tsum_reciprocalZeroContribution_le_of_grh`).
--/
-theorem sum_norm_completedReciprocalZeroTerm_le_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x)
     (S : Finset ℂ) :
@@ -521,8 +356,8 @@ theorem sum_norm_completedReciprocalZeroTerm_le_of_grh {N : ℕ} [NeZero N] (hN2
             ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) *
               (1 / ρ).re) /
         Real.sqrt x := by
-  have hsummableInv := summable_divisor_div_normSq_of_grh hN2 hGRH hprimitive hne hinv
-  have hpt := norm_completedReciprocalZeroTerm_eq_of_grh hGRH hprimitive hne hinv hx
+  have hsummableInv := summable_divisor_div_normSq hN2 hGRH hprimitive hne hinv
+  have hpt := norm_completedReciprocalZeroTerm_eq hGRH hprimitive hne hinv hx
   have hsummableTerm :
     Summable
       (fun ρ : ℂ =>
@@ -561,17 +396,13 @@ theorem sum_norm_completedReciprocalZeroTerm_le_of_grh {N : ℕ} [NeZero N] (hN2
           Real.sqrt x :=
       by rw [tsum_divisor_inv_normSq_eq_two_mul_zeroMass_of_grh hN2 hGRH hprimitive hne hinv]
 
-/--
-Input/assumptions: GRH, `2 ≤ N`, a primitive complex Dirichlet character with `χ ≠ 1` and
-`χ⁻¹ ≠ 1` (no quadratic hypothesis), `x > 0`, and an arbitrary `Finset ℂ`.
-Conclusion: `∑ ρ ∈ S, ‖D_ρ x^{ρ-1}/(ρ(ρ-1))‖ ≤ 2 |DirichletLFunction.primitiveBRe χ| / √x`.
-Content: `sum_norm_completedReciprocalZeroTerm_le_of_grh` rewritten via
-`DirichletLFunction.abs_primitiveBRe_eq_zeroMass_of_grh` from the `Z_χ` witness to the
-`|DirichletLFunction.primitiveBRe χ|` witness,
-matching the quadratic route's `sum_norm_completedReciprocalZeroTerm_le` verbatim.
-Role: the finite-subset reciprocal bound in terms of the shared Hadamard constant.
--/
-theorem sum_norm_completedReciprocalZeroTerm_le_abs_BRe_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+/-- Under GRH, let N ≥ 2 and let χ be primitive with χ ≠ 1 and χ⁻¹ ≠ 1.
+For x > 0 and any finite set S of complex points, the sum of norms of the
+completed-divisor reciprocal terms is at most `2 abs (primitiveBRe χ) / sqrt x`.
+Rewrite the completed zero mass as the absolute Hadamard constant and apply
+the finite-subset reciprocal bound. This gives the reciprocal contour estimate
+in the same Hadamard normalization as the logarithmic formula. -/
+theorem sum_norm_completedReciprocalZeroTerm_le_abs_BRe {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x)
     (S : Finset ℂ) :
@@ -580,8 +411,8 @@ theorem sum_norm_completedReciprocalZeroTerm_le_abs_BRe_of_grh {N : ℕ} [NeZero
               (x : ℂ) ^ (ρ - 1) /
             (ρ * (ρ - 1))‖ ≤
       2 * |primitiveBRe χ| / Real.sqrt x := by
-  rw [abs_primitiveBRe_eq_zeroMass_of_grh hN2 hGRH hprimitive hne hinv]
-  exact sum_norm_completedReciprocalZeroTerm_le_of_grh hN2 hGRH hprimitive hne hinv hx S
+  rw [abs_primitiveBRe_eq_zeroMass hN2 hGRH hprimitive hne hinv]
+  exact sum_norm_completedReciprocalZeroTerm_le hN2 hGRH hprimitive hne hinv hx S
 
 /--
 Input/assumptions: `N ≥ 1`, `χ ≠ 1`, `x > 0`, and `ρ ≠ 0`; no GRH,
@@ -620,5 +451,62 @@ theorem dirichletLFunctionReciprocalZeroContribution_re_le_completedTerm_norm {N
       ring
     rw [heq, ← norm_neg]
     exact Complex.re_le_norm _
+
+/-- Under GRH, the complex sum of ordinary logarithmic contributions at points
+where the gamma factor is nonzero has norm at most `2*sqrt x*|Re B|`.
+The multiplicity bridge identifies each norm with the completed-zero term,
+and the shared finite-subset mass bound controls the sum. -/
+theorem norm_sum_logZeroContribution_of_gamma_ne_zero_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (S : Finset ℂ)
+    (hΓ : ∀ ρ ∈ S, DirichletCharacter.gammaFactor χ ρ ≠ 0) :
+    ‖∑ ρ ∈ S, dirichletLFunctionLogZeroContribution x χ ρ‖ ≤
+      2 * Real.sqrt x * |primitiveBRe χ| := by
+  refine (norm_sum_le S _).trans ?_
+  have he :
+    (∑ ρ ∈ S, ‖dirichletLFunctionLogZeroContribution x χ ρ‖) =
+      ∑ ρ ∈ S,
+        ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
+              (x : ℂ) ^ ρ /
+            ρ ^ 2‖ := by
+    refine Finset.sum_congr rfl ?_
+    intro ρ hρ
+    have hm :
+      (dirichletLFunctionZeroMultiplicity χ ρ : ℂ) =
+        ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) := by
+      exact_mod_cast
+        dirichletLFunctionZeroMultiplicity_eq_divisor_completedLFunction_of_gamma_ne_zero hne
+          (hΓ ρ hρ)
+    simp only [dirichletLFunctionLogZeroContribution, hm, neg_mul, neg_div, norm_neg]
+  rw [he]
+  exact sum_norm_completedLogZeroTerm_le_abs_BRe hN2 hGRH hp hne hinv hx S
+
+/-- Under GRH, the reciprocal ordinary-zero sum away from gamma poles has
+norm at most `2*|Re B|/sqrt x`. Multiplicity comparison and the completed
+finite-subset estimate give a complex bound for the exact explicit formula. -/
+theorem norm_sum_reciprocalZeroContribution_of_gamma_ne_zero_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (S : Finset ℂ)
+    (hΓ : ∀ ρ ∈ S, DirichletCharacter.gammaFactor χ ρ ≠ 0) :
+    ‖∑ ρ ∈ S, dirichletLFunctionReciprocalZeroContribution x χ ρ‖ ≤
+      2 * |primitiveBRe χ| / Real.sqrt x := by
+  refine (norm_sum_le S _).trans ?_
+  have he :
+    (∑ ρ ∈ S, ‖dirichletLFunctionReciprocalZeroContribution x χ ρ‖) =
+      ∑ ρ ∈ S,
+        ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
+              (x : ℂ) ^ (ρ - 1) /
+            (ρ * (ρ - 1))‖ := by
+    refine Finset.sum_congr rfl ?_
+    intro ρ hρ
+    have hm :
+      (dirichletLFunctionZeroMultiplicity χ ρ : ℂ) =
+        ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) := by
+      exact_mod_cast
+        dirichletLFunctionZeroMultiplicity_eq_divisor_completedLFunction_of_gamma_ne_zero hne
+          (hΓ ρ hρ)
+    simp only [dirichletLFunctionReciprocalZeroContribution, hm, neg_mul, neg_div, norm_neg]
+  rw [he]
+  exact sum_norm_completedReciprocalZeroTerm_le_abs_BRe hN2 hGRH hp hne hinv hx S
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

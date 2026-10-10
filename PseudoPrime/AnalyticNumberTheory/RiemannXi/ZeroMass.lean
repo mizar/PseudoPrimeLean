@@ -540,10 +540,11 @@ theorem deriv_logDeriv_riemannXi_zero_eq :
   unfold RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero
   ring
 
-/-! The real part of the zeta second-log-derivative constant is bounded by the
+/-- Under RH, the real part of the zeta second-log-derivative constant is bounded by the
 norm estimate for the corresponding `PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi`
-derivative and the bridge above. -/
-
+derivative and the bridge above. Taking real parts of the bridge and using
+`Re z ≤ ‖z‖` yields `1 - π²/24 + 2 * riemannZeroMass`, the bound used in the
+logarithmic residue ledger. -/
 theorem re_qMinusOneRiemannZetaSecondLogDerivAtZero_le (hRH : RiemannHypothesis) :
     RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero.re ≤
       1 - Real.pi ^ 2 / 24 + 2 * RiemannXi.riemannZeroMass := by
