@@ -27,8 +27,11 @@ by addition, doubling, and binary search.
 -/
 @[ext]
 structure State where
+  /-- Fibonacci index represented by this state. -/
   index : Nat
+  /-- Candidate value of `Nat.fib index`; correctness is asserted by `Valid`. -/
   value : Nat
+  /-- Candidate value of `Nat.fib (index + 1)`. -/
   next : Nat
 
 /--
@@ -51,14 +54,18 @@ def State.zero : State :=
   ⟨0, 0, 1⟩
 
 /--
-Add two indices using Fibonacci addition identities.
+Add the stored indices and compute adjacent values using Fibonacci addition identities.
+The operation accepts arbitrary states; `State.add_valid` proves that valid inputs yield the
+Fibonacci values at the summed index. Binary search uses it while selecting an index bit.
 -/
 @[inline]
 def State.add : State → State → State
   | ⟨i, fi, fi1⟩, ⟨j, fj, fj1⟩ => ⟨i + j, fi * fj1 + (fi1 - fi) * fj, fi1 * fj1 + fi * fj⟩
 
 /--
-Double the index using Fibonacci doubling identities.
+Double the stored index and compute adjacent values using Fibonacci doubling identities.
+`State.double_valid` proves correctness for valid inputs. The binary loop uses the operation to
+double its index stride before recursion.
 -/
 @[inline]
 def State.double : State → State

@@ -92,7 +92,10 @@ theorem jacobi_finset_prod_right (a : ℤ) (s : Finset ℕ) (f : ℕ → ℕ) (h
 
 end Internal
 
-/-- Every nonzero odd nonsquare has a natural numerator with Jacobi value `-1`. -/
+/-- Every odd nonsquare has a natural numerator with Jacobi value `-1`; oddness ensures nonzero
+modulus. The CRT numerator is a nonresidue at one odd-multiplicity prime and one at all other prime
+factors. Multiplicativity over the factorization makes its full Jacobi value `-1`, providing the
+arithmetic input to smaller prime-witness existence. -/
 theorem exists_nat_neg_one_numerator {r : ℕ} (hrodd : Odd r) (hns : ¬IsSquare r) :
     ∃ a : ℕ, jacobiSym a r = -1 := by
   have hr0 : r ≠ 0 := by

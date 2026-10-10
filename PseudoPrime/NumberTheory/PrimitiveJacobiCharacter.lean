@@ -4,8 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.JacobiCharacterPrimeEvaluation
-import PseudoPrime.NumberTheory.MulCharParity
+module
+
+public import PseudoPrime.NumberTheory.JacobiCharacterPrimeEvaluation
 
 /-!
 # Primitive quadratic characters
@@ -88,11 +89,6 @@ theorem complexQuadraticCharacter_isEven (n : ℕ) (hn : Odd n) :
     simp only [hnmod, OfNat.ofNat_ne_one, ↓reduceIte, hn_odd, one_ne_zero, Int.reduceNeg, ha_even,
       ha_mod, mul_neg, mul_one, neg_neg, Int.cast_one]
 
-/-- The associated character is primitive at its conductor. -/
-theorem primitiveQuadraticCharacter_isPrimitive (n : ℕ) (hn : Odd n) :
-    (primitiveQuadraticCharacter n hn).IsPrimitive :=
-  DirichletCharacter.primitiveCharacter_isPrimitive (complexQuadraticCharacter n hn)
-
 /-- The conductor of the complex quadratic character is nonzero for odd `n`. -/
 theorem complexQuadraticCharacter_conductor_ne_zero (n : ℕ) (hn : Odd n) :
     (complexQuadraticCharacter n hn).conductor ≠ 0 := by
@@ -104,15 +100,6 @@ instance complexQuadraticCharacterConductorNeZero (n : ℕ) (hn : Odd n) :
     NeZero (complexQuadraticCharacter n hn).conductor :=
   ⟨complexQuadraticCharacter_conductor_ne_zero n hn⟩
 
-/--
-At every integer coprime to the original level `4 * n`, the primitive character has the same
-value as the complex quadratic character that it induces.
--/
-theorem primitiveQuadraticCharacter_apply_of_isCoprime (n : ℕ) (hn : Odd n) {a : ℤ}
-    (ha : IsCoprime a (4 * n)) :
-    primitiveQuadraticCharacter n hn a = complexQuadraticCharacter n hn a :=
-  DirichletCharacter.primitiveCharacter_apply_of_isCoprime (complexQuadraticCharacter n hn) ha
-
 /-- The primitive character preserves the even parity of its inducing character. -/
 theorem primitiveQuadraticCharacter_isEven (n : ℕ) (hn : Odd n) :
     (primitiveQuadraticCharacter n hn).Even := by
@@ -120,31 +107,15 @@ theorem primitiveQuadraticCharacter_isEven (n : ℕ) (hn : Odd n) :
   have hcop : IsCoprime (-1 : ℤ) (4 * (n : ℤ)) := by
     rw [IsCoprime.neg_left_iff]
     exact isCoprime_one_left
-  have hval := primitiveQuadraticCharacter_apply_of_isCoprime n hn hcop
+  have hval :=
+    DirichletCharacter.primitiveCharacter_apply_of_isCoprime (complexQuadraticCharacter n hn) hcop
   have hvalue : complexQuadraticCharacter n hn (-1 : ZMod (4 * n)) = 1 := by
     simpa only [DirichletCharacter.Even] using complexQuadraticCharacter_isEven n hn
   have hval' :
     primitiveQuadraticCharacter n hn (-1 : ZMod (complexQuadraticCharacter n hn).conductor) =
       complexQuadraticCharacter n hn (-1 : ZMod (4 * n)) := by
-    simpa only [Int.cast_neg, Int.cast_one] using hval
+    simpa only [primitiveQuadraticCharacter, Int.cast_neg, Int.cast_one] using hval
   exact hval'.trans hvalue
-
-/--
-The primitive character inducing a quadratic character is itself quadratic.
-
-The `changeLevel` map sends `PseudoPrime.NumberTheory.primitiveQuadraticCharacter n hn` back to
-`PseudoPrime.NumberTheory.complexQuadraticCharacter n hn`, which squares to `1`; injectivity of
-`changeLevel` at the nonzero level `4 * n` then transfers `^2 = 1` down to the primitive character.
--/
-theorem primitiveQuadraticCharacter_isQuadratic (n : ℕ) (hn : Odd n) :
-    (primitiveQuadraticCharacter n hn).IsQuadratic := by
-  let _ : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
-  rw [MulChar.isQuadratic_iff_sq_eq_one]
-  apply
-    DirichletCharacter.changeLevel_injective (complexQuadraticCharacter n hn).conductor_dvd_level
-  unfold primitiveQuadraticCharacter
-  rw [map_pow, DirichletCharacter.changeLevel_primitiveCharacter, map_one]
-  exact complexQuadraticCharacter_sq n hn
 
 /--
 For an odd nonsquare modulus, the primitive quadratic character is nontrivial.  Otherwise its

@@ -15,15 +15,9 @@ These lemmas are neutral arithmetic interfaces for finite residue checkers.  The
 the `SmallN` certificate or on any Q-side bound.
 -/
 
-namespace PseudoPrime.NumberTheory
+@[expose] public section
 
-/-- For a prime denominator, a zero Jacobi symbol is exactly divisibility. -/
-lemma jacobi_eq_zero_iff_dvd_of_prime {n p : ℕ} (hp : p.Prime) : jacobiSym n p = 0 ↔ p ∣ n := by
-  let _ : NeZero p := ⟨hp.ne_zero⟩
-  rw [jacobi_eq_zero_iff_not_coprime]
-  change (¬n.gcd p = 1) ↔ p ∣ n
-  rw [← Nat.coprime_iff_gcd_eq_one, Nat.coprime_comm, hp.coprime_iff_not_dvd]
-  simp only [not_not]
+namespace PseudoPrime.NumberTheory
 
 /-- A non-one Jacobi value at a prime not dividing the numerator is `-1`. -/
 lemma jacobi_eq_neg_one_of_prime_of_not_dvd_of_ne_one {n p : ℕ} (hp : p.Prime) (hndvd : ¬p ∣ n)

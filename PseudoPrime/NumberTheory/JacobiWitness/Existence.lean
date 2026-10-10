@@ -45,7 +45,9 @@ theorem jacobiSym_three_five_eq_neg_one : jacobiSym 3 5 = -1 := by
 
 end Internal
 
-/-- Every odd nonsquare has an odd-prime denominator where its Jacobi symbol is `-1`. -/
+/-- Every odd nonsquare has an odd-prime denominator where its Jacobi symbol is `-1`.
+For `n > 3`, use the smaller-prime witness construction; for `n = 3`, use the explicit denominator
+five. This discharges the nonemptiness premise of the least-witness definitions without GRH. -/
 theorem primeNegOneWitnessSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) :
     (PrimeNegOneWitnessSet n).Nonempty := by
   have hn1 : n ≠ 1 := by

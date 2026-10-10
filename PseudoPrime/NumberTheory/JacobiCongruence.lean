@@ -4,17 +4,23 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Jacobi.Numerator
-import Mathlib.Data.Nat.Squarefree
-import Mathlib.NumberTheory.LSeries.PrimesInAP
-import Mathlib.NumberTheory.FundamentalDiscriminant
-import Mathlib.Tactic
+module
+
+public import PseudoPrime.NumberTheory.Jacobi.Numerator
+public import Mathlib.Data.Nat.Squarefree
+public import Mathlib.NumberTheory.LSeries.PrimesInAP
+public import Mathlib.NumberTheory.FundamentalDiscriminant
+public import Mathlib.Tactic
 
 /-! # General bounds and arithmetic certificates -/
 
+@[expose] public section
+
 namespace PseudoPrime.NumberTheory
 
-/-- The positive discriminant attached to a squarefree odd part. -/
+/-- Candidate positive discriminant: `d` when `d % 4 = 1`, and `4 * d` otherwise.
+The definition accepts any natural number; oddness and squarefreeness are required by the later
+fundamental-discriminant certificate used in the Jacobi arithmetic bridge. -/
 def positiveFundamentalDiscriminant (d : ℕ) : ℕ :=
   if d % 4 = 1 then d else 4 * d
 
@@ -27,12 +33,6 @@ theorem positiveFundamentalDiscriminant_eq_self {d : ℕ} (hdmod : d % 4 = 1) :
 theorem positiveFundamentalDiscriminant_eq_four_mul {d : ℕ} (hdmod : ¬d % 4 = 1) :
     positiveFundamentalDiscriminant d = 4 * d := by
   simp only [positiveFundamentalDiscriminant, hdmod, ↓reduceIte]
-
-/-- In the odd discriminant branch, the fundamental discriminant is no larger than the input. -/
-theorem positiveFundamentalDiscriminant_le_of_square_mul {b d : ℕ} (hb : 0 < b)
-    (hdmod : d % 4 = 1) : positiveFundamentalDiscriminant d ≤ b ^ 2 * d := by
-  rw [positiveFundamentalDiscriminant_eq_self hdmod]
-  simpa only [one_mul] using Nat.mul_le_mul_right d (Nat.one_le_pow 2 b hb)
 
 /-- The positive representative is a Mathlib fundamental discriminant. -/
 theorem positiveFundamentalDiscriminant_isFundamentalDiscr {d : ℕ} (hdodd : Odd d)
@@ -115,37 +115,6 @@ theorem exists_nat_one_modEq_and_jacobiSym_eq_neg_one {d c : ℕ} (hdodd : Odd d
     norm_num only
   · exact hc0
   · exact Nat.ne_zero_of_lt (Nat.zero_lt_of_lt hrgt)
-
-/-- The CRT representative can be chosen odd, so it is a unit at the level `4 * d`. -/
-theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one {d c : ℕ} (hdodd : Odd d)
-    (hdsq : Squarefree d) (hc : c ∣ d) (hnot : ¬d ∣ c) :
-    ∃ a : ℕ, Odd a ∧ a ≡ 1 [MOD c] ∧ jacobiSym a d = -1 := by
-  obtain ⟨k, hk, hj⟩ := exists_nat_one_modEq_and_jacobiSym_eq_neg_one hdodd hdsq hc hnot
-  let a := if Even k then k + d else k
-  have haodd : Odd a := by
-    dsimp only [a]
-    split_ifs with hke
-    · exact hke.add_odd hdodd
-    · exact Nat.not_even_iff_odd.mp hke
-  have hamodc : a ≡ k [MOD c] := by
-    dsimp only [a]
-    split_ifs with hke
-    · have hz : d ≡ 0 [MOD c] := Dvd.dvd.modEq_zero_nat hc
-      simpa only [Nat.add_zero] using Nat.ModEq.add_left k hz
-    · exact Nat.ModEq.refl k
-  have hamodd : a ≡ k [MOD d] := by
-    dsimp only [a]
-    split_ifs with hke
-    · have hz : d ≡ 0 [MOD d] := Nat.modulus_modEq_zero
-      simpa only [Nat.add_zero] using Nat.ModEq.add_left k hz
-    · exact Nat.ModEq.refl k
-  have hac : a ≡ 1 [MOD c] := hamodc.trans hk
-  have haj : jacobiSym (a : ℤ) d = jacobiSym (k : ℤ) d := by
-    apply jacobiSym.mod_left'
-    exact_mod_cast hamodd
-  refine ⟨a, haodd, hac, ?_⟩
-  rw [haj]
-  exact hj
 
 /-- A prime in the same residue class removes the square-factor obstruction: the
 representative can additionally be chosen coprime to any positive square factor. -/
@@ -236,15 +205,6 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_of_dvd_four_mul_coprim
         (Nat.le_trans hple (Nat.le_trans (le_max_right c s) (le_max_left (max c s) 2))) hpgt
   exact ⟨p, hpodd, hp4, hpc, hpj, hps⟩
 
-/-- The odd representative for a proper divisor of `4*d`, without an extra coprimality target. -/
-theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_of_dvd_four_mul {d c : ℕ} (hdodd : Odd d)
-    (hdsq : Squarefree d) (hc4 : c ∣ 4 * d) (hdnot : ¬d ∣ c) :
-    ∃ a : ℕ, Odd a ∧ a ≡ 1 [MOD 4] ∧ a ≡ 1 [MOD c] ∧ jacobiSym a d = -1 := by
-  obtain ⟨a, haodd, ha4, hac, haj, _⟩ :=
-    exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_of_dvd_four_mul_coprime (s := 1) hdodd hdsq
-      (by norm_num only) hc4 hdnot
-  exact ⟨a, haodd, ha4, hac, haj⟩
-
 /-- For the remaining proper divisors `d` and `2*d`, the Jacobi value is `1` while
 the residue is `3` modulo `4`, so the `χ₄` factor supplies the required sign. -/
 theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul {d c s : ℕ} (hdodd : Odd d)
@@ -333,7 +293,9 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul {d c s 
               hpgt)
     exact ⟨p, hpodd, hpc, hpj, hp4, hps⟩
 
-/-- A proper divisor of `4*d` is either missing an odd factor, or is `d` or `2*d`. -/
+/-- A divisor `c` of `4 * d` that contains the odd part `d`, but not all of `4 * d`, is `d` or
+`2 * d`. Cancel positive `d` and enumerate the divisors of four; this isolates the two conductor
+obstruction cases in which the `χ₄` factor must supply the sign. -/
 theorem eq_squarefreePart_or_two_mul_of_dvd_four_mul_of_dvd {d c : ℕ} (hdodd : Odd d)
     (hc4 : c ∣ 4 * d) (hdc : d ∣ c) (hproper : ¬4 * d ∣ c) : c = d ∨ c = 2 * d := by
   have hdpos : 0 < d := Odd.pos hdodd

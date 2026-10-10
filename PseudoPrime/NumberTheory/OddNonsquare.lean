@@ -4,8 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Algebra.Group.Even
-import Mathlib.Data.Finset.Interval
+module
+
+public import Mathlib.Algebra.Group.Even
+public import Mathlib.Algebra.Ring.Parity
+public import Mathlib.Data.Finset.Interval
 
 /-!
 # Finite domains of positive odd nonsquares

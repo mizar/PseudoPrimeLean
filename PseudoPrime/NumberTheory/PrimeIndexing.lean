@@ -4,20 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Find
-import Mathlib.Data.Finset.Sort
-import Mathlib.NumberTheory.PrimeCounting
-import Mathlib.Tactic.Linarith
+module
+
+public import Mathlib.Data.Nat.Find
+public import Mathlib.NumberTheory.PrimeCounting
 
 /-!
 # Count-indexed primorials
 
-This file records the product of the first `k` primes (all primes, zero-indexed from `2`), and
-proves that the product of any finite set of `k` primes is at least this product.
-Ordering the finite set compares each entry with the prime of the same index.
-It also records the concrete values of the first few primes in this indexing
-and the resulting sixth count-indexed primorial, used to anchor finite numeric certificates.
+Define the zero-indexed prime sequence starting at `2` and the product of its first `k` entries.
+Record the product recurrence and concrete values through the sixth primorial,
+which anchor finite numerical certificates.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory
 
@@ -30,10 +30,6 @@ noncomputable def primeByIndex (i : ℕ) : ℕ :=
 noncomputable def primePrimorialCount (k : ℕ) : ℕ :=
   ∏ i ∈ Finset.range k, primeByIndex i
 
-/-- Every member of `PseudoPrime.NumberTheory.primeByIndex` is prime. -/
-theorem primeByIndex_prime (i : ℕ) : (primeByIndex i).Prime :=
-  Nat.prime_nth_prime i
-
 /-- The empty count-indexed primorial is `1`. -/
 theorem primePrimorialCount_zero : primePrimorialCount 0 = 1 := by
   simp only [primePrimorialCount, Finset.range_zero, Finset.prod_empty]
@@ -42,47 +38,6 @@ theorem primePrimorialCount_zero : primePrimorialCount 0 = 1 := by
 theorem primePrimorialCount_succ (k : ℕ) :
     primePrimorialCount (k + 1) = primePrimorialCount k * primeByIndex k := by
   simp only [primePrimorialCount, Finset.prod_range_succ]
-
-/-- Every count-indexed primorial is positive. -/
-theorem primePrimorialCount_pos (k : ℕ) : 0 < primePrimorialCount k := by
-  induction k with
-  | zero =>
-    rw [primePrimorialCount_zero]
-    norm_num only
-  | succ k hk =>
-    rw [primePrimorialCount_succ]
-    exact Nat.mul_pos hk (primeByIndex_prime k).pos
-
-/-- The `i`-th prime is at most the `i`-th member of any finite set of primes. -/
-theorem primeByIndex_le_orderEmbOfFin {s : Finset ℕ} (hprime : ∀ p ∈ s, p.Prime) (i : Fin s.card) :
-    primeByIndex i ≤ s.orderEmbOfFin rfl i := by
-  let f := s.orderEmbOfFin rfl
-  have hfprime (j : Fin s.card) : (f j).Prime := hprime _ (s.orderEmbOfFin_mem rfl j)
-  have hcountNat : ∀ j, ∀ hj : j < s.card, j ≤ Nat.count Nat.Prime (f ⟨j, hj⟩) := by
-    intro j
-    induction j with
-    | zero =>
-      intro hj
-      exact Nat.zero_le _
-    | succ j ih =>
-      intro hj
-      have hj' : j < s.card := (Nat.lt_succ_self j).trans hj
-      have hlt : Nat.count Nat.Prime (f ⟨j, hj'⟩) < Nat.count Nat.Prime (f ⟨j + 1, hj⟩) :=
-        Nat.count_strict_mono (hfprime ⟨j, hj'⟩) (f.strictMono (by exact Nat.lt_succ_self j))
-      have hind := ih hj'
-      exact Nat.succ_le_of_lt (lt_of_le_of_lt hind hlt)
-  rw [primeByIndex, ← Nat.nth_count (hfprime i)]
-  exact Nat.nth_monotone Nat.infinite_setOfPred_prime (hcountNat i.val i.isLt)
-
-/-- The product of any finite set of primes dominates the matching count-indexed primorial. -/
-theorem primePrimorialCount_card_le_prod {s : Finset ℕ} (hprime : ∀ p ∈ s, p.Prime) :
-    primePrimorialCount s.card ≤ ∏ p ∈ s, p := by
-  rw [primePrimorialCount, ← Fin.prod_univ_eq_prod_range]
-  calc
-    ∏ i : Fin s.card, primeByIndex i ≤ ∏ i : Fin s.card, s.orderEmbOfFin rfl i :=
-      Finset.prod_le_prod fun i _ => primeByIndex_le_orderEmbOfFin hprime i
-    _ = ∏ p : s, (p : ℕ) := Equiv.prod_comp (s.orderIsoOfFin rfl).toEquiv fun p : s => (p : ℕ)
-    _ = ∏ p ∈ s, p := by simpa only [id_eq] using (Finset.prod_coe_sort s id)
 
 /-- The first prime is `2`. -/
 theorem primeByIndex_zero : primeByIndex 0 = 2 :=
