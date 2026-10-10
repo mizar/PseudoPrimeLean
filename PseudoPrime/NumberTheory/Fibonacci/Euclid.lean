@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Find
-import Mathlib.Data.Nat.GCD.Basic
-import PseudoPrime.NumberTheory.Fibonacci.Greatest
+module
+
+public import Mathlib.Data.Nat.Find
+public import Mathlib.Data.Nat.GCD.Basic
+public import PseudoPrime.NumberTheory.Fibonacci.Greatest
 
 /-!
 # Euclidean iteration and the least stopping time
@@ -15,6 +17,8 @@ The state is preserved once its second component becomes zero. Fibonacci lower b
 nontermination give sufficient fuel, correctness of a bounded gcd implementation, and a natural-
 number binary-logarithm bound on the number of iterations.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory.Euclid
 

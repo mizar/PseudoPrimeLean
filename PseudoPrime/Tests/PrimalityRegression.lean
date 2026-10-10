@@ -20,6 +20,8 @@ Kernel-checked counterexamples: increasing fuel alone does not make a fixed rho 
 This regression module is built separately from the public umbrella.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.Tests.PrimalityRegression
 
 /-- The executable cube-discriminant square test accepts the zero discriminant. -/

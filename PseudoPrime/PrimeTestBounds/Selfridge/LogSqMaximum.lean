@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PseudoSquare.Bounds.QNeOneLogSq
-import PseudoPrime.PrimeTestBounds.Selfridge.MaximumBridge
+module
+
+public import PseudoPrime.PseudoSquare.Bounds.QNeOneLogSq
+public import PseudoPrime.PrimeTestBounds.Selfridge.MaximumBridge
 
 /-!
 # Logarithmic bounds for aggregate Selfridge maxima
@@ -14,6 +16,8 @@ This module connects the already established aggregate scan equalities to the un
 `PseudoPrime.PseudoSquare.QNeOne` logarithmic bound without introducing an import cycle between
 the two layers.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.Selfridge
 

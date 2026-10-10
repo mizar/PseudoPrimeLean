@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Analysis.LogarithmicRatios
-import PseudoPrime.Analysis.NumericalLogBounds
-import PseudoPrime.Analysis.ElementaryBounds
-import PseudoPrime.Analysis.LogarithmicMainTerms
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMassBounds
-import Mathlib.Analysis.Convex.SpecificFunctions.Basic
+module
+
+public import PseudoPrime.Analysis.LogarithmicRatios
+public import PseudoPrime.Analysis.NumericalLogBounds
+public import PseudoPrime.Analysis.ElementaryBounds
+public import PseudoPrime.Analysis.LogarithmicMainTerms
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMassBounds
+public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 
 /-!
 # Numerical envelopes for the Q-ne-one extensions
@@ -19,6 +21,8 @@ conductor and parity corrections used in the Q-ne-one argument. The interval cer
 the stronger even reciprocal remainder are extensions of the original Part 1 estimates.
 General logarithmic ratios and the elementary logarithmic correction are imported from Analysis.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS.Extensions
 
@@ -302,7 +306,6 @@ Role: records the first interval certificate for the reciprocal-envelope
 table; later intervals use the same cleared-denominator pattern with their own
 anchor and constant.
 -/
-
 theorem qNeOneBUpperBoundZeroStar_le_affine_twelve_thirteen {y : ℝ} (hy : 12 ≤ y) (hy13 : y ≤ 13) :
     qNeOneBUpperBoundZeroStar y ≤ y / 2 - 2 * Real.log y + 21 / 10 := by
   have hy0 : 0 < y := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 12) hy

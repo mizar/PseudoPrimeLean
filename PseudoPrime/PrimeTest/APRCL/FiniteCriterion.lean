@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.PairCheck
-import PseudoPrime.PrimeTest.APRCL.Criterion
+module
+
+public import PseudoPrime.PrimeTest.APRCL.PairCheck
+public import PseudoPrime.PrimeTest.APRCL.Criterion
 
 /-!
 # Finite APR-CL checks and the final orbit criterion
@@ -13,6 +15,8 @@ import PseudoPrime.PrimeTest.APRCL.Criterion
 The finite pair and flag checks provide explicit checked inputs. The local
 Gauss/Frobenius implication remains a separate assumption in this interface.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.APRCL
 

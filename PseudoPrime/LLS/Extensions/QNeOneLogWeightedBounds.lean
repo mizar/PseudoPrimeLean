@@ -1016,7 +1016,6 @@ Content: lift the B-bound through the nonnegative coefficient, use the exact
 even main-error relaxation, and consume the supplied separation polynomial.
 Role: common comparison used by the compact-interval separation certificates.
 -/
-
 theorem qNeOneUpperBoundZeroStar_lt_of_affine_B {y C : ℝ} (hy : 12 ≤ y)
     (hB : qNeOneBUpperBoundZeroStar y ≤ y / 2 - 2 * Real.log y + C)
     (hsep :

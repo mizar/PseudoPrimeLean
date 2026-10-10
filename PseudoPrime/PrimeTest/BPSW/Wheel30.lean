@@ -13,6 +13,8 @@ The new entries consume certified finite Selfridge search outcomes.
 The existing classical Boolean APIs retain their all-input equality contracts.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
 /-- Evaluate selected Lucas parameters; factors and exhausted search return false.

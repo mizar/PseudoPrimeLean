@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.MulChar.Duality
-import PseudoPrime.LLS.Statement
+module
+
+public import Mathlib.NumberTheory.MulChar.Duality
+public import PseudoPrime.LLS.Statement
 
 /-!
 # From the character-kernel bound to the proper-subgroup bound
@@ -20,6 +22,8 @@ quotient map gives a Dirichlet character of level `q` that is trivial on `H` and
 character. Applying `llsTheorem11S1Character` to this pullback produces a prime with character
 value different from `1`; since the pullback is trivial on `H`, its residue lies outside `H`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

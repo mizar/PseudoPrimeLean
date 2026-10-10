@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaFinal
-import PseudoPrime.PseudoSquare.QNeOneFinal
+module
+
+public import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaFinal
+public import PseudoPrime.PseudoSquare.QNeOneFinal
 
 /-! # Public pointwise bounds for least odd-prime witnesses -/
+
+@[expose] public section
 
 namespace PseudoPrime.PseudoSquare
 

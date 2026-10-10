@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BPSW.Strengthened
-import PseudoPrime.PrimeTest.MillerRabin.Prime
-import PseudoPrime.PrimeTest.Selfridge.Bounded
-import PseudoPrime.PrimeTest.StrongLucas.Prime
-import PseudoPrime.PrimeTest.Selfridge.MethodAStarEquivalence
+module
+
+public import PseudoPrime.PrimeTest.BPSW.Strengthened
+public import PseudoPrime.PrimeTest.MillerRabin.Prime
+public import PseudoPrime.PrimeTest.Selfridge.Bounded
+public import PseudoPrime.PrimeTest.StrongLucas.Prime
+public import PseudoPrime.PrimeTest.Selfridge.MethodAStarEquivalence
 
 /-!
 # Selfridge parameter selection for Baillie–PSW

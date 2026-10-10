@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Find
-import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
-import PseudoPrime.PrimeTest.Selfridge.Candidates
+module
+
+public import Mathlib.Data.Nat.Find
+public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+public import PseudoPrime.PrimeTest.Selfridge.Candidates
 
 /-!
 # Mathematical first-stop positions for PrimeTest

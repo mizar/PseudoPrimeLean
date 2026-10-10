@@ -4,18 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.ChineseRemainder
-import Mathlib.Data.Nat.Factorization.Basic
-import Mathlib.Data.Nat.GCD.BigOperators
-import Mathlib.Data.Nat.ModEq
-import Mathlib.Data.Nat.Prime.Basic
-import Mathlib.FieldTheory.Finite.Basic
-import Mathlib.NumberTheory.Divisors
-import Mathlib.RingTheory.Coprime.Lemmas
-import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-import Mathlib.RingTheory.ZMod.UnitsCyclic
-import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.NormNum
+module
+
+public import Mathlib.Data.Nat.ChineseRemainder
+public import Mathlib.Data.Nat.Factorization.Basic
+public import Mathlib.Data.Nat.GCD.BigOperators
+public import Mathlib.Data.Nat.ModEq
+public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.FieldTheory.Finite.Basic
+public import Mathlib.NumberTheory.Divisors
+public import Mathlib.RingTheory.Coprime.Lemmas
+public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+public import Mathlib.RingTheory.ZMod.UnitsCyclic
+public import Mathlib.Tactic.IntervalCases
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Finite APR-CL auxiliary-prime parameters

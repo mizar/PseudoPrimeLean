@@ -4,9 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.StrongLucas.Shared
+module
+
+public import PseudoPrime.PrimeTest.StrongLucas.Shared
 
 /-! # Lucas-V acceptance and gcd-free shared strengthened execution -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

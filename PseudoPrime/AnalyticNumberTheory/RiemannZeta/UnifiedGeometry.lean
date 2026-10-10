@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.UnifiedHeight
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LeftVerticalLogDeriv
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SingularityGeometry
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogDerivBound
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.UnifiedHeight
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LeftVerticalLogDeriv
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SingularityGeometry
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogDerivBound
 
 /-! # Kernel-independent height and rectangle constructions -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

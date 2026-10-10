@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Find
-import Mathlib.Data.Finset.Sort
-import Mathlib.NumberTheory.PrimeCounting
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
+module
+
+public import Mathlib.Data.Nat.Find
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.NumberTheory.PrimeCounting
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
 
 /-!
 # Odd primorial envelopes

@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Tools.CertificateIO
-import PseudoPrime.PrimeTest.SmallInputJson
+module
+
+public import PseudoPrime.Tools.CertificateIO
+public import PseudoPrime.PrimeTest.SmallInputJson
 
 /-!
 # Small-input certificate file command
 Generation and verification recheck both prime and nonprime claims by bounded trial division.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.Tools.SmallInputCertificate
 

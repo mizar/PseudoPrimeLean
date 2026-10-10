@@ -14,6 +14,8 @@ This file defines positive odd nonsquares bounded by a natural endpoint.
 It contains no character-theoretic or analytic assumptions.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.NumberTheory
 
 /--

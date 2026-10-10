@@ -4,15 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Execution
-import PseudoPrime.PrimeTest.MillerRabin.Decision
-import PseudoPrime.PrimeTest.EulerJacobi.Decision
-import PseudoPrime.PrimeTest.Lucas.Decision
-import PseudoPrime.PrimeTest.LucasV.Decision
-import PseudoPrime.PrimeTest.StrongLucas.Decision
-import PseudoPrime.PrimeTest.BPSW.Wheel30
+module
+
+public import PseudoPrime.PrimeTest.Execution
+public import PseudoPrime.PrimeTest.MillerRabin.Decision
+public import PseudoPrime.PrimeTest.EulerJacobi.Decision
+public import PseudoPrime.PrimeTest.Lucas.Decision
+public import PseudoPrime.PrimeTest.LucasV.Decision
+public import PseudoPrime.PrimeTest.StrongLucas.Decision
+public import PseudoPrime.PrimeTest.BPSW.Wheel30
 
 /-! # Individual probable-prime decision contracts -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.MethodDecisionTests
 

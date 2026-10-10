@@ -22,6 +22,8 @@ multiplicities in `Re s ≥ 0`, away from `1`. The functional equation and zeta'
 zero-free regions give nonvanishing outside the critical strip.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.RiemannXi
 
 /-- The entire extension of `s(s-1)Λ(s)/2`, with value `1/2` at both `0` and `1`.

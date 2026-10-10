@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.UnifiedHeight
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LeftVerticalEdgeBound
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.HorizontalEdgeBound
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.UnifiedHeight
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LeftVerticalEdgeBound
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.HorizontalEdgeBound
 
 /-!
 # the zeta-side estimate: assembly of the far-left contour contributions
@@ -16,6 +18,8 @@ height sequence.  The signs and the factor `I` are those of
 `RectangleGeometry.rectangleBoundaryIntegral`: an upper
 horizontal edge is subtracted, and a left vertical edge contributes with `-I`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

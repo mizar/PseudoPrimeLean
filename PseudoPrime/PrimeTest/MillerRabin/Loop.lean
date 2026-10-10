@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Spec
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Spec
 
 /-!
 # Miller–Rabin by successive squaring
@@ -12,6 +14,8 @@ import PseudoPrime.PrimeTest.MillerRabin.Spec
 The loop checks the current residue before squaring and omits the final unused
 square. Its Boolean result agrees with the existing finite-index specification.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

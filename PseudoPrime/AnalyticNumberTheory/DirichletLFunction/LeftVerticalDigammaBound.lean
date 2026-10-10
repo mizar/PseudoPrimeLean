@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.DigammaBallBound
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.DigammaBallBound
 
 /-!
 # the left-vertical bound: quarter-lattice separation and the small-`|t|` finite digamma bound
@@ -17,6 +19,8 @@ holds for *every* `A` and is entirely independent of `t`, so it covers `t = 0` u
 needing any `|Im z|`-based separation. The reflected two are positive once `A ≥ 2`, hence trivially
 avoid every nonpositive-integer pole.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

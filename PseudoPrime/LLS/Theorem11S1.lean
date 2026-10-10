@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.Harmonic.EulerMascheroni
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.HadamardLimit
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.LogLevelChange
-import PseudoPrime.LLS.Statement
+module
+
+public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.HadamardLimit
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LogLevelChange
+public import PseudoPrime.LLS.Statement
 
 /-!
 # The final contradiction in LLS Theorem 1.1 S1
@@ -16,6 +18,8 @@ This file separates the analytic bounds and the explicit real-variable compariso
 Lamzouri--Li--Soundararajan. Their incompatibility gives the
 character-specialized statement `llsTheorem11S1Character` without any additional analytic reasoning.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

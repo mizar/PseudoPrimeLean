@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.Parameters
+module
+
+public import PseudoPrime.PrimeTest.APRCL.Parameters
 
 /-!
 # Elementary final criterion for APR-CL
@@ -13,6 +15,8 @@ This file isolates the final divisor-orbit argument from the analytic and cyclot
 kernel. It proves that a prime-factor orbit restriction and a finite residue scan certify
 primality when the modulus exceeds the square root of the input.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.APRCL
 

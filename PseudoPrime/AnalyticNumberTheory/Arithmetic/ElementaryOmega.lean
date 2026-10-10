@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.SpecialFunctions.Stirling
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimorialEnvelope
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Stirling
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimorialEnvelope
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
 
 /-!
 # An elementary (Robin-free) bound on the number of distinct prime factors
@@ -20,6 +22,8 @@ For odd `n` with `m := n.primeFactors.card`, this file proves
 `ElementaryOmegaFiniteCertificates` supplies the remaining indices for odd `n ≥ 750`.
 The declarations here require only oddness and elementary prime-factor arithmetic.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 

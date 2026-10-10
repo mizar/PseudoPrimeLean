@@ -19,6 +19,8 @@ finitely many zeros. Finite zero ledgers, multiplicity weights, and local
 Hadamard quotients support finite-radius logarithmic-derivative estimates.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.RiemannXi
 
 /-- A zeta zero with nonnegative real part is also a zero of

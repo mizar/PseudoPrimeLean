@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Algebra.Order.Floor.Ring
-import Mathlib.Analysis.Complex.ExponentialBounds
+module
+
+public import Mathlib.Algebra.Order.Floor.Ring
+public import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
 # The greatest odd prime below a real cutoff, and basic log positivity

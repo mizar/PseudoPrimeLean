@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PseudoSquare.Computation.SmallN
-import PseudoPrime.PrimeTest.Selfridge.Nonempty
+module
+
+public import PseudoPrime.PseudoSquare.Computation.SmallN
+public import PseudoPrime.PrimeTest.Selfridge.Nonempty
 
 /-!
 # Finite pure `-1` Selfridge certificate
@@ -15,6 +17,8 @@ explicit candidates are `5, 7, 11, 13, 15, 17, 19, 21, 23, 27, 29, 31`:
 the composite possibilities are `15`, `21`, and `27`, and the other values are
 primes at least `5`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

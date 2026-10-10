@@ -4,15 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMassBounds
-import PseudoPrime.Analysis.NumericalLogBounds
-import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.Calculus.Deriv.MeanValue
-import Mathlib.Analysis.Real.Pi.Bounds
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ConductorPrimeFactors
-import PseudoPrime.LLS.Lemma21
-import PseudoPrime.Analysis.RealLog
-import PseudoPrime.Analysis.LogarithmicRatios
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMassBounds
+public import PseudoPrime.Analysis.NumericalLogBounds
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ConductorPrimeFactors
+public import PseudoPrime.LLS.Lemma21
+public import PseudoPrime.Analysis.RealLog
+public import PseudoPrime.Analysis.LogarithmicRatios
 
 /-!
 # Elementary numerical reductions for LLS Part 1
@@ -22,6 +24,8 @@ including `llsTheorem11S1ComparisonUpperSimplification` and `llsTheorem11S1Numer
 It consumes the foundation's conductor, prime-factor, and logarithmic-ratio estimates.
 The independent Q-ne-one numerical envelopes are defined in `LLS/Extensions/QNeOneNumerics.lean`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

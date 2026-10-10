@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.Composite
-import PseudoPrime.NumberTheory.JacobiWitness.Smaller
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.Composite
+public import PseudoPrime.NumberTheory.JacobiWitness.Smaller
 
 /-!
 # Pointwise bounds between prime witnesses and classical Selfridge stops
@@ -14,6 +16,8 @@ This file compares least odd-prime Jacobi witnesses with classical first stops. 
 `-1` comparison is unconditional once both least elements exist.  The factor-detecting upper
 bound additionally uses the canonical smaller-witness theorem from `NumberTheory`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

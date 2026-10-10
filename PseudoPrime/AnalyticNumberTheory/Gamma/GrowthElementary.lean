@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
-import Mathlib.Data.Nat.Factorial.Basic
-import Mathlib.Analysis.SpecificLimits.Normed
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
+public import Mathlib.Data.Nat.Factorial.Basic
+public import Mathlib.Analysis.SpecificLimits.Normed
 
 /-!
 # Elementary real-axis Gamma bounds

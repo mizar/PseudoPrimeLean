@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HadamardMultiplicityFactorization
-import Mathlib.Analysis.Meromorphic.Complex
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HadamardMultiplicityFactorization
+public import Mathlib.Analysis.Meromorphic.Complex
 
 /-!
 # The ordinary/completed zero-multiplicity bridge for Dirichlet L-functions
@@ -22,6 +24,8 @@ avoiding any need to prove the (nonpositive-integer) pole locus is closed/discre
 This is fully generic Dirichlet-L-function theory, independent of any particular contour or
 explicit-formula construction.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

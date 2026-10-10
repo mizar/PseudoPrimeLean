@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GrowthBounds
-import PseudoPrime.Analysis.IntegralLimits
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GrowthBounds
+public import PseudoPrime.Analysis.IntegralLimits
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
 
 /-!
 # Vertical integrability and truncation limits
@@ -16,6 +18,8 @@ For positive `x` and `τ > 1`, both zeta contour kernels are integrable on
 and the quadratic denominators give integrable decay. The integrals truncated
 to `[-T,T]` consequently converge to the full vertical integrals.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

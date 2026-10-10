@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Tools.CertificateIO
-import PseudoPrime.PrimeTest.BLS.CertificateGenerateJson
+module
+
+public import PseudoPrime.Tools.CertificateIO
+public import PseudoPrime.PrimeTest.BLS.CertificateGenerateJson
 
 /-!
 # BLS certificate file command
@@ -14,6 +16,8 @@ Run with lake env lean --run PseudoPrime/Tools/BLSCertificate.lean.
 Generation uses fixed rho parameters and may return unknown even on primes.
 The byte limit is enforced during file reading, before UTF-8 decoding and JSON parsing.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.Tools.BLSCertificate
 

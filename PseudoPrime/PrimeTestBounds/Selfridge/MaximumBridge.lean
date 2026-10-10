@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Finset.Lattice.Fold
-import PseudoPrime.PseudoSquare.Bounds.WitnessMaximum
-import PseudoPrime.PseudoSquare.Computation.QThresholds
-import PseudoPrime.PrimeTest.Selfridge.Nonempty
-import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
-import PseudoPrime.PrimeTest.Selfridge.Wheel30
+module
+
+public import Mathlib.Data.Finset.Lattice.Fold
+public import PseudoPrime.PseudoSquare.Bounds.WitnessMaximum
+public import PseudoPrime.PseudoSquare.Computation.QThresholds
+public import PseudoPrime.PrimeTest.Selfridge.Nonempty
+public import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
+public import PseudoPrime.PrimeTest.Selfridge.Wheel30
 
 /-!
 # Finite maxima of Selfridge stopping positions

@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.MellinWeightedSums
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MellinWeightedSums
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
 
 /-!
 # Reciprocal weighted character sums as vertical integrals
@@ -16,6 +18,8 @@ For any complex Dirichlet character, positive `x`, and `τ > 1`, Mellin inversio
 of `dirichletReciprocalContourKernel`. Absolute convergence of the von Mangoldt series
 and `‖χ n‖ ≤ 1` justify exchanging the sum and integral.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BPSW.EulerModEight
-import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroup
+module
+
+public import PseudoPrime.PrimeTest.BPSW.EulerModEight
+public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroup
 
 /-! # Base-two Strong MR implies Euler-Jacobi for every odd modulus greater than one
 
@@ -14,6 +16,8 @@ factor to be one modulo a larger two-power. Square roots of two strengthen the l
 index bound, and the prime-factor product contradicts the valuation of n-1.
 Combine all congruence branches and connect signed powers to the execution and paper contracts.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.EulerRedundancy
 

@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LeftVerticalLogDeriv
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.HorizontalFarLeftBound
-import PseudoPrime.AnalyticNumberTheory.General.GeometricDecay
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LeftVerticalLogDeriv
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.HorizontalFarLeftBound
+public import PseudoPrime.AnalyticNumberTheory.General.GeometricDecay
 
 /-!
 # Left-vertical contour estimates
@@ -16,6 +18,8 @@ and `|t|`. Estimate both contour kernels and integrate over `[-T,T]`.
 For `x > 1`, geometric decay in `m` absorbs polynomially growing heights,
 including the common far-left height sequence.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

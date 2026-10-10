@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorGrowth
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveHorizontalLogDerivBound
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorGrowth
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveHorizontalLogDerivBound
 
 /-!
 # Ordinary logarithmic-derivative envelopes along selected heights

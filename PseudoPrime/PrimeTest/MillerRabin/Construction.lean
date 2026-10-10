@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Decomposition
-import Mathlib.NumberTheory.LegendreSymbol.Basic
-import Mathlib.Data.Nat.GCD.BigOperators
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
+public import Mathlib.NumberTheory.LegendreSymbol.Basic
+public import Mathlib.Data.Nat.GCD.BigOperators
 
 /-! # Fixed-base strong pseudoprimes and construction bridges -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

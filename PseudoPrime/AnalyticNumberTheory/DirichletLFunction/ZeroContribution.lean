@@ -20,6 +20,8 @@ sign estimates suffice. GRH completed-zero mass bounds then control arbitrary fi
 subsets, in both quadratic and general primitive-character forms.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
 /--

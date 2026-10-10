@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Defs
-import PseudoPrime.PrimeTest.StrongLucas.Defs
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Defs
+public import PseudoPrime.PrimeTest.StrongLucas.Defs
 
 /-!
 # Parameterized Baillie–PSW composition

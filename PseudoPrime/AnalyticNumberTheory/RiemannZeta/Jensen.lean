@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.VerticalGrowth
-import Mathlib.Analysis.Complex.JensenFormula
-import Mathlib.NumberTheory.LSeries.Dirichlet
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.VerticalGrowth
+public import Mathlib.Analysis.Complex.JensenFormula
+public import Mathlib.NumberTheory.LSeries.Dirichlet
 
 /-!
 # Local zeta zero counts by Jensen's inequality
@@ -16,6 +18,8 @@ estimate on disks centered at `3+iT`. A radius `37/10` contains all points
 with `0 ≤ Re s ≤ 1` and `|Im s-T| ≤ 2`. For large positive heights, the
 resulting multiplicity count is bounded by a constant times `log(T+2)`.
 -/
+
+@[expose] public section
 
 noncomputable section
 

@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Analysis.ElementaryBounds
-import Mathlib.Analysis.SpecialFunctions.Log.PosLog
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Tactic
+module
+
+public import PseudoPrime.Analysis.ElementaryBounds
+public import Mathlib.Analysis.SpecialFunctions.Log.PosLog
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.Tactic
 
 /-! # Elementary logarithmic constants and reciprocal-square identities -/
+
+@[expose] public section
 
 namespace PseudoPrime.Analysis
 

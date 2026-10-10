@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorGrowth
-import PseudoPrime.AnalyticNumberTheory.Gamma.GrowthElementary
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorGrowth
+public import PseudoPrime.AnalyticNumberTheory.Gamma.GrowthElementary
 
 /-!
 # Variable-radius Borel–Carathéodory bounds for digamma
@@ -16,6 +18,8 @@ gives a linear bound in the imaginary part. Here a radius proportional to the im
 combined with a shift whose cost is bounded by `n / |Im z|`, gives a logarithmic bound.
 The local logarithm and Gamma norm estimates are reused from `RiemannZeta.Growth`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

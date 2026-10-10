@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PseudoSquare.Computation.QThresholds
+module
+
+public import PseudoPrime.PseudoSquare.Computation.QThresholds
 
 /-!
 # Kernel-checked `-1` certificate below `399`

@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.GRH.TrivialZeros
-import Mathlib.NumberTheory.LSeries.DirichletContinuation
-import Mathlib.NumberTheory.LSeries.RiemannZeta
-import Mathlib.NumberTheory.LSeries.Nonvanishing
+module
+
+public import PseudoPrime.AnalyticNumberTheory.GRH.TrivialZeros
+public import Mathlib.NumberTheory.LSeries.DirichletContinuation
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import Mathlib.NumberTheory.LSeries.Nonvanishing
 
 /-!
 # Generalized Riemann hypothesis for Dirichlet L-functions
@@ -17,6 +19,8 @@ Its modulus-one specialization is equivalent to RH; the open-strip API serves th
 
 This predicate is the general GRH interface used by the analytic-number-theory modules below.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.GRH
 

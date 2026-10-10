@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Decomposition
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.IntervalCases
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.IntervalCases
 
 /-!
 # Finite Strong Miller–Rabin classification below `3000`
@@ -14,6 +16,8 @@ import Mathlib.Tactic.IntervalCases
 The certificate checks explicit decompositions and binary modular powers. Its blocks classify every
 odd input below `3000` as rejected by base `2`, prime, or the exceptional value `2047`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.JacobiWitness.Existence
-import PseudoPrime.PrimeTest.Selfridge.Coincidence
-import PseudoPrime.PrimeTest.Selfridge.Witness
-import PseudoPrime.PrimeTest.Selfridge.Wheel30
-import PseudoPrime.PrimeTest.Selfridge.Composite
+module
+
+public import PseudoPrime.NumberTheory.JacobiWitness.Existence
+public import PseudoPrime.PrimeTest.Selfridge.Coincidence
+public import PseudoPrime.PrimeTest.Selfridge.Witness
+public import PseudoPrime.PrimeTest.Selfridge.Wheel30
+public import PseudoPrime.PrimeTest.Selfridge.Composite
 
 /-!
 # Nonemptiness of concrete PrimeTest Selfridge stopping sets
@@ -16,6 +18,8 @@ import PseudoPrime.PrimeTest.Selfridge.Composite
 This module turns the neutral odd-prime witness theorem into nonemptiness of the
 classical stopping sets.  It contains no `PseudoSquare` or GRH dependency.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

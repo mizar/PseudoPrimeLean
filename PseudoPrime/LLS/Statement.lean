@@ -16,6 +16,8 @@ proofs from GRH. Later algebraic and finite arguments may take `llsTheorem11S1Ch
 hypothesis.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.LLS
 
 /-- The nonnegative auxiliary term `A(q)` from LLS Theorem 1.1. -/

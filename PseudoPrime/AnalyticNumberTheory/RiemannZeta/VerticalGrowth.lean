@@ -23,6 +23,8 @@ Bounding the remainder gives polynomial dependence on the norm, with
 coefficients determined by the real part and the distance to the pole.
 -/
 
+@[expose] public section
+
 noncomputable section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta

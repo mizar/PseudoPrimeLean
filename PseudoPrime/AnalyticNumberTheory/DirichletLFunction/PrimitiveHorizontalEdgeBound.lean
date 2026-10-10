@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveOrdinaryLogDerivBound
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveOrdinaryLogDerivBound
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
 
 /-!
 # Horizontal pointwise bound for the reciprocal contour kernel
@@ -18,6 +20,8 @@ log-derivative (as supplied by
 mechanical: no
 primitivity, quadratic, or GRH hypotheses on `χ` are needed at this pointwise level.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

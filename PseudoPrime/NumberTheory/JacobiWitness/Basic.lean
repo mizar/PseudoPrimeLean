@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Find
-import PseudoPrime.NumberTheory.Jacobi.Basic
+module
+
+public import Mathlib.Data.Nat.Find
+public import PseudoPrime.NumberTheory.Jacobi.Basic
 
 /-!
 # Least odd-prime Jacobi witnesses
@@ -14,6 +16,8 @@ This file defines the mathematical witness sets underlying `p_ne1(n)` and `p_neg
 their least elements.  Existence is explicit so that the unconditional order theory remains
 independent of the arithmetic construction establishing that nonsquares have witnesses.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory
 

@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BLS.Certificate
-import PseudoPrime.PrimeTest.BLS.Search
+module
+
+public import PseudoPrime.PrimeTest.BLS.Certificate
+public import PseudoPrime.PrimeTest.BLS.Search
 
 /-!
 # External BLS certificate generation
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.BLS
 

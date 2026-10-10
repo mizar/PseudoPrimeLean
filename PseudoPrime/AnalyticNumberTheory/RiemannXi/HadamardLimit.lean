@@ -30,6 +30,8 @@ become inverse squared norms. Endpoint and zeta-at-zero facts support the
 zero-mass identity proved in `PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMass`.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.RiemannXi
 
 /-- The nonnegative constant `|log(4π)/2 - 1 - γ/2|`, where `γ` is Euler's

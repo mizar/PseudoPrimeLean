@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.JacobiCharacter
-import PseudoPrime.NumberTheory.JacobiWitness.Smaller
-import PseudoPrime.NumberTheory.JacobiWitness.Basic
+module
+
+public import PseudoPrime.NumberTheory.JacobiCharacter
+public import PseudoPrime.NumberTheory.JacobiWitness.Smaller
+public import PseudoPrime.NumberTheory.JacobiWitness.Basic
 
 /-!
 # Evaluation of the quadratic character at odd primes
@@ -15,6 +17,8 @@ This file identifies the level-`4 * n` quadratic Dirichlet character with the Ja
 `J(n | ℓ)` at odd primes `ℓ` coprime to `n`.  The lifted `χ₄` factor supplies exactly the sign
 required by quadratic reciprocity when both arguments are congruent to `3` modulo `4`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory
 

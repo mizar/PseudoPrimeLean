@@ -4,15 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.Calculus.MeanValue
-import Mathlib.Analysis.SpecialFunctions.Log.Deriv
-import Mathlib.Analysis.SpecialFunctions.Log.Monotone
-import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Analysis.SpecialFunctions.Stirling
-import Mathlib.Analysis.Real.Pi.Bounds
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement
-import PseudoPrime.Analysis.LogTaylorBounds
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.CharacterModulus
+module
+
+public import Mathlib.Analysis.Calculus.MeanValue
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Analysis.SpecialFunctions.Log.Monotone
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.SpecialFunctions.Stirling
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement
+public import PseudoPrime.Analysis.LogTaylorBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CharacterModulus
 
 /-!
 # The `ElementaryOmegaStatement` tail (`m := ω(n) ≥ 163`)
@@ -55,6 +57,8 @@ So for `m ≥ 163`,
 ` ≤ PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryF 163 ≤ 7/5`
 (the one numeric certificate needed), giving the target.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 

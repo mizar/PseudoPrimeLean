@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.Complex.CauchyIntegral
-import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
-import PseudoPrime.AnalyticNumberTheory.Rectangle.Basic
-import PseudoPrime.AnalyticNumberTheory.General.PoleResidueCalculus
+module
+
+public import Mathlib.Analysis.Complex.CauchyIntegral
+public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+public import PseudoPrime.AnalyticNumberTheory.Rectangle.Basic
+public import PseudoPrime.AnalyticNumberTheory.General.PoleResidueCalculus
 
 /-!
 # Algebra of rectangular complex boundary integrals
@@ -16,6 +18,8 @@ This file isolates the geometric bookkeeping needed to subdivide rectangular con
 results are independent of the zeta kernels and can later support a finite rectangular grid whose
 internal edges cancel.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RectangleGeometry
 

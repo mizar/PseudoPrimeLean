@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Factorization.PrimeLeafPolicy
-import PseudoPrime.NumberTheory.Factorization.Partial
-import PseudoPrime.NumberTheory.Factorization.PollardRho.Budget
-import PseudoPrime.NumberTheory.Factorization.PollardRho.Search
+module
+
+public import PseudoPrime.NumberTheory.Factorization.PrimeLeafPolicy
+public import PseudoPrime.NumberTheory.Factorization.Partial
+public import PseudoPrime.NumberTheory.Factorization.PollardRho.Budget
+public import PseudoPrime.NumberTheory.Factorization.PollardRho.Search
 
 /-!
 # Bounded factor supply with caller-supplied leaf certification

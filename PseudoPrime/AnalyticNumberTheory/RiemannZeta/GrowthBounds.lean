@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
-import Mathlib.NumberTheory.LSeries.Dirichlet
-import Mathlib.NumberTheory.LSeries.RiemannZeta
+module
+
+public import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+public import Mathlib.NumberTheory.LSeries.Dirichlet
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
 
 /-!
 # A right-half-plane growth bound for `ζ'/ζ`
@@ -16,6 +18,8 @@ convergence, where no zero-density or growth theory is needed) by the value of t
 Dirichlet series at the real point `τ`. This general estimate is independent of any contour kernel,
 so files needing only this growth bound need not import integrability machinery.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Jacobi.Numerator
-import Mathlib.FieldTheory.Finite.Basic
+module
+
+public import PseudoPrime.NumberTheory.Jacobi.Numerator
+public import Mathlib.FieldTheory.Finite.Basic
 
 /-!
 # Smaller prime witnesses for odd nonsquares
@@ -17,6 +19,8 @@ For `r` congruent to `1` modulo `4`, an odd nonsquare `r` admits a Jacobi `-1` n
 finite CRT construction.  Quadratic reciprocity and prime-factor extraction then show that
 every odd nonsquare `r > 3` has a smaller odd-prime denominator with Jacobi value `-1`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory
 

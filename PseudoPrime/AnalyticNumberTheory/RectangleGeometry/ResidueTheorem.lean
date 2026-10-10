@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.Boundary
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.Boundary
 
 /-!
 # A generic finite punctured-rectangle residue theorem
@@ -32,6 +34,8 @@ is deliberately left to the caller via the existing generic
 `RectangleGeometry.rectangleGridSubdivision_eq_sum_toFinset`; the assembly theorem
 only consumes the resulting cell-sum decomposition as a hypothesis.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RectangleGeometry
 

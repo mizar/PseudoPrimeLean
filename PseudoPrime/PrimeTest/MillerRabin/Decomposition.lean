@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Spec
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Spec
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic
 
 /-!
 # Canonical decomposition for the strong Miller–Rabin condition
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

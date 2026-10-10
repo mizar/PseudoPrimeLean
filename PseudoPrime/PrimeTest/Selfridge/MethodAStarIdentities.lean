@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Lucas.Defs
-import Mathlib.Tactic.Ring
+module
+
+public import PseudoPrime.PrimeTest.Lucas.Defs
+public import Mathlib.Tactic.Ring
 
 /-!
 # Integer identities for Selfridge Method A and Method A*

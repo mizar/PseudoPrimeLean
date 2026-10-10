@@ -15,6 +15,8 @@ character at the conductor.  Values at integers coprime to the original level ar
 and nontriviality for odd nonsquare moduli descends to the primitive character.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.NumberTheory
 
 /-- The primitive character inducing `PseudoPrime.NumberTheory.complexQuadraticCharacter n hn`. -/

@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroup
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroup
 
 /-!
 # Prime-factor cases for composite moduli
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

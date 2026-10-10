@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.LLS.Lemma23
-import PseudoPrime.LLS.Numerics
+module
+
+public import PseudoPrime.LLS.Lemma23
+public import PseudoPrime.LLS.Numerics
 
 /-! # Shared full-level interfaces and numerical comparison for LLS S1
 
 These bounds are independent of quadraticity and are used by both analytic routes.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.MellinWeightedSums
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MellinWeightedSums
 
 /-! General smoothed-contour identities and bounds. -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

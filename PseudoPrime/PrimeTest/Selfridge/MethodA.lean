@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.StrongLucas.Spec
-import PseudoPrime.PrimeTest.StrongLucas.Prime
-import PseudoPrime.PrimeTest.Selfridge.Candidates
-import PseudoPrime.PrimeTest.Selfridge.Params
+module
+
+public import PseudoPrime.PrimeTest.StrongLucas.Spec
+public import PseudoPrime.PrimeTest.StrongLucas.Prime
+public import PseudoPrime.PrimeTest.Selfridge.Candidates
+public import PseudoPrime.PrimeTest.Selfridge.Params
 
 /-!
 # Selfridge Method A parameters

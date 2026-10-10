@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BPSW.Prime
-import PseudoPrime.PrimeTest.StrongLucas.Fast
+module
+
+public import PseudoPrime.PrimeTest.BPSW.Prime
+public import PseudoPrime.PrimeTest.StrongLucas.Fast
 
 /-! # Explicit fast parameterized ordinary BPSW
 
 The definition-side composition remains unchanged. This entry explicitly selects
 the reference Strong Lucas PQ procedure and its total shared-state fallback.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

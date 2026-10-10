@@ -4,18 +4,22 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Decision
-import PseudoPrime.PrimeTest.BPSW.Wheel30
-import PseudoPrime.PrimeTest.BPSW.ConditionalEuler
-import PseudoPrime.PrimeTest.BLS.Decision
-import PseudoPrime.PrimeTest.APRCL.Decision
-import PseudoPrime.PrimeTest.FactorWitness
+module
+
+public import PseudoPrime.PrimeTest.Decision
+public import PseudoPrime.PrimeTest.BPSW.Wheel30
+public import PseudoPrime.PrimeTest.BPSW.ConditionalEuler
+public import PseudoPrime.PrimeTest.BLS.Decision
+public import PseudoPrime.PrimeTest.APRCL.Decision
+public import PseudoPrime.PrimeTest.FactorWitness
 
 /-!
 # Staged certified execution
 Keep the APR-CL pending certificate when earlier methods yield no proved decision.
 Budgets belong to the caller-supplied searches; BPSW has its own search cost.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.Execution
 

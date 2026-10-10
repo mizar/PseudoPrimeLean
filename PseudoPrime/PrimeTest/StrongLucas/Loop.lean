@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.StrongLucas.Spec
-import PseudoPrime.PrimeTest.Lucas.UVQ
+module
+
+public import PseudoPrime.PrimeTest.StrongLucas.Spec
+public import PseudoPrime.PrimeTest.Lucas.UVQ
 
 /-! # Shared Strong Lucas doubling scan -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

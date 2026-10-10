@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.Complex.Basic
+module
+
+public import Mathlib.Analysis.Complex.Basic
 
 /-!
 # Generic contour-segment regularity
@@ -13,6 +15,8 @@ These lemmas only express the geometric fact that a horizontal or vertical segme
 complex singularity set when the corresponding imaginary or real coordinates are avoided. They
 do not mention Dirichlet `L`-functions, Mellin kernels, or the fixed points `0` and `1`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RectangleGeometry
 

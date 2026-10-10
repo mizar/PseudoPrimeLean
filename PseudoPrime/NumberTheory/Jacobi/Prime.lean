@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Jacobi.Basic
+module
+
+public import PseudoPrime.NumberTheory.Jacobi.Basic
 
 /-!
 # Prime-denominator Jacobi interfaces

@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HeightRectangle
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveLeftVerticalBound
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveHorizontalLogDerivBound
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ContourRegularity
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HeightRectangle
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveLeftVerticalBound
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveHorizontalLogDerivBound
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ContourRegularity
 
 /-!
 # Reciprocal finite-contour identities at selected heights

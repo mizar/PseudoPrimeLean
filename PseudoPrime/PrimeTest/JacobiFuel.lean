@@ -4,15 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.ReferenceArithmetic
-import PseudoPrime.NumberTheory.Fibonacci.Euclid
-import Mathlib.Data.Nat.PadicValNat
+module
+
+public import PseudoPrime.PrimeTest.ReferenceArithmetic
+public import PseudoPrime.NumberTheory.Fibonacci.Euclid
+public import Mathlib.Data.Nat.PadicValNat
 
 /-! # Batched Jacobi procedures with certified Fibonacci fuel bounds
 
 The fuel counts odd-part extraction followed by reciprocity and remainder updates.
 Zero termination is free; maximal-power extraction uses mathlib's two-adic operations.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.ReferenceArithmetic
 

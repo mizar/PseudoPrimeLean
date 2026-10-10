@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
-import Mathlib.NumberTheory.LegendreSymbol.ZModChar
-import PseudoPrime.PrimeTest.Selfridge.Candidates
+module
+
+public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+public import Mathlib.NumberTheory.LegendreSymbol.ZModChar
+public import PseudoPrime.PrimeTest.Selfridge.Candidates
 
 /-!
 # Selfridge reciprocity for PrimeTest

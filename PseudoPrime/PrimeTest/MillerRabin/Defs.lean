@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Factorization.Basic
-import Mathlib.Data.Nat.Prime.Basic
-import Mathlib.Data.ZMod.Basic
-import PseudoPrime.PrimeTest.Precheck
+module
+
+public import Mathlib.Data.Nat.Factorization.Basic
+public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.Data.ZMod.Basic
+public import PseudoPrime.PrimeTest.Precheck
 
 /-!
 # Strong Miller–Rabin definitions

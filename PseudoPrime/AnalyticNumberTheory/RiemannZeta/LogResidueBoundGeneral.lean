@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FiniteZeroSums
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMass
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroClassification
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ReciprocalTrivialZeroSeries
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogResidueAtZeroClosedForm
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ContourKernelConjugation
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FiniteZeroSums
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMass
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroClassification
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ReciprocalTrivialZeroSeries
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogResidueAtZeroClosedForm
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ContourKernelConjugation
 
 /-! General RH bounds for smoothed zeta zero sums and contour integrals. -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

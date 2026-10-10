@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.PrimeIndexing
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.IntervalCases
+module
+
+public import PseudoPrime.NumberTheory.PrimeIndexing
+public import Mathlib.Tactic.NormNum.Prime
+public import Mathlib.Tactic.IntervalCases
 
 /-!
 # The first 163 primes, certified without `Nat.count`-based `decide` at scale

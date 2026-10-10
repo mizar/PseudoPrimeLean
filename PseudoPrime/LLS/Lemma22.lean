@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.LLS.Numerics
+module
+
+public import PseudoPrime.LLS.Numerics
 
 /-!
 # Primitive-character analytic bounds for LLS Part 1
@@ -14,6 +16,8 @@ represent `|Re B(χ̃)|`, but the propositions only require a nonnegative real s
 Keeping the same witness in both inequalities prevents an accidental mismatch between
 the explicit-formula upper bound and the reciprocal-weight estimate.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

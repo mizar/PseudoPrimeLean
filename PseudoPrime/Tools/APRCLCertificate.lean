@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Tools.CertificateIO
-import PseudoPrime.PrimeTest.APRCL.CertificateJson
+module
+
+public import PseudoPrime.Tools.CertificateIO
+public import PseudoPrime.PrimeTest.APRCL.CertificateJson
 
 /-!
 # APR-CL raw certificate file interface
 All successful messages describe finite replay, not an unconditional primality proof.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.Tools.APRCLCertificate
 

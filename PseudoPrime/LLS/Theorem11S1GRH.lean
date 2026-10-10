@@ -20,6 +20,8 @@ analytic inputs and composes them with the finite and numerical layers. The fina
 supplies the general S1 bound used by `elementary_formula`.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.LLS
 
 /-- The analytic-core interface for the generic character version of LLS Theorem 1.1.

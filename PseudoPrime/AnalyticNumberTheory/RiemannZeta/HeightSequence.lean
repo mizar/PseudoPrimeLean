@@ -4,9 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GoodHeight
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GoodHeight
 
 /-! # General analytic bounds and auxiliary constructions -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

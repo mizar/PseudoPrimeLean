@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BLS.CubeCertificate
-import PseudoPrime.PrimeTest.BLS.Extended
-import PseudoPrime.PrimeTest.BLS.Result
+module
+
+public import PseudoPrime.PrimeTest.BLS.CubeCertificate
+public import PseudoPrime.PrimeTest.BLS.Extended
+public import PseudoPrime.PrimeTest.BLS.Result
 
 /-!
 # External BLS certificate verification
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.BLS
 

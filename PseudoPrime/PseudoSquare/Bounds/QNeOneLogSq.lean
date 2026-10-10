@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Analysis.QNeOneElementaryBounds
-import PseudoPrime.PseudoSquare.Bounds.WitnessMaximum
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.OddPrimeCutoff
-import PseudoPrime.PseudoSquare.QNeOneFinal
+module
+
+public import PseudoPrime.Analysis.QNeOneElementaryBounds
+public import PseudoPrime.PseudoSquare.Bounds.WitnessMaximum
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.OddPrimeCutoff
+public import PseudoPrime.PseudoSquare.QNeOneFinal
 
 /-!
 # A uniform logarithmic bound on the admissible domain

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.PrimeIndexing
-import PseudoPrime.NumberTheory.PrimeTable
+module
+
+public import PseudoPrime.NumberTheory.PrimeIndexing
+public import PseudoPrime.NumberTheory.PrimeTable
 
 /-!
 # Cumulative primorial certificates for the finite range `6 ≤ k ≤ 163`

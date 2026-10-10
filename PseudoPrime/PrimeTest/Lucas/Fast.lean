@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Lucas.Spec
-import Mathlib.Data.Matrix.Reflection
+module
+
+public import PseudoPrime.PrimeTest.Lucas.Spec
+public import Mathlib.Data.Matrix.Reflection
 
 /-!
 # Binary Lucas evaluation in `ZMod`

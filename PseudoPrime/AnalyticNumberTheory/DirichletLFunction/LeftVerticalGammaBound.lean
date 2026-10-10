@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LeftVerticalDigammaBound
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LeftVerticalDigammaBound
 
 /-!
 # Left-vertical gamma-factor pair bound
@@ -15,6 +17,8 @@ in `GammaFactorLogDeriv` at the four digamma arguments the left-vertical line
 `logDeriv (gammaFactor χ)` (even/odd parity × direct/reflected point), then combines the
 explicit digamma bound into a single `χ`-uniform gamma-factor pair bound.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

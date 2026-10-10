@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Prime.Basic
+module
+
+public import Mathlib.Data.Nat.Prime.Basic
 
 /-!
 # Caller-supplied prime leaf certification
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory.Factorization
 

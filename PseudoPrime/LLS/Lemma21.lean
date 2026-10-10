@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
-import PseudoPrime.LLS.Theorem11S1
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
+public import PseudoPrime.LLS.Theorem11S1
 
 /-!
 # The analytic and finite-sum interfaces for LLS Lemma 2.1
@@ -14,6 +16,8 @@ This file separates the Riemann explicit-formula estimate from the finite charac
 decomposition used in Section 3.1.  The analytic proposition is the precise lower-bound direction
 consumed later; it does not expose the paper's auxiliary `θ` parameter.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

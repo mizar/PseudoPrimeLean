@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.FirstStop
-import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
-import PseudoPrime.PrimeTest.Selfridge.Nonempty
-import PseudoPrime.PrimeTest.Selfridge.Candidates
-import PseudoPrime.PrimeTest.Selfridge.MethodAStar
-import PseudoPrime.PrimeTest.Selfridge.Params
-import PseudoPrime.PrimeTest.StrongLucas.Spec
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.FirstStop
+public import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
+public import PseudoPrime.PrimeTest.Selfridge.Nonempty
+public import PseudoPrime.PrimeTest.Selfridge.Candidates
+public import PseudoPrime.PrimeTest.Selfridge.MethodAStar
+public import PseudoPrime.PrimeTest.Selfridge.Params
+public import PseudoPrime.PrimeTest.StrongLucas.Spec
 
 /-!
 # Ascending classical Selfridge search

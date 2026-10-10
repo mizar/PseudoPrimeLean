@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import PseudoPrime.PseudoSquare.Bounds.WitnessMaximum
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Mathlib.Tactic.NormNum.LegendreSymbol
+public import PseudoPrime.PseudoSquare.Bounds.WitnessMaximum
 
 /-!
 # Kernel-checked finite bound below `750`

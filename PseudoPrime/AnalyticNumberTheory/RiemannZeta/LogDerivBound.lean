@@ -19,6 +19,8 @@ At good heights the zero terms are also controlled, yielding the final
 `O(log(T+2)²)` bound on `-1/2 ≤ Re s ≤ 2`.
 -/
 
+@[expose] public section
+
 noncomputable section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta

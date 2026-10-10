@@ -21,6 +21,8 @@ the two character values can differ only at integers sharing a factor with the q
 level by the conductor.  It then restricts the weighted-sum difference to exactly that support.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /--

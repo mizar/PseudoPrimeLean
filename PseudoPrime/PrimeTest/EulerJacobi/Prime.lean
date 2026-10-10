@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.EulerJacobi.Spec
+module
+
+public import PseudoPrime.PrimeTest.EulerJacobi.Spec
 
 /-!
 # Prime inputs for the Euler–Jacobi test

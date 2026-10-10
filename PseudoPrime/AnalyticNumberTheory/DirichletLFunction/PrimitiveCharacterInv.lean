@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.DirichletCharacter.Basic
-import Mathlib.NumberTheory.MulChar.Lemmas
+module
+
+public import Mathlib.NumberTheory.DirichletCharacter.Basic
+public import Mathlib.NumberTheory.MulChar.Lemmas
 
 /-!
 # Primitivity is preserved under inversion
@@ -16,6 +18,8 @@ invariance `χ⁻¹.Even ↔ χ.Even` / `χ⁻¹.Odd ↔ χ.Odd`. None of this m
 or GRH — it holds for a `DirichletCharacter` valued in any `CommMonoidWithZero` (for the
 conductor/primitivity facts) or in `ℂ` (for the conjugation/parity facts).
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

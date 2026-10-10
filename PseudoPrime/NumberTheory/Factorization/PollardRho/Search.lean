@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Factorization.PollardRho.Orbit
+module
+
+public import PseudoPrime.NumberTheory.Factorization.PollardRho.Orbit
 
 /-!
 # Pollard rho retry schedules and fuel accounting
@@ -12,6 +14,8 @@ import PseudoPrime.NumberTheory.Factorization.PollardRho.Orbit
 This file specifies retry failure/success and proves that the executed Floyd rounds are bounded by
 the sum of the caller-provided fuel budgets.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory.Factorization.PollardRho
 

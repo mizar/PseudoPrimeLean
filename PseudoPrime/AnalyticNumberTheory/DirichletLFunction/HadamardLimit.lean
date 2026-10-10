@@ -4,17 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.Complex.AbsMax
-import Mathlib.Analysis.Complex.CanonicalDecomposition
-import Mathlib.Analysis.Complex.JensenFormula
-import Mathlib.Analysis.Meromorphic.LogDeriv
-import Mathlib.Analysis.Normed.Group.Tannery
-import Mathlib.Analysis.SpecialFunctions.Log.Base
-import PseudoPrime.AnalyticNumberTheory.General.CanonicalDecomposition
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Growth
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroCounting
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogDerivBound
+module
+
+public import Mathlib.Analysis.Complex.AbsMax
+public import Mathlib.Analysis.Complex.CanonicalDecomposition
+public import Mathlib.Analysis.Complex.JensenFormula
+public import Mathlib.Analysis.Meromorphic.LogDeriv
+public import Mathlib.Analysis.Normed.Group.Tannery
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import PseudoPrime.AnalyticNumberTheory.General.CanonicalDecomposition
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Growth
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroCounting
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogDerivBound
 
 /-!
 # Ball-envelope growth for `completedLFunction`
@@ -29,6 +31,8 @@ The two branches have genuinely different shapes (the reflected factor
 branch's own bound rather than by forcing one uniform shape: on a given `z`, only one branch's
 term matters, and the other is discarded via nonnegativity.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

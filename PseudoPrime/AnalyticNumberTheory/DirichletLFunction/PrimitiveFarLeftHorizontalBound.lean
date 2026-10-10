@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveCentralHorizontalBound
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.HorizontalFarLeftBound
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorGrowth
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.FarLeftReflection
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveCentralHorizontalBound
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.HorizontalFarLeftBound
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorGrowth
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.FarLeftReflection
 
 /-!
 # Far-left horizontal reciprocal-kernel integrals vanish
@@ -17,6 +19,8 @@ on the fixed strip `[-A-1/2,-2]` by `O_A(|T|+1)`. The reciprocal Mellin factor s
 two powers of height in the denominator. Integrating over the fixed segment therefore
 gives a quantity tending to zero, for both quadratic and general primitive characters.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Lucas.Params
-import PseudoPrime.PrimeTest.Lucas.Spec
-import PseudoPrime.PrimeTest.Lucas.Fast
-import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+module
+
+public import PseudoPrime.PrimeTest.Lucas.Params
+public import PseudoPrime.PrimeTest.Lucas.Spec
+public import PseudoPrime.PrimeTest.Lucas.Fast
+public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 
 /-!
 # Lucas-V probable-prime test

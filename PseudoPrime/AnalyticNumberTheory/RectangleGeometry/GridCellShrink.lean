@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.GridCutConstruction
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.GridCutConstruction
 
 /-!
 # Generic singular-cell shrink helpers
@@ -26,6 +28,8 @@ Unlike a kernel-specific regular set, this file works with plain
 which combine with differentiability off `S` within the parent cell to make each surrounding
 cell's boundary integral vanish.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RectangleGeometry
 

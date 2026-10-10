@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.DirichletCharacter
-import PseudoPrime.NumberTheory.JacobiCongruence
-import Mathlib.Data.Nat.Squarefree
-import Mathlib.NumberTheory.LSeries.PrimesInAP
-import PseudoPrime.NumberTheory.PrimitiveJacobiCharacter
-import PseudoPrime.NumberTheory.Jacobi.Numerator
-import Mathlib.NumberTheory.FundamentalDiscriminant
+module
+
+public import PseudoPrime.NumberTheory.DirichletCharacter
+public import PseudoPrime.NumberTheory.JacobiCongruence
+public import Mathlib.Data.Nat.Squarefree
+public import Mathlib.NumberTheory.LSeries.PrimesInAP
+public import PseudoPrime.NumberTheory.PrimitiveJacobiCharacter
+public import PseudoPrime.NumberTheory.Jacobi.Numerator
+public import Mathlib.NumberTheory.FundamentalDiscriminant
 
 /-!
 # Arithmetic of Jacobi characters and their primitive conductors
@@ -20,6 +22,8 @@ primitive character is the existing canonical character induced by the quadratic
 `n`; the positive discriminant certificate records the elementary bound `D ≤ 4 * n`.
 Conductor identities and transfer of Jacobi witnesses depend only on this arithmetic data.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory
 

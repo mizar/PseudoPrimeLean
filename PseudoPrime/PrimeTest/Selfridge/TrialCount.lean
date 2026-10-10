@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.Nonempty
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.Nonempty
 
 /-!
 # Discrete classical Selfridge trial counts
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

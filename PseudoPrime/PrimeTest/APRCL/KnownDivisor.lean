@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.Execution
+module
+
+public import PseudoPrime.PrimeTest.APRCL.Execution
 
 /-!
 # Direct decisions from known APR-CL prime divisors
 
 Parameter and auxiliary hints are rechecked before being used as mathematical evidence.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.APRCL
 

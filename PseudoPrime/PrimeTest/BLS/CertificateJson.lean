@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BLS.Certificate
-import PseudoPrime.PrimeTest.CertificateJson
+module
+
+public import PseudoPrime.PrimeTest.BLS.Certificate
+public import PseudoPrime.PrimeTest.CertificateJson
 
 /-!
 # JSON interchange for external BLS certificates
 
 The parser accepts untrusted data. The mathematical verifier supplies the primality guarantee.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.BLS
 

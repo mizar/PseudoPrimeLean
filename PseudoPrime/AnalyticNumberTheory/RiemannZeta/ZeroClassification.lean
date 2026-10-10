@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCount
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCount
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
 
 /-!
 # Common bookkeeping for zeta zeros

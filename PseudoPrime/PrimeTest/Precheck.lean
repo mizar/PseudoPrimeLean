@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Algebra.Group.Even
-import Mathlib.Data.Nat.Sqrt
-import PseudoPrime.PrimeTest.Basic
+module
+
+public import Mathlib.Algebra.Group.Even
+public import Mathlib.Data.Nat.Sqrt
+public import PseudoPrime.PrimeTest.Basic
 
 /-!
 # Common small-input, parity, and square precheck

@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.SmallInput
-import PseudoPrime.PrimeTest.APRCL.Generate
+module
+
+public import PseudoPrime.PrimeTest.SmallInput
+public import PseudoPrime.PrimeTest.APRCL.Generate
 
 /-!
 # APR-CL entry with an independent small-input decision
 Small inputs are decided unconditionally; larger APR-CL acceptance remains pending its local kernel.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.APRCL
 

@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.Harmonic.EulerMascheroni
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Tactic
+module
+
+public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.Tactic
 
 /-! # General bounds and arithmetic certificates -/
+
+@[expose] public section
 
 namespace PseudoPrime.Analysis
 

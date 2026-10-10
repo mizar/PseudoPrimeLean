@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+module
+
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
 # Elementary limits for symmetric interval integrals
@@ -12,6 +14,8 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 This file collects limit facts independent of any particular contour kernel or number-theoretic
 construction.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.Analysis
 

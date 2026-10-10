@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.NumberTheory.DirichletCharacter.Basic
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.NumberTheory.DirichletCharacter.Basic
 
 /-!
 # Conductor/quotient arithmetic and elementary prime-factor logarithm bounds
@@ -14,6 +16,8 @@ Generic elementary facts relating a Dirichlet character's level, conductor, and 
 quotient, together with the elementary logarithm bounds on the number of distinct prime factors
 of a natural number.  None of this depends on any specific `L`-function or contour construction.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

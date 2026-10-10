@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PseudoSquare.Computation.QThresholds
-import PseudoPrime.PseudoSquare.Computation.MillionWitnessBridge
-import PseudoPrime.Analysis.LogarithmicConstants
+module
+
+public import PseudoPrime.PseudoSquare.Computation.QThresholds
+public import PseudoPrime.PseudoSquare.Computation.MillionWitnessBridge
+public import PseudoPrime.Analysis.LogarithmicConstants
 
 /-!
 # Finite logarithmic bounds for Q witnesses

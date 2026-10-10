@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Finite
-import PseudoPrime.PrimeTest.Execution
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Finite
+public import PseudoPrime.PrimeTest.Execution
 
 /-! # Finite two-base Miller-Rabin decisions and integration regressions -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.MillerRabin.FiniteTests
 

@@ -4,9 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.StrongLucas.NoGcd
+module
+
+public import PseudoPrime.PrimeTest.StrongLucas.NoGcd
 
 /-! # Signed halving and leading-one reference Lucas procedure -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

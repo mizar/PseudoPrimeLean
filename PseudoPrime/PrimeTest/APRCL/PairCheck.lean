@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.JacobiSum
+module
+
+public import PseudoPrime.PrimeTest.APRCL.JacobiSum
 
 /-!
 # APR-CL pair checks and optional arithmetic flag guards
@@ -13,6 +15,8 @@ A root match is the main Jacobi test. The filtered exponent records when the sam
 meets an arithmetic guard used for the local flag. Failure of that guard does not reject the
 main test. The local number-theoretic implication is a separate proof obligation.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.APRCL
 

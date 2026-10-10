@@ -16,6 +16,8 @@ Both parities' digamma argument (`s/2` even, `(s+1)/2` odd) lands in this strip 
 `|Re s| ≤ 2`, so a single central digamma bound theorem covers both.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
 /-- A point off the real axis is never a nonpositive integer. -/

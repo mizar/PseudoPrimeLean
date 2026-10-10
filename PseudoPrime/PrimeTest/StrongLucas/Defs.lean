@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Lucas.ProbablePrime
-import PseudoPrime.PrimeTest.MillerRabin.Defs
+module
+
+public import PseudoPrime.PrimeTest.Lucas.ProbablePrime
+public import PseudoPrime.PrimeTest.MillerRabin.Defs
 
 /-!
 # Strong Lucas probable-prime test

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.SmallInput
-import PseudoPrime.PrimeTest.CertificateJson
+module
+
+public import PseudoPrime.PrimeTest.SmallInput
+public import PseudoPrime.PrimeTest.CertificateJson
 
 /-!
 # Small-input decision certificates in JSON

@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SingularityGeometry
-import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.GridCutConstruction
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SingularityGeometry
+public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.GridCutConstruction
 
 /-! # Kernel-independent zeta GridCuts -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

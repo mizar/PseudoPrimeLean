@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HadamardLimit
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GoodHeight
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HadamardLimit
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GoodHeight
 
 /-!
 # Finite zero-ordinate and zero-norm ledgers
@@ -16,6 +18,8 @@ corresponding cardinality bounds. The avoiding-point lemma in `RiemannZeta.GoodH
 then selects heights in `[n, 2n]` separated from ordinates, or radii separated from zero norms.
 These choices supply zero-free horizontal edges and spheres for logarithmic-derivative estimates.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

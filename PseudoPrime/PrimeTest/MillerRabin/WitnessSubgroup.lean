@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Decomposition
-import Mathlib.RingTheory.ZMod.UnitsCyclic
-import Mathlib.FieldTheory.Finite.Basic
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
+public import Mathlib.RingTheory.ZMod.UnitsCyclic
+public import Mathlib.FieldTheory.Finite.Basic
 
 /-!
 # Subgroups containing strong Miller–Rabin pass bases
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

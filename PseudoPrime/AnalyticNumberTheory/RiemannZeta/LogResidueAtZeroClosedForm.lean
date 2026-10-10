@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.HadamardLimit
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.HadamardLimit
 
 /-!
 # Logarithmic-kernel residue at zero
@@ -15,6 +17,8 @@ rule. The value is `-deriv (logDeriv ζ) 0 - log(2π)*log x`.
 The second logarithmic derivative is retained as the named constant supplied by
 `PseudoPrime.AnalyticNumberTheory.RiemannXi.HadamardLimit`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.DirichletCharacter.Basic
-import Mathlib.NumberTheory.LSeries.DirichletContinuation
+module
+
+public import Mathlib.NumberTheory.DirichletCharacter.Basic
+public import Mathlib.NumberTheory.LSeries.DirichletContinuation
 
 /-!
 # Trivial zeros for Dirichlet characters
@@ -14,6 +16,8 @@ This definition is independent of the generalized Riemann hypothesis predicate a
 constructions. The modulus-one branch excludes negative even integers; other branches follow the
 parity of the character.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.GRH
 

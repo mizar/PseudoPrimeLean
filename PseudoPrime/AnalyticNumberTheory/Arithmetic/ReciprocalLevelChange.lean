@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.AlternatingSums
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.FejerConvexSums
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ConductorPrimeSupport
-import PseudoPrime.Analysis.RealLog
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.AlternatingSums
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.FejerConvexSums
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ConductorPrimeSupport
+public import PseudoPrime.Analysis.RealLog
 
 /-!
 # Reciprocal level-change identities
@@ -17,6 +19,8 @@ This file records exact and bounded transformations of reciprocal character sums
 conductor level changes.  The declarations separate the algebraic prime-power expansion from
 the later comparison and majorization estimates.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 

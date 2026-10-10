@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.MethodAStarIdentities
-import PseudoPrime.PrimeTest.Selfridge.MethodAStar
-import PseudoPrime.PrimeTest.Lucas.ProbablePrime
-import PseudoPrime.PrimeTest.BPSW.Defs
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.MethodAStarIdentities
+public import PseudoPrime.PrimeTest.Selfridge.MethodAStar
+public import PseudoPrime.PrimeTest.Lucas.ProbablePrime
+public import PseudoPrime.PrimeTest.BPSW.Defs
 
 /-!
 # Strong Lucas equivalence of Selfridge Method A and Method A*
@@ -16,6 +18,8 @@ The exceptional `D = 5` branch is handled in `ZMod n` using the integer
 identities from `MethodAStarIdentities`.  The proof does not assume that `n` is
 prime: the factor `5` is cancelled only after proving that it is a unit.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

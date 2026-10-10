@@ -16,6 +16,8 @@ The common parity bound and two contour limits supply the reciprocal estimate
 for the LLS comparison. The stronger even and quadratic specializations are separate.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.LLS
 
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in

@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.OddPrimeCutoff
-import PseudoPrime.PseudoSquare.CharacterBound
-import PseudoPrime.PseudoSquare.Computation.SmallN
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.OddPrimeCutoff
+public import PseudoPrime.PseudoSquare.CharacterBound
+public import PseudoPrime.PseudoSquare.Computation.SmallN
 
 /-!
 # The Robin-free boxed bound, conditional on `Arithmetic.ElementaryOmegaStatement`

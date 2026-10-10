@@ -4,16 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTestBounds.MillerRabin.SmallLogBound
-import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
-import PseudoPrime.PrimeTestBounds.Selfridge.MaximumBridge
-import PseudoPrime.PrimeTestBounds.Selfridge.TrialCount
-import PseudoPrime.PrimeTestBounds.Selfridge.TrialCountGRH
-import PseudoPrime.PrimeTestBounds.Selfridge.LogBounds
-import PseudoPrime.PrimeTestBounds.Selfridge.LogGRH
-import PseudoPrime.PrimeTestBounds.Selfridge.Comparison
-import PseudoPrime.PrimeTestBounds.Selfridge.ElementaryRadius
-import PseudoPrime.PrimeTestBounds.Selfridge.LogSqMaximum
+module
+
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SmallLogBound
+public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
+public import PseudoPrime.PrimeTestBounds.Selfridge.MaximumBridge
+public import PseudoPrime.PrimeTestBounds.Selfridge.TrialCount
+public import PseudoPrime.PrimeTestBounds.Selfridge.TrialCountGRH
+public import PseudoPrime.PrimeTestBounds.Selfridge.LogBounds
+public import PseudoPrime.PrimeTestBounds.Selfridge.LogGRH
+public import PseudoPrime.PrimeTestBounds.Selfridge.Comparison
+public import PseudoPrime.PrimeTestBounds.Selfridge.ElementaryRadius
+public import PseudoPrime.PrimeTestBounds.Selfridge.LogSqMaximum
 
 /-!
 # Analytic and conditional bounds applied to primality tests
@@ -21,3 +23,5 @@ import PseudoPrime.PrimeTestBounds.Selfridge.LogSqMaximum
 Discrete algorithms remain in PrimeTest. GRH assumptions are explicit in conditional statements.
 Unconditional numerical and maximum comparisons can be imported from their individual modules.
 -/
+
+@[expose] public section

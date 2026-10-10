@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.CertificateJson
+module
+
+public import PseudoPrime.PrimeTest.APRCL.CertificateJson
 
 /-!
 # APR-CL JSON replay regressions
 Round-trip examples, tampering and resource limits are checked by compiled execution.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.APRCL.JsonTests
 

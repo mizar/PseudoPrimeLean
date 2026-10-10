@@ -4,24 +4,26 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.LSeries.DirichletContinuation
-import Mathlib.NumberTheory.LSeries.Dirichlet
-import Mathlib.NumberTheory.LSeries.Nonvanishing
-import Mathlib.Analysis.Fourier.ZMod
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
-import Mathlib.Analysis.Meromorphic.NormalForm
-import Mathlib.Analysis.Meromorphic.Order
-import Mathlib.Analysis.Meromorphic.RCLike
-import Mathlib.MeasureTheory.Integral.IntegralEqImproper
-import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
-import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.Boundary
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
-import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.GridCellShrink
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ContourRegularity
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HadamardMultiplicityFactorization
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroContribution
+module
+
+public import Mathlib.NumberTheory.LSeries.DirichletContinuation
+public import Mathlib.NumberTheory.LSeries.Dirichlet
+public import Mathlib.NumberTheory.LSeries.Nonvanishing
+public import Mathlib.Analysis.Fourier.ZMod
+public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
+public import Mathlib.Analysis.Meromorphic.NormalForm
+public import Mathlib.Analysis.Meromorphic.Order
+public import Mathlib.Analysis.Meromorphic.RCLike
+public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.Boundary
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
+public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.GridCellShrink
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ContourRegularity
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HadamardMultiplicityFactorization
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroContribution
 
 /-!
 # Smoothed Dirichlet L-function contour kernels and finite contour identities
@@ -32,6 +34,8 @@ is assumed. The completed function keeps mathlib's normalization.
 The kernel definitions apply to arbitrary characters of nonzero level; primitivity is required
 only by declarations that explicitly assume it, such as the finite contour identity.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

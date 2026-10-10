@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Analysis.RealLog
-import Mathlib.NumberTheory.Harmonic.EulerMascheroni
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Linarith
+module
+
+public import PseudoPrime.Analysis.RealLog
+public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Linarith
 
 /-! # General analytic bounds and auxiliary constructions -/
+
+@[expose] public section
 
 namespace PseudoPrime.Analysis
 

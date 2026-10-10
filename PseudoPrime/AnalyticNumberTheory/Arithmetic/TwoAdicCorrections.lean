@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ReciprocalLevelChange
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimePowerCutoff
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ReciprocalLevelChange
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimePowerCutoff
 
 /-!
 # The 2-adic correction to the character/zeta level-change ledger
@@ -24,6 +26,8 @@ correction (`*_eq_twoAdicCorrection_of_eq_one`). Bounds each correction case-by-
 `χ̃(2) = -1` reduces the correction to its odd-exponent tail and bounds that tail by `(log x)²`
 (logarithmic) and `(4/3) log 2` (reciprocal).
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 

@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.LLS.Theorem11S1FullLevel
-import PseudoPrime.LLS.PrimitiveLogWeightedBounds
-import PseudoPrime.LLS.PrimitiveReciprocalWeightedBounds
+module
+
+public import PseudoPrime.LLS.Theorem11S1FullLevel
+public import PseudoPrime.LLS.PrimitiveLogWeightedBounds
+public import PseudoPrime.LLS.PrimitiveReciprocalWeightedBounds
 
 /-! # General-character analytic estimates for LLS S1
 

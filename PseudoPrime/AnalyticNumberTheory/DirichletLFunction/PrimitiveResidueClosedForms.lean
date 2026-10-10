@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveMultiplicityBridge
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.OddZeroLogDeriv
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFarLeftHorizontalBound
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveMultiplicityBridge
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.OddZeroLogDeriv
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFarLeftHorizontalBound
 
 /-!
 # the residue evaluation (start): closed forms for the `s = 1` and odd `s = 0` residues
@@ -16,6 +18,8 @@ evaluated: at `s = 1`, `x^{s-1} = x^0 = 1`; at `s = 0` (odd character, simple po
 x^{-1}`. This file records both closed forms, the first building block toward the odd `r₀ + r₁`
 exact formula (the residue evaluation).
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.Meromorphic.NormalForm
-import Mathlib.Analysis.Meromorphic.Order
-import Mathlib.Analysis.Meromorphic.RCLike
-import Mathlib.NumberTheory.LSeries.DirichletContinuation
-import PseudoPrime.AnalyticNumberTheory.Rectangle.Basic
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
+module
+
+public import Mathlib.Analysis.Meromorphic.NormalForm
+public import Mathlib.Analysis.Meromorphic.Order
+public import Mathlib.Analysis.Meromorphic.RCLike
+public import Mathlib.NumberTheory.LSeries.DirichletContinuation
+public import PseudoPrime.AnalyticNumberTheory.Rectangle.Basic
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
 
 /-!
 # Zero counting for Dirichlet `L`-functions
@@ -20,6 +22,8 @@ compact set (in particular any closed rectangle), the resulting finite zero ledg
 positive analytic multiplicity of a completed zero together with its local factorization. None of
 this mentions any application-specific contour kernel.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

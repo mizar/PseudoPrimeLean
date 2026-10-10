@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Positivity
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ConductorPrimeFactors
+module
+
+public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Positivity
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ConductorPrimeFactors
 
 /-!
 # Distinct prime factors and their logarithmic weight

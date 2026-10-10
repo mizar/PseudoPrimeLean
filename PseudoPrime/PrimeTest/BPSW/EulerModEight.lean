@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BPSW.EulerRedundancy
+module
+
+public import PseudoPrime.PrimeTest.BPSW.EulerRedundancy
 
 /-! # Euler redundancy for the five-modulo-eight MR branch
 
@@ -12,6 +14,8 @@ Evaluate the Jacobi characters to exclude the initial-one and zero-index minus-o
 branches. The remaining MR stage fixes the half-index sign, including composite moduli.
 Connect signed powers of two to the shared evaluator and the independent paper conditions.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.EulerRedundancy
 

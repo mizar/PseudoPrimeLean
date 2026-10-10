@@ -4,16 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
-import PseudoPrime.AnalyticNumberTheory.Gamma.TrigammaSpecialValues
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorMultiplicityBridge
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorLogDeriv
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
+public import PseudoPrime.AnalyticNumberTheory.Gamma.TrigammaSpecialValues
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorMultiplicityBridge
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorLogDeriv
 
 /-!
 # Even Dirichlet L-functions at zero
 
 Canonical local factor, simple zero, and logarithmic derivative at the origin.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

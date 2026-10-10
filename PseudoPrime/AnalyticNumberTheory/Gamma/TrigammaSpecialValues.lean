@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
-import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 
 /-!
 # Trigamma at one half and one
@@ -16,6 +18,8 @@ identity once then gives `digamma'(1) = π²/6`. Analyticity away from Gamma's p
 justifies these local differentiations. The resulting special values enter the
 second-logarithmic-derivative comparison between xi and zeta.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Gamma
 

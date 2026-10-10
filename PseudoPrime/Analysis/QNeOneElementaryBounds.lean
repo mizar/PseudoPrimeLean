@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Analysis.ElementaryBounds
-import PseudoPrime.Analysis.LogarithmicConstants
-import Mathlib.Tactic
+module
+
+public import PseudoPrime.Analysis.ElementaryBounds
+public import PseudoPrime.Analysis.LogarithmicConstants
+public import Mathlib.Tactic
 
 /-!
 # Elementary logarithmic and rational inequalities
@@ -15,6 +17,8 @@ These real-variable identities and inequalities bound logarithmic numerators, re
 factors, and polynomial gaps. They require no characters or L-functions. The estimates use
 explicit bounds on logarithms and positive powers of the radius to control rational expressions.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.Analysis
 

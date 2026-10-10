@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Analysis.EulerMascheroniBounds
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ReciprocalTrivialZeroSeries
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMassBounds
-import PseudoPrime.LLS.Lemma23
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.TrivialZeroMultiplicity
+module
+
+public import PseudoPrime.Analysis.EulerMascheroniBounds
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ReciprocalTrivialZeroSeries
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMassBounds
+public import PseudoPrime.LLS.Lemma23
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.TrivialZeroMultiplicity
 
 /-!
 # The Riemann reciprocal explicit-formula interface
@@ -17,6 +19,8 @@ This file separates the analytic explicit formula behind LLS Lemma 2.4 from the 
 estimate that replaces its remainder by `-8 / 5`.  Their conjunction gives exactly the Riemann
 reciprocal lower bound `LLSRiemannReciprocalLowerBound` consumed by `Lemma23.lean`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

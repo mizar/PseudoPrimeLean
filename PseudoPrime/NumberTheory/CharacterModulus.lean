@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.OddNonsquare
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+module
+
+public import PseudoPrime.NumberTheory.OddNonsquare
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Bounds for the quadratic-character modulus
@@ -14,6 +16,8 @@ The induced quadratic character is used at the uniform level `4 * n`.  This file
 elementary natural-number and logarithmic bounds needed to replace an individual admissible
 input by the endpoint of a finite range.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory
 

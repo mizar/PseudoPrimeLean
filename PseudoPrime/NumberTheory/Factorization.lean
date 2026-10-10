@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Factorization.Basic
+module
+
+public import Mathlib.Data.Nat.Factorization.Basic
 
 /-!
 # Factorization lemmas for nonsquare moduli
@@ -12,6 +14,8 @@ import Mathlib.Data.Nat.Factorization.Basic
 This file isolates the elementary factorization input needed for the composite-modulus Jacobi
 construction: a nonzero nonsquare has a prime factor occurring to an odd exponent.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory
 

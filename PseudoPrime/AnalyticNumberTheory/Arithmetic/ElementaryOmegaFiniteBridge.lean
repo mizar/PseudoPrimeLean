@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaTail
-import PseudoPrime.NumberTheory.PrimeIndexing
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaTail
+public import PseudoPrime.NumberTheory.PrimeIndexing
 
 /-!
 # The general bridge for `ElementaryOmegaFiniteStatement`
@@ -17,6 +19,8 @@ The proof transfers the inequality along `elementaryAnchor m ≤ 4n` using monot
 The identity `primePrimorialCount (m + 1) = 2 * oddPrimorial m` connects the anchor to the
 count-indexed primorial certificates in `PseudoPrime.NumberTheory.PrimorialCertificates`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 

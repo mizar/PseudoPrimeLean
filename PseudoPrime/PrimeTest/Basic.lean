@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Algebra.Group.Even
-import Mathlib.Data.Nat.Prime.Basic
+module
+
+public import Mathlib.Algebra.Group.Even
+public import Mathlib.Data.Nat.Prime.Basic
 
 /-!
 # Common interface for primality tests

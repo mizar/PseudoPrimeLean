@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFarLeftHorizontalBound
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HeightRectangle
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveOrdinaryLogDerivBound
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFarLeftHorizontalBound
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HeightRectangle
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveOrdinaryLogDerivBound
 
 /-! Generic logarithmic horizontal-edge estimates and their height-sequence limits. -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

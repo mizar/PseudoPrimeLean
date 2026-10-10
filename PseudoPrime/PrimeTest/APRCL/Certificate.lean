@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.RawInput
+module
+
+public import PseudoPrime.PrimeTest.APRCL.RawInput
 
 /-!
 # Raw APR-CL certificate replay and finite generation

@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Spec
-import Mathlib.FieldTheory.Finite.Basic
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Spec
+public import Mathlib.FieldTheory.Finite.Basic
 
 /-!
 # Arithmetic preparation for Strong Miller–Rabin at primes
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

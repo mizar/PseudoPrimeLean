@@ -4,16 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Factorization.Partial
-import PseudoPrime.NumberTheory.Factorization.PollardRho.Budget
-import PseudoPrime.PrimeTest.BLS.FactorSupply
-import PseudoPrime.PrimeTest.BLS.Cube
-import PseudoPrime.PrimeTest.BLS.Extended
-import PseudoPrime.NumberTheory.Factorization.PollardRho.Search
+module
+
+public import PseudoPrime.NumberTheory.Factorization.Partial
+public import PseudoPrime.NumberTheory.Factorization.PollardRho.Budget
+public import PseudoPrime.PrimeTest.BLS.FactorSupply
+public import PseudoPrime.PrimeTest.BLS.Cube
+public import PseudoPrime.PrimeTest.BLS.Extended
+public import PseudoPrime.NumberTheory.Factorization.PollardRho.Search
 
 /-!
 # Retained factor data for BLS
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.BLS
 

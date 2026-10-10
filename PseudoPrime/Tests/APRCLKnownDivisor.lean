@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.KnownDivisor
+module
+
+public import PseudoPrime.PrimeTest.APRCL.KnownDivisor
 
 /-!
 # Direct known-divisor regressions
 Check decisions beyond the small-input cap and preserve inconclusive fallbacks.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.APRCL.KnownDivisorTests
 

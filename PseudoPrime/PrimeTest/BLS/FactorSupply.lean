@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.FactorizationPolicy
-import PseudoPrime.NumberTheory.Factorization.PollardRho.FactorSupply
-import PseudoPrime.NumberTheory.Factorization.PrimePowers
-import PseudoPrime.PrimeTest.BLS.Basic
-import PseudoPrime.NumberTheory.Factorization.PollardRho.Basic
+module
+
+public import PseudoPrime.PrimeTest.FactorizationPolicy
+public import PseudoPrime.NumberTheory.Factorization.PollardRho.FactorSupply
+public import PseudoPrime.NumberTheory.Factorization.PrimePowers
+public import PseudoPrime.PrimeTest.BLS.Basic
+public import PseudoPrime.NumberTheory.Factorization.PollardRho.Basic
 
 /-!
 # Pollard rho factor hints for BLS
@@ -16,6 +18,8 @@ import PseudoPrime.NumberTheory.Factorization.PollardRho.Basic
 This module uses a bounded Pollard rho attempt on `n - 1` to supply a proper split. The returned
 divisor can be composite; BLS certificate construction must separately factor and certify its keys.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.BLS
 

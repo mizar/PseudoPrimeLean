@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFarLeftHorizontalBound
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveContourRectangle
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveLeftVerticalBound
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveExplicitFormula
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFarLeftHorizontalBound
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveContourRectangle
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveLeftVerticalBound
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveExplicitFormula
 
 /-!
 # Generic horizontal-edge continuity

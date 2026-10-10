@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.General.VerticalGeometry
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LeftVerticalNonvanishing
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LeftVerticalLBound
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveHorizontalLogDerivBound
-import PseudoPrime.AnalyticNumberTheory.General.GeometricDecay
-import PseudoPrime.AnalyticNumberTheory.General.LogQuadraticEnvelope
+module
+
+public import PseudoPrime.AnalyticNumberTheory.General.VerticalGeometry
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LeftVerticalNonvanishing
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LeftVerticalLBound
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveHorizontalLogDerivBound
+public import PseudoPrime.AnalyticNumberTheory.General.GeometricDecay
+public import PseudoPrime.AnalyticNumberTheory.General.LogQuadraticEnvelope
 
 /-!
 # Left-vertical reciprocal-kernel estimates and integral limits
@@ -20,6 +22,8 @@ On `s_A(t) = -A-1/2+it`, the power factor has norm `x^(-A-3/2)` and
 and the integrable logarithmic envelope to prove continuity, integrability, truncation
 limits, and vanishing as `A → ∞` for `x > 1`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

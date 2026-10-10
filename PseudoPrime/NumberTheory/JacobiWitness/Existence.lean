@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.JacobiWitness.Basic
-import PseudoPrime.NumberTheory.JacobiWitness.Smaller
+module
+
+public import PseudoPrime.NumberTheory.JacobiWitness.Basic
+public import PseudoPrime.NumberTheory.JacobiWitness.Smaller
 
 /-!
 # Existence of odd-prime Jacobi witnesses for odd nonsquares
@@ -14,6 +16,8 @@ Odd nonsquare inputs greater than `3` have smaller odd-prime Jacobi `-1` witness
 The remaining input `3` has witness `5`; together these cases establish nonemptiness of the
 odd-prime witness set without any analytic assumptions.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory
 

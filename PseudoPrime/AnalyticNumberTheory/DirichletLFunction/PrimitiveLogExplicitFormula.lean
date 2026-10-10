@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.MellinWeightedSums
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MellinWeightedSums
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
 
 /-!
 # Logarithmic weighted character sums as vertical integrals
@@ -15,6 +17,8 @@ For any complex Dirichlet character, positive `x`, and `τ > 1`, Mellin inversio
 `mellinWeightTwo` identifies the logarithmic weighted sum with the right-vertical integral
 of `dirichletLogContourKernel`. The factor `x^s/s²` uses the unshifted contour variable.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

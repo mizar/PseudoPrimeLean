@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.TrivialZeroMultiplicity
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroClassification
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.TrivialZeroMultiplicity
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroClassification
 
 /-! General reciprocal trivial-zero series, convergence, and bounds. -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

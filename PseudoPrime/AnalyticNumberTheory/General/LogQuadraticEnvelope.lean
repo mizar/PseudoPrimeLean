@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+module
+
+public import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 
 /-!
 # An integrable envelope for logarithmic growth with quadratic decay
 
 The weight `(1 + log(|t| + 2)) / (1 + t²)` is nonnegative and integrable on the real line.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.General
 

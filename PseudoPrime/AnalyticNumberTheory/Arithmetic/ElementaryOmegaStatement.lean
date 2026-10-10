@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmega
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.OddPrimeCutoff
-import PseudoPrime.NumberTheory.CharacterModulus
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmega
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.OddPrimeCutoff
+public import PseudoPrime.NumberTheory.CharacterModulus
 
 /-!
 # The elementary, Robin-free `ω(4n)` bound
@@ -18,6 +20,8 @@ The statement is proved unconditionally elsewhere by `ElementaryOmegaFiniteCerti
 is only declared and consumed as a hypothesis, keeping this file independent of that proof's
 calculus tail and finite certificate checks.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 

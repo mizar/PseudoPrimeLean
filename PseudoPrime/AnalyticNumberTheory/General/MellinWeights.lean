@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.MellinInversion
-import Mathlib.Analysis.MellinTransform
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+module
+
+public import Mathlib.Analysis.MellinInversion
+public import Mathlib.Analysis.MellinTransform
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 
 /-!
 # Mellin transforms of two elementary smoothing weights

@@ -4,16 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PseudoSquare.CharacterBound
-import PseudoPrime.PseudoSquare.Bounds.WitnessMaximum
-import PseudoPrime.PseudoSquare.Bounds.QNeOneLogSq
-import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaEnvelope
-import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaFinal
-import PseudoPrime.PseudoSquare.Bounds.PointwiseWitness
-import PseudoPrime.PseudoSquare.Computation.SmallN
-import PseudoPrime.PseudoSquare.Computation.QThresholds
-import PseudoPrime.PseudoSquare.Computation.QNeOneFiniteLogSq
-import PseudoPrime.PseudoSquare.Computation.SmallNegOne.Below399
+module
+
+public import PseudoPrime.PseudoSquare.CharacterBound
+public import PseudoPrime.PseudoSquare.Bounds.WitnessMaximum
+public import PseudoPrime.PseudoSquare.Bounds.QNeOneLogSq
+public import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaEnvelope
+public import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaFinal
+public import PseudoPrime.PseudoSquare.Bounds.PointwiseWitness
+public import PseudoPrime.PseudoSquare.Computation.SmallN
+public import PseudoPrime.PseudoSquare.Computation.QThresholds
+public import PseudoPrime.PseudoSquare.Computation.QNeOneFiniteLogSq
+public import PseudoPrime.PseudoSquare.Computation.SmallNegOne.Below399
 
 /-!
 # PseudoSquare umbrella module
@@ -30,3 +32,5 @@ General foundations have their own `PseudoPrime.Analysis`,
 Executable primality tests and Selfridge bounds are exposed by
 `PseudoPrime.PrimeTest` and `PseudoPrime.PrimeTestBounds.Selfridge`, respectively.
 -/
+
+@[expose] public section

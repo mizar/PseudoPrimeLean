@@ -150,3 +150,5 @@ This module collects the general analytic-number-theory foundations used by
 PseudoSquare and other components. LLS-specific applications remain
 under `PseudoPrime.LLS`.
 -/
+
+@[expose] public section

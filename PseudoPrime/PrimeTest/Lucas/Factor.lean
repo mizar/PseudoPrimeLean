@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Lucas.Params
-import Mathlib.Data.Nat.Prime.Basic
+module
+
+public import PseudoPrime.PrimeTest.Lucas.Params
+public import Mathlib.Data.Nat.Prime.Basic
 
 /-!
 # Lucas parameter factor detection

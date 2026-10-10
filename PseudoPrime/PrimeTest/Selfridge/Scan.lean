@@ -4,23 +4,27 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.Wheel30
-import PseudoPrime.PrimeTest.JacobiFuel
-import PseudoPrime.PrimeTest.Selfridge.MethodAStar
-import PseudoPrime.PrimeTest.StrongLucas.Loop
-import PseudoPrime.PrimeTest.StrongLucas.Fast
-import PseudoPrime.PrimeTest.StrongLucas.NoGcd
-import PseudoPrime.PrimeTest.Decision
-import PseudoPrime.PrimeTest.BPSW.Exec
-import Mathlib.Data.List.Find
-import PseudoPrime.PrimeTest.Selfridge.Nonempty
-import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.Wheel30
+public import PseudoPrime.PrimeTest.JacobiFuel
+public import PseudoPrime.PrimeTest.Selfridge.MethodAStar
+public import PseudoPrime.PrimeTest.StrongLucas.Loop
+public import PseudoPrime.PrimeTest.StrongLucas.Fast
+public import PseudoPrime.PrimeTest.StrongLucas.NoGcd
+public import PseudoPrime.PrimeTest.Decision
+public import PseudoPrime.PrimeTest.BPSW.Exec
+public import Mathlib.Data.List.Find
+public import PseudoPrime.PrimeTest.Selfridge.Nonempty
+public import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
 
 /-! # Certified finite factor-detecting Selfridge scan
 
 The ascending scan filters Wheel30 candidates and connects its stopping evidence
 to ordinary and strengthened MR-first decision consumers without assuming GRH.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

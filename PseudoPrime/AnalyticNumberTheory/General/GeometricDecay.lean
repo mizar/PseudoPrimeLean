@@ -4,16 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.SpecificLimits.Normed
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
+module
+
+public import Mathlib.Analysis.SpecificLimits.Normed
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.Ring
 
 /-!
 # Geometric decay with polynomial factors
 
 Shifted natural powers multiplied by a geometric sequence of ratio in `[0, 1)` tend to zero.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.General
 

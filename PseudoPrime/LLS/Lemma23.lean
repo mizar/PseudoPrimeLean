@@ -4,14 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ReciprocalLevelChange
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.AlternatingSums
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.FejerConvexSums
-import PseudoPrime.LLS.Lemma22
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ConductorPrimeSupport
-import PseudoPrime.Analysis.RealLog
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ReciprocalLevelChange
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.AlternatingSums
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.FejerConvexSums
+public import PseudoPrime.LLS.Lemma22
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ConductorPrimeSupport
+public import PseudoPrime.Analysis.RealLog
 
 /-!
 # Reciprocal weighted sums and the LLS Lemma 2.3 interface
@@ -21,6 +23,8 @@ primitive reciprocal lower bound, Lemma 2.3's raw zero-mass estimate, and its el
 simplification.  In particular, no equality between the original and primitive characters at the
 extra level primes is assumed silently.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

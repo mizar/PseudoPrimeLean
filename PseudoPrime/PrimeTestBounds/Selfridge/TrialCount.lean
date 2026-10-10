@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.TrialCount
-import PseudoPrime.PrimeTestBounds.Selfridge.MaximumBridge
-import Mathlib.Basic.Real.Basic
-import Mathlib.Tactic.Linarith
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.TrialCount
+public import PseudoPrime.PrimeTestBounds.Selfridge.MaximumBridge
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Tactic.Linarith
 
 /-!
 # Unconditional maximum and real trial counts
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.Selfridge
 

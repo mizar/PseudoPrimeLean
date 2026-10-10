@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.HeightSequence
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FarLeftLogDeriv
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.HeightSequence
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FarLeftLogDeriv
 
 /-! # Kernel-independent height and rectangle constructions -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

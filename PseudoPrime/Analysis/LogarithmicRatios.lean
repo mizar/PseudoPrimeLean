@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.Calculus.Deriv.MeanValue
-import Mathlib.Analysis.SpecialFunctions.Log.Deriv
-import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Tactic
+module
+
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Tactic
 
 /-!
 # Logarithmic ratios and a logarithmic correction
@@ -16,6 +18,8 @@ This module defines two real logarithmic ratios, computes their derivatives at p
 and proves that both are strictly decreasing on `[8, ∞)`. It also defines the elementary
 correction `log 2 * (2 log y - log 2)`. No character or L-function hypotheses are used.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.Analysis
 

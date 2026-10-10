@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.AbelSummation
-import Mathlib.NumberTheory.LSeries.DirichletContinuation
-import PseudoPrime.AnalyticNumberTheory.Gamma.GrowthElementary
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.VerticalGrowth
+module
+
+public import Mathlib.NumberTheory.AbelSummation
+public import Mathlib.NumberTheory.LSeries.DirichletContinuation
+public import PseudoPrime.AnalyticNumberTheory.Gamma.GrowthElementary
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.VerticalGrowth
 
 /-!
 # Boundedness of partial Dirichlet character sums
@@ -21,6 +23,8 @@ argument with a bounded one for `L(s, χ)`, `χ` nonprincipal,
 letting a single level of Abel summation give a growth bound valid on `Re s > 0` (no sawtooth
 refinement needed).
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

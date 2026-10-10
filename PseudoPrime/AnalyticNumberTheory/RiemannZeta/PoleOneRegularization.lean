@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.LSeries.RiemannZeta
-import Mathlib.NumberTheory.Harmonic.ZetaAsymp
-import Mathlib.Analysis.Meromorphic.LogDeriv
-import Mathlib.Tactic
+module
+
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import Mathlib.NumberTheory.Harmonic.ZetaAsymp
+public import Mathlib.Analysis.Meromorphic.LogDeriv
+public import Mathlib.Tactic
 
 /-! # Kernel-independent zeta PoleOneRegularization -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

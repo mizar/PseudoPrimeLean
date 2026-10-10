@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
-import PseudoPrime.PrimeTest.Selfridge.FirstStop
+module
+
+public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+public import PseudoPrime.PrimeTest.Selfridge.FirstStop
 
 /-!
 # Coincidence of Selfridge stopping rules for PrimeTest

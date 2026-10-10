@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.Candidates
-import PseudoPrime.PrimeTest.Selfridge.Composite
-import Mathlib.Tactic
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.Candidates
+public import PseudoPrime.PrimeTest.Selfridge.Composite
+public import Mathlib.Tactic
 
 /-!
 # Wheel30 candidate arithmetic for PrimeTest
@@ -14,6 +16,8 @@ import Mathlib.Tactic
 This module proves the elementary relationship between the Wheel30 candidate predicates and
 odd prime candidates.  It is independent of `PseudoSquare` and GRH.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

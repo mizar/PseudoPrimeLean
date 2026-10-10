@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.LSeries.DirichletContinuation
-import Mathlib.NumberTheory.LSeries.Dirichlet
-import Mathlib.NumberTheory.LSeries.Nonvanishing
-import Mathlib.Analysis.Fourier.ZMod
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
-import PseudoPrime.Analysis.IntegralLimits
+module
+
+public import Mathlib.NumberTheory.LSeries.DirichletContinuation
+public import Mathlib.NumberTheory.LSeries.Dirichlet
+public import Mathlib.NumberTheory.LSeries.Nonvanishing
+public import Mathlib.Analysis.Fourier.ZMod
+public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
+public import PseudoPrime.Analysis.IntegralLimits
 
 /-!
 # Basic facts about completed Dirichlet `L`-functions
@@ -22,6 +24,8 @@ gamma-factor values at zero by parity, standard nonvanishing at `1`, zero reflec
 character and its inverse, and the Euler-product/log-derivative bridge to the twisted von
 Mangoldt Dirichlet series. None of this mentions any application-specific contour kernel.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

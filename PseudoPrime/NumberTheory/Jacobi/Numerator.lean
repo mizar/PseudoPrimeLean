@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Factorization
-import PseudoPrime.NumberTheory.Jacobi.Basic
-import Mathlib.Data.Nat.ChineseRemainder
-import Mathlib.FieldTheory.Finite.Basic
+module
+
+public import PseudoPrime.NumberTheory.Factorization
+public import PseudoPrime.NumberTheory.Jacobi.Basic
+public import Mathlib.Data.Nat.ChineseRemainder
+public import Mathlib.FieldTheory.Finite.Basic
 
 /-!
 # CRT construction of Jacobi numerators
@@ -15,6 +17,8 @@ import Mathlib.FieldTheory.Finite.Basic
 For an odd nonsquare modulus, this file selects a prime factor of odd multiplicity and constructs
 a natural number that is a quadratic nonresidue at that prime and `1` at every other prime factor.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory
 

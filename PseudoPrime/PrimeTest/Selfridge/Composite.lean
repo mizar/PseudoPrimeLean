@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Algebra.Order.Ring.Abs
-import PseudoPrime.NumberTheory.Jacobi.Basic
-import PseudoPrime.PrimeTest.Selfridge.Witness
+module
+
+public import Mathlib.Algebra.Order.Ring.Abs
+public import PseudoPrime.NumberTheory.Jacobi.Basic
+public import PseudoPrime.PrimeTest.Selfridge.Witness
 
 /-!
 # Prime-factor extraction from composite Selfridge stops
@@ -15,6 +17,8 @@ This file supplies the common structural step in the two composite first-stop cl
 A composite stopping candidate has a strictly smaller odd prime factor that already carries the
 relevant Jacobi value.  The remaining classification isolates the exceptional factor `3`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

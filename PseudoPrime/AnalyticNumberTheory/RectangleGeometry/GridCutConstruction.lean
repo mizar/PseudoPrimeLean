@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.ResidueTheorem
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.ResidueTheorem
 
 /-!
 # Generic strict-grid cut construction for a finite singularity set
@@ -19,6 +21,8 @@ mention no singularity
 set at all; only the cut-generation
 functions and the final separation certificates are parametrized by `S` here.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RectangleGeometry
 

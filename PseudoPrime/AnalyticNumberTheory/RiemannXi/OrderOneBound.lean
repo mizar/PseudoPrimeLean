@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.Growth
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZetaEntireGrowth
-import PseudoPrime.AnalyticNumberTheory.Gamma.GrowthElementary
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.Growth
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZetaEntireGrowth
+public import PseudoPrime.AnalyticNumberTheory.Gamma.GrowthElementary
 
 /-!
 # An explicit global xi growth envelope

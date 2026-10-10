@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.HadamardLimit
-import PseudoPrime.Analysis.EulerMascheroniBounds
-import PseudoPrime.Analysis.NumericalLogBounds
-import Mathlib.Tactic
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.HadamardLimit
+public import PseudoPrime.Analysis.EulerMascheroniBounds
+public import PseudoPrime.Analysis.NumericalLogBounds
+public import Mathlib.Tactic
 
 /-! # General bounds and arithmetic certificates -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannXi
 

@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PseudoSquare.Computation.QNeOneFiniteLogSq
-import PseudoPrime.LLS.Extensions.QNeOneLogWeightedBounds
-import PseudoPrime.PseudoSquare.QNeOneConcrete
+module
+
+public import PseudoPrime.PseudoSquare.Computation.QNeOneFiniteLogSq
+public import PseudoPrime.LLS.Extensions.QNeOneLogWeightedBounds
+public import PseudoPrime.PseudoSquare.QNeOneConcrete
 
 /-!
 # The integrated Q-ne-one witness bound
@@ -26,7 +28,6 @@ cutoff; transfer the finite squarefree witness back to `n`.
 Proof: the analytic branch is obtained by contradiction from the no-witness hypothesis.
 Role: the interface consumed by the later `QNeOne` maximum theorem.
 -/
-
 theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hn11 : 11 ≤ n) :

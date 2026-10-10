@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PseudoSquare.Computation.ResidueWheel
+module
+
+public import PseudoPrime.PseudoSquare.Computation.ResidueWheel
 
 /-!
 # Small CRT certificates through 1500

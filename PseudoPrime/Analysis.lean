@@ -21,3 +21,5 @@ import PseudoPrime.Analysis.QNeOneElementaryBounds
 This module collects analysis that is independent of the PseudoSquare
 development. Focused modules remain independently importable.
 -/
+
+@[expose] public section

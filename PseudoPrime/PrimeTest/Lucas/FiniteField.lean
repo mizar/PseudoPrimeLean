@@ -4,15 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Lucas.Defs
-import PseudoPrime.PrimeTest.Lucas.Spec
-import PseudoPrime.PrimeTest.StrongLucas.Defs
-import Mathlib.Algebra.CharP.Lemmas
-import Mathlib.Algebra.CharP.Algebra
-import Mathlib.Algebra.Polynomial.Degree.IsMonicOfDegree
-import Mathlib.Algebra.Polynomial.SpecificDegree
-import Mathlib.FieldTheory.Finite.Extension
-import Mathlib.RingTheory.AdjoinRoot
+module
+
+public import PseudoPrime.PrimeTest.Lucas.Defs
+public import PseudoPrime.PrimeTest.Lucas.Spec
+public import PseudoPrime.PrimeTest.StrongLucas.Defs
+public import Mathlib.Algebra.CharP.Lemmas
+public import Mathlib.Algebra.CharP.Algebra
+public import Mathlib.Algebra.Polynomial.Degree.IsMonicOfDegree
+public import Mathlib.Algebra.Polynomial.SpecificDegree
+public import Mathlib.FieldTheory.Finite.Extension
+public import Mathlib.RingTheory.AdjoinRoot
 
 /-!
 # Finite-field Lucas identities

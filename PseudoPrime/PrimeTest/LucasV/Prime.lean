@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Lucas.FiniteField
-import PseudoPrime.PrimeTest.LucasV.Spec
+module
+
+public import PseudoPrime.PrimeTest.Lucas.FiniteField
+public import PseudoPrime.PrimeTest.LucasV.Spec
 
 /-!
 # Prime completeness for the Lucas-V test

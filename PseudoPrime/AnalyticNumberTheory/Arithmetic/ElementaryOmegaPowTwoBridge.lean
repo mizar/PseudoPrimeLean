@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaFiniteBridge
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaFiniteBridge
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement
 
 /-!
 # Power-of-two reduction for `ElementaryOmegaFiniteStatement` certificates

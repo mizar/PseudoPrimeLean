@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
-import PseudoPrime.LLS.Lemma24
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.WeightedSumIntegral
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.MellinWeightedSums
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
+public import PseudoPrime.LLS.Lemma24
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.WeightedSumIntegral
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MellinWeightedSums
 
 /-!
 # Riemann explicit-formula interfaces

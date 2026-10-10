@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.HeightSequence
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ContourLimit
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogDerivBound
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.HeightSequence
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ContourLimit
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogDerivBound
 
 /-!
 # Horizontal kernel bounds at good heights
@@ -16,6 +18,8 @@ denominators give `O(log(T+2)²/T²)` bounds on `[-1/2,2]+iT`.
 Integrating over a fixed subsegment gives corresponding integral bounds and
 convergence to zero along the good-height sequence.
 -/
+
+@[expose] public section
 
 noncomputable section
 

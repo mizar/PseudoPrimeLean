@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveResidueClosedForms
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveResidueClosedForms
 
 /-!
 # the residue evaluation (even, start): the generic even-zero regularization derivative
@@ -16,6 +18,8 @@ piece `-(m + s·logDeriv g s)`, the Mellin power `x^{s-1}`, and the simple-pole 
 No character, GRH, or functional-equation content enters here — this is a pure calculus lemma,
 isolated from the even-character analytic machinery (the residue evaluation, even block).
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

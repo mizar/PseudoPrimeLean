@@ -20,6 +20,8 @@ The resulting estimates control weighted zero sums, the derivative at zero, and 
 genus sums. No quadratic-character assumption or LLS numerical inequality is used.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
 /--

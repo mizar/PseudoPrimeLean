@@ -20,6 +20,8 @@ that exponent list to the corresponding finite Jacobi-sum formula; constructing 
 data and reducing the resulting polynomial in the cyclotomic quotient remain separate steps.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.APRCL
 
 /-- Construct the multiplicative character whose value at a selected generator is the supplied

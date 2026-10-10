@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.LSeries.RiemannZeta
-import Mathlib.NumberTheory.LSeries.AbstractFuncEq
-import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
-import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
+module
+
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import Mathlib.NumberTheory.LSeries.AbstractFuncEq
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Deligne
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
 
 /-! Elementary norm estimates for the Riemann zeta function. -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

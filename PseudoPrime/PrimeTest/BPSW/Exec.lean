@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Loop
-import PseudoPrime.PrimeTest.BPSW.Top
-import PseudoPrime.PrimeTest.StrongLucas.Loop
-import PseudoPrime.PrimeTest.StrongLucas.NoGcd
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Loop
+public import PseudoPrime.PrimeTest.BPSW.Top
+public import PseudoPrime.PrimeTest.StrongLucas.Loop
+public import PseudoPrime.PrimeTest.StrongLucas.NoGcd
 
 /-!
 # Miller–Rabin-first BPSW execution

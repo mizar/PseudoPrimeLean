@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GrowthBounds
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GrowthBounds
 
 /-! Kernel-independent estimates extracted from the contour applications. -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

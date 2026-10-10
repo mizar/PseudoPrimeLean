@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaEnvelope
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaFiniteCertificates
-import PseudoPrime.LLS.Theorem11S1GRH
+module
+
+public import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaEnvelope
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaFiniteCertificates
+public import PseudoPrime.LLS.Theorem11S1GRH
 
 /-!
 # The Robin-free boxed bound under GRH

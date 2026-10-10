@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.SearchAscending
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.SearchAscending
 
 /-!
 # Elementary bounded Selfridge search

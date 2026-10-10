@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Jacobi.Basic
-import Mathlib.NumberTheory.DirichletCharacter.Basic
+module
+
+public import PseudoPrime.NumberTheory.Jacobi.Basic
+public import Mathlib.NumberTheory.DirichletCharacter.Basic
 
 /-!
 # Quadratic Dirichlet characters attached to odd moduli
@@ -14,6 +16,8 @@ This file begins the character-theoretic layer by descending the numerator varia
 Jacobi symbol to `ZMod n`.  Multiplicativity and vanishing on nonunits are inherited from the
 corresponding Jacobi-symbol theorems.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory
 

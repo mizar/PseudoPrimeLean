@@ -4,9 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Tools.CertificateIO
+module
+
+public import PseudoPrime.Tools.CertificateIO
 
 /-! # Bounded certificate input regressions -/
+
+@[expose] public section
 
 namespace PseudoPrime.Tests.CertificateIO
 

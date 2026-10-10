@@ -4,25 +4,27 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GridCuts
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.PoleOneRegularization
-import Mathlib.Analysis.Complex.CauchyIntegral
-import Mathlib.Analysis.Meromorphic.NormalForm
-import Mathlib.Analysis.Meromorphic.Order
-import Mathlib.Analysis.Meromorphic.RCLike
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.NumberTheory.Harmonic.ZetaAsymp
-import Mathlib.NumberTheory.LSeries.Dirichlet
-import Mathlib.Topology.MetricSpace.HausdorffDistance
-import PseudoPrime.AnalyticNumberTheory.General.PoleResidueCalculus
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroContribution
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SingularityGeometry
-import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
-import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.Boundary
-import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.GridCutConstruction
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMassBounds
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GridCuts
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.PoleOneRegularization
+public import Mathlib.Analysis.Complex.CauchyIntegral
+public import Mathlib.Analysis.Meromorphic.NormalForm
+public import Mathlib.Analysis.Meromorphic.Order
+public import Mathlib.Analysis.Meromorphic.RCLike
+public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import Mathlib.NumberTheory.Harmonic.ZetaAsymp
+public import Mathlib.NumberTheory.LSeries.Dirichlet
+public import Mathlib.Topology.MetricSpace.HausdorffDistance
+public import PseudoPrime.AnalyticNumberTheory.General.PoleResidueCalculus
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroContribution
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SingularityGeometry
+public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.Boundary
+public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.GridCutConstruction
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMassBounds
 
 /-!
 # Smoothed Riemann-zeta contour kernels and finite explicit-formula identities
@@ -31,6 +33,8 @@ This file defines the logarithmic and reciprocal Mellin-weighted logarithmic der
 zeta, their regularizations and residues, finite contour identities, and vertical integrals.
 These analytic identities do not use downstream numerical inequalities; those remain downstream.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

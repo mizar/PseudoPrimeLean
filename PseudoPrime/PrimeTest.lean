@@ -94,3 +94,5 @@ import PseudoPrime.PrimeTest.Selfridge.WitnessBridge
 This module is the focused import boundary for the new primality-test
 implementation.  Individual test layers remain in their own submodules.
 -/
+
+@[expose] public section

@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BPSW.EulerBaseTwo
+module
+
+public import PseudoPrime.PrimeTest.BPSW.EulerBaseTwo
 
 /-! # Certified conditional Euler omission in Wheel30 BPSW
 
@@ -12,6 +14,8 @@ The optional entries omit Euler after base-two Strong MR for every signed power 
 when n is odd and greater than one. All-input equalities preserve the established
 specifications. Performance assessment remains separate from arithmetic correctness.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.EulerRedundancy
 

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.FirstStop
-import PseudoPrime.PrimeTest.Selfridge.Reciprocity
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.FirstStop
+public import PseudoPrime.PrimeTest.Selfridge.Reciprocity
 
 /-!
 # Selfridge witness interfaces for PrimeTest

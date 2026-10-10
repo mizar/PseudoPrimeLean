@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.LLS.Statement
-import PseudoPrime.NumberTheory.JacobiCharacterPrimeEvaluation
-import PseudoPrime.NumberTheory.JacobiWitness.Basic
-import PseudoPrime.NumberTheory.CharacterModulus
+module
+
+public import PseudoPrime.LLS.Statement
+public import PseudoPrime.NumberTheory.JacobiCharacterPrimeEvaluation
+public import PseudoPrime.NumberTheory.JacobiWitness.Basic
+public import PseudoPrime.NumberTheory.CharacterModulus
 
 /-!
 # From the LLS character bound to a Jacobi witness

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Analysis.LogarithmicMainTerms
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GenericLogResidues
+module
+
+public import PseudoPrime.Analysis.LogarithmicMainTerms
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GenericLogResidues
 
 /-!
 # Logarithmic weighted-sum estimates with the exact even main term

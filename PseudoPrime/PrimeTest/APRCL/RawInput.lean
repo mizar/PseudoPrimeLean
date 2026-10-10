@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.FiniteCriterion
+module
+
+public import PseudoPrime.PrimeTest.APRCL.FiniteCriterion
 
 /-!
 # Bounded raw APR-CL pair inputs
@@ -12,6 +14,8 @@ import PseudoPrime.PrimeTest.APRCL.FiniteCriterion
 Executable guards construct the proof-carrying Jacobi inputs used by the four branch checks.
 The local Gauss/Frobenius implication is not supplied by these constructors.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.APRCL
 

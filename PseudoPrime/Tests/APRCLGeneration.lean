@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.Generate
+module
+
+public import PseudoPrime.PrimeTest.APRCL.Generate
 
 /-!
 # Automatic APR-CL generation regressions
 These tests check finite construction and replay, not the missing local kernel.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.APRCL.GenerationTests
 

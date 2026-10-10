@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTestBounds.Selfridge.Comparison
-import PseudoPrime.PrimeTestBounds.Selfridge.LogGRH
+module
+
+public import PseudoPrime.PrimeTestBounds.Selfridge.Comparison
+public import PseudoPrime.PrimeTestBounds.Selfridge.LogGRH
 
 /-!
 # GRH elementary radius application
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.Selfridge
 

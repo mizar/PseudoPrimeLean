@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Factorization.SmallInput
-import PseudoPrime.PrimeTest.APRCL.Execution
+module
+
+public import PseudoPrime.NumberTheory.Factorization.SmallInput
+public import PseudoPrime.PrimeTest.APRCL.Execution
 
 /-!
 # Independent small-input arithmetic regressions
 Compare primality against enumeration of all proper divisors and replay returned factors.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.SmallInput.Tests
 

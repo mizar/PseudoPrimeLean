@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.NoSmallPrimeFactor
-import PseudoPrime.LLS.WeightedComparison
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.NoSmallPrimeFactor
+public import PseudoPrime.LLS.WeightedComparison
 
 /-!
 # Vanishing weighted defects for Theorem 1.1 S2
@@ -20,6 +22,8 @@ The counterexample hypothesis alone forces `q`'s prime factors below `X` to be a
 coprime to its modulus, so `χ p = 1 ≠ 0` already rules out `p ∣ q`. At the endpoint `n = X`,
 both weights vanish. Thus the strict prime cutoff suffices for the closed finite sums.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.Generate
-import PseudoPrime.PrimeTest.CertificateJson
+module
+
+public import PseudoPrime.PrimeTest.APRCL.Generate
+public import PseudoPrime.PrimeTest.CertificateJson
 
 /-!
 # APR-CL raw JSON certificate interchange
 
 The format preserves exact integers and separates finite replay from the local kernel.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.APRCL
 

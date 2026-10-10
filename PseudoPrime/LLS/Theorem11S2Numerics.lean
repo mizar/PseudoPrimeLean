@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.LLS.WeightedComparison
-import PseudoPrime.Analysis.NumericalLogBounds
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMassBounds
+module
+
+public import PseudoPrime.LLS.WeightedComparison
+public import PseudoPrime.Analysis.NumericalLogBounds
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroMassBounds
 
 /-! # Numerical separation for Theorem 1.1 S2 -/
+
+@[expose] public section
 
 namespace PseudoPrime.LLS
 

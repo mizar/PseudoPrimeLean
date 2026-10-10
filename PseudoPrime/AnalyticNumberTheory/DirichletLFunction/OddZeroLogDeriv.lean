@@ -4,15 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorLogDeriv
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorMultiplicityBridge
-import PseudoPrime.AnalyticNumberTheory.Gamma.TrigammaSpecialValues
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorLogDeriv
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorMultiplicityBridge
+public import PseudoPrime.AnalyticNumberTheory.Gamma.TrigammaSpecialValues
 
 /-!
 # Logarithmic derivatives of odd Dirichlet L-functions at zero
 
 Pole-free neighborhoods and the completed-to-ordinary derivative comparison at the origin.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

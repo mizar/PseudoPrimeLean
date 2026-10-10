@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Finset.Lattice.Fold
-import PseudoPrime.NumberTheory.OddNonsquare
-import PseudoPrime.NumberTheory.JacobiWitness.Existence
+module
+
+public import Mathlib.Data.Finset.Lattice.Fold
+public import PseudoPrime.NumberTheory.OddNonsquare
+public import PseudoPrime.NumberTheory.JacobiWitness.Existence
 
 /-!
 # Finite maxima of least Jacobi witnesses

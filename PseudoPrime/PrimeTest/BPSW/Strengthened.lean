@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BPSW.Prime
-import PseudoPrime.PrimeTest.EulerJacobi.Prime
-import PseudoPrime.PrimeTest.LucasV.Prime
+module
+
+public import PseudoPrime.PrimeTest.BPSW.Prime
+public import PseudoPrime.PrimeTest.EulerJacobi.Prime
+public import PseudoPrime.PrimeTest.LucasV.Prime
 
 /-!
 # Strengthened parameterized Baillie–PSW composition

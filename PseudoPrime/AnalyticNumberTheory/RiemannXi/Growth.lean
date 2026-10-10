@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.Basic
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.Basic
 
 /-!
 # Xi growth by reflection
@@ -13,6 +15,8 @@ A monotone norm envelope on `Re s ≥ 1/2` extends to the whole plane via
 `ξ(1-s)=ξ(s)` and `‖1-s‖ ≤ ‖s‖+1`. The Gamma/zeta factorization supplies
 the right-half-plane input.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannXi
 

@@ -25,7 +25,6 @@ Content: expand the four rectangle edges, then combine generic horizontal decay,
 interval exhaustion, and the generic left-vertical height-sequence limit.
 Role: fixed-`A` normalized boundary interface for the generic logarithmic raw bound.
 -/
-
 theorem tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (A : ℕ)

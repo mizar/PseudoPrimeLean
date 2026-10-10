@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveEvenZeroResidue
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.EvenZeroLocalFactor
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveEvenZeroResidue
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.EvenZeroLocalFactor
 
 /-!
 # Canonical local factor and downstream reciprocal residue
 
 Connect the even Dirichlet L-function local factor to the reciprocal kernel regularization.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

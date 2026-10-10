@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FarLeftLogDeriv
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GrowthBounds
-import PseudoPrime.AnalyticNumberTheory.Gamma.GrowthElementary
-import PseudoPrime.AnalyticNumberTheory.General.GeometricDecay
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FarLeftLogDeriv
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GrowthBounds
+public import PseudoPrime.AnalyticNumberTheory.Gamma.GrowthElementary
+public import PseudoPrime.AnalyticNumberTheory.General.GeometricDecay
 
 /-!
 # Far-left horizontal contour estimates
@@ -18,6 +20,8 @@ Combine the logarithmic-derivative majorant on `[-(2m+1),-1/2]+it` with the
 power and denominator bounds for both kernels. For `x > 1`, integration and
 the chosen growing height sequence make these horizontal integrals vanish.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

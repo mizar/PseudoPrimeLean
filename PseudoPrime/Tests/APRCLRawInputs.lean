@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.RawInput
+module
+
+public import PseudoPrime.PrimeTest.APRCL.RawInput
 
 /-!
 # APR-CL raw input regressions
 
 Execute all four constructors and reject malformed data and exceeded resource bounds.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.APRCL.RawInputTests
 

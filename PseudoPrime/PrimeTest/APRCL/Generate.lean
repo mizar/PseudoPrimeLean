@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.APRCL.Certificate
+module
+
+public import PseudoPrime.PrimeTest.APRCL.Certificate
 
 /-!
 # Bounded automatic APR-CL candidate construction

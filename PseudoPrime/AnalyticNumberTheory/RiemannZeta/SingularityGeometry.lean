@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
-import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.Boundary
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
+public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.Boundary
 
 /-!
 # Singularity geometry for Riemann-zeta contour rectangles
@@ -17,6 +19,8 @@ separation certificates that let a concrete grid construction be plugged in inde
 None of the material here refers to any particular contour kernel; it is reused unchanged by
 every explicit-formula argument built over `riemannZeta`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

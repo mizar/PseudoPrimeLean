@@ -4,22 +4,24 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.Complex.AbsMax
-import Mathlib.Analysis.Complex.BorelCaratheodory
-import Mathlib.Analysis.Complex.CanonicalDecomposition
-import Mathlib.Analysis.Complex.Liouville
-import Mathlib.Analysis.Meromorphic.LogDeriv
-import Mathlib.Analysis.Meromorphic.NormalForm
-import Mathlib.Analysis.Normed.Group.Tannery
-import Mathlib.Analysis.Meromorphic.Order
-import Mathlib.Analysis.Meromorphic.RCLike
-import PseudoPrime.AnalyticNumberTheory.General.CanonicalDecomposition
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.OrderOneBound
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroFiniteness
-import PseudoPrime.AnalyticNumberTheory.RiemannXi.HadamardLimit
-import PseudoPrime.AnalyticNumberTheory.Gamma.TrigammaSpecialValues
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroContribution
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.TrivialZeroMultiplicity
+module
+
+public import Mathlib.Analysis.Complex.AbsMax
+public import Mathlib.Analysis.Complex.BorelCaratheodory
+public import Mathlib.Analysis.Complex.CanonicalDecomposition
+public import Mathlib.Analysis.Complex.Liouville
+public import Mathlib.Analysis.Meromorphic.LogDeriv
+public import Mathlib.Analysis.Meromorphic.NormalForm
+public import Mathlib.Analysis.Normed.Group.Tannery
+public import Mathlib.Analysis.Meromorphic.Order
+public import Mathlib.Analysis.Meromorphic.RCLike
+public import PseudoPrime.AnalyticNumberTheory.General.CanonicalDecomposition
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.OrderOneBound
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroFiniteness
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.HadamardLimit
+public import PseudoPrime.AnalyticNumberTheory.Gamma.TrigammaSpecialValues
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroContribution
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.TrivialZeroMultiplicity
 
 /-!
 # Xi endpoint derivatives and RH zero mass
@@ -29,6 +31,8 @@ give `Σρ mρ/|ρ|² = 2 * riemannZeroMass` under RH. Differentiating finite ge
 also bounds the second logarithmic derivative at zero. The xi/zeta factorization
 and the trigamma value at one transfer this bound to zeta residue estimates.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannXi
 

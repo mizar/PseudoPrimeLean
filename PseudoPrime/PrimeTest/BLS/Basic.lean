@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Prime.Basic
-import Mathlib.Data.Nat.GCD.Basic
-import Mathlib.Data.Nat.Sqrt
-import Mathlib.Data.Nat.ModEq
-import Mathlib.NumberTheory.LucasPrimality
-import Mathlib.RingTheory.ZMod.UnitsCyclic
+module
+
+public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.Data.Nat.GCD.Basic
+public import Mathlib.Data.Nat.Sqrt
+public import Mathlib.Data.Nat.ModEq
+public import Mathlib.NumberTheory.LucasPrimality
+public import Mathlib.RingTheory.ZMod.UnitsCyclic
 
 /-!
 # Elementary arithmetic for the BLS primality criterion

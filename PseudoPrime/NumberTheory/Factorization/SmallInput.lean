@@ -4,9 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Factorization.Defs
+module
+
+public import Mathlib.Data.Nat.Factorization.Defs
 
 /-! # Bounded trial-division factorizations -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory.Factorization.SmallInput
 

@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Computation.Small
-import PseudoPrime.Analysis.LogarithmicConstants
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Computation.Small
+public import PseudoPrime.Analysis.LogarithmicConstants
 
 /-!
 # Logarithmic witness bound for the finite Strong Miller–Rabin range
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 

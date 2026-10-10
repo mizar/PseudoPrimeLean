@@ -21,6 +21,8 @@ whose residue is half its second derivative. The completed-function bridge and
 gamma-factor special values express both formulas using completed logarithmic derivatives.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
 /--

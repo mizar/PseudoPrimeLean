@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Algebra.Ring.Parity
-import Mathlib.Data.Nat.ModEq
-import Mathlib.Tactic.Ring
+module
+
+public import Mathlib.Algebra.Ring.Parity
+public import Mathlib.Data.Nat.ModEq
+public import Mathlib.Tactic.Ring
 
 /-!
 # Selfridge candidate values
@@ -14,6 +16,8 @@ import Mathlib.Tactic.Ring
 This executable-facing candidate layer is independent of GRH, LLS, and the
 analytic `PseudoSquare` development.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.Complex.BorelCaratheodory
-import Mathlib.Analysis.Complex.CanonicalDecomposition
-import Mathlib.Analysis.Complex.Liouville
-import Mathlib.Analysis.Meromorphic.LogDeriv
-import Mathlib.Analysis.Normed.Group.Tannery
+module
+
+public import Mathlib.Analysis.Complex.BorelCaratheodory
+public import Mathlib.Analysis.Complex.CanonicalDecomposition
+public import Mathlib.Analysis.Complex.Liouville
+public import Mathlib.Analysis.Meromorphic.LogDeriv
+public import Mathlib.Analysis.Normed.Group.Tannery
 
 /-!
 # Common canonical-decomposition lemmas
@@ -17,6 +19,8 @@ Generic estimates for canonical factors and holomorphic derivatives on disks. Th
 logarithmic-derivative identity separates a genus-one term from a radius-dependent correction;
 the correction bound supports limiting Hadamard factorizations for entire functions.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.General
 

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
 
 /-!
 # Completed-`L` to ordinary-`L` log-derivative bridge
@@ -19,6 +21,8 @@ This file develops the argument in stages: nonvanishing and differentiability of
 gamma factor off the real axis, an exact closed form for `logDeriv Gammaℝ`, and finally the
 completed-to-ordinary bridge itself.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

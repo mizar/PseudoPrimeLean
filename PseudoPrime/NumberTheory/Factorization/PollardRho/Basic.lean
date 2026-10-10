@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Factorization.Basic
-import Mathlib.Data.Nat.Prime.Basic
-import Mathlib.Data.ZMod.Basic
+module
+
+public import PseudoPrime.NumberTheory.Factorization.Basic
+public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.Data.ZMod.Basic
 
 /-!
 # Executable Pollard rho search
@@ -14,6 +16,8 @@ import Mathlib.Data.ZMod.Basic
 This module implements a fuel-bounded Floyd cycle search in `ZMod n`. A successful result is a
 proper divisor; failure to find one within the supplied trajectory carries no primality information.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory.Factorization.PollardRho
 

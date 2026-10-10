@@ -4,21 +4,23 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
-import Mathlib.Analysis.SpecialFunctions.Gamma.Deriv
-import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Analysis.Complex.BorelCaratheodory
-import Mathlib.Analysis.Complex.HasPrimitives
-import Mathlib.Analysis.Complex.Liouville
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Analysis.Calculus.LogDeriv
-import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-import Mathlib.NumberTheory.LSeries.RiemannZeta
-import Mathlib.NumberTheory.LSeries.Dirichlet
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GrowthBounds
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.BasicBounds
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Deriv
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
+public import Mathlib.Analysis.Complex.BorelCaratheodory
+public import Mathlib.Analysis.Complex.HasPrimitives
+public import Mathlib.Analysis.Complex.Liouville
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.Analysis.Calculus.LogDeriv
+public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import Mathlib.NumberTheory.LSeries.Dirichlet
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GrowthBounds
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.BasicBounds
 
 /-!
 # Left-half-plane logarithmic-derivative estimates
@@ -30,6 +32,8 @@ is `log ‖Γ‖`, not the principal logarithm composed with Gamma.
 Borel–Carathéodory and Cauchy estimates then bound digamma; recurrence and the
 zeta functional equation yield logarithmic-derivative estimates on the left.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

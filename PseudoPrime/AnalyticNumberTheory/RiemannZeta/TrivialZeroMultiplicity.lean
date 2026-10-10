@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroContribution
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroClassification
-import Mathlib.NumberTheory.ZetaValues
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroContribution
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroClassification
+public import Mathlib.NumberTheory.ZetaValues
 
 /-!
 # Simplicity of zeta's trivial zeros
@@ -18,6 +20,8 @@ The first factor is analytic and nonzero there, while the sine has a simple zero
 Thus every trivial zero has multiplicity one. This identifies trivial-zero
 residue contributions with the logarithmic and reciprocal series.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 

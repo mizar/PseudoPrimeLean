@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveEvenZeroLocalFactor
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveResidueClosedForms
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveEvenZeroLocalFactor
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveResidueClosedForms
 
 /-!
 # The sum of reciprocal-kernel residues at zero and one for an even character
@@ -15,6 +17,8 @@ For a primitive nontrivial even character, combine the canonical local factor at
 special values from `PrimitiveResidueClosedForms`. Under GRH this expresses the real part of the
 sum in terms of the modulus, the real Hadamard constant, and the positive real parameter `x`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

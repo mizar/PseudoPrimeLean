@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BLS.FactorSupply
-import PseudoPrime.NumberTheory.Factorization.PollardRho.Orbit
+module
+
+public import PseudoPrime.PrimeTest.BLS.FactorSupply
+public import PseudoPrime.NumberTheory.Factorization.PollardRho.Orbit
 
 /-!
 # Orbit conditions for complete BLS factor supply
@@ -14,6 +16,8 @@ import PseudoPrime.NumberTheory.Factorization.PollardRho.Orbit
 that lets the bounded rho routine return a proper factor. It is a sufficient coverage contract,
 not an unconditional guarantee for fixed rho parameters.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.BLS
 

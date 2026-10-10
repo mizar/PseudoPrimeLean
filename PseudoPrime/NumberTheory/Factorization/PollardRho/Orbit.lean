@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Factorization.PollardRho.Basic
+module
+
+public import PseudoPrime.NumberTheory.Factorization.PollardRho.Basic
 
 /-!
 # Pollard rho orbit specifications
@@ -12,6 +14,8 @@ import PseudoPrime.NumberTheory.Factorization.PollardRho.Basic
 This file gives the mathematical orbit underlying the executable Floyd search and relates one
 Floyd round to consecutive orbit indices.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory.Factorization.PollardRho
 

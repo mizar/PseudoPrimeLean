@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Fib.Zeckendorf
+module
+
+public import Mathlib.Data.Nat.Fib.Zeckendorf
 
 /-!
 # Binary search for the greatest Fibonacci index
@@ -13,6 +15,8 @@ The search stores adjacent Fibonacci values. A natural-number fuel bound guarant
 and the result agrees with the greatest index defined in mathlib. This provides an executable
 basis for Euclidean iteration bounds.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.NumberTheory.Fibonacci
 

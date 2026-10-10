@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogDerivBound
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Jensen
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.JensenNeg
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogDerivBound
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Jensen
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.JensenNeg
 
 /-!
 # Summable weights on nontrivial zeta zeros
@@ -16,6 +18,8 @@ nontrivial zeta zeros, both with and without analytic multiplicity.
 Positive and negative heights are treated separately and then combined;
 compactness handles the bounded-height bands.
 -/
+
+@[expose] public section
 
 noncomputable section
 

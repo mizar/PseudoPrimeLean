@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorLogDeriv
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveHorizontalLogDerivBound
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorMultiplicityBridge
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroContribution
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ContourRegularity
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
-import Mathlib.Analysis.Meromorphic.Complex
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorLogDeriv
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveHorizontalLogDerivBound
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorMultiplicityBridge
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroContribution
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ContourRegularity
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
+public import Mathlib.Analysis.Meromorphic.Complex
 
 /-!
 # Finite reciprocal zero-ledger bound
@@ -20,6 +22,8 @@ zero contribution. The multiplicity bridge and trivial-zero sign bound compare i
 real part to a completed-zero norm. The finite norm sum is at most
 `2*|primitiveBRe χ|/sqrt x` under the general primitive-character GRH hypotheses.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

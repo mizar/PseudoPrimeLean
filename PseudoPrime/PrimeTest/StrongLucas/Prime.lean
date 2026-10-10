@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.StrongLucas.FromLucas
-import PseudoPrime.PrimeTest.StrongLucas.Spec
+module
+
+public import PseudoPrime.PrimeTest.StrongLucas.FromLucas
+public import PseudoPrime.PrimeTest.StrongLucas.Spec
 
 /-!
 # Prime completeness for the Strong Lucas test

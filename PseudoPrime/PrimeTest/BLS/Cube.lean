@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BLS.Basic
-import Mathlib.Data.Int.Basic
+module
+
+public import PseudoPrime.PrimeTest.BLS.Basic
+public import Mathlib.Data.Int.Basic
 
 /-!
 # Arithmetic data for the cube-root BLS criterion
@@ -13,6 +15,8 @@ import Mathlib.Data.Int.Basic
 This module begins the cube-root branch by defining the Euclidean quotient, remainder, and
 integer discriminant, and by proving the exact quotient-remainder decomposition used downstream.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.BLS
 

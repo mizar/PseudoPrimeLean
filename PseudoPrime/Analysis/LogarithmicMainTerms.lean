@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 
 /-!
 # Elementary main terms in logarithmic and reciprocal residue formulas
@@ -15,6 +17,8 @@ These real functions contain the logarithmic, Euler--Mascheroni, and pi terms in
 even residue formulas. Their definitions impose no character, parity, or lower-cutoff assumption.
 Quantitative estimates for a chosen cutoff belong to the modules that use these expressions.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.Analysis
 

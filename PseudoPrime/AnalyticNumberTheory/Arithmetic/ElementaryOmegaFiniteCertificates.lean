@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaPowTwoBridge
-import PseudoPrime.NumberTheory.PrimorialCertificates
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaPowTwoBridge
+public import PseudoPrime.NumberTheory.PrimorialCertificates
 
 /-!
 # Finite certificates for `ElementaryOmegaFiniteStatement`, `1 <= m <= 162`
@@ -30,6 +32,8 @@ Each `(e, k)` pair is verified here through the power comparison and the natural
 `(m+1) * (3470*k*2^k + 3470*e) ≤ 4851*e*2^k + 5000*(m+1)*2^k`.
 These checks prove the certificate without trusting the choice procedure for `(e, k)`.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 

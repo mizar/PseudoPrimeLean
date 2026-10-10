@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LeftVerticalGammaBound
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.FarLeftReflection
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LeftVerticalGammaBound
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.FarLeftReflection
 
 /-!
 # Left-vertical ordinary `L'/L` bound

@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.LSeries.DirichletContinuation
-import Mathlib.NumberTheory.MulChar.Lemmas
-import Mathlib.Analysis.Calculus.Deriv.Star
+module
+
+public import Mathlib.NumberTheory.LSeries.DirichletContinuation
+public import Mathlib.NumberTheory.MulChar.Lemmas
+public import Mathlib.Analysis.Calculus.Deriv.Star
 
 /-!
 # Conjugation symmetry of the completed Dirichlet `L`-function
@@ -26,6 +28,8 @@ Conjugation commutes with the integral
 (`Complex.conj_cpow` for the real-positive base `t`, plus `integral_conj`). This propagates through
 the finite-sum structure without ever needing analytic continuation or an identity theorem.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

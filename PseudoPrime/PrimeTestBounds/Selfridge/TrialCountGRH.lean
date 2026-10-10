@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTestBounds.Selfridge.TrialCount
-import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaFinal
+module
+
+public import PseudoPrime.PrimeTestBounds.Selfridge.TrialCount
+public import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaFinal
 
 /-!
 # GRH trial count bounds
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.Selfridge
 

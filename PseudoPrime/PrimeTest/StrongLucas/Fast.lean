@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Lucas.ReferenceProcedure
-import PseudoPrime.PrimeTest.StrongLucas.Prime
+module
+
+public import PseudoPrime.PrimeTest.Lucas.ReferenceProcedure
+public import PseudoPrime.PrimeTest.StrongLucas.Prime
 
 /-! # Explicit Strong Lucas execution
 
@@ -13,6 +15,8 @@ The PQ core follows isprime_lucas_strong_pq: split n + 1, initialize the Lucas t
 once, then check successive V values before doubling. Definition-side APIs remain
 separate, and callers explicitly choose the executable API. No compiler rewrite is used.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

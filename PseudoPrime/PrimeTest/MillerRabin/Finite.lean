@@ -4,15 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Computation.Small
-import PseudoPrime.PrimeTest.MillerRabin.Prime
-import PseudoPrime.PrimeTest.Result
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Computation.Small
+public import PseudoPrime.PrimeTest.MillerRabin.Prime
+public import PseudoPrime.PrimeTest.Result
 
 /-!
 # Certified primality from bases two and three below 3000
 Extract the finite classification without importing logarithmic estimates or GRH.
 The runtime checker uses only the existing Miller-Rabin computations, with direct cases below four.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.MillerRabin
 

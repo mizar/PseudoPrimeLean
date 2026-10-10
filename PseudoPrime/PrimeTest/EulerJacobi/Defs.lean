@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+module
+
+public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 
 /-!
 # Executable Euler–Jacobi test

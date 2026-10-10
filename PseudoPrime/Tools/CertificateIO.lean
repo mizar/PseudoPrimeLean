@@ -4,9 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Lean
+module
+
+public import Lean
 
 /-! # Shared certificate command parsing and bounded UTF-8 input -/
+
+@[expose] public section
 
 namespace PseudoPrime.Tools.CertificateIO
 

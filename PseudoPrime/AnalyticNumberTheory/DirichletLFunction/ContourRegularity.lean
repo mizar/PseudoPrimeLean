@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroCounting
-import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.ContourRegularity
+module
+
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroCounting
+public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.ContourRegularity
 
 /-!
 # Contour regularity for Dirichlet `L`-functions
@@ -15,6 +17,8 @@ The finite rectangle ledger and segment-avoidance theorems require no applicatio
 hypothesis or kernel.
 The excluded set is a sufficient exceptional set, not a claim that both points are poles.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 

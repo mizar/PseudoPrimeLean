@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.UnifiedGeometry
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FarLeftContourAssembly
-import PseudoPrime.AnalyticNumberTheory.General.PoleResidueCalculus
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.JensenNeg
+module
+
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.UnifiedGeometry
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FarLeftContourAssembly
+public import PseudoPrime.AnalyticNumberTheory.General.PoleResidueCalculus
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.JensenNeg
 
 /-!
 # Conjugation symmetry for the Riemann contour kernels
@@ -16,6 +18,8 @@ This file transfers the upper-horizontal estimates to the lower horizontal edge.
 `x` is positive, both kernels commute with complex conjugation.  The same is consequently true of
 their interval integrals along horizontal lines.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
