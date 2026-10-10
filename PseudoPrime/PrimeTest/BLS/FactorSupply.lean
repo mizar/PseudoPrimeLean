@@ -107,8 +107,10 @@ theorem partialFactorizationOfPrimeSplit_sound {n : ℕ}
           exact ⟨hprime.2.1, Nat.zero_lt_one⟩
     · cases h
 
-/-- Recursively split a natural number with a bounded rho schedule, returning only prime leaves.
-The fuel is a maximum split depth: every internal node receives that many rho rounds. -/
+/-- Recursively split a natural number using the exact prime-leaf policy, returning a complete
+prime list or `none` if a required split fails. At depth `fuel + 1`, the current node receives
+`fuel + 1` rho rounds and each child receives depth `fuel`; this is not a global round budget.
+Prime inputs are accepted even at depth zero. The list supplies complete BLS factor data. -/
 abbrev primeFactorListFuel (params : NumberTheory.Factorization.PollardRho.Params) :
     ℕ → ℕ → Option (List ℕ) :=
   NumberTheory.Factorization.PollardRho.primeFactorListFuel exactPrimeLeafPolicy params

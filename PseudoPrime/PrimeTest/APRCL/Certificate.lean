@@ -14,8 +14,17 @@ public import PseudoPrime.PrimeTest.APRCL.RawInput
 Replay uses a fixed modulus and does not discharge the local Gauss/Frobenius kernel.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.APRCL
 
+/--
+Untrusted APR-CL certificate bound to a claimed target `n`. The parameter `t` fixes
+the modulus, `main` supplies required pair rows, and `extra` supplies guarded flag rows outside
+the fixed auxiliary set. No validity conditions are built into this record: replay checks target
+agreement, positive even `t`, limits, rows, flags, coprimality, and the final divisor scan.
+Acceptance still needs the separate local Gauss/Frobenius implication to establish primality.
+-/
 structure RawCertificate where
   /-- Claimed target number, checked against the caller input. -/
   n : ℕ
@@ -26,6 +35,12 @@ structure RawCertificate where
   /-- Additional guarded flag witnesses outside the fixed auxiliary set. -/
   extra : List RawPairData
 
+/--
+Bounds checked during certificate replay and proposal search. `pairs` limits individual
+inputs and total row count, `maxT` bounds the modulus parameter before construction, and
+`maxCandidates` bounds the supplied proposal prefix. These are input and search bounds, not a
+uniform running-time guarantee.
+-/
 structure CertificateLimits where
   /-- Limits for each pair and the combined row count. -/
   pairs : PairInputLimits
@@ -116,6 +131,11 @@ theorem prime_of_verifyRawCertificate {n : ℕ} {limits : CertificateLimits} {c 
     prime_of_checked_sourceBlocks_scanLoopEarly_none entries (pairFlagCandidates entries) hc hn
       hsize a (hlocal entries hd) hscan
 
+/--
+An unchecked APR-CL proposal without a target binding. It supplies a proposed parameter
+`t`, required main rows, and extra flag rows; `bind` attaches the caller target before bounded
+generation replays the proposal. Positivity, evenness, and row validity are checked by replay.
+-/
 structure CertificateCandidate where
   /-- Positive even parameter fixing the modulus. -/
   t : ℕ

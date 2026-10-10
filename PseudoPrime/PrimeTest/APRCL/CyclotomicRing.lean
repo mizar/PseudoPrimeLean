@@ -4,9 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.RingTheory.AdjoinRoot
-import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
-import PseudoPrime.PrimeTest.APRCL.Parameters
+module
+
+public import Mathlib.RingTheory.AdjoinRoot
+public import Mathlib.Algebra.Polynomial.Basic
+public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
+public import PseudoPrime.PrimeTest.APRCL.Parameters
 
 /-!
 # Prime-power cyclotomic polynomials for APR-CL
@@ -16,11 +19,17 @@ Mathlib's cyclotomic polynomial. The quotient by that polynomial is the abstract
 the later coefficient-array implementation.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.APRCL
 
 noncomputable section
 
-/-- The cyclotomic index `p^(k+1)` used for a prime `p` and positive exponent. -/
+/--
+Cyclotomic period `p^(k+1)`, with zero-based backend index `k`: index zero gives period
+`p`. The definition is total for natural `p`; primality is required by the subsequent
+cyclotomic-polynomial and coefficient-array theorems.
+-/
 def primePowerIndex (p k : ℕ) : ℕ :=
   p ^ (k + 1)
 
@@ -32,7 +41,11 @@ def primePowerStep (p k : ℕ) : ℕ :=
 def primePowerDegree (p k : ℕ) : ℕ :=
   (p - 1) * p ^ k
 
-/-- Explicit geometric-sum polynomial for a prime-power cyclotomic polynomial. -/
+/--
+Geometric-sum polynomial `∑_{i < p} X^(p^k*i)` over `R`. For prime `p` this equals
+`Φ_(p^(k+1))`; its monic relation defines the APR-CL quotient and determines reduction of
+coefficient arrays.
+-/
 def primePowerCyclotomic (p k : ℕ) (R : Type*) [CommRing R] : Polynomial R :=
   ∑ i ∈ Finset.range p, (Polynomial.X ^ p ^ k) ^ i
 
@@ -86,7 +99,11 @@ theorem cyclotomicCoefficientEquiv_decode_encode (n p k : ℕ) (hp : Nat.Prime p
     (cyclotomicCoefficientEquiv n p k hp).symm (cyclotomicCoefficientEquiv n p k hp x) = x := by
   exact (cyclotomicCoefficientEquiv n p k hp).symm_apply_apply x
 
-/-- Encoding then decoding any finite coefficient vector recovers that vector. -/
+/--
+Decoding a finite coefficient vector into the quotient and then re-encoding it recovers
+the vector. This is the equivalence right-inverse law, used to validate the coefficient
+representation.
+-/
 theorem cyclotomicCoefficientEquiv_encode_decode (n p k : ℕ) (hp : Nat.Prime p)
     (v : Fin (primePowerCyclotomic p k (ZMod n)).natDegree → ZMod n) :
     cyclotomicCoefficientEquiv n p k hp ((cyclotomicCoefficientEquiv n p k hp).symm v) = v := by
@@ -146,7 +163,11 @@ def cyclotomicFixedArrayConvolution (n p k : ℕ) (a b : cyclotomicFixedArray n 
   ∑ ij ∈ Finset.antidiagonal e.val,
     cyclotomicFixedArrayCoeff n p k a ij.1 * cyclotomicFixedArrayCoeff n p k b ij.2
 
-/-- Reduce a monomial exponent into the fixed degree interval using the cyclotomic block relation.
+/--
+Reduce `X^e` to a degree-length array using the cyclotomic relation. Below degree
+`d=(p-1)*p^k`, return the delta array; otherwise return the negative sum of reductions at
+`e-d+p^k*i` for `i < p-1`. Primality of `p` ensures each recursive exponent is smaller.
+The correctness theorem identifies its quotient class with the requested root power.
 -/
 def cyclotomicFixedArrayMonomialReduce (n : ℕ) {p k : ℕ} (hp : Nat.Prime p) (e : ℕ) :
     cyclotomicFixedArray n p k :=
@@ -171,7 +192,11 @@ decreasing_by
       Nat.add_lt_add_left hblock' _
     _ = e := Nat.sub_add_cancel he'
 
-/-- The coefficient vector of a single monomial below the cyclotomic degree. -/
+/--
+Degree-length delta array for exponent `e`: coefficient `j` is one exactly when `j=e`.
+If `e` is outside the represented degree, the array is zero. The monomial-reduction backend
+uses this array for exponents below the degree.
+-/
 def cyclotomicFixedArrayMonomialUnit (n p k : ℕ) (e : ℕ) : cyclotomicFixedArray n p k := fun j =>
   if j.val = e then 1 else 0
 
@@ -183,7 +208,12 @@ def cyclotomicFixedArrayToArray (n p k : ℕ) (a : cyclotomicFixedArray n p k) :
 def cyclotomicFixedArrayZeroRow (n p k : ℕ) : Array (ZMod n) :=
   Array.replicate (primePowerDegree p k) 0
 
-/-- Dynamic-programming table of monomial reductions for all exponents below `count`. -/
+/--
+Build the first `count` monomial reductions as a materialized array of coefficient rows.
+Append a delta row below the degree; above it, use the negative cyclotomic-block sum of earlier
+rows. Missing lookups default to zero, while the correctness invariant proves all required
+indices already exist. This shares reductions across executable multiplication.
+-/
 def cyclotomicFixedArrayMonomialReduceTableAux (n : ℕ) {p k : ℕ} (hp : Nat.Prime p) :
     ℕ → Array (Array (ZMod n))
   | 0 => #[]
@@ -297,6 +327,7 @@ def cyclotomicFixedArrayClass (n p k : ℕ) (a : cyclotomicFixedArray n p k) :
 theorem cyclotomicFixedArrayPolynomial_neg (n p k : ℕ) (a : cyclotomicFixedArray n p k) :
     cyclotomicFixedArrayPolynomial n p k (-a) = -cyclotomicFixedArrayPolynomial n p k a := by
   ext d
+  rw [Polynomial.coeff_neg]
   calc
     (cyclotomicFixedArrayPolynomial n p k (-a)).coeff d = cyclotomicFixedArrayCoeff n p k (-a) d :=
       cyclotomicFixedArrayPolynomial_coeff n p k (-a) d
@@ -392,7 +423,11 @@ def cyclotomicFixedCoefficientEquiv (n p k : ℕ) (hn : 1 < n) (hp : Nat.Prime p
       (Equiv.piCongrLeft (fun _ : Fin (primePowerDegree p k) => ZMod n)
         (Equiv.cast (congrArg Fin hdeg)))
 
-/-- Encoding and decoding a fixed-size coefficient array returns the original array. -/
+/--
+For `n > 1` and prime `p`, decoding a degree-length coefficient array and then
+re-encoding its quotient class recovers the original array. The proof uses the equivalence
+right-inverse law; this justifies comparing canonical arrays instead of quotient classes.
+-/
 theorem cyclotomicFixedCoefficientEquiv_encode_decode (n p k : ℕ) (hn : 1 < n) (hp : Nat.Prime p)
     (a : cyclotomicFixedArray n p k) :
     cyclotomicFixedCoefficientEquiv n p k hn hp
@@ -892,7 +927,11 @@ def cyclotomicFixedArrayPowByMulArray (n : ℕ) {p k : ℕ} (hp : Nat.Prime p)
       cyclotomicFixedArrayMulByTableArray n hp previousFn a
 termination_by e => e
 
-/-- View a materialized coefficient array in the fixed-size function interface. -/
+/--
+Read the first cyclotomic-degree coefficients of an ordinary array as a fixed array.
+Short arrays are padded with zero by `getD`, and entries beyond the degree are discarded.
+This is the conversion used by the materialized executable array backend.
+-/
 def cyclotomicFixedArrayOfArray (n p k : ℕ) (a : Array (ZMod n)) : cyclotomicFixedArray n p k :=
   fun j => a.getD j.val 0
 
@@ -1403,8 +1442,11 @@ theorem cyclotomicFixedArrayMulByExpansion_eq_remainder (n : ℕ) (hn : 1 < n) {
   simpa only [cyclotomicFixedArrayPolynomial_coeff, cyclotomicFixedArrayCoeff, i.isLt,
     dite_true] using hi
 
-/-- The double geometric sum converts the prime-length cyclotomic relation into
-the unit multiple `-p` over any commutative ring. -/
+/--
+For any `m` and ring element `x`, prove `∑_{i<m} x^i - m =
+(x-1) * ∑_{i<m} ∑_{j<i} x^j`. Induction on `m` telescopes the geometric sums. Applied to
+the prime-length cyclotomic relation, this identity constructs an inverse of `x-1`.
+-/
 private theorem geometric_sum_double_identity {S : Type*} [CommRing S] (x : S) (m : ℕ) :
     (∑ i ∈ Finset.range m, x ^ i) - (m : S) =
       (x - 1) * ∑ i ∈ Finset.range m, ∑ j ∈ Finset.range i, x ^ j := by
@@ -1651,7 +1693,7 @@ theorem exists_inverse_exponent_mod_primePowerIndex {p k u : ℕ} (hp : Nat.Prim
 
 /-- An exponent inverse modulo the prime-power root period is coprime to its
 underlying prime. -/
-private theorem inverse_exponent_coprime_to_prime {p k u v t : ℕ} (hp : Nat.Prime p)
+theorem inverse_exponent_coprime_to_prime {p k u v t : ℕ} (hp : Nat.Prime p)
     (hprod : u * v = primePowerIndex p k * t + 1) : Nat.Coprime v p := by
   apply Nat.Coprime.symm
   apply hp.coprime_iff_not_dvd.mpr
@@ -1780,7 +1822,7 @@ equivalence for every auxiliary prime block. -/
 theorem cyclotomicRootPowerSubstitutionEquiv_class_of_modulus_coprime (n t q k u : ℕ) (ht : t ≠ 0)
     (hq : q ∈ auxiliaryPrimes t) (hn : Nat.Coprime n (modulus t)) (hu : Nat.Coprime u (modulus t))
     (a : cyclotomicFixedArray n q k) :
-    cyclotomicRootPowerSubstitutionEquiv_of_coprime n
+    cyclotomicRootPowerSubstitutionEquiv_of_coprime n (u := u)
         ((mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq |>.1)
         (auxiliaryPrime_coprime_left_of_modulus hq hn)
         (by
@@ -1805,7 +1847,7 @@ the invertibility of the input exponent modulo each prime-power period.
 -/
 theorem cyclotomicRootPowerSubstitutionEquiv_class_of_input_unit (n t q k : ℕ) (ht : t ≠ 0)
     (hq : q ∈ auxiliaryPrimes t) (hn : Nat.Coprime n (modulus t)) (a : cyclotomicFixedArray n q k) :
-    cyclotomicRootPowerSubstitutionEquiv_of_coprime n
+    cyclotomicRootPowerSubstitutionEquiv_of_coprime n (u := n)
         ((mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq |>.1)
         (auxiliaryPrime_coprime_left_of_modulus hq hn)
         (by
@@ -1818,14 +1860,16 @@ theorem cyclotomicRootPowerSubstitutionEquiv_class_of_input_unit (n t q k : ℕ)
           ((mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq |>.1) a n) := by
   exact cyclotomicRootPowerSubstitutionEquiv_class_of_modulus_coprime n t q k n ht hq hn hn a
 
-/-- Every prime-factor coefficient ring of an input unit modulo the APR-CL modulus
-inherits the input-power equivalence on each auxiliary-prime cyclotomic block.
-This exposes the algebraic action needed when proving a prime-factor orbit condition.
+/--
+For any natural divisor `ℓ` of `n`, with nonzero `t`, auxiliary prime `q`, and `n`
+coprime to the APR-CL modulus, the input-power equivalence over `ZMod ℓ` agrees with coefficient
+substitution by `n`. Divisor coprimality supplies the general substitution theorem. Primality
+of `ℓ` is unnecessary here; later prime-factor orbit arguments specialize this interface.
 -/
 theorem cyclotomicRootPowerSubstitutionEquiv_class_of_prime_factor (n ℓ t q k : ℕ) (ht : t ≠ 0)
     (hq : q ∈ auxiliaryPrimes t) (hℓn : ℓ ∣ n) (hn : Nat.Coprime n (modulus t))
     (a : cyclotomicFixedArray ℓ q k) :
-    cyclotomicRootPowerSubstitutionEquiv_of_coprime ℓ
+    cyclotomicRootPowerSubstitutionEquiv_of_coprime ℓ (u := n)
         ((mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq |>.1)
         (auxiliaryPrime_coprime_left_of_modulus hq (Nat.Coprime.of_dvd_left hℓn hn))
         (by
@@ -1839,12 +1883,15 @@ theorem cyclotomicRootPowerSubstitutionEquiv_class_of_prime_factor (n ℓ t q k 
   have hℓM : Nat.Coprime ℓ (modulus t) := Nat.Coprime.of_dvd_left hℓn hn
   exact cyclotomicRootPowerSubstitutionEquiv_class_of_modulus_coprime ℓ t q k n ht hq hℓM hn a
 
-/-- On the coefficient ring of a prime divisor of the input, the induced APR-CL
-equivalence sends the canonical cyclotomic root to its `n`-th power.
+/--
+For any natural divisor `ℓ` of `n`, the induced input-power equivalence over `ZMod ℓ`
+sends the canonical root to its `n`-th power. Nonzero `t`, auxiliary-prime membership, and
+coprimality with the fixed modulus supply the needed unit indices. No primality premise on
+`ℓ` is required by this root-action identity.
 -/
 theorem cyclotomicRootPowerSubstitutionEquiv_map_root_of_prime_factor (n ℓ t q k : ℕ) (ht : t ≠ 0)
     (hq : q ∈ auxiliaryPrimes t) (hℓn : ℓ ∣ n) (hn : Nat.Coprime n (modulus t)) :
-    cyclotomicRootPowerSubstitutionEquiv_of_coprime ℓ
+    cyclotomicRootPowerSubstitutionEquiv_of_coprime ℓ (u := n)
         ((mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq |>.1)
         (auxiliaryPrime_coprime_left_of_modulus hq (Nat.Coprime.of_dvd_left hℓn hn))
         (by
@@ -1888,6 +1935,11 @@ theorem cyclotomicFixedArrayRoot_pow_index_eq_one_squaring (n : ℕ) (hn : 1 < n
 def rootExponent (n p k : ℕ) (S : cyclotomicQuotient n p k) : Option ℕ :=
   (List.range (primePowerIndex p k)).find? (fun h => decide (cyclotomicRoot n p k ^ h = S))
 
+/--
+If Boolean predicates agree on every member of `l`, their first successful searches
+return the same result. Induction compares the head predicates and then the tail searches.
+This transfers fixed-array root searches to the quotient root specification.
+-/
 private theorem list_find?_congr {α : Type*} (l : List α) (p q : α → Bool)
     (h : ∀ x ∈ l, p x = q x) : List.find? p l = List.find? q l := by
   induction l with

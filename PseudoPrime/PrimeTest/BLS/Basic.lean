@@ -21,9 +21,13 @@ The connection from the executable BLS witnesses to the prime-divisor bound
 is developed alongside the certificate verifier.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.BLS
 
-/-- The factored part is the product of the prime powers in the list. -/
+/-- Multiply the powers `q^e` in the supplied list, with empty product one.
+This raw arithmetic definition accepts arbitrary natural pairs; primality, positive exponents,
+and distinct keys are imposed later by `checkPartialFactorization`. -/
 def factorProduct (factors : List (ℕ × ℕ)) : ℕ :=
   factors.foldl (fun acc qe ↦ acc * qe.1 ^ qe.2) 1
 
@@ -104,13 +108,19 @@ theorem factorPower_dvd_factorProduct (factors : List (ℕ × ℕ)) {qe : ℕ ×
       exact dvd_mul_of_dvd_left (dvd_refl _) _
     · exact dvd_mul_of_dvd_right (ih htail) _
 
-/-- Raw data describing a completely factored part of `n - 1`. -/
+/-- Untrusted data for a factored part `F` and residual cofactor `R` of `n - 1`.
+The structure stores no invariants: `checkPartialFactorization` checks prime keys, positive
+exponents, distinctness, `F > 1`, and the decomposition before BLS certificates use it. -/
 structure PartialFactorizationData where
+  /-- Factor-exponent pairs whose powers multiply to the proposed factored part `F`. -/
   factors : List (ℕ × ℕ)
+  /-- The residual factor `R`, intended to satisfy `n - 1 = F * R`. -/
   cofactor : ℕ
   deriving DecidableEq, Repr
 
-/-- The two congruence and gcd conditions required of a BLS witness for `q`. -/
+/-- A base `a` in `[2,n-2]` satisfying the Fermat congruence modulo `n` and
+`gcd(a^((n-1)/q) - 1,n) = 1`. This predicate supplies the order argument for the prime factor
+`q`; primality of `q` and divisibility by `n - 1` are separate hypotheses in that argument. -/
 def IsBLSWitness (n q a : ℕ) : Prop :=
   2 ≤ a ∧ a ≤ n - 2 ∧ Nat.ModEq n (a ^ (n - 1)) 1 ∧ Nat.Coprime (a ^ ((n - 1) / q) - 1) n
 
@@ -328,7 +338,10 @@ theorem blsWitness_coprime_base_prime_factor {n q a p : ℕ} (hn : 1 < n) (hp : 
   have hone : p ∣ 1 := (Nat.ModEq.dvd_iff hmod dvd_rfl).mp hpow
   exact hp.not_dvd_one hone
 
-/-- The unit represented by a BLS base has order dividing both exponents. -/
+/-- For `n > 1` and a prime divisor `p` of `n`, a BLS witness gives a unit modulo `p`
+whose order divides both `n - 1` and `p - 1`, but does not divide `(n - 1)/q`.
+The Fermat condition supplies divisibility and the gcd clause excludes the smaller exponent;
+this is the bridge from executable witnesses to prime-power order bounds. -/
 theorem blsWitness_order_divisors {n q a p : ℕ} (hn : 1 < n) (hp : Nat.Prime p) (hpn : p ∣ n)
     (hw : IsBLSWitness n q a) :
     ∃ x : (ZMod p)ˣ, orderOf x ∣ n - 1 ∧ orderOf x ∣ p - 1 ∧ ¬orderOf x ∣ (n - 1) / q := by
@@ -425,10 +438,15 @@ theorem blsWitness_prime_power_dvd_prime_sub_one {n q a p e : ℕ} (hn : 1 < n) 
   have hpowOrder := prime_pow_dvd_of_dvd_not_dvd_quotient hq hqpow hxN hxnot
   exact dvd_trans hpowOrder hxP
 
-/-- A square-root BLS certificate consists of factorization and one witness per prime factor. -/
+/-- Untrusted square-root BLS certificate data for an input, its partially factored predecessor,
+and witness bases. The checker enforces `n ≥ 5`, `n < F²`, factor validity, and ordered witness
+coverage; acceptance is consumed by `prime_of_valid_square_certificate`. -/
 structure SquareCertificate where
+  /-- The input whose primality the certificate is intended to establish. -/
   n : ℕ
+  /-- Proposed factors and cofactor in the decomposition of `n - 1`. -/
   factorization : PartialFactorizationData
+  /-- Ordered `(q,a)` witness pairs, with keys matching the factor list exactly. -/
   witnesses : List (ℕ × ℕ)
   deriving DecidableEq, Repr
 

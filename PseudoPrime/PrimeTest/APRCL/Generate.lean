@@ -14,8 +14,16 @@ public import PseudoPrime.PrimeTest.APRCL.Certificate
 Construction and replay remain separate from the unproved local number-theoretic kernel.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.APRCL
 
+/--
+Bounds for automatic row construction. `maxRoots` limits the prefix of natural root
+representatives starting at zero; `maxAuxiliary` limits supplied auxiliary candidates per
+missing flag. The scalar two-adic branch needs no root search. These bounds restrict candidate
+enumeration rather than specifying a uniform running time.
+-/
 structure GenerationBudget where
   /-- Number of root representatives starting at zero. -/
   maxRoots : ℕ

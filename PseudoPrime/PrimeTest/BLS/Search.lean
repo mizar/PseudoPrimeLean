@@ -473,8 +473,9 @@ theorem bls5DiscriminantResult_composite_of_retainedSupply {n : ℕ}
   obtain ⟨hcomp, hresult⟩ := bls5DiscriminantResult_composite_of_some hn hF hdecomp hquotient hroot
   exact ⟨hF, hdecomp, hcomp, hresult⟩
 
-/-- Consume a possible cube-root certificate as a proof-carrying result. Missing, mismatched,
-or rejected data gives `unknown`. -/
+/-- Consume an optional cube-root certificate as a proof-carrying result. Inputs at most one
+give `invalidInput`; above one, a matching accepted certificate gives `prime`, while missing,
+mismatched, or rejected data gives `unknown`. -/
 def boundedCubeResult (n : ℕ) (certificate : Option CubeCertificate) : BLSResult n :=
   if hinput : 1 < n then
     match certificate with
@@ -625,8 +626,9 @@ theorem exists_boundedCubeSearch_prime_of_coverage {n : ℕ} (hn : 1 < n)
   let hprime : Nat.Prime n := hspec.1 ▸ prime_of_valid_cube_certificate certificate hspec.2
   exact ⟨hprime, boundedCubeSearch_prime_case params fuel bases hn hcert⟩
 
-/-- Consume an optional BLS5 certificate through the shared result type. A matching accepted
-certificate proves primality; missing, mismatched, or rejected data returns `unknown`. -/
+/-- Consume an optional BLS5 certificate through the shared result type. Inputs at most one
+give `invalidInput`; above one, a matching accepted certificate proves primality, while missing,
+mismatched, or rejected data returns `unknown`. -/
 def boundedBLS5Result (n : ℕ) (certificate : Option BLS5Certificate) : BLSResult n :=
   if hinput : 1 < n then
     match certificate with
@@ -830,7 +832,10 @@ theorem prime_iff_bls5Arithmetic_of_supply_coverage {n : ℕ} (hn5 : 5 ≤ n)
   have hlarge := primeDivisorsAbove_of_valid_bls_data hn data witnesses hfactor hwitness
   exact bls5_prime_iff_passesArithmeticCriterion hEven hFpos hn hcop hdecomp hbound hlarge
 
-/-- Reuse certified partial data to detect a square BLS5 discriminant. -/
+/-- Classify an optional partial factorization using its supplied validity proof. Inputs at most
+one give `invalidInput`. For valid input, a positive BLS5 quotient and square discriminant give
+`composite`; missing data, zero quotient, or nonsquare discriminant give `unknown`.
+The decomposition extracted from validity justifies the composite proof without witness bases. -/
 def bls5DiscriminantResultFromSupply (n : ℕ) (supply : Option PartialFactorizationData)
     (valid : ∀ data, supply = some data → ValidPartialFactorization n data) : BLSResult n :=
   if hinput : 1 < n then
@@ -1474,8 +1479,8 @@ theorem exists_boundedBLS5SearchWithComposite_prime_of_coverage {n : ℕ} (hn5 :
       harithmetic
 
 /-- A proper divisor contradicts primality by the prime-divisor characterization. -/
-private theorem not_prime_of_proper_factor {n d : ℕ}
-    (h : NumberTheory.Factorization.ProperFactor n d) : ¬Nat.Prime n := by
+theorem not_prime_of_proper_factor {n d : ℕ} (h : NumberTheory.Factorization.ProperFactor n d) :
+    ¬Nat.Prime n := by
   change 1 < d ∧ d < n ∧ d ∣ n at h
   rcases h with ⟨hlo, hhi, hdvd⟩
   intro hn
@@ -1718,8 +1723,9 @@ theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_round_budg
           none := by
   exact prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_budget_tree_search h
 
-/-- A valid supply, square-root bound, and witness coverage make the budget-tree constructor
-succeed, provided every local rho allowance is sufficient to realize the supplied splits. -/
+/-- For `n ≥ 5`, a successful budget-tree supply, square-root bound, and witness in the base
+list for each factor key make the verified constructor succeed. Supply success is an explicit
+premise; the proof collects witnesses and invokes the factor and witness checker specifications. -/
 theorem exists_findSquareCertificateFromBudgetTree_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
     {params : NumberTheory.Factorization.PollardRho.Params}
     {tree : NumberTheory.Factorization.PollardRho.RhoBudgetTree} {bases : List ℕ}

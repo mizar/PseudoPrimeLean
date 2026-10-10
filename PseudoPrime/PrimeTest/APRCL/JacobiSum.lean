@@ -4,11 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.Ring.Basic
-import Mathlib.NumberTheory.JacobiSum.Basic
-import PseudoPrime.PrimeTest.APRCL.CyclotomicRing
-import PseudoPrime.PrimeTest.APRCL.Parameters
+module
+
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.Ring.Basic
+public import Mathlib.NumberTheory.JacobiSum.Basic
+public import Mathlib.NumberTheory.MulChar.Lemmas
+public import PseudoPrime.PrimeTest.APRCL.CyclotomicRing
+public import PseudoPrime.PrimeTest.APRCL.Parameters
 
 /-!
 # Finite Jacobi-sum coefficient aggregation
@@ -362,8 +365,12 @@ theorem jacobiPowerCharacter_apply_oneSub_of_success {q P x e : ℕ} {R : Type*}
   rw [← hvalue]
   exact jacobiPowerCharacter_apply_of_discreteLogTableSearch hq g target hg ζ hζ hP htable
 
-/-- The two character factors in one Jacobi summand combine to the reduced exponent used by
-the executable coefficient search. -/
+/--
+For a valid prime-field Jacobi index and a successful one-subtraction logarithm lookup,
+the two powered character factors equal `ζ^(a*x+b*e)`. Evaluate each character by its certified
+generator power and combine powers. The exponent here is unreduced; the following coefficient
+bridge reduces it modulo the root period.
+-/
 theorem jacobiPowerCharacter_jacobiTerm_eq {q P a b x e : ℕ} {R : Type*} [CommRing R]
     (hq : Nat.Prime q) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (ζ : Rˣ)
     (hζ : (ζ : R) ^ P = 1) (hP : P ∣ q - 1) (hx0 : 0 < x) (hx : x < q - 1)
@@ -785,9 +792,12 @@ theorem jacobiOneSubLogBatchSearch_exists_of_prime_range {q : ℕ} (hq : Nat.Pri
       (fun x hx => jacobiIndexList_mem_valid hx)
   exact ⟨logarithms, hsearch, jacobiOneSubLogBatchSearch_some_spec g hsearch⟩
 
-/-- Coefficient-counted Jacobi sum associated with a supplied discrete-log exponent function.
-The summation range omits `x = 0` and `x = 1`, whose character terms vanish in the Jacobi-sum
-definition; `logOneSub` supplies the exponent of `1 - g^x` for each remaining index. -/
+/--
+Coefficient-counted root sum over generator exponents `1 ≤ x ≤ q-2`, with exponent
+`(a*x + b*logOneSub x) mod P`. The omitted field elements are zero and one: in generator
+coordinates one corresponds to exponent zero, while zero has no unit exponent. Certified
+one-subtraction logarithms connect this finite histogram to the actual Jacobi sum.
+-/
 def jacobiSumFromLogCoefficients {R : Type*} [Semiring R] (q P a b : ℕ) (logOneSub : ℕ → ℕ)
     (z : R) : R :=
   jacobiCoefficientSum P (Finset.Icc 1 (q - 2)) (fun x => (a * x + b * logOneSub x) % P) z
@@ -813,8 +823,11 @@ theorem jacobiSumFromLogCoefficients_eq_indexListSum {R : Type*} [Semiring R] {q
   rw [jacobiSumFromLogCoefficients_eq_direct hP]
   exact (jacobiIndexListSum_eq_finset q _).symm
 
-/-- Read a pointwise table search as a natural-number logarithm, using zero only as the value
-outside the validated Jacobi interval. The Option-valued search remains the computational API. -/
+/--
+Totalize the optional one-subtraction logarithm lookup by returning zero whenever it
+fails. Under the prime-modulus and primitive-root premises, failure is excluded on the valid
+Jacobi interval by the coverage theorem; the Option search remains the computational API.
+-/
 def jacobiOneSubLogValue {q : ℕ} (g : (ZMod q)ˣ) (x : ℕ) : ℕ :=
   (jacobiOneSubLogFromTable g x).getD 0
 
@@ -1132,9 +1145,12 @@ theorem jacobiPowerCharacter_jacobiSum_eq_fin_coefficients {q P a b : ℕ} {R : 
         jacobiCoefficientSum_eq_fin_sum P (Finset.Icc 1 (q - 2))
           (fun x => (a * x + b * jacobiOneSubLogValue g x) % P) (ζ : R)
 
-/-- Materialize a bounded Jacobi exponent histogram as a fixed-size coefficient array over
-`ZMod n`. Its length is the prime-power cyclotomic degree; counts outside that represented
-degree are excluded by taking the cyclotomic period as the histogram bound. -/
+/--
+Build a degree-length coefficient array by summing histogram counts for all exponents
+`r < p^(k+1)`, each multiplied by the reduced monomial array for `X^r`. Exponents above the
+cyclotomic degree are reduced using the defining relation rather than discarded. Counts for
+exponents outside the supplied period are absent, so direct-sum consumers require a bound.
+-/
 def jacobiCoefficientFixedArray (n p k : ℕ) (hp : Nat.Prime p) {α : Type*} [DecidableEq α]
     (xs : Finset α) (exponent : α → ℕ) : cyclotomicFixedArray n p k :=
   ∑ r : Fin (primePowerIndex p k),
@@ -1172,7 +1188,11 @@ theorem jacobiCoefficientFixedArray_pow_class {n p k : ℕ} (hp : Nat.Prime p) {
   rw [cyclotomicFixedArrayPowBySquaring_class]
   rw [jacobiCoefficientFixedArray_class]
 
-/-- Multiply finitely many ring elements raised to the APR-CL weight `⌊n*x/P⌋`. -/
+/--
+Finite product `∏_{x ∈ xs} term(x)^exponent(x)` for a supplied natural exponent
+function. APR-CL callers use the floor weight `n*x/P`; the general definition supports the
+quotient-remainder factorization into one shared power and a residual product.
+-/
 def aprclFiniteWeightedProduct {M : Type*} [CommMonoid M] (xs : Finset ℕ) (term : ℕ → M)
     (exponent : ℕ → ℕ) : M :=
   ∏ x ∈ xs, term x ^ exponent x
@@ -1239,9 +1259,11 @@ theorem aprclCyclotomicWeightedProduct_eq_power_mul_mod {n p k : ℕ} (xs : Fins
           (fun x ↦ input % primePowerIndex p k * x / primePowerIndex p k) :=
   aprclFiniteWeightedProduct_eq_power_mul_mod xs term input (primePowerIndex p k) hP
 
-/-- Evaluate the weighted product over an ordered, duplicate-free input list. This form aligns
-with executable array products while preserving the same quotient-remainder update as the Finset
-specification. -/
+/--
+Ordered product of `term(x)^weight(x)` over the supplied list. Repeated entries retain
+their multiplicity; duplicate-freeness is only needed by the following conversion to a Finset
+product. This list representation aligns with executable array products.
+-/
 def aprclListWeightedProduct {M : Type*} [CommMonoid M] (xs : List ℕ) (term : ℕ → M)
     (weight : ℕ → ℕ) : M :=
   (xs.map (fun x => term x ^ weight x)).prod
@@ -1965,7 +1987,8 @@ theorem aprclOddPrimeJacobiIndexFamily_character_spec {p k : ℕ} (hp : Nat.Prim
   have hspec := datum.inverseConjugate_spec hp i hcop
   exact ⟨hbound, hguard.1, hguard.2, hspec.1, hspec.2⟩
 
-/- The residue classes selected for the high two-adic product have odd indices. -/
+/-- Residues one or three modulo eight are odd. Reduce the given congruence modulo two;
+this supplies the unit-index premise for the high two-adic Jacobi family. -/
 private theorem mod_two_eq_one_of_mod_eight {i : ℕ} (h : i % 8 = 1 ∨ i % 8 = 3) : i % 2 = 1 := by
   calc
     i % 2 = (i % 8) % 2 := (Nat.mod_mod_of_dvd i (by decide : 2 ∣ 8)).symm
@@ -1974,7 +1997,9 @@ private theorem mod_two_eq_one_of_mod_eight {i : ℕ} (h : i % 8 = 1 ∨ i % 8 =
       · rw [h1]
       · rw [h3]
 
-/- Every such index is a unit modulo the high two-adic root period. -/
+/-- An index congruent to one or three modulo eight is coprime to `2^(k+1)`.
+Its oddness excludes divisibility by two, and primality of two lifts coprimality to its power.
+This validates inverse-index substitutions in the high two-adic branch. -/
 private theorem coprime_two_power_of_mod_eight {k i : ℕ} (h : i % 8 = 1 ∨ i % 8 = 3) :
     Nat.Coprime i (primePowerIndex 2 k) := by
   have hnot : ¬2 ∣ i := by
@@ -2589,19 +2614,22 @@ theorem aprclTwoAdicKOneBranchCheck_some_value_eq_neg_one {n q : ℕ}
   · cases hh
   · exact ⟨hbranch.2.2, hvalue⟩
 
-/-- Represent the low two-adic `(C-21)` scalar in the `p=2,k=1` cyclotomic coefficient array.
+/-- Represent the low two-adic `(C-21)` scalar in the `p=2` period-two (Lean index `k=0`)
+cyclotomic coefficient array.
 Its quotient interpretation is the scalar embedded in the corresponding cyclotomic quotient. -/
 def aprclTwoAdicKOneCoefficientArray (n q : ℕ) : cyclotomicFixedArray n 2 0 :=
   cyclotomicFixedArrayScale n 2 0 (aprclTwoAdicKOneValue n q) (cyclotomicFixedArrayOne n 2 0)
 
-/-- Decode the `p=2,k=1` coefficient array to its scalar value in the cyclotomic quotient. -/
+/-- Decode the `p=2` period-two (Lean index `k=0`) coefficient array to its scalar value in the
+cyclotomic quotient. -/
 theorem aprclTwoAdicKOneCoefficientArray_class (n q : ℕ) :
     cyclotomicFixedArrayClass n 2 0 (aprclTwoAdicKOneCoefficientArray n q) =
       AdjoinRoot.of (primePowerCyclotomic 2 0 (ZMod n)) (aprclTwoAdicKOneValue n q) := by
   rw [aprclTwoAdicKOneCoefficientArray, cyclotomicFixedArrayClass_scale,
     cyclotomicFixedArrayOne_class n (by decide : Nat.Prime 2), mul_one]
 
-/-- A successful low two-adic branch check is `-1` after translation to the `p=2,k=1`
+/-- A successful low two-adic branch check is `-1` after translation to the `p=2` period-two (Lean
+index `k=0`)
 cyclotomic quotient. This connects the scalar test to the common coefficient-array interface. -/
 theorem aprclTwoAdicKOneBranchCheck_coefficientArray_class_eq_neg_one {n q : ℕ}
     (hcheck : aprclTwoAdicKOneBranchCheck n q = some 1) :
@@ -2611,13 +2639,15 @@ theorem aprclTwoAdicKOneBranchCheck_coefficientArray_class_eq_neg_one {n q : ℕ
   rw [hvalue.2]
   exact map_neg (AdjoinRoot.of (primePowerCyclotomic 2 0 (ZMod n))) 1
 
-/-- Compute the `J²` factor used by the `p=2,k=2` branch from one Jacobi datum. -/
+/-- Compute the `J²` factor used by the `p=2` period-four (Lean index `k=1`) branch from one
+Jacobi datum. -/
 def aprclTwoAdicKTwoJacobiSquareArray {n : ℕ} (hp : Nat.Prime 2) (datum : APRCLJacobiDatum 2 1) :
     cyclotomicFixedArray n 2 1 :=
   cyclotomicFixedArrayMulByExpansion n hp (datum.coefficientArray n hp)
     (datum.coefficientArray n hp)
 
-/-- The `p=2,k=2` fixed-array expression for `(q J²)^(n/4) J^(2δ)`, where the residue correction
+/-- The `p=2` period-four (Lean index `k=1`) fixed-array expression for `(q J²)^(n/4) J^(2δ)`,
+where the residue correction
 is selected by `n mod 4 = 3`. -/
 def aprclTwoAdicKTwoArray {n : ℕ} (hp : Nat.Prime 2) (datum : APRCLJacobiDatum 2 1) :
     cyclotomicFixedArray n 2 1 :=
@@ -2627,7 +2657,8 @@ def aprclTwoAdicKTwoArray {n : ℕ} (hp : Nat.Prime 2) (datum : APRCLJacobiDatum
   let correction := cyclotomicFixedArrayPowBySquaring n hp jSquared (if n % 4 = 3 then 1 else 0)
   cyclotomicFixedArrayMulByExpansion n hp basePower correction
 
-/-- The `p=2,k=2` coefficient array decodes to the stated Jacobi-sum expression. -/
+/-- The `p=2` period-four (Lean index `k=1`) coefficient array decodes to the stated Jacobi-sum
+expression. -/
 theorem aprclTwoAdicKTwoArray_class {n : ℕ} (hp : Nat.Prime 2) (datum : APRCLJacobiDatum 2 1) :
     cyclotomicFixedArrayClass n 2 1 (aprclTwoAdicKTwoArray hp datum) =
       ((AdjoinRoot.of (primePowerCyclotomic 2 1 (ZMod n)) (datum.q : ZMod n) *
@@ -2639,24 +2670,28 @@ theorem aprclTwoAdicKTwoArray_class {n : ℕ} (hp : Nat.Prime 2) (datum : APRCLJ
     cyclotomicFixedArrayClass_scale, APRCLJacobiDatum.jacobiSumValue_eq_coefficientArray, pow_mul,
     pow_two]
 
-/-- The checked `p=2,k=2` coefficient array. Its datum certifies the character exponents `(1,1)`
+/-- The checked `p=2` period-four (Lean index `k=1`) coefficient array. Its datum certifies the
+character exponents `(1,1)`
 and the exact auxiliary-prime valuation required by the branch. -/
 def aprclValidatedTwoAdicKTwoArray {n : ℕ} (hp : Nat.Prime 2)
     (datum : APRCLJacobiDatumWithParameters 2 1 1 1) : cyclotomicFixedArray n 2 1 :=
   aprclTwoAdicKTwoArray hp datum.datum
 
-/-- The cyclotomic quotient value decoded from the checked `p=2,k=2` array. -/
+/-- The cyclotomic quotient value decoded from the checked `p=2` period-four (Lean index `k=1`)
+array. -/
 noncomputable def aprclValidatedTwoAdicKTwoValue {n : ℕ} (hp : Nat.Prime 2)
     (datum : APRCLJacobiDatumWithParameters 2 1 1 1) : cyclotomicQuotient n 2 1 :=
   cyclotomicFixedArrayClass n 2 1 (aprclValidatedTwoAdicKTwoArray hp datum)
 
-/-- Search the complete formal root-exponent period for the checked `p=2,k=2` value. `none`
+/-- Search the complete formal root-exponent period for the checked `p=2` period-four (Lean index
+`k=1`) value. `none`
 means no exponent in that period represents the value; it does not by itself decide primality. -/
 noncomputable def aprclValidatedTwoAdicKTwoCheck {n : ℕ} (hp : Nat.Prime 2)
     (datum : APRCLJacobiDatumWithParameters 2 1 1 1) : Option ℕ :=
   rootExponent n 2 1 (aprclValidatedTwoAdicKTwoValue hp datum)
 
-/-- A successful `p=2,k=2` search returns the least exponent in the complete root period. -/
+/-- A successful `p=2` period-four (Lean index `k=1`) search returns the least exponent in the
+complete root period. -/
 theorem aprclValidatedTwoAdicKTwoCheck_eq_some_iff {n h : ℕ} (hp : Nat.Prime 2)
     (datum : APRCLJacobiDatumWithParameters 2 1 1 1) :
     aprclValidatedTwoAdicKTwoCheck (n := n) hp datum = some h ↔
@@ -2665,7 +2700,8 @@ theorem aprclValidatedTwoAdicKTwoCheck_eq_some_iff {n h : ℕ} (hp : Nat.Prime 2
         ∀ j < h, cyclotomicRoot n 2 1 ^ j ≠ aprclValidatedTwoAdicKTwoValue hp datum := by
   exact rootExponent_eq_some_iff n 2 1 (aprclValidatedTwoAdicKTwoValue hp datum) h
 
-/-- A failed `p=2,k=2` search means no exponent in the formal period represents the value. -/
+/-- A failed `p=2` period-four (Lean index `k=1`) search means no exponent in the formal period
+represents the value. -/
 theorem aprclValidatedTwoAdicKTwoCheck_eq_none_iff {n : ℕ} (hp : Nat.Prime 2)
     (datum : APRCLJacobiDatumWithParameters 2 1 1 1) :
     aprclValidatedTwoAdicKTwoCheck (n := n) hp datum = none ↔
@@ -2673,7 +2709,8 @@ theorem aprclValidatedTwoAdicKTwoCheck_eq_none_iff {n : ℕ} (hp : Nat.Prime 2)
         cyclotomicRoot n 2 1 ^ h ≠ aprclValidatedTwoAdicKTwoValue hp datum := by
   exact rootExponent_eq_none_iff n 2 1 (aprclValidatedTwoAdicKTwoValue hp datum)
 
-/-- Apply the remaining arithmetic conditions for the `p=2,k=2` branch to a successful
+/-- Apply the remaining arithmetic conditions for the `p=2` period-four (Lean index `k=1`) branch
+to a successful
 cyclotomic root search: the least exponent must be odd and `q^((n-1)/2)` must be `-1` modulo n.
 Failure to meet either condition is represented by `none`. -/
 noncomputable def aprclValidatedTwoAdicKTwoBranchCheck {n : ℕ} (hp : Nat.Prime 2)
@@ -2681,7 +2718,8 @@ noncomputable def aprclValidatedTwoAdicKTwoBranchCheck {n : ℕ} (hp : Nat.Prime
   Option.filter (fun h => decide (h % 2 = 1 ∧ (datum.datum.q : ZMod n) ^ ((n - 1) / 2) = -1))
     (aprclValidatedTwoAdicKTwoCheck (n := n) hp datum)
 
-/-- The `p=2,k=2` branch check succeeds exactly when the root search returns that exponent and
+/-- The `p=2` period-four (Lean index `k=1`) branch check succeeds exactly when the root search
+returns that exponent and
 both additional arithmetic conditions hold. -/
 theorem aprclValidatedTwoAdicKTwoBranchCheck_eq_some_iff {n h : ℕ} (hp : Nat.Prime 2)
     (datum : APRCLJacobiDatumWithParameters 2 1 1 1) :
@@ -2691,7 +2729,8 @@ theorem aprclValidatedTwoAdicKTwoBranchCheck_eq_some_iff {n h : ℕ} (hp : Nat.P
   rw [aprclValidatedTwoAdicKTwoBranchCheck, Option.filter_eq_some_iff]
   simp only [decide_eq_true_eq]
 
-/-- The `p=2,k=2` branch check fails exactly when the root search finds nothing or its found
+/-- The `p=2` period-four (Lean index `k=1`) branch check fails exactly when the root search finds
+nothing or its found
 exponent fails at least one of the two arithmetic conditions. -/
 theorem aprclValidatedTwoAdicKTwoBranchCheck_eq_none_iff {n : ℕ} (hp : Nat.Prime 2)
     (datum : APRCLJacobiDatumWithParameters 2 1 1 1) :
@@ -2701,7 +2740,8 @@ theorem aprclValidatedTwoAdicKTwoBranchCheck_eq_none_iff {n : ℕ} (hp : Nat.Pri
           decide (h % 2 = 1 ∧ (datum.datum.q : ZMod n) ^ ((n - 1) / 2) = -1) ≠ true := by
   rw [aprclValidatedTwoAdicKTwoBranchCheck, Option.filter_eq_none_iff]
 
-/-- Compute the four-period root exponent of the validated `p=2,k=2` array. -/
+/-- Compute the four-period root exponent of the validated `p=2` period-four (Lean index `k=1`)
+array. -/
 def aprclValidatedTwoAdicKTwoArrayCheck {n : ℕ} (hp : Nat.Prime 2)
     (datum : APRCLJacobiDatumWithParameters 2 1 1 1) : Option ℕ :=
   cyclotomicFixedArrayRootExponent n hp (aprclValidatedTwoAdicKTwoArray hp datum)
@@ -2715,7 +2755,8 @@ theorem aprclValidatedTwoAdicKTwoArrayCheck_eq_check {n : ℕ} (hn : 1 < n) (hp 
     cyclotomicFixedArrayRootExponent_eq_rootExponent n hn hp
       (aprclValidatedTwoAdicKTwoArray hp datum)
 
-/-- Compute the `p=2,k=2` branch result from arrays and its odd-exponent and Euler guards. -/
+/-- Compute the `p=2` period-four (Lean index `k=1`) branch result from arrays and its
+odd-exponent and Euler guards. -/
 def aprclValidatedTwoAdicKTwoArrayBranchCheck {n : ℕ} (hp : Nat.Prime 2)
     (datum : APRCLJacobiDatumWithParameters 2 1 1 1) : Option ℕ :=
   Option.filter (fun h => decide (h % 2 = 1 ∧ (datum.datum.q : ZMod n) ^ ((n - 1) / 2) = -1))

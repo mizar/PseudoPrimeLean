@@ -209,13 +209,13 @@ theorem aprclTwoAdicHighPairResult_main_some_spec {n k h : ℕ} (hn : 1 < n) (hp
 case carries a prime `q ≡ 3 mod 4`; the other constructors carry their checked
 character and valuation data. Global pair coverage remains a separate requirement. -/
 inductive APRCLPairInput (n : ℕ) where
-  /-- The scalar `p=2,k=1` formula. -/
+  /-- The scalar period-two formula (`p=2`, Lean index `k=0`). -/
   | twoOne (q : ℕ) (hqPrime : Nat.Prime q) (hqClass : q % 4 = 3)
   /-- The odd-prime Jacobi product with the fixed `J₁,₁` condition. -/
   |
   odd {p k : ℕ} (hp : Nat.Prime p) (hpOdd : 2 < p) (hB2 : aprclB2Condition p)
     (datum : APRCLJacobiDatumWithParameters p k 1 1)
-  /-- The four-period `p=2,k=2` formula. -/
+  /-- The period-four formula (`p=2`, Lean index `k=1`). -/
   | twoTwo (hp : Nat.Prime 2) (datum : APRCLJacobiDatumWithParameters 2 1 1 1)
   /-- The corrected high two-adic Jacobi product. -/
   | twoHigh {k : ℕ} (hp : Nat.Prime 2) (hk : 2 ≤ k) (data : APRCLTwoAdicHighBranchData k)
@@ -443,8 +443,12 @@ inductive LpEvidenceData (n : ℕ) where
   /-- A pair input whose arithmetic flag guard is to be rechecked. -/
   | pair (input : APRCLPairInput n)
 
-/-- Recheck a proposed flag source for `p ∣ t`. Initial evidence uses (L-init);
-pair evidence matches `p` and reruns its arithmetic guard. -/
+/--
+Recheck a proposed flag source for index prime `p`. The initial tag checks primality,
+`2 < p`, `p ∣ t`, and the (L-init) noncongruence. The pair tag only matches its index to `p` and
+reruns its arithmetic flag guard; required-prime membership is imposed by the aggregate caller.
+Neither branch supplies the separate local number-theoretic implication.
+-/
 def LpEvidenceData.check {n : ℕ} (t p : ℕ) : LpEvidenceData n → Bool
   | .initial => decide (Nat.Prime p ∧ 2 < p ∧ p ∣ t ∧ n ^ (p - 1) % p ^ 2 ≠ 1)
   | .pair input => decide (input.key.1 = p) && input.check.flagConditionMet
@@ -483,7 +487,11 @@ theorem LpEvidenceData.check_true_cases {n t p : ℕ} (evidence : LpEvidenceData
     obtain ⟨hkey, hflag⟩ := (LpEvidenceData.check_pair_iff input).mp hcheck
     exact Or.inr ⟨input, rfl, hkey, hflag, input.check_flagConditionMet_imp_passed hflag⟩
 
-/-- Keep a previously obtained candidate when the new one fails rechecking. -/
+/--
+Replace retained flag data with `some candidate` when the new candidate passes rechecking;
+otherwise preserve `old` unchanged. This update supports collection while retaining the invariant
+that an existing checked source cannot be erased by a failed candidate.
+-/
 def LpEvidenceData.update {n : ℕ} (t p : ℕ) (old : Option (LpEvidenceData n))
     (candidate : LpEvidenceData n) : Option (LpEvidenceData n) :=
   if candidate.check t p then some candidate else old

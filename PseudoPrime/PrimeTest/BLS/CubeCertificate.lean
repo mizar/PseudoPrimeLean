@@ -4,17 +4,24 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BLS.Cube
+module
+
+public import PseudoPrime.PrimeTest.BLS.Cube
 
 /-! # Cubic BLS certificate verification -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.BLS
 
 /-- Data for the cube-root BLS branch, with a factored part of `n - 1` and an unresolved
 cofactor. The checker validates the factors, witnesses, cubic bound, and arithmetic branch. -/
 structure CubeCertificate where
+  /-- The input whose primality the certificate is intended to establish. -/
   n : ℕ
+  /-- The proposed factor-exponent list for `F` and cofactor `R` in `n = F * R + 1`. -/
   factorization : PartialFactorizationData
+  /-- Pairs `(q,a)` supplying a BLS witness base for each listed prime factor of `F`. -/
   witnesses : List (ℕ × ℕ)
   deriving DecidableEq, Repr
 

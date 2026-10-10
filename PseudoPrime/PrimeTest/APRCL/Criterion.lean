@@ -36,8 +36,11 @@ theorem powerResidueIterate_eq_pow_mod (n M i : ℕ) : powerResidueIterate n M i
       _ = (n ^ i * n) % M := Nat.mod_mul_mod _ _ _
       _ = n ^ (i + 1) % M := by rw [Nat.pow_succ]
 
-/-- Once a positive iterate reaches one, all later residues repeat the earlier sequence.
-This is the periodicity fact needed to justify stopping the APR-CL residue loop at `r = 1`. -/
+/--
+If the residue at index `i` is one, shifting any index `k` by `i` preserves its residue.
+No positivity assumption on `i` is needed for this equality. Rewrite iterates as modular powers,
+split the exponent, and use the unit residue; later cycle lemmas justify the early scan stop.
+-/
 theorem powerResidueIterate_add_of_eq_one {n M i k : ℕ} (hi : powerResidueIterate n M i = 1) :
     powerResidueIterate n M (i + k) = powerResidueIterate n M k := by
   calc
@@ -49,9 +52,11 @@ theorem powerResidueIterate_add_of_eq_one {n M i k : ℕ} (hi : powerResidueIter
       simp only [one_mul]
     _ = powerResidueIterate n M k := (powerResidueIterate_eq_pow_mod n M k).symm
 
-/-- Every later residue repeats the corresponding residue in the first period once a positive
-iterate is one. This iterates the one-period shift and is the exact cycle fact used to justify
-the `r = 1` early stop after all earlier residues have been checked. -/
+/--
+If the residue at `i` is one, any multiple-period shift `i*q` preserves every residue.
+The proof inducts on `q` using the single-shift lemma. The equality is valid even at `i = 0`;
+positive-cycle consumers use it to justify stopping after the already checked prefix.
+-/
 theorem powerResidueIterate_periodic_of_eq_one {n M i q k : ℕ}
     (hi : powerResidueIterate n M i = 1) :
     powerResidueIterate n M (i * q + k) = powerResidueIterate n M k := by
@@ -394,7 +399,11 @@ theorem powerDivisorScanLoopEarly_eq_none_of_prime {n M t : ℕ} (hM : 1 < M) (h
   · rw [heq] at hhi
     exact Nat.lt_irrefl _ hhi
 
-/-- Prime inputs are rejected by the carried-state divisor scan. -/
+/--
+For prime `n`, the carried-state scan returns `none` for every modulus and scan length.
+Its rejection criterion requires a proper divisor, which a prime cannot have; the no-result
+contract transfers this fact to the executable loop.
+-/
 theorem powerDivisorScanLoop_eq_none_of_prime {n M t : ℕ} (hn : Nat.Prime n) :
     powerDivisorScanLoop n M t = none := by
   apply powerDivisorScanLoop_eq_none_iff.mpr
@@ -404,9 +413,11 @@ theorem powerDivisorScanLoop_eq_none_of_prime {n M t : ℕ} (hn : Nat.Prime n) :
   · rw [heq] at hhi
     exact Nat.lt_irrefl _ hhi
 
-/-- The finite scan returns `none` exactly when every positive exponent below `t` is rejected.
-This connects the executable early-termination search to the hypothesis consumed by the final
-prime criterion. -/
+/--
+The finite residue search returns `none` exactly when no exponent `1 ≤ i ≤ t` yields
+a residue that is a proper divisor of `n`. Unfold the list search and its Boolean predicate to
+obtain the universal nondivisor contract used by the final primality criterion.
+-/
 theorem powerDivisorScan_eq_none_iff {n M t : ℕ} :
     powerDivisorScan n M t = none ↔
       ∀ i, 0 < i → i < t → ¬(1 < n ^ i % M ∧ n ^ i % M < n ∧ n ^ i % M ∣ n) := by

@@ -28,10 +28,15 @@ divisor `d` to the candidate prime `d + 1`. The modulus agrees with the paper's 
 `t`, the range used by the main period theorem; odd `t` is retained only as a total extension.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.APRCL
 
-/-- The fixed-`J₁,₁` APR-CL restriction on an odd auxiliary prime: `2^(p-1)` is not `1` modulo
-`p^2`. This is a parameter condition, not a condition on the input being tested. -/
+/--
+The fixed-`J₁,₁` APR-CL parameter condition `2^(p-1) mod p² ≠ 1`. In the odd-prime
+branch, `p` is the cyclotomic index prime, distinct from the auxiliary field prime `q`. The
+definition itself is total on naturals; primality and `2 < p` are supplied by branch callers.
+-/
 def aprclB2Condition (p : ℕ) : Prop :=
   2 ^ (p - 1) % p ^ 2 ≠ 1
 
@@ -39,7 +44,10 @@ def aprclB2Condition (p : ℕ) : Prop :=
 def aprclB2Check (p : ℕ) : Bool :=
   decide (2 ^ (p - 1) % p ^ 2 ≠ 1)
 
-/-- The B2 Boolean accepts exactly when the auxiliary-prime parameter satisfies its proposition.
+/--
+The B2 Boolean accepts exactly when the index parameter satisfies `aprclB2Condition`.
+Unfolding the Boolean and propositional definitions gives the equivalence, which transfers
+executable parameter checks to the odd-prime branch premise.
 -/
 theorem aprclB2Check_eq_true_iff (p : ℕ) : aprclB2Check p = true ↔ aprclB2Condition p := by
   simp only [aprclB2Check, decide_eq_true_eq, aprclB2Condition]
@@ -242,11 +250,19 @@ theorem primitiveRootSearch_discreteLogTableSearch_exists_of_prime {q : ℕ} (hq
   obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hsome
   exact ⟨a, g, e, hsearch, hcast, hroot, he⟩
 
-/-- The auxiliary primes `q` satisfying `q - 1 ∣ t`, enumerated from divisors of `t`. -/
+/--
+Finite auxiliary-prime set obtained by mapping each positive divisor `d` of `t` to `d+1`
+and retaining primes. For `t ≠ 0`, membership is exactly primality together with `q-1 ∣ t`.
+At `t = 0`, the divisor set and this result are empty. The set indexes the fixed APR-CL modulus.
+-/
 def auxiliaryPrimes (t : ℕ) : Finset ℕ :=
   ((Nat.divisors t).image (fun d => d + 1)).filter Nat.Prime
 
-/-- Executable finite scan of all primes whose predecessor may divide `t`. -/
+/--
+Enumerate primes `q < t+2` satisfying `q-1 ∣ t`, in ascending order. For nonzero `t`
+this covers the auxiliary-prime set; at zero the list is empty. This bounded list supports
+executable parameter enumeration.
+-/
 def auxiliaryPrimeSearch (t : ℕ) : List ℕ :=
   (List.range (t + 2)).filter (fun q => decide (Nat.Prime q ∧ q - 1 ∣ t))
 
@@ -869,8 +885,12 @@ theorem odd_pow_two_modEq_one {a v : ℕ} (ha : Odd a) (hv : 1 ≤ v) :
         a ^ (2 ^ (k + 1).succ) = a ^ (2 ^ k.succ * 2) := by rw [Nat.pow_succ]
         _ = (a ^ (2 ^ k.succ)) ^ 2 := Nat.pow_mul a (2 ^ k.succ) 2
 
-/-- An odd base raised to any positive parameter `t` is one modulo the full
-2-primary block of `e(t)`, whose exponent is `2 + v₂(t)`. -/
+/--
+For nonzero even `t` and odd base `a`, prove `a^t ≡ 1` modulo the two-primary modulus
+block `2^(2 + v₂(t))`. The positive valuation premise supplies evenness; the proof combines the
+odd-base power congruence with the factorization of `t`. This supplies the two-primary component
+of the full APR-CL period theorem.
+-/
 theorem pow_modEq_one_twoPrimaryBlock {t a : ℕ} (ht : t ≠ 0) (hv : 0 < Nat.factorization t 2)
     (ha : Odd a) : Nat.ModEq (2 ^ (2 + Nat.factorization t 2)) (a ^ t) 1 := by
   obtain ⟨v, hvEq⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hv)

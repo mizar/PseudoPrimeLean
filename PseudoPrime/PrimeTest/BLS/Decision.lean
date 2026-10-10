@@ -4,16 +4,24 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Result
-import PseudoPrime.PrimeTest.BLS.Certificate
+module
+
+public import PseudoPrime.PrimeTest.Result
+public import PseudoPrime.PrimeTest.BLS.Certificate
 
 /-! # BLS adapter to certified primality decisions -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.BLS
 
-/-- Project BLS outcomes to the common proof-only interface.
-Inputs below two are proved non-prime; failed searches remain unknown.
-The original BLS result retains its separate invalid-input diagnostic. -/
+/--
+Project a BLS result at `n` to the shared proof-carrying `Decision n`.
+Preserve prime proofs, map composite proofs to `notPrime`, and leave exhausted searches
+`unknown`. An `invalidInput` result carries an upper bound below two, which contradicts
+`Nat.Prime.two_le` and therefore certifies non-primality. The projection drops the distinction
+between invalid input and compositeness while the original BLS result retains that diagnostic.
+-/
 def BLSResult.toDecision {n : ℕ} : BLSResult n → Decision n
   | .prime hp => .prime hp
   | .composite hp => .notPrime hp

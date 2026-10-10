@@ -625,15 +625,17 @@ theorem bls5_prime_iff_passesArithmeticCriterion {n R F : ℕ} (hFeven : Even F)
   rw [bls5PassesArithmeticCriterion_eq_true_iff, bls5DiscriminantIsSquare_eq_false_iff]
   exact bls5_prime_iff_zero_quotient_or_nonsquare hFeven hFpos hn hcop hdecomp hupper hlarge
 
-/-- A BLS5 certificate reuses verified prime powers and witnesses from the ordinary BLS
-certificate, and supplies the cofactor and arithmetic data required by the extended criterion.
-The checker below requires this cofactor to be the one in the partial factorization. -/
+/-- Untrusted data for the extended BLS5 primality criterion. The structure stores proposed
+prime powers, witnesses, and a duplicated cofactor without enforcing their validity.
+The checker requires matching cofactors, valid factor and witness data, even `F`, coprimality
+of `F` and `R`, the expanded size bound, and the zero-quotient or nonsquare arithmetic branch.
+An accepted value is consumed by `prime_of_valid_bls5_certificate`. -/
 structure BLS5Certificate where
   /-- Integer whose primality is certified. -/
   n : ℕ
-  /-- Distinct prime powers dividing `n - 1`, together with their remaining cofactor. -/
+  /-- Proposed prime powers and remaining cofactor; distinctness and validity are checked later. -/
   factorization : PartialFactorizationData
-  /-- One BLS witness base for every prime key in `factorization`. -/
+  /-- Proposed `(q, a)` witnesses, whose keys must match the factor keys in their listed order. -/
   witnesses : List (ℕ × ℕ)
   /-- The cofactor `R` in `n = F * R + 1`, where `F` is the known prime-power product. -/
   cofactor : ℕ

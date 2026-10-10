@@ -4,16 +4,25 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Prime.Basic
+module
+
+public import Mathlib.Data.Nat.Prime.Basic
 
 /-!
 # Certified BLS outcomes
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.BLS
 
-/-- A bounded BLS attempt distinguishes certified prime and composite outcomes, exhausted
-searches, and inputs below the primality domain. The first two constructors carry their proofs. -/
+/--
+Proof-carrying outcome of a bounded BLS attempt at natural input `n`.
+`prime` stores `Nat.Prime n`, `composite` stores its negation, `unknown` records no proof,
+and `invalidInput` stores `n ≤ 1`. Exhausted witness searches are not composite certificates.
+BLS generators retain the invalid-input diagnostic; projection to `Decision n` later converts
+it to certified non-primality while preserving the other conclusive proofs.
+-/
 inductive BLSResult (n : ℕ) where
   /-- A proof that the original input is prime. -/
   | prime (proof : Nat.Prime n)
@@ -24,8 +33,12 @@ inductive BLSResult (n : ℕ) where
   /-- The input is outside the domain `1 < n`. -/
   | invalidInput (proof : n ≤ 1)
 
-/-- Read the correctness proposition carried by a BLS result. `unknown` is intentionally
-uninformative; every conclusive or invalid-input constructor returns its corresponding proof. -/
+/--
+Correctness proposition represented by a BLS result, without extracting its proof.
+Map `prime` to `Nat.Prime n`, `composite` to `¬Nat.Prime n`, `invalidInput` to `n ≤ 1`, and
+`unknown` to the uninformative proposition `True`. `sound_proof` certifies this proposition
+for every constructor; no primality assertion is attached to search exhaustion.
+-/
 def BLSResult.sound {n : ℕ} (result : BLSResult n) : Prop :=
   match result with
   | .prime _ => Nat.Prime n
@@ -33,7 +46,12 @@ def BLSResult.sound {n : ℕ} (result : BLSResult n) : Prop :=
   | .unknown => True
   | .invalidInput _ => n ≤ 1
 
-/-- Every result constructor carries a proof of its stated correctness proposition. -/
+/--
+Every BLS result proves the correctness proposition selected by `BLSResult.sound`.
+The theorem has no extra arithmetic assumptions: case analysis extracts each carried proof,
+and uses `True.intro` for the inconclusive constructor. It validates the proof-carrying result
+interface independently of the algorithm that produced the result.
+-/
 theorem BLSResult.sound_proof {n : ℕ} (result : BLSResult n) : result.sound := by
   cases result with
   | prime proof => exact proof
