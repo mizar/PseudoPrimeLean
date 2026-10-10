@@ -3,42 +3,54 @@
 ## 証明済みの障害
 
 定理1.3のLean命題に現れる係数を
+
 $$
 C_h(\varepsilon)=
 \left(\frac14+\varepsilon\right)
 \left(1-\frac1h\right)^2
 \left(\frac{\log(2h)}{\log(2h)-4}\right)^2
 $$
+
 とする。
 
 許容Mellin核 $K$ と正の切断点 $\lambda$ に対して、
+
 $$
 A_K(\lambda)=\int_0^\lambda
 \frac{\Re\widehat K(u)}{\sqrt u} du,
 \qquad B_K=\Re K(1/2),
 \qquad D_h=hA_K(\lambda)-B_K
 $$
+
 と置く。ここでは $\widehat K$ はコードの `K.transform` を表し、Fourier変換とは区別する。核の質量を $M_K$ とすると、非主指標の零点費用を法の対数で一律に評価する比較から得られる先頭係数は
+
 $$
 c_h(K,\lambda)=\lambda
 \left(\frac{(h-1)M_K}{D_h}\right)^2
 $$
+
 である。比較から上界を得るには $D_h > 0$ が必要になる。
 
 明示的な双対重みにより、指数6では $c_6(K,\lambda)\ge60/121$ が成り立つ。この下限は、Fourier変換の実部が正負の値を取る試験関数にも成り立つ。双対重みの台は $[0,\log(5/2)/\pi]$ で、余弦の全域評価から双対関数のノルム平方を $121/60$ 以下に抑える。積分の交換とMellin変換の順変換により、Mellin核にもこのFourier評価を適用できる。
 
 さらに、核の非負性から $A_K(\lambda)\le B_K$ が成り立つ。 $h\le6$ なら
+
 $$
 5D_h\le(h-1)D_6
 $$
+
 となる。 $4\le h\le6$ と $D_h > 0$ の下で、質量の正値性とこの不等式から
+
 $$
 c_h(K,\lambda)\ge c_6(K,\lambda)\ge\frac{60}{121}
 $$
+
 を得る。一方、同じ範囲では
+
 $$
 C_h(1/200)<\frac{425}{864}<\frac{60}{121}
 $$
+
 である。この比較は、 $\log(2h)<5/2$ と $1-1/h\le5/6$ を用いてLeanで証明されている。
 
 `MellinKernel.no_small_index_mellin_certificate` は、指数4〜6について、この方式で $C_h(1/200)$ 以下の係数を得る核と切断点が存在しないことを述べる。任意の正の誤差で目標係数に達するには、誤差 $1/200$ でも達する必要がある。このため、核の探索、尺度の変更、Taylor項数の増加、有理数の分母の変更だけでは、この方式で目標係数に達しない。
