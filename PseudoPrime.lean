@@ -4,12 +4,23 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory
-import PseudoPrime.Analysis
-import PseudoPrime.AnalyticNumberTheory
-import PseudoPrime.LLS
-import PseudoPrime.LLS.Extensions
-import PseudoPrime.PseudoSquare
-import PseudoPrime.PrimeTest
-import PseudoPrime.PrimeTestBounds
-import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
+module
+
+public import PseudoPrime.NumberTheory
+public import PseudoPrime.Analysis
+public import PseudoPrime.AnalyticNumberTheory
+public import PseudoPrime.LLS
+public import PseudoPrime.LLS.Extensions
+public import PseudoPrime.PseudoSquare
+public import PseudoPrime.PrimeTest
+public import PseudoPrime.PrimeTestBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
+
+/-!
+# PseudoPrime public library
+
+Re-export the arithmetic and analytic foundations, LLS bounds, pseudosquare estimates,
+and certified primality-testing APIs.
+-/
+
+@[expose] public section
