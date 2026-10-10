@@ -19,13 +19,26 @@ branch the Lucas-V condition is `V_(n+1) = 2 Q` in `ZMod n`.  The general
 Jacobi-value form is reserved for a later extension.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- The mathematical Lucas-V condition in the initial Selfridge branch. -/
+/--
+Lucas-V condition for natural `n` and proof-carrying recurrence parameters `param`.
+Require both `jacobiSym param.D n = -1` and `V_(n+1) = 2Q` in `ZMod n`.
+The discriminant equation is stored in `param`; this proposition covers the minus-one branch
+used by Selfridge selection, not a general Jacobi-index Lucas-V criterion.
+Executable acceptance is related to this proposition by the specification theorem.
+-/
 def IsLucasVProbablePrime (n : ℕ) (param : LucasParams) : Prop :=
   jacobiSym param.D n = -1 ∧ lucasVZMod n param.P param.Q (n + 1) = 2 * (param.Q : ZMod n)
 
-/-- The executable Lucas-V test for explicit integer parameters. -/
+/--
+Executable Boolean Lucas-V comparison for natural `n` and signed parameters `D`, `P`, `Q`.
+Decide the conjunction of Jacobi value `-1` and the fast modular identity `V_(n+1) = 2Q`.
+The definition does not check the discriminant equation or a primality precheck; guarded decision
+adapters supply the required parameter checks before treating a failure as certified rejection.
+-/
 def lucasVWithParams (n : ℕ) (D P Q : ℤ) : Bool :=
   decide (jacobiSym D n = -1 ∧ lucasVZModFast n P Q (n + 1) = 2 * (Q : ZMod n))
 

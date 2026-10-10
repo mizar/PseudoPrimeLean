@@ -15,9 +15,17 @@ public import PseudoPrime.PrimeTest.StrongLucas.Spec
 This file connects the Jacobi `-1` branch to the finite-field Lucas bridge.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- A prime modulus passes the Strong Lucas test in the Jacobi `-1` branch. -/
+/--
+A prime modulus passes Strong Lucas in the Jacobi-minus-one branch.
+Assume `n.Prime`, the discriminant equation `D = P * P - 4 * Q`, and `jacobiSym D n = -1`.
+The finite-field bridge gives `U_(n+1) = 0`; the selected-index theorem identifies this with
+the Lucas index, and the Lucas-to-Strong bridge finds a successful finite branch.
+The executable specification converts that branch to `true` for BPSW prime completeness.
+-/
 theorem strongLucasWithParams_of_prime {n : ℕ} (hn : n.Prime) (D P Q : ℤ)
     (hdisc : D = P * P - 4 * Q) (hjacobi : jacobiSym D n = -1) :
     strongLucasWithParams n D P Q = true := by

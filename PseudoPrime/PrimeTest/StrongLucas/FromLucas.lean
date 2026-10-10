@@ -4,14 +4,24 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Lucas.FiniteField
-import PseudoPrime.PrimeTest.StrongLucas.Defs
+module
+
+public import PseudoPrime.PrimeTest.Lucas.FiniteField
+public import PseudoPrime.PrimeTest.StrongLucas.Defs
 
 /-! # Strong Lucas consequences of finite-field Lucas identities -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- A zero of `U_(d 2^s)` yields the finite Strong Lucas disjunction. -/
+/--
+A zero `U_(d * 2^s)` over a field forces the finite Strong Lucas disjunction.
+For arbitrary integer parameters `P`, `Q` and natural `d`, `s`, conclude `U_d = 0` or
+`V_(d * 2^r) = 0` for some `r < s`. Induction on `s` factors each doubled `U` as `U * V`
+and uses the field's zero-product property. This is the algebraic Lucas-to-Strong bridge;
+there is no primality or nonsquare hypothesis at this abstract field level.
+-/
 theorem lucasU_twoAdic_zero_implies_strong {K : Type*} [Field K] (P Q : ℤ) :
     ∀ d s : ℕ,
       (lucasU P Q (d * 2 ^ s) : K) = 0 →
@@ -39,7 +49,13 @@ theorem lucasU_twoAdic_zero_implies_strong {K : Type*} [Field K] (P Q : ℤ) :
     · right
       exact ⟨s, List.mem_range.mpr (Nat.lt_succ_self s), hV⟩
 
-/-- A zero at the full Lucas index implies the finite Strong Lucas condition. -/
+/--
+At a prime modulus, a zero at the full selected Lucas index yields the Strong condition.
+The instance `Fact n.Prime` makes `ZMod n` a field; `param` carries its discriminant equation,
+and `hzero` supplies the full-index `U` zero. Decompose the index into odd part and power of
+two, apply the field-level zero-factor induction, then unfold the finite Strong specification.
+Prime completeness combines this bridge with the finite-field Lucas index theorem.
+-/
 theorem isStrongLucasProbablePrime_of_lucasUZMod_index_zero {n : ℕ} [Fact n.Prime]
     (param : LucasParams)
     (hzero : lucasUZMod n param.P param.Q (lucasProbablePrimeIndex n param.D) = 0) :

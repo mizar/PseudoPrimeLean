@@ -16,17 +16,30 @@ The executable evaluator uses binary powering of the companion matrix.  The
 ordinary recursive Lucas sequences remain the proof-side specification.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- The companion matrix of the Lucas recurrence over `ZMod n`. -/
+/--
+The modular recurrence matrix [[P,-Q],[1,0]] for signed Lucas parameters.
+Its powers encode consecutive U values and its trace gives V, enabling binary evaluation.
+-/
 def lucasCompanion (n : ℕ) (P Q : ℤ) : Matrix (Fin 2) (Fin 2) (ZMod n) :=
   !![(P : ZMod n), -(Q : ZMod n); 1, 0]
 
-/-- Binary powering of the Lucas companion matrix. -/
+/--
+Compute the kth power of the Lucas companion matrix by npowBinRec.
+The result is a 2-by-2 matrix over ZMod n for any natural modulus and index.
+The following correctness theorem connects binary execution with ordinary matrix powers.
+-/
 def lucasCompanionPowFast (n : ℕ) (P Q : ℤ) (k : ℕ) : Matrix (Fin 2) (Fin 2) (ZMod n) :=
   npowBinRec k (lucasCompanion n P Q)
 
-/-- The fast matrix power agrees with ordinary matrix power. -/
+/--
+For every n,P,Q,k, binary companion powering equals ordinary matrix power.
+Induction uses the zero and successor equations of npowBinRec.
+This allows matrix sequence identities to certify the executable evaluator.
+-/
 theorem lucasCompanionPowFast_eq_pow (n : ℕ) (P Q : ℤ) (k : ℕ) :
     lucasCompanionPowFast n P Q k = lucasCompanion n P Q ^ k := by
   unfold lucasCompanionPowFast
@@ -34,7 +47,12 @@ theorem lucasCompanionPowFast_eq_pow (n : ℕ) (P Q : ℤ) (k : ℕ) :
   | zero => rw [npowBinRec_zero, pow_zero]
   | succ k ih => rw [npowBinRec_succ, pow_succ, ih]
 
-/-- The first-column matrix formula for a positive Lucas index. -/
+/--
+For every k, the full companion power at k+1 has rows
+[U_{k+2}, -Q U_{k+1}] and [U_{k+1}, -Q U_k], interpreted in ZMod n.
+Induction multiplies the matrix and applies the U recurrence entrywise.
+The first column recovers U and the trace recovers V in the fast correctness proofs.
+-/
 theorem lucasCompanion_pow_succ (n : ℕ) (P Q : ℤ) :
     ∀ k : ℕ,
       lucasCompanion n P Q ^ (k + 1) =
@@ -88,13 +106,21 @@ theorem lucasCompanion_pow_succ (n : ℕ) (P Q : ℤ) :
         Fin.sum_univ_two, Matrix.cons_val_zero, mul_neg, mul_zero, add_zero, neg_inj]
       ring
 
-/-- Four scalar entries of a `2 × 2` matrix used by the executable path. -/
+/--
+Four entries of a 2-by-2 matrix, stored without a matrix-indexing function.
+The fields a,b,c,d are respectively the top-left, top-right, bottom-left and bottom-right entries.
+No sequence invariant is required for arbitrary states; scalar multiplication and powering
+provide the executable representation of the Lucas companion matrix.
+-/
 structure LucasScalarState (R : Type*) where
   a : R
   b : R
   c : R
   d : R
 
+/-- Equality of all four entries gives equality of scalar states over any type.
+Destructure both records and use constructor injectivity.
+This extensionality rule reduces scalar algebra laws to entrywise equations. -/
 @[ext]
 theorem LucasScalarState.ext {x y : LucasScalarState R} (ha : x.a = y.a) (hb : x.b = y.b)
     (hc : x.c = y.c) (hd : x.d = y.d) : x = y := by
@@ -103,21 +129,41 @@ theorem LucasScalarState.ext {x y : LucasScalarState R} (ha : x.a = y.a) (hb : x
   simp only [mk.injEq] at *
   exact ⟨ha, hb, hc, hd⟩
 
+/--
+Multiply two four-entry matrix states over a semiring using the usual row-column sums.
+The returned a,b,c,d entries represent the product without indexed matrix evaluation.
+This operation is the multiplication used by scalar binary companion powering.
+-/
 def lucasScalarMul [Semiring R] (x y : LucasScalarState R) : LucasScalarState R :=
   { a := x.a * y.a + x.b * y.c
     b := x.a * y.b + x.b * y.d
     c := x.c * y.a + x.d * y.c
     d := x.c * y.b + x.d * y.d }
 
+/--
+Equip four-entry states over a semiring with lucasScalarMul as their multiplication.
+The operation is ordinary 2-by-2 matrix multiplication in the scalar representation.
+-/
 instance lucasScalarMulInstance [Semiring R] : Mul (LucasScalarState R) :=
   ⟨lucasScalarMul⟩
 
+/--
+The identity scalar state (a,b,c,d)=(1,0,0,1) over a semiring.
+This initializes binary powers and represents the identity companion-matrix power.
+-/
 def lucasScalarOne [Semiring R] : LucasScalarState R :=
   { a := 1, b := 0, c := 0, d := 1 }
 
+/--
+Use lucasScalarOne as the unit of four-entry states over a semiring.
+Its matrix representation is the 2-by-2 identity used in binary powering.
+-/
 instance lucasScalarOneInstance [Semiring R] : One (LucasScalarState R) :=
   ⟨lucasScalarOne⟩
 
+/-- Four-entry states form a monoid over a commutative semiring under matrix multiplication.
+Associativity and both unit laws are checked in each entry by polynomial normalization.
+The instance enables binary exponentiation of executable Lucas companion states. -/
 instance [CommSemiring R] : Monoid (LucasScalarState R) where
   mul_assoc x y z := by
     cases x with
@@ -153,11 +199,19 @@ instance [CommSemiring R] : Monoid (LucasScalarState R) where
           { a := xa, b := xb, c := xc, d := xd }
       apply LucasScalarState.ext <;> simp only [lucasScalarMul, lucasScalarOne] <;> ring
 
-/-- The scalar state corresponding to a matrix. -/
+/--
+Represent a four-entry state as the matrix [[a,b],[c,d]].
+No algebraic assumptions are required; multiplication and unit preservation
+connect executable scalar states to matrix-based correctness proofs.
+-/
 def lucasScalarStateMatrix {R : Type*} (x : LucasScalarState R) : Matrix (Fin 2) (Fin 2) R :=
   !![x.a, x.b; x.c, x.d]
 
-/-- Scalar-state multiplication is matrix multiplication entrywise. -/
+/--
+Over a commutative semiring, the matrix representation preserves scalar multiplication.
+Expand the two-term row-column sums entrywise; each equality is definitional.
+This transports scalar powering to companion-matrix powering.
+-/
 theorem lucasScalarStateMatrix_mul [CommSemiring R] (x y : LucasScalarState R) :
     lucasScalarStateMatrix (x * y) = lucasScalarStateMatrix x * lucasScalarStateMatrix y := by
   ext i j
@@ -179,7 +233,11 @@ theorem lucasScalarStateMatrix_mul [CommSemiring R] (x y : LucasScalarState R) :
       Matrix.cons_val_zero]
     rfl
 
-/-- Scalar-state one is the identity matrix. -/
+/--
+Over a commutative semiring, the scalar unit represents the identity matrix.
+Check the four entries, distinguishing diagonal and off-diagonal indices.
+This supplies the zero-power case of the representation bridge.
+-/
 theorem lucasScalarStateMatrix_one [CommSemiring R] :
     lucasScalarStateMatrix (1 : LucasScalarState R) = (1 : Matrix (Fin 2) (Fin 2) R) := by
   ext i j
@@ -199,40 +257,67 @@ theorem lucasScalarStateMatrix_one [CommSemiring R] :
       Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.one_apply_eq]
     rfl
 
-/-- Binary powering of the scalar state maps to binary matrix powering. -/
+/--
+For any scalar state over a commutative semiring, representation commutes with binary powering.
+Induction on the exponent uses preservation of multiplication and the unit.
+This transfers executable companion-state powers to the matrix formula.
+-/
 theorem lucasScalarStatePowFast_matrix [CommSemiring R] (x : LucasScalarState R) (k : ℕ) :
     lucasScalarStateMatrix (npowBinRec k x) = npowBinRec k (lucasScalarStateMatrix x) := by
   induction k with
   | zero => rw [npowBinRec_zero, npowBinRec_zero, lucasScalarStateMatrix_one]
   | succ k ih => rw [npowBinRec_succ, npowBinRec_succ, lucasScalarStateMatrix_mul, ih]
 
-/-- The companion matrix encoded as four scalar entries over `ZMod n`. -/
+/--
+Encode the companion matrix as (P,-Q,1,0) in ZMod n.
+Signed parameters are reduced modulo n; this state is the base for scalar Lucas powers.
+-/
 def lucasScalarSeed (n : ℕ) (P Q : ℤ) : LucasScalarState (ZMod n) :=
   { a := (P : ZMod n), b := -(Q : ZMod n), c := 1, d := 0 }
 
-/-- Binary powering of the scalar Lucas state over `ZMod n`. -/
+/--
+Compute the kth power of the scalar companion seed by binary exponentiation.
+The four modular entries represent the companion-matrix power, without matrix indexing
+in the executable path; U is recovered from c and V from a+d.
+-/
 def lucasScalarPowFast (n : ℕ) (P Q : ℤ) (k : ℕ) : LucasScalarState (ZMod n) :=
   npowBinRec k (lucasScalarSeed n P Q)
 
-/-- Scalar Lucas powering has the same matrix representation as companion powering. -/
+/--
+For every n,P,Q,k, the scalar companion power represents the fast matrix companion power.
+Use the general binary-power representation theorem and the definitional seed equality.
+This is the bridge used to certify the scalar U and V evaluators.
+-/
 theorem lucasScalarPowFast_to_matrix (n : ℕ) (P Q : ℤ) (k : ℕ) :
     lucasScalarStateMatrix (lucasScalarPowFast n P Q k) = lucasCompanionPowFast n P Q k := by
   unfold lucasScalarPowFast lucasScalarSeed lucasCompanionPowFast
   rw [lucasScalarStatePowFast_matrix]
   rfl
 
-/-- Fast `ZMod` evaluation of Lucas `U`, with index zero handled separately. -/
+/--
+Compute U_k(P,Q) modulo n using the bottom-left entry of the scalar companion power.
+Return zero explicitly at index zero; all positive indices use binary exponentiation.
+The following theorem compares this executable value with the recursive integer specification.
+-/
 def lucasUZModFast (n : ℕ) (P Q : ℤ) (k : ℕ) : ZMod n :=
   match k with
   | 0 => 0
   | k + 1 => (lucasScalarPowFast n P Q (k + 1)).c
 
-/-- Fast `ZMod` evaluation of Lucas `V` by the trace of the companion power. -/
+/--
+Compute V_k(P,Q) modulo n as the trace a+d of the binary companion-state power.
+The zero-index identity state gives V_0=2 without a separate branch.
+This is the executable V evaluator used by probable-prime tests.
+-/
 def lucasVZModFast (n : ℕ) (P Q : ℤ) (k : ℕ) : ZMod n :=
   let state := lucasScalarPowFast n P Q k
   state.a + state.d
 
-/-- The fast Lucas `U` evaluator agrees with the recursive specification. -/
+/--
+For all moduli, signed parameters and natural indices, fast U equals the integer U cast.
+Handle zero directly; for a successor extract matrix entry (1,0) from the companion formula.
+This certifies the executable Lucas-U condition against its recursive specification.
+-/
 theorem lucasUZModFast_eq_lucasUZMod (n : ℕ) (P Q : ℤ) (k : ℕ) :
     lucasUZModFast n P Q k = lucasUZMod n P Q k := by
   cases k with
@@ -246,7 +331,11 @@ theorem lucasUZModFast_eq_lucasUZMod (n : ℕ) (P Q : ℤ) (k : ℕ) :
     simpa only [lucasScalarStateMatrix, Fin.isValue, Matrix.of_apply, Matrix.cons_val',
       Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.cons_val_one, neg_mul] using hmatrix
 
-/-- The fast Lucas `V` evaluator agrees with the recursive specification. -/
+/--
+For all moduli, signed parameters and natural indices, fast V equals the integer V cast.
+At zero use the identity trace; at a successor extract the diagonal entries and apply
+V_{k+1}=U_{k+2}-Q U_k. This certifies V computations in Lucas-V and Strong Lucas tests.
+-/
 theorem lucasVZModFast_eq_lucasVZMod (n : ℕ) (P Q : ℤ) (k : ℕ) :
     lucasVZModFast n P Q k = lucasVZMod n P Q k := by
   cases k with

@@ -4,17 +4,25 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.StrongLucas.Loop
-import PseudoPrime.PrimeTest.LucasV.Defs
-import PseudoPrime.PrimeTest.EulerJacobi.Defs
+module
+
+public import PseudoPrime.PrimeTest.StrongLucas.Loop
+public import PseudoPrime.PrimeTest.LucasV.Defs
+public import PseudoPrime.PrimeTest.EulerJacobi.Defs
 
 /-! # Shared strengthened Lucas scan and Euler bridge -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- The shared scan result. strongOk records the initial U check and all
-visited V checks; v is the next doubled V, and qk retains the pre-final
-Q power. These components feed the strengthened fixed-parameter tests. -/
+/--
+Result of the shared Strong/Lucas-V/Euler scan for modulus n.
+strongOk accumulates the initial U=0 test and the visited V=0 tests; v stores the final
+doubled V, while qk stores the Q power before that final doubling.
+The record itself imposes no invariant: scan correctness lemmas identify the represented
+indices, and the strengthened test consumes all three fields.
+-/
 structure LucasStrengthenedState (n : ℕ) where
   strongOk : Bool
   v : ZMod n

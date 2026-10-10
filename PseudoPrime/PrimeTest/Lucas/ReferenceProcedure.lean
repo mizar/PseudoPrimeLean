@@ -159,8 +159,8 @@ Eligible inputs use the full terminal-state equality; ineligible inputs share th
 theorem strengthenedLucasLeadingValid_eq (n : ℕ) (param : LucasParams) :
     strengthenedLucasLeadingValid n param = strengthenedLucasSharedEulerValid n param := by
   by_cases hg : Odd n ∧ jacobiSym param.D n = -1
-  · simp only [strengthenedLucasLeadingValid, strengthenedLucasSharedEulerValid, ite_eq_left hg,
-      strengthenedLeadingState_eq n hg.1]
+  · simp only [strengthenedLucasLeadingValid, strengthenedLucasSharedEulerValid,
+      strengthenedLucasSharedEulerCore, ite_eq_left hg, strengthenedLeadingState_eq n hg.1]
   · simp only [strengthenedLucasLeadingValid, strengthenedLucasSharedEulerValid, ite_eq_right hg]
 
 /-- Arithmetic right shift of the adjusted integer equals the raw half at every modulus.

@@ -83,16 +83,28 @@ theorem lucasStrengthenedState_v_q_coprime (n : ℕ) (hn : Odd n) (param : Lucas
   rw [← lucasProbablePrimeIndex_of_jacobi_eq_neg_one hD, ← lucasStrengthenedState_v n hn]
   exact hV
 
+/-- Evaluate the shared Strong, terminal-V, and Euler conditions without parameter guards.
+For odd moduli with Jacobi-minus-one discriminant, the certified entry below identifies
+this core with the total evaluator. The Euler condition still evaluates Jacobi of Q. -/
+def strengthenedLucasSharedEulerCore (n : ℕ) (param : LucasParams) : Bool :=
+  let x := lucasStrengthenedState n param.D param.P param.Q
+  x.strongOk &&
+    ((x.v == 2 * (param.Q : ZMod n)) &&
+      (x.qk == (param.Q : ZMod n) * (jacobiSym param.Q n : ZMod n)))
+
 /-- Evaluate valid Lucas parameters without a gcd guard on the shared Euler branch.
 Odd moduli with Jacobi -1 use Strong, terminal V, and half-index Q; other inputs retain fallback.
 The discriminant invariant is carried by param, and terminal V supplies the cancellation premise. -/
 def strengthenedLucasSharedEulerValid (n : ℕ) (param : LucasParams) : Bool :=
-  if Odd n ∧ jacobiSym param.D n = -1 then
-    let x := lucasStrengthenedState n param.D param.P param.Q
-    x.strongOk &&
-      ((x.v == 2 * (param.Q : ZMod n)) &&
-        (x.qk == (param.Q : ZMod n) * (jacobiSym param.Q n : ZMod n)))
+  if Odd n ∧ jacobiSym param.D n = -1 then strengthenedLucasSharedEulerCore n param
   else strengthenedLucasSharedEuler n param.D param.P param.Q
+
+/-- Oddness and a certified Jacobi-minus-one discriminant allow direct core execution.
+The conditional's positive branch proves equality without repeating either runtime guard. -/
+theorem strengthenedLucasSharedEulerCore_eq (n : ℕ) (hn : Odd n) (param : LucasParams)
+    (hD : jacobiSym param.D n = -1) :
+    strengthenedLucasSharedEulerCore n param = strengthenedLucasSharedEulerValid n param :=
+  (ite_eq_left ⟨hn, hD⟩).symm
 
 /-- Removing the gcd guard preserves every result for proof-carrying valid parameters.
 A failed V comparison rejects both computations; a passed one supplies Q's unit cancellation. -/
@@ -101,7 +113,8 @@ theorem strengthenedLucasSharedEulerValid_eq (n : ℕ) (param : LucasParams) :
       strengthenedLucasSharedEuler n param.D param.P param.Q := by
   by_cases hg : Odd n ∧ jacobiSym param.D n = -1
   · rw [strengthenedLucasSharedEuler_eq, ← strengthenedLucasShared_eq]
-    simp only [strengthenedLucasSharedEulerValid, strengthenedLucasShared, ite_eq_left hg]
+    simp only [strengthenedLucasSharedEulerValid, strengthenedLucasSharedEulerCore,
+      strengthenedLucasShared, ite_eq_left hg]
     by_cases hV : (lucasStrengthenedState n param.D param.P param.Q).v = 2 * (param.Q : ZMod n)
     · rw [lucasStrengthenedState_euler n hg.1 param.D param.P param.Q hg.2
           (lucasStrengthenedState_v_q_coprime n hg.1 param hg.2 hV)]

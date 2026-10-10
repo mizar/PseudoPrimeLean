@@ -123,9 +123,10 @@ theorem lucasVZMod_succ_half (n : ℕ) (hn : Odd n) (P Q : ℤ) (k : ℕ) :
   rw [← h, lucasModHalf_twice n hn]
   rfl
 
-/-- A normalized modular Lucas state: u represents U_m, v represents V_m,
-and qk represents Q^m. The evaluator and strong scan use these components
-without constructing the integer Lucas values. -/
+/-- A modular triple with fields u, v and qk for U_m, V_m and Q^m respectively.
+The record itself imposes no common-index invariant; lucasUVQSpec and the update
+correctness lemmas establish it for evaluated states. The evaluator and Strong scan
+use these components without constructing the integer Lucas values. -/
 @[ext]
 structure LucasUVQState (n : ℕ) where
   u : ZMod n

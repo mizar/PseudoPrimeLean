@@ -24,13 +24,23 @@ construction of a quadratic extension and the proof that Frobenius exchanges
 its two roots are kept separate from this identity.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- The quadratic polynomial whose roots have Lucas parameters `P` and `Q`. -/
+/--
+The polynomial X^2-P*X+Q over a commutative ring.
+Its roots have the Lucas sum and product parameters. This proof-side polynomial
+is used to construct the quadratic extension for prime completeness.
+-/
 noncomputable def lucasQuadraticPolynomial {K : Type*} [CommRing K] (P Q : K) : Polynomial K :=
   Polynomial.X ^ 2 - Polynomial.C P * Polynomial.X + Polynomial.C Q
 
-/-- The canonical root of `lucasQuadraticPolynomial` satisfies its equation. -/
+/--
+Over any commutative ring, the canonical adjoined root alpha satisfies
+alpha^2-P*alpha+Q=0 with coefficients mapped into AdjoinRoot.
+Expand the canonical evaluation identity; this equation supplies the root-product arguments.
+-/
 theorem adjoinRoot_lucasQuadratic_root_eq_zero {K : Type*} [CommRing K] (P Q : K) :
     (AdjoinRoot.root (lucasQuadraticPolynomial P Q)) ^ 2 -
           (P : AdjoinRoot (lucasQuadraticPolynomial P Q)) *
@@ -43,7 +53,11 @@ theorem adjoinRoot_lucasQuadratic_root_eq_zero {K : Type*} [CommRing K] (P Q : K
   simp only [Polynomial.eval₂_C] at h
   exact h
 
-/-- A nonsquare discriminant makes the Lucas quadratic polynomial irreducible. -/
+/--
+Over a field, a nonsquare discriminant P*P-4*Q makes X^2-P*X+Q irreducible.
+A root x would express the discriminant as (2*x-P)^2; the degree-two criterion excludes it.
+This supplies the field structure of the quadratic adjoined-root extension.
+-/
 theorem lucasQuadraticPolynomial_irreducible_of_not_isSquare {K : Type*} [Field K] (P Q : K)
     (hdisc : ¬IsSquare (P * P - 4 * Q)) : Irreducible (lucasQuadraticPolynomial P Q) := by
   have hdeg := Polynomial.isMonicOfDegree_sub_add_two P Q
@@ -61,14 +75,22 @@ theorem lucasQuadraticPolynomial_irreducible_of_not_isSquare {K : Type*} [Field 
       _ = (2 * x - P) ^ 2 := by rw [hx, mul_zero, sub_zero]
       _ = (2 * x - P) * (2 * x - P) := by rw [pow_two]
 
-/-- A nonsquare discriminant equips the quadratic `AdjoinRoot` with a field structure. -/
+/--
+For field coefficients with nonsquare discriminant, the quadratic AdjoinRoot is a field.
+Use the proved irreducibility and AdjoinRoot field criterion.
+This permits zero-product cancellation in Frobenius and Lucas completeness proofs.
+-/
 theorem adjoinRoot_lucasQuadratic_isField_of_not_isSquare {K : Type*} [Field K] (P Q : K)
     (hdisc : ¬IsSquare (P * P - 4 * Q)) : IsField (AdjoinRoot (lucasQuadraticPolynomial P Q)) := by
   have hI : Fact (Irreducible (lucasQuadraticPolynomial P Q)) :=
     ⟨lucasQuadraticPolynomial_irreducible_of_not_isSquare P Q hdisc⟩
   exact AdjoinRoot.isField_iff_irreducible.mpr hI.out
 
-/-- The standard root and its trace-complement have Lucas sum and product. -/
+/--
+For field coefficients with nonsquare discriminant, construct alpha and beta in the
+quadratic AdjoinRoot with alpha+beta=P and alpha*beta=Q. Choose the canonical root
+and beta=P-alpha; the root equation proves the product. These are the Lucas root parameters.
+-/
 theorem adjoinRoot_lucasQuadratic_roots {K : Type*} [Field K] (P Q : K)
     (hdisc : ¬IsSquare (P * P - 4 * Q)) :
     ∃ α β : AdjoinRoot (lucasQuadraticPolynomial P Q), α + β = P ∧ α * β = Q := by
@@ -94,7 +116,12 @@ theorem adjoinRoot_lucasQuadratic_roots {K : Type*} [Field K] (P Q : K)
         by ring
       _ = (AdjoinRoot.of (lucasQuadraticPolynomial P Q)) Q := by rw [hroot, sub_zero]
 
-/-- Closed-form identity for the Lucas `U` sequence at two formal roots. -/
+/--
+In any commutative ring, roots with sum P and product Q satisfy
+(alpha-beta)*U_k=alpha^k-beta^k for every natural k. Two-step induction follows
+the integer Lucas recurrence after casting. No distinctness or division is needed;
+the formula supplies the later field zero test.
+-/
 theorem lucasU_root_difference_mul {K : Type*} [CommRing K] (P Q : ℤ) (α β : K) (hsum : α + β = P)
     (hprod : α * β = Q) : ∀ k : ℕ, (α - β) * (lucasU P Q k : K) = α ^ k - β ^ k := by
   intro k
@@ -127,7 +154,11 @@ theorem lucasU_root_difference_mul {K : Type*} [CommRing K] (P Q : ℤ) (α β :
             rw [hk1, hk]
             ring
 
-/-- The companion closed form expresses `V` as the sum of the two powers. -/
+/--
+In any commutative ring, roots with sum P and product Q satisfy V_k=alpha^k+beta^k.
+Two-step induction compares the power sum with the cast Lucas-V recurrence.
+This companion closed form yields the terminal V value under Frobenius exchange.
+-/
 theorem lucasV_root_sum {K : Type*} [CommRing K] (P Q : ℤ) (α β : K) (hsum : α + β = P)
     (hprod : α * β = Q) : ∀ k : ℕ, (lucasV P Q k : K) = α ^ k + β ^ k := by
   intro k
@@ -145,7 +176,12 @@ theorem lucasV_root_sum {K : Type*} [CommRing K] (P Q : ℤ) (α β : K) (hsum :
       show (Q : K) = α * β by exact_mod_cast hprod.symm]
     ring
 
-/-- Frobenius exchange gives the Lucas `V` value `2 * Q` at `p + 1`. -/
+/--
+In a commutative ring, assume alpha+beta=P, alpha*beta=Q and
+alpha^p=beta, beta^p=alpha. Then V_{p+1}=2*Q.
+Use the power-sum closed form and multiply each Frobenius image by its root.
+The algebraic statement requires no primality assumption on p.
+-/
 theorem lucasV_add_one_eq_two_mul_of_root_frobenius_swap {K : Type*} [CommRing K] (p : ℕ) (P Q : ℤ)
     (α β : K) (hsum : α + β = P) (hprod : α * β = Q) (hα : α ^ p = β) (hβ : β ^ p = α) :
     (lucasV P Q (p + 1) : K) = 2 * (Q : K) := by
@@ -153,14 +189,23 @@ theorem lucasV_add_one_eq_two_mul_of_root_frobenius_swap {K : Type*} [CommRing K
   rw [mul_comm β α, show α * β = (Q : K) by exact hprod]
   ring
 
-/-- The square of the root difference is the discriminant `P^2 - 4 * Q`. -/
+/--
+For roots in a commutative ring with sum P and product Q,
+(alpha-beta)^2 equals the cast integer discriminant P*P-4*Q.
+Substitute the two parameter identities and normalize the polynomial.
+This connects root separation to discriminant nonsquareness.
+-/
 theorem lucasRoot_difference_sq_eq_discriminant {K : Type*} [CommRing K] (P Q : ℤ) (α β : K)
     (hsum : α + β = P) (hprod : α * β = Q) : (α - β) ^ 2 = (P * P - 4 * Q : ℤ) := by
   simp only [Int.cast_sub, Int.cast_mul, Int.cast_ofNat]
   rw [show (P : K) = α + β by exact hsum.symm, show (Q : K) = α * β by exact hprod.symm]
   ring
 
-/-- A nonsquare discriminant separates the two roots in a field. -/
+/--
+Over a field, roots with sum P and product Q have nonzero difference if the discriminant
+is nonsquare. A zero difference makes the discriminant zero via the square identity,
+contradicting nonsquareness. This is the cancellation premise for the Lucas-U zero proof.
+-/
 theorem lucasRoot_difference_ne_zero_of_not_isSquare {K : Type*} [Field K] (P Q : ℤ) (α β : K)
     (hsum : α + β = P) (hprod : α * β = Q) (hdisc : ¬IsSquare (P * P - 4 * Q : K)) : α - β ≠ 0 := by
   intro hdiff
@@ -171,7 +216,11 @@ theorem lucasRoot_difference_ne_zero_of_not_isSquare {K : Type*} [Field K] (P Q 
   norm_num only at hsq ⊢
   simpa only [Int.cast_sub, Int.cast_mul, Int.cast_ofNat] using hsq.symm
 
-/-- A root of the quadratic with coefficients `P, Q` is one of two known roots. -/
+/--
+Over a field, if alpha+beta=P and alpha*beta=Q, a root x of X^2-P*X+Q
+with x-alpha nonzero must equal beta. Factor the root equation as
+(x-alpha)*(x-beta)=0 and eliminate its first factor. This identifies a nonfixed Frobenius root.
+-/
 theorem quadratic_root_eq_other_of_ne {K : Type*} [Field K] (P Q : ℤ) (α β x : K) (hsum : α + β = P)
     (hprod : α * β = Q) (hroot : x ^ 2 - (P : K) * x + (Q : K) = 0) (hne : x - α ≠ 0) : x = β := by
   have hfactor : (x - α) * (x - β) = 0 := by
@@ -181,13 +230,22 @@ theorem quadratic_root_eq_other_of_ne {K : Type*} [Field K] (P Q : ℤ) (α β x
       _ = 0 := hroot
   exact sub_eq_zero.mp ((mul_eq_zero.mp hfactor).resolve_left hne)
 
-/-- A non-fixed Frobenius root is the other root of the quadratic. -/
+/--
+For roots with sum P and product Q in a field, suppose alpha^p satisfies the quadratic
+equation and alpha^p-alpha is nonzero. Then alpha^p=beta by the root-factorization lemma.
+This isolates the algebraic root exchange from the characteristic and nonfixedness proofs.
+-/
 theorem frobenius_root_eq_other_of_quadratic_root {K : Type*} [Field K] (p : ℕ) (P Q : ℤ) (α β : K)
     (hsum : α + β = P) (hprod : α * β = Q) (hroot : (α ^ p) ^ 2 - (P : K) * α ^ p + (Q : K) = 0)
     (hne : α ^ p - α ≠ 0) : α ^ p = β := by
   exact quadratic_root_eq_other_of_ne P Q α β (α ^ p) hsum hprod hroot hne
 
-/-- In characteristic `p`, the Frobenius image of a quadratic root is again a root. -/
+/--
+In a field of prime characteristic p, suppose P and Q are fixed by pth power
+and alpha satisfies alpha^2-P*alpha+Q=0. Then alpha^p satisfies the same equation.
+Raise the equation to p and use characteristic-p add/subtract power laws.
+This supplies the first step of Frobenius exchange in the quadratic extension.
+-/
 theorem frobenius_pow_is_quadratic_root {K : Type*} [Field K] (p : ℕ) [CharP K p] [Fact p.Prime]
     (P Q α : K) (hP : P ^ p = P) (hQ : Q ^ p = Q) (hroot : α ^ 2 - P * α + Q = 0) :
     (α ^ p) ^ 2 - P * α ^ p + Q = 0 := by
@@ -313,7 +371,12 @@ theorem adjoinRoot_lucasQuadratic_frobenius_swap {K : Type*} [Field K] (p : ℕ)
     rw [sub_pow_char, hP', hα]
     ring
 
-/-- A nonsquare quadratic over `ZMod p` has a canonical root not fixed by Frobenius. -/
+/--
+For prime p and a nonsquare discriminant over ZMod p, the canonical quadratic root
+is not fixed by pth power. Fixedness would make its irreducible degree-two polynomial
+divide X^p-X, forcing degree two to divide one. This contradiction supplies
+the nonfixedness needed by both Frobenius-exchange identities.
+-/
 theorem adjoinRoot_lucasQuadratic_frobenius_ne_self_of_not_isSquare (p : ℕ) [Fact p.Prime]
     (P Q : ZMod p) (hdisc : ¬IsSquare (P * P - 4 * Q)) :
     (AdjoinRoot.root (lucasQuadraticPolynomial P Q)) ^ p -
@@ -410,7 +473,11 @@ theorem lucasU_add_one_eq_zero_of_adjoinRoot_frobenius_swap (p : ℕ) [Fact p.Pr
   rw [hpow] at hclosed
   exact (mul_eq_zero.mp hclosed).resolve_left hαβ
 
-/-- The Frobenius exchange identity in the executable `ZMod` Lucas-U representation. -/
+/--
+For prime p and signed P,Q with nonsquare discriminant modulo p, U_{p+1}=0 in ZMod p.
+Use Frobenius exchange in the quadratic AdjoinRoot, then injectivity of the coefficient map
+to descend its zero identity. This is the proof-side modular Lucas-U prime-completeness bridge.
+-/
 theorem lucasUZMod_prime_eq_zero (p : ℕ) [Fact p.Prime] (P Q : ℤ)
     (hdisc : ¬IsSquare ((P : ZMod p) * (P : ZMod p) - 4 * (Q : ZMod p))) :
     lucasUZMod p P Q (p + 1) = 0 := by
@@ -466,7 +533,11 @@ theorem lucasV_add_one_eq_two_mul_of_adjoinRoot_frobenius_swap (p : ℕ) [Fact p
       _ = (Q : E) := by rw [hrootE, sub_zero]
   exact lucasV_add_one_eq_two_mul_of_root_frobenius_swap p P Q α β hsum hprod hα hβ
 
-/-- The Frobenius exchange identity in the executable `ZMod` Lucas-V representation. -/
+/--
+For prime p and signed P,Q with nonsquare discriminant modulo p, V_{p+1}=2*Q in ZMod p.
+Descend the adjoined-root Frobenius identity through the injective coefficient map.
+This is the modular companion bridge used by Lucas-V prime completeness.
+-/
 theorem lucasVZMod_prime_eq_two_mul (p : ℕ) [Fact p.Prime] (P Q : ℤ)
     (hdisc : ¬IsSquare ((P : ZMod p) * (P : ZMod p) - 4 * (Q : ZMod p))) :
     lucasVZMod p P Q (p + 1) = 2 * (Q : ZMod p) := by
@@ -484,7 +555,12 @@ theorem lucasVZMod_prime_eq_two_mul (p : ℕ) [Fact p.Prime] (P Q : ℤ)
   rw [map_mul, htwo]
   simpa only [map_intCast] using hV
 
-/-- Frobenius exchange of two roots forces the Lucas `U` test at `p + 1`. -/
+/--
+In a field, assume roots with sum P and product Q have nonzero difference and are
+exchanged by pth power. Then the cast U_{p+1} is zero. Apply the root-difference
+closed form, use the exchange to cancel the power difference and cancel alpha-beta.
+This algebraic conclusion does not itself require p to be prime.
+-/
 theorem lucasU_add_one_eq_zero_of_root_frobenius_swap {K : Type*} [Field K] (p : ℕ) (P Q : ℤ)
     (α β : K) (hsum : α + β = P) (hprod : α * β = Q) (hαβ : α - β ≠ 0) (hα : α ^ p = β)
     (hβ : β ^ p = α) : (lucasU P Q (p + 1) : K) = 0 := by

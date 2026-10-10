@@ -4,15 +4,23 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Lucas.FiniteField
+module
+
+public import PseudoPrime.PrimeTest.Lucas.FiniteField
 
 /-! # Prime completeness of the Lucas U test in the Jacobi minus-one branch -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- With the discriminant identity and Jacobi value -1, every prime passes the Lucas U test.
-The finite-field bridge gives U at n+1; the index theorem identifies the executable index.
-Other Jacobi branches are not covered by this theorem. -/
+/--
+Every prime modulus passes the Lucas `U` comparison in the Jacobi-minus-one branch.
+Assume `n.Prime`, `D = P * P - 4 * Q`, and `jacobiSym D n = -1`.
+The Jacobi value gives a nonsquare discriminant in the prime field, whose Lucas bridge
+proves `U_(n+1) = 0`. The selected-index identity and executable specification yield `true`.
+The guarded Lucas adapter uses this implication; other Jacobi branches are not covered.
+-/
 theorem lucasWithParams_of_prime {n : ℕ} (hn : n.Prime) (D P Q : ℤ) (hdisc : D = P * P - 4 * Q)
     (hjacobi : jacobiSym D n = -1) : lucasWithParams n D P Q = true := by
   let _ : Fact n.Prime := ⟨hn⟩

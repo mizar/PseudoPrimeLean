@@ -15,9 +15,17 @@ public import PseudoPrime.PrimeTest.LucasV.Spec
 This file connects the Jacobi `-1` branch to the finite-field Lucas-V bridge.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- A prime modulus passes the Lucas-V test in the Jacobi `-1` branch. -/
+/--
+A prime input passes the Lucas-V comparison under the discriminant and Jacobi hypotheses.
+Assume `n.Prime`, `D = P * P - 4 * Q`, and `jacobiSym D n = -1`.
+The Jacobi hypothesis makes the discriminant a nonsquare in the prime field; the finite-field
+Lucas identity gives `V_(n+1) = 2Q`. The executable specification then yields `true`.
+Strengthened BPSW and the guarded Lucas-V decision adapter use this prime-pass implication.
+-/
 theorem lucasVWithParams_of_prime {n : ℕ} (hn : n.Prime) (D P Q : ℤ) (hdisc : D = P * P - 4 * Q)
     (hjacobi : jacobiSym D n = -1) : lucasVWithParams n D P Q = true := by
   let _ : Fact n.Prime := ⟨hn⟩

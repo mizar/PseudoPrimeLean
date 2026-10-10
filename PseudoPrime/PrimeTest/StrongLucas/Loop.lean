@@ -25,12 +25,22 @@ def lucasVScan (n : ℕ) (v q : ZMod n) : ℕ → Bool
       | 0 => false
       | k + 1 => lucasVScan n (v ^ 2 - 2 * q) (q ^ 2) (k + 1))
 
-/-- The finite scan unfolds to one zero check followed by the smaller scan. -/
+/--
+A scan of length `s + 1` checks the current `v` for zero, then scans the doubled state.
+For arbitrary modular `v`, `q`, the tail uses `(v^2 - 2q, q^2)` for `s` checks.
+Case analysis on `s` proves the equation by reflexivity, including the optimized zero-tail case.
+This equation exposes the recursive invariant used to characterize all tested Lucas indices.
+-/
 theorem lucasVScan_step (n : ℕ) (v q : ZMod n) (s : ℕ) :
     lucasVScan n v q (s + 1) = ((v == 0) || lucasVScan n (v ^ 2 - 2 * q) (q ^ 2) s) := by
   cases s <;> rfl
 
-/-- Squaring the modular Q power doubles its exponent, including signed Q. -/
+/--
+Squaring the modular image of `Q^d` equals the image of `Q^(2d)`.
+The signed integer parameter `Q`, natural modulus `n`, and exponent `d` are arbitrary.
+The proof rewrites integer casting, powers, and exponent multiplication.
+It maintains the shared `Q`-power component in the Lucas doubling scan invariant.
+-/
 theorem lucasQPow_double (n : ℕ) (Q : ℤ) (d : ℕ) :
     (lucasQPow Q d : ZMod n) ^ 2 = (lucasQPow Q (2 * d) : ZMod n) := by
   simp only [lucasQPow, Int.cast_pow, pow_mul, Nat.mul_comm 2 d]
@@ -52,7 +62,12 @@ theorem lucasVScan_spec (n : ℕ) (P Q : ℤ) (d s : ℕ) :
       ring
     simp only [heq]
 
-/-- Binary exponentiation computes the signed modular Q power. -/
+/--
+Binary modular exponentiation at `d` equals the cast of the signed integer power `Q^d`.
+For arbitrary natural `n`, `d` and integer `Q`, induction uses the zero and successor equations
+of `npowBinRec` and preservation of powers by casts. This connects executable initialization
+of the scan's `Q` component to the mathematical doubling invariant.
+-/
 theorem lucasQPow_binRec (n : ℕ) (Q : ℤ) (d : ℕ) :
     npowBinRec d (Q : ZMod n) = (lucasQPow Q d : ZMod n) := by
   induction d with
@@ -61,9 +76,13 @@ theorem lucasQPow_binRec (n : ℕ) (Q : ℤ) (d : ℕ) :
     rw [npowBinRec_succ, ih]
     simp only [lucasQPow, pow_succ, Int.cast_mul, Int.cast_pow]
 
-/-- Compute the initial U and V with the existing binary evaluator, then share
-V and Q powers across the strong checks. This total API also preserves n = 0
-and even moduli; the dedicated odd-modulus UVQ initializer is a later replacement. -/
+/--
+Strong Lucas execution with binary initialization and a shared `V`, `Q` doubling scan.
+For natural `n` and integer `D`, `P`, `Q`, compute the selected odd part `d` and exponent `s`;
+accept `U_d = 0` or scan the next `s` prescribed `V` indices using one evolving state.
+This total entry also covers zero and even moduli. The odd-modulus `UVQ` entry uses it as a
+fallback, and the all-input equality preserves the original finite-index Strong specification.
+-/
 def strongLucasWithParamsLoop (n : ℕ) (D P Q : ℤ) : Bool :=
   let d := strongLucasOddPart n D
   let s := strongLucasTwoAdicExponent n D
