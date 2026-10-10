@@ -69,31 +69,6 @@ noncomputable def primitiveReciprocalLevelChangeCorrection {q : ℕ} (x : ℝ)
     (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re
 
 /--
-Input/assumptions: a cutoff `x ≥ 0` and a level-`q` character.
-Conclusion: the character-sensitive level-change correction is a double sum over powers of
-primes dividing the complementary quotient, each retaining the real part of the primitive
-character value at that prime power.
-Content: reindex the level-change correction support by exponent and prime, using that the
-reciprocal weighted summand vanishes off prime powers.
-Role: exposes the terms `log p / p^k * (1-p^k/x) * Re(χ̃(p)^k)` on the same `(k,p)`
-index set as the logarithmic terms `log p * (log x-k*log p) * Re(χ̃(p)^k)`.
--/
-theorem primitiveReciprocalLevelChangeCorrection_eq_sum_prime_powers {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : 0 ≤ x) :
-    primitiveReciprocalLevelChangeCorrection x χ =
-      ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
-        ∑ p ∈ (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter fun p ↦ p.Prime ∧ p ∣ q / χ.conductor,
-          (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
-  rw [primitiveReciprocalLevelChangeCorrection]
-  exact
-    sum_not_coprime_eq_sum_prime_powers
-      (fun n ↦ (characterReciprocalWeightedTerm x χ.primitiveCharacter n).re) (q / χ.conductor) hx
-      fun n hn ↦ by
-      simp only [characterReciprocalWeightedTerm,
-        reciprocalWeightedMangoldtTerm_eq_zero_of_not_primePow hn, Complex.ofReal_zero, zero_mul,
-        Complex.zero_re]
-
-/--
 Input/assumptions: a cutoff, a level-`q` character, a prime `p`, and a nonzero exponent `k`.
 Conclusion: the level-change correction's prime-power summand has the explicit closed form
 carrying the geometric reciprocal weight times the real part of `χ̃(p) ^ k`.
@@ -110,174 +85,10 @@ theorem characterReciprocalWeightedTerm_primitive_re_prime_pow {q : ℕ} (x : �
     map_pow, Complex.re_ofReal_mul]
 
 /--
-Input/assumptions: a cutoff, a level-`q` character whose primitive inducing character is
-quadratic, a prime `p`, and a nonzero exponent `k`.
-Conclusion: the reciprocal level-change correction's prime-power summand has the explicit closed
-form carrying the geometric reciprocal weight times `χ̃(p)` when `k` is odd, and times `χ̃(p) ^ 2`
-when `k` is even.
-Content: apply the quadratic parity expansion `isQuadratic_pow_apply` to the closed form already
-established for a general character.
-Role: is the quadratic closed form for the reciprocal quotient correction, matching
-`PseudoPrime.AnalyticNumberTheory.Arithmetic.`
-`characterLogWeightedTerm_primitive_re_prime_pow_of_isQuadratic` in shape, so the reciprocal
-and logarithmic sums can be combined term by term for quadratic primitive characters.
--/
-theorem characterReciprocalWeightedTerm_primitive_re_prime_pow_of_isQuadratic {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) {p k : ℕ} (hp : p.Prime)
-    (hk : k ≠ 0) :
-    (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
-      Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) *
-        (if Odd k then (χ.primitiveCharacter p).re else (χ.primitiveCharacter p ^ 2).re) := by
-  rw [characterReciprocalWeightedTerm_primitive_re_prime_pow x χ hp hk,
-    NumberTheory.isQuadratic_pow_apply hχ (p : ZMod χ.conductor) hk, apply_ite Complex.re]
-
-/--
-Input/assumptions: a cutoff `x ≥ 0` and a level-`q` character whose primitive inducing character is
-quadratic.
-Conclusion: the reciprocal level-change correction is the double sum over quotient prime powers
-of the geometric weight times `χ̃(p)` on odd exponents, and times a coprime-to-conductor
-indicator (no character value) on even exponents.
-Content: combine the prime-power expansion with the quadratic closed form and the
-coprime-to-conductor indicator for the squared value.
-Role: reduces the even-exponent character factor to `1` when `p` is coprime to the conductor
-and `0` otherwise, leaving only the odd-exponent factor `Re χ̃(p)` to control.
--/
-theorem primitiveReciprocalLevelChangeCorrection_eq_sum_of_isQuadratic {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : 0 ≤ x) :
-    primitiveReciprocalLevelChangeCorrection x χ =
-      ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
-        ∑ p ∈ (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter fun p ↦ p.Prime ∧ p ∣ q / χ.conductor,
-          Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) *
-            (if Odd k then (χ.primitiveCharacter p).re
-            else if Nat.Coprime p χ.conductor then 1 else 0) := by
-  rw [primitiveReciprocalLevelChangeCorrection_eq_sum_prime_powers x χ hx]
-  apply Finset.sum_congr rfl
-  intro k hk
-  apply Finset.sum_congr rfl
-  intro p hp
-  have hkpos : k ≠ 0 := by
-    have := (Finset.mem_Icc.mp hk).1
-    exact Nat.ne_of_gt this
-  have hpprime : p.Prime := (Finset.mem_filter.mp hp).2.1
-  rw [characterReciprocalWeightedTerm_primitive_re_prime_pow_of_isQuadratic x χ hχ hpprime hkpos]
-  by_cases hodd : Odd k
-  · simp only [hodd, ↓reduceIte]
-  · simp only [ite_eq_right hodd]
-    rw [primitiveCharacter_sq_apply_re_eq_ite_of_isQuadratic χ hχ p]
-
-/--
-Input/assumptions: a level-`q` character with quadratic primitive part, a prime `p`, a cutoff
-`x ≥ 2`, and `K ≥ 1` with `p ^ K ≤ x`.
-Conclusion: the finite reciprocal prime-power sum over `k = 1..K` at `p` is at least
-`-(1/2)(1 - 1/x) log p`.
-Content: case on the three possible values of `χ̃(p)`.  When `χ̃(p) = 0` every summand vanishes;
-when `χ̃(p) = 1` every summand is nonnegative; when `χ̃(p) = -1` the sum is `-log p` times the
-alternating geometric partial sum bounded above by `1/p - 1/x ≤ (1/2)(1 - 1/x)` (using `p ≥ 2`)
-in `PseudoPrime.AnalyticNumberTheory.Arithmetic.sum_neg_one_pow_succ_mul_inv_pow_bounds`.
-Role: is the local reciprocal alternating bound: the worst-case loss from any single
-quotient-support prime is controlled by half its log, independently of the character's sign at
-that prime.
--/
-theorem quadraticReciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) {p : ℕ} (hp : p.Prime)
-    (hx : 2 ≤ x) {K : ℕ} (hK : 1 ≤ K) (hKle : (p : ℝ) ^ K ≤ x) :
-    -(1 / 2 * (1 - 1 / x) * Real.log p) ≤
-      ∑ k ∈ Finset.Icc 1 K,
-        (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
-  have hxpos : (0 : ℝ) < x := by linarith only [hx]
-  have hlogp : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hp.one_le)
-  have hxfrac : 0 ≤ 1 - 1 / x := by
-    rw [sub_nonneg, div_le_one hxpos]
-    linarith only [hx]
-  have heach :
-    ∀ k ∈ Finset.Icc 1 K,
-      (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
-        Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) * (χ.primitiveCharacter p ^ k).re := by
-    intro k hk
-    have hk0 : k ≠ 0 := by
-      have := (Finset.mem_Icc.mp hk).1
-      exact Nat.ne_of_gt this
-    exact characterReciprocalWeightedTerm_primitive_re_prime_pow x χ hp hk0
-  rw [Finset.sum_congr rfl heach]
-  rcases hχ (p : ZMod χ.conductor) with h0 | h1 | hm1
-  · have hzero :
-      ∀ k ∈ Finset.Icc 1 K,
-        Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) * (χ.primitiveCharacter p ^ k).re = 0 := by
-      intro k hk
-      have hk0 : k ≠ 0 := by
-        have := (Finset.mem_Icc.mp hk).1
-        exact Nat.ne_of_gt this
-      rw [h0, zero_pow hk0]
-      simp only [Complex.zero_re, mul_zero]
-    rw [Finset.sum_congr rfl hzero, Finset.sum_const_zero]
-    nlinarith only [mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hxfrac) hlogp]
-  · have hone :
-      ∀ k ∈ Finset.Icc 1 K,
-        Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) * (χ.primitiveCharacter p ^ k).re =
-          Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) := by
-      intro k hk
-      rw [h1, one_pow]
-      simp only [Complex.one_re, mul_one]
-    rw [Finset.sum_congr rfl hone]
-    have hnonneg : 0 ≤ ∑ k ∈ Finset.Icc 1 K, Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) := by
-      apply Finset.sum_nonneg
-      intro k hk
-      have hpk : (p : ℝ) ^ k ≤ x :=
-        (pow_le_pow_right₀ (by exact_mod_cast hp.one_le) (Finset.mem_Icc.mp hk).2).trans hKle
-      have hpkpos : (0 : ℝ) < (p : ℝ) ^ k := pow_pos (by exact_mod_cast hp.pos) k
-      apply mul_nonneg (div_nonneg hlogp hpkpos.le)
-      rw [sub_nonneg, div_le_one hxpos]
-      exact hpk
-    nlinarith only [hnonneg,
-      mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hxfrac) hlogp]
-  · have hSeq :
-      ∑ k ∈ Finset.Icc 1 K,
-          Real.log p / (p : ℝ) ^ k * (1 - (p : ℝ) ^ k / x) * (χ.primitiveCharacter p ^ k).re =
-        Real.log p * (∑ k ∈ Finset.Icc 1 K, (-1 : ℝ) ^ k * (1 / (p : ℝ) ^ k - 1 / x)) := by
-      rw [Finset.mul_sum]
-      apply Finset.sum_congr rfl
-      intro k hk
-      have hcast : χ.primitiveCharacter p = ((-1 : ℝ) : ℂ) := by
-        rw [hm1]
-        norm_num only [Complex.ofReal_neg, Complex.ofReal_one]
-      have hre : (χ.primitiveCharacter p ^ k).re = (-1 : ℝ) ^ k := by
-        rw [hcast, ← Complex.ofReal_pow, Complex.ofReal_re]
-      rw [hre]
-      have hpkpos : (0 : ℝ) < (p : ℝ) ^ k := pow_pos (by exact_mod_cast hp.pos) k
-      field_simp [ne_of_gt hpkpos, ne_of_gt hxpos]
-    have hSflip :
-      ∑ k ∈ Finset.Icc 1 K, (-1 : ℝ) ^ k * (1 / (p : ℝ) ^ k - 1 / x) =
-        -(∑ k ∈ Finset.Icc 1 K, (-1 : ℝ) ^ (k + 1) * (1 / (p : ℝ) ^ k - 1 / x)) := by
-      rw [← Finset.sum_neg_distrib]
-      apply Finset.sum_congr rfl
-      intro k _
-      rw [pow_succ]
-      ring
-    rw [hSeq, hSflip]
-    have hgeom := sum_neg_one_pow_succ_mul_inv_pow_bounds hp hxpos hK hKle
-    have hp2 : (2 : ℝ) ≤ (p : ℝ) := by exact_mod_cast hp.two_le
-    have hnum : 1 / (p : ℝ) - 1 / x ≤ 1 / 2 * (1 - 1 / x) := by
-      have h1 : 1 / (p : ℝ) ≤ 1 / 2 := one_div_le_one_div_of_le (by norm_num only) hp2
-      have h2 : 1 / (2 * x) ≤ 1 / x := one_div_le_one_div_of_le hxpos (by linarith only [hxpos])
-      have h3 : 1 / (2 * x) = 1 / 2 * (1 / x) := by ring
-      nlinarith only [h1, h2, h3]
-    nlinarith only [hgeom.2, hlogp, mul_le_mul_of_nonneg_left hnum hlogp]
-
-/--
-Input/assumptions: a cutoff `x ≥ 2`, a level-`q` character,
-  a prime `p` at which the primitive character
-  has unit norm (in particular `p` is coprime to the conductor), and `K ≥ 1` whose
-  endpoints bracket `x` as `p ^ K ≤ x ≤ p ^ (K + 1)`.
-Conclusion: the finite reciprocal prime-power sum over `k = 1..K` at `p` is at least
-  `-(1/2)(1 - 1/x) log p`, with no quadratic hypothesis on the character.
-Content: rewrite each summand as `log p * ((1/p)^k - 1/x) * Re(z^k)` with `z := χ̃(p)`, `‖z‖ = 1`,
-  then apply the generic Fejér reciprocal-weight bound
-  `PseudoPrime.AnalyticNumberTheory.Arithmetic.re_sum_reciprocalWeight_ge_neg_half`
-  with `r := 1/p`, `c := 1/x`.
-Role: is the `hquad`-free replacement for
-  `PseudoPrime.AnalyticNumberTheory.Arithmetic.`
-  `quadraticReciprocalPrimePowerCorrection_neg_le_half_log`.
-For `K = p.log ⌊x⌋₊` and `p ≤ ⌊x⌋₊`, the integer logarithm provides the required brackets.
+For a prime `p` with unit primitive-character value and endpoints
+`p^K ≤ x ≤ p^(K+1)`, `x ≥ 2`, the reciprocal prime-power correction is at least
+`-(1-1/x) * log p / 2`. Rewrite the summands as reciprocal weights times
+real parts of character powers and apply the Fejér bound for level corrections.
 -/
 theorem re_sum_reciprocalPrimePowerCorrection_neg_le_half_log {q : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) {p : ℕ} (hp : p.Prime) (hz : ‖χ.primitiveCharacter p‖ = 1)
@@ -408,125 +219,10 @@ theorem primitiveReciprocalLevelChangeCorrection_eq_sum_prime_divisors {q : ℕ}
         rw [ite_eq_right (not_not_intro hcop)]
 
 /--
-Input/assumptions: a level-`q` character with quadratic primitive part and a cutoff `x ≥ 2`, with
-  `q / conductor ≠ 0`.
-Conclusion: the reciprocal level-change correction is at least
-  `-(1/2)(1 - 1/x) log(q / conductor)`.
-Content: reindex to prime-outer form, bound each prime's inner sum via
-  `PseudoPrime.AnalyticNumberTheory.Arithmetic.`
-  `quadraticReciprocalPrimePowerCorrection_neg_le_half_log` (feeding it
-  `p ^ (Nat.log p ⌊x⌋₊) ≤ x` from `Nat.pow_log_le_self` and `Nat.floor_le`), then bound the
-  resulting `Σ log p` by `Real.log (q / conductor)` via
-  `PseudoPrime.AnalyticNumberTheory.Arithmetic.sum_log_primeFactors_le_log`,
-  using that the quotient-support filter set is a subset of `(q / conductor).primeFactors`.
-Role: supplies the lower bound with quotient dependence `log(q / conductor)` consumed by
-  `primitiveReciprocalConductorAbsorption_of_isQuadratic`.
--/
-theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient_of_isQuadratic {q : ℕ}
-    (x : ℝ) (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : 2 ≤ x)
-    (hqd : q / χ.conductor ≠ 0) :
-    -(1 / 2 * (1 - 1 / x) * Real.log ((q / χ.conductor : ℕ) : ℝ)) ≤
-      primitiveReciprocalLevelChangeCorrection x χ := by
-  have hxpos : (0 : ℝ) < x := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
-  have hxfrac : 0 ≤ 1 - 1 / x := by
-    rw [sub_nonneg, div_le_one hxpos]
-    exact le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx
-  rw [primitiveReciprocalLevelChangeCorrection_eq_sum_prime_divisors]
-  set S := (Nat.primesLE ⌊x⌋₊).filter fun p ↦ p ∣ q / χ.conductor with hSdef
-  have hstep :
-    ∀ p ∈ S,
-      -(1 / 2 * (1 - 1 / x) * Real.log p) ≤
-        ∑ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊),
-          (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
-    intro p hp
-    have hpprime : p.Prime := Nat.prime_of_mem_primesLE (Finset.mem_filter.mp hp).1
-    have hple : p ≤ ⌊x⌋₊ := Nat.le_of_mem_primesLE (Finset.mem_filter.mp hp).1
-    have hK1 : 1 ≤ p.log ⌊x⌋₊ := Nat.log_pos hpprime.one_lt hple
-    have hxfloor : ⌊x⌋₊ ≠ 0 :=
-      (Nat.floor_pos.mpr (le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx)).ne'
-    have hKnat : p ^ p.log ⌊x⌋₊ ≤ ⌊x⌋₊ := Nat.pow_log_le_self p hxfloor
-    have hKnatR : (p : ℝ) ^ (p.log ⌊x⌋₊) ≤ (⌊x⌋₊ : ℝ) := by exact_mod_cast hKnat
-    have hKle : (p : ℝ) ^ (p.log ⌊x⌋₊) ≤ x := hKnatR.trans (Nat.floor_le hxpos.le)
-    exact quadraticReciprocalPrimePowerCorrection_neg_le_half_log x χ hχ hpprime hx hK1 hKle
-  have hbudget : ∑ p ∈ S, Real.log p ≤ Real.log ((q / χ.conductor : ℕ) : ℝ) := by
-    apply le_trans _ (sum_log_primeFactors_le_log hqd)
-    apply Finset.sum_le_sum_of_subset_of_nonneg
-    · intro p hp
-      have hpdata := Finset.mem_filter.mp hp
-      exact Nat.mem_primeFactors.mpr ⟨Nat.prime_of_mem_primesLE hpdata.1, hpdata.2, hqd⟩
-    · intro p _ _
-      exact
-        Real.log_nonneg
-          (by
-            exact_mod_cast
-              (Nat.prime_of_mem_primeFactors
-                  (by assumption : p ∈ (q / χ.conductor).primeFactors)).one_le)
-  calc
-    -(1 / 2 * (1 - 1 / x) * Real.log ((q / χ.conductor : ℕ) : ℝ)) ≤
-        -(1 / 2 * (1 - 1 / x) * ∑ p ∈ S, Real.log p) :=
-      by nlinarith only [mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hxfrac, hbudget]
-    _ = ∑ p ∈ S, -(1 / 2 * (1 - 1 / x) * Real.log p) := by
-      rw [Finset.mul_sum, ← Finset.sum_neg_distrib]
-    _ ≤
-        ∑ p ∈ S,
-          ∑ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊),
-            (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re :=
-      Finset.sum_le_sum hstep
-
-/--
-Input/assumptions: `q ≠ 0`, a level-`q` character with quadratic primitive part, a cutoff
-`x ≥ 2`, and `q / conductor ≠ 0`.
-Conclusion: subtracting the reciprocal level-change correction from the conductor-scaled term
-`(1/2)(1-1/x) log(conductor)` is at most the level-scaled term `(1/2)(1-1/x) log q`.
-Content: apply the preceding lower bound on the correction,
-then use `log(conductor) + log(q/conductor) = log q`
-(from `conductor ∣ q` and `conductor ≠ 0`, via `Real.log_mul`).
-Role: moves the exact reciprocal correction from a
-free-standing quotient term into `(1-1/x) * log(conductor)/2`,
-with no positive residual left over and without ever coarsening to
-`PseudoPrime.AnalyticNumberTheory.Arithmetic.primeFactorLogSum` or
-`ω(q / conductor)`.
--/
-theorem primitiveReciprocalConductorAbsorption_of_isQuadratic {q : ℕ} [NeZero q] (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : 2 ≤ x)
-    (hqd : q / χ.conductor ≠ 0) :
-    1 / 2 * (1 - 1 / x) * Real.log (χ.conductor : ℝ) -
-        primitiveReciprocalLevelChangeCorrection x χ ≤
-      1 / 2 * (1 - 1 / x) * Real.log (q : ℝ) := by
-  have hbound :=
-    primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient_of_isQuadratic x χ hχ hx hqd
-  have hdvd : χ.conductor ∣ q := χ.conductor_dvd_level
-  have hdpos : (χ.conductor : ℝ) ≠ 0 := by exact_mod_cast χ.conductor_ne_zero
-  have hprod : χ.conductor * (q / χ.conductor) = q := Nat.mul_div_cancel' hdvd
-  have hlogsum :
-    Real.log (χ.conductor : ℝ) + Real.log ((q / χ.conductor : ℕ) : ℝ) = Real.log (q : ℝ) := by
-    rw [← Real.log_mul hdpos (by exact_mod_cast hqd)]
-    congr 1
-    exact_mod_cast hprod
-  have hgoal_equiv :
-    1 / 2 * (1 - 1 / x) * Real.log (χ.conductor : ℝ) - 1 / 2 * (1 - 1 / x) * Real.log (q : ℝ) =
-      -(1 / 2 * (1 - 1 / x) * Real.log ((q / χ.conductor : ℕ) : ℝ)) := by
-    rw [← hlogsum]
-    ring
-  linarith only [hbound, hgoal_equiv]
-
-/--
-Input/assumptions: a level-`q` character (no quadratic hypothesis) and a cutoff `x ≥ 2`, with
-  `q / conductor ≠ 0`.
-Conclusion: the reciprocal level-change correction is at least
-  `-(1/2)(1 - 1/x) log(q / conductor)`, matching
-  `PseudoPrime.AnalyticNumberTheory.Arithmetic.`
-  `primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient_of_isQuadratic` without
-  assuming `χ.primitiveCharacter.IsQuadratic`.
-Content: reindex to prime-outer form; at each quotient-support prime `p`, split on whether `p`
-  divides `χ.conductor`. If it does, `χ.primitiveCharacter p = 0` (a nonunit maps to `0`) so every
-  summand vanishes; otherwise `p` is coprime to the conductor, so `‖χ.primitiveCharacter p‖ = 1`
-  and the generic Fejér bound `PseudoPrime.AnalyticNumberTheory.Arithmetic.`
-  `re_sum_reciprocalPrimePowerCorrection_neg_le_half_log` applies,
-  with the tight bracket `x ≤ p ^ (K+1)` supplied by `Nat.lt_pow_succ_log_self`. Bound the resulting
-  `Σ log p` by `log(q / conductor)` exactly as in the quadratic version.
-Role: supplies the lower bound used by
-  `PseudoPrime.AnalyticNumberTheory.Arithmetic.primitiveReciprocalConductorAbsorption`.
+For `x ≥ 2` and nonzero conductor quotient, the reciprocal level correction
+is at least `-(1-1/x) * log(q / χ.conductor) / 2`. Reindex by quotient primes,
+use vanishing at conductor primes and the Fejér bound elsewhere, then bound
+the prime logarithm sum. This supplies reciprocal conductor absorption.
 -/
 theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient {q : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x) (hqd : q / χ.conductor ≠ 0) :
@@ -609,16 +305,10 @@ theorem primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient {q : �
       Finset.sum_le_sum hstep
 
 /--
-Input/assumptions: `q ≠ 0`, a level-`q` character (no quadratic hypothesis), a cutoff `x ≥ 2`,
-  and `q / conductor ≠ 0`.
-Conclusion: subtracting the reciprocal level-change correction from the conductor-scaled term
-  `(1/2)(1-1/x) log(conductor)` is at most the level-scaled term `(1/2)(1-1/x) log q`.
-Content: same as `PseudoPrime.AnalyticNumberTheory.`
-  `Arithmetic.primitiveReciprocalConductorAbsorption_of_isQuadratic`, but built on the
-  generic bound `PseudoPrime.AnalyticNumberTheory.Arithmetic.`
-  `primitiveReciprocalLevelChangeCorrection_ge_neg_half_log_quotient` instead
-  of the quadratic-only one.
-Role: replaces the conductor logarithm and reciprocal correction by a single level logarithm.
+For nonzero level `q`, `x ≥ 2`, and nonzero conductor quotient, subtracting
+the reciprocal level correction from `(1-1/x) * log(χ.conductor) / 2` is at most
+`(1-1/x) * log q / 2`. Combine the correction lower bound with the logarithm
+of the conductor quotient to obtain a level-based weighted estimate.
 -/
 theorem primitiveReciprocalConductorAbsorption {q : ℕ} [NeZero q] (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x) (hqd : q / χ.conductor ≠ 0) :
@@ -695,27 +385,5 @@ theorem characterReciprocalWeightedSum_re_primitive_eq_add_levelChangeCorrection
       _ = _ := hin
   rw [hprimitive]
   rw [hlevel]
-
-/--
-Input/assumptions: a positive cutoff and a level-`q` character with `q ≠ 0`.
-Conclusion: the reciprocal level-change correction is at most the character-free reciprocal
-  weighted sum on the complementary quotient.
-Content: the exact level-change identity gives the correction as the real part of the (level −
-  primitive) difference up to sign; bound that real part by the norm, already bounded by the
-  common-factor sum.
-Role: bounds the signed correction by a nonnegative common-factor sum, to which geometric
-  prime-power bounds apply.
--/
-theorem primitiveReciprocalLevelChangeCorrection_le {q : ℕ} [NeZero q] (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : 0 < x) :
-    primitiveReciprocalLevelChangeCorrection x χ ≤
-      commonFactorReciprocalWeightedSum x (q / χ.conductor) := by
-  have hexact := characterReciprocalWeightedSum_re_primitive_eq_add_levelChangeCorrection x χ
-  have hnorm := norm_characterReciprocalWeightedSum_sub_primitive_le x χ hx
-  have hre :=
-    Complex.re_le_norm
-      (characterReciprocalWeightedSum x χ.primitiveCharacter - characterReciprocalWeightedSum x χ)
-  rw [Complex.sub_re, norm_sub_rev] at hre
-  linarith only [hexact, hnorm, hre]
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

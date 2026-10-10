@@ -19,9 +19,12 @@ Their initial products provide the natural lower envelope for odd integers with 
 prime factors.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
-/-- The zero-indexed sequence `3, 5, 7, ...` of odd primes. -/
+/-- For natural `k`, the prime at index `k + 1` in mathlib's zero-indexed prime sequence,
+giving `3, 5, 7, ...`. Skipping the initial two defines the odd factors in primorial envelopes. -/
 noncomputable def oddPrime (k : ℕ) : ℕ :=
   Nat.nth Nat.Prime (k + 1)
 
@@ -30,56 +33,49 @@ noncomputable def oddPrime (k : ℕ) : ℕ :=
 noncomputable def oddPrimorial (k : ℕ) : ℕ :=
   ∏ i ∈ Finset.range k, oddPrime i
 
-/-- Every member of `PseudoPrime.AnalyticNumberTheory.Arithmetic.oddPrime` is prime. -/
+/-- For every natural `k`, `oddPrime k` is prime by the primality theorem for `Nat.nth`.
+This supplies primality of each factor in the odd primorial. -/
 theorem oddPrime_prime (k : ℕ) : (oddPrime k).Prime :=
   Nat.prime_nth_prime (k + 1)
 
-/-- The odd-prime sequence is strictly increasing. -/
+/-- The sequence `oddPrime` is strictly increasing. Infinitude of the primes makes their
+`Nat.nth` enumeration strictly increasing, and the index shift preserves order.
+This compares odd prime indices with sorted prime supports. -/
 theorem oddPrime_strictMono : StrictMono oddPrime := fun _ _ h =>
   Nat.nth_strictMono Nat.infinite_setOfPred_prime (Nat.add_lt_add_right h 1)
 
-/-- The first odd prime is `3`. -/
+/-- The zero-indexed first odd prime is three, by mathlib's value for prime index one.
+This initializes the lower bounds for all odd primes. -/
 theorem oddPrime_zero : oddPrime 0 = 3 := by
   simp only [oddPrime, zero_add, Nat.nth_prime_one_eq_three]
 
-/-- Every member of `PseudoPrime.AnalyticNumberTheory.Arithmetic.oddPrime` is at least `3`. -/
+/-- For every natural `k`, `3 ≤ oddPrime k`. Compare index zero with `k` using monotonicity
+and the value `oddPrime 0 = 3`. This excludes two and bounds each primorial factor below. -/
 theorem three_le_oddPrime (k : ℕ) : 3 ≤ oddPrime k := by
   rw [← oddPrime_zero]
   exact oddPrime_strictMono.monotone (Nat.zero_le k)
 
-/-- Every member of `PseudoPrime.AnalyticNumberTheory.Arithmetic.oddPrime` is odd. -/
+/-- Every `oddPrime k` is odd: it is prime and at least three, hence differs from two.
+This verifies that the enumeration belongs to the odd-prime supports being compared. -/
 theorem oddPrime_odd (k : ℕ) : Odd (oddPrime k) := by
   apply (oddPrime_prime k).odd_of_ne_two
   exact ne_of_gt ((by norm_num only : 2 < 3).trans_le (three_le_oddPrime k))
 
-/-- The empty odd primorial is `1`. -/
+/-- The product of the first zero odd primes is one, by the empty-product convention.
+This is the base case for inductive odd-primorial estimates. -/
 theorem oddPrimorial_zero : oddPrimorial 0 = 1 := by
   simp only [oddPrimorial, Finset.range_zero, Finset.prod_empty]
 
-/-- Adding one factor multiplies the odd primorial by the next odd prime. -/
+/-- For natural `k`, `oddPrimorial (k + 1) = oddPrimorial k * oddPrime k`.
+The finite-range product recurrence isolates the next factor and supports induction on
+the number of distinct odd primes. -/
 theorem oddPrimorial_succ (k : ℕ) : oddPrimorial (k + 1) = oddPrimorial k * oddPrime k := by
   simp only [oddPrimorial, Finset.prod_range_succ]
 
-/-- Every odd primorial is positive. -/
-theorem oddPrimorial_pos (k : ℕ) : 0 < oddPrimorial k := by
-  induction k with
-  | zero =>
-    rw [oddPrimorial_zero]
-    norm_num only
-  | succ k hk =>
-    rw [oddPrimorial_succ]
-    exact Nat.mul_pos hk (oddPrime_prime k).pos
-
-/-- Odd primorials are monotone in the number of factors. -/
-theorem oddPrimorial_monotone : Monotone oddPrimorial := by
-  apply monotone_nat_of_le_succ
-  intro k
-  rw [oddPrimorial_succ]
-  have hpos := oddPrimorial_pos k
-  have hprime := three_le_oddPrime k
-  nlinarith only [hpos, hprime]
-
-/-- The `i`-th odd prime is at most the `i`-th member of any finite set of odd primes. -/
+/-- In any finite set `s` of odd primes, its increasingly ordered entry at index
+`i : Fin s.card` is at least `oddPrime i`. Induction on the index shows that each entry
+has at least `i + 1` primes below it, accounting for two as well; monotonicity of `Nat.nth`
+gives the bound. This is the termwise input for the primorial product comparison. -/
 theorem oddPrime_le_orderEmbOfFin {s : Finset ℕ} (hprime : ∀ p ∈ s, p.Prime) (hodd : ∀ p ∈ s, Odd p)
     (i : Fin s.card) : oddPrime i ≤ s.orderEmbOfFin rfl i := by
   let f := s.orderEmbOfFin rfl
@@ -107,7 +103,10 @@ theorem oddPrime_le_orderEmbOfFin {s : Finset ℕ} (hprime : ∀ p ∈ s, p.Prim
   rw [oddPrime, ← Nat.nth_count (hfprime i)]
   exact Nat.nth_monotone Nat.infinite_setOfPred_prime (hcountNat i.val i.isLt)
 
-/-- The product of any finite set of odd primes dominates the matching odd primorial. -/
+/-- If every member of a finite set `s` is an odd prime, then `oddPrimorial s.card` is
+at most its product. Sort the set, compare each factor with the corresponding odd prime,
+and reindex the product through the order isomorphism. This bounds the product of an odd
+integer's distinct prime factors from below. -/
 theorem oddPrimorial_card_le_prod {s : Finset ℕ} (hprime : ∀ p ∈ s, p.Prime)
     (hodd : ∀ p ∈ s, Odd p) : oddPrimorial s.card ≤ ∏ p ∈ s, p := by
   rw [oddPrimorial, ← Fin.prod_univ_eq_prod_range]
@@ -117,49 +116,14 @@ theorem oddPrimorial_card_le_prod {s : Finset ℕ} (hprime : ∀ p ∈ s, p.Prim
     _ = ∏ p : s, (p : ℕ) := Equiv.prod_comp (s.orderIsoOfFin rfl).toEquiv fun p : s => (p : ℕ)
     _ = ∏ p ∈ s, p := by simpa only [id_eq] using (Finset.prod_coe_sort s id)
 
-/-- An odd natural number dominates the odd primorial indexed by its distinct prime factors. -/
+/-- For odd natural `n`, `oddPrimorial n.primeFactors.card ≤ n`.
+Its prime factors are odd, their product dominates the corresponding odd primorial, and
+that product divides the positive `n`. This is the lower envelope for factor-count estimates. -/
 theorem oddPrimorial_le_of_card_primeFactors {n : ℕ} (hn : Odd n) :
     oddPrimorial n.primeFactors.card ≤ n := by
   have hodd : ∀ p ∈ n.primeFactors, Odd p := fun _ hp =>
     hn.of_dvd_nat (Nat.mem_primeFactors.mp hp).2.1
   have hprod := oddPrimorial_card_le_prod (fun _ hp => (Nat.mem_primeFactors.mp hp).1) hodd
   exact hprod.trans (Nat.le_of_dvd hn.pos (Nat.prod_primeFactors_dvd n))
-
-/-- An odd primorial exceeding `n` gives a strict upper bound on its number of prime factors. -/
-theorem distinctPrimeFactorCount_lt_of_lt_oddPrimorial {n k : ℕ} (hn : Odd n)
-    (hnk : n < oddPrimorial k) : distinctPrimeFactorCount n < k := by
-  rw [distinctPrimeFactorCount, ArithmeticFunction.cardDistinctFactors_apply, ← List.card_toFinset]
-  by_contra hnot
-  have hk : k ≤ n.primeFactors.card := Nat.le_of_not_gt hnot
-  exact
-    not_lt_of_ge (oddPrimorial_monotone hk |>.trans (oddPrimorial_le_of_card_primeFactors hn)) hnk
-
-/-- A bounded odd input inherits a non-strict factor-count bound from the next primorial. -/
-theorem distinctPrimeFactorCount_le_of_le_of_lt_oddPrimorial_succ {n B k : ℕ} (hn : Odd n)
-    (hnB : n ≤ B) (hB : B < oddPrimorial (k + 1)) : distinctPrimeFactorCount n ≤ k := by
-  have hlt := distinctPrimeFactorCount_lt_of_lt_oddPrimorial hn (hnB.trans_lt hB)
-  exact Nat.le_of_lt_succ hlt
-
-/-- The index of an odd primorial never exceeds the product itself. -/
-theorem le_oddPrimorial (k : ℕ) : k ≤ oddPrimorial k := by
-  induction k with
-  | zero => exact Nat.zero_le _
-  | succ k hk =>
-    rw [oddPrimorial_succ]
-    have hpos := oddPrimorial_pos k
-    have hprime := three_le_oddPrime k
-    nlinarith only [hk, hpos, hprime, Nat.le_mul_of_pos_right k hpos]
-
-/-- The largest `k ≤ B` for which the first `k` odd primes have product at most `B`. -/
-noncomputable def maxOddPrimeFactorCount (B : ℕ) : ℕ := by
-  classical exact Nat.findGreatest (fun k => oddPrimorial k ≤ B) B
-
-/-- Any odd primorial bounded by `B` has index at most
-`PseudoPrime.AnalyticNumberTheory.Arithmetic.maxOddPrimeFactorCount B`. -/
-theorem le_maxOddPrimeFactorCount {B k : ℕ} (hk : oddPrimorial k ≤ B) :
-    k ≤ maxOddPrimeFactorCount B := by
-  classical
-  unfold maxOddPrimeFactorCount
-  exact Nat.le_findGreatest (P := fun i => oddPrimorial i ≤ B) (le_oddPrimorial k |>.trans hk) hk
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

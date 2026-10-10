@@ -57,61 +57,58 @@ noncomputable def twoAdicReciprocalCorrection {q : ℕ} (x : ℝ) (χ : Dirichle
     (reciprocalWeightedMangoldtTerm x (2 ^ k) -
       (characterReciprocalWeightedTerm x χ.primitiveCharacter (2 ^ k)).re)
 
-/-- The logarithmic 2-adic correction has its prime-power closed form. -/
-theorem twoAdicLogCorrection_eq_sum_of_isQuadratic {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
-    (hχ : χ.primitiveCharacter.IsQuadratic) (hx : x ≠ 0) :
+/-- For a nonzero cutoff and any primitive source, express the logarithmic two-adic
+correction through the real parts of powers of its value at two. Prime-power formulas
+identify each summand; the value-one and negative-one branches need no quadraticity. -/
+theorem twoAdicLogCorrection_eq_sum {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : x ≠ 0) :
     twoAdicLogCorrection x χ =
       ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
         (Real.log 2 * (Real.log x - k * Real.log 2) -
-          Real.log 2 * (Real.log x - k * Real.log 2) *
-            (if Odd k then (χ.primitiveCharacter 2).re else (χ.primitiveCharacter 2 ^ 2).re)) := by
+          Real.log 2 * (Real.log x - k * Real.log 2) * (χ.primitiveCharacter 2 ^ k).re) := by
   unfold twoAdicLogCorrection
   apply Finset.sum_congr rfl
   intro k hk
-  have hkpos : k ≠ 0 := by
-    have hk' := (Finset.mem_Icc.mp hk).1
-    exact Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one hk')
+  have hkpos : k ≠ 0 := Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one (Finset.mem_Icc.mp hk).1)
   rw [logWeightedMangoldtTerm_prime_pow hx Nat.prime_two hkpos,
-    characterLogWeightedTerm_primitive_re_prime_pow_of_isQuadratic x χ hχ hx Nat.prime_two hkpos]
+    characterLogWeightedTerm_primitive_re_prime_pow x χ hx Nat.prime_two hkpos]
   norm_num only
 
-/-- The reciprocal 2-adic correction has its prime-power closed form. -/
-theorem twoAdicReciprocalCorrection_eq_sum_of_isQuadratic {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) :
+/-- For a real cutoff and any inducing character, express the reciprocal correction through
+the real parts of powers of its value at two. Prime-power formulas identify each summand.
+The value-one and negative-one branches use this formula without quadraticity. -/
+theorem twoAdicReciprocalCorrection_eq_sum {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) :
     twoAdicReciprocalCorrection x χ =
       ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
         (Real.log 2 / (2 : ℝ) ^ k * (1 - (2 : ℝ) ^ k / x) -
-          Real.log 2 / (2 : ℝ) ^ k * (1 - (2 : ℝ) ^ k / x) *
-            (if Odd k then (χ.primitiveCharacter 2).re else (χ.primitiveCharacter 2 ^ 2).re)) := by
+          Real.log 2 / (2 : ℝ) ^ k * (1 - (2 : ℝ) ^ k / x) * (χ.primitiveCharacter 2 ^ k).re) := by
   unfold twoAdicReciprocalCorrection
   apply Finset.sum_congr rfl
   intro k hk
-  have hkpos : k ≠ 0 := by
-    have hk' := (Finset.mem_Icc.mp hk).1
-    exact Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one hk')
+  have hkpos : k ≠ 0 := Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one (Finset.mem_Icc.mp hk).1)
   rw [reciprocalWeightedMangoldtTerm_prime_pow Nat.prime_two hkpos,
-    characterReciprocalWeightedTerm_primitive_re_prime_pow_of_isQuadratic x χ hχ Nat.prime_two
-      hkpos]
+    characterReciprocalWeightedTerm_primitive_re_prime_pow x χ Nat.prime_two hkpos]
   norm_num only
 
-/-- If the quadratic primitive character has value `1` at `2` and `x ≠ 0`, the logarithmic
+/-- If the primitive character has value `1` at `2` and `x ≠ 0`, the logarithmic
 2-adic correction vanishes. -/
 theorem twoAdicLogCorrection_eq_zero_of_apply_two_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : x ≠ 0)
-    (h2 : χ.primitiveCharacter 2 = 1) : twoAdicLogCorrection x χ = 0 := by
-  rw [twoAdicLogCorrection_eq_sum_of_isQuadratic x χ hχ hx]
+    (χ : DirichletCharacter ℂ q) (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = 1) :
+    twoAdicLogCorrection x χ = 0 := by
+  rw [twoAdicLogCorrection_eq_sum x χ hx]
   apply Finset.sum_eq_zero
   intro k hk
-  simp only [h2, Complex.one_re, one_pow, ite_self, mul_one, sub_self]
+  simp only [h2, one_pow, Complex.one_re, mul_one, sub_self]
 
-/-- If the primitive character is trivial at `2`, the reciprocal correction vanishes. -/
+/-- If the primitive character has value one at two, the reciprocal two-adic correction
+vanishes for every real cutoff. All powers of the value at two are one, so every
+difference term is zero. This disposes of the value-one branch. -/
 theorem twoAdicReciprocalCorrection_eq_zero_of_apply_two_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic)
-    (h2 : χ.primitiveCharacter 2 = 1) : twoAdicReciprocalCorrection x χ = 0 := by
-  rw [twoAdicReciprocalCorrection_eq_sum_of_isQuadratic x χ hχ]
+    (χ : DirichletCharacter ℂ q) (h2 : χ.primitiveCharacter 2 = 1) :
+    twoAdicReciprocalCorrection x χ = 0 := by
+  rw [twoAdicReciprocalCorrection_eq_sum x χ]
   apply Finset.sum_eq_zero
   intro k hk
-  simp only [h2, Complex.one_re, one_pow, ite_self, mul_one, sub_self]
+  simp only [h2, one_pow, Complex.one_re, mul_one, sub_self]
 
 /-- The real logarithmic weighted difference is an exact finite-sum decomposition. -/
 theorem logWeightedMangoldtSum_sub_characterLogWeightedSum_re {q : ℕ} (x : ℝ)
@@ -488,55 +485,48 @@ theorem twoAdicReciprocalCorrection_le_log_two_of_apply_two_eq_zero {q : ℕ} (x
       rw [div_one] at hsum
       exact hsum
 
-/-- The `χ̃(2)=1` logarithmic branch has zero correction. -/
+/-- If `x ≠ 0` and the primitive character has value one at two, its logarithmic
+two-adic correction is at most `(log x)²/2`. The correction is exactly zero and the
+square is nonnegative. This puts the zero-correction branch in the half-square envelope. -/
 theorem twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : x ≠ 0)
-    (h2 : χ.primitiveCharacter 2 = 1) : twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 / 2 := by
-  rw [twoAdicLogCorrection_eq_zero_of_apply_two_eq_one x χ hχ hx h2]
+    (χ : DirichletCharacter ℂ q) (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = 1) :
+    twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 / 2 := by
+  rw [twoAdicLogCorrection_eq_zero_of_apply_two_eq_one x χ hx h2]
   positivity
-
-/-- The `χ̃(2)=1` reciprocal branch has zero correction. -/
-theorem twoAdicReciprocalCorrection_le_log_two_of_apply_two_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic)
-    (h2 : χ.primitiveCharacter 2 = 1) : twoAdicReciprocalCorrection x χ ≤ Real.log 2 := by
-  rw [twoAdicReciprocalCorrection_eq_zero_of_apply_two_eq_one x χ hχ h2]
-  exact Real.log_nonneg (by norm_num only)
 
 /-- In the `χ̃(2)=-1` logarithmic branch, only odd exponents contribute. -/
 theorem twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : x ≠ 0)
-    (h2 : χ.primitiveCharacter 2 = -1) :
+    (χ : DirichletCharacter ℂ q) (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicLogCorrection x χ =
       ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
         if Odd k then 2 * (Real.log 2 * (Real.log x - k * Real.log 2)) else 0 := by
-  rw [twoAdicLogCorrection_eq_sum_of_isQuadratic x χ hχ hx]
+  rw [twoAdicLogCorrection_eq_sum x χ hx]
   apply Finset.sum_congr rfl
   intro k hk
-  simp only [h2, Complex.neg_re, Complex.one_re, even_two, Even.neg_pow, one_pow, mul_ite, mul_neg,
-    mul_one]
+  simp only [h2, neg_one_pow_eq_ite, apply_ite Complex.re, Complex.neg_re, Complex.one_re,
+    ← Nat.not_odd_iff_even, ite_not]
   split_ifs <;> ring
 
 /-- In the `χ̃(2)=-1` reciprocal branch, only odd exponents contribute. -/
 theorem twoAdicReciprocalCorrection_eq_odd_sum_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic)
-    (h2 : χ.primitiveCharacter 2 = -1) :
+    (χ : DirichletCharacter ℂ q) (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicReciprocalCorrection x χ =
       ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
         if Odd k then 2 * (Real.log 2 / (2 : ℝ) ^ k * (1 - (2 : ℝ) ^ k / x)) else 0 := by
-  rw [twoAdicReciprocalCorrection_eq_sum_of_isQuadratic x χ hχ]
+  rw [twoAdicReciprocalCorrection_eq_sum x χ]
   apply Finset.sum_congr rfl
   intro k hk
-  simp only [h2, Complex.neg_re, Complex.one_re, even_two, Even.neg_pow, one_pow, mul_ite, mul_neg,
-    mul_one]
+  simp only [h2, neg_one_pow_eq_ite, apply_ite Complex.re, Complex.neg_re, Complex.one_re,
+    ← Nat.not_odd_iff_even, ite_not]
   split_ifs <;> ring
 
 /-! The `χ̃(2) = -1` logarithmic branch is controlled by the full weighted tail. -/
 
 /-- The odd logarithmic correction is bounded by the square-log envelope. -/
 theorem twoAdicLogCorrection_le_log_sq_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : 2 ≤ x)
-    (h2 : χ.primitiveCharacter 2 = -1) : twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 := by
-  rw [twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ hχ
+    (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x) (h2 : χ.primitiveCharacter 2 = -1) :
+    twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 := by
+  rw [twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ
       (ne_of_gt (lt_of_lt_of_le (by norm_num only) hx)) h2]
   let K := ⌊Real.log x / Real.log 2⌋₊
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
@@ -563,10 +553,9 @@ theorem twoAdicLogCorrection_le_log_sq_of_apply_two_eq_neg_one {q : ℕ} (x : �
 
 /-- The odd reciprocal correction is bounded by `(4 / 3) * log 2`. -/
 theorem twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : 2 ≤ x)
-    (h2 : χ.primitiveCharacter 2 = -1) :
+    (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x) (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicReciprocalCorrection x χ ≤ (4 / 3) * Real.log 2 := by
-  rw [twoAdicReciprocalCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ hχ h2]
+  rw [twoAdicReciprocalCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ h2]
   let K := ⌊Real.log x / Real.log 2⌋₊
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   have hquot_nonneg : 0 ≤ Real.log x / Real.log 2 :=
@@ -609,69 +598,7 @@ theorem twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_o
       have hsum := sum_odd_inv_two_pow_le K
       nlinarith only [hsum, hlog2]
 
-/-!
-Input/assumptions: `x ≥ 2`, a quadratic primitive character, and `χ̃(2) = -1`.
-Conclusion: the uniform odd-tail correction bound is absorbed by the `c=0` correction envelope
-together with the `log 4` conductor saving.
-Content: this is the reciprocal-side comparison used to remove the `c=-1` branch from the
-analytic worst case; it compares the proved envelopes, so no identification of two characters
-is required.
-Proof: use the `4/3 * log 2` odd-tail bound and the positivity of `log 2`.
-Role: bounds the reciprocal correction by `log 2 + (1-1/x)*log 2`;
-the second term equals `(1-1/x)*log 4/2`.
--/
-
-theorem twoAdicReciprocalCorrection_neg_one_absorbed_by_log_four_saving {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : (2 : ℝ) ≤ x)
-    (h2 : χ.primitiveCharacter 2 = -1) :
-    twoAdicReciprocalCorrection x χ ≤ Real.log 2 + (1 - 1 / x) * Real.log 2 := by
-  have hcorr :=
-    twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_one x χ hχ hx h2
-  have hxpos : 0 < x := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
-  have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
-  have hinv : 1 / x ≤ (2 : ℝ) / 3 := by
-    apply (div_le_iff₀ hxpos).mpr
-    nlinarith only [hx]
-  nlinarith only [hcorr, hlog2, hinv]
-
-/-!
-Input/assumptions: `x ≥ 2`, a quadratic primitive character, and one of the three possible values
-  at `2`.
-Conclusion: all logarithmic correction branches share a single square-log upper envelope.
-Content: the zero branch uses the sharper half-square bound, the one branch is exactly zero, and
-the negative-one branch uses the odd-tail bound already proved above.
-Proof: split the value at `2` and apply the branch-specific correction theorem.
-Role: supplies `twoAdicLogCorrection x χ ≤ (log x)²` uniformly over the three values at `2`.
--/
-
-theorem twoAdicLogCorrection_le_log_sq_of_apply_two_mem {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
-    (hχ : χ.primitiveCharacter.IsQuadratic) (hx : (2 : ℝ) ≤ x)
-    (h2 : χ.primitiveCharacter 2 = 0 ∨ χ.primitiveCharacter 2 = 1 ∨ χ.primitiveCharacter 2 = -1) :
-    twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 := by
-  have hxne : x ≠ 0 := ne_of_gt (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx)
-  rcases h2 with h2 | h2 | h2
-  · have h := twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_zero x χ hxne h2
-    linarith only [h, sq_nonneg (Real.log x)]
-  · rw [twoAdicLogCorrection_eq_zero_of_apply_two_eq_one x χ hχ hxne h2]
-    positivity
-  · exact twoAdicLogCorrection_le_log_sq_of_apply_two_eq_neg_one x χ hχ hx h2
-
 /-! The reciprocal corrections also admit one uniform envelope over the three values at `2`. -/
-
-/-- The three reciprocal correction branches are bounded by the odd-tail envelope. -/
-theorem twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_mem {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : 2 ≤ x)
-    (h2 : χ.primitiveCharacter 2 = 0 ∨ χ.primitiveCharacter 2 = 1 ∨ χ.primitiveCharacter 2 = -1) :
-    twoAdicReciprocalCorrection x χ ≤ (4 / 3) * Real.log 2 := by
-  rcases h2 with h2 | h2 | h2
-  · have h :=
-      twoAdicReciprocalCorrection_le_log_two_of_apply_two_eq_zero x χ
-        (lt_of_lt_of_le (by norm_num only) hx) h2
-    have hlog2 : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num only)
-    linarith only [h, hlog2]
-  · rw [twoAdicReciprocalCorrection_eq_zero_of_apply_two_eq_one x χ hχ h2]
-    positivity
-  · exact twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_one x χ hχ hx h2
 
 /-! The alternating linear finite sum used for the logarithmic correction difference. -/
 
@@ -774,12 +701,13 @@ theorem alternatingLogCorrection_le_log_two_mul_log_half {x : ℝ} (K : ℕ) (hx
     simp only [mul_sub] <;>
     ring_nf
 
-/-!
+/--
+For `x ≥ 4` and `K * log 2 ≤ log x`, the alternating logarithmic sum over `Icc 1 K`
+is at most `log 2 * (log x - log 2)`.
 The same alternating estimate in the native `Icc 1 K` indexing used by the correction ledger.
 The shift `k = j + 1` is exposed explicitly so later branch comparisons can consume the exact
 correction without introducing a second cutoff convention.
 -/
-
 theorem alternatingLogCorrection_Icc_le_log_two_mul_log_half {x : ℝ} (K : ℕ) (hx : 4 ≤ x)
     (hK : (K : ℝ) * Real.log 2 ≤ Real.log x) :
     (∑ k ∈ Finset.Icc 1 K,
@@ -816,17 +744,15 @@ theorem alternatingLogCorrection_Icc_le_log_two_mul_log_half {x : ℝ} (K : ℕ)
   rw [hshift]
   exact alternatingLogCorrection_le_log_two_mul_log_half K hx hK
 
-/-!
-For a quadratic primitive character with value `-1` at `2` and `x ≥ 4`, the logarithmic
+/--
+For a primitive character with value `-1` at `2` and `x ≥ 4`, the logarithmic
 correction is at most `(log x)²/2 + log 2 * (log x - log 2)`. Split twice the odd-indexed sum
 into the full affine sum and its alternating sum, and bound these two sums separately.
 -/
-
 theorem twoAdicLogCorrection_le_half_log_sq_add_log_two_mul_log_half_of_apply_two_eq_neg_one {q : ℕ}
-    (x : ℝ) (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) (hx : 4 ≤ x)
-    (h2 : χ.primitiveCharacter 2 = -1) :
+    (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : 4 ≤ x) (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 / 2 + Real.log 2 * (Real.log x - Real.log 2) := by
-  rw [twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ hχ
+  rw [twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ
       (ne_of_gt (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 4) hx)) h2]
   let K := ⌊Real.log x / Real.log 2⌋₊
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
@@ -853,35 +779,5 @@ theorem twoAdicLogCorrection_le_half_log_sq_add_log_two_mul_log_half_of_apply_tw
     · simp only [hodd, ↓reduceIte, add_neg_cancel]
   rw [hdecomp]
   linarith only [hbase, halt]
-
-/-!
-Input/assumptions: `x ≠ 0` and two characters with quadratic primitive parts whose values at
-`2` are `-1` and `0`.
-Conclusion: their logarithmic correction difference equals the displayed alternating finite sum.
-Content: this is the exact bridge from the branch formulas to the conductor-saving estimate.
-Proof: rewrite both corrections by the quadratic closed form and compare the summands by parity.
-Role: identifies the difference to which `alternatingLogCorrection_Icc_le_log_two_mul_log_half`
-applies when `x ≥ 4`; this equality itself requires only `x ≠ 0`.
--/
-
-theorem twoAdicLogCorrection_neg_one_sub_zero_eq_alternating {qz qn : ℕ} (x : ℝ)
-    (χz : DirichletCharacter ℂ qz) (χn : DirichletCharacter ℂ qn)
-    (hχz : χz.primitiveCharacter.IsQuadratic) (hχn : χn.primitiveCharacter.IsQuadratic) (hx : x ≠ 0)
-    (h20 : χz.primitiveCharacter 2 = 0) (h2m : χn.primitiveCharacter 2 = -1) :
-    twoAdicLogCorrection x χn - twoAdicLogCorrection x χz =
-      ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
-        if Odd k then Real.log 2 * (Real.log x - k * Real.log 2)
-        else -(Real.log 2 * (Real.log x - k * Real.log 2)) := by
-  rw [twoAdicLogCorrection_eq_sum_of_isQuadratic x χn hχn hx,
-    twoAdicLogCorrection_eq_sum_of_isQuadratic x χz hχz hx]
-  rw [← Finset.sum_sub_distrib]
-  apply Finset.sum_congr rfl
-  intro k hk
-  by_cases hodd : Odd k
-  · simp only [hodd, ↓reduceIte, h2m, Complex.neg_re, Complex.one_re, mul_neg, mul_one,
-      sub_neg_eq_add, h20, Complex.zero_re, mul_zero, sub_zero, add_sub_cancel_right]
-  · simp only [hodd, ↓reduceIte, h2m, even_two, Even.neg_pow, one_pow, Complex.one_re, mul_one,
-      sub_self, h20, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, Complex.zero_re,
-      mul_zero, sub_zero, zero_sub]
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

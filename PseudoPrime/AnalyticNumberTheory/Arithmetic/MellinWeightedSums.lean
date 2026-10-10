@@ -4,17 +4,23 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
-import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
+public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
 
 /-! General finite-sum identities for Mellin-weighted von Mangoldt sums. -/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /--
-The von Mangoldt tsum against the logarithmic Mellin weight collapses to the classical finite
-Riemann-weighted sum, since the weight vanishes past `x` and the von Mangoldt function vanishes
-at `0`.
+For `x > 0`, the complex von Mangoldt sum against `mellinWeightTwo (n/x)` equals the
+complex cast of `logWeightedMangoldtSum x`. The weight vanishes for `n > x`, the term at
+zero vanishes, and on `0 < n ≤ x` the weight is `-log(n/x) = log(x/n)`.
+Finite support reduces the `tsum` to the defining finite sum. This identifies the arithmetic
+side of the logarithmic Mellin inversion formula without a character twist.
 -/
 theorem mellinWeightTwo_vonMangoldt_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
     ∑' n : ℕ, (ArithmeticFunction.vonMangoldt n : ℂ) * General.mellinWeightTwo ((n : ℝ) / x) =
@@ -49,9 +55,11 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
   ring
 
 /--
-The von Mangoldt tsum against the reciprocal Mellin weight collapses to the classical finite
-reciprocal Riemann-weighted sum, for the same reason as
-`PseudoPrime.AnalyticNumberTheory.Arithmetic.mellinWeightTwo_vonMangoldt_tsum_eq_ofReal`.
+For `x > 0`, the complex sum of `Λ(n)/n * mellinWeightOne (n/x)` equals the complex cast
+of `reciprocalWeightedMangoldtSum x`. The term at zero and all terms beyond the cutoff
+vanish; within the cutoff the Mellin weight is `1 - n/x`. Finite support reduces the
+`tsum` to the defining finite sum. This identifies the arithmetic side of reciprocal Mellin
+inversion without a character twist.
 -/
 theorem mellinWeightOne_vonMangoldt_div_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
     ∑' n : ℕ,

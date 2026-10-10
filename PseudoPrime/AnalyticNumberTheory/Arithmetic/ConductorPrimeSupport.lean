@@ -4,17 +4,26 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
 
 /-! # Agreement of a character and its primitive source under equal prime support -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
-/-- The level and conductor have the same prime support. -/
+/-- For a character `χ` of modulus `q`, every prime divisor of `q` also divides its conductor.
+The reverse containment follows from `χ.conductor ∣ q`, so this predicate expresses equality
+of prime support. It ensures induction from the primitive source introduces no new zero values. -/
 def ConductorPrimeSupport {q : ℕ} (χ : DirichletCharacter ℂ q) : Prop :=
   ∀ p : ℕ, p.Prime → p ∣ q → p ∣ χ.conductor
 
-/-- Equal prime support makes an induced character agree everywhere with its primitive source. -/
+/-- If `χ` has the same prime support as its conductor, then for every natural `n` its value
+equals that of `χ.primitiveCharacter`. When `n` is coprime to the conductor, prime support
+also makes it coprime to the level quotient, and the induction formula applies; otherwise
+both characters vanish. This removes primitive-comparison errors from weighted sums. -/
 theorem apply_eq_primitiveCharacter_of_conductorPrimeSupport {q n : ℕ} (χ : DirichletCharacter ℂ q)
     (hsupport : ConductorPrimeSupport χ) : χ n = χ.primitiveCharacter n := by
   by_cases hconductor : Nat.Coprime n χ.conductor
@@ -37,7 +46,10 @@ theorem apply_eq_primitiveCharacter_of_conductorPrimeSupport {q n : ℕ} (χ : D
           (by simpa only [Nat.isCoprime_iff_coprime] using hconductor)
     rw [hχzero, hprimitiveZero]
 
-/-- Equal prime support removes the conductor-quotient error from the reciprocal sum. -/
+/-- For any real cutoff `x`, equal prime support of the level and conductor makes the
+reciprocal weighted sum for `χ` equal to that for its primitive character.
+The pointwise character equality identifies every term of the finite sum, so no size or
+positivity condition on `x` is required. This eliminates the conductor-quotient correction. -/
 theorem characterReciprocalWeightedSum_eq_primitive_of_conductorPrimeSupport {q : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hsupport : ConductorPrimeSupport χ) :
     characterReciprocalWeightedSum x χ = characterReciprocalWeightedSum x χ.primitiveCharacter := by

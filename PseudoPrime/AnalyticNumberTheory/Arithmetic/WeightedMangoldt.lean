@@ -4,10 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Algebra.Order.Field.GeomSum
-import Mathlib.NumberTheory.Chebyshev
-import Mathlib.NumberTheory.LSeries.Dirichlet
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
+module
+
+public import Mathlib.Algebra.Order.Field.GeomSum
+public import Mathlib.Data.Nat.Prime.Int
+public import Mathlib.NumberTheory.Chebyshev
+public import Mathlib.NumberTheory.LSeries.Dirichlet
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
 
 /-!
 # Weighted von Mangoldt sums
@@ -17,13 +20,29 @@ together with the elementary reindexing and estimation lemmas for finite sums ov
 that these weighted sums reduce to.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
+
+/-- The nonnegative reciprocal Mangoldt sum over positive indices up to the real cutoff.
+It is independent of the L-function and majorizes the norm of its reciprocal arithmetic
+sum after multiplication by the degree. A fixed cutoff supplies a universal zero-mass bound. -/
+noncomputable def reciprocalMangoldtSum (x : ℝ) : ℝ :=
+  ∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, ArithmeticFunction.vonMangoldt n / (n : ℝ)
+
+/-- The real truncated Mangoldt sum with weight `1 / (n log n) - 1 / (x log x)`.
+The cutoff is a real number, with positive integer indices up to its natural floor.
+It majorizes the truncated L-value sum after multiplication by the degree. -/
+noncomputable def truncatedMangoldtMajorant (x : ℝ) : ℝ :=
+  ∑ n ∈ Finset.Ioc 0 ⌊x⌋₊,
+    ArithmeticFunction.vonMangoldt n * (1 / ((n : ℝ) * Real.log n) - 1 / (x * Real.log x))
 
 /-- The logarithmically weighted von Mangoldt summand `Λ(n) log(x / n)`. -/
 noncomputable def logWeightedMangoldtTerm (x : ℝ) (n : ℕ) : ℝ :=
   ArithmeticFunction.vonMangoldt n * Real.log (x / n)
 
-/-- The real weighted von Mangoldt sum occurring in the Riemann explicit formula. -/
+/-- Sum `Λ(n) log(x/n)` over positive natural indices through `⌊x⌋₊`.
+This finite real sum is the arithmetic side of the logarithmic explicit formula. -/
 noncomputable def logWeightedMangoldtSum (x : ℝ) : ℝ :=
   ∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, logWeightedMangoldtTerm x n
 
@@ -35,7 +54,8 @@ noncomputable def commonFactorLogWeightedSum (x : ℝ) (m : ℕ) : ℝ :=
 noncomputable def reciprocalWeightedMangoldtTerm (x : ℝ) (n : ℕ) : ℝ :=
   ArithmeticFunction.vonMangoldt n / n * (1 - n / x)
 
-/-- The real reciprocal weighted sum occurring in the Riemann explicit formula. -/
+/-- Sum `Λ(n)/n * (1 - n/x)` over positive natural indices through `⌊x⌋₊`.
+This finite real sum is the arithmetic side of the reciprocal explicit formula. -/
 noncomputable def reciprocalWeightedMangoldtSum (x : ℝ) : ℝ :=
   ∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, reciprocalWeightedMangoldtTerm x n
 
@@ -132,7 +152,10 @@ theorem sum_log_weight_le_half_sq (a L : ℝ) (K : ℕ) :
     add_nonneg (sq_nonneg _) (mul_nonneg (Nat.cast_nonneg K) (sq_nonneg _))
   nlinarith only [hidentity, hnonneg]
 
-/-- A finite sum over prime powers can be reindexed with the prime as its outer variable. -/
+/-- Reindex any real-valued sum over prime powers through `n` by primes `p ≤ n`
+and exponents `1 ≤ k ≤ p.log n`. Uniqueness of prime-power representations makes
+the prime slices disjoint, and injectivity of powers gives the inner reindexing.
+This supports the common-factor estimates with the prime as outer variable. -/
 theorem sum_primePow_eq_sum_primesLE (f : ℕ → ℝ) (n : ℕ) :
     ∑ q ∈ Finset.Icc 1 n with IsPrimePow q, f q =
       ∑ p ∈ Nat.primesLE n, ∑ k ∈ Finset.Icc 1 (p.log n), f (p ^ k) := by
@@ -182,7 +205,9 @@ theorem sum_primePow_eq_sum_primesLE (f : ℕ → ℝ) (n : ℕ) :
 
 /--
 A finite sum supported on prime powers can be reindexed by exponent and prime while retaining
-the condition that its index is not coprime to `m`.
+the condition that its index is not coprime to `m`. For `x ≥ 0`, Chebyshev's
+prime-power reindexing gives the exponent cutoff `⌊log x / log 2⌋₊`; primality
+then turns failure of coprimality into `p ∣ m`. This is the reciprocal-weight interface.
 -/
 theorem sum_not_coprime_eq_sum_prime_powers (f : ℕ → ℝ) (m : ℕ) {x : ℝ} (hx : 0 ≤ x)
     (hf : ∀ n : ℕ, ¬IsPrimePow n → f n = 0) :
@@ -402,5 +427,27 @@ theorem commonFactorReciprocalWeightedSum_le {m : ℕ} (hm0 : m ≠ 0) {x : ℝ}
       intro p hp
       exact sum_log_div_prime_pow_le (Nat.prime_of_mem_primeFactors hp)
     _ = primeFactorLogSum m := by rw [primeFactorLogSum]
+
+/-- For a prime p and any natural start and end indices, the finite sum of p^(-k)
+is at most twice its first term. Apply the geometric interval bound and use p >= 2
+to bound the remaining geometric denominator below by one half. This gives a uniform
+tail estimate for smoothed prime-power corrections without fixing a truncation. -/
+theorem sum_inv_prime_pow_tail_le {p m N : ℕ} (hp : p.Prime) :
+    ∑ k ∈ Finset.Icc m N, (1 / (p : ℝ) ^ k) ≤ 2 / (p : ℝ) ^ m := by
+  have hp2 : (2 : ℝ) ≤ p := by exact_mod_cast hp.two_le
+  have hp0 : (0 : ℝ) < p := (by norm_num only : (0 : ℝ) < 2).trans_le hp2
+  have hinv0 : 0 ≤ (p : ℝ)⁻¹ := inv_nonneg.mpr hp0.le
+  have hinv2 : (p : ℝ)⁻¹ ≤ 1 / 2 := by
+    simpa only [one_div] using one_div_le_one_div_of_le (by norm_num only : (0 : ℝ) < 2) hp2
+  have hinv1 : (p : ℝ)⁻¹ < 1 := hinv2.trans_lt (by norm_num only)
+  have hden : 0 < 1 - (p : ℝ)⁻¹ := sub_pos.mpr hinv1
+  have hb := geom_sum_Ico_le_of_lt_one (m := m) (n := N + 1) hinv0 hinv1
+  rw [Finset.Ico_add_one_right_eq_Icc] at hb
+  have hpow : 0 ≤ ((p : ℝ)⁻¹) ^ m := pow_nonneg hinv0 m
+  have hc : ((p : ℝ)⁻¹) ^ m / (1 - (p : ℝ)⁻¹) ≤ 2 * ((p : ℝ)⁻¹) ^ m := by
+    apply (div_le_iff₀ hden).mpr
+    have h := mul_le_mul_of_nonneg_left hinv2 hpow
+    nlinarith only [h]
+  simpa only [one_div, inv_pow, div_eq_mul_inv, one_mul] using hb.trans hc
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

@@ -4,16 +4,22 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.AlternatingSums
-import Mathlib.Tactic
+module
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.AlternatingSums
+public import Mathlib.Tactic
 
 /-! # General bounds and arithmetic certificates -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
-/-- Every exponent in the logarithmic cutoff places `2` in the corresponding
-prime cutoff whenever `x ≥ 2`. -/
+/-- If `x ≥ 2` and `1 ≤ k ≤ floor (log x / log 2)`, then two belongs to the natural
+cutoff `Ioc 0 (floor (x^(1/k)))`. The logarithmic bound gives `2^k ≤ x`, and monotonicity
+of positive real powers gives `2 ≤ x^(1/k)`. This ensures the prime two is present in
+each relevant prime-power sum used in the two-adic correction. -/
 theorem two_mem_prime_cutoff_of_two_le {x : ℝ} (hx : 2 ≤ x) {k : ℕ}
     (hk : k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊) : 2 ∈ Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊ := by
   have hkpos : 0 < k := (Finset.mem_Icc.mp hk).1
@@ -45,7 +51,9 @@ interface local makes the `χ̃(2) = -1` correction bound independent of the
 cutoff used by the analytic consumer.
 -/
 
-/-- The odd inverse powers of `2` have total mass at most `2 / 3`. -/
+/-- For any natural cutoff `K`, the sum of `2^(-k)` over odd `k` in `Icc 1 K` is at most
+`2/3`. Reindexing odd exponents as `2*j + 1` gives a finite geometric sum with initial
+term `1/2` and ratio `1/4`. This bounds odd-exponent corrections independently of the cutoff. -/
 theorem sum_odd_inv_two_pow_le (K : ℕ) :
     ∑ k ∈ Finset.Icc (1 : ℕ) K, (if Odd k then (1 : ℝ) / (2 : ℝ) ^ k else 0) ≤ 2 / 3 := by
   classical

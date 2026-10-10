@@ -19,26 +19,38 @@ inequality in `m`, `e`, and a split parameter `k`.
 `ElementaryOmegaFiniteCertificates` uses these reductions for `1 ≤ m ≤ 162`.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 namespace ElementaryOmegaPowTwoBridgeInternal
 
-/-- A crude rational lower bound for `Real.log 2`. -/
+/-- The rational constant `693/1000`, strictly below `log 2` as proved below.
+It gives an exact arithmetic lower estimate for `log (2^e)` in finite anchor certificates. -/
 noncomputable def logTwoLower : ℝ :=
   693 / 1000
 
-/-- A crude rational upper bound for `Real.log 2`. -/
+/-- The rational constant `347/500`, strictly above `log 2` as proved below.
+It bounds the logarithmic tangent estimate by an exact rational expression in certificates. -/
 noncomputable def logTwoUpper : ℝ :=
   347 / 500
 
+/-- The lower logarithm bound `693/1000` is positive, by rational arithmetic.
+This establishes the positive base needed in power-of-two logarithm comparisons. -/
 theorem logTwoLower_pos : (0 : ℝ) < logTwoLower := by
   unfold logTwoLower
   norm_num only
 
+/-- The rational lower constant `693/1000` is strictly below `log 2`.
+The sharper mathlib decimal bound implies the comparison by linear arithmetic.
+This supplies the lower side of the finite anchor certificate inequality. -/
 theorem logTwoLower_lt_logTwo : logTwoLower < Real.log 2 := by
   unfold logTwoLower
   linarith only [Real.log_two_gt_d9]
 
+/-- The logarithm of two is strictly below the rational upper constant `347/500`.
+The sharper mathlib decimal bound gives the inequality by linear arithmetic.
+This supplies the upper coefficient in the rational logarithmic tangent bound. -/
 theorem logTwo_lt_logTwoUpper : Real.log 2 < logTwoUpper := by
   unfold logTwoUpper
   linarith only [Real.log_two_lt_d9]

@@ -16,9 +16,13 @@ This file proves a finite Fejér decomposition on the unit circle using the squa
 real parts of power sums with affine or geometric coefficients, used in level-change estimates.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
-/-- The partial geometric power sum used in a finite Fejér decomposition. -/
+/-- For complex `z` and natural `j`, the finite sum `Σ_{r=0}^j z^r`, including the
+constant term one. On the unit circle its squared norm is the nonnegative kernel in
+the finite Fejér decomposition used for character level-change bounds. -/
 def fejerPartialPowerSum (z : ℂ) (j : ℕ) : ℂ :=
   Finset.sum (Finset.range (j + 1)) fun r => z ^ r
 
@@ -31,7 +35,9 @@ theorem norm_fejerPartialPowerSum_zero_sq (z : ℂ) : ‖fejerPartialPowerSum z 
   rw [fejerPartialPowerSum_zero]
   simp only [norm_one, one_pow]
 
-/-- The first Fejér kernel expansion on the unit circle. -/
+/-- If `‖z‖ = 1`, the squared norm of the first partial sum `1 + z` is `2 + 2 * Re z`.
+Expand the real and imaginary parts and use `Re(z)² + Im(z)² = 1`.
+This supplies the first kernel-square case in the uniform second-difference identity. -/
 theorem norm_fejerPartialPowerSum_one_sq {z : ℂ} (hz : ‖z‖ = 1) :
     ‖fejerPartialPowerSum z 1‖ ^ 2 = 2 + 2 * z.re := by
   have hzsq : z.re ^ 2 + z.im ^ 2 = 1 := by
@@ -55,7 +61,10 @@ theorem normSq_pow_eq_one_of_norm_eq_one {z : ℂ} (hz : ‖z‖ = 1) (n : ℕ) 
   rw [Complex.normSq_eq_norm_sq, norm_pow, hz]
   simp only [one_pow]
 
-/-- The norm-square recurrence for successive Fejér partial sums on the unit circle. -/
+/-- If `‖z‖ = 1`, the norm-square of the partial sum through `j + 1` equals that through
+`j`, plus one, plus twice the real cross term with `conj (z^(j+1))`.
+Expand the squared norm after appending the next power, whose norm-square is one.
+This recurrence yields the kernel-square second-difference telescope. -/
 theorem normSq_fejerPartialPowerSum_succ {z : ℂ} (hz : ‖z‖ = 1) (j : ℕ) :
     Complex.normSq (fejerPartialPowerSum z (j + 1)) =
       Complex.normSq (fejerPartialPowerSum z j) + 1 +
@@ -63,25 +72,6 @@ theorem normSq_fejerPartialPowerSum_succ {z : ℂ} (hz : ‖z‖ = 1) (j : ℕ) 
   rw [fejerPartialPowerSum_succ]
   rw [Complex.normSq_add]
   rw [normSq_pow_eq_one_of_norm_eq_one hz]
-
-/--
-Nonnegative discrete second differences make a Fejér decomposition nonnegative.
-
-The equality hypothesis is the algebraic finite-sum decomposition; isolating it here keeps the
-positivity argument independent of characters and allows the identity to be proved separately by
-finite-sum algebra.
--/
-theorem fejer_decomposition_nonneg {a : ℕ → ℝ} {z : ℂ} {K : ℕ}
-    (hconv : ∀ j ∈ Finset.range (K + 1), 0 ≤ a j - 2 * a (j + 1) + a (j + 2))
-    (hdecomp :
-      a 0 + 2 * (Finset.sum (Finset.Icc 1 K) fun k => a k * z ^ k).re =
-        Finset.sum (Finset.range (K + 1)) fun j =>
-          (a j - 2 * a (j + 1) + a (j + 2)) * ‖fejerPartialPowerSum z j‖ ^ 2) :
-    0 ≤ a 0 + 2 * (Finset.sum (Finset.Icc 1 K) fun k => a k * z ^ k).re := by
-  rw [hdecomp]
-  apply Finset.sum_nonneg
-  intro j hj
-  exact mul_nonneg (hconv j hj) (sq_nonneg _)
 
 /-- On the unit circle, a complex number times its own conjugate is `1`. -/
 theorem mul_conj_eq_one_of_norm_eq_one {z : ℂ} (hz : ‖z‖ = 1) : z * (starRingEnd ℂ) z = 1 := by
@@ -133,12 +123,9 @@ theorem fejerPartialPowerSum_succ_mul_conj_pow_sub {z : ℂ} (hz : ‖z‖ = 1) 
       z ^ n * (starRingEnd ℂ) z ^ n * (starRingEnd ℂ) z * hzc
 
 /--
-The Fejér kernel-square second-difference identity on the unit circle.
-
-This is the complex counterpart of `sum_range_succ_mul_secondDiff`'s scalar telescope: unlike
-the first difference `‖P_{k}‖² - ‖P_{k-1}‖²`, which accumulates a running sum, the *second*
-difference of the kernel square collapses to the single term `2 · Re (z ^ (n + 2))`.
-It supplies the second-difference identity used in the Fejér sum-of-squares decomposition.
+For `‖z‖ = 1`, the second difference of the squared Fejér partial power sums
+is `2 * Re(z^(n+2))`. Expand the squared norms and cancel consecutive terms;
+this identity supplies the Fejér sum-of-squares decomposition.
 -/
 theorem normSq_fejerPartialPowerSum_secondDiff {z : ℂ} (hz : ‖z‖ = 1) (n : ℕ) :
     Complex.normSq (fejerPartialPowerSum z (n + 2)) -
@@ -161,24 +148,6 @@ theorem norm_sq_fejerPartialPowerSum_secondDiff {z : ℂ} (hz : ‖z‖ = 1) (n 
       2 * (z ^ (n + 2)).re := by
   simp only [← Complex.normSq_eq_norm_sq]
   exact normSq_fejerPartialPowerSum_secondDiff hz n
-
-/--
-The weighted discrete second-difference telescope on `Finset.range (K + 1)`.
-
-For any real sequence, `Σ_{j=0}^K (j+1) Δ²a(j)` equals
-`a(0) - (K+2)a(K+1) + (K+1)a(K+2)`. Induction cancels the interior first differences,
-leaving only these endpoint terms.
--/
-theorem sum_range_succ_mul_secondDiff (a : ℕ → ℝ) (K : ℕ) :
-    (Finset.sum (Finset.range (K + 1)) fun j => ((j : ℝ) + 1) * (a j - 2 * a (j + 1) + a (j + 2))) =
-      a 0 - ((K : ℝ) + 2) * a (K + 1) + ((K : ℝ) + 1) * a (K + 2) := by
-  induction K with
-  | zero =>
-    simp only [zero_add, Finset.range_one, Finset.sum_singleton, CharP.cast_eq_zero, one_mul]
-  | succ K ih =>
-    rw [Finset.sum_range_succ, ih]
-    push_cast
-    ring
 
 /--
 The predecessor kernel square, with the convention that the "square before `F 0`"

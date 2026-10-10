@@ -80,6 +80,8 @@ noncomputable def elementaryH (t : ℝ) : ℝ :=
 noncomputable def elementaryF (t : ℝ) : ℝ :=
   (1 + 1 / t) * elementaryH t
 
+/-- At positive `t`, `a(t) = log(2t) - 1` has derivative `1/t` by the logarithm
+chain rule. This supplies the denominator derivative in the tail estimate. -/
 theorem hasDerivAt_elementaryA {t : ℝ} (ht : 0 < t) : HasDerivAt elementaryA (1 / t) t := by
   have hlin : HasDerivAt (fun s : ℝ => 2 * s) 2 t := by
     simpa only [id_eq, mul_one] using (hasDerivAt_id t).const_mul 2
@@ -90,6 +92,8 @@ theorem hasDerivAt_elementaryA {t : ℝ} (ht : 0 < t) : HasDerivAt elementaryA (
     field_simp [hne, ht.ne', (by norm_num only : (2 : ℝ) ≠ 0)]
   rwa [heq] at hsub
 
+/-- At positive `t`, the product rule gives `u'(t) = a(t) + 1`.
+This derivative is used when differentiating `log(u(t))`. -/
 theorem hasDerivAt_elementaryU {t : ℝ} (ht : 0 < t) :
     HasDerivAt elementaryU (elementaryA t + 1) t := by
   have hid : HasDerivAt (fun s : ℝ => s) (1 : ℝ) t := hasDerivAt_id t
@@ -117,6 +121,7 @@ theorem elementaryA_ge_two {t : ℝ} (ht : 11 ≤ t) : (2 : ℝ) ≤ elementaryA
   have hlog3 : (3 : ℝ) < Real.log (2 * t) := hlog22.trans_le this
   exact (show (2 : ℝ) < Real.log (2 * t) - 1 by linarith only [hlog3]).le
 
+/-- For `t ≥ 11`, the bound `a(t) ≥ 2` makes the denominator of `h(t)` positive. -/
 theorem elementaryA_pos {t : ℝ} (ht : 11 ≤ t) : (0 : ℝ) < elementaryA t := by
   linarith only [elementaryA_ge_two ht]
 
@@ -155,6 +160,8 @@ theorem hasDerivAt_elementaryH {t : ℝ} (ht : 11 ≤ t) : ∃ d, HasDerivAt ele
   have hden : (0 : ℝ) ≤ t * elementaryA t ^ 2 := mul_nonneg ht0.le hA_sq_nonneg
   exact div_nonpos_iff.mpr (Or.inr ⟨hloghalf, hden⟩)
 
+/-- `h` decreases on `[11, ∞)`. The nonpositive derivative of `h` on this convex
+interval turns the differential estimate into a comparison of factor counts. -/
 theorem elementaryH_antitoneOn : AntitoneOn elementaryH (Set.Ici (11 : ℝ)) := by
   have hD : Convex ℝ (Set.Ici (11 : ℝ)) := convex_Ici _
   have hcont : ContinuousOn elementaryH (Set.Ici (11 : ℝ)) := fun t ht =>
@@ -171,12 +178,16 @@ theorem elementaryH_antitoneOn : AntitoneOn elementaryH (Set.Ici (11 : ℝ)) := 
   obtain ⟨d, hd, hd_nonpos⟩ := hasDerivAt_elementaryH ht.le
   rwa [hd.deriv]
 
+/-- For `t ≥ 11`, multiplying `t ≥ 11` and `a(t) ≥ 2` gives `u(t) ≥ 22`.
+This places the logarithmic lower bound beyond the monotonicity threshold `e`. -/
 theorem elementaryU_ge {t : ℝ} (ht : 11 ≤ t) : (22 : ℝ) ≤ elementaryU t := by
   unfold elementaryU
   have ha2 := elementaryA_ge_two ht
   nlinarith only [mul_le_mul ht ha2 (by norm_num only : (0 : ℝ) ≤ 2)
       (by linarith only [ht] : (0 : ℝ) ≤ t)]
 
+/-- For `t ≥ 11`, `h(t)` is nonnegative because `u(t) ≥ 22` and `a(t) > 0`.
+The sign allows multiplication of the antitone factors defining `F`. -/
 theorem elementaryH_nonneg {t : ℝ} (ht : 11 ≤ t) : 0 ≤ elementaryH t := by
   unfold elementaryH
   apply div_nonneg
@@ -203,6 +214,9 @@ theorem elementaryF_antitoneOn : AntitoneOn elementaryF (Set.Ici (11 : ℝ)) := 
     _ ≤ (1 + 1 / t1) * elementaryH t1 := mul_le_mul_of_nonneg_left hh1 hc1pos
 
 -- The single numeric certificate closing the tail: `F(163) ≤ 7/5`.
+/-- The tail ratio satisfies `F(163) ≤ 7/5`. Explicit Taylor bounds for the
+logarithms give rational bounds on `a(163)` and `log(u(163))`; these certify
+the endpoint from which monotonicity controls every larger factor count. -/
 theorem elementaryF_163_le : elementaryF 163 ≤ (7 / 5 : ℝ) := by
   have hx1 : |(1 - (326 : ℝ) / 2 ^ 9)| < 1 := by norm_num only [abs_of_nonneg]
   obtain ⟨hlo1, hhi1⟩ := Analysis.log_bounds_of_taylor (N := 326) (by norm_num only) 9 30 rfl hx1
@@ -286,6 +300,9 @@ theorem log_ge_elementaryU_of_pow_mul_factorial_le {n m : ℕ} (hm1 : 1 ≤ m)
   rw [hUeq]
   nlinarith only [hstep1, hsplit, hfact]
 
+/-- Identify the arithmetic-function count of distinct prime factors with the
+cardinality of `Nat.primeFactors`, using the list-to-finset factor identity.
+This connects the character-modulus counting lemma to the tail parameter. -/
 theorem distinctPrimeFactorCount_eq_primeFactors_card (n : ℕ) :
     distinctPrimeFactorCount n = n.primeFactors.card := by
   rw [distinctPrimeFactorCount, ArithmeticFunction.cardDistinctFactors_apply, ← List.card_toFinset,
@@ -294,6 +311,8 @@ theorem distinctPrimeFactorCount_eq_primeFactors_card (n : ℕ) :
 /--
 **The `PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement` tail**:
 unconditional for every odd `n` with `m := n.primeFactors.card ≥ 163`.
+The factorial lower bound puts `log(4n)` above `u(m)`; monotonicity of
+`log(x)/x` and `F`, together with the certificate at `163`, bounds `ω(4n) = m + 1`.
 -/
 theorem elementaryOmegaStatement_tail {n : ℕ} (hn : Odd n) (hm163 : 163 ≤ n.primeFactors.card) :
     ((NumberTheory.characterModulus n).primeFactors.card : ℝ) ≤

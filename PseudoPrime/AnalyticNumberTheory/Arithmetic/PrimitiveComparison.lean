@@ -4,12 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.NumberTheory.DirichletCharacter.Bounds
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
-import PseudoPrime.NumberTheory.MulCharParity
+module
 
-/-! Generic comparison lemmas for a character and its primitive character. -/
+public import Mathlib.NumberTheory.DirichletCharacter.Bounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
+
+/-!
+# Comparison with the primitive inducing character
+
+The character values agree away from factors of the level-to-conductor quotient.
+This support identity and nonnegative Mangoldt weights bound the change in finite
+logarithmic and reciprocal sums. The estimates apply to general complex characters.
+-/
+
+@[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
@@ -23,7 +32,9 @@ theorem primitiveCharacter_ne_one {q : ℕ} (χ : DirichletCharacter ℂ q) (hne
   rw [h, DirichletCharacter.changeLevel_one] at hc
   exact hne hc.symm
 
-/-- A reciprocal Mangoldt term in the finite summation range is nonnegative. -/
+/-- If `x > 0` and `0 < n ≤ floor x`, then the reciprocal Mangoldt weight at `n` is
+nonnegative. Both `Λ(n)/n` and `1 - n/x` are nonnegative in this range.
+This permits termwise norm bounds in the primitive-character comparison. -/
 theorem reciprocalWeightedMangoldtTerm_nonneg {x : ℝ} {n : ℕ} (hx : 0 < x) (hn0 : 0 < n)
     (hnx : n ≤ ⌊x⌋₊) : 0 ≤ reciprocalWeightedMangoldtTerm x n := by
   have hncast : (n : ℝ) ≤ x := (Nat.le_floor_iff hx.le).mp hnx
@@ -33,7 +44,10 @@ theorem reciprocalWeightedMangoldtTerm_nonneg {x : ℝ} {n : ℕ} (hx : 0 < x) (
     mul_nonneg (div_nonneg ArithmeticFunction.vonMangoldt_nonneg hncastPos.le)
       (sub_nonneg.mpr ((div_le_one₀ hx).mpr hncast))
 
-/-- Coprimality with the conductor and complementary quotient implies coprimality with the level. -/
+/-- If the natural `n` is coprime to both `χ.conductor` and `q / χ.conductor`, it is
+coprime to the level `q`. Multiply the coprimality statements and use the conductor's
+divisibility into the level to identify the product with `q`.
+This verifies the unit hypothesis of the primitive-character induction formula. -/
 theorem coprime_level_of_coprime_conductor_quotient {q n : ℕ} (χ : DirichletCharacter ℂ q)
     (hconductor : Nat.Coprime n χ.conductor) (hquotient : Nat.Coprime n (q / χ.conductor)) :
     Nat.Coprime n q := by
@@ -41,7 +55,10 @@ theorem coprime_level_of_coprime_conductor_quotient {q n : ℕ} (χ : DirichletC
     Nat.Coprime.mul_right hconductor hquotient
   rwa [Nat.mul_div_cancel' χ.conductor_dvd_level] at hproduct
 
-/-- The original and primitive characters agree away from the complementary level quotient. -/
+/-- If `n` is coprime to `q / χ.conductor`, then `χ n = χ.primitiveCharacter n`.
+When `n` is coprime to the conductor, it is coprime to the level and the induction formula
+applies; otherwise both characters vanish. This confines level-change errors to the quotient
+common-factor support. -/
 theorem apply_eq_primitiveCharacter_of_coprime_quotient {q n : ℕ} (χ : DirichletCharacter ℂ q)
     (hquotient : Nat.Coprime n (q / χ.conductor)) : χ n = χ.primitiveCharacter n := by
   by_cases hconductor : Nat.Coprime n χ.conductor
@@ -61,14 +78,19 @@ theorem apply_eq_primitiveCharacter_of_coprime_quotient {q n : ℕ} (χ : Dirich
           (by simpa only [Nat.isCoprime_iff_coprime] using hconductor)
     rw [hχzero, hprimitiveZero]
 
-/-- On the coprime complement, the difference of weighted summands is zero. -/
+/-- For any real cutoff `x`, if `n` is coprime to the level quotient, the logarithmic
+weighted terms for the character and its primitive source have difference zero.
+Their character values agree and the real weight is identical. This removes off-support
+terms when restricting the finite logarithmic difference sum. -/
 theorem weightedTerm_sub_eq_zero_of_coprime_quotient {q n : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
     (hquotient : Nat.Coprime n (q / χ.conductor)) :
     characterLogWeightedTerm x χ n - characterLogWeightedTerm x χ.primitiveCharacter n = 0 := by
   rw [characterLogWeightedTerm, characterLogWeightedTerm,
     apply_eq_primitiveCharacter_of_coprime_quotient χ hquotient, sub_self]
 
-/-- A logarithmically weighted Mangoldt term indexed by `n ≤ x` is nonnegative. -/
+/-- If `x > 0` and `0 < n ≤ floor x`, then `Λ(n) * log(x/n)` is nonnegative.
+The quotient is at least one and the Mangoldt function is nonnegative.
+This provides the sign needed to bound character terms by their real logarithmic weight. -/
 theorem logWeightedMangoldtTerm_nonneg {x : ℝ} {n : ℕ} (hx : 0 < x) (hn0 : 0 < n) (hnx : n ≤ ⌊x⌋₊) :
     0 ≤ logWeightedMangoldtTerm x n := by
   have hncast : (n : ℝ) ≤ x := (Nat.le_floor_iff hx.le).mp hnx
@@ -78,7 +100,10 @@ theorem logWeightedMangoldtTerm_nonneg {x : ℝ} {n : ℕ} (hx : 0 < x) (hn0 : 0
     mul_nonneg ArithmeticFunction.vonMangoldt_nonneg
       (Real.log_nonneg ((one_le_div₀ hncastPos).mpr hncast))
 
-/-- A character summand changes by at most its real weight on the quotient support. -/
+/-- For `x > 0` and `0 < n ≤ floor x`, the norm of the logarithmic term's change from
+`χ` to its primitive source is at most its nonnegative real Mangoldt weight.
+Off quotient support the values agree; on it the level character vanishes and the primitive
+value has norm at most one. This gives the termwise logarithmic level-change bound. -/
 theorem norm_weightedTerm_sub_primitive_le {q n : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
     (hx : 0 < x) (hn0 : 0 < n) (hnx : n ≤ ⌊x⌋₊) :
     ‖characterLogWeightedTerm x χ n - characterLogWeightedTerm x χ.primitiveCharacter n‖ ≤
@@ -113,36 +138,9 @@ theorem norm_weightedTerm_sub_primitive_le {q n : ℕ} (x : ℝ) (χ : Dirichlet
       sub_self, norm_zero]
     exact hweight
 
-/-- The primitive character vanishes exactly off the coprime-to-conductor support. -/
-theorem primitiveCharacter_apply_eq_zero_iff_not_coprime {q : ℕ} (χ : DirichletCharacter ℂ q)
-    (p : ℕ) : χ.primitiveCharacter p = 0 ↔ ¬Nat.Coprime p χ.conductor := by
-  rw [← Nat.isCoprime_iff_coprime]
-  simpa only [Int.cast_natCast] using
-    DirichletCharacter.apply_eq_zero_iff χ.primitiveCharacter (p : ℤ)
-
-/-- For a quadratic primitive character, the squared value has the coprimality indicator form. -/
-theorem primitiveCharacter_sq_apply_re_eq_ite_of_isQuadratic {q : ℕ} (χ : DirichletCharacter ℂ q)
-    (hχ : χ.primitiveCharacter.IsQuadratic) (p : ℕ) :
-    (χ.primitiveCharacter p ^ 2).re = if Nat.Coprime p χ.conductor then 1 else 0 := by
-  rcases hχ (p : ZMod χ.conductor) with h0 | h1 | hm1
-  · rw [ite_eq_right ((primitiveCharacter_apply_eq_zero_iff_not_coprime χ p).mp h0), h0]
-    simp only [zero_pow (show (2 : ℕ) ≠ 0 by decide), Complex.zero_re]
-  · have hcop : Nat.Coprime p χ.conductor := by
-      by_contra hncop
-      have heq := (primitiveCharacter_apply_eq_zero_iff_not_coprime χ p).mpr hncop
-      rw [h1] at heq
-      exact one_ne_zero heq
-    rw [ite_eq_left hcop, h1]
-    simp only [one_pow, Complex.one_re]
-  · have hcop : Nat.Coprime p χ.conductor := by
-      by_contra hncop
-      have heq := (primitiveCharacter_apply_eq_zero_iff_not_coprime χ p).mpr hncop
-      rw [hm1] at heq
-      exact (neg_ne_zero.mpr one_ne_zero) heq
-    rw [ite_eq_left hcop, hm1]
-    simp only [neg_one_sq, Complex.one_re]
-
-/-- A character logarithmic summand vanishes on the complementary quotient support. -/
+/-- For any real `x`, if `n` shares a factor with `q / χ.conductor`, its logarithmic term
+for `χ` vanishes. The quotient divides the level, so `n` is not coprime to `q` and the
+character value is zero. This identifies the correction as primitive contributions alone. -/
 theorem characterLogWeightedTerm_eq_zero_of_not_coprime_quotient {q n : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hquotient : ¬Nat.Coprime n (q / χ.conductor)) :
     characterLogWeightedTerm x χ n = 0 := by
@@ -155,7 +153,10 @@ theorem characterLogWeightedTerm_eq_zero_of_not_coprime_quotient {q n : ℕ} (x 
         (by simpa only [Nat.isCoprime_iff_coprime] using hlevel)
   rw [characterLogWeightedTerm, hχzero, mul_zero]
 
-/-- The finite logarithmic weighted-sum difference is supported on the quotient complement. -/
+/-- For any real cutoff `x`, the logarithmic sum for `χ` minus that for its primitive
+source is the sum of their term differences over `0 < n ≤ floor x` sharing a factor
+with `q / χ.conductor`. All omitted terms have equal character values.
+This exact support identity starts the logarithmic level-change ledger. -/
 theorem characterLogWeightedSum_sub_primitive_eq {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) :
     characterLogWeightedSum x χ - characterLogWeightedSum x χ.primitiveCharacter =
       ∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter fun n ↦ ¬Nat.Coprime n (q / χ.conductor),
@@ -168,7 +169,11 @@ theorem characterLogWeightedSum_sub_primitive_eq {q : ℕ} (x : ℝ) (χ : Diric
     simpa only [Finset.mem_filter, hn, true_and, not_not] using hnfilter
   exact weightedTerm_sub_eq_zero_of_coprime_quotient x χ hquotient
 
-/-- The logarithmic weighted summand at a prime power has an explicit closed form. -/
+/-- For `x ≠ 0`, prime `p`, and nonzero natural exponent `k`, the real logarithmic term
+at `p^k` for the primitive character is
+`log p * (log x - k * log p) * Re (χ.primitiveCharacter p ^ k)`.
+Use the Mangoldt prime-power formula and multiplicativity of the character.
+This reduces prime-power corrections to affine logarithmic weights. -/
 theorem characterLogWeightedTerm_primitive_re_prime_pow {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
     {p k : ℕ} (hx : x ≠ 0) (hp : p.Prime) (hk : k ≠ 0) :
     (characterLogWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
@@ -176,17 +181,11 @@ theorem characterLogWeightedTerm_primitive_re_prime_pow {q : ℕ} (x : ℝ) (χ 
   rw [characterLogWeightedTerm, logWeightedMangoldtTerm_prime_pow hx hp hk, Nat.cast_pow, map_pow,
     Complex.re_ofReal_mul]
 
-/-- The quadratic specialization of the logarithmic prime-power closed form. -/
-theorem characterLogWeightedTerm_primitive_re_prime_pow_of_isQuadratic {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.primitiveCharacter.IsQuadratic) {p k : ℕ} (hx : x ≠ 0)
-    (hp : p.Prime) (hk : k ≠ 0) :
-    (characterLogWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
-      Real.log p * (Real.log x - k * Real.log p) *
-        (if Odd k then (χ.primitiveCharacter p).re else (χ.primitiveCharacter p ^ 2).re) := by
-  rw [characterLogWeightedTerm_primitive_re_prime_pow x χ hx hp hk,
-    NumberTheory.isQuadratic_pow_apply hχ (p : ZMod χ.conductor) hk, apply_ite Complex.re]
-
-/-- The finite logarithmic sum difference is bounded by the quotient common-factor sum. -/
+/-- For a nonzero level `q` and positive cutoff `x`, the norm of the logarithmic weighted
+sum's change to the primitive source is at most
+`(1/2) * (q / χ.conductor).primeFactors.card * (log x)²`.
+Restrict to quotient support, bound each term by its nonnegative weight, and apply the
+common-factor sum bound. This is the coarse logarithmic comparison estimate. -/
 theorem norm_characterLogWeightedSum_sub_primitive_le {q : ℕ} [NeZero q] (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 0 < x) :
     ‖characterLogWeightedSum x χ - characterLogWeightedSum x χ.primitiveCharacter‖ ≤
@@ -212,7 +211,9 @@ theorem norm_characterLogWeightedSum_sub_primitive_le {q : ℕ} [NeZero q] (x : 
               χ.conductor_ne_zero.bot_lt).ne'
       · exact hx
 
-/-- A reciprocal character summand vanishes on the complementary quotient support. -/
+/-- For any real cutoff `x`, if `n` is not coprime to the level quotient, the reciprocal
+weighted term for `χ` is zero. Noncoprimality also holds at the level, forcing the character
+value to vanish. This separates primitive contributions on the correction support. -/
 theorem characterReciprocalWeightedTerm_eq_zero_of_not_coprime_quotient {q n : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hquotient : ¬Nat.Coprime n (q / χ.conductor)) :
     characterReciprocalWeightedTerm x χ n = 0 := by
@@ -225,7 +226,10 @@ theorem characterReciprocalWeightedTerm_eq_zero_of_not_coprime_quotient {q n : �
         (by simpa only [Nat.isCoprime_iff_coprime] using hlevel)
   rw [characterReciprocalWeightedTerm, hχzero, mul_zero]
 
-/-- A reciprocal summand changes by at most its nonnegative real weight. -/
+/-- For `x > 0` and `0 < n ≤ floor x`, the norm of the reciprocal term's change to the
+primitive source is at most its nonnegative real weight. Split on coprimality with the
+conductor and level quotient: either the values agree, both vanish, or only the primitive
+value remains with norm at most one. This gives the termwise reciprocal comparison. -/
 theorem norm_reciprocalTerm_sub_primitive_le {q n : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
     (hx : 0 < x) (hn0 : 0 < n) (hnx : n ≤ ⌊x⌋₊) :
     ‖characterReciprocalWeightedTerm x χ n -
@@ -263,7 +267,10 @@ theorem norm_reciprocalTerm_sub_primitive_le {q n : ℕ} (x : ℝ) (χ : Dirichl
       mul_zero, sub_self, norm_zero]
     exact hweight
 
-/-- The reciprocal finite-sum difference is bounded by the quotient common-factor sum. -/
+/-- For nonzero level `q` and `x > 0`, the norm of the reciprocal weighted sum's change
+to the primitive source is at most `commonFactorReciprocalWeightedSum x (q / χ.conductor)`.
+The triangle inequality and termwise weight bound apply on quotient support, while all
+other differences vanish. This is the finite-sum estimate before further arithmetic coarsening. -/
 theorem norm_characterReciprocalWeightedSum_sub_primitive_le {q : ℕ} [NeZero q] (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 0 < x) :
     ‖characterReciprocalWeightedSum x χ - characterReciprocalWeightedSum x χ.primitiveCharacter‖ ≤
@@ -294,5 +301,28 @@ theorem norm_characterReciprocalWeightedSum_sub_primitive_le {q : ℕ} [NeZero q
             (Finset.mem_Ioc.mp hn).2
     _ = commonFactorReciprocalWeightedSum x (q / χ.conductor) := by
       rw [commonFactorReciprocalWeightedSum, Finset.sum_filter]
+
+/-- For a complex Dirichlet character, x > 0 and 0 < n <= floor x, the reciprocal
+term has norm at most its unsigned weight. The weight is nonnegative and the character
+value has norm at most one. This is the termwise input to unsigned reciprocal comparison. -/
+theorem norm_characterReciprocalWeightedTerm_le {q n : ℕ} (χ : DirichletCharacter ℂ q) {x : ℝ}
+    (hx : 0 < x) (hn0 : 0 < n) (hnx : n ≤ ⌊x⌋₊) :
+    ‖characterReciprocalWeightedTerm x χ n‖ ≤ reciprocalWeightedMangoldtTerm x n := by
+  have hw := reciprocalWeightedMangoldtTerm_nonneg hx hn0 hnx
+  rw [characterReciprocalWeightedTerm, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_nonneg hw]
+  exact mul_le_of_le_one_right hw (DirichletCharacter.norm_le_one χ _)
+
+/-- For any complex Dirichlet character and x > 0, the norm of the finite reciprocal
+character sum is at most the unsigned reciprocal Mangoldt sum. Sum the nonnegative
+termwise norm bounds and use the triangle inequality. No primitivity or RH is required;
+the estimate removes character values from explicit logarithmic L-value bounds. -/
+theorem norm_characterReciprocalWeightedSum_le {q : ℕ} (χ : DirichletCharacter ℂ q) {x : ℝ}
+    (hx : 0 < x) : ‖characterReciprocalWeightedSum x χ‖ ≤ reciprocalWeightedMangoldtSum x := by
+  unfold characterReciprocalWeightedSum reciprocalWeightedMangoldtSum
+  refine (norm_sum_le _ _).trans (Finset.sum_le_sum ?_)
+  intro n hn
+  exact
+    norm_characterReciprocalWeightedTerm_le χ hx (Finset.mem_Ioc.mp hn).1 (Finset.mem_Ioc.mp hn).2
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

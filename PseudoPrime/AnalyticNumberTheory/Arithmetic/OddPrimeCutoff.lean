@@ -17,32 +17,44 @@ there is none, and proves its floor and comparison bounds. It also proves positi
 `log q` and `loglog q` for natural `q ≥ 3000`.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
-/-- The greatest odd prime not exceeding a real cutoff, or `0` if the set is empty. -/
+/-- For real `R`, the greatest odd prime at most its natural floor, returning zero if none
+exists. For nonnegative `R` this is the greatest odd prime not exceeding `R`.
+The bounded natural search supplies an odd-prime cutoff for finite arithmetic bounds. -/
 noncomputable def greatestOddPrimeLE (R : ℝ) : ℕ := by
   classical exact Nat.findGreatest (fun p => p.Prime ∧ Odd p) ⌊R⌋₊
 
-/-- Every odd prime below the real cutoff is below `greatestOddPrimeLE`. -/
+/-- If prime `p` is odd and `(p : ℝ) ≤ R`, then `p ≤ greatestOddPrimeLE R`.
+The real comparison puts `p` below the natural floor and `Nat.le_findGreatest` applies.
+This includes every admissible odd prime in the cutoff. -/
 theorem le_greatestOddPrimeLE {p : ℕ} {R : ℝ} (hp : p.Prime) (hpodd : Odd p) (hpR : (p : ℝ) ≤ R) :
     p ≤ greatestOddPrimeLE R := by
   classical
   unfold greatestOddPrimeLE
   exact Nat.le_findGreatest (Nat.le_floor hpR) ⟨hp, hpodd⟩
 
-/-- The greatest odd-prime cutoff does not exceed its natural floor. -/
+/-- For every real `R`, `greatestOddPrimeLE R ≤ floor R` follows from the finite search
+range. This is the natural bound used to compare the chosen cutoff with its real argument. -/
 theorem greatestOddPrimeLE_le_floor (R : ℝ) : greatestOddPrimeLE R ≤ ⌊R⌋₊ := by
   classical
   unfold greatestOddPrimeLE
   exact Nat.findGreatest_le _
 
-/-- A nonnegative real cutoff bounds the cast of its greatest odd prime. -/
+/-- For `R ≥ 0`, the real cast of `greatestOddPrimeLE R` is at most `R`.
+Cast the finite-search bound and use `floor R ≤ R`. Nonnegativity also handles the zero
+fallback value and is needed for this real bound. -/
 theorem greatestOddPrimeLE_cast_le {R : ℝ} (hR : 0 ≤ R) : (greatestOddPrimeLE R : ℝ) ≤ R := by
   have hfloor : (greatestOddPrimeLE R : ℝ) ≤ (⌊R⌋₊ : ℝ) := by
     exact_mod_cast greatestOddPrimeLE_le_floor R
   exact hfloor.trans (Nat.floor_le hR)
 
-/-- For a natural `q ≥ 3000`, both `log q` and `loglog q` are positive. -/
+/-- For natural `q ≥ 3000`, both `log q` and `log (log q)` are positive.
+Use `exp 1 < 3 < 3000` to show `log 3000 > 1`, then monotonicity transfers this to `q`.
+These signs justify multiplication and denominator cancellation in elementary factor-count bounds.
+-/
 theorem log_log_pos_of_le {q : ℕ} (hq : 3000 ≤ q) :
     0 < Real.log (q : ℝ) ∧ 0 < Real.log (Real.log (q : ℝ)) := by
   have hqreal : (1 : ℝ) < q := by exact_mod_cast ((by decide : 1 < 3000).trans_le hq)

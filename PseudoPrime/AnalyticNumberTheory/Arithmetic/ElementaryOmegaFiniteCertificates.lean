@@ -57,6 +57,8 @@ private theorem certificate_rational_of_nat {m e k : ℕ}
   field_simp [hp]
   nlinarith only [hR]
 
+/-- At one odd prime factor, the anchor is `3000`; the bound `2^11 ≤ 3000`
+and the rational certificate with `k = 3` prove the finite omega inequality. -/
 theorem elementaryCertificate_at_1 :
     ((1 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 1) := by
   have hOP : oddPrimorial 1 = 3 := by rw [oddPrimorial_succ, oddPrimorial_zero, oddPrime_zero]
@@ -67,6 +69,8 @@ theorem elementaryCertificate_at_1 :
     norm_num only
   · exact certificate_rational_of_nat (by decide)
 
+/-- At two odd prime factors, `oddPrimorial 2 = 15` leaves the anchor at `3000`.
+The power-of-two certificate with `e = 11`, `k = 3` supplies the finite bound. -/
 theorem elementaryCertificate_at_2 :
     ((2 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 2) := by
   have hOP : oddPrimorial 2 = 15 := by
@@ -79,6 +83,8 @@ theorem elementaryCertificate_at_2 :
     norm_num only
   · exact certificate_rational_of_nat (by decide)
 
+/-- At three odd prime factors, `oddPrimorial 3 = 105` leaves the anchor at `3000`.
+The power-of-two certificate with `e = 11`, `k = 3` supplies the finite bound. -/
 theorem elementaryCertificate_at_3 :
     ((3 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 3) := by
   have hOP : oddPrimorial 3 = 105 := by
@@ -92,6 +98,8 @@ theorem elementaryCertificate_at_3 :
     norm_num only
   · exact certificate_rational_of_nat (by decide)
 
+/-- At four odd prime factors, `oddPrimorial 4 = 1155` gives anchor `4620`.
+The bounds with `e = 12`, `k = 3` certify this first primorial-controlled case. -/
 theorem elementaryCertificate_at_4 :
     ((4 : ℕ) + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor 4) := by
   have hOP : oddPrimorial 4 = 1155 := by
@@ -1493,6 +1501,9 @@ theorem elementaryCertificate_at_162 :
 
 -- END GENERATED OMEGA CERTIFICATES
 
+/-- For every factor count `1 ≤ m < 163`, the anchor satisfies the finite omega
+inequality. Split the integer interval and apply its individually checked certificate;
+this closes the finite-certificate input of the elementary omega bound. -/
 theorem elementaryOmegaFiniteCertificates :
     ∀ m : ℕ, 1 ≤ m → m < 163 → (m + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor m) := by
   -- BEGIN GENERATED OMEGA DISPATCH
@@ -1663,7 +1674,9 @@ theorem elementaryOmegaFiniteCertificates :
 
 -- END GENERATED OMEGA DISPATCH
 
-/-- **`PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement`, unconditionally.** -/
+/-- Every odd `n ≥ 750` satisfies the elementary bound on `ω(4n)`.
+The anchor certificates settle factor counts below `163`; the independent
+calculus tail theorem supplies all larger counts, so no certificate hypothesis remains. -/
 theorem elementaryOmegaStatement : ElementaryOmegaStatement :=
   elementaryOmegaStatement_of_finite
     (elementaryOmegaFiniteStatement_of_certificates elementaryOmegaFiniteCertificates)

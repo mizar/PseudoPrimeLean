@@ -21,18 +21,26 @@ number of distinct prime divisors and the sum `Σ_{p ∣ q} log p / (p - 1)`.  N
 downstream correction terms that consume them.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
-/-- The number of distinct prime factors of `q`. -/
+/-- The number of distinct prime divisors of the natural number `q`, given by mathlib's
+`cardDistinctFactors`. At zero the value is zero by the arithmetic-function convention.
+This count measures prime support in modulus and conductor correction bounds. -/
 def distinctPrimeFactorCount (q : ℕ) : ℕ :=
   ArithmeticFunction.cardDistinctFactors q
 
-/-- The finite sum `Σ_{p ∈ q.primeFactors} log p / (p - 1)`.
-In particular, it is `0` at `q = 0`, following the `Nat.primeFactors` convention. -/
+/-- For a natural number `q`, the finite prime-support weight
+`Σ_{p ∈ q.primeFactors} log p / (p - 1)`. Each divisor is prime, so its real denominator is
+positive. The sum is zero for `q = 0` or `q = 1`, whose prime-factor finsets are empty.
+This weight bounds the terms introduced by changing the level of a character. -/
 noncomputable def primeFactorLogSum (q : ℕ) : ℝ :=
   ∑ p ∈ q.primeFactors, Real.log p / (p - 1)
 
-/-- The project count agrees with mathlib's arithmetic function `cardDistinctFactors`. -/
+/-- For every natural `q`, the project prime-support count equals mathlib's
+`cardDistinctFactors q` by definition. This exposes the underlying arithmetic-function API
+for multiplicativity and prime-power calculations. -/
 theorem distinctPrimeFactorCount_eq_cardDistinctFactors (q : ℕ) :
     distinctPrimeFactorCount q = ArithmeticFunction.cardDistinctFactors q :=
   rfl
@@ -61,7 +69,9 @@ theorem sum_log_primeFactors_le_log {n : ℕ} (hn : n ≠ 0) :
       (by exact_mod_cast (Nat.prime_of_mem_primeFactors hp).pos.ne' : (p : ℝ) ≠ 0)] at hlogle
   exact hlogle
 
-/- For natural `n ≥ 4`, `π ≤ n` implies `0 ≤ log(n/π)`. -/
+/-- If the natural number `n` is at least four, then `log ((n : ℝ) / π)` is nonnegative.
+The bound `π ≤ 4 ≤ n` makes the logarithm argument at least one. This supplies the sign
+condition for conductor-dependent logarithmic estimates. -/
 theorem log_conductor_div_pi_nonneg_of_four_le {n : ℕ} (hn : 4 ≤ n) :
     0 ≤ Real.log ((n : ℝ) / Real.pi) := by
   apply Real.log_nonneg
@@ -69,7 +79,10 @@ theorem log_conductor_div_pi_nonneg_of_four_le {n : ℕ} (hn : 4 ≤ n) :
   have hn' : (4 : ℝ) ≤ n := by exact_mod_cast hn
   simpa only [one_mul] using Real.pi_le_four.trans hn'
 
-/- Each summand `log p / (p - 1)` is at most `log 2`. -/
+/-- For every natural `n`, its prime-support weight is at most the number of distinct prime
+divisors times `log 2`. The inequality `p ≤ 2^(p - 1)` bounds each summand by `log 2`;
+summing gives the result, including the empty prime-support cases. This connects weighted
+level corrections to bounds for the number of prime factors. -/
 theorem primeFactorLogSum_le_card_mul_log_two {n : ℕ} :
     primeFactorLogSum n ≤ (n.primeFactors.card : ℝ) * Real.log 2 := by
   have hpow : ∀ k : ℕ, k + 1 ≤ 2 ^ k := by
@@ -110,7 +123,10 @@ theorem primeFactorLogSum_le_card_mul_log_two {n : ℕ} :
       simpa only [mul_comm, Nat.cast_one] using hlogp
     _ = (n.primeFactors.card : ℝ) * Real.log 2 := by simp only [Finset.sum_const, nsmul_eq_mul]
 
-/- The complementary level quotient inherits the preceding logarithmic bound. -/
+/-- For a character of nonzero modulus `q`, the prime-support weight of `q / χ.conductor`
+is at most `log (q / χ.conductor)`. Combine the per-prime `log 2` estimate with the
+conductor-quotient prime-count bound, then cancel the positive `log 2`.
+This replaces the weighted support of the complementary level by one logarithmic term. -/
 theorem primeFactorLogSum_quotient_le_log {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     primeFactorLogSum (q / χ.conductor) ≤ Real.log (q / χ.conductor : ℕ) := by
   have hsum := primeFactorLogSum_le_card_mul_log_two (n := q / χ.conductor)
