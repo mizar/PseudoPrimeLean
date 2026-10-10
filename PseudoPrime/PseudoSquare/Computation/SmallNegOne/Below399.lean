@@ -14,9 +14,16 @@ public import PseudoPrime.PseudoSquare.Computation.QThresholds
 The generated blocks in this file certify the finite small-negative-one boundary.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PseudoSquare
 
-/-- The finite certificate asserting a Jacobi `-1` witness at most `17` below `399`. -/
+/--
+The finite proposition that odd `n : Fin 399` excluding squares with roots in `Fin 20`
+has Jacobi value `-1` at one of `3, 5, 7, 11, 13, 17`. Since `399 < 20^2`, the finite
+exclusions cover every possible square root. This certificate supplies the least-witness
+bound `17` strictly below the threshold `399`.
+-/
 def Below399NegOneCertificate : Prop :=
   ∀ n : Fin 399,
     n.val % 2 = 1 →
@@ -27,7 +34,12 @@ def Below399NegOneCertificate : Prop :=
         jacobiSym n.val 11 = -1 ∨ jacobiSym n.val 13 = -1 ∨ jacobiSym n.val 17 = -1
 
 -- BEGIN GENERATED below399NegOneCertificate_valid
-/-- Kernel-checked certificate restricted to [0, 16). -/
+/--
+For odd `n : Fin 399` with `0 ≤ n.val < 16` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_0 :
     ∀ n : Fin 399,
       0 ≤ n.val →
@@ -41,7 +53,12 @@ private theorem below399NegOneCertificate_valid_block_0 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [16, 32). -/
+/--
+For odd `n : Fin 399` with `16 ≤ n.val < 32` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_16 :
     ∀ n : Fin 399,
       16 ≤ n.val →
@@ -55,7 +72,12 @@ private theorem below399NegOneCertificate_valid_block_16 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [32, 48). -/
+/--
+For odd `n : Fin 399` with `32 ≤ n.val < 48` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_32 :
     ∀ n : Fin 399,
       32 ≤ n.val →
@@ -69,7 +91,12 @@ private theorem below399NegOneCertificate_valid_block_32 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [48, 64). -/
+/--
+For odd `n : Fin 399` with `48 ≤ n.val < 64` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_48 :
     ∀ n : Fin 399,
       48 ≤ n.val →
@@ -83,7 +110,12 @@ private theorem below399NegOneCertificate_valid_block_48 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [64, 80). -/
+/--
+For odd `n : Fin 399` with `64 ≤ n.val < 80` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_64 :
     ∀ n : Fin 399,
       64 ≤ n.val →
@@ -97,7 +129,12 @@ private theorem below399NegOneCertificate_valid_block_64 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [80, 96). -/
+/--
+For odd `n : Fin 399` with `80 ≤ n.val < 96` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_80 :
     ∀ n : Fin 399,
       80 ≤ n.val →
@@ -111,7 +148,12 @@ private theorem below399NegOneCertificate_valid_block_80 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [96, 112). -/
+/--
+For odd `n : Fin 399` with `96 ≤ n.val < 112` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_96 :
     ∀ n : Fin 399,
       96 ≤ n.val →
@@ -125,7 +167,12 @@ private theorem below399NegOneCertificate_valid_block_96 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [112, 128). -/
+/--
+For odd `n : Fin 399` with `112 ≤ n.val < 128` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_112 :
     ∀ n : Fin 399,
       112 ≤ n.val →
@@ -139,7 +186,12 @@ private theorem below399NegOneCertificate_valid_block_112 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [128, 144). -/
+/--
+For odd `n : Fin 399` with `128 ≤ n.val < 144` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_128 :
     ∀ n : Fin 399,
       128 ≤ n.val →
@@ -153,7 +205,12 @@ private theorem below399NegOneCertificate_valid_block_128 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [144, 160). -/
+/--
+For odd `n : Fin 399` with `144 ≤ n.val < 160` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_144 :
     ∀ n : Fin 399,
       144 ≤ n.val →
@@ -167,7 +224,12 @@ private theorem below399NegOneCertificate_valid_block_144 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [160, 176). -/
+/--
+For odd `n : Fin 399` with `160 ≤ n.val < 176` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_160 :
     ∀ n : Fin 399,
       160 ≤ n.val →
@@ -181,7 +243,12 @@ private theorem below399NegOneCertificate_valid_block_160 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [176, 192). -/
+/--
+For odd `n : Fin 399` with `176 ≤ n.val < 192` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_176 :
     ∀ n : Fin 399,
       176 ≤ n.val →
@@ -195,7 +262,12 @@ private theorem below399NegOneCertificate_valid_block_176 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [192, 208). -/
+/--
+For odd `n : Fin 399` with `192 ≤ n.val < 208` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_192 :
     ∀ n : Fin 399,
       192 ≤ n.val →
@@ -209,7 +281,12 @@ private theorem below399NegOneCertificate_valid_block_192 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [208, 224). -/
+/--
+For odd `n : Fin 399` with `208 ≤ n.val < 224` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_208 :
     ∀ n : Fin 399,
       208 ≤ n.val →
@@ -223,7 +300,12 @@ private theorem below399NegOneCertificate_valid_block_208 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [224, 240). -/
+/--
+For odd `n : Fin 399` with `224 ≤ n.val < 240` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_224 :
     ∀ n : Fin 399,
       224 ≤ n.val →
@@ -237,7 +319,12 @@ private theorem below399NegOneCertificate_valid_block_224 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [240, 256). -/
+/--
+For odd `n : Fin 399` with `240 ≤ n.val < 256` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_240 :
     ∀ n : Fin 399,
       240 ≤ n.val →
@@ -251,7 +338,12 @@ private theorem below399NegOneCertificate_valid_block_240 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [256, 272). -/
+/--
+For odd `n : Fin 399` with `256 ≤ n.val < 272` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_256 :
     ∀ n : Fin 399,
       256 ≤ n.val →
@@ -265,7 +357,12 @@ private theorem below399NegOneCertificate_valid_block_256 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [272, 288). -/
+/--
+For odd `n : Fin 399` with `272 ≤ n.val < 288` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_272 :
     ∀ n : Fin 399,
       272 ≤ n.val →
@@ -279,7 +376,12 @@ private theorem below399NegOneCertificate_valid_block_272 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [288, 304). -/
+/--
+For odd `n : Fin 399` with `288 ≤ n.val < 304` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_288 :
     ∀ n : Fin 399,
       288 ≤ n.val →
@@ -293,7 +395,12 @@ private theorem below399NegOneCertificate_valid_block_288 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [304, 320). -/
+/--
+For odd `n : Fin 399` with `304 ≤ n.val < 320` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_304 :
     ∀ n : Fin 399,
       304 ≤ n.val →
@@ -307,7 +414,12 @@ private theorem below399NegOneCertificate_valid_block_304 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [320, 336). -/
+/--
+For odd `n : Fin 399` with `320 ≤ n.val < 336` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_320 :
     ∀ n : Fin 399,
       320 ≤ n.val →
@@ -321,7 +433,12 @@ private theorem below399NegOneCertificate_valid_block_320 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [336, 352). -/
+/--
+For odd `n : Fin 399` with `336 ≤ n.val < 352` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_336 :
     ∀ n : Fin 399,
       336 ≤ n.val →
@@ -335,7 +452,12 @@ private theorem below399NegOneCertificate_valid_block_336 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [352, 368). -/
+/--
+For odd `n : Fin 399` with `352 ≤ n.val < 368` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_352 :
     ∀ n : Fin 399,
       352 ≤ n.val →
@@ -349,7 +471,12 @@ private theorem below399NegOneCertificate_valid_block_352 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [368, 384). -/
+/--
+For odd `n : Fin 399` with `368 ≤ n.val < 384` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_368 :
     ∀ n : Fin 399,
       368 ≤ n.val →
@@ -363,7 +490,12 @@ private theorem below399NegOneCertificate_valid_block_368 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked certificate restricted to [384, 399). -/
+/--
+For odd `n : Fin 399` with `384 ≤ n.val < 399` and all `Fin 20` square exclusions,
+one of `3, 5, 7, 11, 13, 17` has Jacobi value `-1`.
+Case enumeration, Jacobi normalization, and decision verify this interval of the finite
+certificate. The full below-399 theorem assembles these blocks.
+-/
 private theorem below399NegOneCertificate_valid_block_384 :
     ∀ n : Fin 399,
       384 ≤ n.val →
@@ -377,7 +509,12 @@ private theorem below399NegOneCertificate_valid_block_384 :
   intro n hlo hhi
   interval_cases n.val <;> norm_num only <;> decide
 
-/-- Kernel-checked verification of the witness bound `17` below `399`. -/
+/--
+Verify `Below399NegOneCertificate` by splitting `n : Fin 399` with a balanced tree of
+interval cutoffs and applying the checked block for each interval. The remaining oddness
+and square-exclusion hypotheses are supplied to that block. This assembles the finite
+Jacobi alternatives consumed by the least-negative-one witness bound.
+-/
 theorem below399NegOneCertificate_valid : Below399NegOneCertificate := by
   intro n
   by_cases h192 : n.val < 192
@@ -432,7 +569,11 @@ theorem below399NegOneCertificate_valid : Below399NegOneCertificate := by
 
 -- END GENERATED below399NegOneCertificate_valid
 
-/-- A square below `399` has a square root below `20`. -/
+/--
+If natural `n < 399` equals `k^2`, then `k < 20`. Otherwise monotonicity of natural
+squares would give `400 ≤ k^2 = n`, contradicting the cutoff. This justifies finite
+root enumeration when proving nonsquareness of the attaining input `91`.
+-/
 theorem square_root_lt_twenty_of_lt_399 {n k : ℕ} (hn : n < 399) (hk : n = k ^ 2) : k < 20 := by
   by_contra hnot
   have hk20 : 20 ≤ k := Nat.le_of_not_lt hnot
@@ -440,7 +581,12 @@ theorem square_root_lt_twenty_of_lt_399 {n k : ℕ} (hn : n < 399) (hk : n = k ^
   have h399 : 399 ≤ n := hk ▸ Nat.le_trans (by norm_num only) h400
   exact Nat.not_lt_of_ge h399 hn
 
-/-- Every odd nonsquare below `399` has least odd-prime Jacobi `-1` witness at most `17`. -/
+/--
+Every odd nonsquare `n < 399` has least odd-prime Jacobi `-1` witness at most `17`.
+The proof converts nonsquareness to all `Fin 20` square exclusions, applies the finite
+certificate, and bounds the least witness using each explicit prime alternative.
+This is the upper bound for `QNegOne 398`.
+-/
 theorem primeNegOneWitness_le_seventeen_of_lt_399 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hn399 : n < 399) :
     NumberTheory.primeNegOneWitness n
@@ -456,14 +602,23 @@ theorem primeNegOneWitness_le_seventeen_of_lt_399 {n : ℕ} (hn : Odd n) (hns : 
       (NumberTheory.primeNegOneWitness_le n _ ⟨by decide, by decide, hjacobi⟩).trans
         (by norm_num only)
 
-/-- The number `91` is an admissible nonsquare attaining witness `17`. -/
+/--
+The natural number `91` is not a square. Any hypothetical root is below `20`;
+enumerating those roots and normalizing their squares excludes the equality.
+This supplies the nonsquare hypothesis for the input attaining witness `17`.
+-/
 theorem not_isSquare_91 : ¬IsSquare 91 := by
   intro hsquare
   obtain ⟨k, hk⟩ := (isSquare_iff_exists_sq 91).mp hsquare
   have hk20 := square_root_lt_twenty_of_lt_399 (n := 91) (by norm_num only) hk
   interval_cases k <;> norm_num only at hk
 
-/-- The least odd-prime Jacobi `-1` witness for `91` is exactly `17`. -/
+/--
+For any nonemptiness proof `hw`, the least odd-prime Jacobi `-1` witness of `91` is `17`.
+The finite bound below `399` gives the upper inequality; enumerating smaller odd
+candidates and evaluating their Jacobi symbols excludes a smaller witness.
+This supplies the attaining input for the exact finite maximum at `398`.
+-/
 theorem primeNegOneWitness_91_eq_17 (hw : (NumberTheory.PrimeNegOneWitnessSet 91).Nonempty) :
     NumberTheory.primeNegOneWitness 91 hw = 17 := by
   have hle : NumberTheory.primeNegOneWitness 91 hw ≤ 17 :=
@@ -476,7 +631,12 @@ theorem primeNegOneWitness_91_eq_17 (hw : (NumberTheory.PrimeNegOneWitnessSet 91
   interval_cases NumberTheory.primeNegOneWitness 91 hw <;> norm_num only at hpmod
   all_goals norm_num only at hjacobi
 
-/-- Immediately before `399`, the finite maximum is `17`. -/
+/--
+The finite maximum `QNegOne 398` is exactly `17`. Every admissible input is below `399`,
+so the pointwise small bound lifts through the finite-maximum interface for the upper
+inequality. The admissible input `91`, whose least negative-one witness is `17`,
+gives the lower inequality. This records the value immediately before the `399` threshold.
+-/
 theorem QNegOne_398_eq_17 : QNegOne 398 = 17 := by
   apply Nat.le_antisymm
   · have hreal : (QNegOne 398 : ℝ) ≤ 17 := by
