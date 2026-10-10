@@ -25,8 +25,12 @@ The 100-character line-length convention is waived in this file, matching the nu
 needed to state each prime value directly.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.NumberTheory
 
+/-- If every integer in `[a, b)` is composite, the prime counts below `a` and `b` agree.
+Induction on `b` removes one certified nonprime at a time; this skips gaps in the prime table. -/
 theorem count_eq_of_all_not_prime_of_lt {a b : ℕ} (hab : a ≤ b)
     (hgap : ∀ m ∈ Finset.Ico a b, ¬Nat.Prime m) :
     Nat.count Nat.Prime b = Nat.count Nat.Prime a := by
@@ -47,6 +51,7 @@ theorem count_prime_step {a b k : ℕ} (hc : Nat.count Nat.Prime a = k) (hp : Na
     Nat.count Nat.Prime b = k + 1 := by
   rw [count_eq_of_all_not_prime_of_lt hab hgap, Nat.count_succ, ite_eq_left hp, hc]
 
+/-- No prime lies below two. Kernel decision supplies the base count for the table chain. -/
 theorem count_prime_at_0 : Nat.count Nat.Prime 2 = 0 := by decide
 
 -- BEGIN GENERATED PRIME COUNTS
@@ -1221,630 +1226,1101 @@ theorem count_prime_at_162 : Nat.count Nat.Prime 967 = 162 := by
 
 -- END GENERATED PRIME COUNTS
 
+/-- The zero-indexed prime at index `6` is `17`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_6 : primeByIndex 6 = 17 := by
   have hp : Nat.Prime 17 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_6]
 
+/-- The zero-indexed prime at index `7` is `19`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_7 : primeByIndex 7 = 19 := by
   have hp : Nat.Prime 19 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_7]
 
+/-- The zero-indexed prime at index `8` is `23`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_8 : primeByIndex 8 = 23 := by
   have hp : Nat.Prime 23 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_8]
 
+/-- The zero-indexed prime at index `9` is `29`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_9 : primeByIndex 9 = 29 := by
   have hp : Nat.Prime 29 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_9]
 
+/-- The zero-indexed prime at index `10` is `31`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_10 : primeByIndex 10 = 31 := by
   have hp : Nat.Prime 31 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_10]
 
+/-- The zero-indexed prime at index `11` is `37`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_11 : primeByIndex 11 = 37 := by
   have hp : Nat.Prime 37 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_11]
 
+/-- The zero-indexed prime at index `12` is `41`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_12 : primeByIndex 12 = 41 := by
   have hp : Nat.Prime 41 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_12]
 
+/-- The zero-indexed prime at index `13` is `43`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_13 : primeByIndex 13 = 43 := by
   have hp : Nat.Prime 43 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_13]
 
+/-- The zero-indexed prime at index `14` is `47`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_14 : primeByIndex 14 = 47 := by
   have hp : Nat.Prime 47 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_14]
 
+/-- The zero-indexed prime at index `15` is `53`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_15 : primeByIndex 15 = 53 := by
   have hp : Nat.Prime 53 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_15]
 
+/-- The zero-indexed prime at index `16` is `59`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_16 : primeByIndex 16 = 59 := by
   have hp : Nat.Prime 59 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_16]
 
+/-- The zero-indexed prime at index `17` is `61`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_17 : primeByIndex 17 = 61 := by
   have hp : Nat.Prime 61 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_17]
 
+/-- The zero-indexed prime at index `18` is `67`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_18 : primeByIndex 18 = 67 := by
   have hp : Nat.Prime 67 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_18]
 
+/-- The zero-indexed prime at index `19` is `71`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_19 : primeByIndex 19 = 71 := by
   have hp : Nat.Prime 71 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_19]
 
+/-- The zero-indexed prime at index `20` is `73`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_20 : primeByIndex 20 = 73 := by
   have hp : Nat.Prime 73 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_20]
 
+/-- The zero-indexed prime at index `21` is `79`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_21 : primeByIndex 21 = 79 := by
   have hp : Nat.Prime 79 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_21]
 
+/-- The zero-indexed prime at index `22` is `83`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_22 : primeByIndex 22 = 83 := by
   have hp : Nat.Prime 83 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_22]
 
+/-- The zero-indexed prime at index `23` is `89`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_23 : primeByIndex 23 = 89 := by
   have hp : Nat.Prime 89 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_23]
 
+/-- The zero-indexed prime at index `24` is `97`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_24 : primeByIndex 24 = 97 := by
   have hp : Nat.Prime 97 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_24]
 
+/-- The zero-indexed prime at index `25` is `101`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_25 : primeByIndex 25 = 101 := by
   have hp : Nat.Prime 101 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_25]
 
+/-- The zero-indexed prime at index `26` is `103`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_26 : primeByIndex 26 = 103 := by
   have hp : Nat.Prime 103 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_26]
 
+/-- The zero-indexed prime at index `27` is `107`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_27 : primeByIndex 27 = 107 := by
   have hp : Nat.Prime 107 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_27]
 
+/-- The zero-indexed prime at index `28` is `109`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_28 : primeByIndex 28 = 109 := by
   have hp : Nat.Prime 109 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_28]
 
+/-- The zero-indexed prime at index `29` is `113`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_29 : primeByIndex 29 = 113 := by
   have hp : Nat.Prime 113 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_29]
 
+/-- The zero-indexed prime at index `30` is `127`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_30 : primeByIndex 30 = 127 := by
   have hp : Nat.Prime 127 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_30]
 
+/-- The zero-indexed prime at index `31` is `131`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_31 : primeByIndex 31 = 131 := by
   have hp : Nat.Prime 131 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_31]
 
+/-- The zero-indexed prime at index `32` is `137`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_32 : primeByIndex 32 = 137 := by
   have hp : Nat.Prime 137 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_32]
 
+/-- The zero-indexed prime at index `33` is `139`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_33 : primeByIndex 33 = 139 := by
   have hp : Nat.Prime 139 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_33]
 
+/-- The zero-indexed prime at index `34` is `149`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_34 : primeByIndex 34 = 149 := by
   have hp : Nat.Prime 149 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_34]
 
+/-- The zero-indexed prime at index `35` is `151`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_35 : primeByIndex 35 = 151 := by
   have hp : Nat.Prime 151 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_35]
 
+/-- The zero-indexed prime at index `36` is `157`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_36 : primeByIndex 36 = 157 := by
   have hp : Nat.Prime 157 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_36]
 
+/-- The zero-indexed prime at index `37` is `163`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_37 : primeByIndex 37 = 163 := by
   have hp : Nat.Prime 163 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_37]
 
+/-- The zero-indexed prime at index `38` is `167`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_38 : primeByIndex 38 = 167 := by
   have hp : Nat.Prime 167 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_38]
 
+/-- The zero-indexed prime at index `39` is `173`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_39 : primeByIndex 39 = 173 := by
   have hp : Nat.Prime 173 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_39]
 
+/-- The zero-indexed prime at index `40` is `179`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_40 : primeByIndex 40 = 179 := by
   have hp : Nat.Prime 179 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_40]
 
+/-- The zero-indexed prime at index `41` is `181`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_41 : primeByIndex 41 = 181 := by
   have hp : Nat.Prime 181 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_41]
 
+/-- The zero-indexed prime at index `42` is `191`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_42 : primeByIndex 42 = 191 := by
   have hp : Nat.Prime 191 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_42]
 
+/-- The zero-indexed prime at index `43` is `193`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_43 : primeByIndex 43 = 193 := by
   have hp : Nat.Prime 193 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_43]
 
+/-- The zero-indexed prime at index `44` is `197`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_44 : primeByIndex 44 = 197 := by
   have hp : Nat.Prime 197 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_44]
 
+/-- The zero-indexed prime at index `45` is `199`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_45 : primeByIndex 45 = 199 := by
   have hp : Nat.Prime 199 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_45]
 
+/-- The zero-indexed prime at index `46` is `211`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_46 : primeByIndex 46 = 211 := by
   have hp : Nat.Prime 211 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_46]
 
+/-- The zero-indexed prime at index `47` is `223`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_47 : primeByIndex 47 = 223 := by
   have hp : Nat.Prime 223 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_47]
 
+/-- The zero-indexed prime at index `48` is `227`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_48 : primeByIndex 48 = 227 := by
   have hp : Nat.Prime 227 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_48]
 
+/-- The zero-indexed prime at index `49` is `229`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_49 : primeByIndex 49 = 229 := by
   have hp : Nat.Prime 229 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_49]
 
+/-- The zero-indexed prime at index `50` is `233`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_50 : primeByIndex 50 = 233 := by
   have hp : Nat.Prime 233 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_50]
 
+/-- The zero-indexed prime at index `51` is `239`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_51 : primeByIndex 51 = 239 := by
   have hp : Nat.Prime 239 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_51]
 
+/-- The zero-indexed prime at index `52` is `241`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_52 : primeByIndex 52 = 241 := by
   have hp : Nat.Prime 241 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_52]
 
+/-- The zero-indexed prime at index `53` is `251`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_53 : primeByIndex 53 = 251 := by
   have hp : Nat.Prime 251 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_53]
 
+/-- The zero-indexed prime at index `54` is `257`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_54 : primeByIndex 54 = 257 := by
   have hp : Nat.Prime 257 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_54]
 
+/-- The zero-indexed prime at index `55` is `263`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_55 : primeByIndex 55 = 263 := by
   have hp : Nat.Prime 263 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_55]
 
+/-- The zero-indexed prime at index `56` is `269`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_56 : primeByIndex 56 = 269 := by
   have hp : Nat.Prime 269 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_56]
 
+/-- The zero-indexed prime at index `57` is `271`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_57 : primeByIndex 57 = 271 := by
   have hp : Nat.Prime 271 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_57]
 
+/-- The zero-indexed prime at index `58` is `277`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_58 : primeByIndex 58 = 277 := by
   have hp : Nat.Prime 277 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_58]
 
+/-- The zero-indexed prime at index `59` is `281`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_59 : primeByIndex 59 = 281 := by
   have hp : Nat.Prime 281 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_59]
 
+/-- The zero-indexed prime at index `60` is `283`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_60 : primeByIndex 60 = 283 := by
   have hp : Nat.Prime 283 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_60]
 
+/-- The zero-indexed prime at index `61` is `293`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_61 : primeByIndex 61 = 293 := by
   have hp : Nat.Prime 293 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_61]
 
+/-- The zero-indexed prime at index `62` is `307`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_62 : primeByIndex 62 = 307 := by
   have hp : Nat.Prime 307 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_62]
 
+/-- The zero-indexed prime at index `63` is `311`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_63 : primeByIndex 63 = 311 := by
   have hp : Nat.Prime 311 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_63]
 
+/-- The zero-indexed prime at index `64` is `313`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_64 : primeByIndex 64 = 313 := by
   have hp : Nat.Prime 313 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_64]
 
+/-- The zero-indexed prime at index `65` is `317`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_65 : primeByIndex 65 = 317 := by
   have hp : Nat.Prime 317 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_65]
 
+/-- The zero-indexed prime at index `66` is `331`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_66 : primeByIndex 66 = 331 := by
   have hp : Nat.Prime 331 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_66]
 
+/-- The zero-indexed prime at index `67` is `337`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_67 : primeByIndex 67 = 337 := by
   have hp : Nat.Prime 337 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_67]
 
+/-- The zero-indexed prime at index `68` is `347`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_68 : primeByIndex 68 = 347 := by
   have hp : Nat.Prime 347 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_68]
 
+/-- The zero-indexed prime at index `69` is `349`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_69 : primeByIndex 69 = 349 := by
   have hp : Nat.Prime 349 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_69]
 
+/-- The zero-indexed prime at index `70` is `353`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_70 : primeByIndex 70 = 353 := by
   have hp : Nat.Prime 353 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_70]
 
+/-- The zero-indexed prime at index `71` is `359`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_71 : primeByIndex 71 = 359 := by
   have hp : Nat.Prime 359 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_71]
 
+/-- The zero-indexed prime at index `72` is `367`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_72 : primeByIndex 72 = 367 := by
   have hp : Nat.Prime 367 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_72]
 
+/-- The zero-indexed prime at index `73` is `373`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_73 : primeByIndex 73 = 373 := by
   have hp : Nat.Prime 373 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_73]
 
+/-- The zero-indexed prime at index `74` is `379`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_74 : primeByIndex 74 = 379 := by
   have hp : Nat.Prime 379 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_74]
 
+/-- The zero-indexed prime at index `75` is `383`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_75 : primeByIndex 75 = 383 := by
   have hp : Nat.Prime 383 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_75]
 
+/-- The zero-indexed prime at index `76` is `389`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_76 : primeByIndex 76 = 389 := by
   have hp : Nat.Prime 389 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_76]
 
+/-- The zero-indexed prime at index `77` is `397`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_77 : primeByIndex 77 = 397 := by
   have hp : Nat.Prime 397 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_77]
 
+/-- The zero-indexed prime at index `78` is `401`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_78 : primeByIndex 78 = 401 := by
   have hp : Nat.Prime 401 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_78]
 
+/-- The zero-indexed prime at index `79` is `409`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_79 : primeByIndex 79 = 409 := by
   have hp : Nat.Prime 409 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_79]
 
+/-- The zero-indexed prime at index `80` is `419`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_80 : primeByIndex 80 = 419 := by
   have hp : Nat.Prime 419 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_80]
 
+/-- The zero-indexed prime at index `81` is `421`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_81 : primeByIndex 81 = 421 := by
   have hp : Nat.Prime 421 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_81]
 
+/-- The zero-indexed prime at index `82` is `431`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_82 : primeByIndex 82 = 431 := by
   have hp : Nat.Prime 431 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_82]
 
+/-- The zero-indexed prime at index `83` is `433`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_83 : primeByIndex 83 = 433 := by
   have hp : Nat.Prime 433 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_83]
 
+/-- The zero-indexed prime at index `84` is `439`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_84 : primeByIndex 84 = 439 := by
   have hp : Nat.Prime 439 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_84]
 
+/-- The zero-indexed prime at index `85` is `443`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_85 : primeByIndex 85 = 443 := by
   have hp : Nat.Prime 443 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_85]
 
+/-- The zero-indexed prime at index `86` is `449`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_86 : primeByIndex 86 = 449 := by
   have hp : Nat.Prime 449 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_86]
 
+/-- The zero-indexed prime at index `87` is `457`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_87 : primeByIndex 87 = 457 := by
   have hp : Nat.Prime 457 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_87]
 
+/-- The zero-indexed prime at index `88` is `461`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_88 : primeByIndex 88 = 461 := by
   have hp : Nat.Prime 461 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_88]
 
+/-- The zero-indexed prime at index `89` is `463`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_89 : primeByIndex 89 = 463 := by
   have hp : Nat.Prime 463 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_89]
 
+/-- The zero-indexed prime at index `90` is `467`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_90 : primeByIndex 90 = 467 := by
   have hp : Nat.Prime 467 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_90]
 
+/-- The zero-indexed prime at index `91` is `479`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_91 : primeByIndex 91 = 479 := by
   have hp : Nat.Prime 479 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_91]
 
+/-- The zero-indexed prime at index `92` is `487`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_92 : primeByIndex 92 = 487 := by
   have hp : Nat.Prime 487 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_92]
 
+/-- The zero-indexed prime at index `93` is `491`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_93 : primeByIndex 93 = 491 := by
   have hp : Nat.Prime 491 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_93]
 
+/-- The zero-indexed prime at index `94` is `499`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_94 : primeByIndex 94 = 499 := by
   have hp : Nat.Prime 499 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_94]
 
+/-- The zero-indexed prime at index `95` is `503`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_95 : primeByIndex 95 = 503 := by
   have hp : Nat.Prime 503 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_95]
 
+/-- The zero-indexed prime at index `96` is `509`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_96 : primeByIndex 96 = 509 := by
   have hp : Nat.Prime 509 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_96]
 
+/-- The zero-indexed prime at index `97` is `521`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_97 : primeByIndex 97 = 521 := by
   have hp : Nat.Prime 521 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_97]
 
+/-- The zero-indexed prime at index `98` is `523`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_98 : primeByIndex 98 = 523 := by
   have hp : Nat.Prime 523 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_98]
 
+/-- The zero-indexed prime at index `99` is `541`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_99 : primeByIndex 99 = 541 := by
   have hp : Nat.Prime 541 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_99]
 
+/-- The zero-indexed prime at index `100` is `547`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_100 : primeByIndex 100 = 547 := by
   have hp : Nat.Prime 547 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_100]
 
+/-- The zero-indexed prime at index `101` is `557`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_101 : primeByIndex 101 = 557 := by
   have hp : Nat.Prime 557 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_101]
 
+/-- The zero-indexed prime at index `102` is `563`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_102 : primeByIndex 102 = 563 := by
   have hp : Nat.Prime 563 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_102]
 
+/-- The zero-indexed prime at index `103` is `569`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_103 : primeByIndex 103 = 569 := by
   have hp : Nat.Prime 569 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_103]
 
+/-- The zero-indexed prime at index `104` is `571`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_104 : primeByIndex 104 = 571 := by
   have hp : Nat.Prime 571 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_104]
 
+/-- The zero-indexed prime at index `105` is `577`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_105 : primeByIndex 105 = 577 := by
   have hp : Nat.Prime 577 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_105]
 
+/-- The zero-indexed prime at index `106` is `587`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_106 : primeByIndex 106 = 587 := by
   have hp : Nat.Prime 587 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_106]
 
+/-- The zero-indexed prime at index `107` is `593`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_107 : primeByIndex 107 = 593 := by
   have hp : Nat.Prime 593 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_107]
 
+/-- The zero-indexed prime at index `108` is `599`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_108 : primeByIndex 108 = 599 := by
   have hp : Nat.Prime 599 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_108]
 
+/-- The zero-indexed prime at index `109` is `601`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_109 : primeByIndex 109 = 601 := by
   have hp : Nat.Prime 601 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_109]
 
+/-- The zero-indexed prime at index `110` is `607`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_110 : primeByIndex 110 = 607 := by
   have hp : Nat.Prime 607 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_110]
 
+/-- The zero-indexed prime at index `111` is `613`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_111 : primeByIndex 111 = 613 := by
   have hp : Nat.Prime 613 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_111]
 
+/-- The zero-indexed prime at index `112` is `617`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_112 : primeByIndex 112 = 617 := by
   have hp : Nat.Prime 617 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_112]
 
+/-- The zero-indexed prime at index `113` is `619`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_113 : primeByIndex 113 = 619 := by
   have hp : Nat.Prime 619 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_113]
 
+/-- The zero-indexed prime at index `114` is `631`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_114 : primeByIndex 114 = 631 := by
   have hp : Nat.Prime 631 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_114]
 
+/-- The zero-indexed prime at index `115` is `641`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_115 : primeByIndex 115 = 641 := by
   have hp : Nat.Prime 641 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_115]
 
+/-- The zero-indexed prime at index `116` is `643`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_116 : primeByIndex 116 = 643 := by
   have hp : Nat.Prime 643 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_116]
 
+/-- The zero-indexed prime at index `117` is `647`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_117 : primeByIndex 117 = 647 := by
   have hp : Nat.Prime 647 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_117]
 
+/-- The zero-indexed prime at index `118` is `653`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_118 : primeByIndex 118 = 653 := by
   have hp : Nat.Prime 653 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_118]
 
+/-- The zero-indexed prime at index `119` is `659`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_119 : primeByIndex 119 = 659 := by
   have hp : Nat.Prime 659 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_119]
 
+/-- The zero-indexed prime at index `120` is `661`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_120 : primeByIndex 120 = 661 := by
   have hp : Nat.Prime 661 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_120]
 
+/-- The zero-indexed prime at index `121` is `673`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_121 : primeByIndex 121 = 673 := by
   have hp : Nat.Prime 673 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_121]
 
+/-- The zero-indexed prime at index `122` is `677`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_122 : primeByIndex 122 = 677 := by
   have hp : Nat.Prime 677 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_122]
 
+/-- The zero-indexed prime at index `123` is `683`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_123 : primeByIndex 123 = 683 := by
   have hp : Nat.Prime 683 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_123]
 
+/-- The zero-indexed prime at index `124` is `691`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_124 : primeByIndex 124 = 691 := by
   have hp : Nat.Prime 691 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_124]
 
+/-- The zero-indexed prime at index `125` is `701`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_125 : primeByIndex 125 = 701 := by
   have hp : Nat.Prime 701 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_125]
 
+/-- The zero-indexed prime at index `126` is `709`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_126 : primeByIndex 126 = 709 := by
   have hp : Nat.Prime 709 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_126]
 
+/-- The zero-indexed prime at index `127` is `719`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_127 : primeByIndex 127 = 719 := by
   have hp : Nat.Prime 719 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_127]
 
+/-- The zero-indexed prime at index `128` is `727`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_128 : primeByIndex 128 = 727 := by
   have hp : Nat.Prime 727 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_128]
 
+/-- The zero-indexed prime at index `129` is `733`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_129 : primeByIndex 129 = 733 := by
   have hp : Nat.Prime 733 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_129]
 
+/-- The zero-indexed prime at index `130` is `739`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_130 : primeByIndex 130 = 739 := by
   have hp : Nat.Prime 739 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_130]
 
+/-- The zero-indexed prime at index `131` is `743`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_131 : primeByIndex 131 = 743 := by
   have hp : Nat.Prime 743 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_131]
 
+/-- The zero-indexed prime at index `132` is `751`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_132 : primeByIndex 132 = 751 := by
   have hp : Nat.Prime 751 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_132]
 
+/-- The zero-indexed prime at index `133` is `757`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_133 : primeByIndex 133 = 757 := by
   have hp : Nat.Prime 757 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_133]
 
+/-- The zero-indexed prime at index `134` is `761`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_134 : primeByIndex 134 = 761 := by
   have hp : Nat.Prime 761 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_134]
 
+/-- The zero-indexed prime at index `135` is `769`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_135 : primeByIndex 135 = 769 := by
   have hp : Nat.Prime 769 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_135]
 
+/-- The zero-indexed prime at index `136` is `773`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_136 : primeByIndex 136 = 773 := by
   have hp : Nat.Prime 773 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_136]
 
+/-- The zero-indexed prime at index `137` is `787`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_137 : primeByIndex 137 = 787 := by
   have hp : Nat.Prime 787 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_137]
 
+/-- The zero-indexed prime at index `138` is `797`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_138 : primeByIndex 138 = 797 := by
   have hp : Nat.Prime 797 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_138]
 
+/-- The zero-indexed prime at index `139` is `809`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_139 : primeByIndex 139 = 809 := by
   have hp : Nat.Prime 809 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_139]
 
+/-- The zero-indexed prime at index `140` is `811`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_140 : primeByIndex 140 = 811 := by
   have hp : Nat.Prime 811 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_140]
 
+/-- The zero-indexed prime at index `141` is `821`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_141 : primeByIndex 141 = 821 := by
   have hp : Nat.Prime 821 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_141]
 
+/-- The zero-indexed prime at index `142` is `823`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_142 : primeByIndex 142 = 823 := by
   have hp : Nat.Prime 823 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_142]
 
+/-- The zero-indexed prime at index `143` is `827`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_143 : primeByIndex 143 = 827 := by
   have hp : Nat.Prime 827 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_143]
 
+/-- The zero-indexed prime at index `144` is `829`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_144 : primeByIndex 144 = 829 := by
   have hp : Nat.Prime 829 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_144]
 
+/-- The zero-indexed prime at index `145` is `839`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_145 : primeByIndex 145 = 839 := by
   have hp : Nat.Prime 839 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_145]
 
+/-- The zero-indexed prime at index `146` is `853`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_146 : primeByIndex 146 = 853 := by
   have hp : Nat.Prime 853 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_146]
 
+/-- The zero-indexed prime at index `147` is `857`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_147 : primeByIndex 147 = 857 := by
   have hp : Nat.Prime 857 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_147]
 
+/-- The zero-indexed prime at index `148` is `859`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_148 : primeByIndex 148 = 859 := by
   have hp : Nat.Prime 859 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_148]
 
+/-- The zero-indexed prime at index `149` is `863`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_149 : primeByIndex 149 = 863 := by
   have hp : Nat.Prime 863 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_149]
 
+/-- The zero-indexed prime at index `150` is `877`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_150 : primeByIndex 150 = 877 := by
   have hp : Nat.Prime 877 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_150]
 
+/-- The zero-indexed prime at index `151` is `881`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_151 : primeByIndex 151 = 881 := by
   have hp : Nat.Prime 881 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_151]
 
+/-- The zero-indexed prime at index `152` is `883`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_152 : primeByIndex 152 = 883 := by
   have hp : Nat.Prime 883 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_152]
 
+/-- The zero-indexed prime at index `153` is `887`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_153 : primeByIndex 153 = 887 := by
   have hp : Nat.Prime 887 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_153]
 
+/-- The zero-indexed prime at index `154` is `907`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_154 : primeByIndex 154 = 907 := by
   have hp : Nat.Prime 907 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_154]
 
+/-- The zero-indexed prime at index `155` is `911`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_155 : primeByIndex 155 = 911 := by
   have hp : Nat.Prime 911 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_155]
 
+/-- The zero-indexed prime at index `156` is `919`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_156 : primeByIndex 156 = 919 := by
   have hp : Nat.Prime 919 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_156]
 
+/-- The zero-indexed prime at index `157` is `929`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_157 : primeByIndex 157 = 929 := by
   have hp : Nat.Prime 929 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_157]
 
+/-- The zero-indexed prime at index `158` is `937`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_158 : primeByIndex 158 = 937 := by
   have hp : Nat.Prime 937 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_158]
 
+/-- The zero-indexed prime at index `159` is `941`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_159 : primeByIndex 159 = 941 := by
   have hp : Nat.Prime 941 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_159]
 
+/-- The zero-indexed prime at index `160` is `947`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_160 : primeByIndex 160 = 947 := by
   have hp : Nat.Prime 947 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_160]
 
+/-- The zero-indexed prime at index `161` is `953`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_161 : primeByIndex 161 = 953 := by
   have hp : Nat.Prime 953 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_161]
 
+/-- The zero-indexed prime at index `162` is `967`.
+Primality and the certified count identify this entry through `Nat.nth_count`; the value is used
+by the cumulative primorial certificates. -/
 theorem primeByIndex_at_162 : primeByIndex 162 = 967 := by
   have hp : Nat.Prime 967 := by norm_num only
   rw [primeByIndex, ← Nat.nth_count hp, count_prime_at_162]
