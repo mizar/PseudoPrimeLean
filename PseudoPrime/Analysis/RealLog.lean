@@ -16,12 +16,9 @@ theorems. Its statements concern positive real numbers and require no number-the
 assumptions.
 -/
 
-namespace PseudoPrime.Analysis
+@[expose] public section
 
-/-- For positive `y`, the logarithm of `y²` is twice the logarithm of `y`. -/
-theorem log_sq_eq_two_mul_log {y : ℝ} (_hy : 0 < y) : Real.log (y ^ 2) = 2 * Real.log y := by
-  rw [Real.log_pow]
-  norm_num only
+namespace PseudoPrime.Analysis
 
 /-- The standard tangent-line upper bound for the logarithm, based at a positive `a`. -/
 theorem log_le_log_add_sub_div {a y : ℝ} (ha : 0 < a) (hy : 0 < y) :

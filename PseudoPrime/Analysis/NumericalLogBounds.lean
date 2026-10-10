@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.Analysis.RealLog
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.NumberTheory.Harmonic.EulerMascheroni
-import Mathlib.Tactic
+module
+
+public import PseudoPrime.Analysis.RealLog
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import Mathlib.Tactic
 
 /-! # General bounds and arithmetic certificates -/
+
+@[expose] public section
 
 namespace PseudoPrime.Analysis
 
@@ -17,8 +21,8 @@ namespace PseudoPrime.Analysis
 Input/assumptions: a positive anchor `a`, an endpoint `b ≥ a`, and
 `a ≤ y ≤ b`, together with a real lower certificate `L < log a`.
 Conclusion: a chord-style lower certificate for `log y`.
-Content: apply `Real.le_log_one_add_of_nonneg` to `y/a - 1`; the elementary
-fraction comparison uses only the interval product `(y-a)(b-y) ≥ 0`.
+Proof: apply `Real.le_log_one_add_of_nonneg` to `y/a - 1`. The interval upper bound controls
+its positive denominator by `(a + b)/a`, while `y - a ≥ 0` preserves the comparison.
 Role: produces affine logarithmic lower bounds on compact positive intervals.
 -/
 theorem log_gt_affine_of_anchor {a b y L : ℝ} (ha : 0 < a) (hab : a ≤ b) (hay : a ≤ y) (hyb : y ≤ b)
@@ -69,12 +73,6 @@ theorem log_gt_affine_of_anchor {a b y L : ℝ} (ha : 0 < a) (hab : a ≤ b) (ha
       _ = 2 * (y / a - 1) := by rw [hratio']
   rw [hfactor]
   linarith only [hL, hla', hfrac]
-
-/-- The logarithmic saving from replacing `π` by `4` is strictly positive. -/
-theorem log_four_sub_log_pi_pos : 0 < Real.log 4 - Real.log Real.pi := by
-  have h := Real.strictMonoOn_log Real.pi_pos (by norm_num only [Set.mem_Ioi]) Real.pi_lt_four
-  rw [Real.log_four_eq] at h ⊢
-  linarith only [h]
 
 /-- A strict lower bound `24/100 < log 4 - log π`, obtained from rational bounds for `π`
 and logarithms of `2` and `3`. -/
@@ -174,5 +172,24 @@ theorem log_two_mul_pi_lt : Real.log (2 * Real.pi) < (1839 / 1000 : ℝ) := by
   have hlogThree := Real.log_three_lt_d9
   rw [Real.log_mul (by norm_num only) Real.pi_ne_zero]
   nlinarith only [htangent, hlogTwo, hlogThree, Real.pi_lt_d4]
+
+/-- The logarithm of `2π` exceeds `1837/1000`.
+Use the affine logarithm lower bound anchored at three and certified bounds for pi and log two.
+This provides the rational negative logarithmic coefficient in explicit-formula upper bounds. -/
+theorem log_two_mul_pi_gt : (1837 / 1000 : ℝ) < Real.log (2 * Real.pi) := by
+  have hpi : Real.pi ≤ (22 / 7 : ℝ) := Real.pi_lt_d4.le.trans (by norm_num only)
+  have hl :=
+    log_gt_affine_of_anchor (a := (3 : ℝ)) (b := 22 / 7) (y := Real.pi) (L := 1.0986122885)
+      (by norm_num only) (by norm_num only) Real.pi_gt_three.le hpi Real.log_three_gt_d9
+  rw [Real.log_mul (by norm_num only) Real.pi_ne_zero]
+  linarith only [hl, Real.pi_gt_d4, Real.log_two_gt_d9]
+
+/-- The logarithm of `100` is at most `463/100`.
+The tangent bound based at `81` and the certified upper bound for `log 3`
+give a rational certificate used at the reciprocal cutoff `100`. -/
+theorem log_hundred_le_fourHundredSixtyThree_hundredths : Real.log 100 ≤ (463 / 100 : ℝ) := by
+  have h := log_le_log_add_sub_div (a := (81 : ℝ)) (y := 100) (by norm_num only) (by norm_num only)
+  rw [show (81 : ℝ) = 3 ^ (4 : ℕ) by norm_num only, Real.log_pow] at h
+  nlinarith only [h, Real.log_three_lt_d9]
 
 end PseudoPrime.Analysis

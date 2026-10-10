@@ -31,7 +31,9 @@ noncomputable def logLinearRatio (y : ℝ) : ℝ :=
 noncomputable def logSquareRatio (y : ℝ) : ℝ :=
   (Real.log y) ^ 2 / y
 
-/-- The derivative of the logarithmic ratio at a positive input. -/
+/-- At positive `y`, the derivative of `(2 * log y + 1)/y` is `(1 - 2 * log y)/y²`.
+The quotient rule followed by cancellation of `y⁻¹ * y` gives the formula used to prove the
+ratio decreases on the later cutoff range. -/
 theorem hasDerivAt_logLinearRatio {y : ℝ} (hy : 0 < y) :
     HasDerivAt logLinearRatio ((1 - 2 * Real.log y) / y ^ 2) y := by
   unfold logLinearRatio
@@ -65,7 +67,9 @@ theorem strictAntiOn_logLinearRatio : StrictAntiOn logLinearRatio (Set.Ici 8) :=
       div_neg_of_neg_of_pos (by linarith only [hlog])
         (sq_pos_of_pos (lt_trans (by norm_num only : (0 : ℝ) < 8) hy))
 
-/-- The derivative of the squared-log ratio at a positive input. -/
+/-- At positive `y`, the derivative of `(log y)²/y` is `log y * (2 - log y)/y²`.
+The quotient rule and the derivative of `log` give this factored formula; its sign controls the
+monotonic comparison on `[8, ∞)`. -/
 theorem hasDerivAt_logSquareRatio {y : ℝ} (hy : 0 < y) :
     HasDerivAt logSquareRatio (Real.log y * (2 - Real.log y) / y ^ 2) y := by
   unfold logSquareRatio

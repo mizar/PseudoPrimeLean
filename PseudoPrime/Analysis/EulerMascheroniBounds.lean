@@ -26,7 +26,8 @@ private theorem harmonic_add_block (n k : ℕ) :
     simp only [add_assoc]
 
 -- BEGIN GENERATED harmonic_blocks
-/-- Exact harmonic value at 32, computed from the preceding 32-term block. -/
+/-- Exact harmonic value at 32, obtained by rational reduction of its defining sum.
+This starts the 32-term block chain used in the upper certificate for the Euler constant. -/
 private theorem harmonic_block_32 : harmonic 32 = (586061125622639 / 144403552893600 : ℚ) := by
   norm_num only [harmonic, Finset.sum_range_succ]
 
@@ -96,7 +97,10 @@ private theorem harmonic_block_256 :
 
 -- END GENERATED harmonic_blocks
 
-/-- A kernel-checked rational upper bound for the Euler--Mascheroni constant. -/
+/-- The Euler--Mascheroni constant is strictly less than `29/50`.
+Use the upper approximating sequence at 256, the exact harmonic block chain, and
+`log 256 = 8 * log 2` with the certified logarithmic lower bound. This provides the constant
+estimate used to control reciprocal residue errors. -/
 theorem eulerMascheroniConstant_lt_twentyNine_fiftieths :
     Real.eulerMascheroniConstant < (29 / 50 : ℝ) := by
   have hγ := Real.eulerMascheroniConstant_lt_eulerMascheroniSeq' 256
@@ -108,6 +112,23 @@ theorem eulerMascheroniConstant_lt_twentyNine_fiftieths :
     norm_num only
   rw [hlog] at hγ
   nlinarith only [hγ, Real.log_two_gt_d9]
+
+/-- The Euler--Mascheroni constant is strictly greater than `23/40`.
+The lower approximating sequence at `256`, its exact harmonic value, and a
+tangent bound for `log(257/256)` give a rational certificate. This is strong
+enough to bound the odd reciprocal correction by `-2/7` at large cutoffs. -/
+theorem twentyThree_fortieths_lt_eulerMascheroniConstant :
+    (23 / 40 : ℝ) < Real.eulerMascheroniConstant := by
+  have hγ := Real.eulerMascheroniSeq_lt_eulerMascheroniConstant 256
+  rw [Real.eulerMascheroniSeq, harmonic_block_256] at hγ
+  norm_num only at hγ
+  have hlog := Real.log_le_sub_one_of_pos (by norm_num only : (0 : ℝ) < 257 / 256)
+  rw [Real.log_div (by norm_num only) (by norm_num only)] at hlog
+  have hlog256 : Real.log (256 : ℝ) = 8 * Real.log 2 := by
+    rw [show (256 : ℝ) = 2 ^ (8 : ℕ) by norm_num only, Real.log_pow]
+    norm_num only
+  rw [hlog256] at hlog
+  nlinarith only [hγ, hlog, Real.log_two_lt_d9]
 
 /-- A coarse logarithmic lower bound sufficient for the reciprocal remainder estimate. -/
 theorem three_halves_le_log_two_pi : (3 / 2 : ℝ) ≤ Real.log (2 * Real.pi) := by

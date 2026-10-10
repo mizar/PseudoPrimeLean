@@ -135,29 +135,6 @@ lemma reciprocal_square_coefficient_nonneg {y l q : ℝ} (hy : 8 ≤ y) (hl : l 
   nlinarith only [hy, hl, hlower, hq1, hq2, hpy, hy2, hy3, hP, hR, hC, hC0, hq2y2, hq2y3,
     mul_nonneg hC0 (le_of_lt hy3), mul_nonneg hP (le_of_lt hy2)]
 
-/-- For `y ≥ 8`, `3q ≤ l ≤ y/8 + 3q - 1`, and `0.69 ≤ q ≤ 0.7`, the stated rational
-coefficient is nonnegative. Clearing the positive powers of `y` reduces the claim to polynomial
-inequalities. This public certificate supports logarithmic coefficient comparisons. -/
-lemma reciprocal_square_coefficient_nonneg_explicit {y l q : ℝ} (hy : 8 ≤ y)
-    (hl : l ≤ y / 8 + 3 * q - 1) (hlower : 3 * q ≤ l) (hq1 : 0.69 ≤ q) (hq2 : q ≤ 0.7)
-    (hpy : 0 < y) :
-    0 ≤
-      0.45 - q + 1.098 / 2 - (l + 1) / y + (8 * l - 11 / 4 - 1.4 / 2) / y ^ 2 +
-        (-5 * l + 5 / 2) / y ^ 3 := by
-  have hy2 : 0 < y ^ 2 := sq_pos_of_pos hpy
-  have hy3 : 0 < y ^ 3 := pow_pos hpy 3
-  have hP : 0 ≤ 8 * l - 11 / 4 - 1.4 / 2 := by nlinarith only [hlower, hq1]
-  have hR : -5 * (y / 8 + 3 * q - 1) + 5 / 2 ≤ -5 * l + 5 / 2 := by
-    have hmul := mul_le_mul_of_nonpos_left hl (show (-5 : ℝ) ≤ 0 by norm_num only)
-    simpa only [add_comm] using add_le_add_right hmul (5 / 2 : ℝ)
-  have hC : 0.299 ≤ 0.45 - q + 1.098 / 2 := by nlinarith only [hq2]
-  have hC0 : 0 ≤ 0.45 - q + 1.098 / 2 := le_trans (by norm_num only) hC
-  have hq2y2 : q * y ^ 2 ≤ 0.7 * y ^ 2 := mul_le_mul_of_nonneg_right hq2 (le_of_lt hy2)
-  have hq2y3 : q * y ^ 3 ≤ 0.7 * y ^ 3 := mul_le_mul_of_nonneg_right hq2 (le_of_lt hy3)
-  field_simp [hpy.ne']
-  nlinarith only [hy, hl, hlower, hq1, hq2, hpy, hy2, hy3, hP, hR, hC, hC0, hq2y2, hq2y3,
-    mul_nonneg hC0 (le_of_lt hy3), mul_nonneg hP (le_of_lt hy2)]
-
 /-- For a natural number `B ≥ 10`, `5 < (log B)^2`.
 Logarithmic monotonicity and explicit lower bounds for `log 2` and `log 5` prove the claim.
 This numerical estimate allows a constant bound of five to be absorbed into a logarithmic square. -/
