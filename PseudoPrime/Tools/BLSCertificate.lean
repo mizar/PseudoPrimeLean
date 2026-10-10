@@ -28,7 +28,9 @@ def readMethod : String → Except String PrimeTest.BLS.CertificateMethod
   | "bls5" => .ok .bls5
   | _ => .error "expected square, cube, or bls5"
 
-/-- Validate the method, input, factor fuel and witness-base limit. -/
+/-- Parse the external method and unsigned decimal input, factor fuel, and witness-base cap.
+Return the four parsed values or the first parse error; the input lower bound is checked
+by `run` before generation. -/
 def generateArgs (method n fuel maxBase : String) :
     Except String (PrimeTest.BLS.CertificateMethod × ℕ × ℕ × ℕ) := do
   return (← readMethod method, ← CertificateIO.readNat n, ← CertificateIO.readNat fuel,

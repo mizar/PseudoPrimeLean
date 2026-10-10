@@ -4,14 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BLS.FactorCoverage
-import PseudoPrime.PrimeTest.BLS.Search
-import PseudoPrime.PrimeTest.BLS.Cube
-import PseudoPrime.PrimeTest.BLS.Extended
-import PseudoPrime.PrimeTest.APRCL.CyclotomicRing
-import PseudoPrime.PrimeTest.APRCL.JacobiSum
-import PseudoPrime.PrimeTest.APRCL.PairCheck
-import Mathlib.Tactic.NormNum
+module
+
+-- Kernel computation of APR-CL keys needs mergeSort's recursive implementation.
+import all Init.Data.List.Sort.Basic
+
+public import PseudoPrime.PrimeTest.BLS.FactorCoverage
+public import PseudoPrime.PrimeTest.BLS.Search
+public import PseudoPrime.PrimeTest.BLS.Cube
+public import PseudoPrime.PrimeTest.BLS.Extended
+public import PseudoPrime.PrimeTest.APRCL.CyclotomicRing
+public import PseudoPrime.PrimeTest.APRCL.JacobiSum
+public import PseudoPrime.PrimeTest.APRCL.PairCheck
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Factor-supply completeness boundaries
@@ -225,11 +230,16 @@ theorem covered_factor_tree_builds_prime_certificate :
   exact
     PrimeTest.BLS.exists_findSquareCertificate_of_coverage (by decide) (by decide) ⟨2, 1⟩ hcoverage
 
+/-- With six known composite, zero split depth cannot produce a complete prime-factor list.
+Unfold the complete supplier to isolate the unresolved right branch of the twelve regression. -/
 private theorem primeFactorListFuel_six_zero (params : NumberTheory.Factorization.PollardRho.Params)
     (h6 : ¬Nat.Prime 6) : PrimeTest.BLS.primeFactorListFuel params 0 6 = none := by
   simp only [PrimeTest.BLS.primeFactorListFuel,
     NumberTheory.Factorization.PollardRho.primeFactorListFuel, h6, ite_false]
 
+/-- At depth one, complete factorization of twelve fails for any rho parameters.
+Its even split certifies two but leaves six at depth zero; this supplies the failed complete
+half of the retained-leaf regression. -/
 private theorem primeFactorListFuel_twelve_one
     (params : NumberTheory.Factorization.PollardRho.Params) (h12 : ¬Nat.Prime 12) (h2 : Nat.Prime 2)
     (h6 : ¬Nat.Prime 6) : PrimeTest.BLS.primeFactorListFuel params 1 12 = none := by
@@ -238,6 +248,8 @@ private theorem primeFactorListFuel_twelve_one
   rw [PrimeTest.BLS.primeFactorListFuel_of_prime h2]
   rw [primeFactorListFuel_six_zero params h6]
 
+/-- The exact leaf policy certifies two even at zero split depth, returning `[2]` and cofactor one.
+Unfold the prime branch for the retained-factor regression. -/
 private theorem partialPrimeFactorSupply_zero_prime
     (params : NumberTheory.Factorization.PollardRho.Params) (h2 : Nat.Prime 2) :
     PrimeTest.BLS.partialPrimeFactorSupply params 0 2 = ⟨[2], 1⟩ := by
@@ -245,6 +257,8 @@ private theorem partialPrimeFactorSupply_zero_prime
     NumberTheory.Factorization.PollardRho.partialPrimeFactorSupply, PrimeTest.exactPrimeLeafPolicy,
     h2, ite_true]
 
+/-- At zero split depth, the partial supplier preserves the composite six as its entire cofactor.
+Unfold the rejected-leaf branch; no certified factor is lost when a parent combines this result. -/
 private theorem partialPrimeFactorSupply_zero_composite
     (params : NumberTheory.Factorization.PollardRho.Params) (h6 : ¬Nat.Prime 6) :
     PrimeTest.BLS.partialPrimeFactorSupply params 0 6 = ⟨[], 6⟩ := by
@@ -252,6 +266,9 @@ private theorem partialPrimeFactorSupply_zero_composite
     NumberTheory.Factorization.PollardRho.partialPrimeFactorSupply, PrimeTest.exactPrimeLeafPolicy,
     h6, ite_false]
 
+/-- For any rho parameters, one even split of twelve retains factor two and cofactor six.
+Use the factor-two shortcut and the two zero-depth child evaluations to establish the partial
+half of the retained-leaf regression. -/
 private theorem partialPrimeFactorSupply_twelve_one
     (params : NumberTheory.Factorization.PollardRho.Params) (h12 : ¬Nat.Prime 12) (h2 : Nat.Prime 2)
     (h6 : ¬Nat.Prime 6) : PrimeTest.BLS.partialPrimeFactorSupply params 1 12 = ⟨[2], 6⟩ := by

@@ -4,7 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest
+module
+
+public import PseudoPrime.PrimeTest
+public meta import PseudoPrime.PrimeTest
 
 /-!
 # Baillie--PSW regression tests
@@ -13,43 +16,91 @@ Compiled examples and executable classifications are kept in a dedicated
 module so failures are visible without making them part of the public API.
 -/
 
+@[expose] public section
+
+-- This regression module deliberately exports no declarations.
+set_option linter.privateModule false
+
 namespace PseudoPrime.PrimeTest.Regression
 
+/--
+Conjoin a Boolean predicate over the supplied list, accepting the empty list.
+Regression evaluations use this helper to aggregate their stated expectations.
+-/
 private def all (p : α → Bool) : List α → Bool
   | [] => true
   | x :: xs => p x && all p xs
 
+/--
+Ten supplied ordinary Lucas-pseudoprime regression inputs. The evaluations below
+check that the wheel-based BPSW variants reject every input; the list stores test data only.
+-/
 private def lucasCases : List ℕ :=
   [323, 377, 1159, 1829, 3827, 5459, 5777, 9071, 9179, 10877]
 
+/--
+Ten supplied strong Lucas-pseudoprime regression inputs used to check rejection
+by both wheel-based BPSW variants.
+-/
 private def strongLucasCases : List ℕ :=
   [5459, 5777, 10877, 16109, 18971, 22499, 24569, 25199, 40309, 58519]
 
+/--
+Five supplied Lucas-V pseudoprime inputs used to exercise rejection by the
+combined wheel-based tests.
+-/
 private def lucasVCases : List ℕ :=
   [913, 150267335403, 430558874533, 14760229232131, 936916995253453]
 
-/- Known odd composite strong pseudoprimes to the single base `2`. -/
+/--
+Ten supplied odd composite strong pseudoprimes to base two. Regression checks
+contrast acceptance by the prechecked base-two test with rejection by larger base families
+and the combined Lucas tests.
+-/
 private def base2StrongPseudoprimes : List ℕ :=
   [2047, 3277, 4033, 4681, 8321, 15841, 29341, 42799, 49141, 52633]
 
+/--
+Seven fixed strong Miller–Rabin bases used by executable regression comparisons.
+These checks include inputs far beyond machine-sized deterministic-test ranges.
+-/
 private def mrBases7 : List ℕ :=
   [2, 325, 9375, 28178, 450775, 9780504, 1795265022]
 
+/--
+Thirteen prime strong Miller–Rabin bases from two through forty-one, used for
+regression comparisons against the seven-base family.
+-/
 private def mrBases13 : List ℕ :=
   [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
 
+/--
+The prime `2147483647` as a large input expected to pass both fixed
+Miller–Rabin base families.
+-/
 private def mrPrimeCases : List ℕ :=
   [2147483647]
 
+/--
+Ten small odd primes from three through thirty-one, used to check acceptance
+by the wheel-based BPSW variants.
+-/
 private def smallPrimeCases : List ℕ :=
   [3, 5, 7, 11, 13, 17, 19, 23, 29, 31]
 
-/- D = 5 Method A/A* equivalence examples: primes 7 and 13, composite 2047. -/
+/--
+Inputs `[7,13,2047]` for comparing Method A and Method A* at discriminant five.
+The first two are prime examples and 2047 is composite; the executable assertions check
+equality of the two strong-Lucas implementations on each supplied input.
+-/
 private def methodAStarFiveCases : List ℕ :=
   [7, 13, 2047]
 
-/- Composite numbers constructed as strong pseudoprimes for the fixed MR bases.
-   Each comment records the factorization and the parameter `m`. -/
+/--
+Ten composite constructions supplied as strong pseudoprimes to both fixed
+Miller–Rabin base families. Each entry comment records its factorization and construction
+parameter; the following evaluations check MR acceptance and BPSW rejection.
+-/
 private def multiBaseStrongPseudoprimes : List ℕ :=
   [ /- n = 3361424178291189215886152423998831
       = 21116326471 * 358977549991 * 443442855871
@@ -92,9 +143,17 @@ private def multiBaseStrongPseudoprimes : List ℕ :=
       = m(2m - 1), m = 2353853538180615421. -/
     11081252958410803876664228314425399061]
 
+/--
+Check that every supplied base passes the executable strong Miller–Rabin test
+for `n`. This Boolean helper preserves the list order and aggregates regression expectations.
+-/
 private def passesMrBases (n : ℕ) (bases : List ℕ) : Bool :=
   all (fun base => strongMillerRabinWithBase n base = true) bases
 
+/--
+The square `1000000007²`, used to exercise square rejection by the primality
+precheck and both combined wheel-based tests.
+-/
 private def largePrimeSquare : ℕ :=
   1000000014000000049
 

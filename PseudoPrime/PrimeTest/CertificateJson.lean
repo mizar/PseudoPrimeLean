@@ -4,13 +4,22 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Lean.Data.Json
+module
+
+public import Lean.Data.Json
 
 /-! # Exact decimal fields shared by primality certificate formats -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.CertificateJson
 
-/-- Decode a decimal-string natural without a floating-point conversion. -/
+/--
+Read an exact natural number from a JSON string containing its decimal representation.
+Non-string JSON values return the error from `getStr?`; strings not accepted by `toNat?`
+return the explicit decimal-string error. Successful decoding returns an unbounded `Nat`
+without passing through floating point. Certificate parsers share this reader for large fields.
+-/
 def readNat (j : Lean.Json) : Except String Nat := do
   let s ← j.getStr?
   match s.toNat? with

@@ -37,7 +37,8 @@ theorem floyd_fast_state (n c : ℕ) (seed : ZMod n) (k : ℕ) :
   congr 1
   exact two_mul k
 
-/-- A single search round computes the gcd associated with the next two Floyd orbit indices. -/
+/-- Gcd of the modulus and the difference between orbit indices `k` and `2 * k`.
+Search round `k`, starting with round one, tests this value for a proper factor. -/
 def orbitGcd (n c : ℕ) (seed : ZMod n) (k : ℕ) : ℕ :=
   Nat.gcd (orbit n c seed k - orbit n c seed (2 * k)).val n
 
@@ -168,7 +169,9 @@ theorem findFactor_of_firstProper {n : ℕ} {params : Params} {fuel target : ℕ
   simpa only [findFactor, ite_eq_right hfuelNe, ite_eq_right hnlarge, ite_eq_right heven] using
     hsearch
 
-/-- Fuel monotonicity for the public single-attempt function. -/
+/-- Increasing the fuel of a successful attempt preserves the same returned factor.
+The proof separates the input prechecks and uses search fuel monotonicity on odd inputs; this
+allows a successful trajectory to be reused under a larger caller budget. -/
 theorem findFactor_mono_fuel {n : ℕ} {params : Params} {fuel extra factor : ℕ}
     (h : findFactor n params fuel = some factor) :
     findFactor n params (fuel + extra) = some factor := by

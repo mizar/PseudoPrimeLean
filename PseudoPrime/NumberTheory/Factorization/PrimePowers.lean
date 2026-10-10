@@ -4,19 +4,28 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import Mathlib.Data.Nat.Factorization.Basic
+module
+
+public import Mathlib.Data.Nat.Factorization.Basic
 
 /-!
 # Aggregation of prime factor lists
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.NumberTheory.Factorization
 
-/-- Group a prime-factor list by distinct prime, storing each prime's occurrence count. -/
+/-- Group a natural-number list by distinct entry, storing each entry's occurrence count.
+No primality hypothesis is required. Applied to a certified prime-factor list, the result supplies
+the prime/exponent pairs expected by prime-power certificate consumers. -/
 def aggregatePrimeFactorList (factors : List ℕ) : List (ℕ × ℕ) :=
   factors.dedup.map (fun q => (q, factors.count q))
 
-/-- Aggregating repeated entries into prime powers preserves the list product. -/
+/-- Aggregating repeated entries into powers preserves the product of any natural-number list.
+The proof rewrites the deduplicated list as a finite set and uses the product-by-multiplicity
+identity, so certified prime-factor lists can be converted without changing their represented
+input. -/
 theorem aggregatePrimeFactorList_product (factors : List ℕ) :
     ((aggregatePrimeFactorList factors).map (fun qe => qe.1 ^ qe.2)).prod = factors.prod := by
   dsimp only [aggregatePrimeFactorList]

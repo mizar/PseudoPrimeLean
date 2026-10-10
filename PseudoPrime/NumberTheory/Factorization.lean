@@ -27,7 +27,9 @@ theorem four_coprime_of_odd {n : ℕ} (hn : Odd n) : Nat.Coprime 4 n := by
   have htwo : Nat.Coprime 2 n := Nat.prime_two.coprime_iff_not_dvd.mpr hnot
   simpa only [show 2 ^ 2 = 4 by decide] using htwo.pow_left 2
 
-/-- A nonzero nonsquare has a prime factor whose factorization exponent is odd. -/
+/-- A nonzero nonsquare has a prime factor whose factorization exponent is odd.
+If every exponent were even, halving the exponents in the prime-factor product would construct a
+square root. This supplies the distinguished prime for the CRT Jacobi numerator construction. -/
 theorem exists_prime_odd_factorization_of_not_square {r : ℕ} (hr0 : r ≠ 0) (hns : ¬IsSquare r) :
     ∃ p ∈ r.primeFactors, Odd (r.factorization p) := by
   by_contra hexists

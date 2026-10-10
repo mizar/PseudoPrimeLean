@@ -15,8 +15,15 @@ public import PseudoPrime.PrimeTest.CertificateJson
 Bounded trial division verifies both positive and negative decisions unconditionally.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.SmallInput
 
+/--
+Untrusted small-input primality claim for a target n and a Boolean isPrime.
+The target must agree with the caller and the claim must match bounded trial division.
+No invariant is stored as a proof; resultOfCertificate supplies a certified Decision after replay.
+-/
 structure Certificate where
   /-- Claimed target, checked against the caller's input. -/
   n : ℕ
@@ -34,13 +41,25 @@ theorem verifyCertificate_spec {n limit : ℕ} {c : Certificate}
   obtain ⟨hn, hp⟩ := Bool.and_eq_true_iff.mp h
   exact ⟨of_decide_eq_true hn, of_decide_eq_true hp⟩
 
-/-- Turn an accepted claim into a proved prime or notPrime result.
+/-- Construct a certified decision from an already verified claim.
+The acceptance proof supplies the bounded arithmetic result without repeating trial division.
+Zero and one yield notPrime; generation can reuse its verification evidence. -/
+def resultOfVerifiedCertificate (n limit : ℕ) (c : Certificate)
+    (h : verifyCertificate n limit c = true) : Decision n :=
+  match hb : c.isPrime with
+  | true =>
+    .prime
+      (isPrimeUpTo_true (limit := limit) (n := n)
+        (by simpa only [hb] using (verifyCertificate_spec h).2))
+  | false =>
+    .notPrime
+      (isPrimeUpTo_false (limit := limit) (n := n)
+        (by simpa only [hb] using (verifyCertificate_spec h).2))
+
+/-- Verify an untrusted claim and construct its certified decision.
 Invalid and out-of-range claims return unknown; zero and one are notPrime. -/
 def resultOfCertificate (n limit : ℕ) (c : Certificate) : Decision n :=
-  if h : verifyCertificate n limit c = true then
-    match hb : c.isPrime with
-    | true => .prime (isPrimeUpTo_true (by simpa only [hb] using (verifyCertificate_spec h).2))
-    | false => .notPrime (isPrimeUpTo_false (by simpa only [hb] using (verifyCertificate_spec h).2))
+  if h : verifyCertificate n limit c = true then resultOfVerifiedCertificate n limit c h
   else .unknown
 
 /-- Parse the three-field small-input-v1 format with a decimal-string target.
@@ -79,6 +98,16 @@ def resultOfCertificateText (n limit maxBytes : ℕ) (text : String) : Decision 
   | .error _ => .unknown
   | .ok c => resultOfCertificate n limit c
 
+/-- Decode accepted text and reuse its verification proof to construct a decision.
+The caller supplies acceptance for the same target, limit, and text; this path parses the text
+but performs no additional trial division. The generator CLI uses it after generation. -/
+def resultOfVerifiedCertificateText (n limit maxBytes : ℕ) (text : String)
+    (h : verifyCertificateText n limit maxBytes text = true) : Decision n :=
+  match hd : decodeCertificateText maxBytes text with
+  | .error _ => .unknown
+  | .ok c =>
+    resultOfVerifiedCertificate n limit c (by simpa only [verifyCertificateText, hd] using h)
+
 /-- Accepted text supplies its actual decoded and arithmetically rechecked claim. -/
 theorem verifyCertificateText_spec {n limit maxBytes : ℕ} {text : String}
     (h : verifyCertificateText n limit maxBytes text = true) :
@@ -90,11 +119,16 @@ theorem verifyCertificateText_spec {n limit maxBytes : ℕ} {text : String}
   | ok c =>
     exact ⟨c, rfl, verifyCertificate_spec (by simpa only [verifyCertificateText, hd] using h)⟩
 
-/-- Generate an in-range decision, serialize it, then parse and recheck the exact text.
-Return none on excessive input or output size. -/
+/-- Generate an in-range decision once, serialize it, and parse the exact text again.
+Check the decoded target and Boolean against the computed decision; return none on excessive
+input or output size. The public verifier independently replays trial division. -/
 def generateCertificateText (n limit maxBytes : ℕ) : Option String :=
-  ((isPrimeUpTo limit n).map (fun b ↦ (encodeCertificate ⟨n, b⟩).compress)).filter
-    (verifyCertificateText n limit maxBytes)
+  let expected := isPrimeUpTo limit n
+  (expected.map (fun b ↦ (encodeCertificate ⟨n, b⟩).compress)).filter
+    (fun text ↦
+      match decodeCertificateText maxBytes text with
+      | .error _ => false
+      | .ok c => decide (c.n = n) && decide (expected = some c.isPrime))
 
 /-- Every generated text passes the same external text verifier. -/
 theorem generateCertificateText_checked {n limit maxBytes : ℕ} {text : String}

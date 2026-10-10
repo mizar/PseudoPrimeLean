@@ -15,19 +15,25 @@ Theorems check the arithmetic payloads in the kernel. The executable main checks
 JSON replay and generation using the compiled runtime, without adding proof axioms.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.BLS.CertificateTests
 
-/-- Regression for mismatched small input. -/
+/-- A small certificate bound to two is rejected when replayed against three.
+Kernel reduction checks the input-agreement guard before any primality conclusion. -/
 theorem mismatched_small_input : verifyInputCertificate 3 (.small 2) = false := by decide
 
-/-- Regression for mismatched result unknown. -/
+/-- Replaying the certificate for two against three yields `unknown`.
+Apply the rejection contract, ensuring mismatched data produces neither a prime nor a nonprime
+verdict. -/
 theorem mismatched_result_unknown : resultOfInputCertificate 3 (.small 2) = .unknown := by
   exact resultOfInputCertificate_of_rejected _ (by decide) (by decide)
 
-/-- Regression for zero generation none. -/
+/-- Square-method generation returns no certificate for zero, even with an empty search.
+The input guard reduces definitionally and prevents an out-of-domain payload. -/
 theorem zero_generation_none : generateInputCertificate 0 .square ⟨2, 1⟩ 0 [] = none := by rfl
 
-/-- Regression for one generation none. -/
+/-- BLS5 generation returns no certificate for one; the input guard reduces before searching. -/
 theorem one_generation_none : generateInputCertificate 1 .bls5 ⟨2, 1⟩ 0 [] = none := by rfl
 
 /-- A square-bound certificate for 13. -/
@@ -42,14 +48,17 @@ def testCube : InputCertificate :=
 def testBLS5 : InputCertificate :=
   .bls5 ⟨101, ⟨[(2, 2)], 25⟩, [(2, 2)], 25⟩
 
-/-- Regression for square payload accepts. -/
+/-- Kernel evaluation accepts the square-bound payload for thirteen, with `F = 4` and
+the supplied base-two witness for its prime factor two. -/
 theorem square_payload_accepts : verifyInputCertificate 13 testSquare = true := by decide
 
-/-- Regression for cube payload accepts. -/
+/-- Kernel evaluation accepts the cube-bound payload for seventeen with `F = 4`,
+although `F² < 17`; this exercises the additional cube criterion beyond the square bound. -/
 theorem cube_payload_accepts : verifyInputCertificate 17 testCube = true := by decide
 
 set_option maxRecDepth 4096 in
-/-- Regression for bls5 payload accepts. -/
+/-- Kernel evaluation accepts the BLS5 payload for 101 with `F = 4` and remainder 25,
+exercising the criterion beyond both `F²` and `F³`. -/
 theorem bls5_payload_accepts : verifyInputCertificate 101 testBLS5 = true := by decide
 
 /-- Check generation, JSON replay, input binding, size limits and tamper rejection at runtime. -/

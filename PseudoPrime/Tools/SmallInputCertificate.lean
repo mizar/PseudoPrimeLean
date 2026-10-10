@@ -39,13 +39,15 @@ def run (args : List String) : IO UInt32 := do
     match [n, limit, maxBytes].mapM CertificateIO.readNat with
     | .ok [n, limit, maxBytes] =>
       if command == "generate" then
-        match PrimeTest.SmallInput.generateCertificateText n limit maxBytes with
+        match h : PrimeTest.SmallInput.generateCertificateText n limit maxBytes with
         | none =>
           IO.println "unknown: no certificate generated";
           return 3
         | some text =>
           IO.FS.writeFile path text
-          report (PrimeTest.SmallInput.resultOfCertificateText n limit maxBytes text)
+          report
+              (PrimeTest.SmallInput.resultOfVerifiedCertificateText n limit maxBytes text
+                (PrimeTest.SmallInput.generateCertificateText_checked h))
       else if command == "verify" then
         let some text ← CertificateIO.readFileBounded path maxBytes |
           do

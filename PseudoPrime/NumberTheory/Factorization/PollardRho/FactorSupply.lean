@@ -17,12 +17,16 @@ public import PseudoPrime.NumberTheory.Factorization.PollardRho.Search
 Rho budgets count search rounds only; the cost of the certification policy is separate.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.NumberTheory.Factorization
 
 namespace PollardRho
 
 /-- Recursively split a natural number with a bounded rho schedule, returning only prime leaves.
-The fuel is a maximum split depth: every internal node receives that many rho rounds. -/
+The fuel bounds split depth. At a node with remaining depth `fuel + 1`, the rho attempt receives
+`fuel + 1` rounds and each child receives depth `fuel`. Policy acceptance stops immediately;
+an unsuccessful split or unresolved child returns `none`. -/
 def primeFactorListFuel (policy : PrimeLeafPolicy) (params : Params) : ℕ → ℕ → Option (List ℕ)
   | 0, n => if policy.accepts n then some [n] else none
   | fuel + 1, n =>
@@ -115,7 +119,9 @@ theorem primeFactorListFuel_sound {policy : PrimeLeafPolicy} {params : Params} {
             | some left, some right => some (left ++ right)
             | _, _ => none) =
             some factors := by
-          simpa only [primeFactorListFuel, hp, hfind, ite_false] using h
+          cases hl : primeFactorListFuel policy params fuel d <;>
+            cases hr : primeFactorListFuel policy params fuel (n / d) <;>
+            simpa only [primeFactorListFuel, hp, hfind, ite_false, hl, hr] using h
         have hsplit := findFactor_sound hfind
         change 1 < d ∧ d < n ∧ d ∣ n at hsplit
         have hmul : d * (n / d) = n := Nat.mul_div_cancel' hsplit.2.2
@@ -161,7 +167,10 @@ theorem primeFactorListFuel_sound {policy : PrimeLeafPolicy} {params : Params} {
               · exact hrightSpec.1 p hp
             · rw [List.prod_append, hleftSpec.2, hrightSpec.2, hmul]
 
-/-- Recursively split with bounded rho attempts, retaining unresolved values in `remainder`. -/
+/-- Recursively split with bounded rho attempts, retaining unresolved values in `remainder`.
+The first natural-number argument bounds split depth and supplies the local round allowance;
+each child uses one less. Accepted leaves contribute a factor and remainder one, while unresolved
+leaves contribute no factors and their original value to the remainder. -/
 def partialPrimeFactorSupply (policy : PrimeLeafPolicy) (params : Params) :
     ℕ → ℕ → PartialPrimeFactorSupply
   | 0, n => if policy.accepts n then ⟨[n], 1⟩ else ⟨[], n⟩
@@ -240,7 +249,10 @@ theorem partialPrimeFactorSupply_sound (policy : PrimeLeafPolicy) (params : Para
             _ = divisor * (n / divisor) := by rw [hleft.2, hright.2]
             _ = n := hsplit
 
-/-- Execute a partial factor supply according to an explicit whole-tree budget. -/
+/-- Execute a partial factor supply according to an explicit whole-tree budget.
+At a split, the node's fuel is used once and its two subtrees are assigned to the divisor and
+quotient. Accepted leaves are retained; unsuccessful searches preserve the input as an unresolved
+remainder. This separates the whole-tree round cap from the prime certification policy's cost. -/
 def partialPrimeFactorSupplyByTree (policy : PrimeLeafPolicy) (params : Params) :
     RhoBudgetTree → ℕ → PartialPrimeFactorSupply
   | .leaf, n => if policy.accepts n then ⟨[n], 1⟩ else ⟨[], n⟩

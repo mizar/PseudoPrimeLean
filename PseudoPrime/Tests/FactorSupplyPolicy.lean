@@ -4,14 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Factorization.PollardRho.FactorSupply
-import PseudoPrime.PrimeTest.FactorizationPolicy
-import PseudoPrime.PrimeTest.SmallInput
+module
+
+public import PseudoPrime.NumberTheory.Factorization.PollardRho.FactorSupply
+public import PseudoPrime.PrimeTest.FactorizationPolicy
+public import PseudoPrime.PrimeTest.SmallInput
 
 /-!
 # Leaf policy and partial factorization regressions
 These private checks distinguish rejection from compositeness and preserve partial products.
 -/
+
+@[expose] public section
+
+-- This regression module deliberately exports no declarations.
+set_option linter.privateModule false
 
 namespace PseudoPrime.Tests.FactorSupplyPolicy
 

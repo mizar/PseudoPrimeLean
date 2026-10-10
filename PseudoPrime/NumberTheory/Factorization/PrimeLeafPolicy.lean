@@ -27,6 +27,7 @@ structure PrimeLeafPolicy where
   /-- Every accepted leaf is prime; completeness is not required. -/
   sound : ∀ n, accepts n → Nat.Prime n
 
+/-- Use the policy's supplied decision procedure when testing whether a leaf is accepted. -/
 instance (policy : PrimeLeafPolicy) : DecidablePred policy.accepts :=
   policy.decideAccepts
 

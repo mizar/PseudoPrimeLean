@@ -17,17 +17,25 @@ The precheck handles the values below `3`, all even values, and square values.
 Odd nonsquare inputs at least `3` are left to the test-specific executable body.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
 /--
-Return the result determined before a test-specific primality computation.
-
-The result is `false` below `2`, `true` at `2`, `false` for every other even
-number or square, and `none` for odd nonsquare inputs at least `3`.
+Executable square test for a natural input `n`.
+Compare `Nat.sqrt n ^ 2` with `n` using Boolean equality. The result is a Boolean, not the
+optional classification returned by `primalityPrecheck`. The precheck uses it after handling
+small inputs and parity to reject square candidates before a test-specific computation.
 -/
 def natIsSquare (n : ℕ) : Bool :=
   Nat.sqrt n ^ 2 == n
 
+/--
+A nonsquare natural input is rejected by the executable square comparison.
+From `¬IsSquare n`, conclude `natIsSquare n = false`. If the comparison were true,
+`Nat.sqrt n` would witness `IsSquare n`, contradicting the premise. This supplies the square
+branch needed to show that odd nonsquares pass through the primality precheck.
+-/
 theorem natIsSquare_false_of_not_isSquare {n : ℕ} (hns : ¬IsSquare n) : natIsSquare n = false := by
   by_contra h
   apply hns
@@ -36,22 +44,46 @@ theorem natIsSquare_false_of_not_isSquare {n : ℕ} (hns : ¬IsSquare n) : natIs
   have htrue : natIsSquare n = true := Bool.eq_true_of_not_eq_false h
   simpa only [natIsSquare] using (beq_iff_eq.mp htrue).symm
 
+/--
+Optional classification before running a test-specific primality filter.
+For any natural `n`, return `some false` below `2`, `some true` at `2`, and `some false` for
+other even inputs or squares; return `none` for the remaining odd nonsquares.
+`none` delegates to the caller's test and does not denote a negative conclusion.
+The branch order ensures that the prime `2` is accepted before parity rejection.
+-/
 def primalityPrecheck (n : ℕ) : Option Bool :=
   if n < 2 then some false
   else
     if n = 2 then some true
     else if Even n then some false else if natIsSquare n then some false else none
 
-/-- The precheck rejects zero. -/
+/--
+The precheck classifies `0` as rejected: `primalityPrecheck 0 = some false`.
+There are no premises. The first small-input branch reduces definitionally, so the proof is
+reflexivity. This fixes the lower boundary of top-level primality-test contracts.
+-/
 theorem primalityPrecheck_zero : primalityPrecheck 0 = some false := by rfl
 
-/-- The precheck rejects one. -/
+/--
+The precheck classifies `1` as rejected: `primalityPrecheck 1 = some false`.
+There are no premises; the first small-input branch computes the result by reflexivity.
+Top-level contracts reuse this boundary classification to exclude the unit input.
+-/
 theorem primalityPrecheck_one : primalityPrecheck 1 = some false := by rfl
 
-/-- The precheck accepts two. -/
+/--
+The precheck accepts `2` before applying the even-input rejection branch.
+There are no premises, and the defining branches reduce to `some true` by reflexivity.
+This supplies the distinguished even-prime case in top-level correctness contracts.
+-/
 theorem primalityPrecheck_two : primalityPrecheck 2 = some true := by rfl
 
-/-- Every even input other than two is rejected by the precheck. -/
+/--
+Every even natural input other than `2` is classified as rejected.
+The premises are `n ≠ 2` and `Even n`; the conclusion is `primalityPrecheck n = some false`.
+The proof separates inputs below `2`, then simplifies the explicit parity branch for the rest.
+Top-level primality filters use this result independently of their arithmetic test body.
+-/
 theorem primalityPrecheck_even_false {n : ℕ} (hn2 : n ≠ 2) (heven : Even n) :
     primalityPrecheck n = some false := by
   by_cases hlt : n < 2
@@ -62,7 +94,12 @@ theorem primalityPrecheck_even_false {n : ℕ} (hn2 : n ≠ 2) (heven : Even n) 
   have hne : ¬n = 2 := by exact hn2
   simp only [primalityPrecheck, hn, ↓reduceIte, hne, heven, ↓reduceIte]
 
-/-- Odd nonsquare inputs at least three are passed to the test-specific body. -/
+/--
+Odd nonsquares at least `3` reach the test-specific body.
+From `3 ≤ n`, `Odd n`, and `¬IsSquare n`, conclude `primalityPrecheck n = none`.
+The proof excludes the small-input, equality-to-two, even, and square branches explicitly.
+This is the interface used to unfold top-level tests on their intended arithmetic domain.
+-/
 theorem primalityPrecheck_none_of_odd {n : ℕ} (hn3 : 3 ≤ n) (hodd : Odd n) (hns : ¬IsSquare n) :
     primalityPrecheck n = none := by
   have htwo_lt : 2 < n := lt_of_lt_of_le (by decide) hn3

@@ -4,24 +4,37 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.NumberTheory.Factorization.PrimeLeafPolicy
-import PseudoPrime.PrimeTest.Result
+module
+
+public import PseudoPrime.NumberTheory.Factorization.PrimeLeafPolicy
+public import PseudoPrime.PrimeTest.Result
 
 /-!
 # PrimeTest policies for factorization leaves
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- Preserve the existing exact trial-division leaf policy for BLS generators.
-This policy has no input-size bound; its cost is separate from rho fuel. -/
+/--
+Exact factorization-leaf policy accepting precisely the natural primes.
+Its acceptance predicate is `Nat.Prime`, the decision procedure is the existing exact instance,
+and the soundness field is the supplied primality proof itself. There is no input-size limit
+or probabilistic acceptance. BLS factor generators can use this policy independently of rho fuel.
+-/
 abbrev exactPrimeLeafPolicy : NumberTheory.Factorization.PrimeLeafPolicy where
   accepts := Nat.Prime
   decideAccepts := inferInstance
   sound _ h := h
 
-/-- Use only proved-prime decisions as factorization leaves.
-Both unknown and proved-nonprime decisions leave a value available for splitting. -/
+/--
+Build a sound factorization-leaf policy from a classifier returning `Decision n`.
+Accept `n` exactly when `(classify n).toOption = some true`. Splitting the decision constructors
+extracts the carried prime proof and rules out `unknown` or `notPrime` as accepted leaves.
+Thus inconclusive and negative results remain available for splitting; this policy never
+promotes probable-prime acceptance without a proof into a prime factorization leaf.
+-/
 def primeLeafPolicyOfDecision (classify : (n : ℕ) → Decision n) :
     NumberTheory.Factorization.PrimeLeafPolicy
     where

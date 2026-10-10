@@ -4,31 +4,41 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.SmallInputJson
+module
+
+public import PseudoPrime.PrimeTest.SmallInputJson
 
 /-!
 # Small-input certificate regressions
 Test proof-carrying decisions, corruption and independently chosen verifier limits.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest.SmallInput.JsonTests
 
 /-- Exercise accepted prime/nonprime claims and rejected mutations. -/
 def run : IO Unit := do
   for n in List.range 101 do
-    let some text := generateCertificateText n 100 1024
-      | throw (IO.userError "in-range generation failed")
-    unless verifyCertificateText n 100 1024 text do
-      throw (IO.userError "text replay failed")
-    match resultOfCertificateText n 100 1024 text with
-    | .unknown =>
-      throw (IO.userError "accepted decision lost")
-    | .prime _ =>
-      unless decide (Nat.Prime n) do
-        throw (IO.userError "prime decision mismatch")
-    | .notPrime _ =>
-      if decide (Nat.Prime n) then
-        throw (IO.userError "nonprime decision mismatch")
+    match h : generateCertificateText n 100 1024 with
+    | none =>
+      throw (IO.userError "in-range generation failed")
+    | some text =>
+      unless verifyCertificateText n 100 1024 text do
+        throw (IO.userError "text replay failed")
+      let checked :=
+        resultOfVerifiedCertificateText n 100 1024 text (generateCertificateText_checked h)
+      unless checked.toOption == (resultOfCertificateText n 100 1024 text).toOption do
+        throw (IO.userError "verified decision differs from replay")
+      match checked with
+      | .unknown =>
+        throw (IO.userError "accepted decision lost")
+      | .prime _ =>
+        unless decide (Nat.Prime n) do
+          throw (IO.userError "prime decision mismatch")
+      | .notPrime _ =>
+        if decide (Nat.Prime n) then
+          throw (IO.userError "nonprime decision mismatch")
   let valid := (encodeCertificate ⟨7, true⟩).compress
   for bad in
     [valid.replace "true" "false", valid.replace "\"7\"" "\"9\"", valid.replace "\"7\"" "7", "{}",
