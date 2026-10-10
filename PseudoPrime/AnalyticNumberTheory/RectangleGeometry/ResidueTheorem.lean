@@ -79,17 +79,23 @@ cells from sharing an assigned point, and `point_covered` ensures every point of
 to some cell.
 -/
 structure SingularCellAssignment (S : Finset ℂ) (cells : Finset (ℂ × ℂ)) where
+  /-- Assigned point; values outside the singular-cell filter are unconstrained. -/
   pointOfCell : ℂ × ℂ → ℂ
+  /-- Each singular cell's assigned point belongs to the finite singularity ledger. -/
   point_mem_ledger : ∀ cell ∈ finiteSingularCells S cells, pointOfCell cell ∈ S
+  /-- The assigned point lies in its cell's closed rectangle. -/
   point_mem_cell :
     ∀ cell ∈ finiteSingularCells S cells,
       pointOfCell cell ∈ Rectangle.rectangleClosedBox cell.1 cell.2
+  /-- Every ledger point inside this singular cell equals its assigned point. -/
   point_unique :
     ∀ cell ∈ finiteSingularCells S cells,
       ∀ s ∈ S, s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 → s = pointOfCell cell
+  /-- Equality of assigned points forces equality of singular cells. -/
   distinct_points :
     ∀ cell ∈ finiteSingularCells S cells,
       ∀ other ∈ finiteSingularCells S cells, pointOfCell cell = pointOfCell other → cell = other
+  /-- Every ledger point is the assigned point of some singular cell. -/
   point_covered : ∀ s ∈ S, ∃ cell ∈ finiteSingularCells S cells, pointOfCell cell = s
 
 /--
@@ -99,16 +105,19 @@ point of `S` belongs to at most one listed cell (excluding placement on shared g
 `point_covered` places every point of `S` in a listed cell.
 -/
 structure GridSingularitySeparation (S : Finset ℂ) (cells : Finset (ℂ × ℂ)) where
+  /-- At most one ledger point lies in each listed closed cell. -/
   cell_point_unique :
     ∀ cell ∈ cells,
       ∀ s ∈ S,
         s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 →
           ∀ t ∈ S, t ∈ Rectangle.rectangleClosedBox cell.1 cell.2 → s = t
+  /-- At most one listed closed cell contains each ledger point. -/
   point_cell_unique :
     ∀ s ∈ S,
       ∀ cell ∈ cells,
         s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 →
           ∀ other ∈ cells, s ∈ Rectangle.rectangleClosedBox other.1 other.2 → cell = other
+  /-- The listed closed cells cover all ledger points. -/
   point_covered : ∀ s ∈ S, ∃ cell ∈ cells, s ∈ Rectangle.rectangleClosedBox cell.1 cell.2
 
 /--
@@ -117,19 +126,23 @@ most one point of `S`, every such point lies in the open (not just closed) recta
 distinct listed open rectangles are disjoint, and every point of `S` is covered.
 -/
 structure GridInteriorSeparation (S : Finset ℂ) (cells : Finset (ℂ × ℂ)) where
+  /-- At most one ledger point lies in each listed closed cell. -/
   cell_point_unique :
     ∀ cell ∈ cells,
       ∀ s ∈ S,
         s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 →
           ∀ t ∈ S, t ∈ Rectangle.rectangleClosedBox cell.1 cell.2 → s = t
+  /-- A ledger point in a listed closed cell lies strictly inside that cell. -/
   point_mem_open :
     ∀ s ∈ S,
       ∀ cell ∈ cells,
         s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 → s ∈ rectangleOpenBox cell.1 cell.2
+  /-- Distinct listed cells have disjoint open interiors. -/
   open_disjoint :
     ∀ cell ∈ cells,
       ∀ other ∈ cells,
         cell ≠ other → Disjoint (rectangleOpenBox cell.1 cell.2) (rectangleOpenBox other.1 other.2)
+  /-- The listed closed cells cover all ledger points. -/
   point_covered : ∀ s ∈ S, ∃ cell ∈ cells, s ∈ Rectangle.rectangleClosedBox cell.1 cell.2
 
 /-- Interior separation conditions imply the abstract grid/singularity separation certificate. -/

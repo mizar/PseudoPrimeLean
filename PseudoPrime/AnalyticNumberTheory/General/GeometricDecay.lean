@@ -56,10 +56,4 @@ theorem tendsto_add_one_pow_mul_pow_of_lt_one (k : ℕ) {r : ℝ} (hr : 0 ≤ r)
       mul_le_mul_of_nonneg_right hpow_le hrm_nonneg
     nlinarith only [hprod_le, mul_nonneg (pow_nonneg (by norm_num only : (0 : ℝ) ≤ 2) k) hrm_nonneg]
 
-/-- For `0 ≤ r < 1`, `(m + 1)^2 * r^m` tends to zero. This degree-two specialization
-of `tendsto_add_one_pow_mul_pow_of_lt_one` is used for quadratic growth bounds. -/
-theorem tendsto_add_one_sq_mul_pow_of_lt_one {r : ℝ} (hr : 0 ≤ r) (h'r : r < 1) :
-    Filter.Tendsto (fun m : ℕ => ((m : ℝ) + 1) ^ 2 * r ^ m) Filter.atTop (nhds 0) := by
-  exact tendsto_add_one_pow_mul_pow_of_lt_one 2 hr h'r
-
 end PseudoPrime.AnalyticNumberTheory.General

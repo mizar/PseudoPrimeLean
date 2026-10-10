@@ -18,9 +18,13 @@ monotonicity of the former, and `atTop` decay to `0` of `log n / n²` and of
 particular `L`-function or contour construction.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.General
 
-/-- `(x + 3) log(x + 3)` is monotone on `x ≥ 0`. -/
+/-- If `0 ≤ x ≤ y`, then `(x + 3) log(x + 3) ≤ (y + 3) log(y + 3)`.
+Both factors are nonnegative and increase with the argument, so multiplication preserves the
+comparison. This converts pointwise height bounds into a common logarithmic growth bound. -/
 theorem add_three_mul_log_add_three_mono {x y : ℝ} (hx : 0 ≤ x) (hxy : x ≤ y) :
     (x + 3) * Real.log (x + 3) ≤ (y + 3) * Real.log (y + 3) := by
   have hprod : x + 3 ≤ y + 3 := add_le_add hxy le_rfl
@@ -30,7 +34,9 @@ theorem add_three_mul_log_add_three_mono {x y : ℝ} (hx : 0 ≤ x) (hxy : x ≤
   have hlog_nonneg : 0 ≤ Real.log (x + 3) := Real.log_nonneg (by linarith only [hx])
   exact mul_le_mul hprod hlog hlog_nonneg hbase_nonneg
 
-/-- `log n / n² → 0`. -/
+/-- As the real variable `n` tends to positive infinity, `log n / n²` tends to zero.
+The proof multiplies the standard limit of `log n / n` by that of `n⁻¹`, then identifies the
+product eventually away from zero. This removes logarithmic errors with quadratic denominators. -/
 theorem tendsto_log_div_sq_atTop :
     Filter.Tendsto (fun n : ℝ => Real.log n / n ^ 2) Filter.atTop (nhds 0) := by
   have hL1 : Filter.Tendsto (fun n : ℝ => Real.log n / n) Filter.atTop (nhds 0) := by
@@ -117,5 +123,30 @@ theorem tendsto_sqrt_mul_add_one_div_sq_atTop (K : ℝ) (hK : 0 < K) :
   refine hcomp.congr' ?_
   filter_upwards [hnonneg] with n hn
   rw [Real.sqrt_sq hn]
+
+/-- A fixed additive constant in the logarithmic numerator still gives decay after division
+by the square. Add the inverse-square constant limit to the logarithmic limit.
+This removes gamma logarithmic factors from horizontal contour edges. -/
+theorem tendsto_log_add_const_div_sq_atTop (D : ℝ) :
+    Filter.Tendsto (fun t : ℝ => (Real.log t + D) / t ^ 2) Filter.atTop (nhds 0) := by
+  have h1 := tendsto_log_div_sq_atTop
+  have h2 :=
+    ((tendsto_inv_atTop_zero : Filter.Tendsto (fun t : ℝ => t⁻¹) Filter.atTop (nhds 0)).pow
+          2).const_mul
+      D
+  simpa only [div_eq_mul_inv, add_mul, inv_pow, mul_zero, zero_pow (by norm_num only : (2 : ℕ) ≠ 0),
+    zero_add] using h1.add h2
+
+/-- Above height one, `log (4+t)` is at most `log t + log 5`.
+Compare the arguments using `4+t ≤ 5t`, then split the positive product logarithm.
+This puts the gamma strip bound into the logarithmic inverse-square limit. -/
+theorem log_four_add_le_log_add_log_five {t : ℝ} (ht : 1 ≤ t) :
+    Real.log (4 + t) ≤ Real.log t + Real.log 5 := by
+  have hp : 0 < t := zero_lt_one.trans_le ht
+  have h :=
+    Real.log_le_log (by linarith only [ht] : 0 < 4 + t)
+      (show 4 + t ≤ t * 5 from by linarith only [ht])
+  rw [Real.log_mul hp.ne' (by norm_num only : (5 : ℝ) ≠ 0)] at h
+  exact h
 
 end PseudoPrime.AnalyticNumberTheory.General

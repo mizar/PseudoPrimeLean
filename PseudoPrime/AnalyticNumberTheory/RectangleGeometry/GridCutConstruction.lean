@@ -32,13 +32,21 @@ real/imaginary cut coordinates; the `pairwise` fields make each list strictly in
 `inside` fields place every cut strictly between the outer rectangle's endpoints.
 -/
 structure StrictGridCuts (z w : ℂ) where
+  /-- Internal real coordinates, ordered from left to right. -/
   xcuts : List ℝ
+  /-- Internal imaginary coordinates, ordered from bottom to top. -/
   ycuts : List ℝ
+  /-- The outer real endpoints are strictly increasing. -/
   re_lt : z.re < w.re
+  /-- The outer imaginary endpoints are strictly increasing. -/
   im_lt : z.im < w.im
+  /-- Real cuts are strictly increasing, hence duplicate-free. -/
   xcuts_pairwise : xcuts.Pairwise (· < ·)
+  /-- Imaginary cuts are strictly increasing, hence duplicate-free. -/
   ycuts_pairwise : ycuts.Pairwise (· < ·)
+  /-- Each real cut lies strictly inside the outer real interval. -/
   xcuts_inside : ∀ u ∈ xcuts, z.re < u ∧ u < w.re
+  /-- Each imaginary cut lies strictly inside the outer imaginary interval. -/
   ycuts_inside : ∀ v ∈ ycuts, z.im < v ∧ v < w.im
 
 /-- The endpoint-augmented real coordinates of a strict grid remain strictly increasing. -/

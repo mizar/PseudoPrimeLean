@@ -175,8 +175,10 @@ theorem norm_hasDerivAt_sub_le_of_re_le {h F : ℂ → ℂ} {R : ℝ} (hR : 0 < 
   rw [hfactor] at hmvt
   rwa [hM'_def]
 
-/-- The log-derivative of a canonical factor `Complex.canonicalFactor R w`, evaluated away from
-its pole `z = w`. -/
+/-- For `w` in the open disk of radius `R` and `z` in its closed disk with `z ≠ w`, the
+logarithmic derivative of `Complex.canonicalFactor R w` is the sum of the numerator's
+logarithmic derivative and `-1 / (z - w)`. The quotient rule and nonvanishing of both factors
+give the formula used to center the canonical decomposition at zero. -/
 theorem logDeriv_canonicalFactor {R : ℝ} {w z : ℂ} (hw : w ∈ Metric.ball (0 : ℂ) R)
     (hz : z ∈ Metric.closedBall (0 : ℂ) R) (hzw : z ≠ w) :
     logDeriv (Complex.canonicalFactor R w) z =
@@ -204,8 +206,10 @@ theorem logDeriv_canonicalFactor {R : ℝ} {w z : ℂ} (hw : w ∈ Metric.ball (
   congr 1
   rw [div_mul_eq_div_mul_one_div, div_self hRne, one_mul]
 
-/-- The centered difference of a canonical factor's log-derivative, split into the genus-one term
-`1/(s-w)+1/w` and the `R`-dependent canonical correction `w̄/(R²-w̄s) - w̄/R²`. -/
+/-- For a nonzero `w` in the open disk and `s` in the closed disk with `s ≠ w`, the centered
+logarithmic derivative is the negative of both the genus-one term `1/(s-w)+1/w` and the
+radius-dependent correction `w̄/(R²-w̄s) - w̄/R²`. Subtracting the formulas at `s` and zero
+separates the term retained in the Hadamard limit from the correction estimated below. -/
 theorem centered_logDeriv_canonicalFactor {R : ℝ} {w s : ℂ} (hw : w ∈ Metric.ball (0 : ℂ) R)
     (hs : s ∈ Metric.closedBall (0 : ℂ) R) (hsw : s ≠ w) (hw0 : w ≠ 0) :
     logDeriv (Complex.canonicalFactor R w) s - logDeriv (Complex.canonicalFactor R w) 0 =
@@ -226,16 +230,19 @@ theorem preperfect_closedBall {R : ℝ} (hR : 0 < R) : Preperfect (Metric.closed
   rw [← closure_ball (0 : ℂ) hR.ne']
   exact Metric.isOpen_ball.perfect_closure.acc
 
-/-- A punctured-neighborhood equality between two functions continuous at the puncture point
-forces equality of their values there too. -/
+/-- Two complex-valued functions continuous at `x` and eventually equal on its punctured
+neighborhood have equal values at `x`. Uniqueness of the limits on the punctured neighborhood
+extends local canonical-decomposition identities to their evaluation point. -/
 theorem eq_of_eventuallyEq_nhdsNE_of_continuousAt {f g : ℂ → ℂ} {x : ℂ} (hf : ContinuousAt f x)
     (hg : ContinuousAt g x) (h : f =ᶠ[nhdsWithin x {x}ᶜ] g) : f x = g x := by
   have h1 : Filter.Tendsto f (nhdsWithin x {x}ᶜ) (nhds (f x)) := hf.continuousWithinAt
   have h2 : Filter.Tendsto g (nhdsWithin x {x}ᶜ) (nhds (g x)) := hg.continuousWithinAt
   exact tendsto_nhds_unique h1 (h2.congr' h.symm)
 
-/-- The pointwise bound on the canonical correction term `ρ̄/(R²-ρ̄s) - ρ̄/R²`, using only
-`‖ρ‖ < R` and `‖s‖ ≤ R/2`. -/
+/-- If `‖ρ‖ < R` and `‖s‖ ≤ R/2`, the canonical correction
+`ρ̄/(R²-ρ̄s) - ρ̄/R²` has norm at most `2 * ‖s‖ / R²`. The assumptions imply `R > 0`;
+the proof bounds the first denominator below by `R²/2` and combines the fractions.
+The uniform bound controls the correction when passing to a limiting Hadamard factorization. -/
 theorem norm_canonicalCorrection_le {R : ℝ} {ρ s : ℂ} (hρ : ‖ρ‖ < R) (hs : ‖s‖ ≤ R / 2) :
     ‖(starRingEnd ℂ) ρ / ((R : ℂ) ^ 2 - (starRingEnd ℂ) ρ * s) - (starRingEnd ℂ) ρ / (R : ℂ) ^ 2‖ ≤
       2 * ‖s‖ / R ^ 2 := by

@@ -44,12 +44,18 @@ theorem analyticAt_Gamma_of_ball {s : ℂ} {r : ℝ} (hr : 0 < r)
     exact (Complex.differentiableAt_Gamma w (hball w hw)).differentiableWithinAt
   · exact Metric.ball_mem_nhds s hr
 
+/-- Gamma is analytic at the complex point one half. The ball of radius one quarter there
+avoids every nonpositive integer, so the pole-free-ball criterion applies.
+This supplies local regularity for differentiation of the reflection formula. -/
 theorem analyticAt_Gamma_half : AnalyticAt ℂ Complex.Gamma (1 / 2 : ℂ) :=
   analyticAt_Gamma_of_ball (r := 1 / 4) (by norm_num only)
     (by
       simpa only [one_div, Metric.mem_ball, ne_eq, Complex.ofReal_inv, Complex.ofReal_ofNat] using
         ball_avoids_nonpos_int (c := 1 / 2) (r := 1 / 4) (by norm_num only) (by norm_num only))
 
+/-- Gamma is analytic at one. The radius-one-half ball centered there avoids every
+nonpositive integer, so the pole-free-ball criterion applies.
+This supplies regularity for the duplication formula and the trigamma value at one. -/
 theorem analyticAt_Gamma_one : AnalyticAt ℂ Complex.Gamma (1 : ℂ) :=
   analyticAt_Gamma_of_ball (r := 1 / 2) (by norm_num only)
     (by
@@ -63,6 +69,8 @@ theorem analyticAt_digamma {s : ℂ} (hs : AnalyticAt ℂ Complex.Gamma s) (hne 
   unfold logDeriv
   exact hs.deriv.div hs hne
 
+/-- For any natural `m`, complex one half differs from `-m`. Taking real casts would
+otherwise contradict nonnegativity of `m`. This verifies Gamma nonvanishing at one half. -/
 theorem half_ne_neg_nat (m : ℕ) : (1 / 2 : ℂ) ≠ -m := by
   intro h
   have hm : (1 / 2 : ℝ) = -(m : ℝ) := by
@@ -73,6 +81,8 @@ theorem half_ne_neg_nat (m : ℕ) : (1 / 2 : ℂ) ≠ -m := by
     exact_mod_cast h'
   nlinarith only [hm, Nat.cast_nonneg (α := ℝ) m]
 
+/-- For any natural `m`, complex one differs from `-m`, by the positivity of one and
+nonnegativity of `m` after casting to the reals. This verifies Gamma nonvanishing at one. -/
 theorem one_ne_neg_nat (m : ℕ) : (1 : ℂ) ≠ -m := by
   intro h
   have hm : (1 : ℝ) = -(m : ℝ) := by
@@ -80,13 +90,22 @@ theorem one_ne_neg_nat (m : ℕ) : (1 : ℂ) ≠ -m := by
     exact_mod_cast h'
   nlinarith only [Nat.cast_nonneg (α := ℝ) m, hm]
 
+/-- Digamma is complex differentiable at one half. Gamma is analytic and nonzero there,
+so its logarithmic derivative is analytic. This justifies the chain and subtraction rules
+when differentiating the local reflection identity at one half. -/
 theorem differentiableAt_digamma_half : DifferentiableAt ℂ Complex.digamma (1 / 2 : ℂ) :=
   (analyticAt_digamma analyticAt_Gamma_half
       (Complex.Gamma_ne_zero half_ne_neg_nat)).differentiableAt
 
+/-- Digamma is complex differentiable at one, since Gamma is analytic and nonzero there.
+This justifies the derivatives of the shifted and doubled digamma terms in the duplication
+identity used to compute trigamma at one. -/
 theorem differentiableAt_digamma_one : DifferentiableAt ℂ Complex.digamma (1 : ℂ) :=
   (analyticAt_digamma analyticAt_Gamma_one (Complex.Gamma_ne_zero one_ne_neg_nat)).differentiableAt
 
+/-- The open ball of radius one quarter centered at complex one half avoids all integers.
+Every real integer is at distance at least one half from the center, as shown by splitting
+at zero. This excludes zeros of `sin (π*z)` in the reflection neighborhood. -/
 theorem ball_half_avoids_int : ∀ w ∈ Metric.ball (1 / 2 : ℂ) (1 / 4), ∀ k : ℤ, w ≠ k := by
   intro w hw k hcontra
   rw [Metric.mem_ball, hcontra] at hw
@@ -105,6 +124,9 @@ theorem ball_half_avoids_int : ∀ w ∈ Metric.ball (1 / 2 : ℂ) (1 / 4), ∀ 
       linarith only [hkR]
   exact (not_le_of_gt hw) (le_trans (by norm_num only) hbound)
 
+/-- For `z` within one quarter of one half, `sin (π*z)` is nonzero.
+The sine zero criterion and cancellation of nonzero pi would make `z` an integer,
+contradicting the neighborhood exclusion. This permits division in the reflection identity. -/
 theorem sin_pi_mul_ne_zero_of_ball {z : ℂ} (hz : z ∈ Metric.ball (1 / 2 : ℂ) (1 / 4)) :
     Complex.sin ((Real.pi : ℂ) * z) ≠ 0 := by
   intro hcontra
@@ -118,6 +140,9 @@ theorem sin_pi_mul_ne_zero_of_ball {z : ℂ} (hz : z ∈ Metric.ball (1 / 2 : �
         ring)
   exact ball_half_avoids_int z hz k hzk
 
+/-- If `z` is within one quarter of one half, so is `1 - z`.
+Its displacement from the center is the negative of that of `z`, with equal norm.
+This ensures both Gamma arguments in the reflection formula avoid poles. -/
 theorem one_sub_mem_ball_half {z : ℂ} (hz : z ∈ Metric.ball (1 / 2 : ℂ) (1 / 4)) :
     (1 - z) ∈ Metric.ball (1 / 2 : ℂ) (1 / 4) := by
   rw [Metric.mem_ball, dist_eq_norm] at hz ⊢
@@ -311,6 +336,9 @@ theorem deriv_digamma_half_eq : deriv Complex.digamma (1 / 2 : ℂ) = (Real.pi :
   rw [hchain] at hderiv_eq
   linear_combination hderiv_eq / 2
 
+/-- If `s` is within one quarter of one half, `s + 1/2` is within one half of one.
+The displacement is unchanged and the target radius is larger.
+This verifies pole avoidance for the shifted argument in the Gamma duplication formula. -/
 theorem s_add_half_mem_ball_one {s : ℂ} (hs : s ∈ Metric.ball (1 / 2 : ℂ) (1 / 4)) :
     (s + 1 / 2) ∈ Metric.ball (1 : ℂ) (1 / 2) := by
   rw [Metric.mem_ball, dist_eq_norm] at hs ⊢
@@ -318,6 +346,9 @@ theorem s_add_half_mem_ball_one {s : ℂ} (hs : s ∈ Metric.ball (1 / 2 : ℂ) 
   rw [heq]
   linarith only [hs]
 
+/-- If `s` is within one quarter of one half, `2*s` is within one half of one.
+Doubling the displacement doubles its norm. This verifies pole avoidance for the doubled
+argument in the Gamma duplication formula. -/
 theorem two_s_mem_ball_one {s : ℂ} (hs : s ∈ Metric.ball (1 / 2 : ℂ) (1 / 4)) :
     (2 * s) ∈ Metric.ball (1 : ℂ) (1 / 2) := by
   rw [Metric.mem_ball, dist_eq_norm] at hs ⊢

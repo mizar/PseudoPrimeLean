@@ -23,13 +23,19 @@ ingredients used to convert Dirichlet-series identities into finite-sum explicit
 Mellin inversion; the material here is independent of any specific contour or Dirichlet series.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.General
 
-/-- The reciprocal smoothing weight `1_{(0,1]}(t)(1 - t)`. -/
+/-- The complex-valued reciprocal smoothing weight: `1 - t` for `0 < t ≤ 1`, and zero
+elsewhere. Its Mellin transform supplies the kernel `1 / (s * (s + 1))` in finite-sum
+explicit formulae. -/
 noncomputable def mellinWeightOne : ℝ → ℂ :=
   Set.indicator (Set.Ioc (0 : ℝ) 1) (fun t ↦ 1 - (t : ℂ))
 
-/-- The reciprocal weight is the difference of the two indicator pieces `1` and `t ↦ t`. -/
+/-- The reciprocal weight is the difference of the constant and first-power indicators on
+`(0, 1]`. A pointwise membership split proves the identity, allowing its Mellin transform to
+be computed by subtraction of the two known transforms. -/
 theorem mellinWeightOne_eq_sub :
     mellinWeightOne = fun t ↦
       Set.indicator (Set.Ioc (0 : ℝ) 1) (fun _ ↦ (1 : ℂ)) t -
@@ -39,7 +45,9 @@ theorem mellinWeightOne_eq_sub :
   · simp only [mellinWeightOne, Set.indicator_of_mem ht, Complex.cpow_one]
   · simp only [mellinWeightOne, Set.indicator_of_notMem ht, Complex.cpow_one, sub_self]
 
-/-- The Mellin transform of the reciprocal weight is the rational kernel `1 / (s(s+1))`. -/
+/-- For `Re s > 0`, the reciprocal smoothing weight is Mellin-convergent at `s` and its
+transform is `1 / (s * (s + 1))`. Subtracting the indicator transforms gives `1/s - 1/(s+1)`;
+positive real part makes both denominators nonzero. This is the transform used for inversion. -/
 theorem hasMellin_mellinWeightOne {s : ℂ} (hs : 0 < s.re) :
     HasMellin mellinWeightOne s (1 / (s * (s + 1))) := by
   have h1 := hasMellin_one_Ioc hs
@@ -66,16 +74,21 @@ theorem hasMellin_mellinWeightOne {s : ℂ} (hs : 0 < s.re) :
   rw [hval] at hsub
   rwa [mellinWeightOne_eq_sub]
 
-/-- The base indicator weight `1_{(0,1]}`, whose Mellin derivative produces the logarithmic
-weight. -/
+/-- The complex-valued indicator of `(0, 1]`: one on this interval and zero elsewhere.
+Its Mellin transform is `1/s` on the right half-plane; differentiating that transform produces
+the logarithmic smoothing weight. -/
 noncomputable def mellinWeightZero : ℝ → ℂ :=
   Set.indicator (Set.Ioc (0 : ℝ) 1) (fun _ ↦ 1)
 
-/-- The logarithmic smoothing weight `1_{(0,1]}(t)(-log t)`. -/
+/-- The complex-valued logarithmic smoothing weight: `-log t` for `0 < t ≤ 1`, and zero
+elsewhere. Its Mellin transform supplies the kernel `1/s²` for logarithmically weighted
+finite sums and their contour formulae. -/
 noncomputable def mellinWeightTwo : ℝ → ℂ :=
   Set.indicator (Set.Ioc (0 : ℝ) 1) (fun t ↦ -(Real.log t : ℂ))
 
-/-- The logarithmic weight is minus the real-log-scaled base indicator weight. -/
+/-- The logarithmic weight equals the negative of `Real.log t` times the base indicator,
+for every real `t`, including points outside `(0, 1]`. Splitting on interval membership proves
+the identity used to pass from differentiation of the base transform to the logarithmic one. -/
 theorem mellinWeightTwo_eq_neg_smul_log :
     mellinWeightTwo = fun t ↦ -(Real.log t • mellinWeightZero t) := by
   funext t
@@ -84,7 +97,9 @@ theorem mellinWeightTwo_eq_neg_smul_log :
       mul_one]
   · simp only [mellinWeightTwo, Set.indicator_of_notMem ht, mellinWeightZero, smul_zero, neg_zero]
 
-/-- The base weight is locally integrable on the positive reals. -/
+/-- The base indicator weight is locally integrable on `(0, ∞)`. It is the indicator of a
+measurable interval applied to a locally integrable constant. This verifies the local hypothesis
+of the Mellin differentiation theorem. -/
 theorem locallyIntegrableOn_mellinWeightZero :
     MeasureTheory.LocallyIntegrableOn mellinWeightZero (Set.Ioi 0) := by
   exact
@@ -92,7 +107,9 @@ theorem locallyIntegrableOn_mellinWeightZero :
           measurableSet_Ioc).locallyIntegrableOn
       _
 
-/-- The base weight vanishes eventually at infinity, so it is `O` of any negative power. -/
+/-- For any real exponent parameter `a`, the base indicator is `O(t^(-a))` as `t → ∞`.
+It vanishes for `t > 1`, so eventual equality to zero gives the bound without a sign restriction
+on `a`. This supplies the infinity hypothesis for Mellin differentiation. -/
 theorem isBigO_atTop_mellinWeightZero (a : ℝ) :
     mellinWeightZero =O[Filter.atTop] (fun t : ℝ ↦ t ^ (-a)) := by
   have hzero : mellinWeightZero =ᶠ[Filter.atTop] 0 := by
@@ -103,7 +120,9 @@ theorem isBigO_atTop_mellinWeightZero (a : ℝ) :
     linarith only [h.2, ht]
   exact hzero.trans_isBigO (Asymptotics.isBigO_zero _ _)
 
-/-- The base weight is eventually the constant `1` just to the right of zero. -/
+/-- Near zero from the right, the base weight is `O(t^0)`. It is identically one on `(0, 1)`,
+so the bound has constant one. Together with the bound at infinity, this permits differentiation
+of its Mellin transform on the right half-plane. -/
 theorem isBigO_nhdsWithin_mellinWeightZero :
     mellinWeightZero =O[nhdsWithin 0 (Set.Ioi 0)] (fun t : ℝ ↦ t ^ (-(0 : ℝ))) := by
   have hone : ∀ᶠ t : ℝ in nhdsWithin 0 (Set.Ioi 0), mellinWeightZero t = 1 := by
@@ -114,7 +133,9 @@ theorem isBigO_nhdsWithin_mellinWeightZero :
   filter_upwards [hone] with t ht
   simp only [ht, norm_one, neg_zero, Real.rpow_zero, Std.le_refl]
 
-/-- The Mellin transform of the base weight matches its known closed form near `s`. -/
+/-- If `Re s > 0`, then `mellin mellinWeightZero z = z⁻¹` throughout some neighborhood of `s`.
+The right half-plane is open and the indicator transform is known at each point in it.
+This local identity transfers the derivative of inversion to the base Mellin transform. -/
 theorem eventually_mellin_mellinWeightZero_eq {s : ℂ} (hs : 0 < s.re) :
     ∀ᶠ z in nhds s, mellin mellinWeightZero z = z⁻¹ := by
   have hopen : IsOpen {z : ℂ | 0 < z.re} := isOpen_lt continuous_const Complex.continuous_re
@@ -122,7 +143,9 @@ theorem eventually_mellin_mellinWeightZero_eq {s : ℂ} (hs : 0 < s.re) :
   have := (hasMellin_one_Ioc hz).2
   simpa only [mellinWeightZero, one_div] using this
 
-/-- The Mellin transform of the logarithmic weight is the rational kernel `1 / s²`. -/
+/-- For `Re s > 0`, the logarithmic weight is Mellin-convergent at `s` and its transform is
+`1/s²`. Mellin differentiation identifies the log-scaled base transform with the derivative
+of `1/s`; the weight's minus sign cancels the derivative's minus sign. Used in Mellin inversion. -/
 theorem hasMellin_mellinWeightTwo {s : ℂ} (hs : 0 < s.re) :
     HasMellin mellinWeightTwo s (1 / s ^ 2) := by
   obtain ⟨hconv, hderiv⟩ :=
@@ -157,7 +180,9 @@ theorem hasMellin_mellinWeightTwo {s : ℂ} (hs : 0 < s.re) :
   rw [hmellin_eq, hval]
   rw [neg_neg, one_div]
 
-/-- A vertical line's imaginary displacement never returns to `0` once the real part is nonzero. -/
+/-- If the real coordinate `σ` is nonzero, then `σ + y * I` is nonzero for every real `y`.
+Taking real parts proves the claim. It verifies denominator nonvanishing for kernels on
+vertical lines. -/
 theorem ne_zero_add_mul_I_of_re_ne_zero {σ : ℝ} (hσ0 : σ ≠ 0) (y : ℝ) :
     (σ : ℂ) + y * Complex.I ≠ 0 := by
   intro h
@@ -168,11 +193,15 @@ theorem ne_zero_add_mul_I_of_re_ne_zero {σ : ℝ} (hσ0 : σ ≠ 0) (y : ℝ) :
           Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero, Complex.zero_re] using
           congrArg Complex.re h)
 
-/-- The squared norm of a point on a vertical line at `σ`. -/
+/-- For real `σ` and `y`, the squared norm of `σ + y * I` is `σ² + y²`.
+The identity follows from the complex norm-square formula and is used in vertical kernel bounds. -/
 theorem norm_add_mul_I_sq (σ y : ℝ) : ‖(σ : ℂ) + y * Complex.I‖ ^ 2 = σ ^ 2 + y ^ 2 := by
   rw [← Complex.normSq_eq_norm_sq, Complex.normSq_add_mul_I]
 
-/-- The squared modulus on a vertical line at `σ` dominates a shifted parabola in `y`. -/
+/-- For all real `σ` and `y`, `min (σ²) 1 * (1 + y²)` is bounded by the squared norm of
+`σ + y * I`. Expanding the norm and bounding each coefficient proves the inequality.
+When `σ ≠ 0`, its positive coefficient gives the integrable quadratic majorant for inverse powers.
+-/
 theorem min_sq_one_mul_le_norm_add_mul_I_sq (σ y : ℝ) :
     min (σ ^ 2) 1 * (1 + y ^ 2) ≤ ‖(σ : ℂ) + y * Complex.I‖ ^ 2 := by
   rw [norm_add_mul_I_sq, mul_add, mul_one]
@@ -180,7 +209,9 @@ theorem min_sq_one_mul_le_norm_add_mul_I_sq (σ y : ℝ) :
   have h2 : min (σ ^ 2) 1 * y ^ 2 ≤ y ^ 2 := mul_le_of_le_one_left (sq_nonneg y) (min_le_right _ _)
   linarith only [h1, h2]
 
-/-- The logarithmic rational kernel `s ↦ s⁻² ` is vertically integrable off the imaginary axis. -/
+/-- If `σ ≠ 0`, the logarithmic kernel `s ↦ (s⁻¹)²` is integrable on the vertical line
+with real coordinate `σ`. The squared-norm lower bound dominates it by a constant multiple
+of `(1 + y²)⁻¹`. This supplies the vertical-integrability hypothesis for Mellin inversion. -/
 theorem verticalIntegrable_mellinLogKernel {σ : ℝ} (hσ0 : σ ≠ 0) :
     Complex.VerticalIntegrable (fun s : ℂ ↦ (s : ℂ)⁻¹ ^ 2) σ := by
   unfold Complex.VerticalIntegrable
@@ -195,7 +226,10 @@ theorem verticalIntegrable_mellinLogKernel {σ : ℝ} (hσ0 : σ ≠ 0) :
     have hcy : 0 < min (σ ^ 2) 1 * (1 + y ^ 2) := mul_pos hc (by positivity)
     exact one_div_le_one_div_of_le hcy hb
 
-/-- The reciprocal rational kernel `s ↦ (s(s+1))⁻¹` is vertically integrable off `σ = 0, -1`. -/
+/-- If `σ ≠ 0` and `σ ≠ -1`, the reciprocal kernel `s ↦ (s * (s + 1))⁻¹` is integrable on
+the vertical line with real coordinate `σ`. Multiplying the two squared-norm lower bounds
+and taking square roots bounds its norm by a constant times `(1 + y²)⁻¹`.
+This verifies the reciprocal Mellin inversion hypothesis. -/
 theorem verticalIntegrable_mellinReciprocalKernel {σ : ℝ} (hσ0 : σ ≠ 0) (hσ1 : σ ≠ -1) :
     Complex.VerticalIntegrable (fun s : ℂ ↦ (s * (s + 1))⁻¹) σ := by
   unfold Complex.VerticalIntegrable
@@ -248,7 +282,9 @@ theorem verticalIntegrable_mellinReciprocalKernel {σ : ℝ} (hσ0 : σ ≠ 0) (
     have hcy : 0 < c * (1 + y ^ 2) := mul_pos hc (by positivity)
     exact one_div_le_one_div_of_le hcy hprod
 
-/-- On the positive reals, the reciprocal weight is the shifted-clamped linear function. -/
+/-- For `t > 0`, the reciprocal weight is the complex cast of `max (1 - t) 0`.
+A split at `t = 1` identifies the indicator with this continuous expression, used below to
+establish continuity at every positive inversion point. -/
 theorem mellinWeightOne_eq_ofReal_max {t : ℝ} (ht : 0 < t) :
     mellinWeightOne t = ((max (1 - t) 0 : ℝ) : ℂ) := by
   by_cases h : t ∈ Set.Ioc (0 : ℝ) 1
@@ -261,14 +297,18 @@ theorem mellinWeightOne_eq_ofReal_max {t : ℝ} (ht : 0 < t) :
     rw [mellinWeightOne, Set.indicator_of_notMem h, max_eq_right (sub_nonpos.mpr (le_of_lt h1))]
     simp only [Complex.ofReal_zero]
 
-/-- The reciprocal weight is continuous at every positive real. -/
+/-- For each `x > 0`, the reciprocal weight is continuous at `x`, including `x = 1`.
+Its equality on the positive half-line to the continuous clamped linear expression proves
+the claim. This verifies the pointwise continuity condition in Mellin inversion. -/
 theorem continuousAt_mellinWeightOne {x : ℝ} (hx : 0 < x) : ContinuousAt mellinWeightOne x := by
   have heq : Set.EqOn mellinWeightOne (fun t ↦ ((max (1 - t) 0 : ℝ) : ℂ)) (Set.Ioi 0) := fun t ht ↦
     mellinWeightOne_eq_ofReal_max ht
   refine (ContinuousOn.congr ?_ heq).continuousAt (isOpen_Ioi.mem_nhds hx)
   fun_prop
 
-/-- On the positive reals, the logarithmic weight is minus the log of the clamp at `1`. -/
+/-- For `t > 0`, the logarithmic weight is the complex cast of `-log (min t 1)`.
+The membership split at one uses `log 1 = 0` on the upper branch. The formula gives a continuous
+expression on the positive half-line for the subsequent inversion argument. -/
 theorem mellinWeightTwo_eq_ofReal_neg_log_min {t : ℝ} (ht : 0 < t) :
     mellinWeightTwo t = ((-Real.log (min t 1) : ℝ) : ℂ) := by
   by_cases h : t ∈ Set.Ioc (0 : ℝ) 1
@@ -281,7 +321,9 @@ theorem mellinWeightTwo_eq_ofReal_neg_log_min {t : ℝ} (ht : 0 < t) :
     rw [mellinWeightTwo, Set.indicator_of_notMem h, min_eq_right h1.le, Real.log_one]
     simp only [neg_zero, Complex.ofReal_zero]
 
-/-- The logarithmic weight is continuous at every positive real. -/
+/-- For each `x > 0`, the logarithmic weight is continuous at `x`, including `x = 1`.
+The formula `-log (min x 1)` has a positive logarithm argument there, so continuity of the
+minimum and logarithm applies. This supplies pointwise continuity for Mellin inversion. -/
 theorem continuousAt_mellinWeightTwo {x : ℝ} (hx : 0 < x) : ContinuousAt mellinWeightTwo x := by
   have heq : Set.EqOn mellinWeightTwo (fun t ↦ ((-Real.log (min t 1) : ℝ) : ℂ)) (Set.Ioi 0) :=
     fun t ht ↦ mellinWeightTwo_eq_ofReal_neg_log_min ht
@@ -293,7 +335,10 @@ theorem continuousAt_mellinWeightTwo {x : ℝ} (hx : 0 < x) : ContinuousAt melli
   have hlog_cont : ContinuousAt (fun u : ℝ ↦ Real.log (min u 1)) t := hmin_cont.log hminx_ne
   exact (Complex.continuous_ofReal.continuousAt.comp hlog_cont.neg).continuousWithinAt
 
-/-- The Mellin inversion formula recovers the reciprocal weight from its rational kernel. -/
+/-- For `σ > 0` and `x > 0`, Mellin inversion on the line with real coordinate `σ` sends
+the kernel `1 / (s * (s + 1))` to `mellinWeightOne x`. The proof combines its computed
+transform, Mellin convergence, vertical integrability, and continuity at `x`.
+This recovers the smoothing weight needed to turn a Mellin integral into a finite weighted sum. -/
 theorem mellinInv_mellinWeightOne_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
     mellinInv σ (fun s : ℂ ↦ 1 / (s * (s + 1))) x = mellinWeightOne x := by
   have hconv :=
@@ -336,7 +381,10 @@ theorem mellinInv_mellinWeightOne_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
   unfold mellinInv
   rw [hfun_eq]
 
-/-- The Mellin inversion formula recovers the logarithmic weight from its rational kernel. -/
+/-- For `σ > 0` and `x > 0`, Mellin inversion on the line with real coordinate `σ` sends
+the kernel `1/s²` to `mellinWeightTwo x`. The computed transform, convergence, vertical
+integrability, and continuity provide the hypotheses of the inversion theorem.
+This recovers the logarithmic weight for finite-sum contour identities. -/
 theorem mellinInv_mellinWeightTwo_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
     mellinInv σ (fun s : ℂ ↦ 1 / s ^ 2) x = mellinWeightTwo x := by
   have hconv :=
@@ -370,8 +418,9 @@ theorem mellinInv_mellinWeightTwo_eq {σ x : ℝ} (hσ : 0 < σ) (hx : 0 < x) :
   unfold mellinInv
   rw [hfun_eq]
 
-/-- For a nonnegative numerator and positive denominator, the complex power of their quotient
-splits into the numerator power and the inverse denominator power. -/
+/-- For real `a ≥ 0`, `b > 0`, and any complex exponent `s`, the complex power of `a/b`
+equals `(a : ℂ)^s * (b : ℂ)^(-s)`. The nonnegative-real quotient power rule and the negative
+exponent identity prove the formula, used to separate scaling factors in Mellin weights. -/
 theorem cpow_div_eq_cpow_mul_cpow_neg {a b : ℝ} (ha : 0 ≤ a) (hb : 0 < b) (s : ℂ) :
     ((a / b : ℝ) : ℂ) ^ s = (a : ℂ) ^ s * (b : ℂ) ^ (-s) := by
   rw [Complex.ofReal_div, Complex.div_cpow_ofReal_nonneg ha hb.le, Complex.cpow_neg, div_eq_mul_inv]

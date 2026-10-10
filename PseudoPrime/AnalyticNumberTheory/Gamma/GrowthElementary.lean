@@ -19,9 +19,13 @@ along natural shifts, and estimates for the even and odd subsequences.
 Together with a complex Gamma norm comparison, these bounds control xi growth.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.AnalyticNumberTheory.Gamma
 
-/-- `t ↦ t * log t` is monotone on `[1, ∞)`. -/
+/-- If `1 ≤ a ≤ b`, then `a * log a ≤ b * log b`. Both factors are nonnegative and
+monotone on this range, so compare them in two multiplication steps.
+This transfers factorial endpoint estimates to the real Gamma argument between them. -/
 theorem mul_log_mono_of_one_le {a b : ℝ} (ha : 1 ≤ a) (hab : a ≤ b) :
     a * Real.log a ≤ b * Real.log b := by
   have hla : 0 ≤ Real.log a := Real.log_nonneg ha
