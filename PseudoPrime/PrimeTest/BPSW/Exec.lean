@@ -19,11 +19,17 @@ successive-square MR test ahead of square testing and parameter search.
 The factor-detecting wheel and shared Lucas evaluator are later stages.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- Run the small-input and parity checks, then Miller–Rabin, then the square
-check and classical Selfridge search. The supplied Lucas test consumes the
-selected parameters. Search failure remains false, and no GRH is assumed. -/
+/--
+MR-first ordinary composition with a caller-supplied Lucas consumer of selected parameters.
+For natural `n`, handle values below two, two, and other even inputs first; then run base-two
+successive-square MR, reject squares, and perform the bounded classical Method A* search.
+A failed MR test or search returns false; successful search evaluates `lucasTest param`.
+This is the pure-minus-one search path used for boundary fallback, not the factor-detecting wheel.
+-/
 def bpswMRFirst (n : ℕ) (lucasTest : LucasParams → Bool) : Bool :=
   if n < 2 then false
   else
@@ -39,9 +45,13 @@ def bpswMRFirst (n : ℕ) (lucasTest : LucasParams → Bool) : Bool :=
             | some param => lucasTest param
         else false
 
-/-- Moving Miller–Rabin ahead of the square check and search preserves the
-original composition for every input and Lucas consumer. The proof separates
-the precheck branches from the modular-test and search branches. -/
+/--
+Moving MR before square checking and classical search preserves the composition for any consumer.
+For arbitrary natural `n` and `lucasTest`, the right side prechecks, searches, and conjoins MR
+with the consumer. The proof splits small inputs, parity, squares, MR results, and search results,
+using equality of the successive-square and defining MR tests. This all-input equality permits
+reusing ordinary BPSW correctness without changing the search or Lucas predicate.
+-/
 theorem bpswMRFirst_eq (n : ℕ) (lucasTest : LucasParams → Bool) :
     bpswMRFirst n lucasTest =
       (match primalityPrecheck n with
@@ -66,22 +76,33 @@ theorem bpswMRFirst_eq (n : ℕ) (lucasTest : LucasParams → Bool) :
               strongMillerRabinBase2WithPrecheck, ↓reduceIte, Bool.false_and, Bool.true_and,
               Bool.false_eq_true]
 
-/-- Ordinary BPSW using successive-square MR before square testing and search.
-The classical pure-minus-one search and the existing Strong Lucas test are
-retained so that the all-input equality theorem applies. -/
+/--
+Ordinary BPSW with base-two MR before square checking and pure-minus-one Selfridge search.
+Use `bpswMRFirst` with the shared `U`, `V`, and `Q` Strong Lucas initializer at the selected
+Method A* parameters. The search retains the classical bounded order; this is not the
+factor-detecting Wheel30 entry. Scan boundary handling uses its one-sided correctness contract.
+-/
 def bailliePSWMRFirst (n : ℕ) : Bool :=
   bpswMRFirst n (fun param ↦ strongLucasWithParamsUVQ n param.D param.P param.Q)
 
-/-- The reordered ordinary entry equals the current public BPSW on every input.
-This connects the new execution order to the existing unconditional specification. -/
+/--
+For every natural input, MR-first ordinary BPSW equals precheck-first `bailliePSW`.
+No arithmetic hypothesis is needed. Rewrite the shared Strong Lucas Boolean to its defining
+comparison and use `bpswMRFirst_eq`; the remaining composition is definitional.
+This transfers the existing all-input contract to the reordered entry.
+-/
 theorem bailliePSWMRFirst_eq (n : ℕ) : bailliePSWMRFirst n = bailliePSW n := by
   rw [bailliePSWMRFirst]
   simp only [strongLucasWithParamsUVQ_eq]
   rw [bpswMRFirst_eq]
   rfl
 
-/-- The reordered ordinary entry inherits the unconditional primality-test
-specification by function equality. Acceptance is a probable-prime result. -/
+/--
+Unconditional one-sided primality-filter contract for MR-first ordinary BPSW.
+Function extensionality lifts `bailliePSWMRFirst_eq`, then rewriting gives the precheck-first
+entry's unconditional contract. Consequently rejection certifies non-primality, while acceptance
+still provides only a probable-prime result. Selfridge scan boundary fallbacks use this contract.
+-/
 theorem bailliePSWMRFirst_spec : PrimalityTestSpec bailliePSWMRFirst := by
   have hfun : bailliePSWMRFirst = bailliePSW := funext bailliePSWMRFirst_eq
   rw [hfun]

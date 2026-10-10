@@ -34,7 +34,7 @@ Jacobiの一括除去と燃料の数え方、停止と正当性の証明は [Fib
 
 `Selfridge/MethodALists.lean`で、奇数入力と選択したDのJacobi値−1を前提に、Method AとA*の通常Lucas判定が一致することを証明した。D=5では $U_{2m}(5,5)=5^m U_{2m}(1,-1)$ を使い、法nで5が単元であることから零条件が一致する。それ以外のDではパラメータ自体が同じである。非素数条件を保ったlpspの同値と、任意の適格なD選択関数に対するlpsp集合の一致まで証明している。Strong Lucasの一致は既存の `MethodAStarEquivalence.lean`で証明済みである。
 
-原論文第6節の5段階仕様と強化Wheel30の全入力一致は、`PaperSpec.lean`の `strengthenedBPSWWheel30_eq_bfw`で証明済みである。純粋−1探索との互換性は本計画の対象に含めない。
+原論文第6節の5段階仕様と強化Wheel30の全入力一致は、`BFWSpec.lean`の `strengthenedBPSWWheel30_eq_bfw`で証明済みである。純粋−1探索との互換性は本計画の対象に含めない。
 
 ## 証明付き判定・証明書・解析的上界
 

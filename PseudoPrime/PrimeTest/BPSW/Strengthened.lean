@@ -17,13 +17,27 @@ The strengthened interface adds the Lucas-V and Euler–Jacobi tests with the
 Lucas base `Q` to the explicit-parameter Baillie–PSW composition.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- Baillie–PSW with explicit Lucas parameters and the Euler–Jacobi check. -/
+/--
+Parameterized conjunction of ordinary BPSW, Lucas-V, and signed Euler–Jacobi at base `Q`.
+The input is natural `n` and the parameters `D`, `P`, `Q` are integers. Require all three
+Boolean comparisons to accept; parameter search is not performed here. This uses the raw
+unmultiplied Euler comparison with exponent `n / 2`, distinct from the later Wheel30 shared
+implementation until its equivalence hypotheses are discharged.
+-/
 def strengthenedBPSWWithParams (n : ℕ) (D P Q : ℤ) : Bool :=
   bailliePSWWithParams n D P Q && (lucasVWithParams n D P Q && eulerJacobiWithIntBase n Q)
 
-/-- A prime modulus passes the strengthened parameterized Baillie–PSW composition. -/
+/--
+A prime passes all three parameterized strengthened BPSW comparisons.
+The premises are `n.Prime`, `D = P * P - 4 * Q`, and `jacobiSym D n = -1`.
+The proof splits the conjunction and combines ordinary BPSW, Lucas-V, and signed Euler–Jacobi
+prime-pass theorems. No further coprimality hypothesis on `Q` is imposed.
+This supplies the parameter-level strengthened prime-completeness contract.
+-/
 theorem strengthenedBPSWWithParams_of_prime {n : ℕ} (hn : n.Prime) (D P Q : ℤ)
     (hdisc : D = P * P - 4 * Q) (hjacobi : jacobiSym D n = -1) :
     strengthenedBPSWWithParams n D P Q = true := by

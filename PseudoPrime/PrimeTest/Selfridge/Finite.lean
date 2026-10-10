@@ -42,6 +42,12 @@ lemma jacobi_selfridgeD_neg_twenty_seven_iff {n : ℕ} (hn : Odd n) :
   rw [show (9 : ℕ) = 3 * 3 by norm_num only, jacobiSym.mul_right]
   constructor <;> intro h <;> simpa only [pow_succ, pow_zero, one_mul, pow_two, mul_assoc] using h
 
+/--
+Decide the finite witness implication for n<750. Odd n with no square root below 28
+must have Jacobi value -1 at one of 5,7,11,13,15,17,19,21,23,27,29,31.
+Even or square inputs pass the implication vacuously. The block certificates prove this
+checker always true, supplying the small classical pure -1 first-stop bound.
+-/
 def smallClassicalNegOneCheck (n : Fin 750) : Bool :=
   decide
     (n.val % 2 = 1 →
@@ -387,6 +393,11 @@ private theorem smallClassicalNegOneCheckAll_valid_block_736 :
   simp only [smallClassicalNegOneCheck, decide_eq_true_eq]
   interval_cases n.val <;> norm_num only <;> decide
 
+/--
+The finite witness checker passes for every input n<750.
+Split the range into the certified half-open blocks and combine their kernel-checked results
+with List.all_eq_true. This supplies the finite first-stop bound without an analytic assumption.
+-/
 theorem smallClassicalNegOneCheckAll_valid :
     (List.finRange 750).all smallClassicalNegOneCheck = true := by
   apply List.all_eq_true.mpr

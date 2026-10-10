@@ -17,9 +17,17 @@ theorem is built into the executable definition.  The search is the ascending
 pure-Jacobi-`-1` variant; it does not perform Jacobi-`0` factor detection.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- Baillie–PSW with the elementary `|D| < 2*n` Selfridge A* search. -/
+/--
+Ordinary BPSW using the common precheck and a bounded ascending pure-minus-one search.
+For natural `n`, return the precheck's Boolean when available; otherwise search Method A*
+parameters with fuel `n - 2`, return false on failure, and run parameterized BPSW on success.
+The search tests Jacobi value `-1` without factor-detecting Jacobi-zero stops. Its successful
+candidates have magnitude below `2 * n`; the separate specification proves prime acceptance.
+-/
 def bailliePSW (n : ℕ) : Bool :=
   match primalityPrecheck n with
   | some result => result
@@ -28,20 +36,42 @@ def bailliePSW (n : ℕ) : Bool :=
     | none => false
     | some param => bailliePSWWithParams n param.D param.P param.Q
 
-/-- Top-level BPSW rejects zero through the common precheck. -/
+/--
+The ordinary precheck-first BPSW entry rejects zero without performing its search.
+No premises are required. Unfold the entry and apply the zero precheck equation.
+This supplies the zero-input field of its primality-filter contract.
+-/
 theorem bailliePSW_zero : bailliePSW 0 = false := by simp only [bailliePSW, primalityPrecheck_zero]
 
-/-- Top-level BPSW rejects one through the common precheck. -/
+/--
+The ordinary precheck-first BPSW entry rejects one without performing its search.
+Unfold the entry and use the one-input precheck equation; no hypotheses are required.
+This supplies the unit-input rejection field of the top-level contract.
+-/
 theorem bailliePSW_one : bailliePSW 1 = false := by simp only [bailliePSW, primalityPrecheck_one]
 
-/-- Top-level BPSW accepts two through the common precheck. -/
+/--
+The ordinary precheck-first BPSW entry accepts the prime two without parameter search.
+Unfolding the entry and applying the two-input precheck equation proves the result.
+This separates the even-prime boundary from the odd-domain Selfridge completeness argument.
+-/
 theorem bailliePSW_two : bailliePSW 2 = true := by simp only [bailliePSW, primalityPrecheck_two]
 
-/-- Top-level BPSW rejects every even input other than two. -/
+/--
+Every even input other than two is rejected by ordinary precheck-first BPSW.
+The assumptions are `n ≠ 2` and `Even n`. Rewrite the common precheck's parity result;
+the search and modular comparisons are never reached. This supplies the parity contract.
+-/
 theorem bailliePSW_even_false {n : ℕ} (hn2 : n ≠ 2) (heven : Even n) : bailliePSW n = false := by
   rw [bailliePSW, primalityPrecheck_even_false hn2 heven]
 
-/-- A prime modulus passes top-level BPSW when the elementary search succeeds. -/
+/--
+A prime input passes ordinary BPSW when its bounded classical discriminant search succeeds.
+Assume `n.Prime` and an explicit `some D` search result. The proof handles two by precheck;
+for odd primes it obtains admissible Method A* parameters and the Jacobi-minus-one property
+from the search specification, then applies parameterized BPSW prime completeness.
+The following global contract discharges this search-success premise separately.
+-/
 theorem bailliePSW_of_prime_of_search {n : ℕ} (hn : n.Prime) {D : ℤ}
     (hsearch : selfridgeClassicalSearchWithinTwoMul n = some D) : bailliePSW n = true := by
   rcases hn.eq_two_or_odd' with rfl | hodd
@@ -62,11 +92,11 @@ theorem bailliePSW_of_prime_of_search {n : ℕ} (hn : n.Prime) {D : ℤ}
       bailliePSWWithParams_of_prime hn param.D param.P param.Q param.discr hjacobi
 
 /--
-Input: a proof that every odd prime has a successful elementary Selfridge search.
-Claim: the top-level BPSW implementation satisfies the common primality-test
-interface, including the explicit parity behavior.
-Role: the executable-to-specification connection; an analytic module may later
-provide the search-success premise without becoming a PrimeTest dependency.
+One-sided correctness of ordinary BPSW conditional on bounded search success for odd primes.
+The premise supplies some successful discriminant for each prime `n ≥ 3`; the conclusion
+includes zero/one rejection, two acceptance, even-input rejection, and all-prime acceptance.
+The proof assembles the boundary lemmas and applies prime completeness with the supplied
+search result. `bailliePSW_spec_unconditional` provides the premise by elementary search bounds.
 -/
 theorem bailliePSW_spec
     (hsearch :
@@ -84,7 +114,12 @@ theorem bailliePSW_spec
     · rcases hsearch hn (hn.odd_iff.mp hodd) with ⟨D, hD⟩
       exact bailliePSW_of_prime_of_search hn hD
 
-/-- The unconditional BPSW specification obtained from the canonical ascending search. -/
+/--
+Unconditional one-sided correctness of the precheck-first classical ordinary BPSW entry.
+There are no GRH or analytic hypotheses. Supply `bailliePSW_spec` with the canonical ascending
+search's elementary prime-success theorem. The resulting contract justifies certified rejection
+through `decideByTest`; it does not certify primality of arbitrary accepted inputs.
+-/
 theorem bailliePSW_spec_unconditional : PrimalityTestSpec bailliePSW := by
   apply bailliePSW_spec
   intro n hn hn3

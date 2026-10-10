@@ -110,10 +110,14 @@ theorem SelfridgeScanResult.acceptedAfterMR_eq {n : ℕ} (strengthened : Bool)
   | selected param hj =>
     simp only [acceptedAfterMR, accepted, EulerRedundancy.strengthenedAfterMR_eq]
 
-/-- Optional Wheel30 BPSW entry with certified conditional Euler omission.
-Keep small-input, even-input, MR-first, square, and unconditional Selfridge stages.
-Pass the already computed MR evidence to the selected Lucas consumer; strengthened
-mode omits Euler only on the certified three-modulo-four signed-power branch. -/
+/--
+Wheel30 BPSW entry with certified conditional Euler omission.
+Keep the small-input, even-input, MR-first, square and unconditional Selfridge stages.
+Pass the computed MR evidence to the selected Lucas consumer; strengthened mode
+omits Euler for every signed power-of-two Q at odd moduli greater than one.
+Ineligible parameters retain the original strengthened computation; both modes preserve
+the complete Boolean result by the following all-input equality.
+-/
 def bpswWheel30ReducedEuler (n : ℕ) (strengthened : Bool) : Bool :=
   if n < 2 then false
   else
@@ -135,7 +139,7 @@ becomes the original Boolean branch. This is an all-input equality contract. -/
 theorem bpswWheel30ReducedEuler_eq (n : ℕ) (strengthened : Bool) :
     bpswWheel30ReducedEuler n strengthened = bpswWheel30 n strengthened := by
   simp only [bpswWheel30ReducedEuler, SelfridgeScanResult.acceptedAfterMR_eq, dite_eq_ite,
-    bpswWheel30]
+    bpswWheel30, SelfridgeScanResult.acceptedOdd_eq]
 
 /-- Every prime passes the conditional Wheel30 entry in either mode.
 Transport the existing unconditional prime-completeness theorem through Boolean equality. -/

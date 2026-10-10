@@ -16,9 +16,18 @@ The executable composition keeps the Selfridge parameters explicit.  Search
 and parameter selection remain in the separate Selfridge layer.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- Baillie–PSW with an explicit discriminant and Lucas parameter triple. -/
+/--
+Parameterized Boolean conjunction of base-two Strong Miller–Rabin and Strong Lucas.
+The natural input is `n`; `D`, `P`, and `Q` are the caller-supplied integer discriminant and
+Lucas parameters. Evaluate `strongMillerRabinBase2WithPrecheck n` and
+`strongLucasWithParams n D P Q`; acceptance requires both. This definition does not select
+Selfridge parameters. Prime completeness additionally requires the discriminant and Jacobi
+hypotheses supplied by `bailliePSWWithParams_of_prime`.
+-/
 def bailliePSWWithParams (n : ℕ) (D P Q : ℤ) : Bool :=
   strongMillerRabinBase2WithPrecheck n && strongLucasWithParams n D P Q
 

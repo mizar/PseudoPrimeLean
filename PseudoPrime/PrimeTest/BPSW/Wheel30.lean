@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.EqualityScan
-import PseudoPrime.PrimeTest.StrongLucas.Fast
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.Scan
+public import PseudoPrime.PrimeTest.StrongLucas.Fast
 
 /-! # Unconditional factor-detecting BPSW execution
 
@@ -26,6 +28,32 @@ def SelfridgeScanResult.accepted {n : ℕ} (strengthened : Bool) : SelfridgeScan
   | .selected param _ =>
     if strengthened then strengthenedLucasSharedEulerValid n param
     else strongLucasWithParamsFast n param.D param.P param.Q
+
+/-- Evaluate certified selected parameters at an odd modulus without retesting Jacobi of D.
+The strengthened flag chooses the unguarded shared Euler core; ordinary execution uses PQ.
+Factors and exhausted searches remain false. -/
+def SelfridgeScanResult.acceptedOdd {n : ℕ} (_hn : Odd n) (strengthened : Bool) :
+    SelfridgeScanResult n → Bool
+  | .exhausted => false
+  | .factor _ _ _ _ => false
+  | .selected param _ =>
+    if strengthened then strengthenedLucasSharedEulerCore n param
+    else strongLucasWithPQ n param.P param.Q
+
+/-- Odd-input acceptance agrees with the total selected-parameter evaluator.
+The stored Jacobi evidence identifies both raw-core branches with their guarded versions. -/
+theorem SelfridgeScanResult.acceptedOdd_eq {n : ℕ} (hn : Odd n) (strengthened : Bool)
+    (result : SelfridgeScanResult n) :
+    result.acceptedOdd hn strengthened = result.accepted strengthened := by
+  cases result with
+  | exhausted => rfl
+  | factor g hl hu hd => rfl
+  | selected param hj =>
+    cases strengthened
+    · simp only [SelfridgeScanResult.acceptedOdd, SelfridgeScanResult.accepted, Bool.false_eq_true,
+        ↓reduceIte, strongLucasWithParamsFast, ite_eq_left (And.intro hn hj)]
+    · simp only [SelfridgeScanResult.acceptedOdd, SelfridgeScanResult.accepted, ↓reduceIte,
+        strengthenedLucasSharedEulerCore_eq n hn param hj]
 
 /-- A completed search outcome accepts every prime input.
 A proper factor contradicts primality.
@@ -49,10 +77,12 @@ def bpswWheel30 (n : ℕ) (strengthened : Bool) : Bool :=
   else
     if n = 2 then true
     else
-      if Even n then false
+      if he : Even n then false
       else
         if strongMillerRabinWithBaseLoop n 2 then
-          if natIsSquare n then false else (selfridgeNeOneResult n (2 * n)).accepted strengthened
+          if natIsSquare n then false
+          else
+            (selfridgeNeOneResult n (2 * n)).acceptedOdd (Nat.not_even_iff_odd.mp he) strengthened
         else false
 
 /-- Every prime passes the finite MR-first factor-detecting composition.
@@ -69,7 +99,8 @@ theorem bpswWheel30_of_prime {n : ℕ} (hp : n.Prime) (strengthened : Bool) :
       (strongMillerRabinWithBaseLoop_eq _ _).trans
         (strongMillerRabinWithBase_of_prime hp (Nat.coprime_two_left.mpr ho))
     simp only [bpswWheel30, hl, ht, he, hm, ↓reduceIte,
-      natIsSquare_false_of_not_isSquare hp.not_isSquare, Bool.false_eq_true]
+      natIsSquare_false_of_not_isSquare hp.not_isSquare, Bool.false_eq_true,
+      SelfridgeScanResult.acceptedOdd_eq]
     exact
       SelfridgeScanResult.accepted_of_prime hp strengthened _
         (selfridgeNeOneResult_total ho hp.not_isSquare)
@@ -85,7 +116,7 @@ theorem bpswWheel30_spec (strengthened : Bool) :
   · intro n ht he
     by_cases hl : n < 2
     · simp only [bpswWheel30, hl, ↓reduceIte]
-    · simp only [bpswWheel30, hl, ht, he, ↓reduceIte]
+    · simp only [bpswWheel30, hl, ht, he, ↓reduceIte, ↓reduceDIte]
   · exact fun hp ↦ bpswWheel30_of_prime hp strengthened
 
 /-- Ordinary MR-first BPSW with finite factor-detecting Wheel30-filtered search.
@@ -93,8 +124,12 @@ The selected Method A* parameters use the three-component Strong Lucas evaluator
 def bailliePSWWheel30 (n : ℕ) : Bool :=
   bpswWheel30 n false
 
-/-- Strengthened MR-first BPSW with finite factor-detecting Wheel30-filtered search.
-Selected parameters use the shared Strong, V, and guarded multiplied Euler evaluator. -/
+/--
+Strengthened MR-first BPSW with an unconditional 2*n magnitude budget for the
+factor-detecting Wheel30 Selfridge search. Selected Method A* parameters use shared
+Strong, terminal V and the gcd-free multiplied Euler comparison on odd Jacobi -1 inputs;
+the total evaluator retains its fallback elsewhere. A Boolean pass remains probable primality.
+-/
 def strengthenedBPSWWheel30 (n : ℕ) : Bool :=
   bpswWheel30 n true
 
@@ -162,30 +197,6 @@ theorem BPSW.decideWheel30Int_eq (z : ℤ) (strengthened : Bool) :
     decideWheel30Int z strengthened = decideWheel30 z.toNat strengthened := by
   simp only [decideWheel30Int, bpswWheel30Int_eq, decideWheel30, decideByPrimePass, decideByTest]
 
-/-- For odd nonsquares, equality exclusion preserves both Lucas acceptance modes.
-Rewrite the classified result, including factors and exhausted budgets. -/
-theorem selfridgeNeOneResultEq_accepted (n : ℕ) (hn : Odd n) (hns : ¬IsSquare n) (fuel : ℕ)
-    (strengthened : Bool) :
-    (selfridgeNeOneResultEq n hn hns fuel).accepted strengthened =
-      (selfridgeNeOneResult n fuel).accepted strengthened := by
-  rw [selfridgeNeOneResultEq_eq]
-
-/-- On odd nonsquares, the BPSW Boolean uses the equality-exclusion scan unchanged.
-The square precheck is false and the shared classification preserves both modes. -/
-theorem bpswWheel30_eq_equalityScan {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) (strengthened : Bool) :
-    bpswWheel30 n strengthened =
-      (if n < 2 then false
-      else
-        if n = 2 then true
-        else
-          if Even n then false
-          else
-            if strongMillerRabinWithBaseLoop n 2 then
-              (selfridgeNeOneResultEq n hn hns (2 * n)).accepted strengthened
-            else false) := by
-  simp only [bpswWheel30, natIsSquare_false_of_not_isSquare hns, Bool.false_eq_true, ↓reduceIte,
-    selfridgeNeOneResultEq_eq]
-
 /-- Run the common small-input, parity, and square precheck before MR and Wheel30 search.
 The selected-parameter computation and unconditional search budget match bpswWheel30.
 Squares are rejected before modular exponentiation; other odd inputs pay for sqrt first. -/
@@ -200,7 +211,8 @@ def bpswWheel30WithPrecheck (n : ℕ) (strengthened : Bool) : Bool :=
 Case analysis on the guards shows that only the order of rejection changes. -/
 theorem bpswWheel30WithPrecheck_eq (n : ℕ) (strengthened : Bool) :
     bpswWheel30WithPrecheck n strengthened = bpswWheel30 n strengthened := by
-  simp only [bpswWheel30WithPrecheck, primalityPrecheck, bpswWheel30]
+  simp only [bpswWheel30WithPrecheck, primalityPrecheck, bpswWheel30,
+    SelfridgeScanResult.acceptedOdd_eq]
   split_ifs <;> rfl
 
 /-- The precheck-first Wheel30 test inherits unconditional prime completeness and small answers.

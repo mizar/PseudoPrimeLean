@@ -16,9 +16,16 @@ This file independently relates the pure `-1` stopping rule to the
 factor-detecting `≠ 1` rule for a common candidate predicate.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- A pure `-1` stopping candidate also detects neither a factor nor Jacobi `1`. -/
+/--
+Every pure-minus-one stop is a valid factor-detecting stop when `1 < n`.
+For arbitrary candidate predicate `C`, Jacobi value `-1` excludes a gcd different from one
+and hence excludes `n ∣ i`; it also excludes Jacobi value one. These facts prove inclusion
+of the complete stopping sets. This establishes that the broader rule stops no later.
+-/
 theorem FirstStopNegOneSet.subset_firstStopNeOneSet {C : ℕ → Prop} {n : ℕ} (hn : 1 < n) :
     FirstStopNegOneSet C n ⊆ FirstStopNeOneSet C n := by
   intro i hi
@@ -43,12 +50,21 @@ theorem FirstStopNegOneSet.subset_firstStopNeOneSet {C : ℕ → Prop} {n : ℕ}
     rw [hi.2] at hone
     exact Int.noConfusion hone
 
-/-- A nonempty pure `-1` stopping set yields a nonempty factor-detecting set. -/
+/--
+Nonemptiness of the pure-minus-one stopping set implies nonemptiness of the broader set.
+The premise `1 < n` lets the previous inclusion transport a witness for the same candidate
+predicate `C`. This supplies the existence proof required to define the broader first stop.
+-/
 theorem firstStopNeOneSet_nonempty_of_negOne {C : ℕ → Prop} {n : ℕ} (hn : 1 < n)
     (hneg : (FirstStopNegOneSet C n).Nonempty) : (FirstStopNeOneSet C n).Nonempty :=
   hneg.mono (FirstStopNegOneSet.subset_firstStopNeOneSet hn)
 
-/-- For common candidates, the factor-detecting first-stop is no later. -/
+/--
+For a shared candidate predicate and `1 < n`, the broader first stop is no later than the pure stop.
+Assume the pure-minus-one set is nonempty. Its least element belongs to the broader set by
+inclusion, so broader leastness gives the inequality. No primality hypothesis is needed;
+factor detection may make the inequality strict on composite inputs.
+-/
 theorem firstStopNeOne_le_firstStopNegOne_same_candidates {C : ℕ → Prop} {n : ℕ} (hn : 1 < n)
     (hneg : (FirstStopNegOneSet C n).Nonempty) :
     firstStopNeOne C n (firstStopNeOneSet_nonempty_of_negOne hn hneg) ≤
@@ -56,7 +72,13 @@ theorem firstStopNeOne_le_firstStopNegOne_same_candidates {C : ℕ → Prop} {n 
   apply firstStopNeOne_le C n (firstStopNeOneSet_nonempty_of_negOne hn hneg)
   exact FirstStopNegOneSet.subset_firstStopNeOneSet hn (firstStopNegOne_mem C n hneg)
 
-/-- For a prime modulus below the first pure stop, the two first-stops coincide. -/
+/--
+The two stopping rules have the same least element for a prime modulus and common candidates.
+Assume `Nat.Prime n` and nonemptiness of both sets; no bound relating `n` to the first stop
+is required. The broader stop excludes divisibility by `n`, so its discriminant is coprime
+and its Jacobi value is either one or minus one. Excluding one gives pure-stop membership;
+leastness in both directions proves equality. This removes factor-detection divergence on primes.
+-/
 theorem firstStopNeOne_eq_firstStopNegOne_of_prime {C : ℕ → Prop} {n : ℕ} (hnprime : Nat.Prime n)
     (hneg : (FirstStopNegOneSet C n).Nonempty) (hne : (FirstStopNeOneSet C n).Nonempty) :
     firstStopNeOne C n hne = firstStopNegOne C n hneg := by
@@ -78,7 +100,12 @@ theorem firstStopNeOne_eq_firstStopNegOne_of_prime {C : ℕ → Prop} {n : ℕ} 
     · exact False.elim (hstop.2.2 hone)
     · exact hnegone
 
-/-- A pure `-1` first-stop cannot equal a prime input. -/
+/--
+A pure-minus-one first stop cannot have magnitude equal to its prime modulus `n`.
+The premise supplies `Nat.Prime n` and a nonempty stopping set. Equality would make `n`
+divide the discriminant's absolute value, forcing Jacobi zero and contradicting stop membership.
+This supports exclusion of the trivial full-modulus candidate in search comparisons.
+-/
 theorem firstStopNegOne_ne_input_of_prime {C : ℕ → Prop} {n : ℕ} (hnprime : Nat.Prime n)
     (hneg : (FirstStopNegOneSet C n).Nonempty) : firstStopNegOne C n hneg ≠ n := by
   intro heq
@@ -99,7 +126,12 @@ theorem firstStopNegOne_ne_input_of_prime {C : ℕ → Prop} {n : ℕ} (hnprime 
   rw [hstop.2] at hzero
   exact Int.noConfusion hzero
 
-/-- Mutual inclusion of stopping sets implies equality of their pure `-1` first-stops. -/
+/--
+Mutual inclusion of two nonempty pure-minus-one stopping sets gives equal least stops.
+The candidate predicates `C₁`, `C₂` need not be globally equal; only their stopping sets at
+this `n` must include each other. Apply leastness to the transported least elements in both
+directions. This compares searches after proving equality of their actual admissible stops.
+-/
 theorem firstStopNegOne_eq_of_mutual_subset {C₁ C₂ : ℕ → Prop} {n : ℕ}
     (h₁ : (FirstStopNegOneSet C₁ n).Nonempty) (h₂ : (FirstStopNegOneSet C₂ n).Nonempty)
     (h12 : FirstStopNegOneSet C₁ n ⊆ FirstStopNegOneSet C₂ n)
@@ -109,7 +141,12 @@ theorem firstStopNegOne_eq_of_mutual_subset {C₁ C₂ : ℕ → Prop} {n : ℕ}
   · exact firstStopNegOne_le C₁ n h₁ (h21 (firstStopNegOne_mem C₂ n h₂))
   · exact firstStopNegOne_le C₂ n h₂ (h12 (firstStopNegOne_mem C₁ n h₁))
 
-/-- Mutual inclusion of stopping sets implies equality of their factor-detecting first-stops. -/
+/--
+Mutual inclusion of two nonempty factor-detecting stopping sets gives equal least stops.
+The hypotheses concern the stopping sets at the same modulus `n`, not equality of all
+candidates. Their least elements give the two inequalities by membership and leastness.
+Candidate-filter equivalence proofs use this to transfer the first stopping magnitude.
+-/
 theorem firstStopNeOne_eq_of_mutual_subset {C₁ C₂ : ℕ → Prop} {n : ℕ}
     (h₁ : (FirstStopNeOneSet C₁ n).Nonempty) (h₂ : (FirstStopNeOneSet C₂ n).Nonempty)
     (h12 : FirstStopNeOneSet C₁ n ⊆ FirstStopNeOneSet C₂ n)

@@ -148,7 +148,12 @@ private theorem twoAdicExponent_succ_pos_of_odd {n : ℕ} (hn : Odd n) :
   rw [hfac] at hd
   exact (Nat.not_even_iff_odd.mpr hd) hn.add_one
 
-/-- The two parameterized Strong Lucas tests agree in the exceptional D = 5 branch. -/
+/--
+In the exceptional D=5 branch, Method A* and Method A have identical Strong Lucas results
+when the index is n+1, its odd part is odd, the two-adic exponent is positive and five is a unit.
+Transfer the finite-condition equivalence through both executable correctness contracts.
+This local theorem supplies the exceptional case of the general parameter comparison.
+-/
 theorem strongLucasMethodAStar_eq_methodA_of_five {n : ℕ} (hmod : (1 - (5 : ℤ)) % 4 = 0)
     (hindex : lucasProbablePrimeIndex n 5 = n + 1) (hd : Odd (Nat.divMaxPow (n + 1) 2))
     (hs : 0 < padicValNat 2 (n + 1)) (hunit : IsUnit (5 : ZMod n)) :
@@ -178,7 +183,12 @@ theorem strongLucasMethodAStar_eq_methodA_of_five {n : ℕ} (hmod : (1 - (5 : �
       exact Bool.false_ne_true (hh.mp rfl)
     | true => rfl
 
-/-- Method A and Method A* have the same Strong Lucas result, including D = 5. -/
+/--
+For odd n and D=1 modulo four with jacobiSym D n=-1, Method A* and Method A
+have identical Strong Lucas results, without a primality assumption. For D=5 the Jacobi
+hypothesis supplies the unit and index premises; other D have identical parameters.
+This connects ordinary BPSW parameter conventions.
+-/
 theorem strongLucasMethodAStar_eq_methodA {n : ℕ} (hn : Odd n) {D : ℤ} (hmod : (1 - D) % 4 = 0)
     (hjacobi : jacobiSym D n = -1) :
     strongLucasMethodAStar n D hmod = strongLucasMethodA n D hmod := by
@@ -194,13 +204,21 @@ theorem strongLucasMethodAStar_eq_methodA {n : ℕ} (hn : Odd n) {D : ℤ} (hmod
         (twoAdicExponent_succ_pos_of_odd hn) hunit
   · exact strongLucasMethodAStar_eq_methodA_of_ne_five n hmod hD
 
-/-- The converse orientation of the Method A / Method A* Strong Lucas equivalence. -/
+/--
+Under oddness, D=1 modulo four and Jacobi -1, orient the Method A/Method A*
+Strong Lucas equality from Method A to Method A*. Use symmetry of the comparison theorem
+so downstream rewrites can select either parameter convention.
+-/
 theorem strongLucasMethodA_eq_methodAStar {n : ℕ} (hn : Odd n) {D : ℤ} (hmod : (1 - D) % 4 = 0)
     (hjacobi : jacobiSym D n = -1) :
     strongLucasMethodA n D hmod = strongLucasMethodAStar n D hmod := by
   exact (strongLucasMethodAStar_eq_methodA hn hmod hjacobi).symm
 
-/-- The BPSW composition inherits the D = 5 Method A / A* Strong Lucas equality. -/
+/--
+For odd n with jacobiSym 5 n=-1, ordinary BPSW has the same result at (D,P,Q)=(5,5,5)
+as at (5,1,-1). Rewrite the Strong Lucas component using Method A/A* equality; the
+base-two MR component is common. This validates the ordinary bounded Method A comparison.
+-/
 theorem bailliePSWWithParams_methodAStar_eq_methodA_of_five {n : ℕ} (hn : Odd n)
     (hjacobi : jacobiSym 5 n = -1) :
     bailliePSWWithParams n 5 5 5 = bailliePSWWithParams n 5 1 (-1) := by

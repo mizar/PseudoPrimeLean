@@ -17,8 +17,16 @@ directly from the Lucas recurrences.  This avoids introducing the algebraic
 numbers used in the paper's Binet-formula proof.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
+/--
+Eliminate alternate indices from the integer Lucas `U` recurrence.
+For arbitrary integer `P`, `Q` and natural `k`, express `U_(k+4)` using `U_(k+2)` and `U_k`
+with coefficients `P^2 - 2Q` and `-Q^2`. Rewrite three consecutive recurrence equations and
+normalize algebraically. The even/odd Method A* identities use this two-step recurrence.
+-/
 private theorem lucasU_four_step (P Q : ℤ) (k : ℕ) :
     lucasU P Q (k + 4) = (P * P - 2 * Q) * lucasU P Q (k + 2) - Q * Q * lucasU P Q k := by
   have h3 := lucasU_succ_succ P Q (k + 2)
@@ -28,6 +36,12 @@ private theorem lucasU_four_step (P Q : ℤ) (k : ℕ) :
   rw [h3, h1, h2]
   ring
 
+/--
+Eliminate alternate indices from the integer Lucas `V` recurrence.
+For arbitrary `P`, `Q`, `k`, obtain the same four-step coefficient formula as for `U`.
+The proof substitutes three consecutive recurrence equations and normalizes the ring expression.
+This supplies the recurrence for comparing Method A and A* at fixed index parity.
+-/
 private theorem lucasV_four_step (P Q : ℤ) (k : ℕ) :
     lucasV P Q (k + 4) = (P * P - 2 * Q) * lucasV P Q (k + 2) - Q * Q * lucasV P Q k := by
   have h3 := lucasV_succ_succ P Q (k + 2)
@@ -37,7 +51,12 @@ private theorem lucasV_four_step (P Q : ℤ) (k : ℕ) :
   rw [h3, h1, h2]
   ring
 
-/-- Appendix `S:Astar`, the unlabeled even-index U identity in the first theorem. -/
+/--
+At every even index `2m`, the Method A* `U` value is `5^m` times the Method A value.
+The integer parameters are `(5, 5)` and `(1, -1)` respectively; no modulus or primality
+assumption is used. Two-step induction checks the first two even indices and aligns the
+four-step recurrences algebraically. Unit cancellation transfers this identity to modular zeros.
+-/
 theorem lucasU_methodAStar_even (m : ℕ) : lucasU 5 5 (2 * m) = 5 ^ m * lucasU 1 (-1) (2 * m) := by
   induction m using Nat.twoStepInduction with
   | zero => simp only [lucasU, mul_zero]
@@ -52,7 +71,12 @@ theorem lucasU_methodAStar_even (m : ℕ) : lucasU 5 5 (2 * m) = 5 ^ m * lucasU 
     rw [hs, ho, hm1', hm]
     ring_nf
 
-/-- Appendix `S:Astar`, equation (13): even-index V values. -/
+/--
+At every even index `2m`, `V_(2m)(5,5) = 5^m * V_(2m)(1,-1)` over the integers.
+Two-step induction checks the initial cases and substitutes the common four-step recurrence.
+This is the even-index companion identity used in exceptional-discriminant Method A/A*
+comparisons, without imposing any modulus or primality hypothesis.
+-/
 theorem lucasV_methodAStar_even (m : ℕ) : lucasV 5 5 (2 * m) = 5 ^ m * lucasV 1 (-1) (2 * m) := by
   induction m using Nat.twoStepInduction with
   | zero => simp only [lucasV, pow_zero, one_mul]
@@ -67,7 +91,12 @@ theorem lucasV_methodAStar_even (m : ℕ) : lucasV 5 5 (2 * m) = 5 ^ m * lucasV 
     rw [hs, ho, hm1', hm]
     ring_nf
 
-/-- Appendix `S:Astar`, equation (11): odd-index U values. -/
+/--
+At every odd index `2m+1`, the Method A* `U` value equals `5^m` times Method A's `V` value.
+The identity compares integer sequences with parameters `(5,5)` and `(1,-1)`.
+Two-step induction and the four-step recurrences prove the cross-sequence formula after
+checking the first two odd indices. It supplies the odd-index branch of Method A* equivalence.
+-/
 theorem lucasU_methodAStar_odd (m : ℕ) :
     lucasU 5 5 (2 * m + 1) = 5 ^ m * lucasV 1 (-1) (2 * m + 1) := by
   induction m using Nat.twoStepInduction with
@@ -85,7 +114,12 @@ theorem lucasU_methodAStar_odd (m : ℕ) :
     rw [hs, ho, hm1', hm']
     ring_nf
 
-/-- Appendix `S:Astar`, equation (12): odd-index V values. -/
+/--
+At every odd index `2m+1`, Method A*'s `V` value equals `5^(m+1)` times Method A's `U` value.
+This is an integer identity for parameters `(5,5)` and `(1,-1)`, with no primality premise.
+Check two initial odd indices, then use two-step induction and the four-step recurrences.
+Modular Strong Lucas comparisons use this companion cross-sequence identity.
+-/
 theorem lucasV_methodAStar_odd (m : ℕ) :
     lucasV 5 5 (2 * m + 1) = 5 ^ (m + 1) * lucasU 1 (-1) (2 * m + 1) := by
   induction m using Nat.twoStepInduction with

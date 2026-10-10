@@ -4,14 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.BPSW.Wheel30
+module
+
+public import PseudoPrime.PrimeTest.BPSW.Wheel30
 
 /-! # Independent BFW Section 6 specification and all-input execution equality -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- The paper's Strong Lucas, terminal V, and multiplied Euler conditions.
-Use sequence values and ordinary powers, independently of the shared execution state. -/
+/-- The three Lucas acceptance conditions in the BFW specification for `n` and
+parameters `param`: Strong Lucas acceptance, the terminal identity
+`V_(n+1) = 2Q`, and `Q^((n+1)/2) = Q * Jacobi(Q,n)` in `ZMod n`.
+Sequence values and ordinary powers define this proposition independently of the shared
+executable state; `bfwLucas_iff` relates the two formulations. -/
 def BFWLucasConditions (n : ℕ) (param : LucasParams) : Prop :=
   IsStrongLucasProbablePrime n param ∧
     lucasVZMod n param.P param.Q (n + 1) = 2 * (param.Q : ZMod n) ∧
@@ -26,10 +33,10 @@ theorem bfwLucas_iff (n : ℕ) (hn : Odd n) (param : LucasParams) (hj : jacobiSy
     lucasStrengthenedState_qk n hn param.D param.P param.Q
       (strongLucasTwoAdicExponent_pos n hn param.D hj)
   simp only [lucasProbablePrimeIndex_of_jacobi_eq_neg_one hj, lucasQPow, Int.cast_pow] at hq
-  simp only [strengthenedLucasSharedEulerValid, hn, hj, and_self, ↓reduceIte, Bool.and_eq_true,
-    beq_iff_eq, lucasStrengthenedState_strong n hn, lucasStrengthenedState_v n hn,
-    lucasProbablePrimeIndex_of_jacobi_eq_neg_one hj, hq, hs, BFWLucasConditions,
-    LucasParams.ofDiscriminant]
+  simp only [strengthenedLucasSharedEulerValid, strengthenedLucasSharedEulerCore, hn, hj, and_self,
+    ↓reduceIte, Bool.and_eq_true, beq_iff_eq, lucasStrengthenedState_strong n hn,
+    lucasStrengthenedState_v n hn, lucasProbablePrimeIndex_of_jacobi_eq_neg_one hj, hq, hs,
+    BFWLucasConditions, LucasParams.ofDiscriminant]
 
 /-- Unconditional fuel returns the classical first factor-detecting stopping magnitude.
 Termination, scan minimality, and Wheel30/classical equality remove the executable search. -/
@@ -64,7 +71,7 @@ theorem bfwAccepted_iff {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
   have he :=
     selfridgeNeOneClassify_congr n _ _ (fun _ h ↦ selfridgeNeOneJump_sound h)
       (fun _ h ↦ selfridgeNeOneJump_sound (hi.trans h)) hi
-  rw [selfridgeNeOneResult, he]
+  rw [selfridgeNeOneResult_eq_classify, he]
   by_cases hj : jacobiSym (selfridgeD (firstStopNeOne isClassicalCandidate n hc)) n = -1
   · have hd : (BFWParams n hc).D = selfridgeD (firstStopNeOne isClassicalCandidate n hc) := by
       dsimp only [BFWParams, LucasParams.methodAStar]
@@ -75,9 +82,12 @@ theorem bfwAccepted_iff {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
   · simp only [selfridgeNeOneClassify, hn.pos, ↓reduceDIte, hj, SelfridgeScanResult.accepted,
       Bool.false_eq_true, BFWSelectedConditions, false_and]
 
-/-- The paper's five-stage acceptance, extended to every natural input.
-Small inputs use the conventional answers; even numbers and squares reject.
-Odd nonsquares use base-2 Strong MR and the least classical stop with Method A* and Lucas checks. -/
+/-- The BFW acceptance proposition extended to every natural input.
+Inputs below two reject, two accepts, and the remaining even or square inputs reject.
+Odd nonsquares must pass base-two Strong Miller--Rabin and the BFW Lucas conditions at
+the first classical factor-detecting Selfridge stop with Method A* parameters.
+This proof-side specification is used to establish all-input equality with the Wheel30 test;
+acceptance is not itself a proof that the input is prime. -/
 def BFWPass (n : ℕ) : Prop :=
   if n < 2 then False
   else
@@ -97,7 +107,8 @@ theorem bfwOddNonsquare_iff {n : ℕ} (hl : ¬n < 2) (ht : n ≠ 2) (hn : Odd n)
   have he := Nat.not_even_iff_odd.mpr hn
   have hc := classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
   simp only [strengthenedBPSWWheel30, bpswWheel30, BFWPass, hl, ht, hn, he, hns, ↓reduceIte,
-    ↓reduceDIte, natIsSquare_false_of_not_isSquare hns, Bool.false_eq_true, not_false_eq_true]
+    ↓reduceDIte, natIsSquare_false_of_not_isSquare hns, Bool.false_eq_true, not_false_eq_true,
+    SelfridgeScanResult.acceptedOdd_eq]
   have hx :
     (if strongMillerRabinWithBaseLoop n 2 then (selfridgeNeOneResult n (2 * n)).accepted true
       else false) =
@@ -138,8 +149,10 @@ theorem strengthenedBPSWWheel30_iff_bfw (n : ℕ) : strengthenedBPSWWheel30 n = 
         simp only [strengthenedBPSWWheel30, bpswWheel30, BFWPass, hl, ht, hn, he, ↓reduceIte,
           ↓reduceDIte, Bool.false_eq_true]
 
-/-- The Boolean form of the independent all-input paper specification.
-Classical decision makes this a proof-side specification, not an additional executable evaluator. -/
+/-- The Boolean decision of `BFWPass n`, using classical decidability.
+It is a noncomputable proof-side specification for every natural input, with the same
+acceptance proposition as `BFWPass`. The equality theorem identifies it with the executable
+strengthened Wheel30 test; this definition introduces no additional executable evaluator. -/
 noncomputable def bfwEnhancedBPSW (n : ℕ) : Bool := by classical exact decide (BFWPass n)
 
 /-- The executable and independent paper Booleans agree on every natural input.

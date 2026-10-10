@@ -109,7 +109,11 @@ theorem three_mul_eq_fifteen_of_odd_bounds {k : ℕ} (hlo : 5 ≤ 3 * k) (hhi : 
   · norm_num only [Nat.reduceMul, Nat.reduceMod] at hmod
   · decide
 
-/-- An odd multiple of `3` bounded by `21`, avoiding `9` and `15`, equals `21`. -/
+/--
+If 5 <= 3*k <= 21, the product is odd and differs from 9 and 15,
+then 3*k belongs to the displayed alternatives 15,21,27. Bound k and check the finite cases;
+only 21 remains possible under the hypotheses. The disjunctive form fits the composite-stop proof.
+-/
 theorem three_mul_eq_twenty_one_of_odd_bounds {k : ℕ} (hlo : 5 ≤ 3 * k) (hhi : 3 * k ≤ 21)
     (hmod : 3 * k % 2 = 1) (h9 : 3 * k ≠ 9) (h15 : 3 * k ≠ 15) :
     3 * k = 15 ∨ 3 * k = 21 ∨ 3 * k = 27 := by
@@ -129,7 +133,11 @@ theorem three_mul_eq_twenty_one_of_odd_bounds {k : ℕ} (hlo : 5 ≤ 3 * k) (hhi
   · norm_num only [Nat.reduceMul, Nat.reduceMod] at hmod
   · decide
 
-/-- An odd multiple of `3` bounded by `27`, avoiding `5`, `9`, `15`, and `21`, equals `27`. -/
+/--
+If 5 <= 3*k <= 27, the product is odd and differs from 9,15,21,
+then 3*k belongs to the displayed alternatives 15,21,27. Finite case analysis leaves 27;
+the disjunctive statement is used directly by the composite pure -1 stop classification.
+-/
 theorem three_mul_eq_twenty_seven_of_odd_bounds {k : ℕ} (hlo : 5 ≤ 3 * k) (hhi : 3 * k ≤ 27)
     (hmod : 3 * k % 2 = 1) (h9 : 3 * k ≠ 9) (h15 : 3 * k ≠ 15) (h21 : 3 * k ≠ 21) :
     3 * k = 15 ∨ 3 * k = 21 ∨ 3 * k = 27 := by
@@ -331,9 +339,9 @@ theorem composite_minimal_classical_neOne_eq_nine_or_fifteen_of_not_dvd {n i : �
   · decide
 
 /--
-For a positive nonsquare input, `9` cannot divide the input of a composite minimal classical
-`≠ 1` stop.  The only nonsquare positive divisor of `9` is `3`, where the prime candidate `5`
-already stops and contradicts minimality.
+For a positive nonsquare input n with a composite minimal classical factor-detecting stop,
+n does not divide 9. Classify the positive divisors 1,3,9: squares are excluded and
+n=3 has the earlier prime stop 5. This validates candidate 9 in the stop classification.
 -/
 theorem not_dvd_nine_of_nonsquare_composite_minimal_classical_neOne {n i : ℕ} (hnpos : 0 < n)
     (hns : ¬IsSquare n) (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNeOneSet isClassicalCandidate n)
@@ -353,9 +361,9 @@ theorem not_dvd_nine_of_nonsquare_composite_minimal_classical_neOne {n i : ℕ} 
   · exact hns ⟨3, by norm_num only⟩
 
 /--
-For a positive nonsquare input, `15` cannot divide the input of a composite minimal classical
-`≠ 1` stop.  Its nonsquare divisors `3`, `5`, and `15` have an earlier concrete prime stop at
-`5`, `7`, and `5`, respectively.
+For a positive nonsquare input n with a composite minimal classical factor-detecting stop,
+n does not divide 15. Its positive divisors 1,3,5,15 are handled by nonsquareness or
+an earlier concrete prime stop 5 or 7. This validates candidate 15 in the classification.
 -/
 theorem not_dvd_fifteen_of_nonsquare_composite_minimal_classical_neOne {n i : ℕ} (hnpos : 0 < n)
     (hns : ¬IsSquare n) (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNeOneSet isClassicalCandidate n)

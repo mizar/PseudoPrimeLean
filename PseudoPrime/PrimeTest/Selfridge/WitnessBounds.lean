@@ -270,7 +270,12 @@ theorem classicalFirstStopNeOne_le_max_fifteen_primeWitness {n : ℕ} (hnpos : 0
       (classicalFirstStopNeOne_le_primeWitness_of_ne_three hn hns hw hs hp3).trans
         (Nat.le_max_right 15 (primeNeOneWitness n hw))
 
-/-- Combined conditional pointwise comparison for the classical factor-detecting scan. -/
+/--
+For positive odd nonsquare n with nonempty prime-witness and classical stopping sets,
+the least prime witness <= classical factor-detecting first stop <= max 15 prime witness.
+Combine prime-factor extraction for the lower bound with the exceptional-witness upper bound.
+This pointwise comparison needs no unproved smaller-witness or analytic hypothesis.
+-/
 theorem primeNeOneWitness_le_classicalFirstStop_le_max {n : ℕ} (hnpos : 0 < n) (hn : Odd n)
     (hns : ¬IsSquare n) (hw : (PrimeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :
@@ -280,7 +285,12 @@ theorem primeNeOneWitness_le_classicalFirstStop_le_max {n : ℕ} (hnpos : 0 < n)
     ⟨primeNeOneWitness_le_classicalFirstStop hn hw hs,
       classicalFirstStopNeOne_le_max_fifteen_primeWitness hnpos hn hns hw hs⟩
 
-/-- The previous factor-detecting comparison with the proved smaller-witness theorem supplied. -/
+/--
+Under positive odd nonsquare input and both nonemptiness hypotheses, restate the
+proved factor-detecting pointwise comparison with exceptional constant 15.
+Apply the preceding theorem directly; this compatibility entry has identical hypotheses
+and conclusion, with no additional smaller-witness assumption.
+-/
 theorem primeNeOneWitness_le_classicalFirstStop_le_max_unconditional {n : ℕ} (hnpos : 0 < n)
     (hn : Odd n) (hns : ¬IsSquare n) (hw : (PrimeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :

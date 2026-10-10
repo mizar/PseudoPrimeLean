@@ -16,13 +16,23 @@ These lemmas separate the production of a stopping witness from the
 minimization of its stopping set.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- Odd-prime witnesses whose Jacobi value is different from `1`. -/
+/--
+Odd primes p for which jacobiSym n p differs from one. The input n is the numerator
+and p the denominator; zero values are permitted and can detect factors.
+Least witnesses in this neutral set are compared with classical factor-detecting first stops.
+-/
 def PrimeNeOneWitnessSet (n : ℕ) : Set ℕ :=
   {p | p.Prime ∧ Odd p ∧ jacobiSym n p ≠ 1}
 
-/-- Odd-prime witnesses whose Jacobi value is `-1`. -/
+/--
+Odd primes p for which jacobiSym n p=-1, with n as numerator and p as denominator.
+This pure set excludes zero Jacobi values. Its least witness supplies unconditional
+existence and bounds for pure Selfridge stopping candidates.
+-/
 def PrimeNegOneWitnessSet (n : ℕ) : Set ℕ :=
   {p | p.Prime ∧ Odd p ∧ jacobiSym n p = -1}
 
@@ -40,11 +50,19 @@ theorem primeNeOneWitnessSet_nonempty_of_negOne {n : ℕ} (h : (PrimeNegOneWitne
     (PrimeNeOneWitnessSet n).Nonempty :=
   h.mono (PrimeNegOneWitnessSet.subset_primeNeOneWitnessSet n)
 
-/-- The least odd-prime witness with Jacobi value different from `1`. -/
+/--
+The least odd-prime denominator with Jacobi value different from one for numerator n.
+A nonemptiness proof is required; Nat.find selects the minimum noncomputably.
+Membership and minimality lemmas compare this neutral witness with Selfridge first stops.
+-/
 noncomputable def primeNeOneWitness (n : ℕ) (h : (PrimeNeOneWitnessSet n).Nonempty) : ℕ := by
   classical exact Nat.find h
 
-/-- The least odd-prime witness with Jacobi value `-1`. -/
+/--
+The least odd-prime denominator with Jacobi value -1 for numerator n.
+Use Nat.find on the supplied nonempty witness set; the definition is proof-side only.
+Its membership and minimality support pure-stop existence and pointwise bounds.
+-/
 noncomputable def primeNegOneWitness (n : ℕ) (h : (PrimeNegOneWitnessSet n).Nonempty) : ℕ := by
   classical exact Nat.find h
 
@@ -125,8 +143,11 @@ theorem firstStopNegOneSet_nonempty_of_witness {C : ℕ → Prop} {n i : ℕ} (h
     (hj : jacobiSym (selfridgeD i) n = -1) : (FirstStopNegOneSet C n).Nonempty := by
   exact ⟨i, hi, hj⟩
 
-/-- A factor-free candidate with Jacobi value different from `1` makes the stopping set
-nonempty. -/
+/--
+If C i, n does not divide i and the signed candidate has Jacobi value different from one,
+then i witnesses nonemptiness of the factor-detecting stopping set. Package the hypotheses
+directly; nondivisibility excludes a trivial full-input gcd but does not require coprimality.
+-/
 theorem firstStopNeOneSet_nonempty_of_witness {C : ℕ → Prop} {n i : ℕ} (hi : C i) (hndvd : ¬n ∣ i)
     (hj : jacobiSym (selfridgeD i) n ≠ 1) : (FirstStopNeOneSet C n).Nonempty := by
   exact ⟨i, hi, hndvd, hj⟩

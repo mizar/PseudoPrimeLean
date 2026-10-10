@@ -91,8 +91,12 @@ theorem prime_mem_wheel30NegOneCandidate {p : ℕ} (hp : p.Prime) (hpodd : Odd p
     isWheel30NegOneCandidate p :=
   (prime_mem_wheel30Candidates hp hpodd hp5).2
 
-/-- For a positive odd nonsquare input, the classical and Wheel30 factor-detecting first-stops
-agree. -/
+/--
+For positive odd nonsquare n and nonempty classical and Wheel30 factor-detecting sets,
+both least stopping magnitudes agree. A classical prime stop is retained by the wheel;
+a composite minimum is 9 or 15, also retained. Conversely wheel candidates are classical.
+Two minimality inequalities transfer classical bounds to the executable wheel scan.
+-/
 theorem firstStopNeOne_wheel30_eq_classical {n : ℕ} (hnpos : 0 < n) (hn : Odd n) (hns : ¬IsSquare n)
     (hclass : (FirstStopNeOneSet isClassicalCandidate n).Nonempty)
     (hwheel : (FirstStopNeOneSet isWheel30NeOneCandidate n).Nonempty) :
@@ -126,7 +130,12 @@ theorem firstStopNeOne_wheel30_eq_classical {n : ℕ} (hnpos : 0 < n) (hn : Odd 
       firstStopNeOne_le isClassicalCandidate n hclass
         ⟨wheel30NeOneCandidate_classical hstop.1, hstop.2.1, hstop.2.2⟩
 
-/-- For an odd input, the classical and Wheel30 pure `-1` first-stops agree. -/
+/--
+For odd n and nonempty classical and Wheel30 pure -1 stopping sets, their least
+magnitudes agree. Prime stops are wheel candidates; composite minima are 15,21,27,
+all retained in the initial wheel set. The reverse inequality follows from candidate
+inclusion. This transfers pure first-stop bounds without assuming nonsquareness.
+-/
 theorem firstStopNegOne_wheel30_eq_classical {n : ℕ} (hn : Odd n)
     (hclass : (FirstStopNegOneSet isClassicalCandidate n).Nonempty)
     (hwheel : (FirstStopNegOneSet isWheel30NegOneCandidate n).Nonempty) :

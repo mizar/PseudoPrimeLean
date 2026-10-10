@@ -4,17 +4,21 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.MillerRabin.Decomposition
-import PseudoPrime.PrimeTest.BPSW.PaperSpec
-import PseudoPrime.PrimeTest.EulerJacobi.Spec
+module
+
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
+public import PseudoPrime.PrimeTest.BPSW.BFWSpec
+public import PseudoPrime.PrimeTest.EulerJacobi.Spec
 
 /-! # Conditional Euler redundancy after a base-2 Strong MR pass
 
 Prove closure under powers and signs and connect the three-modulo-four branch
 to the shared evaluator and the independent paper specification.
 Signed even powers are also covered for every odd modulus greater than one.
-The odd-exponent one-modulo-four branch remains a separate obligation.
+The odd-exponent one-modulo-four branches are proved in EulerModEight and EulerBaseTwo.
 -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest.EulerRedundancy
 
@@ -136,14 +140,19 @@ theorem euler_signed_two_power {n : ℕ} (hm : n % 4 = 3) (h : IsStrongMillerRab
   · exact hQ ▸ euler_pow hb k
   · exact hQ ▸ euler_neg (mod_four_data hm).2.1 (euler_pow hb k)
 
-/-- Under the signed-power hypothesis, the executable Euler test returns true. -/
+/-- For n congruent to 3 modulo 4, a passed base-two Strong MR round and Q = ±2^k
+imply that the executable Euler-Jacobi test returns true, including k = 0.
+Transport the signed-power Euler equation through the evaluator's acceptance equivalence.
+This removes the Euler flag from the shared Lucas evaluator under these hypotheses. -/
 theorem euler_signed_two_power_true {n : ℕ} (hm : n % 4 = 3)
     (h : IsStrongMillerRabinProbablePrime n 2) {Q : ℤ} (k : ℕ)
     (hQ : Q = (2 : ℤ) ^ k ∨ Q = -(2 : ℤ) ^ k) : eulerJacobiWithIntBase n Q = true := by
   exact eulerJacobiWithIntBase_eq_true_iff.mpr (euler_signed_two_power hm h k hQ)
 
-/-- The valid shared Lucas evaluator reduces to Strong and terminal V on this branch.
-This equality is a proof contract; it does not alter the standalone evaluator. -/
+/-- For n congruent to 3 modulo 4, assume a base-two Strong MR pass and param.Q = ±2^k.
+The shared strengthened Lucas evaluator equals the conjunction of its Strong Lucas and
+terminal V tests. The signed-power Euler theorem makes the third flag true; this equality
+supplies the conditional omission contract without changing the evaluator definition. -/
 theorem strengthened_without_euler {n : ℕ} (hm : n % 4 = 3)
     (h : IsStrongMillerRabinProbablePrime n 2) (param : LucasParams) (k : ℕ)
     (hQ : param.Q = (2 : ℤ) ^ k ∨ param.Q = -(2 : ℤ) ^ k) :
@@ -160,7 +169,10 @@ theorem multiplied_euler {n : ℕ} (hn : Odd n) {Q : ℤ} (h : IsEulerJacobiProb
   change (Q : ZMod n) ^ (n / 2) = _ at h
   rw [lucasOdd_half_succ n hn, pow_succ, h, mul_comm]
 
-/-- The independent paper specification needs only Strong and terminal V on this branch. -/
+/-- For n congruent to 3 modulo 4, a base-two Strong MR pass and param.Q = ±2^k make
+BFWLucasConditions equivalent to the Strong Lucas condition and V_(n+1) = 2Q.
+Multiply the implied half-index Euler equation by Q and simplify the conjunction.
+This proves the same conditional omission for the independent BFW specification. -/
 theorem bfw_without_euler {n : ℕ} (hm : n % 4 = 3) (h : IsStrongMillerRabinProbablePrime n 2)
     (param : LucasParams) (k : ℕ) (hQ : param.Q = (2 : ℤ) ^ k ∨ param.Q = -(2 : ℤ) ^ k) :
     BFWLucasConditions n param ↔
@@ -169,8 +181,11 @@ theorem bfw_without_euler {n : ℕ} (hm : n % 4 = 3) (h : IsStrongMillerRabinPro
   have he := multiplied_euler (mod_four_data hm).2.1 (euler_signed_two_power hm h k hQ)
   simp only [BFWLucasConditions, he, and_true]
 
-/-- The selected paper conditions omit Euler when MR has already passed on this branch.
-The first-stop Jacobi condition and Method A* parameters are preserved. -/
+/-- For n congruent to 3 modulo 4, assume a base-two Strong MR pass, a nonempty classical
+stopping set, and Q = ±2^k for the selected Method A* parameters.
+The selected BFW conditions reduce to Jacobi(D,n) = -1, Strong Lucas, and V_(n+1) = 2Q.
+Apply the Lucas-condition equivalence at the first stop, preserving its discriminant and
+parameters. This connects conditional Euler omission to the full selection specification. -/
 theorem selected_without_euler {n : ℕ} (hm : n % 4 = 3) (h : IsStrongMillerRabinProbablePrime n 2)
     (hc : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) (k : ℕ)
     (hQ : (BFWParams n hc).Q = (2 : ℤ) ^ k ∨ (BFWParams n hc).Q = -(2 : ℤ) ^ k) :

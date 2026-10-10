@@ -21,13 +21,19 @@ This module provides the canonical ascending traversal and records the
 current candidate index explicitly.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/- The definition records the odd candidate magnitude `5 + 2 * k`. -/
+/-- The kth classical candidate magnitude is 5+2*k, for natural k.
+This affine enumeration records the index explicitly for ascending searches
+and their finite-range and first-stop contracts. -/
 def classicalCandidateMagnitude (k : ℕ) : ℕ :=
   5 + 2 * k
 
-/- Every generated magnitude is a classical Selfridge candidate. -/
+/-- Every affine magnitude 5+2*k is at least five and odd.
+Use the lower bound directly and the witness k+2 for oddness.
+This supplies candidate admissibility throughout the ascending scan proofs. -/
 theorem classicalCandidateMagnitude_isCandidate (k : ℕ) :
     isClassicalCandidate (classicalCandidateMagnitude k) := by
   refine ⟨?_, ?_⟩
@@ -37,7 +43,11 @@ theorem classicalCandidateMagnitude_isCandidate (k : ℕ) :
     dsimp only [classicalCandidateMagnitude]
     ring
 
-/-- Ascending search from candidate index `k` over a half-open fuel range. -/
+/--
+Search ascending magnitudes 5+2*j for k <= j < k+fuel, returning the first signed D
+with jacobiSym D n=-1. Fuel counts inspected affine indices; zero or exhaustion returns none.
+No factor-detection branch is included. This is the canonical pure Selfridge traversal.
+-/
 def selfridgeClassicalSearchAscendingFrom (n k fuel : ℕ) : Option ℤ :=
   match fuel with
   | 0 => none
@@ -46,11 +56,19 @@ def selfridgeClassicalSearchAscendingFrom (n k fuel : ℕ) : Option ℤ :=
       if jacobiSym (selfridgeD i) n = -1 then some (selfridgeD i)
     else selfridgeClassicalSearchAscendingFrom n (k + 1) fuel
 
-/-- Ascending search beginning with the least classical candidate. -/
+/--
+Run the classical pure Jacobi -1 traversal from index zero for at most fuel candidates.
+The magnitude sequence begins 5,7,9,... and none means only that this finite scan failed.
+Bounded prime-success theorems justify the later elementary execution interface.
+-/
 def selfridgeClassicalSearchAscending (n fuel : ℕ) : Option ℤ :=
   selfridgeClassicalSearchAscendingFrom n 0 fuel
 
-/-- Ascending search over the Wheel30-filtered classical candidates. -/
+/--
+Traverse the same affine index interval [k,k+fuel), keeping Wheel30 pure -1 candidates.
+Return the first retained signed D with Jacobi value -1, or none when fuel expires.
+Fuel is consumed even for a filtered-out magnitude; it is not a count of Jacobi evaluations.
+-/
 def selfridgeWheel30SearchAscendingFrom (n k fuel : ℕ) : Option ℤ :=
   match fuel with
   | 0 => none
@@ -61,11 +79,19 @@ def selfridgeWheel30SearchAscendingFrom (n k fuel : ℕ) : Option ℤ :=
       else selfridgeWheel30SearchAscendingFrom n (k + 1) fuel
     else selfridgeWheel30SearchAscendingFrom n (k + 1) fuel
 
-/-- Ascending Wheel30-filtered search beginning with the least classical candidate. -/
+/--
+Run the Wheel30-filtered pure -1 traversal from magnitude five.
+The caller supplies an affine-index fuel budget, including skipped candidates.
+A successful D can be converted to proof-carrying Method A* parameters.
+-/
 def selfridgeWheel30SearchAscending (n fuel : ℕ) : Option ℤ :=
   selfridgeWheel30SearchAscendingFrom n 0 fuel
 
-/-- Ascending search over the prime classical candidates. -/
+/--
+Traverse [k,k+fuel) in the affine magnitude sequence, testing only prime magnitudes.
+Return the first signed D with Jacobi value -1, or none on exhaustion.
+Both nonprime and failed prime candidates consume fuel; no factor-detection stop is used.
+-/
 def selfridgePrimeSearchAscendingFrom (n k fuel : ℕ) : Option ℤ :=
   match fuel with
   | 0 => none
@@ -76,7 +102,11 @@ def selfridgePrimeSearchAscendingFrom (n k fuel : ℕ) : Option ℤ :=
       else selfridgePrimeSearchAscendingFrom n (k + 1) fuel
     else selfridgePrimeSearchAscendingFrom n (k + 1) fuel
 
-/-- Ascending prime-filtered search beginning with the least classical candidate. -/
+/--
+Run the prime-filtered pure -1 traversal from magnitude five with caller-supplied fuel.
+Return an optional signed discriminant; failed finite searches make no primality claim.
+The result supplies the prime-filtered Method A* constructor.
+-/
 def selfridgePrimeSearchAscending (n fuel : ℕ) : Option ℤ :=
   selfridgePrimeSearchAscendingFrom n 0 fuel
 
@@ -212,7 +242,11 @@ theorem selfridgeClassicalSearchAscending_thirteen :
   change some (5 : ℤ) = some 5
   rfl
 
-/-- Every classical candidate occurs at a unique affine scan index. -/
+/--
+Every odd magnitude i >= 5 has an affine scan index k with 5+2*k=i.
+Choose k=(i-5)/2 and use parity and quotient/remainder decomposition.
+The conclusion asserts existence, not uniqueness; it connects mathematical first stops to scans.
+-/
 theorem exists_classicalCandidateMagnitude_eq {i : ℕ} (hi : isClassicalCandidate i) :
     ∃ k, classicalCandidateMagnitude k = i := by
   rcases hi with ⟨hi5, hodd⟩
@@ -229,19 +263,31 @@ theorem exists_classicalCandidateMagnitude_eq {i : ℕ} (hi : isClassicalCandida
     _ = i := by
       rw [Nat.add_comm]; exact Nat.sub_add_cancel hi5
 
-/-- Method A* parameters produced by the ascending search. -/
+/--
+Search classical magnitudes for Jacobi -1, then check D=1 modulo four and build Method A*.
+Return none on scan failure or failed divisibility; a successful record stores its
+discriminant identity. Search-success lemmas show the divisibility guard is satisfied.
+-/
 def selfridgeClassicalMethodAStarParamsAscending (n fuel : ℕ) : Option LucasParams :=
   match selfridgeClassicalSearchAscending n fuel with
   | none => none
   | some D => if hmod : (1 - D) % 4 = 0 then some (LucasParams.methodAStar D hmod) else none
 
-/-- Method A* parameters produced by the ascending Wheel30-filtered search. -/
+/--
+Search Wheel30-filtered magnitudes for Jacobi -1 and convert a found D to Method A*
+after checking (1-D)%4=0. None represents a failed finite search or guard.
+The returned LucasParams record supplies the discriminant invariant to Lucas tests.
+-/
 def selfridgeWheel30MethodAStarParamsAscending (n fuel : ℕ) : Option LucasParams :=
   match selfridgeWheel30SearchAscending n fuel with
   | none => none
   | some D => if hmod : (1 - D) % 4 = 0 then some (LucasParams.methodAStar D hmod) else none
 
-/-- Method A* parameters produced by the ascending prime-filtered search. -/
+/--
+Search prime magnitudes for Jacobi -1 and convert a found D to Method A*
+after checking (1-D)%4=0. Failure returns none, with no primality conclusion.
+Successful-search lemmas justify the record construction for downstream tests.
+-/
 def selfridgePrimeMethodAStarParamsAscending (n fuel : ℕ) : Option LucasParams :=
   match selfridgePrimeSearchAscending n fuel with
   | none => none
@@ -594,7 +640,7 @@ theorem selfridgeWheel30MethodAStarParamsAscending_of_search {n fuel : ℕ} {D :
     selfridgeWheel30MethodAStarParamsAscending n fuel =
       some
         (LucasParams.methodAStar D
-          (selfridgeWheel30SearchAscending_some_methodA_mod
+          (selfridgeWheel30SearchAscending_some_methodA_mod (n := n) (k := 0) (fuel := fuel)
             (by simpa only [selfridgeWheel30SearchAscending] using hsearch))) := by
   simp only [selfridgeWheel30MethodAStarParamsAscending, hsearch]
   split
@@ -612,7 +658,7 @@ theorem selfridgePrimeMethodAStarParamsAscending_of_search {n fuel : ℕ} {D : �
     selfridgePrimeMethodAStarParamsAscending n fuel =
       some
         (LucasParams.methodAStar D
-          (selfridgePrimeSearchAscending_some_methodA_mod
+          (selfridgePrimeSearchAscending_some_methodA_mod (n := n) (k := 0) (fuel := fuel)
             (by simpa only [selfridgePrimeSearchAscending] using hsearch))) := by
   simp only [selfridgePrimeMethodAStarParamsAscending, hsearch]
   split

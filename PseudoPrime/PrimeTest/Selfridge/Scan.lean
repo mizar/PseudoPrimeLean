@@ -41,6 +41,52 @@ theorem selfridgeNeOneStop_iff (n i : ℕ) :
   simp only [selfridgeNeOneStop, ReferenceArithmetic.jacobiExecutable_eq, Bool.and_eq_true,
     decide_eq_true_eq, wheel30NeOneCandidate_eq_true_iff, FirstStopNeOneSet, Set.mem_ofPred_eq]
 
+/-- A candidate magnitude with its evaluated Jacobi value and certified stopping conditions. -/
+structure SelfridgeCachedStop (n : ℕ) where
+  /-- Accepted candidate magnitude. -/
+  magnitude : ℕ
+  /-- Executable Jacobi value retained for classification. -/
+  value : ℤ
+  /-- Wheel30 candidate, nondivisibility and non-one Jacobi conditions. -/
+  valid : magnitude ∈ FirstStopNeOneSet isWheel30NeOneCandidate n
+  /-- Equality with the mathematical Jacobi symbol. -/
+  value_eq : value = jacobiSym (selfridgeD magnitude) n
+
+/-- Test one candidate, retaining Jacobi after the candidate and divisibility guards pass.
+Return none on rejection, and a certified cached stop on acceptance. -/
+def selfridgeNeOneCachedStop (n i : ℕ) : Option (SelfridgeCachedStop n) :=
+  if hc : wheel30NeOneCandidate i = true then
+    if hd : ¬n ∣ i then
+      let j := ReferenceArithmetic.jacobiExecutable (selfridgeD i) n
+      if hj : j ≠ 1 then
+        some
+          ⟨i, j,
+            ⟨wheel30NeOneCandidate_eq_true_iff.mp hc, hd, fun h ↦
+              hj ((ReferenceArithmetic.jacobiExecutable_eq _ _).trans h)⟩,
+            ReferenceArithmetic.jacobiExecutable_eq _ _⟩
+      else none
+    else none
+  else none
+
+/-- Projection to the magnitude preserves the original stopping predicate on every input. -/
+theorem selfridgeNeOneCachedStop_map (n i : ℕ) :
+    (selfridgeNeOneCachedStop n i).map SelfridgeCachedStop.magnitude =
+      if selfridgeNeOneStop n i then some i else none := by
+  by_cases hc : wheel30NeOneCandidate i = true
+  · by_cases hd : ¬n ∣ i
+    · by_cases hj : ReferenceArithmetic.jacobiExecutable (selfridgeD i) n ≠ 1
+      · simp only [selfridgeNeOneCachedStop, hc, ↓reduceDIte, hd, not_false_eq_true,
+          selfridgeNeOneStop, decide_true, Bool.true_and]
+        rw [dite_eq_left hj, decide_eq_true hj, ite_eq_left rfl]
+        rfl
+      · simp only [selfridgeNeOneCachedStop, hc, ↓reduceDIte, hd, not_false_eq_true, hj,
+          Option.map_none, selfridgeNeOneStop, decide_false, Bool.and_false, Bool.false_eq_true,
+          ↓reduceIte]
+    · simp only [selfridgeNeOneCachedStop, hc, ↓reduceDIte, hd, Option.map_none, selfridgeNeOneStop,
+        decide_false, Bool.false_and, Bool.and_false, Bool.false_eq_true, ↓reduceIte]
+  · simp only [selfridgeNeOneCachedStop, hc, Bool.false_eq_true, ↓reduceDIte, Option.map_none,
+      selfridgeNeOneStop, Bool.false_and, ↓reduceIte]
+
 /-- Scan increasing magnitudes without allocating a candidate list.
 Fuel counts magnitudes, not Wheel30 candidates; skipped residues do not evaluate Jacobi.
 The first stop returns its magnitude, while exhausted fuel returns none. -/
@@ -335,6 +381,59 @@ theorem selfridgeNeOneJump_sound {n start fuel i : ℕ}
     i ∈ FirstStopNeOneSet isWheel30NeOneCandidate n :=
   selfridgeNeOneScan_sound ((selfridgeNeOneJump_eq _ _ _).symm.trans h)
 
+/-- Jump through the original magnitude budget while retaining the accepted candidate's
+Jacobi value. Skipped residues and exhausted budgets behave as in `selfridgeNeOneJump`. -/
+def selfridgeNeOneCachedJump (n start fuel : ℕ) : Option (SelfridgeCachedStop n) :=
+  match fuel with
+  | 0 => none
+  | fuel + 1 =>
+    match selfridgeNeOneCachedStop n start with
+    | some entry => some entry
+    | none =>
+      if fuel + 1 < wheel30GapFast start then none
+      else
+        selfridgeNeOneCachedJump n (start + wheel30GapFast start) (fuel + 1 - wheel30GapFast start)
+termination_by fuel
+decreasing_by
+  simp only [wheel30GapFast_eq]
+  exact Nat.sub_lt (Nat.zero_lt_succ _) (wheel30Gap_bounds _).1
+
+/-- Forgetting the cached Jacobi value recovers the original jumping scan on every input.
+Strong induction preserves the same candidate jumps and budget boundary behavior. -/
+theorem selfridgeNeOneCachedJump_map (n start fuel : ℕ) :
+    (selfridgeNeOneCachedJump n start fuel).map SelfridgeCachedStop.magnitude =
+      selfridgeNeOneJump n start fuel := by
+  induction fuel using Nat.strong_induction_on generalizing start with
+  | h fuel ih =>
+    cases fuel with
+    | zero => simp only [selfridgeNeOneCachedJump, selfridgeNeOneJump, Option.map_none]
+    | succ fuel =>
+      rw [selfridgeNeOneCachedJump, selfridgeNeOneJump]
+      have hmap := selfridgeNeOneCachedStop_map n start
+      cases hc : selfridgeNeOneCachedStop n start with
+      | some entry =>
+        rw [hc, Option.map_some] at hmap
+        have hs : selfridgeNeOneStop n start = true := by
+          by_contra hn
+          simp only [hn, ↓reduceIte, Option.some_ne_none] at hmap
+        rw [hs, ite_eq_left rfl] at hmap
+        simpa only [Option.map_some, hs, ↓reduceIte] using hmap
+      | none =>
+        rw [hc, Option.map_none] at hmap
+        have hs : selfridgeNeOneStop n start ≠ true := by
+          intro hn
+          rw [hn, ite_eq_left rfl] at hmap
+          cases hmap
+        rw [ite_eq_right hs]
+        by_cases hb : fuel + 1 < wheel30GapFast start
+        · simp only [hb, ↓reduceIte, Option.map_none]
+        · simp only [hb, ↓reduceIte]
+          exact
+            ih _
+              (Nat.sub_lt (Nat.zero_lt_succ _)
+                (wheel30GapFast_eq start ▸ (wheel30Gap_bounds start).1))
+              _
+
 /-- Proof-carrying outcomes of finite Selfridge search.
 Selected parameters carry Jacobi minus one; factors carry proper-divisor evidence.
 Exhausted records an insufficient budget and supports only an unknown decision. -/
@@ -370,6 +469,44 @@ def selfridgeNeOneClassify (n : ℕ) (found : Option ℕ)
         .factor (Nat.gcd i n) hg.1 hg.2 (Nat.gcd_dvd_right i n)
   else .exhausted
 
+/-- Classify a certified stop using its cached Jacobi integer.
+Minus one selects Method A* parameters; zero yields a proper factor. Nonpositive inputs
+retain the original inconclusive outcome. No Jacobi procedure is rerun here. -/
+def SelfridgeCachedStop.classify {n : ℕ} (entry : SelfridgeCachedStop n) : SelfridgeScanResult n :=
+  if hn : 0 < n then
+    if hj : entry.value = -1 then
+      let param :=
+        LucasParams.methodAStar (selfridgeD entry.magnitude)
+          (selfridgeD_methodA_mod_four (wheel30NeOneCandidate_classical entry.valid.1).2)
+      have hd : param.D = selfridgeD entry.magnitude := by
+        dsimp only [param, LucasParams.methodAStar]
+        split <;> rfl
+      .selected param (hd.symm ▸ entry.value_eq.symm.trans hj)
+    else
+      have hnot : jacobiSym (selfridgeD entry.magnitude) n ≠ -1 := fun h ↦
+        hj (entry.value_eq.trans h)
+      have hz : jacobiSym (selfridgeD entry.magnitude) n = 0 :=
+        (jacobiSym.trichotomy _ _).resolve_right (fun h ↦ h.elim entry.valid.2.2 hnot)
+      let hg := selfridgeStop_gcd_bounds hn entry.valid.2.1 hz
+      .factor (Nat.gcd entry.magnitude n) hg.1 hg.2 (Nat.gcd_dvd_right _ _)
+  else .exhausted
+
+/-- Cached classification equals the original classifier of the same stopping magnitude.
+The stored value equality identifies both branches; proof irrelevance identifies their evidence. -/
+theorem SelfridgeCachedStop.classify_eq {n : ℕ} (entry : SelfridgeCachedStop n) :
+    entry.classify =
+      selfridgeNeOneClassify n (some entry.magnitude)
+        (fun _ h ↦ Option.some.inj h ▸ entry.valid) := by
+  unfold SelfridgeCachedStop.classify selfridgeNeOneClassify
+  by_cases hn : 0 < n
+  · rw [dite_eq_left hn, dite_eq_left hn]
+    by_cases hj : entry.value = -1
+    · have hm : jacobiSym (selfridgeD entry.magnitude) n = -1 := entry.value_eq.symm.trans hj
+      simp only [hj, hm, ↓reduceDIte]
+    · have hm : jacobiSym (selfridgeD entry.magnitude) n ≠ -1 := fun h ↦ hj (entry.value_eq.trans h)
+      simp only [hj, hm, ↓reduceDIte]
+  · rw [dite_eq_right hn, dite_eq_right hn]
+
 /-- Equal sound scan results give identical certified classifications.
 Proof irrelevance identifies the stopping-set and divisor evidence. -/
 theorem selfridgeNeOneClassify_congr (n : ℕ) (a b : Option ℕ)
@@ -383,7 +520,35 @@ theorem selfridgeNeOneClassify_congr (n : ℕ) (a b : Option ℕ)
 Nonpositive input and exhaustion remain inconclusive.
 The selected branch carries Jacobi evidence. -/
 def selfridgeNeOneResult (n fuel : ℕ) : SelfridgeScanResult n :=
-  selfridgeNeOneClassify n (selfridgeNeOneJump n 5 fuel) (fun _ h ↦ selfridgeNeOneJump_sound h)
+  match selfridgeNeOneCachedJump n 5 fuel with
+  | none => .exhausted
+  | some entry => entry.classify
+
+/-- Cached execution preserves the original certified classification for every input and budget.
+The position projection identifies exhaustion and success; cached classification identifies
+the selected-parameter and factor outcomes. -/
+theorem selfridgeNeOneResult_eq_classify (n fuel : ℕ) :
+    selfridgeNeOneResult n fuel =
+      selfridgeNeOneClassify n (selfridgeNeOneJump n 5 fuel)
+        (fun _ h ↦ selfridgeNeOneJump_sound h) := by
+  have hmap := selfridgeNeOneCachedJump_map n 5 fuel
+  cases hc : selfridgeNeOneCachedJump n 5 fuel with
+  | none =>
+    rw [hc, Option.map_none] at hmap
+    simp only [selfridgeNeOneResult, hc]
+    have hnone :
+      SelfridgeScanResult.exhausted = selfridgeNeOneClassify n none (fun _ h ↦ nomatch h) := by
+      unfold selfridgeNeOneClassify
+      split <;> rfl
+    apply hnone.trans
+    apply selfridgeNeOneClassify_congr
+    exact hmap
+  | some entry =>
+    rw [hc, Option.map_some] at hmap
+    simp only [selfridgeNeOneResult, hc]
+    rw [SelfridgeCachedStop.classify_eq]
+    apply selfridgeNeOneClassify_congr
+    exact hmap
 
 /-- Consume a search outcome using the ordinary shared-initial-value Strong Lucas test.
 Proper factors and failed prime-pass tests prove non-primality; acceptance remains unknown. -/
@@ -449,9 +614,61 @@ def SelfridgeScanResult.decideStrengthened {n : ℕ} : SelfridgeScanResult n →
     decideByPrimePass n (strengthenedLucasSharedEulerValid n param)
       (fun hp ↦ strengthenedLucasSharedEulerValid_of_prime hp param hj)
 
-/-- Run successive-square MR before square checking and finite factor-detecting search.
-The strengthened flag selects the shared strengthened Lucas consumer.
-Fuel exhaustion is unknown; the original public Boolean entries remain comparison interfaces. -/
+/-- Consume a certified stop at an odd modulus without retesting Jacobi of its discriminant.
+Selected parameters run the existing PQ core directly; factor and exhaustion outcomes retain
+the total consumer's behavior. Prime completeness supplies certified rejection. -/
+def SelfridgeScanResult.decideOdd {n : ℕ} (hn : Odd n) : SelfridgeScanResult n → Decision n
+  | .exhausted => .unknown
+  | .factor _ hl hu hd => .notPrime (Nat.not_prime_of_dvd_of_lt hd hl hu)
+  | .selected param hj =>
+    decideByPrimePass n (strongLucasWithPQ n param.P param.Q)
+      (fun hp ↦
+        (strongLucasWithPQ_eq n hn param.D param.P param.Q hj).trans
+          (strongLucasWithParams_of_prime hp _ _ _ param.discr hj))
+
+/-- Odd-input execution equals the ordinary total consumer on every certified outcome.
+The stored Jacobi evidence selects the PQ branch, while proof irrelevance identifies decisions. -/
+theorem SelfridgeScanResult.decideOdd_eq {n : ℕ} (hn : Odd n) (result : SelfridgeScanResult n) :
+    result.decideOdd hn = result.decide := by
+  cases result with
+  | exhausted => rfl
+  | factor g hl hu hd => rfl
+  | selected param hj =>
+    simp only [SelfridgeScanResult.decideOdd, SelfridgeScanResult.decide, strongLucasWithParamsFast,
+      ite_eq_left (And.intro hn hj)]
+
+/-- Consume certified parameters at an odd modulus using the unguarded shared Euler core.
+The discriminant's Jacobi evidence bypasses its guard; Jacobi of Q remains part of the Euler
+condition. Factors and exhausted searches retain their existing decision outcomes. -/
+def SelfridgeScanResult.decideStrengthenedOdd {n : ℕ} (hn : Odd n) :
+    SelfridgeScanResult n → Decision n
+  | .exhausted => .unknown
+  | .factor _ hl hu hd => .notPrime (Nat.not_prime_of_dvd_of_lt hd hl hu)
+  | .selected param hj =>
+    decideByPrimePass n (strengthenedLucasSharedEulerCore n param)
+      (fun hp ↦
+        (strengthenedLucasSharedEulerCore_eq n hn param hj).trans
+          (strengthenedLucasSharedEulerValid_of_prime hp param hj))
+
+/-- Odd-input shared Euler execution equals the total strengthened consumer.
+The core equality uses the stored discriminant evidence and leaves the fallback API intact. -/
+theorem SelfridgeScanResult.decideStrengthenedOdd_eq {n : ℕ} (hn : Odd n)
+    (result : SelfridgeScanResult n) :
+    result.decideStrengthenedOdd hn = result.decideStrengthened := by
+  cases result with
+  | exhausted => rfl
+  | factor g hl hu hd => rfl
+  | selected param hj =>
+    simp only [SelfridgeScanResult.decideStrengthenedOdd, SelfridgeScanResult.decideStrengthened,
+      strengthenedLucasSharedEulerCore_eq n hn param hj]
+
+/--
+Run base-two successive-square Miller-Rabin before square checking and finite
+factor-detecting Selfridge search. The flag selects ordinary or shared strengthened Lucas
+on selected parameters. Small, even and square cases use the established MR-first filter;
+proper factors and failed tests certify non-primality, while passes and fuel exhaustion
+return unknown. Fuel bounds the Selfridge magnitude interval.
+-/
 def BPSW.decideWheel30Within (n fuel : ℕ) (strengthened : Bool := false) : Decision n :=
   if n < 3 then decideByTest bailliePSWMRFirst bailliePSWMRFirst_spec n
   else
@@ -467,7 +684,7 @@ def BPSW.decideWheel30Within (n fuel : ℕ) (strengthened : Bool := false) : Dec
         if natIsSquare n then decideByTest bailliePSWMRFirst bailliePSWMRFirst_spec n
         else
           let result := selfridgeNeOneResult n fuel
-          if strengthened then result.decideStrengthened else result.decide
+          if strengthened then result.decideStrengthenedOdd ho else result.decideOdd ho
     else decideByTest bailliePSWMRFirst bailliePSWMRFirst_spec n
 
 /-- Report whether a search outcome carries parameters or a proper factor.
@@ -494,7 +711,7 @@ theorem selfridgeNeOneClassify_hasStop {n : ℕ} (hn : 0 < n) (found : Option �
 The selected and factor branches both represent the returned stopping magnitude. -/
 theorem selfridgeNeOneResult_hasStop {n fuel : ℕ} (hn : 0 < n) :
     (selfridgeNeOneResult n fuel).hasStop = (selfridgeNeOneScan n 5 fuel).isSome := by
-  rw [selfridgeNeOneResult, selfridgeNeOneClassify_hasStop hn, selfridgeNeOneJump_eq]
+  rw [selfridgeNeOneResult_eq_classify, selfridgeNeOneClassify_hasStop hn, selfridgeNeOneJump_eq]
 
 /-- Odd nonsquare inputs never exhaust the unconditional 2*n search budget.
 The raw scan termination theorem removes the incomplete outcome at this consumer boundary. -/

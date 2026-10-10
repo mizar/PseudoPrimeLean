@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
-import PseudoPrime.PrimeTest.Selfridge.MethodAStarEquivalence
-import PseudoPrime.PrimeTest.BPSW.PaperSpec
+module
+
+public import PseudoPrime.PrimeTest.Selfridge.MethodAStarEquivalence
+public import PseudoPrime.PrimeTest.BPSW.BFWSpec
 
 /-! # Selfridge discriminant equality and ordinary Method A/A* list equivalence -/
+
+@[expose] public section
 
 namespace PseudoPrime.PrimeTest
 

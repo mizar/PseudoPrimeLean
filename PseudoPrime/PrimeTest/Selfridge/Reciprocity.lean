@@ -17,9 +17,17 @@ This module provides the unconditional Jacobi reciprocity identity for the
 signed Selfridge discriminant.
 -/
 
+@[expose] public section
+
 namespace PseudoPrime.PrimeTest
 
-/-- The Selfridge sign converts quadratic reciprocity into `J(n | i)`. -/
+/--
+Signed Selfridge reciprocity for arbitrary odd natural `i` and `n`.
+The conclusion is `jacobiSym (selfridgeD i) n = jacobiSym n i`; neither argument is assumed
+prime or coprime. Split odd residues modulo four and combine ordinary quadratic reciprocity
+with the sign correction in `selfridgeD`. This connects executable discriminant tests to
+neutral witness sets whose numerator is `n`.
+-/
 theorem jacobi_selfridgeD {i n : ℕ} (hi : Odd i) (hn : Odd n) :
     jacobiSym (selfridgeD i) n = jacobiSym n i := by
   rcases Nat.odd_mod_four_iff.mp (Nat.odd_iff.mp hi) with hi1 | hi3
