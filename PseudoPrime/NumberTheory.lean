@@ -17,7 +17,7 @@ public import PseudoPrime.NumberTheory.TotientComputation
 
 public import PseudoPrime.NumberTheory.PrimeIndexing
 public import PseudoPrime.NumberTheory.Fibonacci.Greatest
-public import PseudoPrime.NumberTheory.Fibonacci.Euclid
+public import PseudoPrime.NumberTheory.Euclid
 public import PseudoPrime.NumberTheory.PrimeTable
 public import PseudoPrime.NumberTheory.PrimorialCertificates
 public import PseudoPrime.NumberTheory.JacobiCharacterArithmetic

@@ -204,7 +204,7 @@ Selfridge走査の燃料は候補区間の整数の個数を数え、Jacobi内�
 | モジュール | 内容 |
 |---|---|
 | [Fibonacci/Greatest.lean](../PseudoPrime/NumberTheory/Fibonacci/Greatest.lean) | 隣接値の状態、二進探索、十分な探索燃料、最大添字との一致 |
-| [Fibonacci/Euclid.lean](../PseudoPrime/NumberTheory/Fibonacci/Euclid.lean) | 最小停止回数、Fibonacci燃料、gcdの正当性、最悪例、除数縮小付き遷移 |
+| [Euclid.lean](../PseudoPrime/NumberTheory/Euclid.lean) | 最小停止回数、Fibonacci燃料、gcdの正当性、最悪例、除数縮小付き遷移 |
 | [PrimeTest/JacobiFuel.lean](../PseudoPrime/PrimeTest/JacobiFuel.lean) | 2因子一括除去の燃料付きJacobi、枯渇の排除、自然数・整数入力の正当性 |
 
 Fibonacciと互除法の名前空間は、それぞれ `PseudoPrime.NumberTheory.Fibonacci` と `PseudoPrime.NumberTheory.Euclid` である。Jacobiの実装と定理は `PseudoPrime.PrimeTest.ReferenceArithmetic` に置く。前者は `import PseudoPrime.NumberTheory`、後者は `import PseudoPrime.PrimeTest` で利用できる。`import PseudoPrime` は両方を公開する。

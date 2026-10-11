@@ -212,6 +212,13 @@ Transfer executable fuel computation to the mathlib greatest-index specification
 theorem stepBound_eq (m : ℕ) : stepBound m = Nat.greatestFib m - 1 :=
   congrArg (fun k : ℕ ↦ k - 1) (PseudoPrime.NumberTheory.Fibonacci.greatestFibBinary_spec m)
 
+/-- Increasing the second operand cannot decrease the certified Fibonacci budget.
+Monotonicity of the greatest Fibonacci index survives subtraction by one.
+This transfers input-specific budgets to uniform upper bounds. -/
+theorem stepBound_mono {a b : ℕ} (h : a ≤ b) : stepBound a ≤ stepBound b := by
+  rw [stepBound_eq, stepBound_eq]
+  exact Nat.sub_le_sub_right (Nat.greatestFib_mono h) 1
+
 /--
 A positive second component gives positive fuel, using `fib 2 = 1`.
 -/

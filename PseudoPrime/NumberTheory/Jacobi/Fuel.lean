@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.Jacobi.Computation
-public import PseudoPrime.NumberTheory.Fibonacci.Euclid
+public import PseudoPrime.NumberTheory.Euclid
 public import Mathlib.Data.Nat.PadicValNat
 
 /-! # Batched Jacobi procedures with certified Fibonacci fuel bounds
