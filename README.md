@@ -77,8 +77,7 @@ The public theorem is in namespace `PseudoPrime.PrimeTestBounds.MillerRabin`, in
 theorem prime_iff_millerRabin_for_all_primes_le_log_sq
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
     (hnOdd : Odd n) :
-    let s := padicValNat 2 (n - 1)
-    let d := Nat.divMaxPow (n - 1) 2
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     (∀ p : ℕ,
         Nat.Prime p →
           (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 →
