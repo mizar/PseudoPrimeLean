@@ -20,8 +20,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- A prime base at most `(log n)^2` that fails the strong test using the canonical
 two-adic decomposition of `n - 1`. This predicate is the conclusion of the witness bounds. -/
 def PrimeMillerRabinWitness (n : ℕ) : Prop :=
-  let s := padicValNat 2 (n - 1)
-  let d := Nat.divMaxPow (n - 1) 2
+  let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
   ∃ p : ℕ,
     Nat.Prime p ∧
       (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 ∧

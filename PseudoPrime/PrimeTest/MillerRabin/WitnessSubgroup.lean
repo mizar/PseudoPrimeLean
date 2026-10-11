@@ -109,9 +109,11 @@ would give `1 = -1` in `ZMod q`. The sign-subgroup inclusion uses this index bou
 theorem neg_power_index_lt_twoAdicExponent {q j d : ℕ} {y : ZMod q} (hq : Nat.Prime q)
     (hqOdd : Odd q) (htj : padicValNat 2 (q - 1) ≤ j) (hfermat : y ^ (q - 1) = 1)
     (hneg : y ^ (2 ^ j * d) = -1) : False := by
-  let t := padicValNat 2 (q - 1)
-  let c := Nat.divMaxPow (q - 1) 2
-  obtain ⟨_, hcOdd, hdecomp⟩ := odd_sub_canonical_decomp hq.one_lt hqOdd
+  rcases hTcPair : Nat.maxPowDvdDiv 2 (q - 1) with ⟨t, c⟩
+  have hcanonical : 0 < t ∧ Odd c ∧ q - 1 = 2 ^ t * c := by
+    simpa only [padicValNat, Nat.divMaxPow, hTcPair] using odd_sub_canonical_decomp hq.one_lt hqOdd
+  obtain ⟨_, hcOdd, hdecomp⟩ := hcanonical
+  simp only [padicValNat, hTcPair] at htj
   have hq2 : q ≠ 2 := by
     intro h
     subst q
@@ -196,20 +198,18 @@ Cyclicity of the prime-field unit group yields the canonical decomposition `q - 
 and a unit of order `2^t`, where `t` is the two-adic valuation and `c` is the odd part.
 -/
 private theorem exists_prime_field_unit_order_two_power {q : ℕ} (hq : Nat.Prime q) (hqOdd : Odd q) :
-    let t := padicValNat 2 (q - 1)
-    let c := Nat.divMaxPow (q - 1) 2
+    let (t, c) := Nat.maxPowDvdDiv 2 (q - 1)
     q - 1 = 2 ^ t * c ∧ ∃ b : (ZMod q)ˣ, orderOf b = 2 ^ t := by
-  intro t c
-  obtain ⟨_, _, hqdecomp⟩ := odd_sub_canonical_decomp hq.one_lt hqOdd
+  rcases hTcPair : Nat.maxPowDvdDiv 2 (q - 1) with ⟨t, c⟩
+  simp only
+  have hcanonical : 0 < t ∧ Odd c ∧ q - 1 = 2 ^ t * c := by
+    simpa only [← Nat.fst_maxPowDvdDiv 2 (q - 1), ← Nat.snd_maxPowDvdDiv 2 (q - 1), hTcPair] using
+      odd_sub_canonical_decomp hq.one_lt hqOdd
+  obtain ⟨_, hcOdd, hqdecomp⟩ := hcanonical
   have : Fact (Nat.Prime q) := ⟨hq⟩
   obtain ⟨g, hg⟩ := (isCyclic_iff_exists_orderOf_eq_natCard).mp (ZMod.isCyclic_units_prime hq)
   rw [Nat.card_eq_fintype_card, @ZMod.card_units q ⟨hq⟩] at hg
-  have hcpos : 0 < c := by
-    have hqminus : 0 < q - 1 := Nat.sub_pos_of_lt hq.one_lt
-    by_contra hcnot
-    have hc0 : Nat.divMaxPow (q - 1) 2 = 0 := Nat.eq_zero_of_not_pos hcnot
-    rw [hc0, Nat.mul_zero] at hqdecomp
-    exact (Nat.ne_of_gt hqminus) hqdecomp
+  have hcpos : 0 < c := hcOdd.pos
   have hcdiv : c ∣ 2 ^ t * c := by
     refine ⟨2 ^ t, ?_⟩
     rw [Nat.mul_comm]

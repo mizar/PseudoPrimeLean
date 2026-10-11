@@ -200,23 +200,24 @@ private theorem pow_oddPart_eq_one_iff_orderOf_twoAdic_eq_zero {n s d : ℕ} {x 
 /-- The odd part of a finite order divides the odd part of a Fermat exponent. -/
 private theorem order_dvd_twoAdic_pow_mul {n s d : ℕ} {x : ZMod n} (hdOdd : Odd d)
     (hFermat : x ^ (2 ^ s * d) = 1) : orderOf x ∣ 2 ^ padicValNat 2 (orderOf x) * d := by
-  let o := orderOf x
-  let t := padicValNat 2 o
-  let u := Nat.divMaxPow o 2
-  change o ∣ 2 ^ t * d
-  have hdiv : o ∣ 2 ^ s * d := orderOf_dvd_of_pow_eq_one hFermat
-  have hone : o ≠ 0 := by
+  rcases hTuPair : Nat.maxPowDvdDiv 2 (orderOf x) with ⟨t, u⟩
+  simp only [padicValNat, hTuPair]
+  have hdiv : (orderOf x) ∣ 2 ^ s * d := orderOf_dvd_of_pow_eq_one hFermat
+  have hone : (orderOf x) ≠ 0 := by
     intro hz
     have hzero : 2 ^ s * d = 0 := Nat.eq_zero_of_zero_dvd (hz ▸ hdiv)
     rcases mul_eq_zero.mp hzero with htwo | hd0
     · exact (pow_ne_zero s (by decide : (2 : ℕ) ≠ 0)) htwo
     · have hdmod := Nat.odd_iff.mp hdOdd
       exact Nat.zero_ne_one (by simpa only [hd0, Nat.zero_mod] using hdmod)
-  have hfactor : u * 2 ^ t = o := Nat.divMaxPow_mul_pow_padicValNat 2 o
-  have huodd : Odd u :=
-    Nat.not_even_iff_odd.mp ((even_iff_two_dvd).not.mpr (Nat.not_dvd_divMaxPow (by decide) hone))
+  have hfactor := Nat.divMaxPow_mul_pow_padicValNat 2 (orderOf x)
+  simp only [padicValNat, Nat.divMaxPow, hTuPair] at hfactor
+  have huodd : Odd u := by
+    have hnot := Nat.not_dvd_divMaxPow (by decide : 1 < 2) hone
+    simp only [Nat.divMaxPow, hTuPair] at hnot
+    exact Nat.not_even_iff_odd.mp ((even_iff_two_dvd).not.mpr hnot)
   have huD : u ∣ 2 ^ s * d := by
-    have huO : u ∣ o := by
+    have huO : u ∣ (orderOf x) := by
       rw [← hfactor]
       exact dvd_mul_right u _
     exact dvd_trans huO hdiv
@@ -699,8 +700,7 @@ global decomposition and applies the two-factor CRT power identities.
 theorem strongMillerRabinWithBase_mul_eq_true_iff {p q a : ℕ} (hc : p.Coprime q) (hn : 1 < p * q)
     (hnOdd : Odd (p * q)) :
     strongMillerRabinWithBase (p * q) a = true ↔
-      (let s := padicValNat 2 (p * q - 1)
-       let d := Nat.divMaxPow (p * q - 1) 2
+      (let (s, d) := Nat.maxPowDvdDiv 2 (p * q - 1)
        ((a : ZMod p) ^ d = 1 ∧ (a : ZMod q) ^ d = 1) ∨
         ∃ j : ℕ, j < s ∧ (a : ZMod p) ^ (2 ^ j * d) = -1 ∧ (a : ZMod q) ^ (2 ^ j * d) = -1) := by
   obtain ⟨hs, hd, hdecomp⟩ := odd_sub_canonical_decomp hn hnOdd

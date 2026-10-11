@@ -90,8 +90,7 @@ Write n-1 = 2^s d and require a^d=1 or a^(d*2^r)=n-1 in ZMod n for some r<s.
 The definition is total and performs no input precheck; prime soundness uses separate hypotheses.
 -/
 def IsStrongMillerRabinProbablePrime (n a : ℕ) : Prop :=
-  let s := padicValNat 2 (n - 1)
-  let d := Nat.divMaxPow (n - 1) 2
+  let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
   zmodPowProof n a d = 1 ∨ ∃ r ∈ List.range s, zmodPowProof n a (d * 2 ^ r) = n - 1
 
 /--
@@ -100,8 +99,7 @@ The alternatives are a^d=1 or a^(d*2^r)=n-1 for r in List.range s, where n-1=2^s
 No small-input guard is included; the equivalence lemma connects this to the specification.
 -/
 def IsStrongMillerRabinProbablePrimeFast (n a : ℕ) : Prop :=
-  let s := padicValNat 2 (n - 1)
-  let d := Nat.divMaxPow (n - 1) 2
+  let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
   zmodPow n a d = 1 ∨ ∃ r ∈ List.range s, zmodPow n a (d * 2 ^ r) = n - 1
 
 /--
@@ -110,8 +108,7 @@ Binary modular powers test a^d=1 or a^(d*2^r)=n-1 over r<s in n-1=2^s d.
 A true result is a probable-prime pass; small-input classification is provided by wrappers.
 -/
 def strongMillerRabinWithBase (n a : ℕ) : Bool :=
-  let s := padicValNat 2 (n - 1)
-  let d := Nat.divMaxPow (n - 1) 2
+  let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
   decide (zmodPow n a d = 1 ∨ ∃ r ∈ List.range s, zmodPow n a (d * 2 ^ r) = n - 1)
 
 /--

@@ -60,16 +60,15 @@ the executable prime-acceptance theorem consumes this result. -/
 private theorem strong_condition_of_prime {p a : ℕ} (hp : p.Prime) (ha : Nat.Coprime a p) :
     IsStrongMillerRabinProbablePrime p a := by
   let _ : Fact p.Prime := ⟨hp⟩
-  let s := padicValNat 2 (p - 1)
-  let d := Nat.divMaxPow (p - 1) 2
+  rcases hSdPair : Nat.maxPowDvdDiv 2 (p - 1) with ⟨s, d⟩
   have hpa : (a : ZMod p) ≠ 0 := by
     intro hzero
     exact (hp.coprime_iff_not_dvd.mp ha.symm) ((ZMod.natCast_eq_zero_iff a p).mp hzero)
   have hfermat : (a : ZMod p) ^ (p - 1) = 1 := ZMod.pow_card_sub_one_eq_one hpa
-  have hdecomp : p - 1 = d * 2 ^ s := by exact sub_eq_oddPart_mul_twoAdicPart
-  have hpow : ((a : ZMod p) ^ d) ^ (2 ^ s) = 1 := by
-    rw [← pow_mul, ← hdecomp]
-    exact hfermat
+  have hdecomp := Nat.divMaxPow_mul_pow_padicValNat 2 (p - 1)
+  simp only [padicValNat, Nat.divMaxPow, hSdPair] at hdecomp
+  have hpow : ((a : ZMod p) ^ d) ^ (2 ^ s) = 1 := by simpa only [← pow_mul, hdecomp] using hfermat
+  simp only [IsStrongMillerRabinProbablePrime, hSdPair]
   rcases pow_two_adic_eq_one_or_neg_one ((a : ZMod p) ^ d) s hpow with hpos | hneg
   · left
     change zmodPowProof p a d = 1

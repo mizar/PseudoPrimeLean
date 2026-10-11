@@ -95,8 +95,7 @@ otherwise S2 supplies a prime outside the proper subgroup containing all passing
 This is the large-input branch of the GRH witness theorem. -/
 theorem exists_prime_millerRabin_witness_le_log_sq_of_s2 (hS2 : LLS.llsTheorem11S2) {n : ℕ}
     (hn : 1 < n) (hnOdd : Odd n) (hnNotPrime : ¬Nat.Prime n) (hlarge : 3000 ≤ n) :
-    let s := padicValNat 2 (n - 1)
-    let d := Nat.divMaxPow (n - 1) 2
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     ∃ p : ℕ,
       Nat.Prime p ∧
         (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 ∧
@@ -124,8 +123,7 @@ subgroup argument handles `n ≥ 3000`. -/
 theorem exists_prime_millerRabin_witness_le_log_sq
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
     (hnOdd : Odd n) (hnNotPrime : ¬Nat.Prime n) :
-    let s := padicValNat 2 (n - 1)
-    let d := Nat.divMaxPow (n - 1) 2
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     ∃ p : ℕ,
       Nat.Prime p ∧
         (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 ∧
@@ -141,8 +139,7 @@ test. The logarithmic estimate puts each candidate base below `n`, hence coprime
 prime modulus; prime-base acceptance then contradicts the witness inequalities. -/
 theorem no_prime_millerRabin_witness_le_log_sq_of_prime {n : ℕ} (hnOdd : Odd n)
     (hnPrime : Nat.Prime n) :
-    let s := padicValNat 2 (n - 1)
-    let d := Nat.divMaxPow (n - 1) 2
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     ¬∃ p : ℕ,
         Nat.Prime p ∧
           (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 ∧
@@ -172,8 +169,7 @@ prime base is coprime to `n` and passes the prime-modulus test. -/
 theorem prime_iff_millerRabin_for_all_primes_le_log_sq
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
     (hnOdd : Odd n) :
-    let s := padicValNat 2 (n - 1)
-    let d := Nat.divMaxPow (n - 1) 2
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     (∀ p : ℕ,
         Nat.Prime p →
           (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 →
@@ -209,8 +205,7 @@ exposes the rejection certificate in the naming used by strong-test consumers. -
 theorem exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
     (hnOdd : Odd n) (hnNotPrime : ¬Nat.Prime n) :
-    let s := padicValNat 2 (n - 1)
-    let d := Nat.divMaxPow (n - 1) 2
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     ∃ p : ℕ,
       Nat.Prime p ∧
         (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 ∧

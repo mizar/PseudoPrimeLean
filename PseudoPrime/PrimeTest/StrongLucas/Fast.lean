@@ -43,8 +43,7 @@ Q^d once, accepts initial U = 0, and scans V at d * 2^r for r < v_2(n + 1).
 The scan returns on acceptance and omits the final unused doubling. -/
 def strongLucasWithPQ (n : ℕ) (P Q : ℤ) : Bool :=
   let delta := n + 1
-  let s := padicValNat 2 delta
-  let d := Nat.divMaxPow delta 2
+  let (s, d) := Nat.maxPowDvdDiv 2 delta
   let x := lucasUVQLeading n P Q d
   (x.u == 0) || lucasVScan n x.v x.qk s
 
@@ -55,7 +54,8 @@ theorem strongLucasWithPQ_eq (n : ℕ) (hn : Odd n) (D P Q : ℤ) (hD : jacobiSy
     strongLucasWithPQ n P Q = strongLucasWithParams n D P Q := by
   rw [← strongLucasWithParamsUVQ_eq]
   simp only [strongLucasWithPQ, strongLucasWithParamsUVQ, ite_eq_left hn, strongLucasOddPart,
-    strongLucasTwoAdicExponent, lucasProbablePrimeIndex_of_jacobi_eq_neg_one hD, leading_eq n hn]
+    strongLucasTwoAdicExponent, lucasProbablePrimeIndex_of_jacobi_eq_neg_one hD, leading_eq n hn,
+    Nat.fst_maxPowDvdDiv, Nat.snd_maxPowDvdDiv]
 
 /-- Fast explicit-parameter Strong Lucas, separate from the finite-index definition.
 Odd Jacobi-minus-one inputs run the reference PQ core; all other inputs use shared

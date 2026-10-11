@@ -60,18 +60,14 @@ theorem isStrongLucasProbablePrime_of_lucasUZMod_index_zero {n : ℕ} [Fact n.Pr
     (param : LucasParams)
     (hzero : lucasUZMod n param.P param.Q (lucasProbablePrimeIndex n param.D) = 0) :
     IsStrongLucasProbablePrime n param := by
-  let m := lucasProbablePrimeIndex n param.D
-  let d := Nat.divMaxPow m 2
-  let s := padicValNat 2 m
-  have hdecomp : d * 2 ^ s = m := by
-    dsimp only [d, s]
-    rw [mul_comm]
-    exact twoAdicPart_mul_oddPart m
+  rcases hSdPair : Nat.maxPowDvdDiv 2 (lucasProbablePrimeIndex n param.D) with ⟨s, d⟩
+  have hdecomp := Nat.divMaxPow_mul_pow_padicValNat 2 (lucasProbablePrimeIndex n param.D)
+  simp only [padicValNat, Nat.divMaxPow, hSdPair] at hdecomp
   have hzero' : (lucasU param.P param.Q (d * 2 ^ s) : ZMod n) = 0 := by
     rw [hdecomp]
     exact hzero
   have hstrong := lucasU_twoAdic_zero_implies_strong param.P param.Q d s hzero'
-  dsimp only [IsStrongLucasProbablePrime, strongLucasOddPart, strongLucasTwoAdicExponent]
-  simpa only [lucasUZMod, lucasVZMod] using hstrong
+  simpa only [IsStrongLucasProbablePrime, strongLucasOddPart, strongLucasTwoAdicExponent,
+    lucasUZMod, lucasVZMod, padicValNat, Nat.divMaxPow, hSdPair] using hstrong
 
 end PseudoPrime.PrimeTest

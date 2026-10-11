@@ -58,8 +58,7 @@ theorem mrSquareScan_spec (n : ℕ) (target t : ZMod n) (s : ℕ) :
 The base is a natural number, and all inputs are totalized as in the existing
 fixed-base test. Input prechecking and zero-base skipping are separate concerns. -/
 def strongMillerRabinWithBaseLoop (n a : ℕ) : Bool :=
-  let s := padicValNat 2 (n - 1)
-  let d := Nat.divMaxPow (n - 1) 2
+  let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
   let t := zmodPow n a d
   (t == 1) || mrSquareScan n (n - 1) t s
 

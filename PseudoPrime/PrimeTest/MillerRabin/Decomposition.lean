@@ -22,18 +22,14 @@ namespace PseudoPrime.PrimeTest
 two-adic exponent, an odd residual factor, and product `n - 1`. The proof obtains positivity
 from `2 ∣ n - 1`; later pass and subgroup proofs use all three facts. -/
 theorem odd_sub_canonical_decomp {n : ℕ} (hn : 1 < n) (hnOdd : Odd n) :
-    let s := padicValNat 2 (n - 1)
-    let d := Nat.divMaxPow (n - 1) 2
-    0 < s ∧ Odd d ∧ n - 1 = 2 ^ s * d := by
-  dsimp only
+    0 < padicValNat 2 (n - 1) ∧
+      Odd (Nat.divMaxPow (n - 1) 2) ∧
+      n - 1 = 2 ^ padicValNat 2 (n - 1) * Nat.divMaxPow (n - 1) 2 := by
   have hne : n - 1 ≠ 0 := Nat.sub_ne_zero_of_lt hn
-  have heven : Even (n - 1) := by
-    have ho := Nat.odd_iff.mp hnOdd
-    rw [even_iff_two_dvd]
-    exact even_iff_two_dvd.mp (Nat.Odd.sub_odd hnOdd odd_one)
-  have hs : 0 < padicValNat 2 (n - 1) := one_le_padicValNat_of_dvd hne (even_iff_two_dvd.mp heven)
-  have hd : Odd (Nat.divMaxPow (n - 1) 2) := oddPart_odd hne
-  exact ⟨hs, hd, (twoAdicPart_mul_oddPart (n - 1)).symm⟩
+  have htwo : 2 ∣ n - 1 := even_iff_two_dvd.mp (Nat.Odd.sub_odd hnOdd odd_one)
+  exact
+    ⟨one_le_padicValNat_of_dvd hne htwo, oddPart_odd hne,
+      (Nat.pow_padicValNat_mul_divMaxPow 2 (n - 1)).symm⟩
 
 /-- The strong Miller–Rabin pass condition using `s = padicValNat 2 (n - 1)` and
 `d = Nat.divMaxPow (n - 1) 2`. A residue passes when `x^d = 1` or one of the `s`
@@ -47,28 +43,15 @@ The initial-one branch raises to `2^s`; a minus-one branch raises to the remaini
 The unit and subgroup results consume this Fermat equation. -/
 theorem strongMillerRabinPass_pow {n : ℕ} {x : ZMod n} (hn : 1 < n) (hnOdd : Odd n)
     (hpass : StrongMillerRabinPass n x) : x ^ (n - 1) = 1 := by
-  let s := padicValNat 2 (n - 1)
-  let d := Nat.divMaxPow (n - 1) 2
-  obtain ⟨_, _, hdecomp⟩ := odd_sub_canonical_decomp hn hnOdd
+  rcases hSdPair : Nat.maxPowDvdDiv 2 (n - 1) with ⟨s, d⟩
+  have hdecomp := (odd_sub_canonical_decomp hn hnOdd).2.2
+  simp only [StrongMillerRabinPass, padicValNat, Nat.divMaxPow, hSdPair] at hdecomp hpass
+  rw [hdecomp]
   rcases hpass with hodd | ⟨j, hj, hneg⟩
-  · calc
-      x ^ (n - 1) = x ^ (2 ^ s * d) := by rw [hdecomp]
-      _ = (x ^ d) ^ (2 ^ s) := by rw [Nat.mul_comm, pow_mul]
-      _ = 1 := by rw [hodd, one_pow]
-  · have hexp : (2 ^ j * d) * 2 ^ (s - j) = 2 ^ s * d := by
-      calc
-        (2 ^ j * d) * 2 ^ (s - j) = 2 ^ j * 2 ^ (s - j) * d := by ring
-        _ = 2 ^ (j + (s - j)) * d := by rw [Nat.pow_add]
-        _ = 2 ^ s * d := by rw [Nat.add_sub_of_le hj.le]
-    have hpositive : 0 < s - j := Nat.sub_pos_of_lt hj
-    have heven : Even (2 ^ (s - j)) :=
-      (show Even 2 from ⟨1, by rfl⟩).pow_of_ne_zero (Nat.ne_of_gt hpositive)
-    calc
-      x ^ (n - 1) = x ^ (2 ^ s * d) := by rw [hdecomp]
-      _ = x ^ ((2 ^ j * d) * 2 ^ (s - j)) := by rw [hexp]
-      _ = (x ^ (2 ^ j * d)) ^ (2 ^ (s - j)) := by rw [pow_mul]
-      _ = (-1) ^ (2 ^ (s - j)) := by rw [hneg]
-      _ = 1 := heven.neg_one_pow
+  · rw [Nat.mul_comm, pow_mul, hodd, one_pow]
+  · rw [← pow_mul_pow_sub 2 hj.le, Nat.mul_right_comm, pow_mul, hneg]
+    exact
+      ((show Even 2 from ⟨1, rfl⟩).pow_of_ne_zero (Nat.ne_of_gt (Nat.sub_pos_of_lt hj))).neg_one_pow
 
 /-- For `1 < n` and odd `n`, a passing residue is a unit modulo `n`.
 Its inverse is witnessed by `x^(n - 2)` using `strongMillerRabinPass_pow`;
@@ -111,24 +94,9 @@ pass predicate. The proof converts `List.range` membership into `r < s`, commute
 `d * 2^r` to `2^r * d`, and identifies the residue of `n - 1` with `-1`. -/
 theorem isStrongMillerRabinProbablePrime_iff_pass {n a : ℕ} :
     IsStrongMillerRabinProbablePrime n a ↔ StrongMillerRabinPass n (a : ZMod n) := by
-  let s := padicValNat 2 (n - 1)
-  let d := Nat.divMaxPow (n - 1) 2
-  change
-    ((a : ZMod n) ^ d = 1 ∨ ∃ r ∈ List.range s, (a : ZMod n) ^ (d * 2 ^ r) = (n - 1 : ZMod n)) ↔
-      ((a : ZMod n) ^ d = 1 ∨ ∃ r, r < s ∧ (a : ZMod n) ^ (2 ^ r * d) = -1)
-  constructor
-  · rintro (hodd | ⟨r, hr, hpow⟩)
-    · exact Or.inl hodd
-    · right
-      refine ⟨r, List.mem_range.mp hr, ?_⟩
-      rw [Nat.mul_comm] at hpow
-      rw [ZMod.natCast_self, zero_sub] at hpow
-      exact hpow
-  · rintro (hodd | ⟨r, hr, hpow⟩)
-    · exact Or.inl hodd
-    · right
-      refine ⟨r, List.mem_range.mpr hr, ?_⟩
-      rw [Nat.mul_comm, hpow, ZMod.natCast_self, zero_sub]
+  simp only [IsStrongMillerRabinProbablePrime, StrongMillerRabinPass, Nat.fst_maxPowDvdDiv,
+    Nat.snd_maxPowDvdDiv, zmodPowProof_eq_pow, List.mem_range, ZMod.natCast_self, zero_sub,
+    Nat.mul_comm]
 
 /-- The executable single-base test returns `true` exactly when its residue satisfies the
 canonical proof-side pass predicate. This composes the existing Boolean specification with
@@ -151,8 +119,7 @@ theorem strongMillerRabinPass_not_of_prime_dvd {n p : ℕ} (hn : 1 < n) (hnOdd :
 branches. Choose a prime factor and apply `strongMillerRabinPass_not_of_prime_dvd`, then
 expand the negated pass condition. This is the unbounded factor-witness interface. -/
 theorem exists_prime_factor_strongMillerRabin_witness {n : ℕ} (hn : 1 < n) (hnOdd : Odd n) :
-    let s := padicValNat 2 (n - 1)
-    let d := Nat.divMaxPow (n - 1) 2
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     ∃ p : ℕ,
       Nat.Prime p ∧
         p ∣ n ∧ (p : ZMod n) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
