@@ -15,7 +15,7 @@ $$
 具体的には、一意な分解を
 
 $$
-n - 1 = 2^s d,\qquad s, d \in \mathbb{N},\qquad d \text{ は奇数}
+n - 1 = 2^s d,\qquad s, d \in ℕ,\qquad d \text{ は奇数}
 $$
 
 と書く。底 $p$ に対する強 Miller–Rabin の合格条件は、次の冪合同条件である。
@@ -23,7 +23,7 @@ $$
 $$
 p^d \equiv 1 \pmod n
 \lor
-\exists j \in \mathbb{N},\quad j < s \land p^{2^j d} \equiv -1 \pmod n
+\exists j \in ℕ,\quad j < s \land p^{2^j d} \equiv -1 \pmod n
 $$
 
 この条件は任意の自然数底に定義され、実行用判定 `strongMillerRabinWithBase n p` が `true` を返すことと同値である。対応する定理は [Decomposition.lean](../PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) の `strongMillerRabinWithBase_eq_true_iff_pass` である。
@@ -36,11 +36,11 @@ n \text{ が合成数}
 \exists p \text{ 素数},\quad
 p \le (\ln\mathrel{} n)^2
 \land p^d \not\equiv 1 \pmod n
-\land \forall j \in \mathbb{N},\quad
+\land \forall j \in ℕ,\quad
 j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n
 $$
 
-ここで $\mathbb{N} = \lbrace 0, 1, 2, \ldots \rbrace$ とし、 $\ln$ は自然対数を表す。素数から合格条件への向きは無条件であり、上界内の全素数底の合格から素数性への向きに GRH を用いる。素数入力では、上界内の素数底は $p < n$ を満たし、 $n$ と互いに素になる。
+ここで $ℕ = \lbrace 0, 1, 2, \ldots \rbrace$ とし、 $\ln$ は自然対数を表す。素数から合格条件への向きは無条件であり、上界内の全素数底の合格から素数性への向きに GRH を用いる。素数入力では、上界内の素数底は $p < n$ を満たし、 $n$ と互いに素になる。
 
 Lean では、 $n - 1$ の 2 進付値 $s$ と奇数部分 $d$ をそれぞれ `padicValNat 2 (n - 1)` と `Nat.divMaxPow (n - 1) 2` として定義し、合同式を `ZMod n` の等式・不等式として表す。 GRH は [既存の定義](../PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) `PseudoPrime.AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis` を仮定する。 GRH 自体を証明したという主張ではない。
 

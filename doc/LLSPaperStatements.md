@@ -36,7 +36,7 @@ Lamzouri・Li・Soundararajanによる論文[「Conditional bounds for the least
 
 RHはリーマンゼータ関数の非自明零点の実部が1/2であるという仮定である。GRHは、すべての原始複素ディリクレ指標のL関数について同じ主張をする。法1の指標を含むため、GRHからRHも得られる。
 
-対数は自然対数、 $\Lambda$ はフォン・マンゴルト関数、 $\gamma$ はオイラー定数である。法 $q$ は自然数とし、指標または単数群を用いる命題では $q \ne 0$ を仮定する。 $G_q=(\mathbb Z/q\mathbb Z)^\times$ とし、 $H \subseteq G_q$ の指数を $h=[G_q:H]$ と書く。単数でない剰余類は $H$ の像に含まれない。
+対数は自然対数、 $\Lambda$ はフォン・マンゴルト関数、 $\gamma$ はオイラー定数である。法 $q$ は自然数とし、指標または単数群を用いる命題では $q \ne 0$ を仮定する。 $G_q=(ℤ/qℤ)^\times$ とし、 $H \subseteq G_q$ の指数を $h=[G_q:H]$ と書く。単数でない剰余類は $H$ の像に含まれない。
 
 $\chi$ は複素数値ディリクレ指標、 $L(s,\chi)$ はその解析接続である。偶指標 $\chi(-1)=1$ では $a=0$、奇指標では $a=1$ とする。以下で扱う法 $q \ge 3$ の原始指標について、mathlib の `completedLFunction` を $F_\chi$ と書く。 $\mathrm{Re}s > 1$ での表示は
 
@@ -133,7 +133,7 @@ $$
 
 ## 系1.1 `lls_corollary11`
 
-前提はGRHと素数 $q \ge 5$ である。正の整数のうち、 $\mathbb Z/q\mathbb Z$ で平方にならない最小のもの $n$ が存在し、
+前提はGRHと素数 $q \ge 5$ である。正の整数のうち、 $ℤ/qℤ$ で平方にならない最小のもの $n$ が存在し、
 
 $$
 n < (\log q)^2
@@ -622,7 +622,7 @@ GRHの下で、原始非主指標の重複度付き零点和は絶対収束す�
 
 $$
 \begin{aligned}
-\mathcal R_{f,\chi,K}(x)
+ℛ_{f,\chi,K}(x)
 &=\frac1{2\pi i}\int_{(c_-)}
 -\frac{\xi_{\mathrm{LLS}}'}{\xi_{\mathrm{LLS}}}
 \left(\frac12+s,\chi\right)K(s)x^s\mathrm{d}s,\\
@@ -633,7 +633,7 @@ $$
 とする。関数等式で右半平面へ戻すと、対数微分に $\frac12\log f$ が現れる。残りは $F_{\overline\chi}'/F_{\overline\chi}$ であり、 $\mathrm{Re}(1/2-s) > 1$ ではEuler級数とガンマ因子によって法・指標に一様に評価できる。したがって
 
 $$
-\mathcal R_{f,\chi,K}(x)
+ℛ_{f,\chi,K}(x)
 =\frac{\log f}{2}\frac1{2\pi i}\int_{(c_-)}K(s)x^s\mathrm{d}s
 +O_K(x^{c_-})
 $$
@@ -641,14 +641,14 @@ $$
 となる。例えば $K(s)=\Gamma(s+1)$、 $\delta=1/4$、 $c_-=-5/8$ を選ぶ。この核は指定された帯内で正則であり、逆Mellin変換 $\widetilde K(u)=u e^{-u}$ はすべての $u > 0$ で正なので、原文の核条件を満たす。核の極を越えずに積分線を移せるため、核だけの積分は $x^{-1}e^{-1/x}$ に等しく、
 
 $$
-\mathcal R_{f,\chi,K}(x)
+ℛ_{f,\chi,K}(x)
 =\frac{\log f}{2x}e^{-1/x}+O_K(x^{-5/8})
 $$
 
 を得る。奇素数の法 $q=f \to \infty$ に対して原始非主指標を選び、 $x=(\log q)^2$ とすれば
 
 $$
-x^{1/2}\mathcal R_{q,\chi,K}(x)
+x^{1/2}ℛ_{q,\chi,K}(x)
 =\frac12e^{-1/x}+O_K(x^{-1/8})\longrightarrow\frac12.
 $$
 

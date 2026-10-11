@@ -11,7 +11,7 @@ C_h(\varepsilon)=
 \left(\frac{\log(2h)}{\log(2h)-4}\right)^2
 $$
 
-とする。ここで $h=[(\mathbb Z/q\mathbb Z)^\times:H]$ は部分群の指数、 $\log$ は自然対数である。Lean命題は、GRHの下で、固定した $h \ge 4$ と任意の $\varepsilon > 0$ に対して閾値 $Q$ が存在し、 $q \ge Q$ と指数 $h$ の任意の部分群 $H$ について、 $p \nmid q$ かつ $p \bmod q \notin H$ を満たす最小素数が $C_h(\varepsilon)(\log q)^2$ 未満となることを述べる。閾値は $h,\varepsilon$ に依存してよいが、 $q,H$ には依存しない。
+とする。ここで $h=[(ℤ/qℤ)^\times:H]$ は部分群の指数、 $\log$ は自然対数である。Lean命題は、GRHの下で、固定した $h \ge 4$ と任意の $\varepsilon > 0$ に対して閾値 $Q$ が存在し、 $q \ge Q$ と指数 $h$ の任意の部分群 $H$ について、 $p \nmid q$ かつ $p \bmod q \notin H$ を満たす最小素数が $C_h(\varepsilon)(\log q)^2$ 未満となることを述べる。閾値は $h,\varepsilon$ に依存してよいが、 $q,H$ には依存しない。
 
 論文の第6.1節は、命題6.1による共通核の比較では先頭係数 $1/4$ より小さい上界を得られないことを述べる。本プロジェクトでは、この比較の限界を指数4〜6で $60/121$ に強めて形式化している。以下の係数障害自体はGRHを仮定しない解析的な命題であり、GRHから導かれる素数上界に適用する際に命題6.1と接続する。
 
@@ -67,11 +67,11 @@ $$
 
 ## 指数6のFourier双対評価
 
-指数6では、Mellin核に対応する関数を含む、より広いFourier試験関数のクラスに対して下限を証明する。 $F:\mathbb R\to\mathbb C$ のFourier変換は $(\mathcal F F)(t)=\int_{-\infty}^{\infty}F(x)e^{-2\pi ixt}dx$ の規約を用い、
+指数6では、Mellin核に対応する関数を含む、より広いFourier試験関数のクラスに対して下限を証明する。 $F:ℝ\toℂ$ のFourier変換は $(ℱ F)(t)=\int_{-\infty}^{\infty}F(x)e^{-2\pi ixt}dx$ の規約を用い、
 
 $$
 \begin{aligned}
-R(t)&=\Re(\mathcal F F)(t),\\
+R(t)&=\Re(ℱ F)(t),\\
 R_+(t)&=\max(R(t),0),\\
 R_-(t)&=\max(-R(t),0),
 \end{aligned}
@@ -108,7 +108,7 @@ $b=\log(5/2)$ と置くと、正規化した双対関数 `dualValue` は
 $$
 \begin{aligned}
 V(u)&=\frac{2\left(6/5-(1/2)e^{-ibu}\right)}{1-iu},\\
-(\mathcal Fw)(x)&=\frac{V(2x)}{2\pi}
+(ℱw)(x)&=\frac{V(2x)}{2\pi}
 \end{aligned}
 $$
 
@@ -143,7 +143,7 @@ $$
 
 $$
 \begin{aligned}
-(\mathcal F F_{K,\lambda})(t)&=\widetilde K(\lambda e^{2\pi t}),\\
+(ℱ F_{K,\lambda})(t)&=\widetilde K(\lambda e^{2\pi t}),\\
 \lVert F_{K,\lambda}\rVert_1&=M_K,\\
 J(F_{K,\lambda})&=\frac{D_6}{10\pi\sqrt\lambda}
 \end{aligned}

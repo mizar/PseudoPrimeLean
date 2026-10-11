@@ -7,7 +7,7 @@
 Fibonacci数を $F_0=0,F_1=1,F_{k+2}=F_k+F_{k+1}$ とする。入力 $n$ 以下のFibonacci数の最大添字を
 
 $$
-G(n)=\max\lbrace k\in\mathbb{N}\mid F_k\le n\rbrace
+G(n)=\max\lbrace k\in ℕ\mid F_k\le n\rbrace
 $$
 
 と定義する。mathlibの `Nat.greatestFib` に対応し、$F_{G(n)}\le n < F_{G(n)+1}$ を満たす。$F_1=F_2=1$ なので $G(1)=2$、$G(0)=0$ である。

@@ -33,7 +33,7 @@ $$
 More explicitly, write the unique decomposition
 
 $$
-n - 1 = 2^s d,\qquad s, d \in \mathbb{N},\quad d \text{ odd}.
+n - 1 = 2^s d,\qquad s, d \in ℕ,\quad d \text{ odd}.
 $$
 
 Then
@@ -44,7 +44,7 @@ n \text{ is prime}
 \forall p \text{ prime},\quad p \le (\ln\mathrel{} n)^2
 \Longrightarrow \bigl(p^d \equiv 1 \pmod n
 \lor
-\exists j \in \mathbb{N},\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
+\exists j \in ℕ,\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
 $$
 
 Equivalently, since $n > 1$, the same result can be stated on the composite side:
@@ -57,12 +57,12 @@ p \le (\ln\mathrel{} n)^2
 \land
 p^d \not\equiv 1 \pmod n
 \land
-\forall j \in \mathbb{N},\quad j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n.
+\forall j \in ℕ,\quad j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n.
 $$
 
 Thus, $n$ is composite if and only if there is a prime base not exceeding the stated bound for which the strong Miller–Rabin test rejects $n$.
 
-Here $\mathbb{N} = \lbrace 0, 1, 2, \ldots \rbrace$, matching Lean's `ℕ`.
+Here $ℕ = \lbrace 0, 1, 2, \ldots \rbrace$, matching Lean's `ℕ`.
 
 The two directions play different roles:
 

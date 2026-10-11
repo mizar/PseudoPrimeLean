@@ -32,7 +32,7 @@ $$
 具体的には、一意な分解を
 
 $$
-n - 1 = 2^s d,\qquad s, d \in \mathbb{N},\quad d \text{ は奇数}
+n - 1 = 2^s d,\qquad s, d \in ℕ,\quad d \text{ は奇数}
 $$
 
 と書くと、
@@ -43,7 +43,7 @@ n \text{ が素数}
 \forall p \text{ 素数},\quad p \le (\ln\mathrel{} n)^2
 \Longrightarrow \bigl(p^d \equiv 1 \pmod n
 \lor
-\exists j \in \mathbb{N},\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
+\exists j \in ℕ,\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
 $$
 
 前提が $n > 1$ なので、同じ GRH の仮定の下で、次のように同値に言い換えられる。
@@ -56,12 +56,12 @@ p \le (\ln\mathrel{} n)^2
 \land
 p^d \not\equiv 1 \pmod n
 \land
-\forall j \in \mathbb{N},\quad j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n.
+\forall j \in ℕ,\quad j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n.
 $$
 
 つまり、奇数 $n > 1$ の合成数性は、それを棄却する素数底 $p \le (\ln\mathrel{} n)^2$ の存在と同値である。
 
-ここで $\mathbb{N} = \lbrace 0, 1, 2, \ldots \rbrace$ とし、Lean の `ℕ` に合わせる。
+ここで $ℕ = \lbrace 0, 1, 2, \ldots \rbrace$ とし、Lean の `ℕ` に合わせる。
 
 同値の二つの向きでは、仮定の役割が異なる。
 

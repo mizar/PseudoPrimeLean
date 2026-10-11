@@ -78,7 +78,7 @@ $n-1 = 2^{s_-}d_-$、$d_-$ は奇数、$s_- = v_2(n-1)$ とする。底 $a$ の�
 $$
 a^{d_-} \equiv 1 \pmod n
 \quad\lor\quad
-\exists j \in \mathbb{N},\quad
+\exists j \in ℕ,\quad
 j < s_- \land a^{2^j d_-} \equiv -1 \pmod n
 $$
 
@@ -143,7 +143,7 @@ $$
 
 が成り立つ。
 
-理由は有限体でのFrobenius写像にある。$D$ が平方剰余なら両根は $\mathbb{F}_p$ にあり、$\alpha^p=\alpha,\beta^p=\beta$ となる。非平方剰余なら2次拡大体で $\alpha^p=\beta,\beta^p=\alpha$ となる。後者では $\alpha^{p+1}=\beta^{p+1}=Q$ なので、上の式は $U_{p+1}=0,V_{p+1}=2Q$ になる。
+理由は有限体でのFrobenius写像にある。$D$ が平方剰余なら両根は $𝔽_p$ にあり、$\alpha^p=\alpha,\beta^p=\beta$ となる。非平方剰余なら2次拡大体で $\alpha^p=\beta,\beta^p=\alpha$ となる。後者では $\alpha^{p+1}=\beta^{p+1}=Q$ なので、上の式は $U_{p+1}=0,V_{p+1}=2Q$ になる。
 
 BPSWでは必ず $J(D,n)=-1$ となるパラメータを選び、次の2条件を使う。
 
@@ -163,7 +163,7 @@ $n+1 = 2^{s_+}d_+$、$d_+$ は奇数、$s_+ = v_2(n+1)$ とする。強Lucas条�
 $$
 U_{d_+} \equiv 0 \pmod n
 \quad\lor\quad
-\exists r \in \mathbb{N},\quad
+\exists r \in ℕ,\quad
 r < s_+ \land V_{2^r d_+} \equiv 0 \pmod n
 $$
 
