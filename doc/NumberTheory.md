@@ -14,11 +14,13 @@
 | [Factorization.lean](../PseudoPrime/NumberTheory/Factorization.lean) | 素因数分解から必要な素因数を取り出す補題 |
 | [TwoAdic.lean](../PseudoPrime/NumberTheory/TwoAdic.lean) | 奇数部分の抽出と2進分解に伴うgcdの恒等式 |
 | [Jacobi/Normalization.lean](../PseudoPrime/NumberTheory/Jacobi/Normalization.lean) | Jacobi記号の分子の符号・2冪と分母の2冪の分解 |
+| [Jacobi/Symbol.lean](../PseudoPrime/NumberTheory/Jacobi/Symbol.lean) | 2進分解と累積符号による記号専用再帰、参照計算との一致 |
 | [Jacobi/Gcd.lean](../PseudoPrime/NumberTheory/Jacobi/Gcd.lean) | 記号・gcd共有状態、不変条件、燃料による停止保証 |
-| [Jacobi/Fast.lean](../PseudoPrime/NumberTheory/Jacobi/Fast.lean) | 全自然数分母のJacobi記号・gcd共有入口と正当性 |
+| [Jacobi/Fast.lean](../PseudoPrime/NumberTheory/Jacobi/Fast.lean) | 全自然数分母の記号専用入口・gcd共有入口と正当性 |
 | [Kronecker/Basic.lean](../PseudoPrime/NumberTheory/Kronecker/Basic.lean) | 全整数入力のKronecker記号の数学的仕様 |
 | [Kronecker/Compatibility.lean](../PseudoPrime/NumberTheory/Kronecker/Compatibility.lean)・[Kronecker/Properties.lean](../PseudoPrime/NumberTheory/Kronecker/Properties.lean) | Jacobi記号との対応と記号の零判定 |
 | [Kronecker/Computation.lean](../PseudoPrime/NumberTheory/Kronecker/Computation.lean) | 全整数入力の記号・gcd同時計算と正当性 |
+| [Kronecker/Fast.lean](../PseudoPrime/NumberTheory/Kronecker/Fast.lean) | 全整数入力の記号専用計算と正当性 |
 | [Jacobi/Basic.lean](../PseudoPrime/NumberTheory/Jacobi/Basic.lean) | Jacobi 記号の基本的な算術 |
 | [Jacobi/Prime.lean](../PseudoPrime/NumberTheory/Jacobi/Prime.lean) | 素数を法とする Jacobi 記号の性質 |
 | [Jacobi/Numerator.lean](../PseudoPrime/NumberTheory/Jacobi/Numerator.lean) | 指定した Jacobi 値を持つ分子の構成 |
@@ -31,7 +33,7 @@
 | [JacobiCongruence.lean](../PseudoPrime/NumberTheory/JacobiCongruence.lean)・[DirichletCharacter.lean](../PseudoPrime/NumberTheory/DirichletCharacter.lean) | Jacobi 合同式と一般指標の法変更 |
 | [PrimeIndexing.lean](../PseudoPrime/NumberTheory/PrimeIndexing.lean)・[PrimeTable.lean](../PseudoPrime/NumberTheory/PrimeTable.lean)・[PrimorialCertificates.lean](../PseudoPrime/NumberTheory/PrimorialCertificates.lean) | 素数列、最初の 163 素数の表、累積 primorial の有限証明書 |
 
-数学的な記号・証人の宣言は`PseudoPrime.NumberTheory`に置く。参照用のJacobi計算は`PseudoPrime.NumberTheory.Jacobi`、記号とgcdの共有状態・遷移は`PseudoPrime.NumberTheory.Jacobi.Gcd`、記号に依存しない2進分解の補題は`PseudoPrime.NumberTheory.TwoAdic`に属する。`kroneckerSym`の仕様・性質と、`kroneckerGcd`の実行・正当性は別のモジュールに分けている。
+数学的な記号・証人の宣言は`PseudoPrime.NumberTheory`に置く。参照用のJacobi計算は`PseudoPrime.NumberTheory.Jacobi`、記号とgcdの共有状態・遷移は`PseudoPrime.NumberTheory.Jacobi.Gcd`、記号に依存しない2進分解の補題は`PseudoPrime.NumberTheory.TwoAdic`に属する。`kroneckerSym`の仕様・性質と、`kroneckerGcd`の実行・正当性は別のモジュールに分けている。`jacobiSymFast` と `kroneckerSymFast` はgcdを計算しない記号専用の入口であり、記号とgcdの同時計算には `jacobiGcdFast` と `kroneckerGcd` を使う。
 
 高速計算と停止上界の理論は [Fibonacci最大添字と互除法の燃料](FibonacciEuclid.md) にまとめている。Jacobi計算への接続も同ページで説明する。
 
@@ -70,3 +72,5 @@ import PseudoPrime.NumberTheory.JacobiWitness.Existence
 [PrimeTest](PrimeTest.md) は証人を Selfridge 候補へ移送して探索成功を示す。[PseudoSquare](PseudoSquare.md) は最小証人の有限最大と解析的上界を構成し、[SelfridgeBoundGrh](SelfridgeBoundGrh.md) がそれを Selfridge 停止値へ接続する。
 
 [構成全体へ](README.md)
+
+燃料計算を省く同時計算には `kroneckerGcdFast` と `jacobiGcdFuelFreeFast` を使う。分子が各回で真に減少することから停止を証明し、零の記号になった後もgcdを求める計算を続ける。既存の `kroneckerGcd` と `jacobiGcdFast` はFibonacci燃料を使う実装として残している。両方式が全入力で同じ値を返すことも証明済みである。

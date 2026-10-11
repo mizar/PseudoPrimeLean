@@ -1,8 +1,14 @@
-# PrimeTest — 実行可能な素数性テストと仕様
+# PrimeTestの実行可能な素数性テストと仕様
 
 対象: [`PseudoPrime/PrimeTest`](../PseudoPrime/PrimeTest)。公開入口は [`PseudoPrime/PrimeTest.lean`](../PseudoPrime/PrimeTest.lean)、名前空間は `PseudoPrime.PrimeTest`。
 
 この領域では、Boolean 値を返す素数性テストとその数学的仕様、素数を受理する証明、Selfridge パラメータ探索を実装する。
+
+## Jacobi評価の実行範囲
+
+Wheel30のSelfridge走査は `JacobiFuel.lean` の `jacobiExecutable` と証明付き比較を通じて、NumberTheoryの全入力Jacobi実装を使う。Euler–JacobiのBool、LucasVのBool、Lucas・LucasV・StrongLucasのDecision、StrongLucasの一般パラメータ実行と共有計算は、mathlibの `jacobiSym` を評価する。古典的なSelfridge昇順探索もmathlibの記号を使う。数学的仕様のPropは、いずれも `jacobiSym` で表す。`jacobiExecutable` はgcdを計算しない `jacobiSymFast` を使う。記号とgcdを併せて使う場合は `NumberTheory.jacobiGcdFast` を呼び出す。
+
+mathlibは `jacobiSym` を実行時に高速算法へ置き換える。記号専用実装や共有gcd付き実装への変更が常に高速化になるとは限らないため、上記の実行経路は一律に置き換えていない。
 
 ## 構成
 
@@ -12,7 +18,7 @@
 |---|---|
 | [Basic.lean](../PseudoPrime/PrimeTest/Basic.lean) | `PrimalityTest` と `PrimalityTestSpec` |
 | [Precheck.lean](../PseudoPrime/PrimeTest/Precheck.lean) | 小さい入力・偶数・平方数の事前判定 |
-| [JacobiFuel.lean](../PseudoPrime/PrimeTest/JacobiFuel.lean) | 2進付値による一括除去、Fibonacci燃料、正規化した整数入力のJacobi計算 |
+| [JacobiFuel.lean](../PseudoPrime/PrimeTest/JacobiFuel.lean) | NumberTheoryのJacobi計算の互換名称、全入力の評価入口、証明付き比較 |
 | [EulerJacobi](../PseudoPrime/PrimeTest/EulerJacobi) | 自然数底・整数底の Euler–Jacobi 合同式 |
 | [MillerRabin](../PseudoPrime/PrimeTest/MillerRabin) | Strong Miller–Rabin、底 2、素数完全性 |
 | [Lucas](../PseudoPrime/PrimeTest/Lucas) | パラメータ、整数列、ZMod 上の列、高速評価、有限体による証明 |

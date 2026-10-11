@@ -27,6 +27,8 @@ public import PseudoPrime.NumberTheory.JacobiCharacterPrimeEvaluation
 public import PseudoPrime.NumberTheory.PrimitiveJacobiCharacter
 public import PseudoPrime.NumberTheory.Kronecker.Properties
 public import PseudoPrime.NumberTheory.Kronecker.Computation
+public import PseudoPrime.NumberTheory.Kronecker.Fast
+public import PseudoPrime.NumberTheory.Kronecker.GcdFast
 public import PseudoPrime.NumberTheory.Jacobi.Fast
 public import PseudoPrime.NumberTheory.Jacobi.Basic
 public import PseudoPrime.NumberTheory.Jacobi.Prime

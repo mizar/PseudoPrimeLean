@@ -193,11 +193,11 @@ $$
 
 ### BPSWの実行経路への接続
 
-`jacobiExecutable` は、奇数の法では正規化付きの一括除去を使う。その他の法では `jacobiSym` の既存の定義を使う。`jacobiExecutable_eq` により、すべての整数の分子と自然数の法で `jacobiSym` と一致する。
+`jacobiExecutable` は、すべての自然数分母に対して `NumberTheory.jacobiSymFast` を使う。`jacobiGcdFast` は零分母の規約と偶数分母の2冪係数を補正し、mathlibの `jacobiSym` と全入力で一致する。記号のみが必要な場合は `jacobiSymFast`、記号とgcdが必要な場合は `jacobiGcdFast` を使う。前者は記号専用の再帰を使い、gcdの復元とFibonacci燃料の計算を行わない。`jacobiExecutable_eq` は素数判定側の入口と数学的仕様との一致を保証する。
 
 Wheel30のSelfridge走査では、候補の停止判定と、停止後のパラメータ・因子の分類にこの実行入口を使う。分類に必要な命題は従来の `jacobiSym D n = -1` のまま保持し、`jacobiEqDecidable` が実行結果からその証拠を返す。C++の等号除外に対応する比較用走査にも同じ入口を使う。通常版・強化版のWheel30 Bool、予算付きDecision、段階実行はこの走査を通る。
 
-Selfridge走査の燃料は候補区間の整数の個数を数え、Jacobi内部の燃料は一括除去後の反復を数える。Jacobiの自動予算は十分性を証明済みなので、外側の走査の枯渇と混同しない。古典的な純粋 $-1$ 探索や一般のLucas検査のJacobi評価は今回の置換対象に含めていない。参考実装との回帰照合と性能測定は未実施である。
+Selfridge走査の燃料は候補区間の整数の個数を数える。gcd共有版と燃料付き参照版のJacobi燃料は、一括除去後の反復を数え、選んだ予算の十分性は証明済みである。記号専用の `jacobiSymFast` は燃料を選ばず、分子の減少によって停止する。古典的な純粋 $-1$ 探索や一般のLucas検査のJacobi評価は今回の置換対象に含めていない。記号・gcdと燃料の回帰検査は `Tests/KroneckerGcd.lean` で行う。テストのビルドには `lake build PseudoPrime/Tests/KroneckerGcd.lean` を明示的に実行する。mathlibのJacobi計算との比較測定は `PseudoPrimeWork/tools/benchmark_kronecker_gcd.lean` で再実行できる。
 
 ## 公開モジュール
 
@@ -205,6 +205,10 @@ Selfridge走査の燃料は候補区間の整数の個数を数え、Jacobi内�
 |---|---|
 | [Fibonacci/Greatest.lean](../PseudoPrime/NumberTheory/Fibonacci/Greatest.lean) | 隣接値の状態、二進探索、十分な探索燃料、最大添字との一致 |
 | [Euclid.lean](../PseudoPrime/NumberTheory/Euclid.lean) | 最小停止回数、Fibonacci燃料、gcdの正当性、最悪例、除数縮小付き遷移 |
-| [PrimeTest/JacobiFuel.lean](../PseudoPrime/PrimeTest/JacobiFuel.lean) | 2因子一括除去の燃料付きJacobi、枯渇の排除、自然数・整数入力の正当性 |
+| [Jacobi/Fuel.lean](../PseudoPrime/NumberTheory/Jacobi/Fuel.lean) | 参照計算のFibonacci燃料と枯渇の排除 |
+| [Jacobi/Symbol.lean](../PseudoPrime/NumberTheory/Jacobi/Symbol.lean) | 累積符号による記号専用の末尾再帰と参照計算との一致 |
+| [Jacobi/Gcd.lean](../PseudoPrime/NumberTheory/Jacobi/Gcd.lean) | 奇数核の記号・gcd同時計算、不変条件、停止保証 |
+| [Jacobi/Fast.lean](../PseudoPrime/NumberTheory/Jacobi/Fast.lean) | 全自然数分母のJacobi実行入口と正当性 |
+| [PrimeTest/JacobiFuel.lean](../PseudoPrime/PrimeTest/JacobiFuel.lean) | 互換名称、素数判定用の評価入口、証明付き比較 |
 
-Fibonacciと互除法の名前空間は、それぞれ `PseudoPrime.NumberTheory.Fibonacci` と `PseudoPrime.NumberTheory.Euclid` である。Jacobiの実装と定理は `PseudoPrime.PrimeTest.ReferenceArithmetic` に置く。前者は `import PseudoPrime.NumberTheory`、後者は `import PseudoPrime.PrimeTest` で利用できる。`import PseudoPrime` は両方を公開する。
+Fibonacciと互除法の名前空間は、それぞれ `PseudoPrime.NumberTheory.Fibonacci` と `PseudoPrime.NumberTheory.Euclid` である。Jacobiの参照計算は `PseudoPrime.NumberTheory.Jacobi`、共有した奇数核は `PseudoPrime.NumberTheory.Jacobi.Gcd`、全入力の実行APIは `PseudoPrime.NumberTheory` に置く。`PseudoPrime.PrimeTest.ReferenceArithmetic` は互換名称と素数判定向けの入口を提供する。数論のAPIは `import PseudoPrime.NumberTheory`、素数判定側の入口は `import PseudoPrime.PrimeTest` で利用できる。`import PseudoPrime` は両方を公開する。

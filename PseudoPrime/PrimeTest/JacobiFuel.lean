@@ -28,7 +28,7 @@ export PseudoPrime.NumberTheory.Jacobi (jacobiNat_round jacobiNatBatchedFuel
   jacobiNormalizedBatchedFuel_eq jacobiNormalizedBatchedFuel_log2 jacobiNatBatchedFuel_sound)
 
 /-- Executable Jacobi entry on every integer numerator and natural modulus.
-All nonzero inputs use the shared symbol-and-gcd trajectory with certified Fibonacci fuel.
+Nonzero denominators use the symbol-only recursion without gcd computation or fuel selection.
 The factor-at-two correction and zero-input branches preserve mathlib conventions.
 This entry supplies executable guards while their proofs continue to use jacobiSym. -/
 def jacobiExecutable (a : ℤ) (n : ℕ) : ℤ :=

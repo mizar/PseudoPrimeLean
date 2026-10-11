@@ -37,9 +37,9 @@ remainder update the two gcd operands. Sign zero still performs the full arithme
 def step (st : State) : State :=
   if st.m = 0 then st
   else
-    let t := Nat.maxPowDvdDiv 2 st.m
-    let factor : ℤ := twoPowerSign st.c t.1 * (if t.2 % 4 = 3 ∧ st.c % 4 = 3 then -1 else 1)
-    ⟨t.2, st.c % t.2, st.sign * factor⟩
+    let (e, d) := Nat.maxPowDvdDiv 2 st.m
+    let factor : ℤ := twoPowerSign st.c e * (if d % 4 = 3 ∧ st.c % 4 = 3 then -1 else 1)
+    ⟨d, st.c % d, st.sign * factor⟩
 
 /-- Run at most the supplied number of batched rounds.
 Terminal states return immediately, so excess fuel incurs no further rounds.
@@ -208,13 +208,14 @@ theorem runFuel_fst (fuel : ℕ) (st : State) :
           rfl)
 
 /-- Exhaustion yields a divisor-reducing nonterminal trajectory at the supplied budget.
-The arbitrary-budget symbol projection transfers failure to the certified old fuel procedure.
+A terminal shared state would return `some`; exhaustion therefore gives a nonterminal result.
+Apply the shared run trajectory directly, without using the reference symbol recursion.
 No oddness assumption is needed for this termination interface. -/
 theorem runFuel_none_nonstop (fuel : ℕ) (st : State) (h : runFuel fuel st = none) :
     Euclid.divisionNonstop fuel st.c st.m := by
-  have hp := runFuel_fst fuel st
-  rw [h, Option.map_none] at hp
-  exact jacobiNatBatchedFuel_none_nonstop _ _ _ (Option.map_eq_none_iff.mp hp.symm)
+  apply run_nonterminal_divisionNonstop fuel st
+  intro hm
+  simp only [runFuel, hm, ite_true, Option.some_ne_none] at h
 
 /-- Any budget at least the Fibonacci step bound prevents exhaustion.
 A nonterminal result would give a forbidden divisor-reducing trajectory.

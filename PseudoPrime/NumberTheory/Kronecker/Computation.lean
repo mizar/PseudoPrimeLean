@@ -29,13 +29,12 @@ The odd kernel uses its certified Fibonacci budget, then restores the common two
 The optional correction repeats the factor at two for natural-Jacobi compatibility.
 The default pair only represents an unreachable exhausted result; it invokes no fallback. -/
 def kroneckerGcdNonzero (a n : ℤ) (jacobiCorrection : Bool := false) : ℤ × ℕ :=
-  let ta := Nat.maxPowDvdDiv 2 a.natAbs
-  let tn := Nat.maxPowDvdDiv 2 n.natAbs
-  let s := kroneckerNormalizationSign a n ta.1 tn.1 tn.2
-  let r := ta.2 % tn.2
-  let out := (Jacobi.Gcd.runFuel (Euclid.stepBound r) ⟨tn.2, r, s⟩).getD (0, 0)
-  (if jacobiCorrection then kroneckerTwoPowerFactor a tn.1 * out.1 else out.1,
-    2 ^ min ta.1 tn.1 * out.2)
+  let (ea, da) := Nat.maxPowDvdDiv 2 a.natAbs
+  let (en, dn) := Nat.maxPowDvdDiv 2 n.natAbs
+  let s := kroneckerNormalizationSign a n ea en dn
+  let r := da % dn
+  let out := (Jacobi.Gcd.runFuel (Euclid.stepBound r) ⟨dn, r, s⟩).getD (0, 0)
+  (if jacobiCorrection then kroneckerTwoPowerFactor a en * out.1 else out.1, 2 ^ min ea en * out.2)
 
 /-- Executable Kronecker symbol and exact gcd for every integer input.
 Zero inputs return the specified boundary pair directly. Nonzero inputs share one
