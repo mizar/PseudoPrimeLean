@@ -717,7 +717,7 @@ theorem JacobiCharacterArithmeticData.discriminant_eq_squarefreePart_of_two_eq_o
 
 /-- A prime divisor of `n` is an immediate `≠ 1` Jacobi witness. -/
 theorem primeNeOneWitness_mem_of_dvd {n p : ℕ} (hp : p.Prime) (hodd : Odd p) (hpdvd : p ∣ n) :
-    p ∈ PrimeNeOneWitnessSet n := by
+    p ∈ primeNeOneWitnessSet n := by
   refine ⟨hp, hodd, ?_⟩
   have hnotcop : ¬Nat.Coprime n p := by
     intro hcop
@@ -744,7 +744,7 @@ Role: transfers any squarefree-part witness to the original nonsquare input.
 -/
 theorem primeNeOneWitness_mem_of_squarefreePart_mem {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : JacobiCharacterArithmeticData n hn hns) {p : ℕ}
-    (hp : p ∈ PrimeNeOneWitnessSet bridge.squarefreePart) : p ∈ PrimeNeOneWitnessSet n := by
+    (hp : p ∈ primeNeOneWitnessSet bridge.squarefreePart) : p ∈ primeNeOneWitnessSet n := by
   rcases hp with ⟨hpp, hodd, hvalue⟩
   by_cases hpdvd : p ∣ n
   · exact primeNeOneWitness_mem_of_dvd hpp hodd hpdvd
@@ -764,13 +764,13 @@ Role: transfers numerical upper bounds on the least squarefree-part witness.
 -/
 theorem primeNeOneWitness_le_of_squarefreePart {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : JacobiCharacterArithmeticData n hn hns)
-    {hd : (PrimeNeOneWitnessSet bridge.squarefreePart).Nonempty} :
+    {hd : (primeNeOneWitnessSet bridge.squarefreePart).Nonempty} :
     primeNeOneWitness n
-        (show (PrimeNeOneWitnessSet n).Nonempty from by
+        (show (primeNeOneWitnessSet n).Nonempty from by
           obtain ⟨p, hp⟩ := hd
           exact ⟨p, primeNeOneWitness_mem_of_squarefreePart_mem bridge hp⟩) ≤
       primeNeOneWitness bridge.squarefreePart hd := by
-  let hdn : (PrimeNeOneWitnessSet n).Nonempty := by
+  let hdn : (primeNeOneWitnessSet n).Nonempty := by
     obtain ⟨p, hp⟩ := hd
     exact ⟨p, primeNeOneWitness_mem_of_squarefreePart_mem bridge hp⟩
   have hp := primeNeOneWitness_mem bridge.squarefreePart hd
@@ -781,12 +781,12 @@ theorem primeNeOneWitness_le_of_squarefreePart {n : ℕ} {hn : Odd n} {hns : ¬I
 theorem exists_primeNeOneWitness_le_of_squarefreePart_eq {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : JacobiCharacterArithmeticData n hn hns) {d p : ℕ} (hd : bridge.squarefreePart = d)
     (hpp : p.Prime) (hodd : Odd p) (hvalue : jacobiSym d p ≠ 1) :
-    ∃ hdn : (PrimeNeOneWitnessSet n).Nonempty, primeNeOneWitness n hdn ≤ p := by
-  have hpd : p ∈ PrimeNeOneWitnessSet bridge.squarefreePart := by
+    ∃ hdn : (primeNeOneWitnessSet n).Nonempty, primeNeOneWitness n hdn ≤ p := by
+  have hpd : p ∈ primeNeOneWitnessSet bridge.squarefreePart := by
     rw [hd]
     exact ⟨hpp, hodd, hvalue⟩
   have hpn := primeNeOneWitness_mem_of_squarefreePart_mem bridge hpd
-  let hdn : (PrimeNeOneWitnessSet n).Nonempty := ⟨p, hpn⟩
+  let hdn : (primeNeOneWitnessSet n).Nonempty := ⟨p, hpn⟩
   exact ⟨hdn, primeNeOneWitness_le n hdn hpn⟩
 
 /-- The prime `3` witnesses `jacobiSym 5 3 ≠ 1`, by its Legendre-symbol power identity. -/
@@ -861,13 +861,13 @@ Role: supplies an unconditional logarithmic-square witness bound for these three
 theorem exists_primeNeOneWitness_cast_le_log_sq_of_small_squarefreePart {n : ℕ} {hn : Odd n}
     {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns) (hn11 : 11 ≤ n)
     (hd : bridge.squarefreePart = 3 ∨ bridge.squarefreePart = 5 ∨ bridge.squarefreePart = 7) :
-    ∃ hdn : (PrimeNeOneWitnessSet n).Nonempty,
+    ∃ hdn : (primeNeOneWitnessSet n).Nonempty,
       (primeNeOneWitness n hdn : ℝ) ≤ (Real.log n) ^ 2 := by
   rcases hd with h3 | h5 | h7
   · have hzero : jacobiSym (3 : ℤ) 3 = 0 := by
       apply jacobiSym.eq_zero_iff.mpr
       exact ⟨Nat.prime_three.ne_zero, by norm_num only⟩
-    have hmem : (3 : ℕ) ∈ PrimeNeOneWitnessSet 3 := by
+    have hmem : (3 : ℕ) ∈ primeNeOneWitnessSet 3 := by
       refine ⟨Nat.prime_three, by decide, ?_⟩
       change jacobiSym (3 : ℤ) 3 ≠ 1
       rw [hzero]
@@ -1069,7 +1069,7 @@ theorem JacobiCharacterArithmeticData.log_character_conductor_le_y_add_log_four 
 
 /-- Under a no-small-witness hypothesis, an odd prime divisor cannot occur below the cutoff. -/
 theorem not_dvd_of_no_primeNeOne_witness {n X p : ℕ} (hp : p.Prime) (hodd : Odd p) (hpX : p ≤ X)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ PrimeNeOneWitnessSet n) : ¬p ∣ n := by
+    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ primeNeOneWitnessSet n) : ¬p ∣ n := by
   intro hpdvd
   exact hno p hp hodd hpX (primeNeOneWitness_mem_of_dvd hp hodd hpdvd)
 
@@ -1098,7 +1098,7 @@ theorem primitiveQuadraticCharacter_apply_odd_prime {n p : ℕ} (hn : Odd n) (hp
 /-- The primitive character is one at every odd prime below `X` when no witness exists. -/
 theorem primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness {n X p : ℕ} (hn : Odd n)
     (hp : p.Prime) (hodd : Odd p) (hpX : p ≤ X)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ PrimeNeOneWitnessSet n) (hpdvd : ¬p ∣ n) :
+    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ primeNeOneWitnessSet n) (hpdvd : ¬p ∣ n) :
     primitiveQuadraticCharacter n hn (p : ℤ) = 1 := by
   rw [primitiveQuadraticCharacter_apply_odd_prime hn hp hodd hpdvd]
   have hj : jacobiSym n p = 1 := by
@@ -1118,7 +1118,7 @@ Role: supplies exact character values under a no-witness cutoff hypothesis.
 theorem JacobiCharacterArithmeticData.character_eq_one_of_no_primeNeOne_witness {n X p : ℕ}
     {hn : Odd n} {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns)
     (hp : p.Prime) (hodd : Odd p) (hpX : p ≤ X)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ PrimeNeOneWitnessSet n) :
+    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ primeNeOneWitnessSet n) :
     bridge.character (p : ℤ) = 1 := by
   have hpdvd : ¬p ∣ n := not_dvd_of_no_primeNeOne_witness hp hodd hpX hno
   rw [bridge.character_eq]
@@ -1137,7 +1137,7 @@ Role: transports the no-witness value-one condition through primitive normalizat
 theorem JacobiCharacterArithmeticData.primitiveCharacter_eq_one_of_no_primeNeOne_witness {n X p : ℕ}
     {hn : Odd n} {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns)
     (hp : p.Prime) (hodd : Odd p) (hpX : p ≤ X)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ PrimeNeOneWitnessSet n) :
+    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ primeNeOneWitnessSet n) :
     bridge.character.primitiveCharacter (p : ℤ) = 1 := by
   have hpdvd : ¬p ∣ n := not_dvd_of_no_primeNeOne_witness hp hodd hpX hno
   have hcdvd : bridge.character.conductor ∣ 4 * n := by
@@ -1196,7 +1196,7 @@ the character-value hypothesis for the weighted correction estimates. -/
 theorem JacobiCharacterArithmeticData.primitiveCharacter_eq_one_in_log_square_range {n : ℕ}
     {hn : Odd n} {hns : ¬IsSquare n} [NeZero (complexQuadraticCharacter n hn).conductor]
     (bridge : JacobiCharacterArithmeticData n hn hns) {y : ℝ} (hy : 1 ≤ y)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ PrimeNeOneWitnessSet n) :
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ primeNeOneWitnessSet n) :
     ∀ {k p : ℕ},
       k ∈ Finset.Icc 1 ⌊Real.log (y ^ 2) / Real.log 2⌋₊ →
         p ∈ Finset.Ioc 0 ⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊ →

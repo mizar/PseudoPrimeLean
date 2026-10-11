@@ -43,7 +43,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_o
     (hlogD : Real.log bridge.character.conductor ≤ y + Real.log 4)
     (hriemann : LLS.LLSRiemannWeightedLowerBound)
     (hriemannReciprocal : LLS.LLSRiemannReciprocalLowerBound)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = 0) : False := by
   let _ : NeZero bridge.character.conductor :=
     ⟨by
@@ -78,7 +78,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_commo
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 12 ≤ y)
     (hlogD : Real.log bridge.character.conductor ≤ y) (hriemann : LLS.LLSRiemannWeightedLowerBound)
     (hriemannReciprocal : LLS.LLSRiemannReciprocalLowerBound)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = -1) : False := by
   let _ : NeZero bridge.character.conductor :=
     ⟨by
@@ -113,7 +113,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 12 ≤ y)
     (hlogD : Real.log bridge.character.conductor ≤ y) (hriemann : LLS.LLSRiemannWeightedLowerBound)
     (hriemannReciprocal : LLS.LLSRiemannReciprocalLowerBound)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = 1) : False := by
   let _ : NeZero bridge.character.conductor :=
     ⟨by
@@ -146,7 +146,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_o
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 12 ≤ y)
     (hlogD : Real.log bridge.character.conductor ≤ y + Real.log 4)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = 0) : False := by
   have hriemann := LLS.llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann
   have hriemannReciprocal := LLS.llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann
@@ -167,7 +167,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_neg_one_branch_false_commo
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 12 ≤ y)
     (hlogD : Real.log bridge.character.conductor ≤ y)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = -1) : False := by
   have hriemann := LLS.llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann
   have hriemannReciprocal := LLS.llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann
@@ -188,7 +188,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 12 ≤ y)
     (hlogD : Real.log bridge.character.conductor ≤ y)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = 1) : False := by
   have hriemann := LLS.llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann
   have hriemannReciprocal := LLS.llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann
@@ -210,7 +210,7 @@ theorem qNeOneNegCutoffFalse {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {N : ℕ} (hNpos : 0 < N)
     (hN : 12 ≤ Real.log (N : ℝ)) (hNd : N ≤ bridge.squarefreePart)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = -1) : False := by
   have hy := bridge.y_ge_of_nat_cutoff_of_twelve hNpos hN hNd
   have hdvd : bridge.squarefreePart ∣ n := by
@@ -263,7 +263,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_one_branch_false_common_of
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {N : ℕ} (hNpos : 0 < N)
     (hN : 12 ≤ Real.log (N : ℝ)) (hNd : N ≤ bridge.squarefreePart)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = 1) : False := by
   have hy := bridge.y_ge_of_nat_cutoff_of_twelve hNpos hN hNd
   have hdvd : bridge.squarefreePart ∣ n := by
@@ -315,7 +315,7 @@ theorem primitiveQuadraticLogWeightedBounds_of_qneOne_zero_branch_false_common_o
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {N : ℕ} (hNpos : 0 < N)
     (hN : 12 ≤ Real.log (N : ℝ)) (hNd : N ≤ bridge.squarefreePart)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n)
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n)
     (h2 : bridge.character.primitiveCharacter 2 = 0) : False := by
   have hy := bridge.y_ge_of_nat_cutoff_of_twelve hNpos hN hNd
   have hlogD := bridge.log_character_conductor_le_y_add_log_four
@@ -337,7 +337,7 @@ theorem qNeOneAnalyticFalse_of_bridge_of_cutoff {n : ℕ} {hn : Odd n} {hns : ¬
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {N : ℕ} (hNpos : 0 < N)
     (hN : 12 ≤ Real.log (N : ℝ)) (hNd : N ≤ bridge.squarefreePart)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n) :
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n) :
     False := by
   rcases
     NumberTheory.isQuadratic_primitiveCharacter bridge.character bridge.character_quadratic
@@ -364,7 +364,7 @@ theorem qNeOneAnalyticFalse_of_bridge_of_explicit_cutoff {n : ℕ} {hn : Odd n} 
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hNd : 10 ^ 6 ≤ bridge.squarefreePart)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n) :
+    (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n) :
     False := by
   have hNpos : 0 < (10 ^ 6 : ℕ) := by norm_num only
   have hN : (12 : ℝ) ≤ Real.log ((10 ^ 6 : ℕ) : ℝ) := by

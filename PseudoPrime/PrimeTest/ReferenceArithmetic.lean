@@ -20,8 +20,8 @@ These aliases preserve existing qualified source references and theorem contract
 
 namespace PseudoPrime.PrimeTest.ReferenceArithmetic
 
-export PseudoPrime.NumberTheory.Jacobi
-  (jacobiSign2 oddPart_pos oddPart_le oddPart_odd jacobiRoundSign jacobiRoundSign_mul
-    jacobiNat jacobiNat_eq jacobiSigned jacobiSign4 jacobiSigned_eq)
+export PseudoPrime.NumberTheory.TwoAdic (oddPart_pos oddPart_le oddPart_odd)
+export PseudoPrime.NumberTheory.Jacobi (jacobiSign2 jacobiRoundSign jacobiRoundSign_mul jacobiNat
+  jacobiNat_eq jacobiSigned jacobiSign4 jacobiSigned_eq)
 
 end PseudoPrime.PrimeTest.ReferenceArithmetic

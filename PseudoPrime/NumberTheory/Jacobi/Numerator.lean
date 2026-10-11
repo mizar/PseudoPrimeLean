@@ -22,14 +22,6 @@ a natural number that is a quadratic nonresidue at that prime and `1` at every o
 
 namespace PseudoPrime.NumberTheory
 
-/-- Distinct members of a natural number's prime-factor finset are pairwise coprime. -/
-theorem primeFactors_pairwise_coprime (r : ℕ) :
-    Set.Pairwise (↑r.primeFactors : Set ℕ) (Function.onFun Nat.Coprime fun p => p) := by
-  intro p hp q hq hpq
-  exact
-    (Nat.coprime_primes (Nat.prime_of_mem_primeFactors hp) (Nat.prime_of_mem_primeFactors hq)).mpr
-      hpq
-
 /--
 For an odd nonsquare `r`, there is a CRT representative below the radical of `r` which is a
 quadratic nonresidue at one odd-multiplicity prime factor and is `1` at all other prime factors.
@@ -76,28 +68,12 @@ theorem exists_crt_residue_for_odd_factorization {r : ℕ} (hrodd : Odd r) (hns 
         (primeFactors_pairwise_coprime r)
   exact ⟨p₀, z.val, a, hp₀mem, hp₀odd, hzvalue, hacong, halt⟩
 
-namespace Internal
-
-/-- The Jacobi symbol distributes over a finite product in its denominator. -/
-theorem jacobi_finset_prod_right (a : ℤ) (s : Finset ℕ) (f : ℕ → ℕ) (hf : ∀ p ∈ s, f p ≠ 0) :
-    jacobiSym a (∏ p ∈ s, f p) = ∏ p ∈ s, jacobiSym a (f p) := by
-  induction s using Finset.induction_on with
-  | empty => simp only [Finset.prod_empty, jacobiSym.one_right]
-  | @insert p s hp ih =>
-    have hpne : f p ≠ 0 := hf p (Finset.mem_insert_self p s)
-    have hsne : ∏ q ∈ s, f q ≠ 0 :=
-      Finset.prod_ne_zero_iff.mpr fun q hq => hf q (Finset.mem_insert_of_mem hq)
-    rw [Finset.prod_insert hp, Finset.prod_insert hp, jacobiSym.mul_right' a hpne hsne]
-    exact congrArg (jacobiSym a (f p) * ·) (ih fun q hq => hf q (Finset.mem_insert_of_mem hq))
-
-end Internal
-
 /-- Every odd nonsquare has a natural numerator with Jacobi value `-1`; oddness ensures nonzero
 modulus. The CRT numerator is a nonresidue at one odd-multiplicity prime and one at all other prime
 factors. Multiplicativity over the factorization makes its full Jacobi value `-1`, providing the
 arithmetic input to smaller prime-witness existence. -/
-theorem exists_nat_neg_one_numerator {r : ℕ} (hrodd : Odd r) (hns : ¬IsSquare r) :
-    ∃ a : ℕ, jacobiSym a r = -1 := by
+theorem exists_nat_jacobiSym_eq_neg_one_of_odd_nonsquare {r : ℕ} (hrodd : Odd r)
+    (hns : ¬IsSquare r) : ∃ a : ℕ, jacobiSym a r = -1 := by
   have hr0 : r ≠ 0 := by
     have hrmod : r % 2 = 1 := Nat.odd_iff.mp hrodd
     intro h
@@ -117,7 +93,7 @@ theorem exists_nat_neg_one_numerator {r : ℕ} (hrodd : Odd r) (hns : ¬IsSquare
     · exact jacobiSym.one_left p
   refine ⟨a, ?_⟩
   rw [Nat.prod_primeFactors_pow_factorization hr0,
-    Internal.jacobi_finset_prod_right _ _ _
+    jacobiSym_finset_prod_right _ _ _
       (fun p hp => pow_ne_zero _ (Nat.prime_of_mem_primeFactors hp).ne_zero),
     Finset.prod_eq_single p₀]
   · rw [jacobiSym.pow_right, hlocal p₀ hp₀mem]
@@ -129,9 +105,9 @@ theorem exists_nat_neg_one_numerator {r : ℕ} (hrodd : Odd r) (hns : ¬IsSquare
   · exact fun hp₀not => (hp₀not hp₀mem).elim
 
 /-- Every odd nonsquare modulus has a residue-class representative of Jacobi value `-1`. -/
-theorem oddNonsquareHasNegOneNumerator {r : ℕ} (hrodd : Odd r) (hns : ¬IsSquare r) :
-    ∃ a : ZMod r, jacobiSym a.val r = -1 := by
-  obtain ⟨a, havalue⟩ := exists_nat_neg_one_numerator hrodd hns
+theorem exists_zmod_jacobiSym_eq_neg_one_of_odd_nonsquare {r : ℕ} (hrodd : Odd r)
+    (hns : ¬IsSquare r) : ∃ a : ZMod r, jacobiSym a.val r = -1 := by
+  obtain ⟨a, havalue⟩ := exists_nat_jacobiSym_eq_neg_one_of_odd_nonsquare hrodd hns
   refine ⟨(a : ZMod r), ?_⟩
   rw [ZMod.val_natCast]
   have hmod : (((a % r : ℕ) : ℤ) % r) = (a : ℤ) % r := by

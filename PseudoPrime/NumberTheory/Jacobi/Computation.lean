@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
-public import Mathlib.Data.Nat.PadicValNat
+public import PseudoPrime.NumberTheory.TwoAdic
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.IntervalCases
 
@@ -25,34 +25,6 @@ theorem jacobiSign2 (n : ℕ) (hn : n % 2 = 1) :
   exact hj.symm
 
 /--
-For a nonzero numerator, removing all factors of two leaves a positive odd part.
-The factorization identity excludes zero; reciprocity uses this positive divisor.
--/
-theorem oddPart_pos (a : ℕ) (ha : a ≠ 0) : 0 < Nat.divMaxPow a 2 := by
-  apply Nat.pos_of_ne_zero
-  intro hz
-  have h := Nat.divMaxPow_mul_pow_padicValNat 2 a
-  rw [hz, zero_mul] at h
-  exact ha h.symm
-
-/--
-For a nonzero numerator, its odd part is at most the original numerator.
-Divisibility supplies the bound required by the divisor-reducing Fibonacci interface.
--/
-theorem oddPart_le (a : ℕ) (ha : a ≠ 0) : Nat.divMaxPow a 2 ≤ a :=
-  Nat.le_of_dvd (Nat.pos_of_ne_zero ha)
-    ⟨2 ^ padicValNat 2 a, (Nat.divMaxPow_mul_pow_padicValNat 2 a).symm⟩
-
-/--
-For a nonzero numerator, its maximal-power quotient is odd.
-Maximality excludes divisibility by two, so the next Jacobi modulus remains odd.
--/
-theorem oddPart_odd (a : ℕ) (ha : a ≠ 0) : Nat.divMaxPow a 2 % 2 = 1 := by
-  apply Nat.mod_two_ne_zero.mp
-  intro he
-  exact Nat.not_dvd_divMaxPow (by decide : 1 < 2) ha (Nat.dvd_iff_mod_eq_zero.mpr he)
-
-/--
 Sign multiplier for one batched Jacobi round on numerator `a` and modulus `n`.
 The factor-two rule contributes a power with exponent `padicValNat 2 a`; reciprocity
 contributes minus one exactly when the odd part and modulus are both three modulo four.
@@ -67,7 +39,7 @@ This identity supplies the semantic step for both recursive and fuel-bounded pro
 theorem jacobiRoundSign_mul (a n : ℕ) (ha : a ≠ 0) (hn : n % 2 = 1) :
     jacobiRoundSign a n * jacobiSym ((n % Nat.divMaxPow a 2 : ℕ) : ℤ) (Nat.divMaxPow a 2) =
       jacobiSym (a : ℤ) n := by
-  have hr := jacobiSym.quadratic_reciprocity_if (oddPart_odd a ha) hn
+  have hr := jacobiSym.quadratic_reciprocity_if (TwoAdic.oddPart_odd a ha) hn
   have hf := Nat.pow_padicValNat_mul_divMaxPow 2 a
   conv_rhs =>
     rw [← hf, Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat, jacobiSym.mul_left, jacobiSym.pow_left,
@@ -84,7 +56,7 @@ def jacobiNat (a n : ℕ) : ℤ :=
   if _ha : a = 0 then if n = 1 then 1 else 0
   else jacobiRoundSign a n * jacobiNat (n % Nat.divMaxPow a 2) (Nat.divMaxPow a 2)
 termination_by a
-decreasing_by exact (Nat.mod_lt n (oddPart_pos a _ha)).trans_le (oddPart_le a _ha)
+decreasing_by exact (Nat.mod_lt n (TwoAdic.oddPart_pos a _ha)).trans_le (TwoAdic.oddPart_le a _ha)
 
 /-- For an odd modulus, the batched reference recursion equals jacobiSym, including modulus one.
 Strong induction uses odd-part positivity and its upper bound to decrease the numerator;
@@ -106,8 +78,8 @@ theorem jacobiNat_eq (a n : ℕ) (hn : n % 2 = 1) : jacobiNat a n = jacobiSym (a
           rw [ite_eq_right h, Nat.cast_zero, jacobiSym.zero_left hp]
     · next
         ha =>
-        rw [ih _ ((Nat.mod_lt n (oddPart_pos a ha)).trans_le (oddPart_le a ha)) _
-            (oddPart_odd a ha)]
+        rw [ih _ ((Nat.mod_lt n (TwoAdic.oddPart_pos a ha)).trans_le (TwoAdic.oddPart_le a ha)) _
+            (TwoAdic.oddPart_odd a ha)]
         exact jacobiRoundSign_mul a n ha hn
 
 /-- Signed reference Jacobi procedure; a negative numerator contributes the mod-four sign. -/

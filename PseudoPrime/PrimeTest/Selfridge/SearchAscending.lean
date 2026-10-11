@@ -568,7 +568,7 @@ theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_firstStop_lt {n : 
 
 /-- A least prime witness below `n` and the exceptional bound `27` imply bounded success. -/
 theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_primeWitness_lt {n : ℕ} (hn : 3 ≤ n)
-    (hnodd : Odd n) (hn27 : 27 < n) (hw : (PrimeNegOneWitnessSet n).Nonempty)
+    (hnodd : Odd n) (hn27 : 27 < n) (hw : (primeNegOneWitnessSet n).Nonempty)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty)
     (hqw : primeNegOneWitness n hw < n) :
     ∃ D, selfridgeClassicalSearchAscending n (n - 2) = some D := by
@@ -578,12 +578,13 @@ theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_primeWitness_lt {n
 
 /-- Every prime above `27` supplies the witness bound needed by the ascending search. -/
 theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime {n : ℕ} (hn : n.Prime)
-    (hn27 : 27 < n) (hw : (PrimeNegOneWitnessSet n).Nonempty)
+    (hn27 : 27 < n) (hw : (primeNegOneWitnessSet n).Nonempty)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     ∃ D, selfridgeClassicalSearchAscending n (n - 2) = some D := by
   have hodd : Odd n := hn.odd_iff.mpr (Nat.le_trans (by decide : 3 ≤ 27) (Nat.le_of_lt hn27))
   obtain ⟨p, hp, hpodd, hplt, hvalue⟩ :=
-    NumberTheory.primeHasSmallerNegOneWitness hn (lt_trans (by decide : 3 < 27) hn27)
+    NumberTheory.exists_smaller_prime_jacobiSym_eq_neg_one_of_prime hn
+      (lt_trans (by decide : 3 < 27) hn27)
   apply
     selfridgeClassicalSearchAscendingWithinTwoMul_some_of_primeWitness_lt
       (Nat.le_trans (by decide : 3 ≤ 27) (Nat.le_of_lt hn27)) hodd hn27 hw hs

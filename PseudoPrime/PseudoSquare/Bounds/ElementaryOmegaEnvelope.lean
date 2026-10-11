@@ -227,7 +227,7 @@ This supplies the large-input branch of the final finite maximum theorem.
 theorem primeNegOneWitness_cast_le_elementaryRadius (hLLS : LLS.llsTheorem11S1Character)
     (hElem : AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement) {B n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hnB : n ≤ B) (hn750 : 750 ≤ n)
-    (hw : (NumberTheory.PrimeNegOneWitnessSet n).Nonempty) :
+    (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ elementaryRadius B := by
   have hq : 3000 ≤ NumberTheory.characterModulus n := by
     unfold NumberTheory.characterModulus

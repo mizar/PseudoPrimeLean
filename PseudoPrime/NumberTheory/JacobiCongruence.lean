@@ -100,7 +100,7 @@ theorem exists_nat_one_modEq_and_jacobiSym_eq_neg_one {d c : ℕ} (hdodd : Odd d
     have hiff := Nat.squarefree_pow_iff hxne (by decide : 2 ≠ 0)
     have hbad : (2 : ℕ) = 1 := (hiff.mp hpow).2
     norm_num only at hbad
-  obtain ⟨b, hb⟩ := exists_nat_neg_one_numerator hrodd hrsns
+  obtain ⟨b, hb⟩ := exists_nat_jacobiSym_eq_neg_one_of_odd_nonsquare hrodd hrsns
   let k := Nat.chineseRemainder hcop.symm 1 b
   refine ⟨k, k.prop.1, ?_⟩
   rw [← hprod, Nat.mul_comm r c, jacobiSym.mul_right']

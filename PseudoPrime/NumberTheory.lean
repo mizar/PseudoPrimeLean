@@ -14,7 +14,6 @@ public import PseudoPrime.NumberTheory.TotientPrimeCountBounds
 public import PseudoPrime.NumberTheory.PrimeFactorPowerBounds
 public import PseudoPrime.NumberTheory.PrimeLookup
 public import PseudoPrime.NumberTheory.TotientComputation
-
 public import PseudoPrime.NumberTheory.PrimeIndexing
 public import PseudoPrime.NumberTheory.Fibonacci.Greatest
 public import PseudoPrime.NumberTheory.Euclid
@@ -26,6 +25,9 @@ public import PseudoPrime.NumberTheory.CharacterModulus
 public import PseudoPrime.NumberTheory.JacobiCharacter
 public import PseudoPrime.NumberTheory.JacobiCharacterPrimeEvaluation
 public import PseudoPrime.NumberTheory.PrimitiveJacobiCharacter
+public import PseudoPrime.NumberTheory.Kronecker.Properties
+public import PseudoPrime.NumberTheory.Kronecker.Computation
+public import PseudoPrime.NumberTheory.Jacobi.Fast
 public import PseudoPrime.NumberTheory.Jacobi.Basic
 public import PseudoPrime.NumberTheory.Jacobi.Prime
 public import PseudoPrime.NumberTheory.Factorization

@@ -30,42 +30,41 @@ This handles the small-input branch of the uniform admissible-domain estimate.
 -/
 private lemma exists_primeNeOneWitness_cast_le_log_sq_of_small_admissible {B n : ℕ} (hB : 10 ≤ B)
     (hn : n ∈ NumberTheory.admissibleFinset B) (hn3 : n = 3 ∨ n = 5 ∨ n = 7) :
-    ∃ hdn : (NumberTheory.PrimeNeOneWitnessSet n).Nonempty,
+    ∃ hdn : (NumberTheory.primeNeOneWitnessSet n).Nonempty,
       (NumberTheory.primeNeOneWitness n hdn : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
   rcases hn3 with rfl | rfl | rfl
-  · let hdn : (NumberTheory.PrimeNeOneWitnessSet 3).Nonempty :=
+  · let hdn : (NumberTheory.primeNeOneWitnessSet 3).Nonempty :=
       NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide)
           (not_isSquare_of_fin_certificate (n := 3) (K := 2) (by norm_num only) (by decide)))
     refine ⟨hdn, ?_⟩
     have hle5 :=
       NumberTheory.primeNeOneWitness_le 3 hdn
-        (show 5 ∈ NumberTheory.PrimeNeOneWitnessSet 3 from
-          ⟨by decide, by decide, by
-            norm_num only [NumberTheory.Internal.jacobiSym_three_five_eq_neg_one]⟩)
+        (show 5 ∈ NumberTheory.primeNeOneWitnessSet 3 from
+          ⟨by decide, by decide, by norm_num only [NumberTheory.jacobiSym_three_five_eq_neg_one]⟩)
     have hle5R : (NumberTheory.primeNeOneWitness 3 hdn : ℝ) ≤ 5 := by exact_mod_cast hle5
     exact hle5R.trans (le_of_lt (Analysis.five_lt_log_sq_of_ten_le hB))
-  · let hdn : (NumberTheory.PrimeNeOneWitnessSet 5).Nonempty :=
+  · let hdn : (NumberTheory.primeNeOneWitnessSet 5).Nonempty :=
       NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide)
           (not_isSquare_of_fin_certificate (n := 5) (K := 3) (by norm_num only) (by decide)))
     refine ⟨hdn, ?_⟩
     have hle3 :=
       NumberTheory.primeNeOneWitness_le 5 hdn
-        (show 3 ∈ NumberTheory.PrimeNeOneWitnessSet 5 from
+        (show 3 ∈ NumberTheory.primeNeOneWitnessSet 5 from
           ⟨by decide, by decide, NumberTheory.jacobiSym_five_three_ne_one⟩)
     have hle3R : (NumberTheory.primeNeOneWitness 5 hdn : ℝ) ≤ 3 := by exact_mod_cast hle3
     have hBbound : (3 : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
       nlinarith only [Analysis.five_lt_log_sq_of_ten_le hB]
     exact hle3R.trans hBbound
-  · let hdn : (NumberTheory.PrimeNeOneWitnessSet 7).Nonempty :=
+  · let hdn : (NumberTheory.primeNeOneWitnessSet 7).Nonempty :=
       NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide)
           (not_isSquare_of_fin_certificate (n := 7) (K := 3) (by norm_num only) (by decide)))
     refine ⟨hdn, ?_⟩
     have hle5 :=
       NumberTheory.primeNeOneWitness_le 7 hdn
-        (show 5 ∈ NumberTheory.PrimeNeOneWitnessSet 7 from
+        (show 5 ∈ NumberTheory.primeNeOneWitnessSet 7 from
           ⟨by decide, by decide, NumberTheory.jacobiSym_seven_five_ne_one⟩)
     have hle5R : (NumberTheory.primeNeOneWitness 7 hdn : ℝ) ≤ 5 := by exact_mod_cast hle5
     exact hle5R.trans (le_of_lt (Analysis.five_lt_log_sq_of_ten_le hB))
@@ -83,7 +82,7 @@ Role: the pointwise input to `QNeOne_le_log_sq_of_grh`.
 theorem exists_primeNeOneWitness_cast_le_log_sq_of_admissible
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B n : ℕ} (hB : 10 ≤ B)
     (hn : n ∈ NumberTheory.admissibleFinset B) :
-    ∃ hdn : (NumberTheory.PrimeNeOneWitnessSet n).Nonempty,
+    ∃ hdn : (NumberTheory.primeNeOneWitnessSet n).Nonempty,
       (NumberTheory.primeNeOneWitness n hdn : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   by_cases hn11 : 11 ≤ n

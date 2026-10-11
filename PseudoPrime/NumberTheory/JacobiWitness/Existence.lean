@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.JacobiWitness.Basic
+public import PseudoPrime.NumberTheory.Jacobi.Prime
 public import PseudoPrime.NumberTheory.JacobiWitness.Smaller
 
 /-!
@@ -21,35 +22,11 @@ odd-prime witness set without any analytic assumptions.
 
 namespace PseudoPrime.NumberTheory
 
-namespace Internal
-
-/-- The fixed Jacobi value used for the exceptional odd nonsquare modulus `3`. -/
-theorem jacobiSym_three_five_eq_neg_one : jacobiSym 3 5 = -1 := by
-  have : Fact (Nat.Prime 5) := ⟨Nat.prime_five⟩
-  rw [← jacobiSym.legendreSym.to_jacobiSym 5 3]
-  have hthree : ((3 : ℤ) : ZMod 5) ≠ 0 := by
-    intro hzero
-    have hval := congrArg ZMod.val hzero
-    change 3 = 0 at hval
-    norm_num only at hval
-  rcases legendreSym.eq_one_or_neg_one 5 hthree with hone | hneg
-  · have hpow := legendreSym.eq_pow 5 3
-    rw [hone] at hpow
-    have hne : (1 : ZMod 5) ≠ 3 ^ ((5 - 1) / 2) := by
-      intro hmod
-      have hval := congrArg ZMod.val hmod
-      rw [@ZMod.val_one 5 ⟨by norm_num only⟩] at hval
-      norm_num only [ZMod.val_ofNat] at hval
-    exact (hne hpow).elim
-  · exact hneg
-
-end Internal
-
 /-- Every odd nonsquare has an odd-prime denominator where its Jacobi symbol is `-1`.
 For `n > 3`, use the smaller-prime witness construction; for `n = 3`, use the explicit denominator
 five. This discharges the nonemptiness premise of the least-witness definitions without GRH. -/
 theorem primeNegOneWitnessSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) :
-    (PrimeNegOneWitnessSet n).Nonempty := by
+    (primeNegOneWitnessSet n).Nonempty := by
   have hn1 : n ≠ 1 := by
     intro hnone
     subst n
@@ -69,8 +46,9 @@ theorem primeNegOneWitnessSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (
     · right
       nlinarith only [hk, hkgt]
   rcases hn3 with rfl | hn3
-  · exact ⟨5, Nat.prime_five, by decide, Internal.jacobiSym_three_five_eq_neg_one⟩
-  · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ := oddNonsquareHasSmallerNegOneWitness hn hn3 hns
+  · exact ⟨5, Nat.prime_five, by decide, jacobiSym_three_five_eq_neg_one⟩
+  · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ :=
+      exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare hn hn3 hns
     exact ⟨q, hqprime, hqodd, hqvalue⟩
 
 end PseudoPrime.NumberTheory

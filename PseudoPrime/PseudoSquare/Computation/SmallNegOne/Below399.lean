@@ -619,7 +619,7 @@ The finite bound below `399` gives the upper inequality; enumerating smaller odd
 candidates and evaluating their Jacobi symbols excludes a smaller witness.
 This supplies the attaining input for the exact finite maximum at `398`.
 -/
-theorem primeNegOneWitness_91_eq_17 (hw : (NumberTheory.PrimeNegOneWitnessSet 91).Nonempty) :
+theorem primeNegOneWitness_91_eq_17 (hw : (NumberTheory.primeNegOneWitnessSet 91).Nonempty) :
     NumberTheory.primeNegOneWitness 91 hw = 17 := by
   have hle : NumberTheory.primeNegOneWitness 91 hw ≤ 17 :=
     primeNegOneWitness_le_seventeen_of_lt_399 (by decide) not_isSquare_91 (by norm_num only)

@@ -45,11 +45,12 @@ def kroneckerSym (a n : ℤ) : ℤ :=
 
 /-- At denominator zero, the symbol is one exactly for numerator absolute value one.
 This unfolds the zero-input convention used by the executable entry point. -/
-theorem kroneckerSym_zero_right (a : ℤ) :
-    kroneckerSym a 0 = (if a.natAbs = 1 then 1 else 0) := rfl
+theorem kroneckerSym_zero_right (a : ℤ) : kroneckerSym a 0 = (if a.natAbs = 1 then 1 else 0) :=
+  rfl
 
 /-- Both inputs zero give symbol zero, rather than mathlib's zero-denominator Jacobi value.
 This boundary identity follows directly from the independent specification. -/
-theorem kroneckerSym_zero_zero : kroneckerSym 0 0 = 0 := rfl
+theorem kroneckerSym_zero_zero : kroneckerSym 0 0 = 0 :=
+  rfl
 
 end PseudoPrime.NumberTheory

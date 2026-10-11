@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.PrimeTest.ReferenceArithmetic
 public import PseudoPrime.NumberTheory.Jacobi.Fuel
+public import PseudoPrime.NumberTheory.Jacobi.Fast
 
 /-! # Prime-test compatibility and executable Jacobi decisions
 
@@ -19,29 +20,25 @@ This module preserves the old names and supplies the prime-test decision interfa
 
 namespace PseudoPrime.PrimeTest.ReferenceArithmetic
 
-export PseudoPrime.NumberTheory.Jacobi
-  (jacobiNat_round jacobiNatBatchedFuel jacobiNatBatchedFuel_none_nonstop
-    jacobiNatBatchedFuel_result jacobiNatBatchedFuel_complete jacobiNatBatchedFuel_eq
-    jacobiNatBatched jacobiNatBatched_eq jacobiSignedBatched jacobiSignedBatched_eq
-    jacobiNormalizedBatched jacobiNormalizedBatched_eq jacobiNatBatchedFuel_log2
-    jacobiNatBatchedFuel_ne_none jacobiStepBound_mono jacobiNormalized_lt
-    jacobiNormalizedBatchedFuel_eq jacobiNormalizedBatchedFuel_log2 jacobiNatBatchedFuel_sound)
+export PseudoPrime.NumberTheory.Jacobi (jacobiNat_round jacobiNatBatchedFuel
+  jacobiNatBatchedFuel_none_nonstop jacobiNatBatchedFuel_result jacobiNatBatchedFuel_complete
+  jacobiNatBatchedFuel_eq jacobiNatBatched jacobiNatBatched_eq jacobiSignedBatched
+  jacobiSignedBatched_eq jacobiNormalizedBatched jacobiNormalizedBatched_eq
+  jacobiNatBatchedFuel_log2 jacobiNatBatchedFuel_ne_none jacobiStepBound_mono jacobiNormalized_lt
+  jacobiNormalizedBatchedFuel_eq jacobiNormalizedBatchedFuel_log2 jacobiNatBatchedFuel_sound)
 
 /-- Executable Jacobi entry on every integer numerator and natural modulus.
-Odd moduli use remainder normalization and certified batched Fibonacci fuel.
-Other moduli use the existing convention of jacobiSym, preserving the all-input contract.
+All nonzero inputs use the shared symbol-and-gcd trajectory with certified Fibonacci fuel.
+The factor-at-two correction and zero-input branches preserve mathlib conventions.
 This entry supplies executable guards while their proofs continue to use jacobiSym. -/
 def jacobiExecutable (a : ℤ) (n : ℕ) : ℤ :=
-  if n % 2 = 1 then jacobiNormalizedBatched a n else jacobiSym a n
+  NumberTheory.jacobiSymFast a n
 
 /-- The executable entry agrees with jacobiSym on all inputs.
-The odd branch uses certified batched correctness; the other branch is unchanged.
+The all-input compatibility theorem covers odd, even and zero denominators.
 This equality transfers existing stopping predicates and proof-carrying classifications. -/
 theorem jacobiExecutable_eq (a : ℤ) (n : ℕ) : jacobiExecutable a n = jacobiSym a n := by
-  unfold jacobiExecutable
-  split
-  · next hn => exact jacobiNormalizedBatched_eq a n hn
-  · rfl
+  exact NumberTheory.jacobiSymFast_eq a n
 
 /-- Decide a mathematical Jacobi equality using the certified executable entry.
 The returned true or false evidence is transported through jacobiExecutable_eq.

@@ -27,7 +27,7 @@ For a prime stop this is the direct correspondence; for a composite stop, prime-
 extraction supplies a smaller odd-prime witness.
 -/
 theorem primeNeOneWitness_le_classicalFirstStop {n : ℕ} (hn : Odd n)
-    (hw : (PrimeNeOneWitnessSet n).Nonempty)
+    (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :
     primeNeOneWitness n hw ≤ firstStopNeOne isClassicalCandidate n hs := by
   by_cases hp : (firstStopNeOne isClassicalCandidate n hs).Prime
@@ -45,7 +45,7 @@ The least odd-prime `-1` witness is no larger than the classical pure `-1` first
 composite first-stop yields a smaller prime witness by the common factor-extraction theorem.
 -/
 theorem primeNegOneWitness_le_classicalFirstStop {n : ℕ} (hn : Odd n)
-    (hw : (PrimeNegOneWitnessSet n).Nonempty)
+    (hw : (primeNegOneWitnessSet n).Nonempty)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     primeNegOneWitness n hw ≤ firstStopNegOne isClassicalCandidate n hs := by
   by_cases hp : (firstStopNegOne isClassicalCandidate n hs).Prime
@@ -65,7 +65,7 @@ The classical pure `-1` first-stop is at most the larger of `27` and the least o
 `3`, multiplicativity makes candidate `27` a stopping point.
 -/
 theorem classicalFirstStopNegOne_le_max_twenty_seven_primeWitness {n : ℕ} (hn : Odd n)
-    (hw : (PrimeNegOneWitnessSet n).Nonempty)
+    (hw : (primeNegOneWitnessSet n).Nonempty)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     firstStopNegOne isClassicalCandidate n hs ≤ max 27 (primeNegOneWitness n hw) := by
   have hp := primeNegOneWitness_mem n hw
@@ -106,7 +106,7 @@ Combined pointwise pure `-1` comparison: the classical first-stop lies between t
 witness and the maximum of that witness with the exceptional bound `27`.
 -/
 theorem primeNegOneWitness_le_classicalFirstStop_le_max {n : ℕ} (hn : Odd n)
-    (hw : (PrimeNegOneWitnessSet n).Nonempty)
+    (hw : (primeNegOneWitnessSet n).Nonempty)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     primeNegOneWitness n hw ≤ firstStopNegOne isClassicalCandidate n hs ∧
       firstStopNegOne isClassicalCandidate n hs ≤ max 27 (primeNegOneWitness n hw) := by
@@ -120,14 +120,15 @@ Divisibility would force the input to equal that prime; the smaller-witness theo
 then produce a smaller prime witness, contradicting minimality.
 -/
 theorem not_dvd_primeNeOneWitness_of_three_lt {n : ℕ} (hns : ¬IsSquare n)
-    (hw : (PrimeNeOneWitnessSet n).Nonempty) (hp3 : 3 < primeNeOneWitness n hw) :
+    (hw : (primeNeOneWitnessSet n).Nonempty) (hp3 : 3 < primeNeOneWitness n hw) :
     ¬n ∣ primeNeOneWitness n hw := by
   intro hdiv
   have hp := primeNeOneWitness_mem n hw
   rcases hp.1.eq_one_or_self_of_dvd n hdiv with hn1 | hnp
   · exact hns ⟨1, by rw [hn1]⟩
-  · obtain ⟨q, hqprime, hqodd, hqlt, hqvalue⟩ := NumberTheory.primeHasSmallerNegOneWitness hp.1 hp3
-    have hqmem : q ∈ PrimeNeOneWitnessSet n := by
+  · obtain ⟨q, hqprime, hqodd, hqlt, hqvalue⟩ :=
+      NumberTheory.exists_smaller_prime_jacobiSym_eq_neg_one_of_prime hp.1 hp3
+    have hqmem : q ∈ primeNeOneWitnessSet n := by
       exact
         ⟨hqprime, hqodd, by
           rw [hnp, hqvalue]
@@ -140,7 +141,7 @@ factor-detecting first-stop is no larger than that witness itself. The proof use
 smaller-witness theorem to exclude divisibility by the input.
 -/
 theorem classicalFirstStopNeOne_le_primeWitness_of_three_lt {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
-    (hw : (PrimeNeOneWitnessSet n).Nonempty)
+    (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) (hp3 : 3 < primeNeOneWitness n hw) :
     firstStopNeOne isClassicalCandidate n hs ≤ primeNeOneWitness n hw := by
   have hp := primeNeOneWitness_mem n hw
@@ -161,7 +162,7 @@ Equivalent convenient form of the preceding bound: for an odd-prime witness, bei
 from `3` forces it above `3`.
 -/
 theorem classicalFirstStopNeOne_le_primeWitness_of_ne_three {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
-    (hw : (PrimeNeOneWitnessSet n).Nonempty)
+    (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) (hp3 : primeNeOneWitness n hw ≠ 3) :
     firstStopNeOne isClassicalCandidate n hs ≤ primeNeOneWitness n hw := by
   have hp := primeNeOneWitness_mem n hw
@@ -182,7 +183,7 @@ most `15`.  Divisibility exceptions among `5`, `9`, and `15` reduce to the posit
 these fixed numbers; nonsquareness or the concrete candidate `7` handles every exception.
 -/
 theorem classicalFirstStopNeOne_le_fifteen_of_primeWitness_eq_three {n : ℕ} (hnpos : 0 < n)
-    (hn : Odd n) (hns : ¬IsSquare n) (hw : (PrimeNeOneWitnessSet n).Nonempty)
+    (hn : Odd n) (hns : ¬IsSquare n) (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) (hp3 : primeNeOneWitness n hw = 3) :
     firstStopNeOne isClassicalCandidate n hs ≤ 15 := by
   have hp := primeNeOneWitness_mem n hw
@@ -259,7 +260,7 @@ theorem classicalFirstStopNeOne_le_fifteen_of_primeWitness_eq_three {n : ℕ} (h
 odd-prime `≠ 1` witness.
 -/
 theorem classicalFirstStopNeOne_le_max_fifteen_primeWitness {n : ℕ} (hnpos : 0 < n) (hn : Odd n)
-    (hns : ¬IsSquare n) (hw : (PrimeNeOneWitnessSet n).Nonempty)
+    (hns : ¬IsSquare n) (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :
     firstStopNeOne isClassicalCandidate n hs ≤ max 15 (primeNeOneWitness n hw) := by
   by_cases hp3 : primeNeOneWitness n hw = 3
@@ -277,7 +278,7 @@ Combine prime-factor extraction for the lower bound with the exceptional-witness
 This pointwise comparison needs no unproved smaller-witness or analytic hypothesis.
 -/
 theorem primeNeOneWitness_le_classicalFirstStop_le_max {n : ℕ} (hnpos : 0 < n) (hn : Odd n)
-    (hns : ¬IsSquare n) (hw : (PrimeNeOneWitnessSet n).Nonempty)
+    (hns : ¬IsSquare n) (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :
     primeNeOneWitness n hw ≤ firstStopNeOne isClassicalCandidate n hs ∧
       firstStopNeOne isClassicalCandidate n hs ≤ max 15 (primeNeOneWitness n hw) := by
@@ -292,7 +293,7 @@ Apply the preceding theorem directly; this compatibility entry has identical hyp
 and conclusion, with no additional smaller-witness assumption.
 -/
 theorem primeNeOneWitness_le_classicalFirstStop_le_max_unconditional {n : ℕ} (hnpos : 0 < n)
-    (hn : Odd n) (hns : ¬IsSquare n) (hw : (PrimeNeOneWitnessSet n).Nonempty)
+    (hn : Odd n) (hns : ¬IsSquare n) (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :
     primeNeOneWitness n hw ≤ firstStopNeOne isClassicalCandidate n hs ∧
       firstStopNeOne isClassicalCandidate n hs ≤ max 15 (primeNeOneWitness n hw) := by
@@ -307,10 +308,10 @@ also different from `1`, so witness minimality gives the strict bound.
 Role: supplies the direct `g_{\ne1}` finite argument.
 -/
 theorem primeNeOneWitness_lt_of_odd_nonsquare_of_three_lt {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
-    (hn3 : 3 < n) (hw : (PrimeNeOneWitnessSet n).Nonempty) : primeNeOneWitness n hw < n := by
+    (hn3 : 3 < n) (hw : (primeNeOneWitnessSet n).Nonempty) : primeNeOneWitness n hw < n := by
   obtain ⟨q, hqprime, hqodd, hq_lt, hqvalue⟩ :=
-    NumberTheory.oddNonsquareHasSmallerNegOneWitness hn hn3 hns
-  have hqmem : q ∈ PrimeNeOneWitnessSet n := by
+    NumberTheory.exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare hn hn3 hns
+  have hqmem : q ∈ primeNeOneWitnessSet n := by
     exact
       ⟨hqprime, hqodd, by
         rw [hqvalue]
@@ -326,7 +327,7 @@ canonical smaller-witness bound makes the least witness a valid classical candid
 Role: provides the `g_{\ne1}` analogue of the direct finite Selfridge improvement.
 -/
 theorem classicalFirstStopNeOne_lt_of_odd_nonsquare_of_fifteen_lt {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hn15 : 15 < n) (hw : (PrimeNeOneWitnessSet n).Nonempty)
+    (hns : ¬IsSquare n) (hn15 : 15 < n) (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :
     firstStopNeOne isClassicalCandidate n hs < n := by
   have hp := primeNeOneWitness_mem n hw

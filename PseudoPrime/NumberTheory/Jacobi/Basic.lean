@@ -48,4 +48,16 @@ theorem exists_prime_dvd_jacobi_ne_one {a : ℤ} {n : ℕ} (hn : n ≠ 0) (h : j
   obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hx
   exact ⟨p, Nat.prime_of_mem_primeFactorsList hp, Nat.dvd_of_mem_primeFactorsList hp, hxne⟩
 
+/-- The Jacobi symbol distributes over a finite product in its denominator. -/
+theorem jacobiSym_finset_prod_right (a : ℤ) (s : Finset ℕ) (f : ℕ → ℕ) (hf : ∀ p ∈ s, f p ≠ 0) :
+    jacobiSym a (∏ p ∈ s, f p) = ∏ p ∈ s, jacobiSym a (f p) := by
+  induction s using Finset.induction_on with
+  | empty => simp only [Finset.prod_empty, jacobiSym.one_right]
+  | @insert p s hp ih =>
+    have hpne : f p ≠ 0 := hf p (Finset.mem_insert_self p s)
+    have hsne : ∏ q ∈ s, f q ≠ 0 :=
+      Finset.prod_ne_zero_iff.mpr fun q hq => hf q (Finset.mem_insert_of_mem hq)
+    rw [Finset.prod_insert hp, Finset.prod_insert hp, jacobiSym.mul_right' a hpne hsne]
+    exact congrArg (jacobiSym a (f p) * ·) (ih fun q hq => hf q (Finset.mem_insert_of_mem hq))
+
 end PseudoPrime.NumberTheory

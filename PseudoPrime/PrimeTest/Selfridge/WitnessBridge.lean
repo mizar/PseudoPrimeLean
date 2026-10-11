@@ -25,7 +25,7 @@ from one; reciprocity makes it a neutral witness. Leastness then gives
 `primeNeOneWitness n hw ≤ p`, linking discrete stopping values to prime-witness bounds.
 -/
 theorem primeNeOneWitness_le_classicalFirstStop_of_prime {n : ℕ} (hn : Odd n)
-    (hw : (PrimeNeOneWitnessSet n).Nonempty)
+    (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) {p : ℕ} (hp : p.Prime)
     (hstop : p = firstStopNeOne isClassicalCandidate n hs) : primeNeOneWitness n hw ≤ p := by
   apply primeNeOneWitness_le n hw
@@ -43,7 +43,7 @@ its least-element property proves the bound. The primality of the stop is essent
 this theorem does not identify a general composite stopping candidate with a prime witness.
 -/
 theorem primeNegOneWitness_le_classicalFirstStop_of_prime {n : ℕ} (hn : Odd n)
-    (hw : (PrimeNegOneWitnessSet n).Nonempty)
+    (hw : (primeNegOneWitnessSet n).Nonempty)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) {p : ℕ} (hp : p.Prime)
     (hstop : p = firstStopNegOne isClassicalCandidate n hs) : primeNegOneWitness n hw ≤ p := by
   apply primeNegOneWitness_le n hw

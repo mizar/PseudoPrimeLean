@@ -218,7 +218,7 @@ theorem fifteen_lt_QNeOne_of_751_le {B : ℕ} (hB : 751 ≤ B) : 15 < PseudoSqua
   have hadm : 751 ∈ NumberTheory.admissibleFinset B := by
     apply NumberTheory.mem_admissibleFinset_iff.mpr
     exact ⟨by norm_num only, hB, by decide, PseudoSquare.not_isSquare_751⟩
-  have hw : (PrimeTest.PrimeNeOneWitnessSet 751).Nonempty :=
+  have hw : (PrimeTest.primeNeOneWitnessSet 751).Nonempty :=
     PrimeTest.primeNeOneWitnessSet_nonempty_of_negOne
       (PrimeTest.primeNegOneWitnessSet_nonempty_of_odd_nonsquare (by decide)
         PseudoSquare.not_isSquare_751)

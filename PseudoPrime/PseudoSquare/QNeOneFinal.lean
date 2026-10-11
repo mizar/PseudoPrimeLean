@@ -33,7 +33,7 @@ Role: the interface consumed by the later `QNeOne` maximum theorem.
 theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hn11 : 11 ≤ n) :
-    ∃ hdn : (NumberTheory.PrimeNeOneWitnessSet n).Nonempty,
+    ∃ hdn : (NumberTheory.primeNeOneWitnessSet n).Nonempty,
       (NumberTheory.primeNeOneWitness n hdn : ℝ) ≤ (Real.log n) ^ 2 := by
   let bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns :=
     Classical.choice
@@ -49,7 +49,7 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
   by_cases hdbig : 1000000 ≤ bridge.squarefreePart
   · by_contra hbound
     have hno :
-      ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.PrimeNeOneWitnessSet n := by
+      ∀ q, q.Prime → Odd q → q ≤ ⌊bridge.y ^ 2⌋₊ → q ∉ NumberTheory.primeNeOneWitnessSet n := by
       intro q hq hqodd hqX hqmem
       have hleq :=
         NumberTheory.primeNeOneWitness_le n
@@ -113,14 +113,14 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
           rw [hk]
           simp only [pow_two]
         _ = bridge.squareFactor * k * (bridge.squareFactor * k) := by ring
-    let hdn : (NumberTheory.PrimeNeOneWitnessSet bridge.squarefreePart).Nonempty :=
+    let hdn : (NumberTheory.primeNeOneWitnessSet bridge.squarefreePart).Nonempty :=
       NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare bridge.squarefreePart_odd
           hnsd)
     have hwd :=
       primeNeOneWitness_cast_le_log_sq_of_eleven_le_of_lt_million (n := bridge.squarefreePart)
         bridge.squarefreePart_odd hnsd hd11 hdbelow
-    let hdnN : (NumberTheory.PrimeNeOneWitnessSet n).Nonempty := by
+    let hdnN : (NumberTheory.primeNeOneWitnessSet n).Nonempty := by
       obtain ⟨p, hp⟩ := hdn
       exact ⟨p, NumberTheory.primeNeOneWitness_mem_of_squarefreePart_mem bridge hp⟩
     refine ⟨hdnN, ?_⟩

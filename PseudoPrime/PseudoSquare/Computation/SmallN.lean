@@ -857,7 +857,7 @@ theorem smallNegOneWitnessBound : SmallNegOneWitnessBound := by
   intro n hn hns hn750
   have hnosquare := SmallN.fin28_ne_sq_of_not_isSquare hns
   have hcertificate := smallNegOneCertificate_valid ⟨n, hn750⟩ (Nat.odd_iff.mp hn) hnosquare
-  have hle (p : ℕ) (hp : p ∈ NumberTheory.PrimeNegOneWitnessSet n) (hp31 : p ≤ 31) :
+  have hle (p : ℕ) (hp : p ∈ NumberTheory.primeNegOneWitnessSet n) (hp31 : p ≤ 31) :
     NumberTheory.primeNegOneWitness n
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns) ≤
       31 := by
@@ -898,7 +898,7 @@ The small-range theorem gives the upper bound, while enumerating all smaller odd
 candidates excludes Jacobi value `-1`. This provides the attaining input for `QNegOne`
 and the threshold lower bound beyond `399`.
 -/
-theorem primeNegOneWitness_399_eq_31 (hw : (NumberTheory.PrimeNegOneWitnessSet 399).Nonempty) :
+theorem primeNegOneWitness_399_eq_31 (hw : (NumberTheory.primeNegOneWitnessSet 399).Nonempty) :
     NumberTheory.primeNegOneWitness 399 hw = 31 := by
   have hle : NumberTheory.primeNegOneWitness 399 hw ≤ 31 :=
     smallNegOneWitnessBound 399 (by decide) not_isSquare_399 (by norm_num only)

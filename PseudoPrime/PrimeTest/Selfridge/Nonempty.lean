@@ -49,7 +49,7 @@ end Internal
 
 /-- Every odd nonsquare has an odd-prime denominator with Jacobi value `-1`. -/
 theorem primeNegOneWitnessSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) :
-    (PrimeNegOneWitnessSet n).Nonempty := by
+    (primeNegOneWitnessSet n).Nonempty := by
   have hn1 : n ≠ 1 := by
     intro hnone
     subst n
@@ -75,12 +75,12 @@ theorem primeNegOneWitnessSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (
   rcases hn3 with rfl | hn3
   · exact ⟨5, Nat.prime_five, by decide, Internal.jacobiSym_three_five_eq_neg_one⟩
   · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ :=
-      NumberTheory.oddNonsquareHasSmallerNegOneWitness hn hn3 hns
+      NumberTheory.exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare hn hn3 hns
     exact ⟨q, hqprime, hqodd, hqvalue⟩
 
 /-- A candidate containing `27` and every odd prime at least `5` admits a pure `-1` stop. -/
 theorem firstStopNegOneSet_nonempty_of_primeWitness {C : ℕ → Prop} {n : ℕ} (hn : Odd n) (h27 : C 27)
-    (hprime : ∀ {p : ℕ}, p.Prime → Odd p → 5 ≤ p → C p) (hw : (PrimeNegOneWitnessSet n).Nonempty) :
+    (hprime : ∀ {p : ℕ}, p.Prime → Odd p → 5 ≤ p → C p) (hw : (primeNegOneWitnessSet n).Nonempty) :
     (FirstStopNegOneSet C n).Nonempty := by
   obtain ⟨p, hpprime, hpodd, hpvalue⟩ := hw
   by_cases hp3 : p = 3
@@ -115,7 +115,8 @@ theorem classicalFirstStopNegOne_lt_of_odd_nonsquare_of_twenty_seven_lt {n : ℕ
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     firstStopNegOne isClassicalCandidate n hs < n := by
   obtain ⟨p, hp, hpodd, hplt, hpvalue⟩ :=
-    NumberTheory.oddNonsquareHasSmallerNegOneWitness hn (lt_trans (by decide : 3 < 27) hn27) hns
+    NumberTheory.exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare hn
+      (lt_trans (by decide : 3 < 27) hn27) hns
   by_cases hp3 : p = 3
   · subst p
     have hmem : 27 ∈ FirstStopNegOneSet isClassicalCandidate n := by

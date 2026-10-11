@@ -28,12 +28,12 @@ namespace PseudoPrime.PseudoSquare
 For odd nonsquare `n` with character modulus `4 * n ≥ 3000`, the assumed LLS S1 bound
 produces an odd prime with Jacobi value `-1` within its corrected logarithmic-square radius.
 The proof applies the character theorem at level `4 * n` and converts nontrivial character
-evaluation to membership in `PrimeNegOneWitnessSet n`. This supplies the least-witness bound.
+evaluation to membership in `primeNegOneWitnessSet n`. This supplies the least-witness bound.
 -/
 theorem exists_primeNegOneWitness_of_LLS (hLLS : LLS.llsTheorem11S1Character) (n : ℕ) (hn : Odd n)
     (hns : ¬IsSquare n) (hq : 3000 ≤ NumberTheory.characterModulus n) :
     ∃ ℓ : ℕ,
-      ℓ ∈ NumberTheory.PrimeNegOneWitnessSet n ∧
+      ℓ ∈ NumberTheory.primeNegOneWitnessSet n ∧
         (ℓ : ℝ) ≤
           (Real.log (NumberTheory.characterModulus n : ℝ) +
               LLS.llsCorrectionTerm (NumberTheory.characterModulus n)) ^
@@ -56,7 +56,7 @@ and transitivity give the real estimate used by the elementary-radius envelope.
 -/
 theorem primeNegOneWitness_le_of_LLS (hLLS : LLS.llsTheorem11S1Character) (n : ℕ) (hn : Odd n)
     (hns : ¬IsSquare n) (hq : 3000 ≤ NumberTheory.characterModulus n)
-    (hw : (NumberTheory.PrimeNegOneWitnessSet n).Nonempty) :
+    (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤
       (Real.log (NumberTheory.characterModulus n : ℝ) +
           LLS.llsCorrectionTerm (NumberTheory.characterModulus n)) ^

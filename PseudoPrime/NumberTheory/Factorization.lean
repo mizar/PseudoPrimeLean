@@ -52,4 +52,12 @@ theorem exists_prime_odd_factorization_of_not_square {r : ℕ} (hr0 : r ≠ 0) (
   rw [hk]
   rw [hdiv]
 
+/-- Distinct members of a natural number's prime-factor finset are pairwise coprime. -/
+theorem primeFactors_pairwise_coprime (r : ℕ) :
+    Set.Pairwise (↑r.primeFactors : Set ℕ) (Function.onFun Nat.Coprime fun p => p) := by
+  intro p hp q hq hpq
+  exact
+    (Nat.coprime_primes (Nat.prime_of_mem_primeFactors hp) (Nat.prime_of_mem_primeFactors hq)).mpr
+      hpq
+
 end PseudoPrime.NumberTheory

@@ -63,7 +63,7 @@ theorem jacobiNatBatchedFuel_none_nonstop (fuel a n : ℕ)
     by_cases ha : a = 0
     · simp only [jacobiNatBatchedFuel, ha, ↓reduceIte, Option.some_ne_none] at h
     · rw [jacobiNatBatchedFuel, ite_eq_right ha, Option.map_eq_none_iff] at h
-      exact ⟨Nat.divMaxPow a 2, oddPart_pos a ha, oddPart_le a ha, ih _ _ h⟩
+      exact ⟨Nat.divMaxPow a 2, TwoAdic.oddPart_pos a ha, TwoAdic.oddPart_le a ha, ih _ _ h⟩
 
 /--
 For an odd modulus and any caller budget, the result is either exhaustion or the reference value.
@@ -88,7 +88,7 @@ theorem jacobiNatBatchedFuel_result (fuel a n : ℕ) (hn : n % 2 = 1) :
       subst a
       rw [jacobiNatBatchedFuel, jacobiNat]
       simp only [↓reduceIte, ↓reduceDIte]
-    · rcases ih (n % Nat.divMaxPow a 2) (Nat.divMaxPow a 2) (oddPart_odd a ha) with h | h
+    · rcases ih (n % Nat.divMaxPow a 2) (Nat.divMaxPow a 2) (TwoAdic.oddPart_odd a ha) with h | h
       · left
         rw [jacobiNatBatchedFuel, ite_eq_right ha, h, Option.map_none]
       · right
@@ -205,8 +205,7 @@ This transfers an input-specific budget to a uniform modulus-dependent budget.
 -/
 theorem jacobiStepBound_mono {a b : ℕ} (h : a ≤ b) :
     PseudoPrime.NumberTheory.Euclid.stepBound a ≤ PseudoPrime.NumberTheory.Euclid.stepBound b := by
-  rw [PseudoPrime.NumberTheory.Euclid.stepBound_eq, PseudoPrime.NumberTheory.Euclid.stepBound_eq]
-  exact Nat.sub_le_sub_right (Nat.greatestFib_mono h) 1
+  exact Euclid.stepBound_mono h
 
 /--
 For a positive modulus, the normalized integer numerator is strictly below that modulus.

@@ -165,7 +165,8 @@ theorem quadraticCharacter_ne_one_of_not_square (n : ℕ) (hn : Odd n) (hns : ¬
       rw [@ZMod.val_one 5 ⟨by norm_num only⟩] at hval
       norm_num only [ZMod.val_ofNat] at hval
     exact hne hpow
-  · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ := oddNonsquareHasSmallerNegOneWitness hn hn3 hns
+  · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ :=
+      exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare hn hn3 hns
     let _ : NeZero q := ⟨hqprime.ne_zero⟩
     have hcop : Nat.Coprime q n := by
       rw [Nat.coprime_comm, Nat.coprime_iff_gcd_eq_one, ← Int.gcd_natCast_natCast]
@@ -205,7 +206,7 @@ quadratic reciprocity then turns the character value different from `1` into the
 Jacobi value. -/
 theorem primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one (n : ℕ) (hn : Odd n) {ℓ : ℕ}
     (hℓprime : ℓ.Prime) (hℓndvd : ¬ℓ ∣ 4 * n) (hℓchar : complexQuadraticCharacter n hn ℓ ≠ 1) :
-    ℓ ∈ PrimeNegOneWitnessSet n := by
+    ℓ ∈ primeNegOneWitnessSet n := by
   have hℓne2 : ℓ ≠ 2 := by
     intro hℓtwo
     subst ℓ

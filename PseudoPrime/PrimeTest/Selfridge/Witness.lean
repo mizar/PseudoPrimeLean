@@ -25,7 +25,7 @@ Odd primes p for which jacobiSym n p differs from one. The input n is the numera
 and p the denominator; zero values are permitted and can detect factors.
 Least witnesses in this neutral set are compared with classical factor-detecting first stops.
 -/
-def PrimeNeOneWitnessSet (n : ℕ) : Set ℕ :=
+def primeNeOneWitnessSet (n : ℕ) : Set ℕ :=
   {p | p.Prime ∧ Odd p ∧ jacobiSym n p ≠ 1}
 
 /--
@@ -33,12 +33,12 @@ Odd primes p for which jacobiSym n p=-1, with n as numerator and p as denominato
 This pure set excludes zero Jacobi values. Its least witness supplies unconditional
 existence and bounds for pure Selfridge stopping candidates.
 -/
-def PrimeNegOneWitnessSet (n : ℕ) : Set ℕ :=
+def primeNegOneWitnessSet (n : ℕ) : Set ℕ :=
   {p | p.Prime ∧ Odd p ∧ jacobiSym n p = -1}
 
 /-- A pure `-1` prime witness is also a `≠1` prime witness. -/
-theorem PrimeNegOneWitnessSet.subset_primeNeOneWitnessSet (n : ℕ) :
-    PrimeNegOneWitnessSet n ⊆ PrimeNeOneWitnessSet n := by
+theorem primeNegOneWitnessSet.subset_primeNeOneWitnessSet (n : ℕ) :
+    primeNegOneWitnessSet n ⊆ primeNeOneWitnessSet n := by
   intro p hp
   exact
     ⟨hp.1, hp.2.1, by
@@ -46,16 +46,16 @@ theorem PrimeNegOneWitnessSet.subset_primeNeOneWitnessSet (n : ℕ) :
       decide⟩
 
 /-- Nonemptiness of the pure `-1` witness set implies nonemptiness of the `≠1` set. -/
-theorem primeNeOneWitnessSet_nonempty_of_negOne {n : ℕ} (h : (PrimeNegOneWitnessSet n).Nonempty) :
-    (PrimeNeOneWitnessSet n).Nonempty :=
-  h.mono (PrimeNegOneWitnessSet.subset_primeNeOneWitnessSet n)
+theorem primeNeOneWitnessSet_nonempty_of_negOne {n : ℕ} (h : (primeNegOneWitnessSet n).Nonempty) :
+    (primeNeOneWitnessSet n).Nonempty :=
+  h.mono (primeNegOneWitnessSet.subset_primeNeOneWitnessSet n)
 
 /--
 The least odd-prime denominator with Jacobi value different from one for numerator n.
 A nonemptiness proof is required; Nat.find selects the minimum noncomputably.
 Membership and minimality lemmas compare this neutral witness with Selfridge first stops.
 -/
-noncomputable def primeNeOneWitness (n : ℕ) (h : (PrimeNeOneWitnessSet n).Nonempty) : ℕ := by
+noncomputable def primeNeOneWitness (n : ℕ) (h : (primeNeOneWitnessSet n).Nonempty) : ℕ := by
   classical exact Nat.find h
 
 /--
@@ -63,32 +63,32 @@ The least odd-prime denominator with Jacobi value -1 for numerator n.
 Use Nat.find on the supplied nonempty witness set; the definition is proof-side only.
 Its membership and minimality support pure-stop existence and pointwise bounds.
 -/
-noncomputable def primeNegOneWitness (n : ℕ) (h : (PrimeNegOneWitnessSet n).Nonempty) : ℕ := by
+noncomputable def primeNegOneWitness (n : ℕ) (h : (primeNegOneWitnessSet n).Nonempty) : ℕ := by
   classical exact Nat.find h
 
 /-- The least `≠1` witness belongs to its witness set. -/
-theorem primeNeOneWitness_mem (n : ℕ) (h : (PrimeNeOneWitnessSet n).Nonempty) :
-    primeNeOneWitness n h ∈ PrimeNeOneWitnessSet n := by classical exact Nat.find_spec h
+theorem primeNeOneWitness_mem (n : ℕ) (h : (primeNeOneWitnessSet n).Nonempty) :
+    primeNeOneWitness n h ∈ primeNeOneWitnessSet n := by classical exact Nat.find_spec h
 
 /-- The least `-1` witness belongs to its witness set. -/
-theorem primeNegOneWitness_mem (n : ℕ) (h : (PrimeNegOneWitnessSet n).Nonempty) :
-    primeNegOneWitness n h ∈ PrimeNegOneWitnessSet n := by classical exact Nat.find_spec h
+theorem primeNegOneWitness_mem (n : ℕ) (h : (primeNegOneWitnessSet n).Nonempty) :
+    primeNegOneWitness n h ∈ primeNegOneWitnessSet n := by classical exact Nat.find_spec h
 
 /-- Every `≠1` witness is at least the least `≠1` witness. -/
-theorem primeNeOneWitness_le (n : ℕ) (h : (PrimeNeOneWitnessSet n).Nonempty) {p : ℕ}
-    (hp : p ∈ PrimeNeOneWitnessSet n) : primeNeOneWitness n h ≤ p := by
+theorem primeNeOneWitness_le (n : ℕ) (h : (primeNeOneWitnessSet n).Nonempty) {p : ℕ}
+    (hp : p ∈ primeNeOneWitnessSet n) : primeNeOneWitness n h ≤ p := by
   classical exact Nat.find_min' h hp
 
 /-- Every `-1` witness is at least the least `-1` witness. -/
-theorem primeNegOneWitness_le (n : ℕ) (h : (PrimeNegOneWitnessSet n).Nonempty) {p : ℕ}
-    (hp : p ∈ PrimeNegOneWitnessSet n) : primeNegOneWitness n h ≤ p := by
+theorem primeNegOneWitness_le (n : ℕ) (h : (primeNegOneWitnessSet n).Nonempty) {p : ℕ}
+    (hp : p ∈ primeNegOneWitnessSet n) : primeNegOneWitness n h ≤ p := by
   classical exact Nat.find_min' h hp
 
 /-- The least `≠1` witness is no larger than the least `-1` witness. -/
-theorem primeNeOneWitness_le_primeNegOneWitness (n : ℕ) (h : (PrimeNegOneWitnessSet n).Nonempty) :
+theorem primeNeOneWitness_le_primeNegOneWitness (n : ℕ) (h : (primeNegOneWitnessSet n).Nonempty) :
     primeNeOneWitness n (primeNeOneWitnessSet_nonempty_of_negOne h) ≤ primeNegOneWitness n h := by
   apply primeNeOneWitness_le
-  exact PrimeNegOneWitnessSet.subset_primeNeOneWitnessSet n (primeNegOneWitness_mem n h)
+  exact primeNegOneWitnessSet.subset_primeNeOneWitnessSet n (primeNegOneWitness_mem n h)
 
 /-- Every member of a candidate predicate is odd. -/
 def CandidateOdd (C : ℕ → Prop) : Prop :=
@@ -155,7 +155,7 @@ theorem firstStopNeOneSet_nonempty_of_witness {C : ℕ → Prop} {n i : ℕ} (hi
 /-- A prime pure `-1` first-stop is an odd-prime Jacobi witness. -/
 theorem primeNegOneWitnessSet_of_prime_mem_firstStopNegOneSet {C : ℕ → Prop} {n p : ℕ}
     (hC : CandidateOdd C) (hn : Odd n) (hp : p.Prime) (hstop : p ∈ FirstStopNegOneSet C n) :
-    p ∈ PrimeNegOneWitnessSet n := by
+    p ∈ primeNegOneWitnessSet n := by
   refine ⟨hp, hC hstop.1, ?_⟩
   rw [← jacobi_selfridgeD (hC hstop.1) hn]
   exact hstop.2
@@ -163,14 +163,14 @@ theorem primeNegOneWitnessSet_of_prime_mem_firstStopNegOneSet {C : ℕ → Prop}
 /-- A prime factor-detecting first-stop is an odd-prime `≠1` witness. -/
 theorem primeNeOneWitnessSet_of_prime_mem_firstStopNeOneSet {C : ℕ → Prop} {n p : ℕ}
     (hC : CandidateOdd C) (hn : Odd n) (hp : p.Prime) (hstop : p ∈ FirstStopNeOneSet C n) :
-    p ∈ PrimeNeOneWitnessSet n := by
+    p ∈ primeNeOneWitnessSet n := by
   refine ⟨hp, hC hstop.1, ?_⟩
   rw [← jacobi_selfridgeD (hC hstop.1) hn]
   exact hstop.2.2
 
 /-- An odd-prime `-1` witness in the candidate set is a pure stopping candidate. -/
 theorem mem_firstStopNegOneSet_of_mem_primeNegOneWitnessSet {C : ℕ → Prop} {n p : ℕ} (hn : Odd n)
-    (hCp : C p) (hp : p ∈ PrimeNegOneWitnessSet n) : p ∈ FirstStopNegOneSet C n := by
+    (hCp : C p) (hp : p ∈ primeNegOneWitnessSet n) : p ∈ FirstStopNegOneSet C n := by
   refine ⟨hCp, ?_⟩
   rw [jacobi_selfridgeD hp.2.1 hn]
   exact hp.2.2
@@ -178,35 +178,35 @@ theorem mem_firstStopNegOneSet_of_mem_primeNegOneWitnessSet {C : ℕ → Prop} {
 /-- An odd-prime `≠1` witness in the candidate set is factor-detecting when not divisible by
 `n`. -/
 theorem mem_firstStopNeOneSet_of_mem_primeNeOneWitnessSet {C : ℕ → Prop} {n p : ℕ} (hn : Odd n)
-    (hCp : C p) (hndvd : ¬n ∣ p) (hp : p ∈ PrimeNeOneWitnessSet n) : p ∈ FirstStopNeOneSet C n := by
+    (hCp : C p) (hndvd : ¬n ∣ p) (hp : p ∈ primeNeOneWitnessSet n) : p ∈ FirstStopNeOneSet C n := by
   refine ⟨hCp, hndvd, ?_⟩
   rw [jacobi_selfridgeD hp.2.1 hn]
   exact hp.2.2
 
 /-- If the pure first-stop is prime, the least `-1` witness is no larger than it. -/
 theorem primeNegOneWitness_le_firstStopNegOne_of_prime {C : ℕ → Prop} {n : ℕ} (hC : CandidateOdd C)
-    (hn : Odd n) (hw : (PrimeNegOneWitnessSet n).Nonempty) (hs : (FirstStopNegOneSet C n).Nonempty)
+    (hn : Odd n) (hw : (primeNegOneWitnessSet n).Nonempty) (hs : (FirstStopNegOneSet C n).Nonempty)
     (hp : (firstStopNegOne C n hs).Prime) : primeNegOneWitness n hw ≤ firstStopNegOne C n hs := by
   apply primeNegOneWitness_le
   exact primeNegOneWitnessSet_of_prime_mem_firstStopNegOneSet hC hn hp (firstStopNegOne_mem C n hs)
 
 /-- If the factor-detecting first-stop is prime, the least `≠ 1` witness is no larger than it. -/
 theorem primeNeOneWitness_le_firstStopNeOne_of_prime {C : ℕ → Prop} {n : ℕ} (hC : CandidateOdd C)
-    (hn : Odd n) (hw : (PrimeNeOneWitnessSet n).Nonempty) (hs : (FirstStopNeOneSet C n).Nonempty)
+    (hn : Odd n) (hw : (primeNeOneWitnessSet n).Nonempty) (hs : (FirstStopNeOneSet C n).Nonempty)
     (hp : (firstStopNeOne C n hs).Prime) : primeNeOneWitness n hw ≤ firstStopNeOne C n hs := by
   apply primeNeOneWitness_le
   exact primeNeOneWitnessSet_of_prime_mem_firstStopNeOneSet hC hn hp (firstStopNeOne_mem C n hs)
 
 /-- If the least `-1` witness is a candidate, the pure first-stop is no larger than it. -/
 theorem firstStopNegOne_le_primeNegOneWitness {C : ℕ → Prop} {n : ℕ} (hn : Odd n)
-    (hw : (PrimeNegOneWitnessSet n).Nonempty) (hs : (FirstStopNegOneSet C n).Nonempty)
+    (hw : (primeNegOneWitnessSet n).Nonempty) (hs : (FirstStopNegOneSet C n).Nonempty)
     (hC : C (primeNegOneWitness n hw)) : firstStopNegOne C n hs ≤ primeNegOneWitness n hw := by
   apply firstStopNegOne_le
   exact mem_firstStopNegOneSet_of_mem_primeNegOneWitnessSet hn hC (primeNegOneWitness_mem n hw)
 
 /-- If the least `≠ 1` witness is a candidate and avoids `n`, the first-stop is no larger. -/
 theorem firstStopNeOne_le_primeNeOneWitness {C : ℕ → Prop} {n : ℕ} (hn : Odd n)
-    (hw : (PrimeNeOneWitnessSet n).Nonempty) (hs : (FirstStopNeOneSet C n).Nonempty)
+    (hw : (primeNeOneWitnessSet n).Nonempty) (hs : (FirstStopNeOneSet C n).Nonempty)
     (hC : C (primeNeOneWitness n hw)) (hndvd : ¬n ∣ primeNeOneWitness n hw) :
     firstStopNeOne C n hs ≤ primeNeOneWitness n hw := by
   apply firstStopNeOne_le
