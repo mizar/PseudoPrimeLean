@@ -303,31 +303,31 @@ $$
 
 GRHの下で、 $L\ge240$ のすべての奇合成数について、最小素数証人は $B_6(L)$ 以下となる。全入力の存在定理`exists_prime_witness_gaussianMR6_log240`と最小証人版`exists_least_witness_gaussianMR6_log240`は [PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR240WitnessBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR240WitnessBounds.lean) にある。平方自由性やFermat部分群指数は公開定理の追加仮定に含めない。
 
-上界 $B_*(L)$ は $L\ge300$ に適用する。定数を
+上界 $B_{\ast}(L)$ は $L\ge300$ に適用する。定数を
 
 $$
-M_*=\frac{64167}{100000},\quad c_*=\frac{20115621}{50000000},\quad k_*=\frac25,
+M_{\ast}=\frac{64167}{100000},\quad c_{\ast}=\frac{20115621}{50000000},\quad k_{\ast}=\frac25,
 $$
 
 $$
-d_*=\frac{JM_*-E}{J-1},\qquad
-\beta_*=\gamma\left(M_*k_*+\frac1{10k_*}\right)
+d_{\ast}=\frac{JM_{\ast}-E}{J-1},\qquad
+\beta_{\ast}=\gamma\left(M_{\ast}k_{\ast}+\frac1{10k_{\ast}}\right)
 $$
 
 とし、
 
 $$
-s_*(L)=\frac{\beta_*+\sqrt{\beta_*^2+4d_*(c_*L+28/5)}}{2d_*},\qquad
-B_*(L)=\frac65s_*(L)^4
+s_{\ast}(L)=\frac{\beta_{\ast}+\sqrt{\beta_{\ast}^2+4d_{\ast}(c_{\ast}L+28/5)}}{2d_{\ast}},\qquad
+B_{\ast}(L)=\frac65s_{\ast}(L)^4
 $$
 
-と定める。ここで $J,E,\gamma$ は $B_6$ と共通である。証明には128点証明書による質量下界 $M_*$ と、cutoff 50000でのGaussian部分和下界を用いる。導手係数は $c_*$、相対幅は $h=k_*/s_*(L)$ である。Lean定義`gaussianMRRefinedBound`と数値比較は [PseudoPrime/Analysis/GaussianMRRefinedNumerics.lean](../PseudoPrime/Analysis/GaussianMRRefinedNumerics.lean) にある。
+と定める。ここで $J,E,\gamma$ は $B_6$ と共通である。証明には128点証明書による質量下界 $M_{\ast}$ と、cutoff 50000でのGaussian部分和下界を用いる。導手係数は $c_{\ast}$、相対幅は $h=k_{\ast}/s_{\ast}(L)$ である。Lean定義`gaussianMRRefinedBound`と数値比較は [PseudoPrime/Analysis/GaussianMRRefinedNumerics.lean](../PseudoPrime/Analysis/GaussianMRRefinedNumerics.lean) にある。
 
-全入力の存在定理`exists_prime_witness_gaussianMRRefined`と最小証人版`exists_least_witness_gaussianMRRefined`は [PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean) にある。いずれもGRH、奇数性、合成数性、 $L\ge300$ のみを仮定する。この適用域全体で $B_*(L) < B_6(L)$ が成立する。
+全入力の存在定理`exists_prime_witness_gaussianMRRefined`と最小証人版`exists_least_witness_gaussianMRRefined`は [PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean) にある。いずれもGRH、奇数性、合成数性、 $L\ge300$ のみを仮定する。この適用域全体で $B_{\ast}(L) < B_6(L)$ が成立する。
 
 $240\le L < 300$ の全区間で、使用する上界は $B_6(L)$ である。Lean定理`gaussianMRWitnessEnvelope_eq240`が、この区間で公開包絡線`gaussianMRWitnessEnvelope`と $B_6$ が一致することを示す。包絡線の定義、各区間の等式定理、最小証人定理`exists_least_witness_gaussianMR_envelope`は [GaussianMRWitnessEnvelopes.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRWitnessEnvelopes.lean) にある。
 
-係数枝の開始尺度を $T=9565217391305\ln10$ とする。条件 $T\le L$ は $n\ge10^{9565217391305}$ と同値である。 $L\ge300$ では $B_*(L) > 0.3L^2$ が成立し、係数 $282924/1000000$ は $0.3$ より小さい。したがって $T\le L$ では、係数上界 $(282924/1000000)L^2$ が $B_*(L)$ より小さく、最小素数証人の上界として適用できる。定理`gaussianMRLargeEnvelope_eq`と`exists_least_witness_gaussianMRLarge`が、比較と適用条件をそれぞれ示す。
+係数枝の開始尺度を $T=9565217391305\ln10$ とする。条件 $T\le L$ は $n\ge10^{9565217391305}$ と同値である。 $L\ge300$ では $B_{\ast}(L) > 0.3L^2$ が成立し、係数 $282924/1000000$ は $0.3$ より小さい。したがって $T\le L$ では、係数上界 $(282924/1000000)L^2$ が $B_{\ast}(L)$ より小さく、最小素数証人の上界として適用できる。定理`gaussianMRLargeEnvelope_eq`と`exists_least_witness_gaussianMRLarge`が、比較と適用条件をそれぞれ示す。
 
 ## 上界式の適用区間と比較
 
@@ -349,7 +349,7 @@ $240\le L < 300$ の全区間で、使用する上界は $B_6(L)$ である。Le
 | $R_{\mathrm{aff}}(L-7/4)^2$ | $144/5\le L\le13517/100$ | [`exists_least_prime_reject_le_7over4_shifted_midscale_radius_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
 | $U_{\Gamma}(L)$ | $L\ge120$ | [`exists_least_prime_witness_le_gammaClippedUpper`](../PseudoPrime/PrimeTestBounds/MillerRabin/GammaClippedComparison.lean) |
 | $B_6(L)$ | $L\ge240$ | [`exists_least_witness_gaussianMR6_log240`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR240WitnessBounds.lean) |
-| $B_*(L)$ | $L\ge300$ | [`exists_least_witness_gaussianMRRefined`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean) |
+| $B_{\ast}(L)$ | $L\ge300$ | [`exists_least_witness_gaussianMRRefined`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean) |
 | $(282924/1000000)L^2$ | $n\ge10^{9565217391305}$ | [`exists_least_prime_witness_le_0282924`](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularWitnessBounds.lean) |
 
 
@@ -371,7 +371,7 @@ $n$ は正の奇合成数、$L=\ln n$ とする。有限上界3の行を除きGR
 | $120\le L < 122$ | $\min\lbrace R_{\mathrm{aff}}(L-7/4)^2,U_{\Gamma}(L)\rbrace$ | [`exists_least_prime_witness_le_endpointGammaEnvelope`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointGammaEnvelope.lean) |
 | $122\le L < 240$ | $U_{\Gamma}(L)$ | [`exists_least_prime_witness_le_gammaClippedUpper`](../PseudoPrime/PrimeTestBounds/MillerRabin/GammaClippedComparison.lean) |
 | $240\le L < 300$ | $B_6(L)$ | [`exists_least_witness_gaussianMR6_log240`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR240WitnessBounds.lean) |
-| $300\le L < T$ | $B_*(L)$ | [`exists_least_witness_gaussianMRRefined`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean)、[`gaussianMRRefinedEnvelope_eq`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRWitnessEnvelopes.lean) |
+| $300\le L < T$ | $B_{\ast}(L)$ | [`exists_least_witness_gaussianMRRefined`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean)、[`gaussianMRRefinedEnvelope_eq`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRWitnessEnvelopes.lean) |
 | $T\le L$ | $(282924/1000000)L^2$ | 入力条件は $n\ge10^{9565217391305}$。[`exists_least_witness_gaussianMRLarge`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRWitnessEnvelopes.lean)、[`gaussianMRLargeEnvelope_eq`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRWitnessEnvelopes.lean) |
 
 ### 比較グラフ
