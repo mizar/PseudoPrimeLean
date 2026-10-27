@@ -37,7 +37,6 @@ variable {N : ℕ} {P : ℝ}
 transfer the signed prefix gain through this comparison, retaining the exact conductor coefficient.
 The result is used by the next stage of the constant-principal MR comparison. -/
 theorem gaussian_zeroMass_prefix_lt
-
     (hprefix : P ≤ ∑ n ∈ Finset.Ioc 0 N, Analysis.gaussianResolventMangoldtWeight n)
     {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ)
@@ -127,7 +126,6 @@ noncomputable def gaussianPrefixError (P : ℝ) (q : ℕ) (x : ℝ) : ℝ :=
 transfer the signed prefix gain through this comparison, retaining the exact conductor coefficient.
 The result is used by the next stage of the constant-principal MR comparison. -/
 theorem norm_gaussian_zeroSum_prefix_lt
-
     (hprefix : P ≤ ∑ n ∈ Finset.Ioc 0 N, Analysis.gaussianResolventMangoldtWeight n)
     {m : ℕ} [NeZero m] (hm : 2 ≤ m)
     {χ : DirichletCharacter ℂ m} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -160,7 +158,6 @@ theorem norm_gaussian_zeroSum_prefix_lt
 transfer the signed prefix gain through this comparison, retaining the exact conductor coefficient.
 The result is used by the next stage of the constant-principal MR comparison. -/
 theorem gaussian_primitive_sum_prefix_le
-
     (hprefix : P ≤ ∑ n ∈ Finset.Ioc 0 N, Analysis.gaussianResolventMangoldtWeight n)
     {q m : ℕ} [NeZero m]
     (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
@@ -199,7 +196,6 @@ theorem gaussian_primitive_sum_prefix_le
 transfer the signed prefix gain through this comparison, retaining the exact conductor coefficient.
 The result is used by the next stage of the constant-principal MR comparison. -/
 theorem gaussian_source_sum_prefix_le
-
     (hprefix : P ≤ ∑ n ∈ Finset.Ioc 0 N, Analysis.gaussianResolventMangoldtWeight n)
     {q : ℕ} [NeZero q]
     (hq : 20000 ≤ q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
@@ -224,7 +220,6 @@ theorem gaussian_source_sum_prefix_le
 transfer the signed prefix gain through this comparison, retaining the exact conductor coefficient.
 The result is used by the next stage of the constant-principal MR comparison. -/
 theorem gaussian_average_prefix_le
-
     (hprefix : P ≤ ∑ n ∈ Finset.Ioc 0 N, Analysis.gaussianResolventMangoldtWeight n)
     {q : ℕ} [NeZero q]
     (hq : 20000 ≤ q) (S : Subgroup (DirichletCharacter ℂ q)) [Fintype S] [DecidableEq S]
@@ -272,7 +267,6 @@ theorem gaussian_average_prefix_le
 transfer the signed prefix gain through this comparison, retaining the exact conductor coefficient.
 The result is used by the next stage of the constant-principal MR comparison. -/
 theorem gaussian_principal_prefix_le
-
     (hprefix : P ≤ ∑ n ∈ Finset.Ioc 0 N, Analysis.gaussianResolventMangoldtWeight n)
     {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -320,7 +314,6 @@ theorem gaussian_principal_prefix_le
 transfer the signed prefix gain through this comparison, retaining the exact conductor coefficient.
 The result is used by the next stage of the constant-principal MR comparison. -/
 theorem gaussian_relative_prefix_le
-
     (hprefix : P ≤ ∑ n ∈ Finset.Ioc 0 N, Analysis.gaussianResolventMangoldtWeight n)
     {q : ℕ} [NeZero q]
     (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
@@ -355,7 +348,6 @@ theorem gaussian_relative_prefix_le
 Relax only the exact coefficient using the nonnegative conductor-log sum. This wrapper
 connects the shorter prefix to the existing MR scalar normalization. -/
 theorem gaussian_relative_prefix_le_coarse
-
     (hprefix : P ≤ ∑ n ∈ Finset.Ioc 0 N, Analysis.gaussianResolventMangoldtWeight n)
     {q : ℕ} [NeZero q]
     (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
