@@ -44,8 +44,19 @@ public import PseudoPrime.LLS.Extensions.QNeOneCorrections
 public import PseudoPrime.LLS.Extensions.QNeOneWeightedComparisonInputs
 public import PseudoPrime.LLS.Extensions.QNeOneNumerics
 public import PseudoPrime.LLS.Extensions.PrimitiveReciprocalRefinedBounds
+public import PseudoPrime.LLS.Extensions.RetainedEvenReciprocalBounds
 public import PseudoPrime.LLS.Extensions.PrimitiveReciprocalBranchBounds
 public import PseudoPrime.LLS.Extensions.QNeOneLogWeightedBounds
+public import PseudoPrime.LLS.Extensions.QNeOneReciprocalSeparation
+public import PseudoPrime.LLS.Extensions.QNeOneRetainedReciprocalSeparation
+public import PseudoPrime.LLS.Extensions.QNeOneDeciShiftSeparation
+public import PseudoPrime.LLS.Extensions.QNeOneShiftEntranceObstruction
+public import PseudoPrime.LLS.Extensions.QNeOneScaleReciprocalComparison
+public import PseudoPrime.LLS.Extensions.QNeOneHalfShiftSeparation
+public import PseudoPrime.LLS.Extensions.QNeOneLogShiftSeparation
+public import PseudoPrime.LLS.Extensions.EvenCoprimeCoupledComparison
+public import PseudoPrime.LLS.Extensions.EvenCoprimeSingleSupport
+public import PseudoPrime.LLS.Extensions.EvenCoprimePrimeBudget
 
 /-! Public umbrella for LLS-specific extensions and quadratic refinements. -/
 

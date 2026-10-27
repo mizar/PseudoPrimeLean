@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ReciprocalLevelChange
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ReciprocalTrivialSupport
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.AlternatingSums
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
@@ -77,33 +78,11 @@ theorem characterReciprocalWeightedTerm_re_eq_ite {q n : ℕ} [NeZero q] (x : �
     (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedTerm x χ n).re =
       if Nat.Coprime n q then AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm x n
       else 0 := by
-  by_cases hcop : Nat.Coprime n q
-  · rw [ite_eq_left hcop]
-    by_cases hΛ : ArithmeticFunction.vonMangoldt n = 0
-    · rw [AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedTerm,
-        AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm, hΛ, zero_div, zero_mul]
-      norm_num only [Complex.ofReal_zero, zero_mul, Complex.zero_re]
-    · obtain ⟨p, k, hp, hk, rfl⟩ :=
-        (isPrimePow_nat_iff (n := n)).mp (ArithmeticFunction.vonMangoldt_ne_zero_iff.mp hΛ)
-      have hpdiv : p ∣ p ^ k := dvd_pow_self p hk.ne'
-      have hpcop : Nat.Coprime p q := hcop.of_dvd_left hpdiv
-      have hpbound : (p : ℝ) ≤ x := by
-        have hpowFloor := (Finset.mem_Ioc.mp hn).2
-        have hpPow : p ≤ p ^ k := Nat.le_pow hk
-        exact
-          (show (p : ℝ) ≤ (p ^ k : ℕ) by exact_mod_cast hpPow).trans
-            ((Nat.le_floor_iff hx.le).mp hpowFloor)
-      have hpvalue : χ p = 1 := hsmall p hp (hp.coprime_iff_not_dvd.mp hpcop) (hpbound.trans hlimit)
-      rw [AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedTerm]
-      simp only [Nat.cast_pow, map_pow, hpvalue, one_pow, mul_one, Complex.ofReal_re]
-  · rw [ite_eq_right hcop]
-    have hχzero : χ n = 0 := by
-      simpa only [Int.cast_natCast] using
-        (DirichletCharacter.apply_eq_zero_iff χ (n : ℤ)).mpr
-          (by simpa only [Nat.isCoprime_iff_coprime] using hcop)
-    rw [AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedTerm, hχzero, mul_zero,
-      Complex.zero_re]
+  exact
+    AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedTerm_re_eq_ite_of_prime_trivial x χ
+      hx hn (fun p hp hd hbound ↦ hsmall p hp hd (hbound.trans hlimit))
 
+open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 /-- Under the Part 1 no-small-prime hypothesis and within its positive cutoff, the reciprocal
 character sum has real part equal to the coprime part of the Riemann sum. -/
 theorem characterReciprocalWeightedSum_re_eq_coprime {q : ℕ} [NeZero q] (x : ℝ)
@@ -112,16 +91,9 @@ theorem characterReciprocalWeightedSum_re_eq_coprime {q : ℕ} [NeZero q] (x : �
     (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ).re =
       ∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter fun n ↦ Nat.Coprime n q,
         AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm x n := by
-  rw [AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum]
-  simp only [Complex.re_sum]
-  trans
-    ∑ n ∈ Finset.Ioc 0 ⌊x⌋₊,
-      if Nat.Coprime n q then AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm x n
-      else 0
-  · apply Finset.sum_congr rfl
-    intro n hn
-    exact characterReciprocalWeightedTerm_re_eq_ite x χ hx hn hsmall hlimit
-  · rw [← Finset.sum_filter]
+  exact
+    characterReciprocalWeightedSum_re_eq_coprime_of_prime_trivial x χ hx
+      (fun p hp hd hbound ↦ hsmall p hp hd (hbound.trans hlimit))
 
 /--
 The safe finite reciprocal lower bound, retaining the correction from primes in the level divided
@@ -222,6 +194,7 @@ theorem llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_riemann
   rw [LLSPart1PrimitiveReciprocalLowerAtWithQuotient]
   linarith only [hlogX, hriemann, hlower]
 
+open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 /--
 Input/assumptions: a positive cutoff within the Part 1 range and a no-small-prime character.
 Conclusion: the level character's own reciprocal sum is at least the Riemann reciprocal sum
@@ -241,12 +214,9 @@ theorem characterReciprocalWeightedSum_re_lower_level {q : ℕ} [NeZero q] (x : 
     AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum x -
         AnalyticNumberTheory.Arithmetic.primeFactorLogSum q ≤
       (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ).re := by
-  have horiginal := characterReciprocalWeightedSum_re_eq_coprime x χ hx hsmall hlimit
-  have hsplit :=
-    AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum_eq_coprime_add_common x q
-  have hcommon :=
-    AnalyticNumberTheory.Arithmetic.commonFactorReciprocalWeightedSum_le (NeZero.ne q) hx
-  linarith only [horiginal, hsplit, hcommon]
+  exact
+    characterReciprocalWeightedSum_re_lower_level_of_prime_trivial x χ hx
+      (fun p hp hd hbound ↦ hsmall p hp hd (hbound.trans hlimit))
 
 /-- Under the no-small-prime hypothesis and within the Part 1 cutoff, the reciprocal sum has
 nonnegative real part. -/
@@ -254,13 +224,9 @@ theorem characterReciprocalWeightedSum_re_nonneg_level {q : ℕ} [NeZero q] (x :
     (χ : DirichletCharacter ℂ q) (hx : 0 < x) (hsmall : llsTheorem11S1NoSmallPrime χ)
     (hlimit : x ≤ (llsTheorem11S1RadiusRoot q) ^ 2) :
     0 ≤ (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ).re := by
-  rw [characterReciprocalWeightedSum_re_eq_coprime x χ hx hsmall hlimit]
-  apply Finset.sum_nonneg
-  intro n hn
-  have hnIoc := (Finset.mem_filter.mp hn).1
   exact
-    AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm_nonneg hx
-      (Finset.mem_Ioc.mp hnIoc).1 (Finset.mem_Ioc.mp hnIoc).2
+    AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum_re_nonneg_of_prime_trivial x χ hx
+      (fun p hp hd hbound ↦ hsmall p hp hd (hbound.trans hlimit))
 
 /--
 Input/assumptions: a level-`q` character.
