@@ -32,6 +32,10 @@ $$
 
 ## GRH と輪郭積分の成果
 
+[RiemannZeta/TrivialZeros.lean](../PseudoPrime/AnalyticNumberTheory/RiemannZeta/TrivialZeros.lean) の `zeta_trivial_zero_exists` は、ゼータ関数の負の偶整数における零点の存在を証明する。[GRH/TrivialZeroExistence.lean](../PseudoPrime/AnalyticNumberTheory/GRH/TrivialZeroExistence.lean) は、非主偶指標の非正偶整数、奇指標の負の奇整数における自明零点の存在を証明する。非主指標について、定義集合 `dirichletTrivialZeros` に属する点でL関数が実際に消えることまで接続している。これらはGRHと指標の原始性を仮定しない。
+
+原始非主指標のL関数については [GRH/ZeroClassification.lean](../PseudoPrime/AnalyticNumberTheory/GRH/ZeroClassification.lean) の `mem_trivialZeros_of_LFunction_zero_outside_strip` が、閉臨界帯の外の零点は定義済みの自明零点集合に属することを証明する。ゼータ関数の零点については [RiemannZeta/TrivialZeros.lean](../PseudoPrime/AnalyticNumberTheory/RiemannZeta/TrivialZeros.lean) の `zeta_trivial_of_zero_outside_strip` が、閉臨界帯 $0\le\mathrm{Re}(s)\le1$ の外の零点は負の偶整数に限られることを証明する。どちらもRH・GRHを仮定しない。
+
 [Definition.lean](../PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) の `GeneralizedRiemannHypothesis` は、法 $1$ を含むすべての原始複素 Dirichlet 指標について、所定の自明零点以外の L 関数の零点の実部が $1/2$ であるという命題である。 `GeneralizedRiemannHypothesis.riemann` が法 $1$ から RH を導く。したがって後続の GRH 定理に独立した RH 仮定を追加する必要はない。
 
 解析証明では、有限矩形の境界積分を留数和に変換する。次に、適切な高さ列に沿って水平辺の積分を消し、左辺を遠方へ移す。一般指標用の [PrimitiveGenericLogLeftVertical.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/PrimitiveGenericLogLeftVertical.lean) などが、この極限を与える。有限輪郭と極限に必要な条件は、それぞれ個別の定理で確認する。RH・GRH に基づく零点評価は各定理の引数として受け取る。

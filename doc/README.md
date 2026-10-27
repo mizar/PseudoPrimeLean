@@ -39,6 +39,8 @@ flowchart TD
 
 ## 読み方と利用方法
 
+参考情報として、[3種類の最小素数証人の数表](WitnessRecords.md) にMR・負値・非1証人の累積最大値の更新点をまとめた。数値探索の範囲と、Leanによる形式検証との違いも記載している。
+
 最終的な数学的上界については [PseudoSquare](PseudoSquare.md)、[PrimeTestBounds.Selfridge](SelfridgeBoundGrh.md)、[PrimeTestBounds.MillerRabin](MillerRabinBoundGrh.md) を参照する。その解析的な根拠は [LLS](LLS.md) で説明する。BPSWの定義・理論・判定手順は [BPSWと強化版の実装手順](BPSWAlgorithm.md) だけで読める。Leanの公開APIは [PrimeTest](PrimeTest.md)、C++・Pythonの実行方法とLean版との違いは [参考実装](BPSWImplementations.md) にまとめている。
 
 ```lean

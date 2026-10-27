@@ -6,14 +6,14 @@
 
 ## 概要
 
-このプロジェクトでは、**一般化リーマン予想（GRH）**の下で成り立つ素数判定と、二次指標の証人に対する明示的な上界を Lean で形式化している。
+このプロジェクトでは、一般化リーマン予想（GRH）の下で成り立つ素数判定と、二次指標の証人に対する明示的な上界を Lean で形式化している。
 
 解析的な議論は、Lamzouri、Li、Soundararajan の論文 [*Conditional bounds for the least quadratic non-residue and related problems*](https://arxiv.org/abs/1309.3595) に沿っている。上界の証明に必要な部分を、有限範囲および代数的な議論とともに Lean で形式化している。
 
 主な結果は次の二つである。
 
 1. GRH の下で、奇数 $n > 1$ が素数であることと、上界 $p \le (\ln\mathrel{} n)^2$ を満たすすべての素数底で強 Miller–Rabin 条件を満たすことは同値である。
-2. GRH の下で、正の奇数かつ非平方数 $n$ に対して、2 種類の奇素数証人 $p$ の存在と、それぞれの明示的な上界を示す。一方は Legendre 記号 $\bigl(\frac{n}{p}\bigr)$ が $1$ でない証人、もう一方は記号が $-1$ となる証人である。
+2. GRH の下で、正の奇数で平方数でない整数 $n$ に対して、2 種類の奇素数証人 $p$ の存在と、それぞれの明示的な上界を示す。一方は Legendre 記号 $\bigl(\frac{n}{p}\bigr)$ が $1$ でない証人、もう一方は記号が $-1$ となる証人である。
 
 以下、 $\ln$ は底が $e$ の自然対数を表す。Lean では `Real.log` に対応する。
 
@@ -68,7 +68,7 @@ $$
 - $\text{Prime} \to (\text{all pass})$ の向きに GRH は不要である。 $n$ が素数なら、指定の上界以下の各素数底が合格する。
 - $(\text{all pass}) \to \text{Prime}$ の向きに GRH を用いる。奇合成数 $n > 1$ には、 $n$ を棄却する素数底 $p \le (\ln\mathrel{} n)^2$ が存在する。
 
-Lean では $n - 1$ の分解を $n$ から標準的に定める。値 $s$、値 $d$、及び分解の等式は、この公開定理における追加仮定ではない。
+Lean では $n - 1$ の分解を $n$ から標準的に定める。その値 $s$、 $d$ と分解の等式は、この公開定理における追加仮定ではない。
 
 公開定理は名前空間 `PseudoPrime.PrimeTestBounds.MillerRabin` の [FromLLS.lean](PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) にある。以下の宣言抜粋では証明本体を省略している。
 
@@ -88,7 +88,7 @@ theorem prime_iff_millerRabin_for_all_primes_le_log_sq
 
 ## GRH の下での Legendre 記号の証人
 
-正の奇数かつ非平方数 $n$ をとる。
+正の奇数で平方数でない整数 $n$ をとる。
 
 ### Legendre 記号が $1$ でない素数証人
 
@@ -108,7 +108,7 @@ theorem exists_prime_ne_one_witness_of_grh
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ max 5 (Real.log (n : ℝ) ^ 2) ∧ jacobiSym n p ≠ 1
 ```
 
-### 平方非剰余となる素数の証人
+### Legendre 記号が $-1$ となる素数証人
 
 GRH の下で、次を満たす奇素数 $p$ も存在する。
 
@@ -133,13 +133,13 @@ theorem exists_prime_neg_one_witness_of_grh
 
 Lean の定理では `jacobiSym n p` を用いる。分母 $p$ は奇素数なので、これは Legendre 記号 $\bigl(\frac{n}{p}\bigr)$ と一致する。
 
-最初の結果は $\bigl(\frac{n}{p}\bigr) = 0$ または $\bigl(\frac{n}{p}\bigr) = -1$ を許す。前者は $p \mid n$ と同値であり、後者は $n$ が $p$ を法として平方非剰余であることを意味する。第 2 の定理は後者を保証する。
+最初の結果は $\bigl(\frac{n}{p}\bigr) = 0$ または $\bigl(\frac{n}{p}\bigr) = -1$ を許す。前者は $p \mid n$ と同値であり、後者は $n$ が $p$ を法として平方非剰余であることを意味する。二つ目の定理は後者を保証する。
 
 ## GRH の仮定の位置付け
 
 上記の条件付き結果では、GRH を明示的な仮定とする。Lean では、名前空間 `PseudoPrime` 内の [`AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis`](PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) として定義している。
 
-このプロジェクトは **GRH 自体を証明しない**。GRH から、LLS Theorem 1.1 の関連する部分に対応する結果を Lean 内で導出する。これには [`LLS.llsTheorem11S1_of_grh`](PseudoPrime/LLS/Theorem11S1GRH.lean) と [`LLS.llsTheorem11S2_of_grh`](PseudoPrime/LLS/Theorem11S2.lean) が含まれる。これらをプロジェクトの代数的・数論的議論及び有限範囲の議論と組み合わせ、上記の明示的上界を得る。
+このプロジェクトは **GRH 自体を証明しない**。GRH から、LLS Theorem 1.1 の関連する部分に対応する結果を Lean 内で導出する。これには [`LLS.llsTheorem11S1_of_grh`](PseudoPrime/LLS/Theorem11S1GRH.lean) と [`LLS.llsTheorem11S2_of_grh`](PseudoPrime/LLS/Theorem11S2.lean) が含まれる。これらをプロジェクトの代数的・数論的議論と有限範囲の議論と組み合わせ、上記の明示的上界を得る。
 
 ## 詳細な資料
 
@@ -156,9 +156,9 @@ Lean の定理では `jacobiSym n p` を用いる。分母 $p$ は奇素数な�
 
 > Youness Lamzouri, Xiannan Li, and Kannan Soundararajan, “Conditional bounds for the least quadratic non-residue and related problems,” *Mathematics of Computation* **84** (2015), no. 295, 2391–2412. [DOI: 10.1090/S0025-5718-2015-02925-1](https://doi.org/10.1090/S0025-5718-2015-02925-1), [arXiv:1309.3595](https://arxiv.org/abs/1309.3595).
 
-本形式化は、この論文の関連する結果と解析的評価を、プロジェクトの算術的議論及び有限範囲の議論と組み合わせて用いる。対応する形式化済みの結果については [LLS のモジュール解説](doc/LLS.md) を参照。
+本形式化は、この論文の関連する結果と解析的評価を、プロジェクトの算術的議論と有限範囲の議論と組み合わせて用いる。対応する形式化済みの結果については [LLS のモジュール解説](doc/LLS.md) を参照。
 
-### Baillie–PSW 及び Lucas–Selfridge 素数判定法
+### Baillie–PSW と Lucas–Selfridge 素数判定法
 
 Lucas–Selfridge と Baillie–PSW の背景となる歴史的文献として、次が挙げられる。
 
@@ -166,12 +166,12 @@ Lucas–Selfridge と Baillie–PSW の背景となる歴史的文献として�
 
 > Carl Pomerance, John L. Selfridge, and Samuel S. Wagstaff, Jr., “The pseudoprimes to $25\cdot10^9$,” *Mathematics of Computation* **35** (1980), no. 151, 1003–1026. [DOI: 10.1090/S0025-5718-1980-0572872-7](https://doi.org/10.1090/S0025-5718-1980-0572872-7).
 
-これらの論文は、Baillie–PSW テストに関連する底 2 の強 Miller–Rabin と Lucas–Selfridge の構成要素、及びこのプロジェクトにおいて `selfridgeD`、 `firstStopNegOne`、 `firstStopNeOne` が表現する Selfridge パラメータ選択の文脈に関する歴史的な参考文献である。Baillie–PSW テストの後年の強化については、Robert Baillie, Andrew Fiori, and Samuel S. Wagstaff, Jr., “[Strengthening the Baillie-PSW primality test](https://arxiv.org/abs/2006.14425v2),” arXiv:2006.14425v2 を参照。
+これらの論文は、Baillie–PSW テストに関連する底 2 の強 Miller–Rabin と Lucas–Selfridge の構成要素、及びこのプロジェクトにおいて `selfridgeD`、 `firstStopNegOne`、 `firstStopNeOne` が表現する Selfridge パラメータの選択に関する歴史的な参考文献である。Baillie–PSW テストの後年の強化については、Robert Baillie, Andrew Fiori, and Samuel S. Wagstaff, Jr., “[Strengthening the Baillie-PSW primality test](https://arxiv.org/abs/2006.14425v2),” arXiv:2006.14425v2 を参照。
 
-実行用BPSWには `bailliePSWWheel30`と `strengthenedBPSWWheel30`を使う。底2 Miller–Rabinを先に実行し、因子検出付きWheel30探索でSelfridgeパラメータを選ぶ。強化版はBFW論文の5段階仕様と一致する。証明付き判定には `BPSW.decideWheel30 n false`または `BPSW.decideWheel30 n true`、段階実行には `Execution.runBPSWWheel30`を使う。平方数ではMR先行の費用が増える場合がある。
+実行用BPSWには `bailliePSWWheel30`と `strengthenedBPSWWheel30`を使う。底2 Miller–Rabinを先に実行し、因子検出付きWheel30探索でSelfridgeパラメータを選ぶ。強化版はBaillie–Fiori–Wagstaff（BFW）論文の5段階仕様と一致する。証明付き判定には `BPSW.decideWheel30 n false`または `BPSW.decideWheel30 n true`、段階実行には `Execution.runBPSWWheel30`を使う。平方数ではMR先行の費用が増える場合がある。
 
 ### 疑似平方数に関する参考文献
 
 背景となる用語と数値データについては、[OEIS A002189 — Pseudosquares](https://oeis.org/A002189) を参照。OEIS A002189 は、奇素数列の各初期部分に対し、 $1 \pmod 8$ に合同で、その初期部分に含まれるすべての奇素数を法として非零平方剰余となる最小の正の非平方整数を記録する。
 
-本プロジェクトは、Selfridge/LLS 証人定理において、より広い正の奇数かつ非平方数の定義域を用いる。OEIS のエントリは参考資料として挙げるにとどめる。
+本プロジェクトのSelfridge/LLS証人定理では、正の奇数で平方数でない整数全体という、より広い定義域を用いる。OEIS のエントリは参考資料として挙げるにとどめる。

@@ -6,7 +6,7 @@
 
 ## Overview
 
-This project formalizes in Lean explicit bounds for primality testing and quadratic-character witnesses under the **Generalized Riemann Hypothesis (GRH)**.
+This project uses Lean to formalize explicit bounds for primality testing and quadratic-character witnesses under the **Generalized Riemann Hypothesis (GRH)**.
 
 The analytic development follows the work of Lamzouri, Li, and Soundararajan, [*Conditional bounds for the least quadratic non-residue and related problems*](https://arxiv.org/abs/1309.3595). The results needed for these bounds, together with the required finite-range and algebraic arguments, are formalized in Lean.
 
@@ -47,7 +47,7 @@ n \text{ is prime}
 \exists j \in ℕ,\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
 $$
 
-Equivalently, since $n > 1$, the same result can be stated on the composite side:
+Equivalently, since $n > 1$, compositeness can be characterized as follows:
 
 $$
 n \text{ is composite}
@@ -64,7 +64,7 @@ Thus, $n$ is composite if and only if there is a prime base not exceeding the st
 
 Here $ℕ = \lbrace 0, 1, 2, \ldots \rbrace$, matching Lean's `ℕ`.
 
-The two directions play different roles:
+The two directions require different assumptions:
 
 - $\text{Prime} \to (\text{all pass})$ is unconditional: every prime base satisfying the stated bound passes when $n$ is prime.
 - $(\text{all pass}) \to \text{Prime}$ uses GRH: every odd composite $n > 1$ has a rejecting prime base not exceeding the stated bound.
@@ -85,7 +85,7 @@ theorem prime_iff_millerRabin_for_all_primes_le_log_sq
       Nat.Prime n
 ```
 
-The chained implications `Nat.Prime p → (p : ℝ) ≤ ... → ...` require the strong Miller–Rabin pass condition whenever the arbitrary base `p` is prime and satisfies the bound. This explicit power-congruence pass condition is equivalent to `PrimeTest.strongMillerRabinWithBase n p = true`, as proved by [`strongMillerRabinWithBase_eq_true_iff_pass`](PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean).
+The chained implications `Nat.Prime p → (p : ℝ) ≤ ... → ...` require the strong Miller–Rabin pass condition for every base `p` that is prime and satisfies the bound. This explicit power-congruence condition is equivalent to `PrimeTest.strongMillerRabinWithBase n p = true`, as proved by [`strongMillerRabinWithBase_eq_true_iff_pass`](PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean).
 
 ## Legendre-symbol witnesses under GRH
 
@@ -163,15 +163,15 @@ The formalization draws on the relevant results and analytic estimates in this p
 
 ### Baillie–PSW and Lucas–Selfridge primality testing
 
-Historical sources underlying the Lucas–Selfridge and Baillie–PSW context include:
+Historical references for Lucas–Selfridge and Baillie–PSW primality testing include:
 
 > Robert Baillie and Samuel S. Wagstaff, Jr., “Lucas pseudoprimes,” *Mathematics of Computation* **35** (1980), no. 152, 1391–1417. [DOI: 10.1090/S0025-5718-1980-0583518-6](https://doi.org/10.1090/S0025-5718-1980-0583518-6).
 
 > Carl Pomerance, John L. Selfridge, and Samuel S. Wagstaff, Jr., “The pseudoprimes to $25\cdot10^9$,” *Mathematics of Computation* **35** (1980), no. 151, 1003–1026. [DOI: 10.1090/S0025-5718-1980-0572872-7](https://doi.org/10.1090/S0025-5718-1980-0572872-7).
 
-These papers provide historical background for the strong base-2 and Lucas–Selfridge components associated with the Baillie–PSW test, as well as the Selfridge parameter-selection context represented by `selfridgeD`, `firstStopNegOne`, and `firstStopNeOne` in this project. For a later strengthening of the Baillie–PSW test, see Robert Baillie, Andrew Fiori, and Samuel S. Wagstaff, Jr., “[Strengthening the Baillie-PSW primality test](https://arxiv.org/abs/2006.14425v2),” arXiv:2006.14425v2.
+These papers provide historical background for the strong base-2 Miller–Rabin and Lucas–Selfridge components associated with the Baillie–PSW test, as well as the Selfridge parameter selection represented by `selfridgeD`, `firstStopNegOne`, and `firstStopNeOne` in this project. For a later strengthening of the Baillie–PSW test, see Robert Baillie, Andrew Fiori, and Samuel S. Wagstaff, Jr., “[Strengthening the Baillie-PSW primality test](https://arxiv.org/abs/2006.14425v2),” arXiv:2006.14425v2.
 
-Use `bailliePSWWheel30` and `strengthenedBPSWWheel30` for executable BPSW tests. They run base-2 Miller–Rabin first and use factor-detecting Wheel30 Selfridge selection. The strengthened entry agrees with the BFW five-stage specification. Use `BPSW.decideWheel30 n false` or `BPSW.decideWheel30 n true` for certified decisions, and `Execution.runBPSWWheel30` for staged execution. MR-before-square ordering can cost more on square inputs.
+Use `bailliePSWWheel30` and `strengthenedBPSWWheel30` for executable BPSW tests. They run base-2 Miller–Rabin first and select Selfridge parameters using a Wheel30 search that also detects factors. The strengthened test agrees with the five-stage specification of Baillie, Fiori, and Wagstaff (BFW). Use `BPSW.decideWheel30 n false` or `BPSW.decideWheel30 n true` for certified decisions, and `Execution.runBPSWWheel30` for staged execution. Running Miller–Rabin before checking for squares can increase the cost for square inputs.
 
 ### Pseudosquare reference
 

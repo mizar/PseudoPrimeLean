@@ -8,19 +8,19 @@ $$
 C_h(\varepsilon)=
 \left(\frac14+\varepsilon\right)
 \left(1-\frac1h\right)^2
-\left(\frac{\log(2h)}{\log(2h)-4}\right)^2
+\left(\frac{\ln(2h)}{\ln(2h)-4}\right)^2
 $$
 
-とする。ここで $h=[(ℤ/qℤ)^\times:H]$ は部分群の指数、 $\log$ は自然対数である。Lean命題は、GRHの下で、固定した $h \ge 4$ と任意の $\varepsilon > 0$ に対して閾値 $Q$ が存在し、 $q \ge Q$ と指数 $h$ の任意の部分群 $H$ について、 $p \nmid q$ かつ $p \bmod q \notin H$ を満たす最小素数が $C_h(\varepsilon)(\log q)^2$ 未満となることを述べる。閾値は $h,\varepsilon$ に依存してよいが、 $q,H$ には依存しない。
+とする。ここで $h=[(ℤ/qℤ)^\times:H]$ は部分群の指数、 $\ln$ は自然対数である。Lean命題は、GRHの下で、固定した $h \ge 4$ と任意の $\varepsilon > 0$ に対して閾値 $Q$ が存在し、 $q \ge Q$ と指数 $h$ の任意の部分群 $H$ について、 $p \nmid q$ かつ $p \bmod q \notin H$ を満たす最小素数が $C_h(\varepsilon)(\ln q)^2$ 未満となることを述べる。閾値は $h,\varepsilon$ に依存してよいが、 $q,H$ には依存しない。
 
 論文の第6.1節は、命題6.1による共通核の比較では先頭係数 $1/4$ より小さい上界を得られないことを述べる。本プロジェクトでは、この比較の限界を指数4〜6で $60/121$ に強めて形式化している。以下の係数障害自体はGRHを仮定しない解析的な命題であり、GRHから導かれる素数上界に適用する際に命題6.1と接続する。
 
 ### 原文 §6.2 の導出に関する疑義
 
-論文の第6.2節は三角形型核と $\lambda=1$、 $\alpha=\log(2h)/2$ を選び、 $h \ge 4$ で定理1.3の係数が得られると述べる。この核を用いた比較不等式の左辺の係数を $D_h=h(4\alpha-4+4e^{-\alpha})-4(e^{\alpha/2}-e^{-\alpha/2})^2$ とすると、そこで用いる簡略下界は
+論文の第6.2節は三角形型核と $\lambda=1$、 $\alpha=\ln(2h)/2$ を選び、 $h \ge 4$ で定理1.3の係数が得られると述べる。この核を用いた比較不等式の左辺の係数を $D_h=h(4\alpha-4+4e^{-\alpha})-4(e^{\alpha/2}-e^{-\alpha/2})^2$ とすると、そこで用いる簡略下界は
 
 $$
-D_h \ge 2h\bigl(\log(2h)-4\bigr)
+D_h \ge 2h\bigl(\ln(2h)-4\bigr)
 $$
 
 である。この下界で比較不等式を除して上界を得るには、右辺が正である必要がある。整数の指数では $h \ge 28$ がこの条件に対応する。これは実際の $D_h$ の符号とは別の条件であり、簡略下界が負の場合にそれを二乗しても、上界の導出は正当化されない。
@@ -49,11 +49,11 @@ $$
 
 と置く。質量 $M_K$ はコードの `K.mass` と同じ正規化であり、許容核では $M_K > 0$ である。
 
-命題6.1で、非主の消去指標 $h-1$ 個に共通核を使い、各指標の零点項の費用を $M_K\log q$ で一律に評価すると、
+命題6.1で、非主の消去指標 $h-1$ 個に共通核を使い、各指標の零点項の費用を $M_K\ln q$ で一律に評価すると、
 
 $$
 D_h\sqrt X
-\le (1+o(1))\sqrt\lambda(h-1)M_K\log q
+\le (1+o(1))\sqrt\lambda(h-1)M_K\ln q
 $$
 
 という比較を得る。ここで $X$ 以下の素数のうち $q$ と互いに素なものはすべて $H$ に属すると仮定している。 $D_h > 0$ の場合にこの比較を解いて得られる、漸近誤差を加える前の先頭係数は
@@ -84,7 +84,7 @@ $$
 
 と置く。これは `ep1Numerator F` である。試験関数には $F$ と `ep1Integrand F` の可積分性、および $J(F) > 0$ を要求する。 $R(t)$ の符号は制限しない。
 
-双対重みは、 $a=\log(5/2)/\pi$ として
+双対重みは、 $a=\ln(5/2)/\pi$ として
 
 $$
 w(t)=
@@ -103,7 +103,7 @@ $$
 
 を得る。
 
-$b=\log(5/2)$ と置くと、正規化した双対関数 `dualValue` は
+$b=\ln(5/2)$ と置くと、正規化した双対関数 `dualValue` は
 
 $$
 \begin{aligned}
@@ -178,7 +178,7 @@ $$
 c_h(K,\lambda)\ge c_6(K,\lambda)\ge\frac{60}{121}
 $$
 
-を得る。一方、同じ範囲では $0 < \log(2h) < 5/2$ と $0 < 1-1/h \le 5/6$ より、
+を得る。一方、同じ範囲では $0 < \ln(2h) < 5/2$ と $0 < 1-1/h \le 5/6$ より、
 
 $$
 C_h(1/200)
@@ -217,17 +217,17 @@ $$
 | 定理 | 追加条件 |
 | --- | --- |
 | `theorem13_small_index_of_odd_proper_prime_power` — [`PseudoPrime/LLS/PrimePowerSubgroupBounds.lean`](../PseudoPrime/LLS/PrimePowerSubgroupBounds.lean) | 法が $q=r^k$、 $r$ が奇素数、 $k \ge 2$。底の素数に例外は残していない。 |
-| `theorem13_small_index_of_conductor_sum_le_half` — [`PseudoPrime/LLS/SmallIndexConductorBounds.lean`](../PseudoPrime/LLS/SmallIndexConductorBounds.lean) | `subgroupConductorLogSum H` が $(h-1)\log q/2$ 以下。法は一般の正整数でよい。 |
+| `theorem13_small_index_of_conductor_sum_le_half` — [`PseudoPrime/LLS/SmallIndexConductorBounds.lean`](../PseudoPrime/LLS/SmallIndexConductorBounds.lean) | `subgroupConductorLogSum H` が $(h-1)\ln q/2$ 以下。法は一般の正整数でよい。 |
 
 `subgroupConductorLogSum H` は、 $H$ 上で1となる指標のうち非主のものについて、その原始導手 $f_\chi$ の対数を足した
 
 $$
-\sum_{\substack{\chi\in H^\perp\\\chi\ne\chi_0}}\log f_\chi
+\sum_{\substack{\chi\in H^\perp\\\chi\ne\chi_0}}\ln f_\chi
 $$
 
-である。各導手を法で抑える一般評価は $(h-1)\log q$ であり、その半分以下という条件は追加仮定である。
+である。各導手を法で抑える一般評価は $(h-1)\ln q$ であり、その半分以下という条件は追加仮定である。
 
-両定理では $4 \le h \le 6$ を満たす指数を固定し、閾値 $Q$ を与える。追加条件を満たす $q \ge Q$ と指数 $h$ の部分群について、最小の部分群外素数を $C_h(0)(\log q)^2$ 未満に抑える。したがって、任意の正の誤差での定理1.3の上界も得られる。この閾値は、該当範囲の法と部分群について一様である。
+両定理では $4 \le h \le 6$ を満たす指数を固定し、閾値 $Q$ を与える。追加条件を満たす $q \ge Q$ と指数 $h$ の部分群について、最小の部分群外素数を $C_h(0)(\ln q)^2$ 未満に抑える。したがって、任意の正の誤差での定理1.3の上界も得られる。この閾値は、該当範囲の法と部分群について一様である。
 
 どちらの追加条件も満たさない指数4〜6の場合については、一般の結論は未証明である。公開証明の対象は指数7以上の制限版であり、上記の部分定理を合わせても `lls_theorem13` 全体の証明にはなっていない。
 
