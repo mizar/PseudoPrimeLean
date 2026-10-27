@@ -37,6 +37,10 @@ public import PseudoPrime.Analysis.GaussianGammaCutoffQuadrature
 public import PseudoPrime.Analysis.GaussianGammaCutoffLowerBound
 public import PseudoPrime.Analysis.GaussianGammaCutoffSixFifths
 public import PseudoPrime.Analysis.GaussianMR6FifthsNumerics
+public import PseudoPrime.Analysis.GaussianMR240Numerics
+public import PseudoPrime.Analysis.GaussianMRWidthNumerics
+public import PseudoPrime.Analysis.GaussianMRRefinedNumerics
+public import PseudoPrime.Analysis.GaussianMRCoefficientBounds
 public import PseudoPrime.Analysis.GaussianResolventCertificate
 public import PseudoPrime.Analysis.SignedExponentialMoments
 public import PseudoPrime.Analysis.GaussianSignedResolventWeight
