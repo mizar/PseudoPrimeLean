@@ -1,0 +1,180 @@
+{
+  "date": "2026-10-17",
+  "platform": "Windows",
+  "compiler": "GCC 16.2.0 (MSYS2 MinGW-w64), C++20 -static",
+  "additional_compiler": "Clang 23.1.3 (MSYS2 CLANG64), C++20 -static",
+  "supported_input_max_exclusive": "340282366920938463463374607431768211456",
+  "python_unit_tests_passed": 6,
+  "exhaustive_comparison_upper_inclusive": 200000,
+  "wide_interval_cases": 26,
+  "wide_interval_boundaries": [
+    "2^64",
+    "2^96",
+    "2^127",
+    "(2^64-1)^2",
+    "2^128-1",
+    "known 80-bit record n=900328310767395396567151"
+  ],
+  "wide_interval_thresholds": [
+    3,
+    17,
+    131
+  ],
+  "wide_interval_counts_and_minima_match_reference": true,
+  "wide_interval_resume": "passed, including the final chunk containing 2^128-1",
+  "arithmetic_128_bit_test": {
+    "GCC": "passed",
+    "Clang": "passed",
+    "modular_reduction_samples": 60000,
+    "coverage": [
+      "overflow-checked decimal parsing",
+      "largest u64 square and adjacent nonsquares",
+      "full-width modular reduction",
+      "generic and six-level wheels at 128-bit coordinates",
+      "normalized coordinate filters",
+      "both witness kernels"
+    ]
+  },
+  "ubsan": "unavailable: GCC installation lacks libsanitizer.spec",
+  "executable_imports": [
+    "KERNEL32.dll",
+    "msvcrt.dll"
+  ],
+  "full_u64_run": false,
+  "full_u80_run": false,
+  "full_u128_run": false,
+  "linux_run": false,
+  "source_sha256": {
+    "search.cpp": "7cec01c27d644dafacf7c3d451af5056b4272acb160ce2ce80a5266661eebb69",
+    "records.py": "55d37b890090a5dc71d32a2cac94bc0e03c3fa00ce0713d2cd7782ca7c2accbd",
+    "test_records.py": "36156c6078a3b4e2d83fe8742048768648c09969a921145d88ed300998ce7494",
+    "test_arithmetic.cpp": "19d04a888878f561986e5d362ee2bf949a47445356112b34ff69653c70bb1833",
+    "g++-static.cmd": "4748ce5145c1fa96076b72611724145f0023d8b926244c9ec2d87f7a9fbfcca8",
+    "clang++-static.cmd": "bbbbf62ff588866aac527080160bf64e93daa798ad5181b009fb5ff25eae5a61"
+  },
+  "journal_validation": {
+    "date": "2026-10-18",
+    "result_format": "QWJNL001, little-endian 32-byte header and ASCII payload, FNV-1a-64 metadata/payload checksum",
+    "max_result_files_per_mode": 16,
+    "gcc_tests_passed": 8,
+    "clang_tests_passed": 8,
+    "checks": [
+      "independent exhaustive records through 200000",
+      "26 full-width 128-bit windows, minima and counts",
+      "stop.request and actual killed-process restart",
+      "changed worker count on resume",
+      "truncated header and payload recovery",
+      "missing bitmap reconstruction",
+      "complete-frame checksum corruption and duplicate rejection",
+      "fixed file count with more than 100 chunks"
+    ],
+    "source_sha256": {
+      "search.cpp": "125ce85cb1ef34ce3c3816d9ac3b36689cec482c89fe906f5e18ac2a94c95a47",
+      "records.py": "91a86efa3a2b38c0c9df97a1d977f2bca5bb6871be77c09345e5bf15bacd3284",
+      "test_records.py": "ad804c08f4bd963b36382c9f305b9eab0ea5914e514c496a51b92529cf26b105"
+    }
+  },
+  "prime_minima_validation": {
+    "date": "2026-10-18",
+    "tests_passed": 10,
+    "independent_comparison_upper_inclusive": 200000,
+    "kinds": [
+      "negative",
+      "non_one"
+    ],
+    "outputs": [
+      "negative_prime_minima.csv",
+      "non_one_prime_minima.csv"
+    ],
+    "columns": [
+      "witness",
+      "n"
+    ],
+    "checks": [
+      "all observed least-witness primes, including nonrecords",
+      "empty n for unobserved primes below largest observed witness",
+      "smallest missing prime determines search threshold",
+      "p=3 first appears after p=5 in negative search",
+      "completed work-directory restart",
+      "journal interruption and 128-bit boundary regressions"
+    ],
+    "source_sha256": {
+      "records.py": "58de7295b63114103e80e29f1516e3b32ff4e9c29f83d427dc55c4340017564d",
+      "test_records.py": "7593624d5d8b449669d0bb2d4664d37b90cc03528d880c82bcc7ebf832572d3f"
+    }
+  },
+  "interval_cap_validation": {
+    "date": "2026-10-18",
+    "tests_passed": 12,
+    "max_additional_interval": "18446744073709551616",
+    "next_upper": "min(target, covered * 16, covered + 2^64)",
+    "engine_lower": "covered + 1",
+    "checks": [
+      "boundary calculations at 2^64, 2^80 and 2^128-1",
+      "contiguous nonoverlapping capped engine intervals",
+      "exact minima and workflow restart",
+      "independent exhaustive comparison through 200000",
+      "existing journal interruption and 128-bit boundary regressions"
+    ],
+    "source_sha256": {
+      "records.py": "52cd82adcf92bf90a0ebbec9121cb9aa41496431047c25f5744ab0e8443835fe",
+      "test_records.py": "ee5d2087b1ec8a8e30b7e41b608902ca6455385558164c2c2f0894f74b50e623"
+    }
+  },
+  "extend_range_validation": {
+    "date": "2026-10-18",
+    "tests_passed": 16,
+    "execution": "15-test suite plus one newly added incomplete-legacy-migration test",
+    "identity_format": 3,
+    "legacy_format_2_records_sha256": "52cd82adcf92bf90a0ebbec9121cb9aa41496431047c25f5744ab0e8443835fe",
+    "checks": [
+      "extend completed prefix without rewriting result journals",
+      "extend incomplete job while retaining its original bounds and committed frames",
+      "all minima agree with independent reference",
+      "reject reduced upper bound without modifying saved state",
+      "reject changed chunk configuration",
+      "migrate completed and incomplete immediately preceding interval-capped format-2 jobs",
+      "existing interval, interruption, exhaustive and 128-bit boundary regressions"
+    ],
+    "source_sha256": {
+      "records.py": "7ae810ce1fc0755dd8be12929238d69e9c9c26106a0b97a8956b770d1e5e1a4a",
+      "test_records.py": "f497afa4528cb0d832f97b8e01e3e86f1132bf103a48ecbbca3c6a46b66864eb"
+    }
+  },
+  "same_workdir_extension_validation": {
+    "date": "2026-10-19",
+    "python_unit_tests": 20,
+    "python_unit_tests_exit_code": 0,
+    "python_unit_tests_seconds": 67.858,
+    "gcc_static_build": "passed",
+    "clang_static_build": "passed",
+    "legacy_format1_copy_extensions": [
+      {
+        "covered_prefix": "1000000",
+        "appended_interval": "1000001..1001001",
+        "result": "both witness tables matched independent Python enumeration"
+      },
+      {
+        "covered_prefix": "2^64",
+        "appended_interval": "18446744073709551617..18446744073709552617",
+        "result": "both witness tables matched independent Python enumeration"
+      }
+    ],
+    "high_offset_direct_range": {
+      "condition": "lower >= 2^64 and interval width <= 2^20 integers",
+      "gcc_and_clang": "passed",
+      "independent_comparison": "passed"
+    },
+    "legacy_format1_minima": "minima_complete=false; old update points are exact, missing per-prime minima are not claimed",
+    "previous_format3_engine_migration": "completed and incomplete jobs retain their original interval and resume",
+    "original_work_directories_modified": false,
+    "source_sha256": {
+      "records.py": "928c45de871582b7d4fc124b3f1022ad671a6908f9bf70b7ee4d50c3543719fc",
+      "test_records.py": "e42f9c8fe2a1ffd7746df9de14cafc983421b3d21c5465ffcb3014e05db219b9",
+      "README.md": "dbd713f56e075f7ecc4a553c95d173952bc3674f2e7ae7ca6fb38abd77f0643f",
+      "search.cpp": "049bdd283d66a8257af6d7a351dfa69c93732c7ea2dfa301f0e8096c7be97ae1",
+      "search.exe": "e604cbbf1d714af3b720ec1031ef9964042c6d11b0e33dbf4521d9971294bdec",
+      "search-clang.exe": "eb4fdacd5eeb0e7b76bab25bf540527152b000b24c06ea9fcf67a381050d5a98"
+    }
+  }
+}
