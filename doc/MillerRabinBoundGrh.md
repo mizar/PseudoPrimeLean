@@ -337,20 +337,20 @@ $$
 
 次表には、各上界式について対応するLean定理が証明している適用条件を載せる。区間ごとにどの式が最小となるかは、次の「区間ごとの包絡線」で示す。各行で $n$ は正の奇合成数とし、有限上界3の行を除いてGRHを仮定する。定理名は有限上界の行を除いて `PseudoPrime.PrimeTestBounds.MillerRabin` 名前空間に属する。
 
-| 上界式 | 適用条件 | 対応するLean定理 |
+| 適用条件 | 上界式 | 対応するLean定理 |
 |---|---|---|
-| $2$ | $n < 2047$。GRH不要 | [`PseudoPrime.PrimeTest.base_two_decides_prime_of_lt_2047`](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) |
-| $3$ | $2047\le n<3000$。GRH不要 | [`PseudoPrime.PrimeTest.base_two_or_three_rejects_of_lt_3000`](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) |
-| $61$ | $n\ge3000$、$L\le56/5$ | [`exists_least_prime_reject_le_sixty_one_exact_even`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
-| $(64/81)(L-73/50)^2$ | $523/50\le L\le2171/100$ | [`exists_least_prime_reject_le_sixtyFourEightyFirst_shifted_log_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
-| $C_2(L)$ | $23/2\le L\le74/5$ | [`exists_least_prime_reject_le_evenTwoStepEndpointEnvelope`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointEvenPolynomial.lean) |
-| $(81/100)(L-73/50)^2$ | $523/50\le L\le1373/50$ | [`exists_least_prime_reject_le_eightyOne_shifted_log_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
-| $576$ | $L\le144/5$ | [`exists_least_prime_reject_le_576_exact_even`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
-| $R_{\mathrm{aff}}(L-7/4)^2$ | $144/5\le L\le13517/100$ | [`exists_least_prime_reject_le_7over4_shifted_midscale_radius_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
-| $U_{\Gamma}(L)$ | $L\ge120$ | [`exists_least_prime_witness_le_gammaClippedUpper`](../PseudoPrime/PrimeTestBounds/MillerRabin/GammaClippedComparison.lean) |
-| $B_6(L)$ | $L\ge240$ | [`exists_least_witness_gaussianMR6_log240`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR240WitnessBounds.lean) |
-| $B_{\ast}(L)$ | $L\ge300$ | [`exists_least_witness_gaussianMRRefined`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean) |
-| $(282924/1000000)L^2$ | $n\ge10^{9565217391305}$ | [`exists_least_prime_witness_le_0282924`](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularWitnessBounds.lean) |
+| $n < 2047$。GRH不要 | $2$ | [`PseudoPrime.PrimeTest.base_two_decides_prime_of_lt_2047`](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) |
+| $2047\le n<3000$。GRH不要 | $3$ | [`PseudoPrime.PrimeTest.base_two_or_three_rejects_of_lt_3000`](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) |
+| $n\ge3000$、$L\le56/5$ | $61$ | [`exists_least_prime_reject_le_sixty_one_exact_even`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
+| $523/50\le L\le2171/100$ | $(64/81)(L-73/50)^2$ | [`exists_least_prime_reject_le_sixtyFourEightyFirst_shifted_log_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
+| $23/2\le L\le74/5$ | $C_2(L)$ | [`exists_least_prime_reject_le_evenTwoStepEndpointEnvelope`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointEvenPolynomial.lean) |
+| $523/50\le L\le1373/50$ | $(81/100)(L-73/50)^2$ | [`exists_least_prime_reject_le_eightyOne_shifted_log_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
+| $L\le144/5$ | $576$ | [`exists_least_prime_reject_le_576_exact_even`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
+| $144/5\le L\le13517/100$ | $R_{\mathrm{aff}}(L-7/4)^2$ | [`exists_least_prime_reject_le_7over4_shifted_midscale_radius_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
+| $L\ge120$ | $U_{\Gamma}(L)$ | [`exists_least_prime_witness_le_gammaClippedUpper`](../PseudoPrime/PrimeTestBounds/MillerRabin/GammaClippedComparison.lean) |
+| $L\ge240$ | $B_6(L)$ | [`exists_least_witness_gaussianMR6_log240`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR240WitnessBounds.lean) |
+| $L\ge300$ | $B_{\ast}(L)$ | [`exists_least_witness_gaussianMRRefined`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean) |
+| $n\ge10^{9565217391305}$ | $(282924/1000000)L^2$ | [`exists_least_prime_witness_le_0282924`](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularWitnessBounds.lean) |
 
 
 ### 区間ごとの包絡線
