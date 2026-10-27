@@ -38,6 +38,7 @@ public import PseudoPrime.Analysis.GaussianGammaCutoffLowerBound
 public import PseudoPrime.Analysis.GaussianGammaCutoffSixFifths
 public import PseudoPrime.Analysis.GaussianMR6FifthsNumerics
 public import PseudoPrime.Analysis.GaussianMR240Numerics
+public import PseudoPrime.Analysis.GaussianMR35000Numerics
 public import PseudoPrime.Analysis.GaussianMRWidthNumerics
 public import PseudoPrime.Analysis.GaussianMRRefinedNumerics
 public import PseudoPrime.Analysis.GaussianMRCoefficientBounds

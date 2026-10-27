@@ -181,6 +181,7 @@ public import PseudoPrime.LLS.GammaPrefixCellCertificate
 public import PseudoPrime.LLS.GammaSmallCheckpointBounds
 public import PseudoPrime.LLS.RiemannOneSidedLogCap
 public import PseudoPrime.LLS.GammaCheckpoint1000
+public import PseudoPrime.LLS.GammaCheckpoint1000Refined
 public import PseudoPrime.LLS.GammaCheckpoint35000
 public import PseudoPrime.LLS.Part1SmallRadiusBounds
 public import PseudoPrime.LLS.Part1ThreeFourBounds
@@ -292,6 +293,8 @@ public import PseudoPrime.LLS.ReciprocalGapSecantLower
 public import PseudoPrime.LLS.ReciprocalGapSecantEndpoint
 public import PseudoPrime.LLS.FullEndpointPolynomial
 public import PseudoPrime.LLS.FullEndpointEvenPolynomial
+public import PseudoPrime.LLS.EndpointCorrectionIntervals
+public import PseudoPrime.LLS.FullEndpointFixed61
 public import PseudoPrime.LLS.FullEndpointExactEvenRanges
 public import PseudoPrime.LLS.FullEndpointShortRange
 public import PseudoPrime.LLS.FullEndpointEightyOneRange
