@@ -347,7 +347,7 @@ $$
 |---|---|---|
 | $n < 2047$。GRH不要 | $2$ | [`PseudoPrime.PrimeTest.base_two_decides_prime_of_lt_2047`](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) |
 | $2047\le n<3000$。GRH不要 | $3$ | [`PseudoPrime.PrimeTest.base_two_or_three_rejects_of_lt_3000`](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) |
-| $n\ge3000$、$L\le56/5$ | $61$ | [`exists_least_prime_reject_le_sixty_one_exact_even`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
+| $n\ge3000$、 $L\le56/5$ | $61$ | [`exists_least_prime_reject_le_sixty_one_exact_even`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
 | $523/50\le L\le2171/100$ | $(64/81)(L-73/50)^2$ | [`exists_least_prime_reject_le_sixtyFourEightyFirst_shifted_log_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
 | $23/2\le L\le74/5$ | $C_2(L)$ | [`exists_least_prime_reject_le_evenTwoStepEndpointEnvelope`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointEvenPolynomial.lean) |
 | $523/50\le L\le1373/50$ | $(81/100)(L-73/50)^2$ | [`exists_least_prime_reject_le_eightyOne_shifted_log_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
