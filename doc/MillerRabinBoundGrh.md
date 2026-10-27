@@ -3,7 +3,9 @@
 公開入口は [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean)。名前空間は `PseudoPrime.PrimeTestBounds.MillerRabin` で、 `import PseudoPrime` からも利用できる。
 
 
-区間別の公開包絡線は [MidscaleIntervalSelection.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) の `selectedWitnessEnvelope` である。GRHの下で、すべての奇合成数 $n > 1$ について、`exists_prime_selectedWitness` と `exists_least_selectedWitness` が実際の素数証人と最小素数証人の上界を与える。
+区間別の公開包絡線は [ImprovedIntervalSelection.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/ImprovedIntervalSelection.lean) の `improvedSelectedEnvelope` である。GRHの下で、すべての奇合成数 $n > 1$ について、 `exists_prime_improvedSelected` と `exists_least_improvedSelected` が実際の素数証人と最小素数証人の上界を与える。平方自由性、素因数の個数、Fermat部分群指数に関する追加条件はない。
+
+[ImprovedWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/ImprovedWitnessEnvelope.lean) の `improvedWitnessEnvelope` は、各候補を証明済みの適用条件でのみ使う最小値である。 `improved_eq_selected` が区間選択との一致を証明する。既存の `selectedWitnessEnvelope` とその公開定理も利用できる。
 
 MRの最小素数証人の累積最大値について、既知の更新点を [3種類の最小素数証人の数表](WitnessRecords.md) に参考情報として掲載した。
 
@@ -159,263 +161,233 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 
 ## 個別の上界と証明
 
-### 有限区間 $9\le n<2047$ の上界 $2$
+以下では $L=\ln n$、 $q_{\mathrm{MR}}(n)$ を奇合成数 $n$ を棄却する最小の素数基数とする。有限区間の節を除きGRHを仮定する。各節は後の区間表に現れる順に並べている。
 
-有限上界 $2$ は底 $2$ で不合格になることから得られる。
+### 有限区間 $9\le n < 3000$ の上界
 
-[`PseudoPrime.PrimeTest.base_two_decides_prime_of_lt_2047`](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean)
-
-### 有限区間 $2047\le n<3000$ の上界 $3$
-
-この区間の奇合成数は、底 $2$ または底 $3$ のいずれかで不合格になる。 $n<2047$ では底 $2$ の上界 $2$ が小さいため、ここでは $2047\le n<3000$ の範囲を示す。
-
-[`PseudoPrime.PrimeTest.base_two_or_three_rejects_of_lt_3000`](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean)
-
-### GRH下で $L\le286/25$ における素数底61以下の上界
-
-$L=\ln n$ とする。GRHの下で、すべての奇合成数 $n > 1$ について、
+この範囲の奇合成数は $n < 2047$ では基数2で、 $2047\le n < 3000$ では基数2または基数3で不合格になる。後者の区間全体には上界3を使う。
 
 $$
-L\le\frac{286}{25}
-\quad\Longrightarrow\quad
-\exists p\in\mathbb P,\quad p\le61,\quad\neg\mathrm{StrongMRPass}(n,p)
+U_{\mathrm{small}}(n)=
+\begin{cases}
+2 & 9\le n < 2047,\\
+3 & 2047\le n < 3000
+\end{cases}
 $$
 
-が成立する。存在定理`exists_prime_endpoint61`と最小証人版`exists_least_endpoint61`は [EndpointFixed61.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointFixed61.lean) にある。
+GRHは不要である。 [SmallPointwiseBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallPointwiseBounds.lean) の `smallIntervalBound`、 `exists_prime_smallInterval`、 `exists_least_smallInterval` がこの主張を表す。証明はLeanカーネルで検証した既存の有限分類を使う。2047は基数2で合格し基数3で不合格になるため、後者の区間の上界3にはこの例も含まれる。
 
-証明には偶指標の厳密な逆数誤差評価と、半径 $y=49/6$ での正の比較gapを使う。この半径の平方は $2401/36 < 67$ なので、得られる素数証人は67未満となる。62から66の5整数が合成数であることをLeanカーネルで確認し、61以下へ丸める。入力 $n$ の列挙は行わない。対数とgapの評価は [FullEndpointFixed61.lean](../PseudoPrime/LLS/FullEndpointFixed61.lean) にある。
+### $L\le2877/250$ での固定上界61
 
-### 偶指標の厳密評価による endpoint 上界
-
-偶な原始非主指標では、逆数評価の定数を $179/200$ とする端点零点質量上界を使える。Miller–Rabin の合格剰余上で自明な指標は $-1$ も合格剰余であることから偶となる。
-
-偶指標の逆数誤差について、 $y\ge8$ で
+リーマンゼータ側の逆数誤差に、点ごとの評価
 
 $$
-E_{\mathrm{even}}(y^2)\le-\frac{1961}{2000}+\frac{2\ln y+103/80}{y^2}
+\ell(y)=\frac{78861}{50000}+\frac{231}{5000y}-\frac{16033}{9000y^2}
 $$
 
-を満たす。この評価を厳密な対数和上界および主和下界と比較し、正のendpoint gapから証人を抽出する。二次上界を
+を用いる。偶指標側の誤差項を保持し、半径 $y=1637/200$ の比較gapが $L\le2877/250=11.508$ で正になることを有理数評価で示す。 $y^2 < 67$ なので、得られた素数証人は67未満である。62から66の合成数性により、証人は61以下となる。入力 $n$ の列挙は行わない。
 
-$$
-F_8(L)=\frac{64}{81}(L-7/4)^2
-$$
+解析評価と原始導手から法 $n$ への移送は [EndpointPointwise.lean](../PseudoPrime/LLS/EndpointPointwise.lean)、実際のMR証人と最小証人の定理は [EndpointPointwise.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointPointwise.lean) の `exists_prime_endpointPointwise61`、 `exists_least_endpointPointwise61` にある。
 
-と定める。 $43/4\le L\le22$ の全奇合成数に適用できる。証人定理と最小証人定理は [EndpointExactEvenPolynomial.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) にある。
+### $L\le47/4$ での固定上界67
 
-### 偶 endpoint gap の二段階補正
+半径 $y=337/40$ の偶指標endpoint gapは、 $L\le47/4=11.75$ で正となる。 $y^2 < 71$ なので証人は71未満の素数であり、68から70の合成数性により67以下となる。 [EndpointFixed67.lean](../PseudoPrime/LLS/EndpointFixed67.lean) が正のgapを、 [EndpointFixed67.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointFixed67.lean) の `exists_prime_endpoint67`、 `exists_least_endpoint67` が実際のMR証人と最小証人を与える。
 
-直接 gap を正規化した補正関数を
+### 偶endpoint gapの四段補正
+
+補正関数を
 
 $$
 H(y)=\frac{N_H(y)}{18310000(y-1)((y+1)^2+2y\ln y)},
 $$
 
 $$
-N_H(y)=36620000y^3\ln y-56749471y^3+109860000y^2(\ln y)^2
-+73100099y^2\ln y+10777809y^2-73240000y(\ln y)^2
--1528140y\ln y+2824690y-36620000(\ln y)^2-177204180\ln y-94877470
+\begin{aligned}
+N_H(y)={}&36620000y^3\ln y-56749471y^3+109860000y^2(\ln y)^2\\
+&+73100099y^2\ln y+10777809y^2-73240000y(\ln y)^2\\
+&-1528140y\ln y+2824690y-36620000(\ln y)^2\\
+&-177204180\ln y-94877470
+\end{aligned}
 $$
 
-とする。 $A(L)=\max\lbrace8,L-H(L)\rbrace$、 $B(L)=L-H(A(L))$ と置き、二段階cutoffを $C_2(L)=B(L)^2$ と定める。単調性と正の比較gapにより、GRHの下で $L\ge23/2$ のすべての奇合成数に素数証人が存在し、その最小素数証人は $C_2(L)$ 以下となる。この証人定理に対数の上限はない。
+とする。次の4つの半径を用いる。
 
-公開包絡線では $23/2\le L < 120$ で $C_2(L)$ を使う。この連続区間全体で端点上界と固定上界35000を下回ることは [MidscaleEnvelopeOrder.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleEnvelopeOrder.lean) と [MidscaleIntervalSelection.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) にある。補正関数の比較には、対数の有理上下界と単調性から各実区間を覆う証明を用いる。入力点のサンプリングによる比較ではない。
+$$
+a(L)=\max\lbrace8,L-H(L)\rbrace,\qquad b(L)=L-H(a(L)),
+$$
 
-証人定理`exists_least_prime_reject_le_even_twoStep_cutoff`は [EndpointEvenPolynomial.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointEvenPolynomial.lean) にある。
+$$
+c(L)=\max\lbrace8,L-H(b(L))\rbrace,\qquad d(L)=L-H(c(L)),\qquad C_4(L)=d(L)^2.
+$$
+
+$L\ge45/4$ では $a\le c < d\le b$ となり、半径 $d$ の比較gapが正になる。したがって、対数の上限なしに $q_{\mathrm{MR}}(n)\le C_4(L)$ が成り立つ。解析的な順序とgapは [EndpointFourStep.lean](../PseudoPrime/LLS/EndpointFourStep.lean)、証人定理 `exists_prime_fourStep` と最小証人定理 `exists_least_fourStep` は [EndpointFourStep.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointFourStep.lean) にある。
+
+$2877/250\le L\le47/4$ では $67 < C_4(L)$、 $112\le L\le240$ では後述の $G_1(L)\le C_4(L)$ である。これらの連続区間比較は [ImprovedEnvelopeOrder.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/ImprovedEnvelopeOrder.lean) と [ImprovedIntervalSelection.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/ImprovedIntervalSelection.lean) にある。
 
 ### Gamma prefix上界と切替点
 
-cutoff 1000に対するprefix下界を $C=413/100$ とし、
+1000までのGamma prefixには、10節点の証明書から得る下界 $423/100$ を用いる。証明は [GammaCheckpoint1000Sharp.lean](../PseudoPrime/LLS/GammaCheckpoint1000Sharp.lean) にある。平滑化幅 $h=(2/25)r^2$ の評価を合わせ、係数を
 
 $$
-K=\frac{87069}{98800},\quad
-\mu=\frac{11783423}{25000000},\quad
-D=\frac{143420077}{11856000}-2C,
+K_1=\frac{86733}{98800},\qquad \mu=\frac{11783423}{25000000},\qquad
+D_1=\frac{38128717}{11856000},\qquad T_1=\frac{20475759}{494000}
 $$
 
-$$
-\rho(L)=\frac{\mu L+D+\sqrt{(\mu L+D)^2+4K(7L/6+190/3)}}{2K},
-$$
+と置く。正規化したgapと、その正の零点を
 
 $$
-U_{\Gamma}(L)=\frac{99}{40}
-\max\left\lbrace\sqrt{\frac{40000}{99}},\rho(L)\right\rbrace^2
-$$
-
-と定める。GRHの下で $L\ge120$ の全奇合成数に適用できる。Lean定義`gamma1000RefinedBound`と最小証人定理`exists_least_gamma1000Refined`は [GammaRefinedEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GammaRefinedEnvelope.lean) にある。
-
-prefix下界は、10節点の有理区間から誤差上界 $9/1000$ とboundary上界 $4073/500$ を証明して得る。ソースは [GammaCheckpoint1000Refined.lean](../PseudoPrime/LLS/GammaCheckpoint1000Refined.lean) にある。
-
-固定上界35000への切替点を
-
-$$
-r_f=\sqrt{\frac{1400000}{99}},\qquad
-S=\frac{Kr_f-D-\dfrac{190}{3r_f}}{\mu+\dfrac{7}{6r_f}}
-$$
-
-と定める。 $208 < S < 209$ であり、
-
-$$
-120\le L\le S\quad\Longrightarrow\quad U_{\Gamma}(L)\le35000,
+g_1(L,r)=K_1r-\mu L-D_1-\frac{7L/6+T_1}{r},
 $$
 
 $$
-S\le L\quad\Longrightarrow\quad 35000\le U_{\Gamma}(L),\qquad
-U_{\Gamma}(S)=35000
+\rho_1(L)=\frac{\mu L+D_1+
+\sqrt{(\mu L+D_1)^2+4K_1(7L/6+T_1)}}{2K_1},\qquad
+G_1(L)=\frac{99}{40}\rho_1(L)^2
 $$
 
-が成り立つ。Leanの`gammaFixedSwitch`はこの厳密な定数を表す。境界の有理挟み撃ちと両側の大小関係は [GammaFixedSwitch.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GammaFixedSwitch.lean) にある。
+と定める。 $L\ge100$ ではまず代数的に $\rho_1(L) > 60$ を示し、その半径で解析評価を適用する。これにより全奇合成数について $q_{\mathrm{MR}}(n)\le G_1(L)$ が成り立つ。 [GammaSharpComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GammaSharpComparison.lean) の `exists_prime_gammaSharp`、 `exists_least_gammaSharp` が証人定理である。
 
-また、 $120\le L\le240$ で $U_{\Gamma}(L) < C_2(L)$ が成り立つ。証明は [MidscaleEnvelopeOrder.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleEnvelopeOrder.lean) の`gamma_lt_twoStep`である。公開包絡線では $120\le L\le S$ で $U_{\Gamma}(L)$ を使う。
-
-### 固定Gaussian上界35,000
-
-GRHの下で、すべての奇合成数 $n$ について、
+固定35000との切替点は
 
 $$
-63\le L\le240
-\quad\Longrightarrow\quad
-q_{\mathrm{MR}}(n)\le35000
+R=\sqrt{\frac{1400000}{99}},\qquad
+S_1=\frac{K_1R-D_1-T_1/R}{\mu+7/(6R)}
 $$
 
-が成立する。存在定理`exists_prime_witness_gaussian35000`と最小証人版`exists_least_witness_gaussian35000`は [GaussianMR35000WitnessBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR35000WitnessBounds.lean) にある。公開前提はGRH、奇数性、合成数性、対数の範囲のみである。
+である。 $209 < S_1 < 210$ であり、 $100\le L\le S_1$ では $G_1(L)\le35000$、 $S_1\le L$ では $35000\le G_1(L)$、端点では $G_1(S_1)=35000$ となる。厳密式を表す定義 `gammaSharpFixedSwitch` と大小関係の証明は [GammaSharpEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GammaSharpEnvelope.lean) にある。小数での交点を分岐条件には使わない。
 
-解析パラメータを
+### 床付きGaussian上界
 
-$$
-x=\frac{87500}{3},\quad r=\sqrt{x},\quad s=\sqrt r,\quad
-h=\frac1{3s},\quad \lambda=\frac65
-$$
-
-に固定する。 $\lambda x=35000$ であり、cutoff 35000の10節点証明書によるGaussian部分和下界 $47/10$ を使う。ambient誤差は $539/100$ 以下となり、大指数枝と指数4の三素数枝で正の有理gapが得られる。残る局所枝は $q^2\le10^9n$ と $\log q\le261/2$ から同じ上界35000を満たす。数値評価は [GaussianMR35000Numerics.lean](../PseudoPrime/Analysis/GaussianMR35000Numerics.lean) にある。
-
-### Gaussian上界
-
-
-定数6のGaussian上界 $B_6$ に用いる定数を
+共通の定数を
 
 $$
-J=10^9,\qquad E=\frac{2129}{2000},\qquad \gamma=\frac{J}{J-1},
+J=10^9,\quad M=\frac{64167}{100000},\quad E=\frac{2129}{2000},\quad
+\kappa=\frac25,\quad c_G=\frac{20115621}{50000000},
 $$
 
 $$
-M=\frac{16}{25},\qquad c=\frac{161}{400},\qquad
-d=\frac{JM-E}{J-1},\qquad
-\beta=\gamma\left(\frac M3+\frac3{10}\right)
+d_G=\frac{JM-E}{J-1},\qquad
+\beta_G=\frac{J}{J-1}\left(\kappa M+\frac{1}{10\kappa}\right)
 $$
 
-とし、
+とする。2つの候補には次のprefixと残差定数を使う。
+
+| 候補 | $N$ | prefix下界 | $D$ | 平方根半径の下限 |
+|---|---|---|---|---|
+| $U_{35}$ | $35000$ | $189499/40000$ | $29/5$ | $13$ |
+| $U_{50}$ | $50000$ | $484381/100000$ | $111/20$ | $14$ |
 
 $$
-s_6(L)=\frac{\beta+\sqrt{\beta^2+4d(cL+6)}}{2d},\qquad
-B_6(L)=\frac65s_6(L)^4
-$$
-
-と定める。証明では35000をcutoffとする10節点の有理区間証明書からGaussian部分和下界 $47/10$ を導き、主指標誤差を13とするsigned比較を使う。
-
-GRHの下で、 $L\ge240$ のすべての奇合成数について、最小素数証人は $B_6(L)$ 以下となる。全入力の存在定理`exists_prime_witness_gaussianMR6_log240`と最小証人版`exists_least_witness_gaussianMR6_log240`は [PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR240WitnessBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR240WitnessBounds.lean) にある。平方自由性やFermat部分群指数は公開定理の追加仮定に含めない。
-
-上界 $B_{\ast}(L)$ は $L\ge300$ に適用する。定数を
-
-$$
-M_{\ast}=\frac{64167}{100000},\quad c_{\ast}=\frac{20115621}{50000000},\quad k_{\ast}=\frac25,
+t_D(L)=\frac{\beta_G+\sqrt{\beta_G^2+4d_G(c_GL+D)}}{2d_G},
 $$
 
 $$
-d_{\ast}=\frac{JM_{\ast}-E}{J-1},\qquad
-\beta_{\ast}=\gamma\left(M_{\ast}k_{\ast}+\frac1{10k_{\ast}}\right)
+s_N(L)=\max\left\lbrace\sqrt{\sqrt{5N/6}},t_D(L)\right\rbrace,\qquad
+r_N(L)=s_N(L)^2,\qquad
+U_N(L)=\frac65r_N(L)^2=\max\left\lbrace N,\frac65t_D(L)^4\right\rbrace.
 $$
 
-とし、
+$U_{35}$ では $(N,D)=(35000,29/5)$、 $U_{50}$ では $(N,D)=(50000,111/20)$ を用いる。両候補とも $L\ge63$ の全奇合成数に適用でき、対数の上限はない。床を入れた半径では等式でなく
 
 $$
-s_{\ast}(L)=\frac{\beta_{\ast}+\sqrt{\beta_{\ast}^2+4d_{\ast}(c_{\ast}L+28/5)}}{2d_{\ast}},\qquad
-B_{\ast}(L)=\frac65s_{\ast}(L)^4
+d_Gr_N\ge c_GL+\beta_Gs_N+D
 $$
 
-と定める。ここで $J,E,\gamma$ は $B_6$ と共通である。証明には128点証明書による質量下界 $M_{\ast}$ と、cutoff 50000でのGaussian部分和下界を用いる。導手係数は $c_{\ast}$、相対幅は $h=k_{\ast}/s_{\ast}(L)$ である。Lean定義`gaussianMRRefinedBound`と数値比較は [PseudoPrime/Analysis/GaussianMRRefinedNumerics.lean](../PseudoPrime/Analysis/GaussianMRRefinedNumerics.lean) にある。
+を使う。大指数枝では、係数が負の逆数二次項を一次項と対にしたまま残差を抑える。三素数枝では誤差を11未満、主項を11超とし、有限指数の分類と局所枝を合わせて全入力へ接続する。数値評価は [GaussianMRClippedNumerics.lean](../PseudoPrime/Analysis/GaussianMRClippedNumerics.lean)、実際の証人・最小証人は [GaussianMRClippedWitnessBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRClippedWitnessBounds.lean) の `exists_prime_gaussianClipped`、 `exists_least_gaussianClipped` にある。
 
-全入力の存在定理`exists_prime_witness_gaussianMRRefined`と最小証人版`exists_least_witness_gaussianMRRefined`は [PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean) にある。いずれもGRH、奇数性、合成数性、 $L\ge300$ のみを仮定する。この適用域全体で $B_{\ast}(L) < B_6(L)$ が成立する。
+Gaussian候補の切替点を、厳密式
 
-$240 < L < 300$ では、公開包絡線は $B_6(L)$ に等しい。 $L=240$ では固定上界35000を使う。 $L > 240$ でのGaussian包絡線との一致は`midscaleWitnessEnvelope_eq_high`、Gaussian包絡線の $B_6$ との一致は`gaussianMRWitnessEnvelope_eq240`が示す。それぞれ [MidscaleWitnessEnvelopes.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleWitnessEnvelopes.lean) と [GaussianMRWitnessEnvelopes.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRWitnessEnvelopes.lean) にある。
+$$
+\sigma_N(D)=\frac{d_G\sqrt{5N/6}-\beta_G\sqrt{\sqrt{5N/6}}-D}{c_G},
+$$
 
-係数枝の開始尺度を $T=9565217391305\ln10$ とする。条件 $T\le L$ は $n\ge10^{9565217391305}$ と同値である。 $L\ge300$ では $B_{\ast}(L) > 0.3L^2$ が成立し、係数 $282924/1000000$ は $0.3$ より小さい。したがって $T\le L$ では、係数上界 $(282924/1000000)L^2$ が $B_{\ast}(L)$ より小さく、最小素数証人の上界として適用できる。定理`gaussianMRLargeEnvelope_eq`と`exists_least_witness_gaussianMRLarge`が、比較と適用条件をそれぞれ示す。
+$$
+\sigma_1=\sigma_{35000}(29/5),\qquad
+\sigma_2=\sigma_{50000}(29/5),\qquad
+\sigma_3=\sigma_{50000}(111/20)
+$$
+
+で定める。 $240 < \sigma_1 < 242$、 $293 < \sigma_2 < \sigma_3 < 294$ である。 $\sigma_1$ では $35000=(6/5)t_{29/5}(\sigma_1)^4$、 $\sigma_2$ では $(6/5)t_{29/5}(\sigma_2)^4=50000$、 $\sigma_3$ では $50000=(6/5)t_{111/20}(\sigma_3)^4$ となる。これらの端点等式と、次の4区間選択が $\min\lbrace U_{35},U_{50}\rbrace$ に等しいことは [GaussianMRClippedComparison.lean](../PseudoPrime/Analysis/GaussianMRClippedComparison.lean) で証明した。
+
+$$
+U_G(L)=
+\begin{cases}
+35000 & L\le\sigma_1,\\
+\frac65t_{29/5}(L)^4 & \sigma_1 < L < \sigma_2,\\
+50000 & \sigma_2\le L\le\sigma_3,\\
+\frac65t_{111/20}(L)^4 & \sigma_3 < L.
+\end{cases}
+$$
+
+Leanの選択関数は `PseudoPrime.Analysis.gaussianFloorSelected`、候補最小値との等式は `gaussianFloor_min_eq_selected` である。 $L\ge240$ での $U_G < G_1$、 $U_G < C_4$ は [ImprovedEnvelopeGlobalOrder.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/ImprovedEnvelopeGlobalOrder.lean) にある。
 
 ### 全奇合成数に対する係数 $282924/1000000$ の上界
 
-GRH の下で、すべての奇合成数 $n\ge10^{9565217391305}$ に対し、最小素数 MR 証人 $q_{\mathrm{MR}}(n)$ は係数 $282924/1000000$ の上界を満たす。素数証人の存在定理 `exists_prime_witness_le_0282924` と最小証人版 `exists_least_prime_witness_le_0282924` は [TriangularWitnessBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularWitnessBounds.lean) にある。証明では有限指数の分類と三素数 Korselt 枝を結合し、平方自由性や Fermat 部分群指数の制限なしに全入力を同じ係数で覆う。
-
-三素数枝では Gaussian cutoff 質量
+GRHの下で、 $L\ge2\cdot10^{12}$ のすべての奇合成数について
 
 $$
-I=\int_0^{21/10}\frac{\mathcal G(u)}{\sqrt{u}} du
+q_{\mathrm{MR}}(n)\le\frac{282924}{1000000}L^2
 $$
 
-を、tilt の上界 $2129/2000$ と曲率多項式の上界 $71$ を使った二階微分評価 $97$ の下で、16,000点のmidpoint証明書に適用する。このとき積分値は $81470555/100000000$ より大きい。ここで $\mathcal G$ は Gaussian プロファイルである。端点項 $k$ は $k\le2129/2000$ を満たすので、三つの導手から得る分母は
+が成り立つ。大指数枝の閾値を $10^{12}$ とし、 $x=(282924/1000000)L^2$ に対して $x^{1/16}\ge31$、 $\sqrt{x}\ge(5319/10000)L$、符号を保持した誤差コスト $\le(123/1000)L$ を用いる。局所枝と三素数Korselt枝も同じ上界へ接続する。平方自由性や部分群指数の条件は結論に残らない。
 
-$$
-4I-k\ge\frac{10971611}{5000000}>\frac{21943}{10000}.
-$$
-
-係数 $282924/1000000$ に必要な主項余裕は
-
-$$
-\left(\frac{161}{200}+\frac{1}{2500}\right)^2
-<\left(\frac{21943}{10000}\right)^2
-\frac{282924/1000000}{21/10}.
-$$
-
-この有理不等式は差 $503185673/17500000000000$ が正であることに帰着する。大 Fermat 指数枝では $L\ge22\cdot10^{12}$ とし、 $x=(282924/1000000)L^2$ と置く。この範囲では $x^{1/16}\ge43$ かつ $\sqrt{x}\ge(531/1000)L$ なので、signed cost は $175400000000$ 以下であり、 $L/125$ 以下でもある。これを指数 $h\ge10^9$ の signed gap に代入して、同じ係数の上界を得る。有限指数分類の他の枝も同じ係数を満たすため、三素数枝の開始値 $10^{434782608696}$ と合わせ、全奇合成数に対する適用条件 $n\ge10^{9565217391305}$ が得られる。
+数値gapは [TriangularSignedThresholdNumerics.lean](../PseudoPrime/Analysis/TriangularSignedThresholdNumerics.lean)、全入力への接続は [TriangularThresholdBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularThresholdBounds.lean) の `exists_prime_triangularThreshold`、 `exists_least_triangularThreshold` にある。十進の十分条件 $n\ge10^{869565217392}$ からも適用できる。巨大な冪を展開せず、 $\ln10 > 23/10$ から対数閾値を導く。
 
 ## 上界式の適用区間と比較
 
-対象は正の奇合成数 $n$ に対する最小素数底証人 $q_{\mathrm{MR}}(n)$ とし、 $L=\ln n$ とする。各式は記載区間の全奇合成数に適用でき、追加の素因数条件や平方自由性やFermat部分群指数などの GRH 以外の仮定を要しない。
+対象は正の奇合成数 $n\ge9$ に対する最小素数基数 $q_{\mathrm{MR}}(n)$ とする。上界式 $2,3$ の行を除きGRHを仮定する。
 
 ### 上界式と証明済みの適用条件
 
-次表には、各上界式について対応するLean定理が証明している適用条件を載せる。区間ごとにどの式が最小となるかは、次の「区間ごとの包絡線」で示す。各行で $n$ は正の奇合成数とし、有限上界2・3の行を除いてGRHを仮定する。定理名は有限上界の行を除いて `PseudoPrime.PrimeTestBounds.MillerRabin` 名前空間に属する。
-
 | 適用条件 | 上界式 | 対応するLean定理 |
 |---|---|---|
-| $n < 2047$。GRH不要 | $2$ | [`PseudoPrime.PrimeTest.base_two_decides_prime_of_lt_2047`](../PseudoPrime/PrimeTestBounds/MillerRabin/../../PrimeTest/MillerRabin/Computation/Small.lean) |
-| $2047\le n < 3000$。GRH不要 | $3$ | [`PseudoPrime.PrimeTest.base_two_or_three_rejects_of_lt_3000`](../PseudoPrime/PrimeTestBounds/MillerRabin/../../PrimeTest/MillerRabin/Computation/Small.lean) |
-| $L\le286/25$ | $61$ | [`exists_least_endpoint61`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointFixed61.lean) |
-| $43/4\le L\le22$ | $F_8(L)$ | [`exists_least_prime_reject_le_7over4_shifted_eightNinths_log_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
-| $L\ge23/2$ | $C_2(L)$ | [`exists_least_prime_reject_le_even_twoStep_cutoff`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointEvenPolynomial.lean) |
-| $L\ge120$ | $U_{\Gamma}(L)$ | [`exists_least_gamma1000Refined`](../PseudoPrime/PrimeTestBounds/MillerRabin/GammaRefinedEnvelope.lean) |
-| $63\le L\le240$ | $35000$ | [`exists_least_witness_gaussian35000`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR35000WitnessBounds.lean) |
-| $L\ge240$ | $B_6(L)$ | [`exists_least_witness_gaussianMR6_log240`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR240WitnessBounds.lean) |
-| $L\ge300$ | $B_{\ast}(L)$ | [`exists_least_witness_gaussianMRRefined`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean) |
-| $n\ge10^{9565217391305}$ | $(282924/1000000)L^2$ | [`exists_least_prime_witness_le_0282924`](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularWitnessBounds.lean) |
-
+| $9\le n < 2047$ | $2$ | [`exists_least_smallInterval`](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallPointwiseBounds.lean) |
+| $2047\le n < 3000$ | $3$ | [`exists_least_smallInterval`](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallPointwiseBounds.lean) |
+| $L\le2877/250$ | $61$ | [`exists_least_endpointPointwise61`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointPointwise.lean) |
+| $L\le47/4$ | $67$ | [`exists_least_endpoint67`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointFixed67.lean) |
+| $L\ge45/4$ | $C_4(L)$ | [`exists_least_fourStep`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointFourStep.lean) |
+| $L\ge100$ | $G_1(L)$ | [`exists_least_gammaSharp`](../PseudoPrime/PrimeTestBounds/MillerRabin/GammaSharpComparison.lean) |
+| $L\ge63$ | $U_{35}(L),U_{50}(L),U_G(L)$ | [`exists_least_gaussianClippedEnvelope`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRClippedWitnessBounds.lean) |
+| $L\ge2\cdot10^{12}$ | $(282924/1000000)L^2$ | [`exists_least_triangularThreshold`](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularThresholdBounds.lean) |
 
 ### 区間ごとの包絡線
 
-$n$ は正の奇合成数、 $L=\ln n$ とする。有限上界2・3の行を除きGRHを仮定する。切替点 $S$ は上記の厳密な定数であり、 $T=9565217391305\ln10$ とする。
+$T_{\mathrm{tri}}=2\cdot10^{12}$ とする。 $S_1$ と $\sigma_1,\sigma_2,\sigma_3$ は前節の厳密式で定めた切替点である。
 
-| 条件 | $U_{\mathrm{MR}}(n)$ | 上界を与えるLean定理 |
-|---|---|---|
-| $9\le n < 2047$ | $2$ | [`exists_least_selectedWitness`](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) |
-| $2047\le n < 3000$ | $3$ | [`exists_least_selectedWitness`](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) |
-| $n\ge3000$、 $L\le286/25$ | $61$ | [`exists_least_selectedWitness`](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) |
-| $286/25 < L < 23/2$ | $F_8(L)$ | [`exists_least_selectedWitness`](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) |
-| $23/2\le L < 120$ | $C_2(L)$ | [`exists_least_selectedWitness`](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) |
-| $120\le L\le S$ | $U_{\Gamma}(L)$ | [`exists_least_selectedWitness`](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) |
-| $S < L\le240$ | $35000$ | [`exists_least_selectedWitness`](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) |
-| $240 < L < 300$ | $B_6(L)$ | [`exists_least_selectedWitness`](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) |
-| $300\le L < T$ | $B_{\ast}(L)$ | [`exists_least_selectedWitness`](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) |
-| $T\le L$ | $(282924/1000000)L^2$ | [`exists_least_selectedWitness`](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) |
+| 条件 | $U_{\mathrm{MR}}(n)$ |
+|---|---|
+| $9\le n < 2047$ | $2$ |
+| $2047\le n < 3000$ | $3$ |
+| $n\ge3000$、 $L\le2877/250$ | $61$ |
+| $2877/250 < L\le47/4$ | $67$ |
+| $47/4 < L < 100$ | $C_4(L)$ |
+| $100\le L < 112$ | $\min\lbrace C_4(L),G_1(L)\rbrace$ |
+| $112\le L\le S_1$ | $G_1(L)$ |
+| $S_1 < L\le\sigma_1$ | $35000$ |
+| $\sigma_1 < L < \sigma_2$ | $(6/5)t_{29/5}(L)^4$ |
+| $\sigma_2\le L\le\sigma_3$ | $50000$ |
+| $\sigma_3 < L < 2\cdot10^{12}$ | $(6/5)t_{111/20}(L)^4$ |
+| $2\cdot10^{12}\le L$ | $(282924/1000000)L^2$ |
 
-各行の式を選ぶ定義は`selectedWitnessEnvelope`である。`midscale_eq_selected`は、この区間選択が候補上界の点ごとの最小値に等しいことを証明する。`midscale_eq_twoStep_full`、`midscale_eq_gamma`、`midscale_eq_fixed`が、二段補正・Gamma・固定上界の各採用区間を示す。いずれも [MidscaleIntervalSelection.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/MidscaleIntervalSelection.lean) にある。
+変数で示した境界の値は次のとおりである。小数は参考値であり、区間の条件には前節の厳密式を使う。
+
+- $S_1\approx209.5595004$
+- $\sigma_1\approx241.5155012$
+- $\sigma_2\approx293.1589138$
+- $\sigma_3\approx293.7803214$
+
+この表の定義は `improvedSelectedEnvelope` である。 `improved_eq_selected` は、証明済みの適用条件でのみ候補を使う `improvedWitnessEnvelope` との一致を、すべての $n > 1$ について示す。 $100\le L < 112$ では $C_4$ と $G_1$ の交差位置を厳密に特定していないため、両候補の最小値を残す。その他の区間は連続区間の大小関係と端点等式によって単一式へ選択した。証明と、全奇合成数に対する `exists_prime_improvedSelected`、 `exists_least_improvedSelected` は [ImprovedIntervalSelection.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/ImprovedIntervalSelection.lean) にある。
 
 ### 比較グラフ
 
 ![Miller–Rabinの最小素数証人と上界式の比較](figures/mr_upper_bound_comparison.svg)
 
-横軸は $\ln(\ln n)$ に線形なスケールとし、目盛りには $n$ を10の累乗で示す。縦軸は対数軸である。 $2^{64}$、 $2^{80}$、 $2^{128}$ の縦グリッドを重ねた。橙の実線は区間表の $U_{\mathrm{MR}}(n)$、黒の点線は $(\ln n)^2$、青緑の点と階段線は最小素数証人の記録を表す。青緑の点の横座標は [OEIS A006945](https://oeis.org/A006945) の第 $k$ 項に対応する。ここでは、基数を素数 $2,3,5,7,\ldots$ の順に選んでMiller–Rabinテストを行う。第 $k$ 項は、最初の $k-1$ 個の素数を基数とするテストをすべて通過する最小の奇合成数である。この合成数を棄却するには、少なくとも第 $k$ 番目の素数 $p_k$ を基数とするテストまで進む必要がある。青緑の点の縦座標は、その奇合成数 $n$ をMiller–Rabinテストで棄却する最小の素数基数 $q_{\mathrm{MR}}(n)$ である。例えば、 $n=2047$ は基数2では通過し、基数3で棄却されるため、対応する点の縦座標は3となる。描画範囲は $9\le n\le10^{1024}$ である。
+横軸は $\ln(\ln n)$ に線形なスケールとし、目盛りには $n$ を10の累乗で示す。縦軸は対数軸である。 $2^{64}$、 $2^{80}$、 $2^{128}$ の縦グリッドを重ねた。橙の実線は区間表の $U_{\mathrm{MR}}(n)$、黒の点線は $(\ln n)^2$、青緑の点と階段線は最小素数証人の記録を表す。
 
-橙線は各入力 $n$ に対する証明済み上界であり、そこまでの入力全体に対する累積最大値ではない。例えば $L=23/2$、 $L=120$、 $L=300$ では、適用できる上界式が切り替わるため、線が下がる。この下降は、その地点から小さい上界を使えることを表し、実際の最小素数証人やその累積最大値が減少することを意味しない。また、切替後の上界が切替前の入力にも成り立つとは限らない。ある $N$ 以下の全入力を一律に覆う上界が必要な場合は、 $U_{\mathrm{MR}}(N)$ だけでなく、対象となる各区間内での上界の最大値も含めて評価する。
+青緑の点の横座標は [OEIS A006945](https://oeis.org/A006945) の第 $k$ 項に対応する。基数を素数 $2,3,5,7,\ldots$ の順に選んでMiller–Rabinテストを行うと、第 $k$ 項は、最初の $k-1$ 個の素数基数によるテストをすべて通過する最小の奇合成数である。この合成数を棄却するには、少なくとも第 $k$ 番目の素数 $p_k$ を基数とするテストまで進む必要がある。縦座標はその奇合成数 $n$ を棄却する最小の素数基数 $q_{\mathrm{MR}}(n)$ である。例えば、 $n=2047$ は基数2で通過し、基数3で棄却されるので、点の縦座標は3となる。
 
-挿入図は $n\ge3000$ における比 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。 $10^{1024}$ より大きい範囲で有効になる枝は、指定した描画範囲を超えるため図には現れない。
+橙線は各入力の証明済み上界であり、入力全体に対する累積最大値ではない。 $L=T_{\mathrm{tri}}$ では採用する式の切替によって上界が下がる。この切替点は図の描画範囲外にある。この下降はその入力から小さい上界を使えることを示す。実際の最小素数証人の累積最大値が減少することや、切替後の上界が切替前の入力にも成り立つことは意味しない。ある $N$ 以下の全入力を一律に覆うには、 $U_{\mathrm{MR}}(N)$ だけでなく、対象となる各区間内の上界の最大値を含めて評価する。
+
+描画範囲は $9\le n\le10^{1024}$ で、挿入図は $n\ge3000$ での比 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。 $L\ge T_{\mathrm{tri}}$ の係数枝は描画範囲外である。図の数値照合はLeanの証明を代替しない。 [PNG版](figures/mr_upper_bound_comparison.png)
 
 [構成全体へ](README.md) · [PrimeTest](PrimeTest.md) · [LLS](LLS.md)
