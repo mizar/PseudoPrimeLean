@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
+public import PseudoPrime.PrimeTest.MillerRabin.Prime
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.IntervalCases
 
@@ -284,5 +285,43 @@ theorem base_two_or_three_rejects_of_lt_3000 {n : ℕ} (hn : 1 < n) (hnOdd : Odd
         (by
           rw [hexception]
           exact baseThreeRejects_2047)
+
+/-- Every odd composite n with 1 < n < 3000 other than 2047 is rejected by base two.
+Reuse the existing finite classification and eliminate its prime and exceptional branches.
+This exposes the sharper small-range witness needed for pointwise fitting curves. -/
+theorem base_two_rejects_of_lt_3000_of_ne_2047 {n : ℕ} (hn : 1 < n) (hnOdd : Odd n)
+    (hnNotPrime : ¬Nat.Prime n) (hlt : n < 3000) (hne : n ≠ 2047) :
+    strongMillerRabinWithBase n 2 = false := by
+  obtain ⟨k, rfl⟩ := hnOdd
+  have hk : k < 1500 := by linarith only [hlt]
+  have hclass := baseTwoClassifyBelow3000 ⟨k, hk⟩
+  change
+    2 * k + 1 = 1 ∨
+      baseTwoRejectCheck (2 * k + 1) = true ∨ Nat.Prime (2 * k + 1) ∨ 2 * k + 1 = 2047 at hclass
+  rcases hclass with hone | hreject | hprime | hexception
+  · exact ((Nat.ne_of_gt hn) hone).elim
+  · exact baseTwoRejectCheck_sound hn hreject
+  · exact (hnNotPrime hprime).elim
+  · exact (hne hexception).elim
+
+/--
+For odd `n` with `1 < n < 2047`, the base-`2` Strong Miller–Rabin test accepts exactly
+the primes. The finite classification below `3000` supplies composite rejection, and the prime
+case follows from the general theorem for prime inputs.
+-/
+theorem base_two_decides_prime_of_lt_2047 {n : ℕ} (hn : 1 < n) (hnOdd : Odd n) (hlt : n < 2047) :
+    strongMillerRabinWithBase n 2 = true ↔ Nat.Prime n := by
+  constructor
+  · intro hpass
+    by_contra hnot
+    have hrejected :=
+      base_two_rejects_of_lt_3000_of_ne_2047 hn hnOdd hnot (Nat.lt_trans hlt (by norm_num only))
+        (Nat.ne_of_lt hlt)
+    rw [hrejected] at hpass
+    contradiction
+  · intro hp
+    obtain ⟨k, rfl⟩ := hnOdd
+    apply strongMillerRabinBase2_of_prime_of_ne_two hp
+    omega
 
 end PseudoPrime.PrimeTest
