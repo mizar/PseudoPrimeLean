@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LeastWitnessBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaLinearCutoffCompletion
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularWitnessBounds
 
@@ -14,36 +15,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularWitnessBounds
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
-
-/-- Combine two least-prime witness bounds by choosing the smaller numerical
-cutoff. The selected witness remains least among all rejecting primes. -/
-theorem least_prime_witness_bound_min {n : ℕ} {A B : ℝ}
-    (hA :
-      ∃ p : ℕ,
-        p.Prime ∧
-          ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-          (p : ℝ) ≤ A ∧ ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q)
-    (hB :
-      ∃ p : ℕ,
-        p.Prime ∧
-          ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-          (p : ℝ) ≤ B ∧
-          ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        (p : ℝ) ≤ min A B ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
-  rcases hA with ⟨pA, hpA, hfailA, hboundA, hminA⟩
-  rcases hB with ⟨pB, hpB, hfailB, hboundB, hminB⟩
-  by_cases hAB : A ≤ B
-  · refine ⟨pA, hpA, hfailA, ?_, hminA⟩
-    rw [min_eq_left hAB]
-    exact hboundA
-  · have hBA : B ≤ A := le_of_not_ge hAB
-    refine ⟨pB, hpB, hfailB, ?_, hminB⟩
-    rw [min_eq_right hBA]
-    exact hboundB
 
 /-- A natural number with logarithm at least 240 is greater than one. -/
 theorem nat_gt_one_of_log_ge_240 {n : ℕ} (hL : 240 ≤ Real.log n) : 1 < n := by
