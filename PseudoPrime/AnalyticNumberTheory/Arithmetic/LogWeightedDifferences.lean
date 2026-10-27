@@ -198,4 +198,109 @@ theorem mangoldt_interval_sum_eq_psi_sub {x y : ℝ} (hxy : x ≤ y) :
     psi_eq_positive_sum] at he
   linarith only [he]
 
+/-- A nonnegative square-root smoothing constant C and the corresponding endpoint
+bounds imply error at most (1+6C)s³ at cutoff s⁴ for s≥2. Compare the two cubic-step
+intervals with the cutoff, and bound their square roots by the quadratic scale. -/
+private theorem psi_error_fourth_power_of_short_interval_bounds {C : ℝ} (hC : 0 ≤ C)
+    (hb :
+      ∀ {x y : ℝ},
+        1 < x →
+          x < y →
+          Chebyshev.psi x ≤ y + C * (Real.sqrt x + Real.sqrt y) * y / (y - x) ∧
+            x - C * (Real.sqrt x + Real.sqrt y) * x / (y - x) ≤ Chebyshev.psi y)
+    {s : ℝ} (hs : 2 ≤ s) : |Chebyshev.psi (s ^ 4) - s ^ 4| ≤ (1 + 6 * C) * s ^ 3 := by
+  have hs0 : 0 < s := (by norm_num only : (0 : ℝ) < 2).trans_le hs
+  have hs1 : 1 ≤ s := (by norm_num only : (1 : ℝ) ≤ 2).trans hs
+  have hp3 : 0 < s ^ 3 := pow_pos hs0 _
+  have hp2 : 0 ≤ s ^ 2 := sq_nonneg s
+  have h23 : s ^ 2 ≤ s ^ 3 := by
+    have h := mul_le_mul_of_nonneg_left hs1 hp2
+    nlinarith only [h]
+  have hs3 : 8 ≤ s ^ 3 := by
+    simpa only [show (2 : ℝ) ^ 3 = 8 by norm_num only] using
+      pow_le_pow_left₀ (by norm_num only : (0 : ℝ) ≤ 2) hs 3
+  have hx : 1 < s ^ 4 := by nlinarith only [hs3, h23, hs]
+  have ha : 1 < s ^ 4 - s ^ 3 := by
+    have h := mul_le_mul_of_nonneg_left hs hp3.le
+    nlinarith only [h, hs3]
+  have hroot : Real.sqrt (s ^ 4) = s ^ 2 := by
+    rw [show s ^ 4 = (s ^ 2) ^ 2 by ring, Real.sqrt_sq hp2]
+  have hrootU : Real.sqrt (s ^ 4 + s ^ 3) ≤ 2 * s ^ 2 := by
+    apply Real.sqrt_le_iff.mpr
+    constructor
+    · linarith only [hp2]
+    · have h := mul_le_mul_of_nonneg_left hs1 hp3.le
+      nlinarith only [h, sq_nonneg (s ^ 2)]
+  have hrootL : Real.sqrt (s ^ 4 - s ^ 3) ≤ s ^ 2 := by
+    rw [← hroot]
+    exact Real.sqrt_le_sqrt (sub_le_self _ hp3.le)
+  have hu := (hb hx (show s ^ 4 < s ^ 4 + s ^ 3 by linarith only [hp3])).1
+  have hl := (hb ha (show s ^ 4 - s ^ 3 < s ^ 4 by linarith only [hp3])).2
+  rw [hroot, add_sub_cancel_left] at hu
+  rw [hroot, sub_sub_cancel] at hl
+  have huB :
+    C * (s ^ 2 + Real.sqrt (s ^ 4 + s ^ 3)) * (s ^ 4 + s ^ 3) / s ^ 3 ≤
+      C * (3 * s ^ 2) * (s ^ 4 + s ^ 3) / s ^ 3 := by
+    apply div_le_div_of_nonneg_right _ hp3.le
+    apply mul_le_mul_of_nonneg_right _ (by nlinarith only [hx, hp3])
+    exact mul_le_mul_of_nonneg_left (by linarith only [hrootU]) hC
+  have hlB :
+    C * (Real.sqrt (s ^ 4 - s ^ 3) + s ^ 2) * (s ^ 4 - s ^ 3) / s ^ 3 ≤
+      C * (2 * s ^ 2) * (s ^ 4 - s ^ 3) / s ^ 3 := by
+    apply div_le_div_of_nonneg_right _ hp3.le
+    apply mul_le_mul_of_nonneg_right _ (by linarith only [ha])
+    exact mul_le_mul_of_nonneg_left (by linarith only [hrootL]) hC
+  have heU : C * (3 * s ^ 2) * (s ^ 4 + s ^ 3) / s ^ 3 = 3 * C * (s ^ 3 + s ^ 2) := by
+    apply (div_eq_iff (pow_ne_zero 3 hs0.ne')).mpr
+    ring
+  have heL : C * (2 * s ^ 2) * (s ^ 4 - s ^ 3) / s ^ 3 = 2 * C * (s ^ 3 - s ^ 2) := by
+    apply (div_eq_iff (pow_ne_zero 3 hs0.ne')).mpr
+    ring
+  rw [heU] at huB
+  rw [heL] at hlB
+  have hC23 := mul_le_mul_of_nonneg_left h23 hC
+  have hC2 := mul_nonneg hC hp2
+  have hC3 := mul_nonneg hC hp3.le
+  rw [abs_le]
+  constructor <;> nlinarith only [hu, hl, huB, hlB, hC23, hC2, hC3]
+
+/-- If the logarithmically smoothed Mangoldt sum has error at most C sqrt(x) for
+x>1, with C≥0, then psi has error at most (1+6C)sqrt(x)sqrt(sqrt(x)) for x≥16.
+Finite differences at cubic steps supply the fourth-power bound; representing x by
+its iterated square root gives the general cutoff. No RH hypothesis is used here. -/
+theorem psi_error_le_three_quarter_of_logWeighted_error {C : ℝ} (hC : 0 ≤ C)
+    (hbound : ∀ {x : ℝ}, 1 < x → |logWeightedMangoldtSum x - x| ≤ C * Real.sqrt x) {x : ℝ}
+    (hx : 16 ≤ x) :
+    |Chebyshev.psi x - x| ≤ (1 + 6 * C) * Real.sqrt x * Real.sqrt (Real.sqrt x) := by
+  have hb : ∀ {s : ℝ}, 2 ≤ s → |Chebyshev.psi (s ^ 4) - s ^ 4| ≤ (1 + 6 * C) * s ^ 3 := by
+    apply psi_error_fourth_power_of_short_interval_bounds hC
+    intro u v hu huv
+    have h :=
+      psi_bounds_of_logWeighted_error_without_log (zero_lt_one.trans hu) huv (hbound hu)
+        (hbound (hu.trans huv))
+    simpa only [← mul_add] using h
+  have hx0 : 0 ≤ x := (by norm_num only : (0 : ℝ) ≤ 16).trans hx
+  have hr : 4 ≤ Real.sqrt x := by
+    have h := Real.sqrt_le_sqrt hx
+    rw [show (16 : ℝ) = (4 : ℝ) ^ 2 by norm_num only, Real.sqrt_sq (by norm_num only)] at h
+    exact h
+  have hs : 2 ≤ Real.sqrt (Real.sqrt x) := by
+    have h := Real.sqrt_le_sqrt hr
+    rw [show (4 : ℝ) = (2 : ℝ) ^ 2 by norm_num only, Real.sqrt_sq (by norm_num only)] at h
+    exact h
+  have hs2 := Real.sq_sqrt (Real.sqrt_nonneg x)
+  have hx2 := Real.sq_sqrt hx0
+  have he : Real.sqrt (Real.sqrt x) ^ 4 = x := by nlinarith only [hs2, hx2]
+  have h := hb hs
+  rw [he] at h
+  have hm :
+    (1 + 6 * C) * Real.sqrt x * Real.sqrt (Real.sqrt x) =
+      (1 + 6 * C) * Real.sqrt (Real.sqrt x) ^ 3 := by
+    calc
+      _ = (1 + 6 * C) * Real.sqrt (Real.sqrt x) ^ 2 * Real.sqrt (Real.sqrt x) :=
+        congrArg (fun z ↦ (1 + 6 * C) * z * Real.sqrt (Real.sqrt x)) hs2.symm
+      _ = _ := by ring
+  rw [hm]
+  exact h
+
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

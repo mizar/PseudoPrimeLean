@@ -24,8 +24,8 @@ namespace PseudoPrime.LLS.PaperStatements
 logarithmic derivative at zero has norm at most (7/6) log q + 4. Apply the cutoff-100 xi
 endpoint bound and subtract the half-conductor logarithm. This supplies the pole estimate
 without assuming that the kernel residue is real. -/
-private theorem norm_completedLogDeriv_zero_le_affine_log {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 8 ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1)
+theorem norm_completedLogDeriv_zero_le_affine_log {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hq : 8 ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ‖logDeriv χ.completedLFunction 0‖ ≤ (7 / 6 : ℝ) * Real.log q + 4 := by
   have hqR : (1 : ℝ) ≤ q := by exact_mod_cast (by linarith only [hq] : 1 ≤ q)
@@ -47,7 +47,7 @@ private theorem norm_completedLogDeriv_zero_le_affine_log {q : ℕ} [NeZero q]
 an ambient modulus q at least 20000 have completed endpoint norm at most (7/6) log q + 4.
 Use the ambient xi estimate and bound the half-conductor logarithm by log q/2. This also
 handles the small primitive conductors arising when a character is primitivized. -/
-private theorem norm_completedLogDeriv_zero_le_ambient_affine_log {q m : ℕ} [NeZero m]
+theorem norm_completedLogDeriv_zero_le_ambient_affine_log {q m : ℕ} [NeZero m]
     {χ : DirichletCharacter ℂ m} (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ‖logDeriv χ.completedLFunction 0‖ ≤ (7 / 6 : ℝ) * Real.log q + 4 := by

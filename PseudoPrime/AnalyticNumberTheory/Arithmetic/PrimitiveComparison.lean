@@ -325,4 +325,19 @@ theorem norm_characterReciprocalWeightedSum_le {q : ℕ} (χ : DirichletCharacte
   exact
     norm_characterReciprocalWeightedTerm_le χ hx (Finset.mem_Ioc.mp hn).1 (Finset.mem_Ioc.mp hn).2
 
+/-- At every natural index, a character equals its primitive source on units
+of the original level and is zero off those units. The induction formula and
+the nonunit vanishing criterion give this exact value identity.
+It supplies signed level corrections before taking norms. -/
+theorem apply_eq_primitiveCharacter_or_zero {q n : ℕ} (χ : DirichletCharacter ℂ q) :
+    χ n = if Nat.Coprime n q then χ.primitiveCharacter n else 0 := by
+  by_cases hc : Nat.Coprime n q
+  · rw [ite_eq_left hc]
+    simpa only [Int.cast_natCast] using
+      (χ.primitiveCharacter_apply_of_isCoprime (Nat.isCoprime_iff_coprime.mpr hc)).symm
+  · rw [ite_eq_right hc]
+    simpa only [Int.cast_natCast] using
+      (DirichletCharacter.apply_eq_zero_iff χ (n : ℤ)).mpr
+        (by simpa only [Nat.isCoprime_iff_coprime] using hc)
+
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

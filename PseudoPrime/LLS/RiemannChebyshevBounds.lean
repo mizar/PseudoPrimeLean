@@ -88,70 +88,6 @@ theorem exists_psi_short_interval_bounds (hRH : RiemannHypothesis) :
       (zero_lt_one.trans hx) hxy (hb hx) (hb (hx.trans hxy))
   simpa only [← mul_add] using h
 
-/-- Under RH, at every fourth-power cutoff s^4 with s >= 2, the Chebyshev error
-is at most D s^3 for a fixed positive constant D. Use the two intervals with
-endpoints s^4 plus or minus s^3, compare their square roots with s^2, and cancel the
-positive step. This prepares the quantitative bound for arbitrary real cutoffs. -/
-private theorem exists_psi_error_le_fourth_power (hRH : RiemannHypothesis) :
-    ∃ D : ℝ, 0 < D ∧ ∀ {s : ℝ}, 2 ≤ s → |Chebyshev.psi (s ^ 4) - s ^ 4| ≤ D * s ^ 3 := by
-  obtain ⟨C, hC, hb⟩ := exists_psi_short_interval_bounds hRH
-  refine ⟨1 + 6 * C, by linarith only [hC], ?_⟩
-  intro s hs
-  have hs0 : 0 < s := (by norm_num only : (0 : ℝ) < 2).trans_le hs
-  have hs1 : 1 ≤ s := (by norm_num only : (1 : ℝ) ≤ 2).trans hs
-  have hp3 : 0 < s ^ 3 := pow_pos hs0 _
-  have hp2 : 0 ≤ s ^ 2 := sq_nonneg s
-  have h23 : s ^ 2 ≤ s ^ 3 := by
-    have h := mul_le_mul_of_nonneg_left hs1 hp2
-    nlinarith only [h]
-  have hs3 : 8 ≤ s ^ 3 := by
-    simpa only [show (2 : ℝ) ^ 3 = 8 by norm_num only] using
-      pow_le_pow_left₀ (by norm_num only : (0 : ℝ) ≤ 2) hs 3
-  have hx : 1 < s ^ 4 := by nlinarith only [hs3, h23, hs]
-  have ha : 1 < s ^ 4 - s ^ 3 := by
-    have h := mul_le_mul_of_nonneg_left hs hp3.le
-    nlinarith only [h, hs3]
-  have hroot : Real.sqrt (s ^ 4) = s ^ 2 := by
-    rw [show s ^ 4 = (s ^ 2) ^ 2 by ring, Real.sqrt_sq hp2]
-  have hrootU : Real.sqrt (s ^ 4 + s ^ 3) ≤ 2 * s ^ 2 := by
-    apply Real.sqrt_le_iff.mpr
-    constructor
-    · linarith only [hp2]
-    · have h := mul_le_mul_of_nonneg_left hs1 hp3.le
-      nlinarith only [h, sq_nonneg (s ^ 2)]
-  have hrootL : Real.sqrt (s ^ 4 - s ^ 3) ≤ s ^ 2 := by
-    rw [← hroot]
-    exact Real.sqrt_le_sqrt (sub_le_self _ hp3.le)
-  have hu := (hb hx (show s ^ 4 < s ^ 4 + s ^ 3 by linarith only [hp3])).1
-  have hl := (hb ha (show s ^ 4 - s ^ 3 < s ^ 4 by linarith only [hp3])).2
-  rw [hroot, add_sub_cancel_left] at hu
-  rw [hroot, sub_sub_cancel] at hl
-  have huB :
-    C * (s ^ 2 + Real.sqrt (s ^ 4 + s ^ 3)) * (s ^ 4 + s ^ 3) / s ^ 3 ≤
-      C * (3 * s ^ 2) * (s ^ 4 + s ^ 3) / s ^ 3 := by
-    apply div_le_div_of_nonneg_right _ hp3.le
-    apply mul_le_mul_of_nonneg_right _ (by nlinarith only [hx, hp3])
-    exact mul_le_mul_of_nonneg_left (by linarith only [hrootU]) hC.le
-  have hlB :
-    C * (Real.sqrt (s ^ 4 - s ^ 3) + s ^ 2) * (s ^ 4 - s ^ 3) / s ^ 3 ≤
-      C * (2 * s ^ 2) * (s ^ 4 - s ^ 3) / s ^ 3 := by
-    apply div_le_div_of_nonneg_right _ hp3.le
-    apply mul_le_mul_of_nonneg_right _ (by linarith only [ha])
-    exact mul_le_mul_of_nonneg_left (by linarith only [hrootL]) hC.le
-  have heU : C * (3 * s ^ 2) * (s ^ 4 + s ^ 3) / s ^ 3 = 3 * C * (s ^ 3 + s ^ 2) := by
-    apply (div_eq_iff (pow_ne_zero 3 hs0.ne')).mpr
-    ring
-  have heL : C * (2 * s ^ 2) * (s ^ 4 - s ^ 3) / s ^ 3 = 2 * C * (s ^ 3 - s ^ 2) := by
-    apply (div_eq_iff (pow_ne_zero 3 hs0.ne')).mpr
-    ring
-  rw [heU] at huB
-  rw [heL] at hlB
-  have hC23 := mul_le_mul_of_nonneg_left h23 hC.le
-  have hC2 := mul_nonneg hC.le hp2
-  have hC3 := mul_nonneg hC.le hp3.le
-  rw [abs_le]
-  constructor <;> nlinarith only [hu, hl, huB, hlB, hC23, hC2, hC3]
-
 /-- Under RH, a positive constant bounds abs(psi(x)-x) by
 C sqrt(x) sqrt(sqrt(x)) for every x >= 16. Represent x as the fourth power of
 its iterated square root and apply the short-interval bound with a cubic step.
@@ -161,30 +97,12 @@ theorem exists_psi_error_le_three_quarter (hRH : RiemannHypothesis) :
     ∃ D : ℝ,
       0 < D ∧
         ∀ {x : ℝ}, 16 ≤ x → |Chebyshev.psi x - x| ≤ D * Real.sqrt x * Real.sqrt (Real.sqrt x) := by
-  obtain ⟨D, hD, hb⟩ := exists_psi_error_le_fourth_power hRH
-  refine ⟨D, hD, ?_⟩
+  obtain ⟨C, hC, hb⟩ := exists_logWeightedMangoldtSum_error_le_sqrt hRH
+  refine ⟨1 + 6 * C, by linarith only [hC], ?_⟩
   intro x hx
-  have hx0 : 0 ≤ x := (by norm_num only : (0 : ℝ) ≤ 16).trans hx
-  have hr : 4 ≤ Real.sqrt x := by
-    have h := Real.sqrt_le_sqrt hx
-    rw [show (16 : ℝ) = (4 : ℝ) ^ 2 by norm_num only, Real.sqrt_sq (by norm_num only)] at h
-    exact h
-  have hs : 2 ≤ Real.sqrt (Real.sqrt x) := by
-    have h := Real.sqrt_le_sqrt hr
-    rw [show (4 : ℝ) = (2 : ℝ) ^ 2 by norm_num only, Real.sqrt_sq (by norm_num only)] at h
-    exact h
-  have hs2 := Real.sq_sqrt (Real.sqrt_nonneg x)
-  have hx2 := Real.sq_sqrt hx0
-  have he : Real.sqrt (Real.sqrt x) ^ 4 = x := by nlinarith only [hs2, hx2]
-  have h := hb hs
-  rw [he] at h
-  have hm : D * Real.sqrt x * Real.sqrt (Real.sqrt x) = D * Real.sqrt (Real.sqrt x) ^ 3 := by
-    calc
-      _ = D * Real.sqrt (Real.sqrt x) ^ 2 * Real.sqrt (Real.sqrt x) :=
-        congrArg (fun z ↦ D * z * Real.sqrt (Real.sqrt x)) hs2.symm
-      _ = _ := by ring
-  rw [hm]
-  exact h
+  exact
+    AnalyticNumberTheory.Arithmetic.psi_error_le_three_quarter_of_logWeighted_error hC.le
+      (fun hu ↦ hb hu) hx
 
 /-- Under RH and x >= 16, the normalized Chebyshev error is at most a fixed
 positive constant divided by sqrt(sqrt(x)). Divide the three-quarter-power estimate

@@ -450,4 +450,45 @@ theorem sum_inv_prime_pow_tail_le {p m N : ℕ} (hp : p.Prime) :
     nlinarith only [h]
   simpa only [one_div, inv_pow, div_eq_mul_inv, one_mul] using hb.trans hc
 
+/-- For nonzero modulus m and cutoff y≥1, the Mangoldt sum on indices not
+coprime to m is at most log(m)log(y)/log(2). Reindex by positive exponents and
+prime divisors of m, bound each exponent slice by log(m), and bound the number
+of slices by log(y)/log(2). This controls finite missing Euler factors. -/
+theorem sum_vonMangoldt_not_coprime_le_log_product {m : ℕ} (hm : m ≠ 0) {y : ℝ} (hy : 1 ≤ y) :
+    (∑ n ∈ (Finset.Ioc 0 ⌊y⌋₊).filter (fun n ↦ ¬Nat.Coprime n m),
+        ArithmeticFunction.vonMangoldt n) ≤
+      Real.log m * Real.log y / Real.log 2 := by
+  classical
+  rw [sum_not_coprime_eq_sum_prime_powers ArithmeticFunction.vonMangoldt m (zero_le_one.trans hy)
+      (fun n hn ↦ ArithmeticFunction.vonMangoldt_eq_zero_iff.mpr hn)]
+  have hper (k : ℕ) (hk : k ∈ Finset.Icc 1 ⌊Real.log y / Real.log 2⌋₊) :
+    (∑ p ∈ (Finset.Ioc 0 ⌊y ^ ((1 : ℝ) / k)⌋₊).filter (fun p ↦ p.Prime ∧ p ∣ m),
+        ArithmeticFunction.vonMangoldt (p ^ k)) ≤
+      Real.log m := by
+    have hk0 : k ≠ 0 := Nat.ne_of_gt (Finset.mem_Icc.mp hk).1
+    have hs :
+      (∑ p ∈ (Finset.Ioc 0 ⌊y ^ ((1 : ℝ) / k)⌋₊).filter (fun p ↦ p.Prime ∧ p ∣ m),
+          ArithmeticFunction.vonMangoldt (p ^ k)) =
+        ∑ p ∈ (Finset.Ioc 0 ⌊y ^ ((1 : ℝ) / k)⌋₊).filter (fun p ↦ p.Prime ∧ p ∣ m), Real.log p := by
+      apply Finset.sum_congr rfl
+      intro p hp
+      rw [ArithmeticFunction.vonMangoldt_apply_pow hk0,
+        ArithmeticFunction.vonMangoldt_apply_prime (Finset.mem_filter.mp hp).2.1]
+    rw [hs]
+    apply le_trans _ (sum_log_primeFactors_le_log hm)
+    apply Finset.sum_le_sum_of_subset_of_nonneg
+    · intro p hp
+      exact
+        Nat.mem_primeFactors.mpr ⟨(Finset.mem_filter.mp hp).2.1, (Finset.mem_filter.mp hp).2.2, hm⟩
+    · intro p hp _hmiss
+      exact Real.log_nonneg (Nat.one_le_cast.mpr (Nat.prime_of_mem_primeFactors hp).one_le)
+  have hsum := Finset.sum_le_sum hper
+  have hlogM : 0 ≤ Real.log (m : ℝ) :=
+    Real.log_nonneg (Nat.one_le_cast.mpr (Nat.one_le_iff_ne_zero.mpr hm))
+  have hf : (⌊Real.log y / Real.log 2⌋₊ : ℝ) ≤ Real.log y / Real.log 2 :=
+    Nat.floor_le (div_nonneg (Real.log_nonneg hy) (Real.log_pos (by norm_num only)).le)
+  have hmul := mul_le_mul_of_nonneg_right hf hlogM
+  simp only [Finset.sum_const, Nat.card_Icc, Nat.add_sub_cancel, nsmul_eq_mul] at hsum
+  exact hsum.trans (hmul.trans_eq (by ring))
+
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

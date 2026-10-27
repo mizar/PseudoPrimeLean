@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogResidueBoundGeneral
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ReciprocalResidueBoundGeneral
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ReciprocalWeightedLowerBound
 public import PseudoPrime.LLS.ExplicitFormula
 
 /-!
@@ -41,13 +42,8 @@ for x ≥ 2. The Mellin identity at real part two gives the explicit lower bound
 the numerical remainder estimate yields the input used in LLS Section 3.1. -/
 theorem llsRiemannReciprocalLowerBound_of_riemannHypothesis (hRH : RiemannHypothesis) :
     LLSRiemannReciprocalLowerBound := by
-  apply llsRiemannReciprocalLowerBound_of_explicit_analytic
   intro x hx
-  have heq :=
-    reciprocalWeightedMangoldtSum_eq_integral (zero_lt_one.trans hx) (τ := 2) (by norm_num only)
-  have hre := congrArg Complex.re heq
-  rw [Complex.ofReal_re] at hre
-  rw [hre]
-  exact re_integral_riemannZetaReciprocalContourKernel_two_ge_of_riemannHypothesis hRH hx
+  have h := reciprocalWeightedMangoldtSum_lower_bound hRH hx
+  linarith only [h]
 
 end PseudoPrime.LLS
