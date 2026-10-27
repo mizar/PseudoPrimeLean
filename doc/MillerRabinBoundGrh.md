@@ -256,14 +256,14 @@ $$
 $L\ge120$ に対して、1000と50000の二つのcutoffに対応するprefix から得る上界の小さい方を
 
 $$
-U_{\Gamma}(L)=\min\left\{\frac{99}{40}r_{1000}(L)^2,
-\frac{99}{40}r_{50000}(L)^2\right\}
+U_{\Gamma}(L)=\min\left\lbrace\frac{99}{40}r_{1000}(L)^2,
+\frac{99}{40}r_{50000}(L)^2\right\rbrace
 $$
 
-とする。$b_1=1000$、$C_1=203/50$、$b_2=50000$、$C_2=28493/5000$ と置き、各 $i\in\{1,2\}$ について
+とする。$b_1=1000$、$C_1=203/50$、$b_2=50000$、$C_2=28493/5000$ と置き、各 $i\in\lbrace1,2\rbrace$ について
 
 $$
-r_i(L)=\max\left\{\sqrt{\frac{40b_i}{99}},\rho_{C_i}(L)\right\},
+r_i(L)=\max\left\lbrace\sqrt{\frac{40b_i}{99}},\rho_{C_i}(L)\right\rbrace,
 $$
 
 $$
@@ -368,7 +368,7 @@ $n$ は正の奇合成数、$L=\ln n$ とする。有限上界3の行を除きGR
 | $2171/100 < L\le1373/50$ | $(81/100)(L-73/50)^2$ | [`exists_least_prime_reject_le_eightyOne_shifted_log_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
 | $1373/50 < L\le144/5$ | $576$ | [`exists_least_prime_reject_le_576_exact_even`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
 | $144/5 < L < 120$ | $R_{\mathrm{aff}}(L-7/4)^2$ | [`exists_least_prime_reject_le_7over4_shifted_midscale_radius_sq`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointExactEvenPolynomial.lean) |
-| $120\le L < 122$ | $\min\{R_{\mathrm{aff}}(L-7/4)^2,U_{\Gamma}(L)\}$ | [`exists_least_prime_witness_le_endpointGammaEnvelope`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointGammaEnvelope.lean) |
+| $120\le L < 122$ | $\min\lbrace R_{\mathrm{aff}}(L-7/4)^2,U_{\Gamma}(L)\rbrace$ | [`exists_least_prime_witness_le_endpointGammaEnvelope`](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointGammaEnvelope.lean) |
 | $122\le L < 240$ | $U_{\Gamma}(L)$ | [`exists_least_prime_witness_le_gammaClippedUpper`](../PseudoPrime/PrimeTestBounds/MillerRabin/GammaClippedComparison.lean) |
 | $240\le L < 300$ | $B_6(L)$ | [`exists_least_witness_gaussianMR6_log240`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMR240WitnessBounds.lean) |
 | $300\le L < T$ | $B_*(L)$ | [`exists_least_witness_gaussianMRRefined`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRRefinedWitnessBounds.lean)、[`gaussianMRRefinedEnvelope_eq`](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRWitnessEnvelopes.lean) |
