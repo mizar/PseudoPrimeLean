@@ -98,6 +98,7 @@ public import PseudoPrime.LLS.GaussianPrimitiveRemainderBounds
 public import PseudoPrime.LLS.GaussianSubgroupComparison
 public import PseudoPrime.LLS.GaussianPrincipalConstantBounds
 public import PseudoPrime.LLS.RelativeGaussianSubgroupComparison
+public import PseudoPrime.LLS.GaussianPrefixComparison
 public import PseudoPrime.LLS.ConductorPrimeWitnessBounds
 public import PseudoPrime.LLS.RefinedConductorPrimeExclusionBounds
 public import PseudoPrime.LLS.AffineConductorWitnessBounds
@@ -180,6 +181,7 @@ public import PseudoPrime.LLS.GammaPrefixCellCertificate
 public import PseudoPrime.LLS.GammaSmallCheckpointBounds
 public import PseudoPrime.LLS.RiemannOneSidedLogCap
 public import PseudoPrime.LLS.GammaCheckpoint1000
+public import PseudoPrime.LLS.GammaCheckpoint35000
 public import PseudoPrime.LLS.Part1SmallRadiusBounds
 public import PseudoPrime.LLS.Part1ThreeFourBounds
 public import PseudoPrime.LLS.Part1ProductCertificates
