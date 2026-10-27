@@ -231,26 +231,6 @@ $$
 
 とする。$A(L)=\max\lbrace8,L-H(L)\rbrace$、$B(L)=L-H(A(L))$ と置き、二段階 cutoff を $C_2(L)=B(L)^2$ と定める。単調性と正の直接 gap により、GRH の下で $L\ge23/2$ の全奇合成数に実際の素数証人が存在し、その最小素数証人は $C_2(L)$ 以下となる。$23/2\le L\le74/5$ では$(64/81)(L-73/50)^2$ 以下でもあるため、両方の適用上界の最小値に対応する公開定理 `exists_least_prime_reject_le_evenTwoStepEndpointEnvelope` は [EndpointEvenPolynomial.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointEvenPolynomial.lean) にある。この区間では最小値は $C_2(L)$ となる。
 
-### 全奇合成数に対する係数 $282924/1000000$ の上界
-
-GRH の下で、すべての奇合成数 $n\ge10^{9\,565\,217\,391\,305}$ に対し、最小素数 MR 証人 $q_{\mathrm{MR}}(n)$ は係数 $282924/1000000$ の上界を満たす。素数証人の存在定理 `exists_prime_witness_le_0282924` と最小証人版 `exists_least_prime_witness_le_0282924` は [TriangularWitnessBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularWitnessBounds.lean) にある。証明では有限指数の分類と三素数 Korselt 枝を結合し、平方自由性や Fermat 部分群指数の制限なしに全入力を同じ係数で覆う。
-
-三素数枝では Gaussian cutoff 質量
-$$
-I=\int_0^{21/10}\frac{\mathcal G(u)}{\sqrt{u}}\,du
-$$
-を、tilt の上界 $2129/2000$ と曲率多項式の上界 $71$ を使った二階微分評価 $97$ の下で、16,000点のmidpoint証明書に適用する。このとき積分値は $81470555/100000000$ より大きい。ここで $\mathcal G$ は Gaussian プロファイルである。端点項 $k$ は $k\le2129/2000$ を満たすので、三つの導手から得る分母は
-$$
-4I-k\ge\frac{10971611}{5000000}>\frac{21943}{10000}.
-$$
-係数 $282924/1000000$ に必要な主項余裕は
-$$
-\left(\frac{161}{200}+\frac{1}{2500}\right)^2
-<\left(\frac{21943}{10000}\right)^2
-\frac{282924/1000000}{21/10}.
-$$
-この有理不等式は差 $503185673/17500000000000$ が正であることに帰着する。大 Fermat 指数枝では $L\ge22\cdot10^{12}$ とし、$x=(282924/1000000)L^2$ と置く。この範囲では $x^{1/16}\ge43$ かつ $\sqrt{x}\ge(531/1000)L$ なので、signed cost は $175400000000$ 以下であり、$L/125$ 以下でもある。これを指数 $h\ge10^9$ の signed gap に代入して、同じ係数の上界を得る。有限指数分類の他の枝も同じ係数を満たすため、三素数枝の開始値 $10^{434782608696}$ と合わせ、全奇合成数に対する適用条件 $n\ge10^{9565217391305}$ が得られる。
-
 ### 最小包絡に採用する clipped-log Gamma 上界
 
 $L\ge120$ に対して、1000と50000の二つのcutoffに対応するprefix から得る上界の小さい方を
@@ -328,6 +308,26 @@ $$
 $240\le L < 300$ の全区間で、使用する上界は $B_6(L)$ である。Lean定理`gaussianMRWitnessEnvelope_eq240`が、この区間で公開包絡線`gaussianMRWitnessEnvelope`と $B_6$ が一致することを示す。包絡線の定義、各区間の等式定理、最小証人定理`exists_least_witness_gaussianMR_envelope`は [GaussianMRWitnessEnvelopes.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianMRWitnessEnvelopes.lean) にある。
 
 係数枝の開始尺度を $T=9565217391305\ln10$ とする。条件 $T\le L$ は $n\ge10^{9565217391305}$ と同値である。 $L\ge300$ では $B_{\ast}(L) > 0.3L^2$ が成立し、係数 $282924/1000000$ は $0.3$ より小さい。したがって $T\le L$ では、係数上界 $(282924/1000000)L^2$ が $B_{\ast}(L)$ より小さく、最小素数証人の上界として適用できる。定理`gaussianMRLargeEnvelope_eq`と`exists_least_witness_gaussianMRLarge`が、比較と適用条件をそれぞれ示す。
+
+### 全奇合成数に対する係数 $282924/1000000$ の上界
+
+GRH の下で、すべての奇合成数 $n\ge10^{9\,565\,217\,391\,305}$ に対し、最小素数 MR 証人 $q_{\mathrm{MR}}(n)$ は係数 $282924/1000000$ の上界を満たす。素数証人の存在定理 `exists_prime_witness_le_0282924` と最小証人版 `exists_least_prime_witness_le_0282924` は [TriangularWitnessBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularWitnessBounds.lean) にある。証明では有限指数の分類と三素数 Korselt 枝を結合し、平方自由性や Fermat 部分群指数の制限なしに全入力を同じ係数で覆う。
+
+三素数枝では Gaussian cutoff 質量
+$$
+I=\int_0^{21/10}\frac{\mathcal G(u)}{\sqrt{u}}\,du
+$$
+を、tilt の上界 $2129/2000$ と曲率多項式の上界 $71$ を使った二階微分評価 $97$ の下で、16,000点のmidpoint証明書に適用する。このとき積分値は $81470555/100000000$ より大きい。ここで $\mathcal G$ は Gaussian プロファイルである。端点項 $k$ は $k\le2129/2000$ を満たすので、三つの導手から得る分母は
+$$
+4I-k\ge\frac{10971611}{5000000}>\frac{21943}{10000}.
+$$
+係数 $282924/1000000$ に必要な主項余裕は
+$$
+\left(\frac{161}{200}+\frac{1}{2500}\right)^2
+<\left(\frac{21943}{10000}\right)^2
+\frac{282924/1000000}{21/10}.
+$$
+この有理不等式は差 $503185673/17500000000000$ が正であることに帰着する。大 Fermat 指数枝では $L\ge22\cdot10^{12}$ とし、$x=(282924/1000000)L^2$ と置く。この範囲では $x^{1/16}\ge43$ かつ $\sqrt{x}\ge(531/1000)L$ なので、signed cost は $175400000000$ 以下であり、$L/125$ 以下でもある。これを指数 $h\ge10^9$ の signed gap に代入して、同じ係数の上界を得る。有限指数分類の他の枝も同じ係数を満たすため、三素数枝の開始値 $10^{434782608696}$ と合わせ、全奇合成数に対する適用条件 $n\ge10^{9565217391305}$ が得られる。
 
 ## 上界式の適用区間と比較
 
