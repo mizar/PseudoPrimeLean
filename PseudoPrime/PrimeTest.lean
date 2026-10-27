@@ -44,6 +44,13 @@ public import PseudoPrime.PrimeTest.Execution
 public import PseudoPrime.PrimeTest.Precheck
 public import PseudoPrime.PrimeTest.EulerJacobi.Prime
 public import PseudoPrime.PrimeTest.MillerRabin.Prime
+public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroupCardinality
+public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroupTwoPrimes
+public import PseudoPrime.PrimeTest.MillerRabin.SignSubgroupIndex
+public import PseudoPrime.PrimeTest.MillerRabin.CommonSignLegendre
+public import PseudoPrime.PrimeTest.MillerRabin.PairedQuadraticAnnihilator
+public import PseudoPrime.PrimeTest.MillerRabin.KorseltCanonicalSign
+public import PseudoPrime.PrimeTest.MillerRabin.PairedLocalSign
 public import PseudoPrime.PrimeTest.Lucas.Spec
 public import PseudoPrime.PrimeTest.Lucas.Params
 public import PseudoPrime.PrimeTest.Lucas.FiniteField
@@ -87,8 +94,20 @@ public import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
 public import PseudoPrime.PrimeTest.Selfridge.Bounded
 public import PseudoPrime.PrimeTest.MillerRabin.WitnessBound
 public import PseudoPrime.PrimeTest.MillerRabin.Construction
+public import PseudoPrime.PrimeTest.MillerRabin.KorseltHalfExponent
+public import PseudoPrime.PrimeTest.MillerRabin.KorseltSignIndex
+public import PseudoPrime.PrimeTest.MillerRabin.TripleTwoAdic
+public import PseudoPrime.PrimeTest.MillerRabin.LocalFermatKernel
+public import PseudoPrime.PrimeTest.MillerRabin.LocalFermatIndexSize
+public import PseudoPrime.PrimeTest.MillerRabin.SquareFactorLocalBounds
+public import PseudoPrime.PrimeTest.MillerRabin.UnequalTwoAdicSquares
 public import PseudoPrime.PrimeTest.Selfridge.TrialCount
 public import PseudoPrime.PrimeTest.Selfridge.WitnessBridge
+public import PseudoPrime.PrimeTest.MillerRabin.OEISA006945
+public import PseudoPrime.PrimeTest.MillerRabin.OEISA006945Iff
+public import PseudoPrime.PrimeTest.MillerRabin.AGP.FiniteBases
+public import PseudoPrime.PrimeTest.MillerRabin.AGP.FiniteBasesTheorem
+public import PseudoPrime.PrimeTest.MillerRabin.OEISA006945Existence
 
 /-!
 # Executable primality-test interfaces
