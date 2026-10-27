@@ -567,7 +567,6 @@ theorem bls5_certificate_result_small_case :
     PrimeTest.BLS.boundedBLS5Result_prime_case ⟨13, ⟨[(2, 2)], 3⟩, [(2, 2)], 3⟩ (by decide) rfl
       (by decide)
 
-set_option maxRecDepth 660 in
 /-- The retained factor `F = 4` certifies `101` using BLS5 with unresolved cofactor `25`.
 The witness is checked by kernel reduction, including the nonsquare discriminant condition. -/
 theorem bls5_verified_certificate_prime_extended_case : Nat.Prime 101 := by
@@ -583,7 +582,6 @@ theorem bls5_extended_case_outside_square_bound : ¬101 < 4 ^ 2 := by decide
 theorem bls5_extended_case_rejects_bad_witness :
     PrimeTest.BLS.checkBLS5Certificate ⟨101, ⟨[(2, 2)], 25⟩, [(2, 1)], 25⟩ = false := by decide
 
-set_option maxRecDepth 660 in
 /-- The retained factor `F = 4`, unresolved cofactor `R = 25`, and base `2`
 satisfy the conditional BLS5 search contract and reach the prime result for `101`. -/
 theorem bls5_bounded_search_prime_of_coverage :
@@ -602,7 +600,6 @@ theorem bls5_bounded_search_prime_of_coverage :
     PrimeTest.BLS.exists_boundedBLS5Search_prime_of_coverage (by decide) hdata (by decide)
       (by decide) (by decide) (by decide) hcoverage
 
-set_option maxRecDepth 660 in
 /-- The combined BLS5 search retains the accepted prime certificate for `101`. -/
 theorem bls5_combined_search_prime_101 :
     ∃ hprime : Nat.Prime 101,

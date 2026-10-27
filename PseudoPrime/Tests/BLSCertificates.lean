@@ -56,7 +56,6 @@ theorem square_payload_accepts : verifyInputCertificate 13 testSquare = true := 
 although `F² < 17`; this exercises the additional cube criterion beyond the square bound. -/
 theorem cube_payload_accepts : verifyInputCertificate 17 testCube = true := by decide
 
-set_option maxRecDepth 4096 in
 /-- Kernel evaluation accepts the BLS5 payload for 101 with `F = 4` and remainder 25,
 exercising the criterion beyond both `F²` and `F³`. -/
 theorem bls5_payload_accepts : verifyInputCertificate 101 testBLS5 = true := by decide
