@@ -32,9 +32,12 @@ theorem gaussianCutoffSixFifthsMidpointLower_gt :
   rw [gaussianCutoffSixFifthsMidpointLower_value]
   norm_num only [gaussianCutoffNodeScale]
 
-/-- The kernel-checked midpoint certificate proves a strict mass lower bound at 6/5. -/
-theorem gaussianGammaCutoffSixFifths_mass_gt :
-    16 / 25 < ∫ u in (0 : ℝ)..(6 / 5), gaussianGammaProfile u / Real.sqrt u := by
+/-- The original 128-node certificate minus its curvature error bounds the actual cutoff
+mass below. Transfer each rounded midpoint contribution before summing. This exposes the
+certificate value for sharper rational targets without changing its nodes or payload. -/
+theorem gaussianGammaCutoffSixFifths_lower :
+    (gaussianCutoffSixFifthsMidpointLower : ℝ) / gaussianCutoffNodeScale - 1 / 288 ≤
+      ∫ u in (0 : ℝ)..(6 / 5), gaussianGammaProfile u / Real.sqrt u := by
   have hmid := gaussianGammaCutoff_midpoint_128_lower
   have hnum :
     (gaussianCutoffSixFifthsMidpointLower : ℝ) / gaussianCutoffNodeScale - 1 / 288 ≤
@@ -100,6 +103,24 @@ theorem gaussianGammaCutoffSixFifths_mass_gt :
       apply (div_le_iff₀ hscale).2
       simpa only [mul_comm] using hs'
     exact sub_le_sub_right hs'' (1 / 288)
-  exact lt_of_lt_of_le gaussianCutoffSixFifthsMidpointLower_gt (hnum.trans hmid)
+  exact hnum.trans hmid
+
+
+/-- The kernel-checked midpoint certificate proves a strict mass lower bound at 6/5. -/
+theorem gaussianGammaCutoffSixFifths_mass_gt :
+    16 / 25 < ∫ u in (0 : ℝ)..(6 / 5), gaussianGammaProfile u / Real.sqrt u := by
+  exact gaussianCutoffSixFifthsMidpointLower_gt.trans_le gaussianGammaCutoffSixFifths_lower
+
+/-- The unchanged 128-node certificate gives cutoff mass strictly above 64167/100000.
+Kernel arithmetic compares the existing certificate value with this sharper rational target.
+This is the improved mass used by the refined Gaussian MR bound. -/
+theorem gaussianGammaCutoffSixFifths_refined :
+    (64167 / 100000 : ℝ) <
+      ∫ u in (0 : ℝ)..(6 / 5), gaussianGammaProfile u / Real.sqrt u := by
+  have h : (64167 / 100000 : ℝ) <
+      (gaussianCutoffSixFifthsMidpointLower : ℝ) / gaussianCutoffNodeScale - 1 / 288 := by
+    rw [gaussianCutoffSixFifthsMidpointLower_value]
+    norm_num only [gaussianCutoffNodeScale]
+  exact h.trans_le gaussianGammaCutoffSixFifths_lower
 
 end PseudoPrime.Analysis

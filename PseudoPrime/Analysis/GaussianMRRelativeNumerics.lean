@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.GaussianMRNumerics
+public import PseudoPrime.Analysis.GaussianMRWidthNumerics
 
 /-! # Relative-loss Gaussian MR numerical budgets -/
 
@@ -21,20 +22,10 @@ theorem gaussianMR_normalized_main_lower_of_mass {m t s I E h M Ecap : ℝ} (hm 
     (ht : t = m - 1) (hs : 0 < s) (hh : h = 1 / (3 * s)) (hh1 : h ≤ 1 / 2) (hI : M ≤ I)
     (hE : E ≤ Ecap) :
     ((m * M - Ecap) / t - (m * M) / (3 * t * s)) ≤ (m / t) * (1 - h) * I - E / t := by
-  have htpos : 0 < t := by
-    rw [ht]; linarith only [hm]
-  have hm0 : 0 ≤ m := by linarith only [hm]
-  have hfactor : 0 ≤ 1 - h := by linarith only [hh1]
-  have hI' := mul_le_mul_of_nonneg_left hI (mul_nonneg hm0 hfactor)
-  have hE' := neg_le_neg hE
-  have hbase : m * (1 - h) * M - Ecap ≤ m * (1 - h) * I - E := by nlinarith only [hI', hE']
-  calc
-    _ = (m * (1 - h) * M - Ecap) / t := by
-      rw [hh]
-      field_simp [htpos.ne', hs.ne']
-      ring_nf
-    _ ≤ (m * (1 - h) * I - E) / t := div_le_div_of_nonneg_right hbase htpos.le
-    _ = _ := by field_simp [htpos.ne']
+  have hh' : h = (1 / 3 : ℝ) / s := by rw [hh]; ring
+  have H := gaussianMR_main_lower_width hm ht hs hh' hh1 hI hE
+  convert H using 1
+  ring
 
 /-- Convert a relative Gaussian subgroup inequality to its normalized scalar
 budget for arbitrary cutoff mass, endpoint, index, conductor cost and radius.
@@ -54,90 +45,17 @@ theorem gaussianMR_relative_comparison_to_scalar {m t s r A L I E C h M Ecap con
             A →
         False) :
     False := by
-  have htpos : 0 < t := by
-    rw [ht]
-    linarith only [hm4]
-  have hrpos : 0 < r := by
-    rw [hr]
-    exact sq_pos_of_pos hs
-  have hmain := gaussianMR_normalized_main_lower_of_mass hm4 ht hs hh hh1 hI hE
-  have hcmpDiv0 := div_le_div_of_nonneg_right hcmp htpos.le
-  have hleftEq : ((m * (1 - h) * I - E) * r) / t = ((m / t) * (1 - h) * I - E / t) * r := by
-    field_simp [htpos.ne']
-  have hrightEq :
-    (conductor * C + m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) + 13 + t * A) /
-        t =
-      conductor * (C / t) + (m / t) * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
-        13 / t +
-        A := by
-    field_simp [htpos.ne']
-  have hW :
-    1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E =
-      3 * s / 10 + 63 * E / (10 * s) + 1839 * E / (1000 * r) := by
-    rw [hh, hr]
-    field_simp [hs.ne']
+  have hh' : h = (1 / 3 : ℝ) / s := by rw [hh]; ring
+  apply gaussianMR_compare_width (k := 1 / 3) (A := A) (beta := beta)
+    (by norm_num only) hm4 ht hs hr hh' hh1 hI hE hC
+    hconductor hD
+  · convert hbeta using 1
     ring
-  have hcmpDiv :
-    ((m / t) * (1 - h) * I - E / t) * r ≤
-      conductor * (C / t) + (m / t) * (3 * s / 10 + 63 * E / (10 * s) + 1839 * E / (1000 * r)) +
-        13 / t +
-        A := by
-    have hcmpDiv1 :
-      ((m / t) * (1 - h) * I - E / t) * r ≤
-        (conductor * C + m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) + 13 +
-            t * A) /
-          t := by
-      simpa only [hleftEq] using hcmpDiv0
-    have hcmpDiv2 :
-      ((m / t) * (1 - h) * I - E / t) * r ≤
-        conductor * (C / t) + (m / t) * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
-          13 / t +
-          A := by
-      simpa only [hrightEq] using hcmpDiv1
-    simpa only [hW] using hcmpDiv2
-  have hratio0 : 0 ≤ m / t := by exact div_nonneg (by linarith only [hm4]) htpos.le
-  have hCscaled := mul_le_mul_of_nonneg_left hC hconductor
-  have hEterm1 : 63 * E / (10 * s) ≤ 63 * Ecap / (10 * s) := by
-    apply div_le_div_of_nonneg_right
-    · exact mul_le_mul_of_nonneg_left hE (by positivity)
-    · positivity
-  have hEterm2 : 1839 * E / (1000 * r) ≤ 1839 * Ecap / (1000 * r) := by
-    apply div_le_div_of_nonneg_right
-    · exact mul_le_mul_of_nonneg_left hE (by positivity)
-    · positivity
-  have hEterms := add_le_add hEterm1 hEterm2
-  have hEtermsScaled := mul_le_mul_of_nonneg_left hEterms hratio0
-  have hcmpUpper :
-    conductor * (C / t) + (m / t) * (3 * s / 10 + 63 * E / (10 * s) + 1839 * E / (1000 * r)) +
-        13 / t +
-        A ≤
-      conductor * L + (m / t) * (3 * s / 10 + 63 * Ecap / (10 * s) + 1839 * Ecap / (1000 * r)) +
-        13 / t +
-        A := by
-    nlinarith only [hCscaled, hEtermsScaled]
-  have hcombined := (mul_le_mul_of_nonneg_right hmain hrpos.le).trans (hcmpDiv.trans hcmpUpper)
-  have hmainEq :
-    ((m * M - Ecap) / t - (m * M) / (3 * t * s)) * r =
-      ((m * M - Ecap) / t) * r - (m / t) * (M / 3) * s := by
-    rw [hr]
-    field_simp [htpos.ne', hs.ne']
-  have hcombinedNorm :
-    ((m * M - Ecap) / t) * r - (m / t) * (M / 3) * s ≤
-      conductor * L + (m / t) * (3 * s / 10 + 63 * Ecap / (10 * s) + 1839 * Ecap / (1000 * r)) +
-        13 / t +
-        A := by
-    simpa only [hmainEq] using hcombined
-  have hDscaled := mul_le_mul_of_nonneg_right hD hrpos.le
-  have hbetaScaled := mul_le_mul_of_nonneg_right hbeta hs.le
-  have hfactor :
-    (m / t) * (3 * s / 10) + (m / t) * (M / 3) * s = (m / t) * (M / 3 + 3 / 10) * s := by ring
-  have hbudget :
-    D * r ≤
-      conductor * L + beta * s + (m / t) * (63 * Ecap / (10 * s) + 1839 * Ecap / (1000 * r)) +
-        13 / t +
-        A := by
-    nlinarith only [hcombinedNorm, hDscaled, hbetaScaled, hfactor]
-  exact hfinish hbudget
+  · exact hcmp
+  · intro hb
+    apply hfinish
+    convert hb using 1
+    ring
 
 /-- For L at least 350000, the Gaussian MR scale exceeds 3^16.
 Compare squared scales to enter the established left-moment decay range. -/
