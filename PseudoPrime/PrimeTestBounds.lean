@@ -99,6 +99,7 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR240WitnessBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRRefinedWitnessBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRWitnessEnvelopes
 public import PseudoPrime.PrimeTestBounds.MillerRabin.MidscaleIntervalSelection
+public import PseudoPrime.PrimeTestBounds.MillerRabin.ImprovedIntervalSelection
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedWitnessBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RationalWitnessProfiles
 public import PseudoPrime.PrimeTestBounds.MillerRabin.OEISA006945Bounds
