@@ -95,6 +95,45 @@ theorem jensen_count_le {F : ℂ → ℂ} (hF : Differentiable ℂ F) (h0 : F 0 
   rw [he, Real.log_div (Real.exp_pos _).ne' (norm_pos_iff.mpr h0).ne', Real.log_exp] at hj
   exact hj
 
+/--
+Inputs: an entire function nonzero at the origin, a positive radius, and a norm bound on the
+concentric circle of radius twice as large.
+
+Claim: the sum of analytic zero multiplicities in the closed inner disk is at most the logarithmic
+ratio of the circle bound to the value at the origin, divided by `log 2`.
+
+Proof: apply Jensen's divisor inequality to the two disks and cast its integer-valued divisor sum
+to the nonnegative real multiplicity sum.
+
+Role: gives the zero-count input for bounding reflected correction sums in canonical decompositions.
+-/
+theorem finsum_divisor_closedBall_le_of_sphere_bound {F : ℂ → ℂ} (hF : Differentiable ℂ F)
+    (h0 : F 0 ≠ 0) {R M : ℝ} (hR : 0 < R) (hM : 1 ≤ M)
+    (hbound : ∀ z ∈ Metric.sphere (0 : ℂ) (2 * R), ‖F z‖ ≤ M) :
+    (∑ᶠ z : ℂ, (MeromorphicOn.divisor F (Metric.closedBall 0 R) z : ℝ)) ≤
+      Real.log (M / ‖F 0‖) / Real.log 2 := by
+  have ha : AnalyticOnNhd ℂ F (Metric.closedBall 0 |2 * R|) := fun z _ => hF.analyticAt z
+  have hbound' : ∀ z ∈ Metric.sphere (0 : ℂ) |2 * R|, ‖F z‖ ≤ M := by
+    intro z hz
+    apply hbound z
+    simpa only [abs_of_pos (mul_pos (by norm_num only : (0 : ℝ) < 2) hR)] using hz
+  have hj :=
+    AnalyticOnNhd.sum_divisor_le (c := (0 : ℂ)) (r := R) (R := 2 * R) (abs_pos.mpr hR.ne')
+      (by
+        rw [abs_of_pos hR, abs_of_pos (mul_pos (by norm_num only : (0 : ℝ) < 2) hR)];
+        nlinarith only [hR])
+      hM ha h0 hbound'
+  have hf :=
+    (MeromorphicOn.divisor F (Metric.closedBall (0 : ℂ) R)).finiteSupport
+      (isCompact_closedBall (x := (0 : ℂ)) (r := R))
+  have he :
+    ((∑ᶠ z : ℂ, MeromorphicOn.divisor F (Metric.closedBall 0 R) z : ℤ) : ℝ) =
+      ∑ᶠ z : ℂ, (MeromorphicOn.divisor F (Metric.closedBall 0 R) z : ℝ) :=
+    (Int.castRingHom ℝ).toAddMonoidHom.map_finsum hf
+  rw [abs_of_pos hR, show 2 * R / R = (2 : ℝ) from mul_div_cancel_right₀ 2 hR.ne'] at hj
+  rw [he] at hj
+  exact hj
+
 /-- The dyadic radial shell index, with the inner region of norm below two at index zero.
 Nonzero indices bound the norm between successive powers of two. -/
 noncomputable def zeroMassShell (z : ℂ) : ℕ :=
