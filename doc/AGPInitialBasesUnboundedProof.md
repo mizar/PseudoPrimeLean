@@ -47,13 +47,13 @@ $B$ を固定しても $C$ はいくらでも大きくできる。
 ただし、$B$ を増やしたときには別の $a$ を選んでよく、
 「一つの合成数が、すべての正整数底を通過する」という主張ではない。
 
-底ごとの通過条件を $\operatorname{MRPass}(a,b)$ と書けば、定理は
+底ごとの通過条件を $\mathrm{MRPass}(a,b)$ と書けば、定理は
 
 $$
 \begin{aligned}
 \forall B,C\in\mathbb{N},\quad\exists a\in\mathbb{N}:\quad
-&a > C\ \land\ \operatorname{Carmichael}(a)\\
-&\land\ \forall b\in\{1,\ldots,B\},\ \operatorname{MRPass}(a,b).
+&a > C\ \land\ \mathrm{Carmichael}(a)\\
+&\land\ \forall b\in\{1,\ldots,B\},\ \mathrm{MRPass}(a,b).
 \end{aligned}
 $$
 
@@ -871,7 +871,7 @@ N_{\mathrm{fam}}(R,\sigma)\le C_*R^{A_*(1-\sigma)}
 $$
 
 を満たす。$N_{\mathrm{fam}}$ は、導手が $R$ 以下の原始非主指標について、
-$\sigma\le\operatorname{Re}\rho\le1$、$|\operatorname{Im}\rho|\le R$ の範囲にある零点を、
+$\sigma\le\Re\rho\le1$、$|\Im\rho|\le R$ の範囲にある零点を、
 解析的重複度を含めて数えたものである。
 
 $\log R\ge2$ となる十分大きい $R$ で $\sigma=1-1/\log R$ とすると、
@@ -1124,7 +1124,7 @@ Lean 側では $p_0=2,p_1=3,p_2=5,\ldots$ と0から添字を付け、
 
 $$
 a > 1,\quad a\text{ は奇数かつ合成数},\quad
-\forall k < n,\ \operatorname{MRPass}(a,p_k)
+\forall k < n,\ \mathrm{MRPass}(a,p_k)
 $$
 
 という条件にしている。
