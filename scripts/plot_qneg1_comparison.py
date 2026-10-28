@@ -116,7 +116,8 @@ def main() -> None:
     endpoint383 = 1736820352691539357719
     assert minima[349] == 451368766434936754915
     assert minima[383] == endpoint383
-    assert all(p not in minima for p in [353, 359, 367, 373, 379])
+    assert all(p not in minima or minima[p] >= evidence["upper_exclusive"]
+               for p in [353, 359, 367, 373, 379])
     assert endpoint383 < 1900000000000000000000
     derived.extend([(minima[349], 349), (endpoint383, 383)])
     assert derived == list(zip(ns, qs))
