@@ -105,7 +105,6 @@ theorem gaussianGammaCutoffSixFifths_lower :
     exact sub_le_sub_right hs'' (1 / 288)
   exact hnum.trans hmid
 
-
 /-- The kernel-checked midpoint certificate proves a strict mass lower bound at 6/5. -/
 theorem gaussianGammaCutoffSixFifths_mass_gt :
     16 / 25 < ∫ u in (0 : ℝ)..(6 / 5), gaussianGammaProfile u / Real.sqrt u := by
@@ -115,9 +114,9 @@ theorem gaussianGammaCutoffSixFifths_mass_gt :
 Kernel arithmetic compares the existing certificate value with this sharper rational target.
 This is the improved mass used by the refined Gaussian MR bound. -/
 theorem gaussianGammaCutoffSixFifths_refined :
+    (64167 / 100000 : ℝ) < ∫ u in (0 : ℝ)..(6 / 5), gaussianGammaProfile u / Real.sqrt u := by
+  have h :
     (64167 / 100000 : ℝ) <
-      ∫ u in (0 : ℝ)..(6 / 5), gaussianGammaProfile u / Real.sqrt u := by
-  have h : (64167 / 100000 : ℝ) <
       (gaussianCutoffSixFifthsMidpointLower : ℝ) / gaussianCutoffNodeScale - 1 / 288 := by
     rw [gaussianCutoffSixFifthsMidpointLower_value]
     norm_num only [gaussianCutoffNodeScale]

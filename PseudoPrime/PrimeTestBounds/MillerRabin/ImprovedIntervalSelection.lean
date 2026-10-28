@@ -7,7 +7,9 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ImprovedEnvelopeStrict
+
 /-! # Exact selections of the improved candidate minimum -/
+
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
@@ -15,25 +17,27 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- A real C below the compatible envelope and every valid candidate is below the
 improved envelope. Split each guard separately and combine the minimum inequalities.
 This supplies the lower half of exact interval-selection equalities. -/
-theorem improved_lower_of_candidates {n : ℕ} {C : ℝ}
-    (hB : C ≤ selectedWitnessEnvelope n)
-    (hs : n < 3000 → C ≤ smallIntervalBound n)
-    (h61 : Real.log n ≤ 2877 / 250 → C ≤ 61)
+theorem improved_lower_of_candidates {n : ℕ} {C : ℝ} (hB : C ≤ selectedWitnessEnvelope n)
+    (hs : n < 3000 → C ≤ smallIntervalBound n) (h61 : Real.log n ≤ 2877 / 250 → C ≤ 61)
     (h67 : Real.log n ≤ 47 / 4 → C ≤ 67)
     (hfour : 45 / 4 ≤ Real.log n → C ≤ LLS.PaperStatements.endpointFourStepCutoff (Real.log n))
     (hgamma : 100 ≤ Real.log n → C ≤ gammaSharpBound (Real.log n))
     (hgauss : 63 ≤ Real.log n → C ≤ Analysis.gaussianFloorSelected (Real.log n))
-    (htri : 2000000000000 ≤ Real.log n → C ≤
-      (282924 / 1000000 : ℝ) * Real.log n ^ 2) : C ≤ improvedWitnessEnvelope n := by
+    (htri : 2000000000000 ≤ Real.log n → C ≤ (282924 / 1000000 : ℝ) * Real.log n ^ 2) :
+    C ≤ improvedWitnessEnvelope n := by
   have cond {P : Prop} [Decidable P] {v : ℝ} (h : P → C ≤ v) :
-      C ≤ if P then v else selectedWitnessEnvelope n := by
+    C ≤ if P then v else selectedWitnessEnvelope n := by
     by_cases hp : P
     · rw [ite_eq_left hp]
       exact h hp
     · rw [ite_eq_right hp]
       exact hB
-  exact le_min hB (le_min (cond hs) (le_min (cond h61) (le_min (cond h67)
-    (le_min (cond hfour) (le_min (cond hgamma) (le_min (cond hgauss) (cond htri)))))))
+  exact
+    le_min hB
+      (le_min (cond hs)
+        (le_min (cond h61)
+          (le_min (cond h67)
+            (le_min (cond hfour) (le_min (cond hgamma) (le_min (cond hgauss) (cond htri)))))))
 
 /-- For n>1 and log n>=2 trillion, the compatible envelope is at least the
 coefficient-0.282924 candidate. Both its refined and coefficient branches satisfy this bound. -/
@@ -46,11 +50,10 @@ theorem old_high_ge_triangular {n : ℕ} (hn : 1 < n) (hL : 2000000000000 ≤ Re
   have h11 : ¬Real.log n < 23 / 2 := by linarith only [hL]
   have h120 : ¬Real.log n < 120 := by linarith only [hL]
   have h240 : ¬Real.log n ≤ 240 := by linarith only [hL]
-  have hS : ¬Real.log n ≤ gammaFixedSwitch := by
-    linarith only [hL, gammaFixedSwitch_bounds.2]
-  simp only [selectedWitnessEnvelope, ite_eq_right h2, ite_eq_right h3,
-    ite_eq_right h61, ite_eq_right h11, ite_eq_right h120, ite_eq_right hS,
-    ite_eq_right h240, gaussianMRWitnessEnvelope]
+  have hS : ¬Real.log n ≤ gammaFixedSwitch := by linarith only [hL, gammaFixedSwitch_bounds.2]
+  simp only [selectedWitnessEnvelope, ite_eq_right h2, ite_eq_right h3, ite_eq_right h61,
+    ite_eq_right h11, ite_eq_right h120, ite_eq_right hS, ite_eq_right h240,
+    gaussianMRWitnessEnvelope]
   by_cases h : 10 ^ 9565217391305 ≤ n
   · rw [ite_eq_left h, gaussianMRLargeEnvelope_eq (by linarith only [hL])]
   · have h300 : (300 : ℝ) ≤ Real.log n := by linarith only [hL]
@@ -74,8 +77,8 @@ theorem improved_eq_triangular {n : ℕ} (hn : 1 < n) (hL : 2000000000000 ≤ Re
     exfalso
     linarith only [hL, h]
   · intro _
-    have hl := LLS.PaperStatements.fourStep_quadratic_lower
-      (by linarith only [hL] : (240 : ℝ) ≤ Real.log n)
+    have hl :=
+      LLS.PaperStatements.fourStep_quadratic_lower (by linarith only [hL] : (240 : ℝ) ≤ Real.log n)
     nlinarith only [hl, sq_nonneg (Real.log n)]
   · intro _
     have hl := sharp_quadratic_lower (by linarith only [hL] : (100 : ℝ) ≤ Real.log n)
@@ -85,6 +88,7 @@ theorem improved_eq_triangular {n : ℕ} (hn : 1 < n) (hL : 2000000000000 ≤ Re
     nlinarith only [hl, sq_nonneg (Real.log n)]
   · intro _
     exact le_refl _
+
 /-- For n>1 and 240<log n<2 trillion, the improved minimum equals the selected
 clipped Gaussian envelope. Global comparisons remove C4 and G1, and the decimal threshold
 excludes the compatible coefficient branch. -/
@@ -118,23 +122,22 @@ theorem improved_eq_gaussian {n : ℕ} (hn : 1 < n) (hL : 240 < Real.log n)
 
 /-- For n>1 and 11.5<=log n<120, the compatible envelope equals its two-step
 cutoff. Simplify the integer and logarithmic guards for later dominance proofs. -/
-theorem old_eq_twoStep_low {n : ℕ} (hn : 1 < n)
-    (hL : 23 / 2 ≤ Real.log n) (hU : Real.log n < 120) :
-    selectedWitnessEnvelope n =
-      LLS.PaperStatements.fullEndpointEvenTwoStepCutoff (Real.log n) := by
+theorem old_eq_twoStep_low {n : ℕ} (hn : 1 < n) (hL : 23 / 2 ≤ Real.log n) (hU : Real.log n < 120) :
+    selectedWitnessEnvelope n = LLS.PaperStatements.fullEndpointEvenTwoStepCutoff (Real.log n) := by
   have hN := midscale_large_of_log (Nat.zero_lt_of_lt hn) (by linarith only [hL])
   have h3 : ¬n < 3000 := not_lt.mpr hN
   have h2 : ¬n < 2047 := not_lt.mpr ((by norm_num only : 2047 ≤ 3000).trans hN)
   have h61 : ¬Real.log n ≤ 286 / 25 := by linarith only [hL]
-  simp only [selectedWitnessEnvelope, ite_eq_right h2, ite_eq_right h3,
-    ite_eq_right h61, ite_eq_right (not_lt.mpr hL), ite_eq_left hU]
+  simp only [selectedWitnessEnvelope, ite_eq_right h2, ite_eq_right h3, ite_eq_right h61,
+    ite_eq_right (not_lt.mpr hL), ite_eq_left hU]
 
 /-- For 11.5<=L<=120, C4<35000. Combine C4<=C2 with the certified two-step
 comparison. This removes the clipped Gaussian floor from lower intervals. -/
 theorem fourStep_lt_fixed_low {L : ℝ} (hL : 23 / 2 ≤ L) (hU : L ≤ 120) :
     LLS.PaperStatements.endpointFourStepCutoff L < 35000 := by
-  exact (LLS.PaperStatements.endpoint_fourStep_le_two
-    (by linarith only [hL])).trans_lt (twoStep_lt_fixed hL hU)
+  exact
+    (LLS.PaperStatements.endpoint_fourStep_le_two (by linarith only [hL])).trans_lt
+      (twoStep_lt_fixed hL hU)
 
 /-- For n>1 and 11.75<log n<100, the improved minimum equals C4. The two-step
 comparison and fixed Gaussian floor dominate C4; all other candidates are inactive. -/
@@ -162,7 +165,7 @@ theorem improved_eq_fourStep {n : ℕ} (hn : 1 < n) (hL : 47 / 4 < Real.log n)
     linarith only [hU, h]
   · intro _
     rw [Analysis.gaussianFloorSelected_eq_fixed
-      (by linarith only [hU, Analysis.gaussianFloor_switch35_bounds.1])]
+        (by linarith only [hU, Analysis.gaussianFloor_switch35_bounds.1])]
     exact (fourStep_lt_fixed_low (by linarith only [hL]) (by linarith only [hU])).le
   · intro h
     exfalso
@@ -172,15 +175,16 @@ theorem improved_eq_fourStep {n : ℕ} (hn : 1 < n) (hL : 47 / 4 < Real.log n)
 Remove every other candidate without assuming an uncertified numerical crossing. -/
 theorem improved_eq_middle_min {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n)
     (hU : Real.log n < 112) :
-    improvedWitnessEnvelope n = min (LLS.PaperStatements.endpointFourStepCutoff (Real.log n))
-      (gammaSharpBound (Real.log n)) := by
+    improvedWitnessEnvelope n =
+      min (LLS.PaperStatements.endpointFourStepCutoff (Real.log n))
+        (gammaSharpBound (Real.log n)) := by
   have hf := improved_le_fourStep (by linarith only [hL] : (45 / 4 : ℝ) ≤ Real.log n)
   have hg := improved_le_sharp hL
   apply le_antisymm (le_min hf hg)
   apply improved_lower_of_candidates
   · rw [old_eq_twoStep_low hn (by linarith only [hL]) (by linarith only [hU])]
-    exact (min_le_left _ _).trans (LLS.PaperStatements.endpoint_fourStep_le_two
-      (by linarith only [hL]))
+    exact
+      (min_le_left _ _).trans (LLS.PaperStatements.endpoint_fourStep_le_two (by linarith only [hL]))
   · intro h
     have hN := midscale_large_of_log (Nat.zero_lt_of_lt hn) (by linarith only [hL])
     exact False.elim (not_lt.mpr hN h)
@@ -196,9 +200,10 @@ theorem improved_eq_middle_min {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n)
     exact min_le_right _ _
   · intro _
     rw [Analysis.gaussianFloorSelected_eq_fixed
-      (by linarith only [hU, Analysis.gaussianFloor_switch35_bounds.1])]
-    exact (min_le_left _ _).trans (fourStep_lt_fixed_low
-      (by linarith only [hL]) (by linarith only [hU])).le
+        (by linarith only [hU, Analysis.gaussianFloor_switch35_bounds.1])]
+    exact
+      (min_le_left _ _).trans
+        (fourStep_lt_fixed_low (by linarith only [hL]) (by linarith only [hU])).le
   · intro h
     exfalso
     linarith only [hU, h]
@@ -219,15 +224,16 @@ theorem old_ge_sharp {n : ℕ} (hn : 1 < n) (hL : 112 ≤ Real.log n)
   have h240 : Real.log n ≤ 240 := by linarith only [hS, gammaSharpFixedSwitch_bounds.2]
   by_cases h120 : Real.log n < 120
   · rw [old_eq_twoStep_low hn (by linarith only [hL]) h120]
-    exact (sharp_le_fourStep_full hL h240).trans
-      (LLS.PaperStatements.endpoint_fourStep_le_two (by linarith only [hL]))
+    exact
+      (sharp_le_fourStep_full hL h240).trans
+        (LLS.PaperStatements.endpoint_fourStep_le_two (by linarith only [hL]))
   · have hN := midscale_large_of_log (Nat.zero_lt_of_lt hn) (by linarith only [hL])
     have h3 : ¬n < 3000 := not_lt.mpr hN
     have h2 : ¬n < 2047 := not_lt.mpr ((by norm_num only : 2047 ≤ 3000).trans hN)
     have h61 : ¬Real.log n ≤ 286 / 25 := by linarith only [hL]
     have h11 : ¬Real.log n < 23 / 2 := by linarith only [hL]
-    simp only [selectedWitnessEnvelope, ite_eq_right h2, ite_eq_right h3,
-      ite_eq_right h61, ite_eq_right h11, ite_eq_right h120]
+    simp only [selectedWitnessEnvelope, ite_eq_right h2, ite_eq_right h3, ite_eq_right h61,
+      ite_eq_right h11, ite_eq_right h120]
     by_cases h : Real.log n ≤ gammaFixedSwitch
     · rw [ite_eq_left h]
       exact (gammaSharp_lt_refined (le_of_not_gt h120) h240).le
@@ -257,7 +263,7 @@ theorem improved_eq_sharp {n : ℕ} (hn : 1 < n) (hL : 112 ≤ Real.log n)
     exact le_refl _
   · intro _
     rw [Analysis.gaussianFloorSelected_eq_fixed
-      (h240.trans Analysis.gaussianFloor_switch35_bounds.1.le)]
+        (h240.trans Analysis.gaussianFloor_switch35_bounds.1.le)]
     exact gammaSharp_le_fixed (by linarith only [hL]) hS
   · intro h
     exfalso
@@ -265,20 +271,18 @@ theorem improved_eq_sharp {n : ℕ} (hn : 1 < n) (hL : 112 ≤ Real.log n)
 
 /-- For n>1 and S1<=log n<=240, the improved minimum equals 35000.
 Both G1 and C4 are above the floor, and the Gaussian envelope attains it. -/
-theorem improved_eq_fixed35000 {n : ℕ} (hn : 1 < n)
-    (hS : gammaSharpFixedSwitch ≤ Real.log n) (hU : Real.log n ≤ 240) :
-    improvedWitnessEnvelope n = 35000 := by
-  have hL : (120 : ℝ) ≤ Real.log n := by
-    linarith only [hS, gammaSharpFixedSwitch_bounds.1]
+theorem improved_eq_fixed35000 {n : ℕ} (hn : 1 < n) (hS : gammaSharpFixedSwitch ≤ Real.log n)
+    (hU : Real.log n ≤ 240) : improvedWitnessEnvelope n = 35000 := by
+  have hL : (120 : ℝ) ≤ Real.log n := by linarith only [hS, gammaSharpFixedSwitch_bounds.1]
   have hf : Analysis.gaussianFloorSelected (Real.log n) = 35000 :=
-    Analysis.gaussianFloorSelected_eq_fixed
-      (hU.trans Analysis.gaussianFloor_switch35_bounds.1.le)
+    Analysis.gaussianFloorSelected_eq_fixed (hU.trans Analysis.gaussianFloor_switch35_bounds.1.le)
   have hg : (35000 : ℝ) ≤ gammaSharpBound (Real.log n) :=
     fixed_le_gammaSharp (by linarith only [hL]) hS
   apply le_antisymm (hf ▸ improved_le_gaussian (by linarith only [hL]))
   apply improved_lower_of_candidates
-  · rw [← midscale_eq_selected hn, midscale_eq_fixed hn
-      (by linarith only [hS, gammaSharpFixedSwitch_bounds.1, gammaFixedSwitch_bounds.2]) hU]
+  · rw [← midscale_eq_selected hn,
+      midscale_eq_fixed hn
+        (by linarith only [hS, gammaSharpFixedSwitch_bounds.1, gammaFixedSwitch_bounds.2]) hU]
   · intro h
     have hN := midscale_large_of_log (Nat.zero_lt_of_lt hn) (by linarith only [hL])
     exact False.elim (not_lt.mpr hN h)
@@ -315,8 +319,7 @@ theorem improved_eq_fixed67 {n : ℕ} (hn : 1 < n) (hL : 2877 / 250 < Real.log n
   apply le_antisymm (improved_le_fixed67 hU)
   apply improved_lower_of_candidates
   · rw [old_eq_twoStep_low hn (by linarith only [hL]) (by linarith only [hU])]
-    exact hf.le.trans (LLS.PaperStatements.endpoint_fourStep_le_two
-      (by linarith only [hL]))
+    exact hf.le.trans (LLS.PaperStatements.endpoint_fourStep_le_two (by linarith only [hL]))
   · intro h
     have hN := midscale_large_of_log (Nat.zero_lt_of_lt hn) (by linarith only [hL])
     exact False.elim (not_lt.mpr hN h)
@@ -354,8 +357,9 @@ theorem old_low_ge61 {n : ℕ} (hN : 3000 ≤ n) (hU : Real.log n ≤ 2877 / 250
     · have h120 : Real.log n < 120 := by linarith only [hU]
       rw [ite_eq_right h11, ite_eq_left h120]
       have hb : (45 / 4 : ℝ) ≤ Real.log n := by linarith only [le_of_not_gt h11]
-      exact (by norm_num only : (61 : ℝ) ≤ 64).trans ((fourStep_gt64 hb).le.trans
-        (LLS.PaperStatements.endpoint_fourStep_le_two hb))
+      exact
+        (by norm_num only : (61 : ℝ) ≤ 64).trans
+          ((fourStep_gt64 hb).le.trans (LLS.PaperStatements.endpoint_fourStep_le_two hb))
 
 /-- For n>=3000 and log n<=11.508, the improved minimum equals 61.
 Its pointwise gap supplies 61; all active alternative candidates are at least 61. -/
@@ -385,8 +389,7 @@ theorem improved_eq_fixed61 {n : ℕ} (hN : 3000 ≤ n) (hU : Real.log n ≤ 287
 throughout 2047<=n<3000. A logarithmic cap excludes all nonconstant analytic candidates. -/
 theorem improved_eq_small {n : ℕ} (hn : 1 < n) (hN : n < 3000) :
     improvedWitnessEnvelope n = smallIntervalBound n := by
-  have hcast : (n : ℝ) ≤ 46000 := by
-    exact_mod_cast (hN.le.trans (by norm_num only : 3000 ≤ 46000))
+  have hcast : (n : ℝ) ≤ 46000 := by exact_mod_cast (hN.le.trans (by norm_num only : 3000 ≤ 46000))
   have hL : Real.log n < 11 :=
     (Real.log_le_log (Nat.cast_pos.mpr (Nat.zero_lt_of_lt hn)) hcast).trans_lt
       Analysis.log_46000_lt_eleven
@@ -426,14 +429,21 @@ and starts the coefficient branch at log n>=2 trillion. The equality theorem cer
 noncomputable def improvedSelectedEnvelope (n : ℕ) : ℝ :=
   let L := Real.log n
   if n < 3000 then smallIntervalBound n
-  else if L ≤ 2877 / 250 then 61
-  else if L ≤ 47 / 4 then 67
-  else if L < 100 then LLS.PaperStatements.endpointFourStepCutoff L
-  else if L < 112 then min (LLS.PaperStatements.endpointFourStepCutoff L) (gammaSharpBound L)
-  else if L ≤ gammaSharpFixedSwitch then gammaSharpBound L
-  else if L ≤ 240 then 35000
-  else if L < 2000000000000 then Analysis.gaussianFloorSelected L
-  else (282924 / 1000000 : ℝ) * L ^ 2
+  else
+    if L ≤ 2877 / 250 then 61
+    else
+      if L ≤ 47 / 4 then 67
+      else
+        if L < 100 then LLS.PaperStatements.endpointFourStepCutoff L
+        else
+          if L < 112 then min (LLS.PaperStatements.endpointFourStepCutoff L) (gammaSharpBound L)
+          else
+            if L ≤ gammaSharpFixedSwitch then gammaSharpBound L
+            else
+              if L ≤ 240 then 35000
+              else
+                if L < 2000000000000 then Analysis.gaussianFloorSelected L
+                else (282924 / 1000000 : ℝ) * L ^ 2
 
 /-- For every n>1, the guarded candidate minimum equals its explicit interval
 selection. Apply the proved branch equalities at each exact guard, including every endpoint. -/
@@ -478,8 +488,9 @@ theorem improved_eq_selected {n : ℕ} (hn : 1 < n) :
 within the explicit improved selection. Transfer through the exact envelope equality. -/
 theorem exists_prime_improvedSelected {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ improvedSelectedEnvelope n ∧
-      ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
+    ∃ p : ℕ,
+      p.Prime ∧
+        (p : ℝ) ≤ improvedSelectedEnvelope n ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   rw [← improved_eq_selected hn]
   exact exists_prime_improvedWitness hn ho hc hGRH
 
@@ -487,9 +498,11 @@ theorem exists_prime_improvedSelected {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : 
 within the explicit improved selection. The exact selection equality preserves minimality. -/
 theorem exists_least_improvedSelected {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
-    ∃ p : ℕ, p.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-      (p : ℝ) ≤ improvedSelectedEnvelope n ∧
-      ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
+    ∃ p : ℕ,
+      p.Prime ∧
+        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
+        (p : ℝ) ≤ improvedSelectedEnvelope n ∧
+        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   rw [← improved_eq_selected hn]
   exact exists_least_improvedWitness hn ho hc hGRH
 

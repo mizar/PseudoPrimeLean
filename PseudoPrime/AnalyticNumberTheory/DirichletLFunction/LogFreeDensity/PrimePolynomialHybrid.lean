@@ -2574,6 +2574,24 @@ noncomputable def primeLogPowerPolynomial (s : Finset ℕ) (r : ℕ) (σ : ℝ) 
       Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I) *
       χ p
 
+/--
+Inputs: finite prime support, a derivative order, a real abscissa, and a coefficient twist.
+Claim: the associated prime-log polynomial is continuous in its height variable.
+Proof: each summand is a constant multiple of a complex exponential of a continuous linear map.
+Role: supplies interval integrability for energy estimates on physical detection windows.
+-/
+theorem primePoly_cont (s : Finset ℕ) (r : ℕ) (σ : ℝ) (χ : ℕ → ℂ) :
+    Continuous (primeLogPowerPolynomial s r σ χ) := by
+  unfold primeLogPowerPolynomial
+  apply continuous_finsetSum
+  intro p hp
+  have hreal : Continuous (fun t : ℝ => -(t * Real.log (p : ℝ))) := (continuous_id.mul_const _).neg
+  have harg : Continuous (fun t : ℝ => ((-(t * Real.log (p : ℝ)) : ℝ) : ℂ) * Complex.I) :=
+    (Complex.continuous_ofReal.comp hreal).mul continuous_const
+  have hphase : Continuous (fun t : ℝ => Complex.exp ((-(t * Real.log (p : ℝ)) : ℝ) * Complex.I)) :=
+    Complex.continuous_exp.comp harg
+  exact ((continuous_const.mul hphase).mul continuous_const)
+
 /-- For a positive index, identify the complex coefficient norm with its real
 logarithmic weight. Evaluate the exponential norm and positive-base real power.
 This converts polynomial derivative bounds into nonnegative prime moments. -/

@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianStarClassification
 public import PseudoPrime.Analysis.GaussianMR35000Numerics
+
 /-! # Fixed prime strong-MR witness bound 35000 on 63<=log n<=240 -/
 
 @[expose] public section
@@ -17,8 +18,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- For an index-four subgroup with conductor sum at most twice log n and log n<=240,
 the fixed-scale relative comparison is impossible. Normalize at radius sqrt(87500/3)
 and use the certified four-index gap. This helper retains the internal subgroup data. -/
-theorem gaussian35000_index_four {n : ℕ} [NeZero n]
-    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
+theorem gaussian35000_index_four {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : Real.log n ≤ 240) :
     let r := Analysis.gaussian35000Radius
     let s := Analysis.gaussian35000Root
@@ -79,30 +79,27 @@ theorem gaussian35000_index_four {n : ℕ} [NeZero n]
     nlinarith only [hC]
   exact
     Analysis.gaussianMR_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
-      LLS.PaperStatements.gaussianPrefixError (47 / 10) n (r ^ 2)) (L :=
-      (2 / 3 : ℝ) * Real.log n) (I := I) (E := E) (C :=
-      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := Analysis.gaussianMR6FifthsMass)
-      (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor := (161 / 400 : ℝ)) (D :=
+      LLS.PaperStatements.gaussianPrefixError (47 / 10) n (r ^ 2)) (L := (2 / 3 : ℝ) * Real.log n)
+      (I := I) (E := E) (C := LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M :=
+      Analysis.gaussianMR6FifthsMass) (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor :=
+      (161 / 400 : ℝ)) (D :=
       (4 * Analysis.gaussianMR6FifthsMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
       (4 / 3 : ℝ) * (Analysis.gaussianMR6FifthsMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
       (by norm_num only : (0 : ℝ) ≤ 161 / 400) le_rfl le_rfl hcmp'
-      (fun hbudget ↦ Analysis.gaussian35000_four_absurd hL
-        (Analysis.gaussian35000_ambient hL) hbudget)
+      (fun hbudget ↦
+        Analysis.gaussian35000_four_absurd hL (Analysis.gaussian35000_ambient hL) hbudget)
 
 /-- An index-four subgroup containing every strong-MR pass yields a rejecting prime
 at most 35000 under GRH and log n<=240. A hypothetical absence of witnesses excludes
 small prime factors and supplies the prefix comparison; the fixed four-index gap contradicts it. -/
-theorem gaussian35000_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
+theorem gaussian35000_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge : 20000 ≤ n)
+    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : Real.log n ≤ 240) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ (35000 : ℝ) ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
+    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (35000 : ℝ) ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
   let r := Analysis.gaussian35000Radius
   let x := r ^ 2
@@ -110,8 +107,7 @@ theorem gaussian35000_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n)
     dsimp only [x, r]
     rw [Analysis.gaussian35000_radius_sq]
     norm_num only
-  have hX : 35000 ≤ (6 / 5 : ℝ) * x := by
-    rw [hcut]
+  have hX : 35000 ≤ (6 / 5 : ℝ) * x := by rw [hcut]
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -149,30 +145,26 @@ theorem gaussian35000_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n)
   have hx : 4 ≤ x := by
     dsimp only [x]
     nlinarith only [hrbound]
-  have hprefix : (47 / 10 : ℝ) ≤
-      ∑ n ∈ Finset.Ioc 0 (35000 : ℕ), Analysis.gaussianResolventMangoldtWeight n := by
+  have hprefix :
+    (47 / 10 : ℝ) ≤ ∑ n ∈ Finset.Ioc 0 (35000 : ℕ), Analysis.gaussianResolventMangoldtWeight n := by
     have hp := LLS.gaussian_prefix35000_lower hGRH.riemann (le_refl (35000 : ℝ))
     have hf : ⌊(35000 : ℝ)⌋₊ = (35000 : ℕ) := Nat.floor_natCast 35000
     rw [hf] at hp
     exact hp
   have hcmp :=
-    LLS.PaperStatements.gaussian_relative_prefix_le_coarse hprefix hnlarge H hGRH
-      hwidth hwidth1 hx (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
+    LLS.PaperStatements.gaussian_relative_prefix_le_coarse hprefix hnlarge H hGRH hwidth hwidth1 hx
+      (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
   exact gaussian35000_index_four H hi hC hL hcmp
 
 /-- For subgroup index at least 10^9 and log n<=240, the fixed Gaussian scale yields
 a rejecting prime at most 35000 under GRH. Use the 35000-prefix mass and normalize
 the relative comparison before applying the positive large-index gap. -/
-theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
-    (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
+theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge : 20000 ≤ n)
+    (H : Subgroup (ZMod n)ˣ) (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : Real.log n ≤ 240) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ (35000 : ℝ) ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
+    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (35000 : ℝ) ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
   let L := Real.log n
   let r := Analysis.gaussian35000Radius
@@ -212,8 +204,7 @@ theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n)
     dsimp only [x, r]
     rw [Analysis.gaussian35000_radius_sq]
     norm_num only
-  have hX : 35000 ≤ (6 / 5 : ℝ) * x := by
-    rw [hcut]
+  have hX : 35000 ≤ (6 / 5 : ℝ) * x := by rw [hcut]
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -235,15 +226,15 @@ theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n)
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
   have hwidth : 0 < h := one_div_pos.mpr (mul_pos (by norm_num only) hspos)
-  have hprefix : (47 / 10 : ℝ) ≤
-      ∑ n ∈ Finset.Ioc 0 (35000 : ℕ), Analysis.gaussianResolventMangoldtWeight n := by
+  have hprefix :
+    (47 / 10 : ℝ) ≤ ∑ n ∈ Finset.Ioc 0 (35000 : ℕ), Analysis.gaussianResolventMangoldtWeight n := by
     have hp := LLS.gaussian_prefix35000_lower hGRH.riemann (le_refl (35000 : ℝ))
     have hf : ⌊(35000 : ℝ)⌋₊ = (35000 : ℕ) := Nat.floor_natCast 35000
     rw [hf] at hp
     exact hp
   have hcmp :=
-    LLS.PaperStatements.gaussian_relative_prefix_le_coarse hprefix hnlarge H hGRH
-      hwidth hh1 hx (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
+    LLS.PaperStatements.gaussian_relative_prefix_le_coarse hprefix hnlarge H hGRH hwidth hh1 hx
+      (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
   have hcastIndex : ((H.index - 1 : ℕ) : ℝ) = (H.index : ℝ) - 1 := by
     have hidxReal : (1 : ℝ) ≤ (H.index : ℝ) := by
       have hK : (1 : ℝ) ≤ Analysis.gaussianMR6FifthsIndex := by
@@ -293,8 +284,7 @@ theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n)
           A →
       False := by
     intro hbudget
-    exact Analysis.gaussian35000_large_absurd hL hi
-      (Analysis.gaussian35000_ambient hL) hbudget
+    exact Analysis.gaussian35000_large_absurd hL hi (Analysis.gaussian35000_ambient hL) hbudget
   exact
     Analysis.gaussianMR_relative_comparison_to_scalar (m := m) (t := t) (s := s) (r := r) (A := A)
       (L := L) (I := I) (E := E) (C := C) (h := h) (M := Analysis.gaussianMR6FifthsMass) (Ecap :=
@@ -305,22 +295,18 @@ theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n)
           simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
         linarith only [hi'])
       rfl hspos hrootSq.symm hh hh1 hI hE hC
-      (by norm_num only [Analysis.gaussianMR6FifthsConductor]) hD
-      hbeta hcmp' hfinish
+      (by norm_num only [Analysis.gaussianMR6FifthsConductor]) hD hbeta hcmp' hfinish
 
 /-- A uniform three-prime Korselt product with log n<=240 has a prime strong-MR witness
 at most 35000 under GRH. Its conductor subgroup has index four and conductor sum 2 log n.
 Apply the fixed index-four theorem without adding these data to the public API. -/
-theorem gaussian35000_witness_triple {n p q r : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q)
-    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
-    (hrdiv : r - 1 ∣ n - 1) (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
+theorem gaussian35000_witness_triple {n p q r : ℕ} (hp : p.Prime) (hq : q.Prime) (hr : r.Prime)
+    (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r)
+    (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1) (hrdiv : r - 1 ∣ n - 1)
+    (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hprv : padicValNat 2 (p - 1) = padicValNat 2 (r - 1)) (hnlarge : 20000 ≤ n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : Real.log n ≤ 240) :
-    ∃ s : ℕ,
-      s.Prime ∧
-        (s : ℝ) ≤ (35000 : ℝ) ∧
-        ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
+    ∃ s : ℕ, s.Prime ∧ (s : ℝ) ≤ (35000 : ℝ) ∧ ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hnOdd : Odd n := hn ▸ (hpOdd.mul hqOdd).mul hrOdd
   have hn1 : 1 < n :=
     hn ▸
@@ -335,17 +321,13 @@ theorem gaussian35000_witness_triple {n p q r : ℕ} (hp : p.Prime)
 /-- For a squarefree uniform Korselt number with three prime factors, the fixed
 35000 witness bound holds under GRH and log n<=240. Extract the three primes from
 the factor set and use the index-four subgroup construction. -/
-theorem gaussian35000_witness_card_three {n : ℕ} (hnOdd : Odd n)
-    (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
-    (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
+theorem gaussian35000_witness_card_three {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree n)
+    (hc : n.primeFactors.card = 3) (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
       ∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hnlarge : 20000 ≤ n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : Real.log n ≤ 240) :
-    ∃ s : ℕ,
-      s.Prime ∧
-        (s : ℝ) ≤ (35000 : ℝ) ∧
-        ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
+    ∃ s : ℕ, s.Prime ∧ (s : ℝ) ≤ (35000 : ℝ) ∧ ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   obtain ⟨p, q, r, hpq, hpr, hqr, hset⟩ := Finset.card_eq_three.mp hc
   have hpMem : p ∈ n.primeFactors := hset ▸ Finset.mem_insert_self p _
   have hqMem : q ∈ n.primeFactors := hset ▸ Finset.mem_insert_of_mem (Finset.mem_insert_self q _)
@@ -363,8 +345,7 @@ theorem gaussian35000_witness_card_three {n : ℕ} (hnOdd : Odd n)
     simpa only [Finset.prod_insert, Finset.prod_singleton, Finset.mem_insert, Finset.mem_singleton,
       hpq, hpr, hqr, or_self, not_false_eq_true, mul_assoc] using hprod
   exact
-    gaussian35000_witness_triple hp hq hr
-      (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
+    gaussian35000_witness_triple hp hq hr (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
       (hq.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hqn))
       (hr.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hrn)) hpq hpr hqr hnprod (hK p hp hpn)
       (hK q hq hqn) (hK r hr hrn) (hU p q hp hq hpn hqn) (hU p r hp hr hpn hrn) hnlarge hGRH hL
@@ -372,8 +353,7 @@ theorem gaussian35000_witness_card_three {n : ℕ} (hnOdd : Odd n)
 /-- If n>0 and log n>=63, then 10^27<=n. Compare logarithms using log 10<7/3.
 This supplies both the finite-index classification size and n>=20000
 without invoking the log240 classification wrapper. -/
-theorem gaussian35000_size {n : ℕ} (hn : 0 < n) (hL : 63 ≤ Real.log n) :
-    10 ^ 27 ≤ n := by
+theorem gaussian35000_size {n : ℕ} (hn : 0 < n) (hL : 63 ≤ Real.log n) : 10 ^ 27 ≤ n := by
   by_contra h
   have hR : (n : ℝ) ≤ (10 : ℝ) ^ 27 := by exact_mod_cast (lt_of_not_ge h).le
   have hl := Real.log_le_log (Nat.cast_pos.mpr hn) hR
@@ -384,24 +364,21 @@ theorem gaussian35000_size {n : ℕ} (hn : 0 < n) (hL : 63 ≤ Real.log n) :
 /-- If q squared is at most 10^9 n and log n<=240, the local witness envelope is
 at most 35000. Its logarithm is at most 261/2, whose square is below 35000.
 The ambient-rejection transfer remains the responsibility of the local subgroup theorem. -/
-theorem gaussian35000_local {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
-    (hsize : q ^ 2 ≤ 10 ^ 9 * n) (hU : Real.log n ≤ 240) :
-    max (3000 : ℝ) (Real.log q ^ 2) ≤ 35000 := by
+theorem gaussian35000_local {n q : ℕ} (hn : 0 < n) (hq : 0 < q) (hsize : q ^ 2 ≤ 10 ^ 9 * n)
+    (hU : Real.log n ≤ 240) : max (3000 : ℝ) (Real.log q ^ 2) ≤ 35000 := by
   have hlog := Analysis.mr_local_log_le_of_square_le hn hq hsize
-  have hcap : Real.log q ≤ 261 / 2 := by
-    linarith only [hlog, hU, Analysis.log_ten_lt_seven_thirds]
-  have hsq := (sq_le_sq₀ (Real.log_natCast_nonneg q)
-    (by norm_num only : (0 : ℝ) ≤ 261 / 2)).mpr hcap
+  have hcap : Real.log q ≤ 261 / 2 := by linarith only [hlog, hU, Analysis.log_ten_lt_seven_thirds]
+  have hsq :=
+    (sq_le_sq₀ (Real.log_natCast_nonneg q) (by norm_num only : (0 : ℝ) ≤ 261 / 2)).mpr hcap
   exact max_le (by norm_num only) (by nlinarith only [hsq])
 
 /-- Under GRH, every odd composite with 63<=log n<=240 has a prime rejecting
 strong MR at most 35000. Combine the coefficient-free local classification,
 the uniform Korselt triple, and the large Fermat-index fixed-scale comparison. -/
 theorem exists_prime_witness_gaussian35000 {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 63 ≤ Real.log n) (hU : Real.log n ≤ 240) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ 35000 ∧
-      ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n)
+    (hU : Real.log n ≤ 240) :
+    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ 35000 ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hnpos : 0 < n := ho.pos
   have hN := gaussian35000_size hnpos hL
   have hn1 : 1 < n := (by norm_num only : 1 < 10 ^ 27).trans_le hN
@@ -411,42 +388,46 @@ theorem exists_prime_witness_gaussian35000 {n : ℕ} (ho : Odd n) (hc : ¬n.Prim
   · have hJ : (10 ^ 9 : ℕ) ^ 3 ≤ n := by
       norm_num only [← pow_mul, Nat.reduceMul]
       exact hN
-    rcases finite_index_local_subgroup_or_uniform_korselt_triple hn1 ho hc
-      (PrimeTest.fermatSubgroup n) le_rfl (by norm_num only : 1 ≤ 10 ^ 9) hJ hi with
+    rcases
+      finite_index_local_subgroup_or_uniform_korselt_triple hn1 ho hc (PrimeTest.fermatSubgroup n)
+        le_rfl (by norm_num only : 1 ≤ 10 ^ 9) hJ hi with
       hl | ht
     · obtain ⟨q, hq, hqn, hqsize, K, hK, hpass⟩ := hl
       have hqp : 0 < q := (by norm_num only : 0 < 2).trans_le hq
       let : NeZero q := ⟨hqp.ne'⟩
-      obtain ⟨p, hp, hb, hr⟩ := exists_prime_witness_le_local_subgroup_envelope
-        hn1 ho hq hqn K hK hpass hGRH
+      obtain ⟨p, hp, hb, hr⟩ :=
+        exists_prime_witness_le_local_subgroup_envelope hn1 ho hq hqn K hK hpass hGRH
       exact ⟨p, hp, hb.trans (gaussian35000_local hnpos hqp hqsize hU), hr⟩
     · obtain ⟨hsf, hcard, hK, hUval⟩ := ht
       exact gaussian35000_witness_card_three ho hsf hcard hK hUval hnlarge hGRH hU
-  · have hiR : Analysis.gaussianMR6FifthsIndex ≤
-        ((PrimeTest.fermatSubgroup n).index : ℝ) := by
+  · have hiR : Analysis.gaussianMR6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
       norm_num only [Analysis.gaussianMR6FifthsIndex]
       exact_mod_cast (lt_of_not_ge hi).le
-    have hpass : ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z →
-        ∃ u : (ZMod n)ˣ, u ∈ PrimeTest.fermatSubgroup n ∧ (u : ZMod n) = z := by
+    have hpass :
+      ∀ z : ZMod n,
+        PrimeTest.StrongMillerRabinPass n z →
+          ∃ u : (ZMod n)ˣ, u ∈ PrimeTest.fermatSubgroup n ∧ (u : ZMod n) = z := by
       intro z hz
       exact PrimeTest.strongMillerRabinPass_mem_fermatSubgroup hn1 ho hz
-    exact gaussian35000_witness_large ho hnlarge (PrimeTest.fermatSubgroup n) hiR
-      hpass hGRH hU
+    exact gaussian35000_witness_large ho hnlarge (PrimeTest.fermatSubgroup n) hiR hpass hGRH hU
 
 /-- Under the same GRH and logarithmic assumptions, the least prime rejecting
 strong MR is at most 35000. Minimize the actual prime-witness theorem with Nat.find.
 No squarefree, factor-count, or Fermat-index restriction appears in the conclusion. -/
 theorem exists_least_witness_gaussian35000 {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 63 ≤ Real.log n) (hU : Real.log n ≤ 240) :
-    ∃ p : ℕ, p.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-      (p : ℝ) ≤ 35000 ∧
-      ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n)
+    (hU : Real.log n ≤ 240) :
+    ∃ p : ℕ,
+      p.Prime ∧
+        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
+        (p : ℝ) ≤ 35000 ∧
+        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   classical
   obtain ⟨p, hp, hb, hr⟩ := exists_prime_witness_gaussian35000 ho hc hGRH hL hU
   have hex : ∃ q : ℕ, q.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := ⟨p, hp, hr⟩
-  exact ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
-    (Nat.cast_le.mpr (Nat.find_min' hex ⟨hp, hr⟩)).trans hb,
-    fun q hq hrq ↦ Nat.find_min' hex ⟨hq, hrq⟩⟩
+  exact
+    ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
+      (Nat.cast_le.mpr (Nat.find_min' hex ⟨hp, hr⟩)).trans hb, fun q hq hrq ↦
+      Nat.find_min' hex ⟨hq, hrq⟩⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

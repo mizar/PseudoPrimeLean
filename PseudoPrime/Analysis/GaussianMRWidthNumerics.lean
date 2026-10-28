@@ -17,9 +17,8 @@ namespace PseudoPrime.Analysis
 /-- For a certified cutoff mass, endpoint cap and width h=k/s, normalize the Gaussian main
 term by the positive index excess. Only h<=1/2 is needed here; k enters algebraically.
 This is the common mass-normalization input for variable-width MR budgets. -/
-theorem gaussianMR_main_lower_width {m t s I E h M Ecap k : ℝ} (hm : 4 ≤ m)
-    (ht : t = m - 1) (hs : 0 < s) (hh : h = k / s) (hh1 : h ≤ 1 / 2) (hI : M ≤ I)
-    (hE : E ≤ Ecap) :
+theorem gaussianMR_main_lower_width {m t s I E h M Ecap k : ℝ} (hm : 4 ≤ m) (ht : t = m - 1)
+    (hs : 0 < s) (hh : h = k / s) (hh1 : h ≤ 1 / 2) (hI : M ≤ I) (hE : E ≤ Ecap) :
     ((m * M - Ecap) / t - (m * M) * k / (t * s)) ≤ (m / t) * (1 - h) * I - E / t := by
   have htpos : 0 < t := by
     rw [ht]; linarith only [hm]
@@ -31,25 +30,27 @@ theorem gaussianMR_main_lower_width {m t s I E h M Ecap k : ℝ} (hm : 4 ≤ m)
   calc
     _ = (m * (1 - h) * M - Ecap) / t := by
       rw [hh]
-      field_simp (disch := first
-      | exact htpos.ne'
-      | exact hs.ne'
-      | norm_num only)
+      field_simp (disch :=
+        first
+        | exact htpos.ne'
+        | exact hs.ne'
+        | norm_num only)
       ring_nf
     _ ≤ (m * (1 - h) * I - E) / t := div_le_div_of_nonneg_right hbase htpos.le
-    _ = _ := by field_simp (disch := first
-      | exact htpos.ne'
-      | exact hs.ne'
-      | norm_num only)
+    _ = _ := by
+      field_simp (disch :=
+        first
+        | exact htpos.ne'
+        | exact hs.ne'
+        | norm_num only)
 
 /-- Convert a relative Gaussian subgroup inequality to its normalized scalar
 budget for arbitrary cutoff mass, endpoint, index, conductor cost and radius.
 The caller supplies the coefficient bounds and the final scalar contradiction;
 this shared step handles normalization and the relative-width error terms. -/
-theorem gaussianMR_compare_width {m t s r A L I E C h M Ecap conductor D beta k : ℝ}
-    (hk : 0 < k)
-    (hm4 : 4 ≤ m) (ht : t = m - 1) (hs : 0 < s) (hr : r = s ^ 2) (hh : h = k / s)
-    (hh1 : h ≤ 1 / 2) (hI : M ≤ I) (hE : E ≤ Ecap) (hC : C / t ≤ L) (hconductor : 0 ≤ conductor)
+theorem gaussianMR_compare_width {m t s r A L I E C h M Ecap conductor D beta k : ℝ} (hk : 0 < k)
+    (hm4 : 4 ≤ m) (ht : t = m - 1) (hs : 0 < s) (hr : r = s ^ 2) (hh : h = k / s) (hh1 : h ≤ 1 / 2)
+    (hI : M ≤ I) (hE : E ≤ Ecap) (hC : C / t ≤ L) (hconductor : 0 ≤ conductor)
     (hD : D ≤ (m * M - Ecap) / t) (hbeta : (m / t) * (M * k + 1 / (10 * k)) ≤ beta)
     (hcmp :
       (m * (1 - h) * I - E) * r ≤
@@ -71,7 +72,8 @@ theorem gaussianMR_compare_width {m t s r A L I E C h M Ecap conductor D beta k 
   have hmain := gaussianMR_main_lower_width hm4 ht hs hh hh1 hI hE
   have hcmpDiv0 := div_le_div_of_nonneg_right hcmp htpos.le
   have hleftEq : ((m * (1 - h) * I - E) * r) / t = ((m / t) * (1 - h) * I - E / t) * r := by
-    field_simp (disch := first
+    field_simp (disch :=
+      first
       | exact htpos.ne'
       | exact hs.ne'
       | exact hk.ne'
@@ -79,11 +81,11 @@ theorem gaussianMR_compare_width {m t s r A L I E C h M Ecap conductor D beta k 
   have hrightEq :
     (conductor * C + m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) + 13 + t * A) /
         t =
-      conductor * (C / t) +
-        (m / t) * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
+      conductor * (C / t) + (m / t) * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 / t +
         A := by
-    field_simp (disch := first
+    field_simp (disch :=
+      first
       | exact htpos.ne'
       | exact hs.ne'
       | exact hk.ne'
@@ -92,7 +94,8 @@ theorem gaussianMR_compare_width {m t s r A L I E C h M Ecap conductor D beta k 
     1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E =
       s / (10 * k) + 21 * E / (10 * k * s) + 1839 * E / (1000 * r) := by
     rw [hh, hr]
-    field_simp (disch := first
+    field_simp (disch :=
+      first
       | exact htpos.ne'
       | exact hs.ne'
       | exact hk.ne'
@@ -112,8 +115,7 @@ theorem gaussianMR_compare_width {m t s r A L I E C h M Ecap conductor D beta k 
       simpa only [hleftEq] using hcmpDiv0
     have hcmpDiv2 :
       ((m / t) * (1 - h) * I - E / t) * r ≤
-        conductor * (C / t) +
-        (m / t) * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
+        conductor * (C / t) + (m / t) * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
           13 / t +
           A := by
       simpa only [hrightEq] using hcmpDiv1
@@ -131,8 +133,7 @@ theorem gaussianMR_compare_width {m t s r A L I E C h M Ecap conductor D beta k 
   have hEterms := add_le_add hEterm1 hEterm2
   have hEtermsScaled := mul_le_mul_of_nonneg_left hEterms hratio0
   have hcmpUpper :
-    conductor * (C / t) +
-        (m / t) * (s / (10 * k) + 21 * E / (10 * k * s) + 1839 * E / (1000 * r)) +
+    conductor * (C / t) + (m / t) * (s / (10 * k) + 21 * E / (10 * k * s) + 1839 * E / (1000 * r)) +
         13 / t +
         A ≤
       conductor * L +
@@ -145,7 +146,8 @@ theorem gaussianMR_compare_width {m t s r A L I E C h M Ecap conductor D beta k 
     ((m * M - Ecap) / t - (m * M) * k / (t * s)) * r =
       ((m * M - Ecap) / t) * r - (m / t) * (M * k) * s := by
     rw [hr]
-    field_simp (disch := first
+    field_simp (disch :=
+      first
       | exact htpos.ne'
       | exact hs.ne'
       | exact hk.ne'
@@ -160,16 +162,14 @@ theorem gaussianMR_compare_width {m t s r A L I E C h M Ecap conductor D beta k 
   have hDscaled := mul_le_mul_of_nonneg_right hD hrpos.le
   have hbetaScaled := mul_le_mul_of_nonneg_right hbeta hs.le
   have hfactor :
-    (m / t) * (s / (10 * k)) + (m / t) * (M * k) * s =
-       (m / t) * (M * k + 1 / (10 * k)) * s := by ring
+    (m / t) * (s / (10 * k)) + (m / t) * (M * k) * s = (m / t) * (M * k + 1 / (10 * k)) * s := by
+    ring
   have hbudget :
     D * r ≤
-      conductor * L + beta * s +
-            (m / t) * (21 * Ecap / (10 * k * s) + 1839 * Ecap / (1000 * r)) +
+      conductor * L + beta * s + (m / t) * (21 * Ecap / (10 * k * s) + 1839 * Ecap / (1000 * r)) +
         13 / t +
         A := by
     nlinarith only [hcombinedNorm, hDscaled, hbetaScaled, hfactor]
   exact hfinish hbudget
-
 
 end PseudoPrime.Analysis

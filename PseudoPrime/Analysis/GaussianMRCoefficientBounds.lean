@@ -23,8 +23,7 @@ theorem gaussianMR6_radius_upper240 {L : ℝ} (hL : 240 ≤ L) :
   let s := gaussianMR6Root L
   have hL0 : 0 ≤ L := by linarith only [hL]
   have hu0 : 0 ≤ u := Real.sqrt_nonneg _
-  have hu2 : u ^ 2 = (18 / 25 : ℝ) * L :=
-    Real.sq_sqrt (mul_nonneg (by norm_num only) hL0)
+  have hu2 : u ^ 2 = (18 / 25 : ℝ) * L := Real.sq_sqrt (mul_nonneg (by norm_num only) hL0)
   have hu : u ≤ (11 / 200 : ℝ) * L := by
     apply (Real.sqrt_le_iff).mpr
     constructor
@@ -35,10 +34,12 @@ theorem gaussianMR6_radius_upper240 {L : ℝ} (hL : 240 ≤ L) :
     have h := gaussianMR6_root_lower hL
     linarith only [h]
   have he := gaussianMR6_equation hL0
-  change gaussianMR6FifthsD * s ^ 2 =
-    gaussianMR6FifthsConductor * L + gaussianMR6FifthsBeta * s + 6 at he
+  change
+    gaussianMR6FifthsD * s ^ 2 =
+      gaussianMR6FifthsConductor * L + gaussianMR6FifthsBeta * s + 6 at he
   have hd := gaussianMR6Fifths_coefficients_pos.1
-  have hc : (1 / 40 : ℝ) <
+  have hc :
+    (1 / 40 : ℝ) <
       gaussianMR6FifthsD * (18 / 25) - gaussianMR6FifthsConductor -
         gaussianMR6FifthsBeta * (11 / 200) := by
     norm_num only [gaussianMR6FifthsD, gaussianMR6FifthsBeta, gaussianMR6FifthsConductor,
@@ -46,8 +47,10 @@ theorem gaussianMR6_radius_upper240 {L : ℝ} (hL : 240 ≤ L) :
   have hscale := mul_lt_mul_of_pos_right hc (by linarith only [hL] : 0 < L)
   have hbeta := mul_le_mul_of_nonneg_left hu gaussianMR6Fifths_coefficients_pos.2.le
   have hdu := congrArg (fun x : ℝ ↦ gaussianMR6FifthsD * x) hu2
-  have hv : 0 < gaussianMR6FifthsD * u ^ 2 - gaussianMR6FifthsBeta * u -
-      gaussianMR6FifthsConductor * L - 6 := by
+  have hv :
+    0 <
+      gaussianMR6FifthsD * u ^ 2 - gaussianMR6FifthsBeta * u - gaussianMR6FifthsConductor * L -
+        6 := by
     nlinarith only [hdu, hscale, hbeta, hL]
   by_contra hn
   have hr := le_of_not_gt hn
@@ -59,10 +62,8 @@ theorem gaussianMR6_radius_upper240 {L : ℝ} (hL : 240 ≤ L) :
   have hb : 0 < gaussianMR6FifthsD * 13 - gaussianMR6FifthsBeta := by
     norm_num only [gaussianMR6FifthsD, gaussianMR6FifthsBeta, gaussianMR6FifthsIndex,
       gaussianMR6FifthsMass, gaussianMR6FifthsEndpoint]
-  have hmul := mul_le_mul_of_nonneg_left
-    (by linarith only [hs, hu0] : (13 : ℝ) ≤ s + u) hd.le
-  have hf : 0 ≤ gaussianMR6FifthsD * (s + u) - gaussianMR6FifthsBeta := by
-    linarith only [hb, hmul]
+  have hmul := mul_le_mul_of_nonneg_left (by linarith only [hs, hu0] : (13 : ℝ) ≤ s + u) hd.le
+  have hf : 0 ≤ gaussianMR6FifthsD * (s + u) - gaussianMR6FifthsBeta := by linarith only [hb, hmul]
   have hp := mul_nonneg (sub_nonneg.mpr hus) hf
   nlinarith only [he, hv, hp]
 
@@ -78,7 +79,6 @@ theorem gaussianMR6Bound_lt_063_sq {L : ℝ} (hL : 240 ≤ L) :
   dsimp only [gaussianMR6Bound]
   nlinarith only [hscaled, sq_pos_of_pos (by linarith only [hL] : 0 < L)]
 
-
 /-- At L>=300 the unchanged radius is below 6989L/10000. Evaluate its quadratic
 budget at the square root of that linear cap, bounding the latter by 181L/3750.
 The positive-root comparison proves the estimate on the entire half-line. -/
@@ -88,8 +88,7 @@ theorem gaussianMR6_radius_upper_sharp {L : ℝ} (hL : 300 ≤ L) :
   let s := gaussianMR6Root L
   have hL0 : 0 ≤ L := by linarith only [hL]
   have hu0 : 0 ≤ u := Real.sqrt_nonneg _
-  have hu2 : u ^ 2 = (6989 / 10000 : ℝ) * L :=
-    Real.sq_sqrt (mul_nonneg (by norm_num only) hL0)
+  have hu2 : u ^ 2 = (6989 / 10000 : ℝ) * L := Real.sq_sqrt (mul_nonneg (by norm_num only) hL0)
   have hu : u ≤ (181 / 3750 : ℝ) * L := by
     apply (Real.sqrt_le_iff).mpr
     constructor
@@ -98,10 +97,12 @@ theorem gaussianMR6_radius_upper_sharp {L : ℝ} (hL : 300 ≤ L) :
       nlinarith only [hm, hL]
   have hs : 14 ≤ s := gaussianMR6Root_lower_14 hL
   have he := gaussianMR6Radius_equation hL
-  change gaussianMR6FifthsD * s ^ 2 =
-    gaussianMR6FifthsConductor * L + gaussianMR6FifthsBeta * s + 6 at he
+  change
+    gaussianMR6FifthsD * s ^ 2 =
+      gaussianMR6FifthsConductor * L + gaussianMR6FifthsBeta * s + 6 at he
   have hd := gaussianMR6Fifths_coefficients_pos.1
-  have hc : (1 / 50 : ℝ) <
+  have hc :
+    (1 / 50 : ℝ) <
       gaussianMR6FifthsD * (6989 / 10000) - gaussianMR6FifthsConductor -
         gaussianMR6FifthsBeta * (181 / 3750) := by
     norm_num only [gaussianMR6FifthsD, gaussianMR6FifthsBeta, gaussianMR6FifthsConductor,
@@ -109,8 +110,10 @@ theorem gaussianMR6_radius_upper_sharp {L : ℝ} (hL : 300 ≤ L) :
   have hscale := mul_lt_mul_of_pos_right hc (by linarith only [hL] : 0 < L)
   have hbeta := mul_le_mul_of_nonneg_left hu gaussianMR6Fifths_coefficients_pos.2.le
   have hdu := congrArg (fun x : ℝ ↦ gaussianMR6FifthsD * x) hu2
-  have hv : 0 < gaussianMR6FifthsD * u ^ 2 - gaussianMR6FifthsBeta * u -
-      gaussianMR6FifthsConductor * L - 6 := by
+  have hv :
+    0 <
+      gaussianMR6FifthsD * u ^ 2 - gaussianMR6FifthsBeta * u - gaussianMR6FifthsConductor * L -
+        6 := by
     nlinarith only [hdu, hscale, hbeta, hL]
   by_contra hn
   have hr := le_of_not_gt hn
@@ -122,10 +125,8 @@ theorem gaussianMR6_radius_upper_sharp {L : ℝ} (hL : 300 ≤ L) :
   have hb : 0 < gaussianMR6FifthsD * 14 - gaussianMR6FifthsBeta := by
     norm_num only [gaussianMR6FifthsD, gaussianMR6FifthsBeta, gaussianMR6FifthsIndex,
       gaussianMR6FifthsMass, gaussianMR6FifthsEndpoint]
-  have hmul := mul_le_mul_of_nonneg_left
-    (by linarith only [hs, hu0] : (14 : ℝ) ≤ s + u) hd.le
-  have hf : 0 ≤ gaussianMR6FifthsD * (s + u) - gaussianMR6FifthsBeta := by
-    linarith only [hb, hmul]
+  have hmul := mul_le_mul_of_nonneg_left (by linarith only [hs, hu0] : (14 : ℝ) ≤ s + u) hd.le
+  have hf : 0 ≤ gaussianMR6FifthsD * (s + u) - gaussianMR6FifthsBeta := by linarith only [hb, hmul]
   have hp := mul_nonneg (sub_nonneg.mpr hus) hf
   nlinarith only [he, hv, hp]
 
@@ -140,4 +141,5 @@ theorem gaussianMR6Bound_lt_05862_sq {L : ℝ} (hL : 300 ≤ L) :
   have hscaled := mul_lt_mul_of_pos_left hs (by norm_num only : (0 : ℝ) < 6 / 5)
   dsimp only [gaussianMR6Bound]
   nlinarith only [hscaled, sq_pos_of_pos (by linarith only [hL] : 0 < L)]
+
 end PseudoPrime.Analysis

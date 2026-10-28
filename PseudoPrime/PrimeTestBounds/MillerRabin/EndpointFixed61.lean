@@ -26,28 +26,26 @@ theorem prime_lt67_le61 {p : ℕ} (hp : p.Prime) (h : p < 67) : p ≤ 61 := by
 /-- Under GRH, an odd composite n>1 with log n<=286/25 has a rejecting prime at most 61.
 Use the positive exact gap at radius 49/6, then round primes below 67 to 61.
 The conclusion uses the actual strong-MR rejection predicate. -/
-theorem exists_prime_endpoint61 {n : ℕ} [NeZero n] (hn : 1 < n) (ho : Odd n)
-    (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : Real.log n ≤ 286 / 25) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ 61 ∧
-      ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  obtain ⟨p, hp, hb, hpow, hrest⟩ := exists_prime_reject_of_even_exact_endpoint_gap_pos
-    hn ho hc hGRH (by norm_num only : (8 : ℝ) ≤ 49 / 6)
-    (LLS.PaperStatements.endpoint61_gap_pos hL)
+theorem exists_prime_endpoint61 {n : ℕ} [NeZero n] (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : Real.log n ≤ 286 / 25) :
+    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ 61 ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
+  obtain ⟨p, hp, hb, hpow, hrest⟩ :=
+    exists_prime_reject_of_even_exact_endpoint_gap_pos hn ho hc hGRH
+      (by norm_num only : (8 : ℝ) ≤ 49 / 6) (LLS.PaperStatements.endpoint61_gap_pos hL)
   have h67 : (p : ℝ) < 67 := lt_of_le_of_lt hb (by norm_num only)
   have hp61 := prime_lt67_le61 hp (by exact_mod_cast h67)
-  exact ⟨p, hp, by exact_mod_cast hp61,
-    PrimeTest.not_strongMillerRabinPass_iff.mpr ⟨hpow, hrest⟩⟩
+  exact ⟨p, hp, by exact_mod_cast hp61, PrimeTest.not_strongMillerRabinPass_iff.mpr ⟨hpow, hrest⟩⟩
 
 /-- Under the fixed-61 theorem assumptions, the least rejecting prime is at most 61.
 Apply the existing least-prime extraction to the prime witness theorem.
 No lower logarithmic threshold is imposed. -/
-theorem exists_least_endpoint61 {n : ℕ} [NeZero n] (hn : 1 < n) (ho : Odd n)
-    (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : Real.log n ≤ 286 / 25) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ 61 ∧
-      ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-      ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
+theorem exists_least_endpoint61 {n : ℕ} [NeZero n] (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : Real.log n ≤ 286 / 25) :
+    ∃ p : ℕ,
+      p.Prime ∧
+        (p : ℝ) ≤ 61 ∧
+        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
+        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   exact exists_least_prime_reject_of_exists_prime_reject (exists_prime_endpoint61 hn ho hc hGRH hL)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

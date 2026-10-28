@@ -1,0 +1,95 @@
+{
+  "structural_directories": {
+    "PseudoPrime/PseudoSquare/Bounds": {
+      "namespaces": [
+        "PseudoPrime.PseudoSquare"
+      ],
+      "reason": "Bounds and computation subdivide the shared PseudoPrime.PseudoSquare predicate and witness API."
+    },
+    "PseudoPrime/PseudoSquare/Computation": {
+      "namespaces": [
+        "PseudoPrime.PseudoSquare",
+        "PseudoPrime.PseudoSquare.SmallN"
+      ],
+      "reason": "Bounds and computation subdivide the shared PseudoPrime.PseudoSquare predicate and witness API."
+    },
+    "PseudoPrime/PseudoSquare/Computation/SmallNegOne": {
+      "namespaces": [
+        "PseudoPrime.PseudoSquare"
+      ],
+      "reason": "Bounds and computation subdivide the shared PseudoPrime.PseudoSquare predicate and witness API."
+    },
+    "PseudoPrime/PrimeTest/BPSW": {
+      "namespaces": [
+        "PseudoPrime.PrimeTest"
+      ],
+      "reason": "Algorithm source subdivisions share the existing PseudoPrime.PrimeTest predicate, decision, and witness API."
+    },
+    "PseudoPrime/PrimeTest/EulerJacobi": {
+      "namespaces": [
+        "PseudoPrime.PrimeTest"
+      ],
+      "reason": "Algorithm source subdivisions share the existing PseudoPrime.PrimeTest predicate, decision, and witness API."
+    },
+    "PseudoPrime/PrimeTest/Lucas": {
+      "namespaces": [
+        "PseudoPrime.PrimeTest"
+      ],
+      "reason": "Algorithm source subdivisions share the existing PseudoPrime.PrimeTest predicate, decision, and witness API."
+    },
+    "PseudoPrime/PrimeTest/LucasV": {
+      "namespaces": [
+        "PseudoPrime.PrimeTest"
+      ],
+      "reason": "Algorithm source subdivisions share the existing PseudoPrime.PrimeTest predicate, decision, and witness API."
+    },
+    "PseudoPrime/PrimeTest/MillerRabin": {
+      "namespaces": [
+        "PseudoPrime.PrimeTest"
+      ],
+      "reason": "Algorithm source subdivisions share the existing PseudoPrime.PrimeTest predicate, decision, and witness API."
+    },
+    "PseudoPrime/PrimeTest/Selfridge": {
+      "namespaces": [
+        "PseudoPrime.PrimeTest"
+      ],
+      "reason": "Algorithm source subdivisions share the existing PseudoPrime.PrimeTest predicate, decision, and witness API."
+    },
+    "PseudoPrime/PrimeTest/StrongLucas": {
+      "namespaces": [
+        "PseudoPrime.PrimeTest"
+      ],
+      "reason": "Algorithm source subdivisions share the existing PseudoPrime.PrimeTest predicate, decision, and witness API."
+    },
+    "PseudoPrime/PrimeTest/MillerRabin/Computation": {
+      "namespaces": [
+        "PseudoPrime.PrimeTest"
+      ],
+      "reason": "Algorithm source subdivisions share the existing PseudoPrime.PrimeTest predicate, decision, and witness API."
+    },
+    "PseudoPrime/NumberTheory/Jacobi": {
+      "namespaces": [
+        "PseudoPrime.NumberTheory"
+      ],
+      "reason": "Jacobi and Kronecker implementations and witness lemmas share PseudoPrime.NumberTheory."
+    },
+    "PseudoPrime/NumberTheory/JacobiWitness": {
+      "namespaces": [
+        "PseudoPrime.NumberTheory"
+      ],
+      "reason": "Jacobi and Kronecker implementations and witness lemmas share PseudoPrime.NumberTheory."
+    },
+    "PseudoPrime/NumberTheory/Kronecker": {
+      "namespaces": [
+        "PseudoPrime.NumberTheory"
+      ],
+      "reason": "Jacobi and Kronecker implementations and witness lemmas share PseudoPrime.NumberTheory."
+    },
+    "PseudoPrime/AnalyticNumberTheory/NumberField": {
+      "namespaces": [
+        "PseudoPrime.AnalyticNumberTheory"
+      ],
+      "reason": "The Dedekind L-function interface belongs to the established parent analytic-number-theory API."
+    }
+  }
+}

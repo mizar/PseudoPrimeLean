@@ -19,11 +19,10 @@ namespace PseudoPrime.LLS
 Recompose the existing Gamma lower bound and the pointwise factor 17/20.
 This retains the unrounded prefix mass without new nodes or finite input data. -/
 theorem gaussian_prefix35000_sharp {b : ℝ} (hRH : RiemannHypothesis) (hb : 35000 ≤ b) :
-    (189499 / 40000 : ℝ) ≤
-      ∑ n ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gaussianResolventMangoldtWeight n := by
+    (189499 / 40000 : ℝ) ≤ ∑ n ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gaussianResolventMangoldtWeight n := by
   have hg := gamma_prefix35000_lower hRH hb
-  have hs := Finset.sum_le_sum (s := Finset.Ioc 0 ⌊b⌋₊)
-    (fun n _ ↦ gaussian_gamma_mangoldt_weight_le n)
+  have hs :=
+    Finset.sum_le_sum (s := Finset.Ioc 0 ⌊b⌋₊) (fun n _ ↦ gaussian_gamma_mangoldt_weight_le n)
   rw [← Finset.mul_sum] at hs
   have hm := mul_le_mul_of_nonneg_left hg (by norm_num only : (0 : ℝ) ≤ 17 / 20)
   linarith only [hm, hs]

@@ -7,29 +7,31 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.EndpointFourStep
+
 /-! # Sharper fixed endpoint anchors -/
+
 @[expose] public section
 
 namespace PseudoPrime.LLS.PaperStatements
 
 /-- For y>0, log y>=3 log 2+1-8/y. Apply log u<=u-1 at u=8/y.
 This reusable bound supplies the two rational logarithm anchors. -/
-theorem endpoint_log_lower {y : ℝ} (hy : 0 < y) :
-    3 * Real.log 2 + 1 - 8 / y ≤ Real.log y := by
+theorem endpoint_log_lower {y : ℝ} (hy : 0 < y) : 3 * Real.log 2 + 1 - 8 / y ≤ Real.log y := by
   have h := Real.log_le_sub_one_of_pos (div_pos (by norm_num only : (0 : ℝ) < 8) hy)
-  rw [Real.log_div (by norm_num only) hy.ne',
-    show (8 : ℝ) = 2 ^ 3 by norm_num only, Real.log_pow] at h
+  rw [Real.log_div (by norm_num only) hy.ne', show (8 : ℝ) = 2 ^ 3 by norm_num only,
+    Real.log_pow] at h
   norm_num only [Nat.cast_ofNat] at h
   linarith only [h]
 
 /-- Given a positive rational gap anchor and nonnegative quadratic coefficients,
 transfer positivity to log y and then every L<=the anchor level.
 Square monotonicity and conductor-level antitonicity justify both transfers. -/
-theorem endpoint_gap_from_quad {L L₀ y z₀ a b : ℝ} (hL : L ≤ L₀) (hy : 1 ≤ y)
-    (hz0 : 0 ≤ z₀) (hz : z₀ ≤ Real.log y) (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hpoly : ∀ z : ℝ,
-      fullEndpointEvenExactComparisonGap L₀ (2096 / 1831) y z -
-        fullEndpointEvenExactComparisonGap L₀ (2096 / 1831) y z₀ =
+theorem endpoint_gap_from_quad {L L₀ y z₀ a b : ℝ} (hL : L ≤ L₀) (hy : 1 ≤ y) (hz0 : 0 ≤ z₀)
+    (hz : z₀ ≤ Real.log y) (ha : 0 ≤ a) (hb : 0 ≤ b)
+    (hpoly :
+      ∀ z : ℝ,
+        fullEndpointEvenExactComparisonGap L₀ (2096 / 1831) y z -
+            fullEndpointEvenExactComparisonGap L₀ (2096 / 1831) y z₀ =
           a * (z ^ 2 - z₀ ^ 2) + b * (z - z₀))
     (hanchor : 0 < fullEndpointEvenExactComparisonGap L₀ (2096 / 1831) y z₀) :
     0 < fullEndpointEvenExactComparisonGap L (2096 / 1831) y (Real.log y) := by
@@ -53,12 +55,13 @@ theorem endpoint61Sharp_log_lower : (1051 / 500 : ℝ) ≤ Real.log (1637 / 200 
 Its rational anchor and positive quadratic coefficients permit logarithm transfer.
 This supplies the extended fixed prime-witness bound 61. -/
 theorem endpoint61Sharp_gap_pos {L : ℝ} (hL : L ≤ 1147 / 100) :
-    0 < fullEndpointEvenExactComparisonGap L (2096 / 1831) (1637 / 200)
-      (Real.log (1637 / 200 : ℝ)) := by
-  apply endpoint_gap_from_quad (z₀ := 1051 / 500) (a := 7344507 / 20000)
-    (b := 708540428363131 / 732400000000)
-    hL (by norm_num only) (by norm_num only) endpoint61Sharp_log_lower
-    (by norm_num only) (by norm_num only)
+    0 <
+      fullEndpointEvenExactComparisonGap L (2096 / 1831) (1637 / 200)
+        (Real.log (1637 / 200 : ℝ)) := by
+  apply
+    endpoint_gap_from_quad (z₀ := 1051 / 500) (a := 7344507 / 20000) (b :=
+      708540428363131 / 732400000000) hL (by norm_num only) (by norm_num only)
+      endpoint61Sharp_log_lower (by norm_num only) (by norm_num only)
   · intro z
     dsimp only [fullEndpointEvenExactComparisonGap]
     ring
@@ -75,12 +78,12 @@ theorem endpoint67_log_lower : (10649 / 5000 : ℝ) ≤ Real.log (337 / 40 : ℝ
 Its rational anchor and positive quadratic coefficients permit logarithm transfer.
 This supplies the fixed prime-witness bound 67. -/
 theorem endpoint67_gap_pos {L : ℝ} (hL : L ≤ 47 / 4) :
-    0 < fullEndpointEvenExactComparisonGap L (2096 / 1831) (337 / 40)
-      (Real.log (337 / 40 : ℝ)) := by
-  apply endpoint_gap_from_quad (z₀ := 10649 / 5000) (a := 312147 / 800)
-    (b := 30849497726131 / 29296000000)
-    hL (by norm_num only) (by norm_num only) endpoint67_log_lower
-    (by norm_num only) (by norm_num only)
+    0 <
+      fullEndpointEvenExactComparisonGap L (2096 / 1831) (337 / 40) (Real.log (337 / 40 : ℝ)) := by
+  apply
+    endpoint_gap_from_quad (z₀ := 10649 / 5000) (a := 312147 / 800) (b :=
+      30849497726131 / 29296000000) hL (by norm_num only) (by norm_num only) endpoint67_log_lower
+      (by norm_num only) (by norm_num only)
   · intro z
     dsimp only [fullEndpointEvenExactComparisonGap]
     ring

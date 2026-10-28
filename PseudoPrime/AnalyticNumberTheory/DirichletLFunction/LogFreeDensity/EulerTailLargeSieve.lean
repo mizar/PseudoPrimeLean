@@ -19,6 +19,243 @@ public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity
 
+/--
+Inputs: a symmetric interval radius, a nonnegative lower bound, a function, and its interval
+integrability.
+Claim: a pointwise norm lower bound on the interval gives the corresponding lower bound for its
+squared norm integral.
+Proof: square the pointwise inequality and compare the integrand with the constant lower bound.
+Role: converts a physical detector window into an integrated energy lower bound.
+-/
+theorem interval_sq_lower (δ b : ℝ) (hδ : 0 ≤ δ) (hb : 0 ≤ b) (f : ℝ → ℂ)
+    (hf : ∀ x ∈ Set.Icc (-δ) δ, b ≤ ‖f x‖)
+    (hi : IntervalIntegrable (fun x => ‖f x‖ ^ 2) MeasureTheory.volume (-δ) δ) :
+    (2 * δ) * b ^ 2 ≤ ∫ x in (-δ)..δ, ‖f x‖ ^ 2 ∂MeasureTheory.volume := by
+  have hpoint : ∀ x ∈ Set.Icc (-δ) δ, b ^ 2 ≤ ‖f x‖ ^ 2 := by
+    intro x hx
+    exact pow_le_pow_left₀ hb (hf x hx) 2
+  have hmono :=
+    intervalIntegral.integral_mono_on (by linarith only [hδ]) (intervalIntegrable_const) hi hpoint
+  rw [intervalIntegral.integral_const] at hmono
+  simpa only [smul_eq_mul, sub_neg_eq_add, two_mul] using hmono
+
+/--
+Inputs: a finite index set, a complex-valued function, and a nonnegative threshold after scaling.
+Claim: the number of indices whose scaled norm reaches the threshold, times its square, is at most
+the scaled sum of squared norms.
+Proof: square the threshold inequality on the filtered set, then enlarge that set using
+nonnegativity of every squared norm.
+Role: converts polynomial large-value counts into the primitive-family mean square.
+-/
+theorem card_filter_scaled_norm_sq {α : Type*} (s : Finset α) (f : α → ℂ) (A B : ℝ) (hB : 0 ≤ B) :
+    ((s.filter fun x => B ≤ A * ‖f x‖).card : ℝ) * B ^ 2 ≤ A ^ 2 * ∑ x ∈ s, ‖f x‖ ^ 2 := by
+  classical
+  let t := s.filter fun x => B ≤ A * ‖f x‖
+  have hinside : ∑ x ∈ t, B ^ 2 ≤ ∑ x ∈ t, A ^ 2 * ‖f x‖ ^ 2 := by
+    apply Finset.sum_le_sum
+    intro x hx
+    have hnorm := (Finset.mem_filter.mp hx).2
+    have hpow := pow_le_pow_left₀ hB hnorm 2
+    simpa only [mul_pow] using hpow
+  have houtside : ∑ x ∈ t, A ^ 2 * ‖f x‖ ^ 2 ≤ ∑ x ∈ s, A ^ 2 * ‖f x‖ ^ 2 := by
+    apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+    intro x hx hnot
+    exact mul_nonneg (sq_nonneg A) (sq_nonneg ‖f x‖)
+  calc
+    _ = ∑ x ∈ t, B ^ 2 := by simp only [Finset.sum_const, t, nsmul_eq_mul]
+    _ ≤ ∑ x ∈ t, A ^ 2 * ‖f x‖ ^ 2 := hinside
+    _ ≤ ∑ x ∈ s, A ^ 2 * ‖f x‖ ^ 2 := houtside
+    _ = A ^ 2 * ∑ x ∈ s, ‖f x‖ ^ 2 := by rw [Finset.mul_sum]
+
+/--
+Inputs: a conductor, finite prime support, derivative order, height, and a normalized polynomial
+threshold.
+Claim: the number of primitive characters reaching that threshold, times its square, is bounded by
+the normalized primitive-character polynomial mean square.
+Proof: apply the finite scaled-norm count bound and unfold the mean-square definition.
+Role: turns the uniform zero-window detector into the mean-square quantity controlled by the hybrid
+large sieve.
+-/
+theorem poly_count_sq_mean {q : ℕ} (hq : 1 < q) (s : Finset ℕ) (r : ℕ) (η t B : ℝ) (hB : 0 ≤ B) :
+    (((primitiveDirichletCharacterSet q).filter fun χ =>
+              B ≤
+                (η ^ (r + 1) / (r.factorial : ℝ)) *
+                  ‖primeLogPowerPolynomial s r (1 + η) (fun p => χ (p : ZMod q)) t‖).card :
+          ℝ) *
+        B ^ 2 ≤
+      (η ^ (r + 1) / (r.factorial : ℝ)) ^ 2 *
+        primitiveCharacterPolynomialMeanSquare q hq s
+          (fun p =>
+            (((Real.log p : ℝ) ^ (r + 1) : ℂ) *
+                Complex.exp (-((Real.log p : ℝ) * (1 + η) : ℝ) : ℂ)) *
+              Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) := by
+  let A : ℝ := η ^ (r + 1) / (r.factorial : ℝ)
+  let P : DirichletCharacter ℂ q → ℂ := fun χ =>
+    primeLogPowerPolynomial s r (1 + η) (fun p => χ (p : ZMod q)) t
+  have hcount := card_filter_scaled_norm_sq (primitiveDirichletCharacterSet q) P A B hB
+  change
+    (((primitiveDirichletCharacterSet q).filter fun χ => B ≤ A * ‖P χ‖).card : ℝ) * B ^ 2 ≤
+      A ^ 2 * ∑ χ ∈ primitiveDirichletCharacterSet q, ‖P χ‖ ^ 2 at hcount
+  have hmean :
+    (∑ χ ∈ primitiveDirichletCharacterSet q, ‖P χ‖ ^ 2) =
+      primitiveCharacterPolynomialMeanSquare q hq s
+        (fun p =>
+          (((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * (1 + η) : ℝ) : ℂ)) *
+            Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) := by
+    simp only [P, primeLogPowerPolynomial, primitiveCharacterPolynomialMeanSquare,
+      Complex.normSq_eq_norm_sq]
+  simpa only [A, hmean] using hcount
+
+/--
+Inputs: a finite prime support, an equally spaced height mesh, and the hypotheses of the normalized
+prime-log hybrid bound.
+Claim: the scaled count of primitive characters exceeding a fixed polynomial threshold on that mesh
+is bounded by the explicit hybrid coefficient-energy estimate.
+Proof: apply `poly_count_sq_mean` at every conductor and mesh point, sum the bounds, then apply the
+normalized prime-log grid hybrid theorem.
+Role: connects the zero-window large-value events to the hybrid mean-square estimate.
+-/
+theorem poly_grid_hybrid (R : ℕ) (hR : 2 ≤ R) (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (r : ℕ)
+    (s : Finset ℕ) (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) (X : ℕ)
+    (hupper : ∀ p ∈ s, p ≤ X) (a h : ℝ) (n : ℕ) (hh : 0 < h) (ha : -T ≤ a)
+    (hb : a + (n : ℝ) * h ≤ T) (η c₁ : ℝ) (K : ℕ) (hη : 0 < η) (hc₁ : 0 ≤ c₁) (hhη : h ≤ η / 8)
+    (hX : 1 ≤ X) (hlogX : η * Real.log X ≤ c₁ * K) (N : ℕ) (hN : 1 ≤ N) (hηsmall : 2 * η ≤ 1)
+    (hmoment : ((2 * r + 1 : ℕ) : ℝ) ≤ (1 + 2 * η) * Real.log N) (habove : ∀ p ∈ s, N < p) (B : ℝ)
+    (hB : 0 ≤ B) :
+    B ^ 2 * (h / 2) *
+        (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
+          ∑ k ∈ Finset.range n,
+            (((primitiveDirichletCharacterSet q.val).filter fun χ =>
+                  B ≤
+                    (η ^ (r + 1) / (r.factorial : ℝ)) *
+                      ‖primeLogPowerPolynomial s r (1 + η) (fun p => χ (p : ZMod q.val))
+                          (a + ((k : ℝ) + 1 / 2) * h)‖).card :
+              ℝ)) ≤
+      (4096 : ℝ) / Real.log R * (1 + (c₁ * K / 8) ^ 2 / 2) *
+        (((r + 1 : ℝ) * (2 : ℝ) ^ (2 * r + 1)) *
+          ((3 / 2 : ℝ) * (Real.log 4 + 4) * Real.exp (-(η * Real.log N)))) := by
+  let qset := (Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R
+  let A : ℝ := η ^ (r + 1) / (r.factorial : ℝ)
+  let E :=
+    ∑ q ∈ qset,
+      ∑ k ∈ Finset.range n,
+        primitiveCharacterPolynomialMeanSquare q.val
+          (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+          (fun p =>
+            (((Real.log p : ℝ) ^ (r + 1) : ℂ) *
+                Complex.exp (-((Real.log p : ℝ) * (1 + η) : ℝ) : ℂ)) *
+              Complex.exp ((-((a + ((k : ℝ) + 1 / 2) * h) * Real.log p : ℝ) : ℝ) * Complex.I))
+  let C :=
+    ∑ q ∈ qset,
+      ∑ k ∈ Finset.range n,
+        (((primitiveDirichletCharacterSet q.val).filter fun χ =>
+              B ≤
+                A *
+                  ‖primeLogPowerPolynomial s r (1 + η) (fun p => χ (p : ZMod q.val))
+                      (a + ((k : ℝ) + 1 / 2) * h)‖).card :
+          ℝ)
+  have hcount : B ^ 2 * C ≤ A ^ 2 * E := by
+    calc
+      B ^ 2 * C =
+          ∑ q ∈ qset,
+            ∑ k ∈ Finset.range n,
+              B ^ 2 *
+                (((primitiveDirichletCharacterSet q.val).filter fun χ =>
+                      B ≤
+                        A *
+                          ‖primeLogPowerPolynomial s r (1 + η) (fun p => χ (p : ZMod q.val))
+                              (a + ((k : ℝ) + 1 / 2) * h)‖).card :
+                  ℝ) :=
+        by simp only [C, Finset.mul_sum]
+      _ ≤
+          ∑ q ∈ qset,
+            ∑ k ∈ Finset.range n,
+              A ^ 2 *
+                primitiveCharacterPolynomialMeanSquare q.val
+                  (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+                  (fun p =>
+                    (((Real.log p : ℝ) ^ (r + 1) : ℂ) *
+                        Complex.exp (-((Real.log p : ℝ) * (1 + η) : ℝ) : ℂ)) *
+                      Complex.exp
+                        ((-((a + ((k : ℝ) + 1 / 2) * h) * Real.log p : ℝ) : ℝ) * Complex.I)) :=
+        by
+        apply Finset.sum_le_sum
+        intro q hq
+        apply Finset.sum_le_sum
+        intro k hk
+        have hpoint :=
+          poly_count_sq_mean (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s r η
+            (a + ((k : ℝ) + 1 / 2) * h) B hB
+        change
+          ((primitiveDirichletCharacterSet q.val).filter fun χ =>
+                  B ≤
+                    A *
+                      ‖primeLogPowerPolynomial s r (1 + η) (fun p => χ (p : ZMod q.val))
+                          (a + ((k : ℝ) + 1 / 2) * h)‖).card *
+              B ^ 2 ≤
+            A ^ 2 *
+              primitiveCharacterPolynomialMeanSquare q.val
+                (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+                (fun p =>
+                  (((Real.log p : ℝ) ^ (r + 1) : ℂ) *
+                      Complex.exp (-((Real.log p : ℝ) * (1 + η) : ℝ) : ℂ)) *
+                    Complex.exp
+                      ((-((a + ((k : ℝ) + 1 / 2) * h) * Real.log p : ℝ) : ℝ) * Complex.I)) at hpoint
+        simpa only [A, mul_comm] using hpoint
+      _ = A ^ 2 * E := by simp only [E, Finset.mul_sum]
+  have hgrid :=
+    primitiveCharacterPrimeLogPower_grid_hybrid_normalized_detector_order_bound R hR T hT hTupper r
+      s hprime hlower X hupper a h n hh ha hb η c₁ K hη hc₁ hhη hX hlogX N hN hηsmall hmoment habove
+  calc
+    B ^ 2 * (h / 2) * C = (h / 2) * (B ^ 2 * C) := by ring
+    _ ≤ (h / 2) * (A ^ 2 * E) := mul_le_mul_of_nonneg_left hcount (by positivity)
+    _ = A ^ 2 * (h / 2) * E := by ring
+    _ ≤ _ := by simpa only [A, E, qset] using hgrid
+
+/--
+Inputs: a physical window, a positive normalization, and a uniform normalized signal lower bound
+for a finite prime-log polynomial throughout that window.
+Claim: the squared polynomial norm has an explicit lower bound on the corresponding height
+integral.
+Proof: translate the window to a symmetric interval, use polynomial continuity for integrability,
+and apply `interval_sq_lower`.
+Role: converts the zero-wise prime detector into the continuous energy input for the hybrid sieve.
+-/
+theorem poly_window_integral (δ B A : ℝ) (hδ : 0 ≤ δ) (hB : 0 ≤ B) (hA : 0 < A) (s : Finset ℕ)
+    (r : ℕ) (σ t : ℝ) (χ : ℕ → ℂ)
+    (hwindow : ∀ u, |u - t| ≤ δ → B ≤ A * ‖primeLogPowerPolynomial s r σ χ u‖) :
+    (2 * δ) * (B / A) ^ 2 ≤ ∫ u in (t - δ)..(t + δ), ‖primeLogPowerPolynomial s r σ χ u‖ ^ 2 := by
+  let P := primeLogPowerPolynomial s r σ χ
+  have hcont : Continuous P := primePoly_cont s r σ χ
+  have hI : IntervalIntegrable (fun x => ‖P (t + x)‖ ^ 2) MeasureTheory.volume (-δ) δ :=
+    ((hcont.norm.pow 2).comp (continuous_const.add continuous_id)).intervalIntegrable _ _
+  have hpoint : ∀ x ∈ Set.Icc (-δ) δ, B / A ≤ ‖P (t + x)‖ := by
+    intro x hx
+    have hxabs : |x| ≤ δ := abs_le.mpr ⟨by linarith only [hx.1], by linarith only [hx.2]⟩
+    have hdist : |(t + x) - t| ≤ δ := by
+      calc
+        |(t + x) - t| = |x| := by
+          congr 1; ring
+        _ ≤ δ := hxabs
+    apply (div_le_iff₀ hA).2
+    simpa only [P, mul_comm] using hwindow (t + x) hdist
+  have hlower := interval_sq_lower δ (B / A) hδ (div_nonneg hB hA.le) (fun x => P (t + x)) hpoint hI
+  have hlower' : (2 * δ) * (B / A) ^ 2 ≤ ∫ x in (-δ)..δ, (fun u => ‖P u‖ ^ 2) (t + x) := by
+    simpa only [P] using hlower
+  have hcomm :
+    ∫ x in (-δ)..δ, (fun u => ‖P u‖ ^ 2) (t + x) =
+      ∫ x in (-δ)..δ, (fun u => ‖P u‖ ^ 2) (x + t) := by
+    congr 1
+    funext x
+    rw [add_comm]
+  calc
+    (2 * δ) * (B / A) ^ 2 ≤ ∫ x in (-δ)..δ, (fun u => ‖P u‖ ^ 2) (t + x) := hlower'
+    _ = ∫ x in (-δ)..δ, (fun u => ‖P u‖ ^ 2) (x + t) := hcomm
+    _ = ∫ u in (-δ) + t..δ + t, ‖P u‖ ^ 2 :=
+      intervalIntegral.integral_comp_add_right (f := fun u => ‖P u‖ ^ 2) t
+    _ = ∫ u in (t - δ)..(t + δ), ‖P u‖ ^ 2 := by congr 1 <;> ring
+    _ = ∫ u in (t - δ)..(t + δ), ‖primeLogPowerPolynomial s r σ χ u‖ ^ 2 := by rfl
+
 /-- Given a nonnegative normalization and signal, an Euler-polynomial error at most
 one eighth of the signal preserves at least half the signal in the polynomial norm.
 Apply the triangle inequality and remove the unit sign factor.
@@ -2346,10 +2583,10 @@ Proof: apply the positive ordinary-derivative detector and choose the mesh so th
 variation allowance is smaller than half its lower bound.
 Role: gives each zero occurrence a full window of large derivative values for incidence counting.
 -/
-theorem exists_character_derivative_large_grid_window_of_completed_zero {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (Krequested : ℕ) (hKrequested : 2 ≤ Krequested)
-    {ρ : ℂ} (hρre : |ρ.re - 1| ≤ η) (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
+theorem zero_grid_window {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1)
+    (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    (Krequested : ℕ) (hKrequested : 2 ≤ Krequested) {ρ : ℂ} (hρre : |ρ.re - 1| ≤ η)
+    (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ (((1 + η : ℝ) : ℂ) + Complex.I * (ρ.im : ℂ)) ≠ 0)
     (hscale : η * Real.log ((q : ℝ) * (|ρ.im| + 3)) ≤ 3) :
     ∃ massConstA massConstB : ℝ,
@@ -2403,8 +2640,7 @@ theorem exists_character_derivative_large_grid_window_of_completed_zero {q : ℕ
     simpa only [D, B, mul_comm] using hnormalized
   let Mmin : ℕ := Nat.ceil (8 * (K + 1 : ℝ) / η)
   obtain ⟨M, hMmin, hM, hgrid⟩ :=
-    exists_mesh_for_vonMangoldt_log_weight_window_at_least χ hχ (by linarith only [hη]) n K Mmin hB
-      hlarge
+    mesh_deriv_window_ge χ hχ (by linarith only [hη]) n K Mmin hB hlarge
   have hwidth : ((K + 1 : ℝ) / M) ≤ η / 8 := by
     apply (div_le_iff₀ (by exact_mod_cast hM : (0 : ℝ) < (M : ℝ))).2
     have hceil : 8 * (K + 1 : ℝ) / η ≤ (M : ℝ) := by
@@ -2491,10 +2727,10 @@ window, with the explicit half-strength threshold.
 Proof: apply the all-points window detector and unfold the primitive-character filter.
 Role: exposes the window detector in the finite-set form used by incidence and family counting.
 -/
-theorem exists_primitiveCharacterDerivativeLargeSet_mem_of_completed_zero_window {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (Krequested : ℕ) (hKrequested : 2 ≤ Krequested)
-    {ρ : ℂ} (hρre : |ρ.re - 1| ≤ η) (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
+theorem zero_grid_mem {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1)
+    (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    (Krequested : ℕ) (hKrequested : 2 ≤ Krequested) {ρ : ℂ} (hρre : |ρ.re - 1| ≤ η)
+    (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ (((1 + η : ℝ) : ℂ) + Complex.I * (ρ.im : ℂ)) ≠ 0)
     (hscale : η * Real.log ((q : ℝ) * (|ρ.im| + 3)) ≤ 3) :
     ∃ massConstA massConstB : ℝ,
@@ -2526,8 +2762,7 @@ theorem exists_primitiveCharacterDerivativeLargeSet_mem_of_completed_zero_window
   obtain
     ⟨massConstA, massConstB, hmassConstA, hmassConstB, Kmin, C, K, m, n, M, hKreq, hKupper,
       hKupperFixed, hKmin, hCeq, hK, hn, hnm, hmK, hmCap, hM, hwidth, hlarge⟩ :=
-    exists_character_derivative_large_grid_window_of_completed_zero hq hχ hp hinv hη hηsmall
-      Krequested hKrequested hρre hzero hc hscale
+    zero_grid_window hq hχ hp hinv hη hηsmall Krequested hKrequested hρre hzero hc hscale
   have hq1 : 1 < q := by omega
   have hχmem : χ ∈ primitiveDirichletCharacterSet q := by
     simp only [primitiveDirichletCharacterSet, Finset.mem_filter, Finset.mem_univ, true_and]

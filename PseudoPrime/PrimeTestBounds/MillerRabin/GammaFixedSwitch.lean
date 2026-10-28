@@ -7,35 +7,36 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaRefinedEnvelope
+
 /-! # Exact Gamma crossing -/
+
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- The radius corresponding exactly to witness bound 35000 under the scale 99/40.
 This positive square root defines the algebraic Gamma switching point. -/
-noncomputable def gammaFixedRadius : ℝ := Real.sqrt ((40 / 99 : ℝ) * 35000)
+noncomputable def gammaFixedRadius : ℝ :=
+  Real.sqrt ((40 / 99 : ℝ) * 35000)
 
 /-- The unique logarithmic scale where the refined Gamma gap vanishes at the fixed
 35000 radius. Solve the affine gap equation in L; the certified location is (208,209).
 The interval envelope uses this exact real constant rather than a rounded decimal. -/
 noncomputable def gammaFixedSwitch : ℝ :=
-  ((87069 / 98800 : ℝ) * gammaFixedRadius -
-    (143420077 / 11856000 - 2 * (413 / 100)) - (190 / 3) / gammaFixedRadius) /
+  ((87069 / 98800 : ℝ) * gammaFixedRadius - (143420077 / 11856000 - 2 * (413 / 100)) -
+      (190 / 3) / gammaFixedRadius) /
     ((11783423 / 25000000 : ℝ) + (7 / 6) / gammaFixedRadius)
 
 /-- The fixed radius lies strictly between 1189/10 and 119.
 Square the nonnegative endpoints to reduce both comparisons to rational arithmetic. -/
-theorem gammaFixedRadius_bounds : (1189 / 10 : ℝ) < gammaFixedRadius ∧
-    gammaFixedRadius < 119 := by
+theorem gammaFixedRadius_bounds : (1189 / 10 : ℝ) < gammaFixedRadius ∧ gammaFixedRadius < 119 := by
   constructor
   · exact (Real.lt_sqrt (by norm_num only)).mpr (by norm_num only)
   · exact (Real.sqrt_lt (by norm_num only) (by norm_num only)).mpr (by norm_num only)
 
 /-- The fixed radius is positive by its rational lower bound.
 This permits division in the switching equation. -/
-theorem gammaFixedRadius_pos : 0 < gammaFixedRadius := by
-  linarith only [gammaFixedRadius_bounds.1]
+theorem gammaFixedRadius_pos : 0 < gammaFixedRadius := by linarith only [gammaFixedRadius_bounds.1]
 
 /-- For L>=120 and positive radii r<s, the prefix gap strictly increases.
 The linear term increases strictly and the reciprocal penalty decreases.
@@ -65,10 +66,12 @@ give opposite signs at the two logarithmic endpoints. -/
 theorem gammaFixedSwitch_bounds : (208 : ℝ) < gammaFixedSwitch ∧ gammaFixedSwitch < 209 := by
   have hD : 0 < (11783423 / 25000000 : ℝ) + (7 / 6) / gammaFixedRadius :=
     add_pos (by norm_num only) (div_pos (by norm_num only) gammaFixedRadius_pos)
-  have hlo := prefixGap_strictMono (C := (413 / 100 : ℝ))
-    (by norm_num only : (120 : ℝ) ≤ 208) (by norm_num only) gammaFixedRadius_bounds.1
-  have hhi := prefixGap_strictMono (C := (413 / 100 : ℝ))
-    (by norm_num only : (120 : ℝ) ≤ 209) gammaFixedRadius_pos gammaFixedRadius_bounds.2
+  have hlo :=
+    prefixGap_strictMono (C := (413 / 100 : ℝ)) (by norm_num only : (120 : ℝ) ≤ 208)
+      (by norm_num only) gammaFixedRadius_bounds.1
+  have hhi :=
+    prefixGap_strictMono (C := (413 / 100 : ℝ)) (by norm_num only : (120 : ℝ) ≤ 209)
+      gammaFixedRadius_pos gammaFixedRadius_bounds.2
   have h0 : 0 < gammaClippedPrefixGap 208 (413 / 100) (1189 / 10) := by
     norm_num only [gammaClippedPrefixGap]
   have h1 : gammaClippedPrefixGap 209 (413 / 100) 119 < 0 := by
@@ -85,10 +88,12 @@ theorem gammaRefined_le_fixed {L : ℝ} (hL : 120 ≤ L) (hS : L ≤ gammaFixedS
     gamma1000RefinedBound L ≤ 35000 := by
   have hgap : 0 ≤ gammaClippedPrefixGap L (413 / 100) gammaFixedRadius := by
     rw [gammaFixedSwitch_gap]
-    exact mul_nonneg (add_nonneg (by norm_num only)
-      (div_nonneg (by norm_num only) gammaFixedRadius_pos.le)) (sub_nonneg.mpr hS)
-  have hroot := gammaClippedPrefixRoot_le_of_gap_nonneg hL (by norm_num only)
-    gammaFixedRadius_pos hgap
+    exact
+      mul_nonneg
+        (add_nonneg (by norm_num only) (div_nonneg (by norm_num only) gammaFixedRadius_pos.le))
+        (sub_nonneg.mpr hS)
+  have hroot :=
+    gammaClippedPrefixRoot_le_of_gap_nonneg hL (by norm_num only) gammaFixedRadius_pos hgap
   have hfloor : Real.sqrt ((40 / 99 : ℝ) * 1000) ≤ gammaFixedRadius :=
     Real.sqrt_le_sqrt (by norm_num only)
   have hradius : gammaClippedPrefixRadius L 1000 (413 / 100) ≤ gammaFixedRadius :=
@@ -96,8 +101,7 @@ theorem gammaRefined_le_fixed {L : ℝ} (hL : 120 ≤ L) (hS : L ≤ gammaFixedS
   have hpos : 0 ≤ gammaClippedPrefixRadius L 1000 (413 / 100) :=
     (Real.sqrt_nonneg _).trans (le_max_left _ _)
   have hsq := (sq_le_sq₀ hpos gammaFixedRadius_pos.le).mpr hradius
-  have hR : gammaFixedRadius ^ 2 = (40 / 99 : ℝ) * 35000 :=
-    Real.sq_sqrt (by norm_num only)
+  have hR : gammaFixedRadius ^ 2 = (40 / 99 : ℝ) * 35000 := Real.sq_sqrt (by norm_num only)
   change (99 / 40 : ℝ) * gammaClippedPrefixRadius L 1000 (413 / 100) ^ 2 ≤ 35000
   linarith only [hsq, hR]
 
@@ -108,22 +112,26 @@ theorem fixed_le_gammaRefined {L : ℝ} (hL : 120 ≤ L) (hS : gammaFixedSwitch 
     (35000 : ℝ) ≤ gamma1000RefinedBound L := by
   have hgap : gammaClippedPrefixGap L (413 / 100) gammaFixedRadius ≤ 0 := by
     rw [gammaFixedSwitch_gap]
-    exact mul_nonpos_of_nonneg_of_nonpos (add_nonneg (by norm_num only)
-      (div_nonneg (by norm_num only) gammaFixedRadius_pos.le)) (sub_nonpos.mpr hS)
+    exact
+      mul_nonpos_of_nonneg_of_nonpos
+        (add_nonneg (by norm_num only) (div_nonneg (by norm_num only) gammaFixedRadius_pos.le))
+        (sub_nonpos.mpr hS)
   have hroot : gammaFixedRadius ≤ gammaClippedPrefixRoot L (413 / 100) := by
     by_contra h
-    have hz := gammaClippedPrefixGap_root_eq_zero hL (by norm_num only :
-      0 ≤ 143420077 / 11856000 - 2 * (413 / 100 : ℝ))
-    have hm := prefixGap_strictMono (C := (413 / 100 : ℝ)) hL
-      (gammaClippedPrefixRoot_pos hL (by norm_num only :
-        0 ≤ 143420077 / 11856000 - 2 * (413 / 100 : ℝ))) (lt_of_not_ge h)
+    have hz :=
+      gammaClippedPrefixGap_root_eq_zero hL
+        (by norm_num only : 0 ≤ 143420077 / 11856000 - 2 * (413 / 100 : ℝ))
+    have hm :=
+      prefixGap_strictMono (C := (413 / 100 : ℝ)) hL
+        (gammaClippedPrefixRoot_pos hL
+          (by norm_num only : 0 ≤ 143420077 / 11856000 - 2 * (413 / 100 : ℝ)))
+        (lt_of_not_ge h)
     linarith only [hm, hz, hgap]
   have hradius : gammaFixedRadius ≤ gammaClippedPrefixRadius L 1000 (413 / 100) :=
     hroot.trans (le_max_right _ _)
-  have hsq := (sq_le_sq₀ gammaFixedRadius_pos.le
-    (gammaFixedRadius_pos.le.trans hradius)).mpr hradius
-  have hR : gammaFixedRadius ^ 2 = (40 / 99 : ℝ) * 35000 :=
-    Real.sq_sqrt (by norm_num only)
+  have hsq :=
+    (sq_le_sq₀ gammaFixedRadius_pos.le (gammaFixedRadius_pos.le.trans hradius)).mpr hradius
+  have hR : gammaFixedRadius ^ 2 = (40 / 99 : ℝ) * 35000 := Real.sq_sqrt (by norm_num only)
   change (35000 : ℝ) ≤ (99 / 40 : ℝ) * gammaClippedPrefixRadius L 1000 (413 / 100) ^ 2
   linarith only [hsq, hR]
 
@@ -131,8 +139,7 @@ theorem fixed_le_gammaRefined {L : ℝ} (hL : 120 ≤ L) (hS : gammaFixedSwitch 
 The certified lower scale bound makes both one-sided comparisons applicable.
 Antisymmetry proves equality without a numerical crossing assumption. -/
 theorem gammaRefined_at_switch : gamma1000RefinedBound gammaFixedSwitch = 35000 := by
-  have hL : (120 : ℝ) ≤ gammaFixedSwitch := by
-    linarith only [gammaFixedSwitch_bounds.1]
+  have hL : (120 : ℝ) ≤ gammaFixedSwitch := by linarith only [gammaFixedSwitch_bounds.1]
   exact le_antisymm (gammaRefined_le_fixed hL le_rfl) (fixed_le_gammaRefined hL le_rfl)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

@@ -2255,8 +2255,8 @@ apply the vertical variation estimate to each point in the window.
 Role: turns one positive derivative detector into the block of grid values needed for window
 incidence counting.
 -/
-theorem exists_mesh_for_vonMangoldt_log_weight_window {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {σ t : ℝ} (hσ : 1 < σ) (n K : ℕ) {B : ℝ} (hB : 0 < B)
+theorem mesh_deriv_window {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {σ t : ℝ}
+    (hσ : 1 < σ) (n K : ℕ) {B : ℝ} (hB : 0 < B)
     (hlarge :
       B ≤
         ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ))
@@ -2309,9 +2309,8 @@ Proof: enlarge the mesh supplied by the variation estimate; the inverse mesh and
 allowance can only decrease.
 Role: combines the grid lower bound with a later quantitative mesh-width requirement.
 -/
-theorem exists_mesh_for_vonMangoldt_log_weight_window_at_least {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {σ t : ℝ} (hσ : 1 < σ) (n K Mmin : ℕ) {B : ℝ}
-    (hB : 0 < B)
+theorem mesh_deriv_window_ge {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {σ t : ℝ}
+    (hσ : 1 < σ) (n K Mmin : ℕ) {B : ℝ} (hB : 0 < B)
     (hlarge :
       B ≤
         ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ))
@@ -2569,8 +2568,8 @@ Proof: choose the radius so the von Mangoldt variation allowance is at most half
 then apply the nearby-height derivative estimate.
 Role: turns a point detector into an interval detector for zero-height incidence arguments.
 -/
-theorem exists_real_height_window_large_of_derivative_lower_bound {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {σ t : ℝ} (hσ : 1 < σ) (n : ℕ) {B : ℝ} (hB : 0 < B)
+theorem real_deriv_window {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1) {σ t : ℝ}
+    (hσ : 1 < σ) (n : ℕ) {B : ℝ} (hB : 0 < B)
     (hlarge :
       B ≤
         ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ))

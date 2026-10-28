@@ -22,7 +22,8 @@ theorem gaussianMR_normalized_main_lower_of_mass {m t s I E h M Ecap : ℝ} (hm 
     (ht : t = m - 1) (hs : 0 < s) (hh : h = 1 / (3 * s)) (hh1 : h ≤ 1 / 2) (hI : M ≤ I)
     (hE : E ≤ Ecap) :
     ((m * M - Ecap) / t - (m * M) / (3 * t * s)) ≤ (m / t) * (1 - h) * I - E / t := by
-  have hh' : h = (1 / 3 : ℝ) / s := by rw [hh]; ring
+  have hh' : h = (1 / 3 : ℝ) / s := by
+    rw [hh]; ring
   have H := gaussianMR_main_lower_width hm ht hs hh' hh1 hI hE
   convert H using 1
   ring
@@ -45,10 +46,11 @@ theorem gaussianMR_relative_comparison_to_scalar {m t s r A L I E C h M Ecap con
             A →
         False) :
     False := by
-  have hh' : h = (1 / 3 : ℝ) / s := by rw [hh]; ring
-  apply gaussianMR_compare_width (k := 1 / 3) (A := A) (beta := beta)
-    (by norm_num only) hm4 ht hs hr hh' hh1 hI hE hC
-    hconductor hD
+  have hh' : h = (1 / 3 : ℝ) / s := by
+    rw [hh]; ring
+  apply
+    gaussianMR_compare_width (k := 1 / 3) (A := A) (beta := beta) (by norm_num only) hm4 ht hs hr
+      hh' hh1 hI hE hC hconductor hD
   · convert hbeta using 1
     ring
   · exact hcmp

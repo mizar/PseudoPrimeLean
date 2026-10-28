@@ -43,16 +43,16 @@ theorem endpoint61_gap_eq (z : ℝ) :
 Use the logarithmic lower bound in the quadratic anchor, then antitonicity in L.
 This is the analytic input for the fixed prime-base bound 61. -/
 theorem endpoint61_gap_pos {L : ℝ} (hL : L ≤ 286 / 25) :
-    0 < fullEndpointEvenExactComparisonGap L (2096 / 1831) (49 / 6)
-      (Real.log (49 / 6 : ℝ)) := by
+    0 < fullEndpointEvenExactComparisonGap L (2096 / 1831) (49 / 6) (Real.log (49 / 6 : ℝ)) := by
   have hz := endpoint61_log_lower.le
   have hz0 : 0 ≤ Real.log (49 / 6 : ℝ) := by linarith only [hz]
   have hs := (sq_le_sq₀ (by norm_num only : (0 : ℝ) ≤ 10499 / 5000) hz0).mpr hz
-  have hg : 0 < fullEndpointEvenExactComparisonGap (286 / 25) (2096 / 1831) (49 / 6)
-      (Real.log (49 / 6 : ℝ)) := by
+  have hg :
+    0 <
+      fullEndpointEvenExactComparisonGap (286 / 25) (2096 / 1831) (49 / 6)
+        (Real.log (49 / 6 : ℝ)) := by
     rw [endpoint61_gap_eq]
     nlinarith only [hz, hs]
-  exact hg.trans_le (fullEndpointEvenExactComparisonGap_antitone_level
-    (by norm_num only) hz0 hL)
+  exact hg.trans_le (fullEndpointEvenExactComparisonGap_antitone_level (by norm_num only) hz0 hL)
 
 end PseudoPrime.LLS.PaperStatements

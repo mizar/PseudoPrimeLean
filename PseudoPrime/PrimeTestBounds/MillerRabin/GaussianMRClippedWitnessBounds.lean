@@ -10,7 +10,9 @@ public import PseudoPrime.Analysis.GaussianMRClippedNumerics
 public import PseudoPrime.LLS.GaussianClippedPrefix
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR35000WitnessBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointEvenPolynomial
+
 /-! # All-input Gaussian witness bounds with cutoff floors -/
+
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
@@ -18,9 +20,9 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- For either clipped profile at log n>=63, an index-four subgroup with conductor
 log-sum<=2 log n cannot satisfy the signed Gaussian comparison. Use the common
 width lemma, clipped-root inequality and strict triple error/main margins. -/
-theorem gaussianClipped_index_four (f : Bool) {n : ℕ} [NeZero n]
-    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
-    (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 63 ≤ Real.log n) :
+theorem gaussianClipped_index_four (f : Bool) {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
+    (hi : H.index = 4) (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n)
+    (hL : 63 ≤ Real.log n) :
     let L := Real.log n
     let r := Analysis.gaussianFloorRadius f L
     let s := Analysis.gaussianFloorRoot f L
@@ -35,8 +37,8 @@ theorem gaussianClipped_index_four (f : Bool) {n : ℕ} [NeZero n]
           (H.index : ℝ) *
             (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / Real.sqrt x) * Real.exp (1 / 16 : ℝ)) +
           13 +
-          ((H.index - 1 : ℕ) : ℝ) * LLS.PaperStatements.gaussianPrefixError
-            (Analysis.gaussianFloorPrefix f) n x) := by
+          ((H.index - 1 : ℕ) : ℝ) *
+            LLS.PaperStatements.gaussianPrefixError (Analysis.gaussianFloorPrefix f) n x) := by
   intro L r s h x hcmp
   have hindex : (H.index : ℝ) = 4 := by exact_mod_cast hi
   let I : ℝ :=
@@ -92,27 +94,30 @@ theorem gaussianClipped_index_four (f : Bool) {n : ℕ} [NeZero n]
       (2 / 3 : ℝ) * Real.log n) (I := I) (E := E) (C :=
       LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := Analysis.gaussianMRRefinedMass)
       (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor :=
-        Analysis.gaussianMRRefinedConductor) (D :=
+      Analysis.gaussianMRRefinedConductor) (D :=
       (4 * Analysis.gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
-      (4 / 3 : ℝ) * (Analysis.gaussianMRRefinedMass * Analysis.gaussianMRRefinedWidth + 1 /
-        (10 * Analysis.gaussianMRRefinedWidth)))
+      (4 / 3 : ℝ) *
+        (Analysis.gaussianMRRefinedMass * Analysis.gaussianMRRefinedWidth +
+          1 / (10 * Analysis.gaussianMRRefinedWidth)))
       (by norm_num only [Analysis.gaussianMRRefinedWidth]) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
       (by norm_num only [Analysis.gaussianMRRefinedConductor] :
-        (0 : ℝ) ≤ Analysis.gaussianMRRefinedConductor) le_rfl le_rfl hcmp'
+        (0 : ℝ) ≤ Analysis.gaussianMRRefinedConductor)
+      le_rfl le_rfl hcmp'
       (by
         intro hbudget
         have hnorm :
           ((4 * Analysis.gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) * r ≤
             (2 / 3 : ℝ) * Analysis.gaussianMRRefinedConductor * Real.log n +
-              (4 / 3 : ℝ) * (Analysis.gaussianMRRefinedMass *
-                Analysis.gaussianMRRefinedWidth + 1 / (10 * Analysis.gaussianMRRefinedWidth)) * s +
+              (4 / 3 : ℝ) *
+                (Analysis.gaussianMRRefinedMass * Analysis.gaussianMRRefinedWidth +
+                  1 / (10 * Analysis.gaussianMRRefinedWidth)) *
+                s +
               11 := by
           dsimp only [Analysis.gaussianMRRefinedMass,
             Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
           nlinarith only [hbudget, herror]
         exact Analysis.gaussianFloor_triple_absurd (f := f) hL hnorm)
-
 
 /-- Under GRH at log n>=63, an index-four pass-containing subgroup with conductor
 log-sum<=2 log n yields an actual rejecting prime within the clipped cutoff.
@@ -159,35 +164,34 @@ theorem gaussianClipped_witness_four (f : Bool) {n : ℕ} [NeZero n] (hnOdd : Od
   have hrootSq : (Analysis.gaussianFloorRoot f (Real.log n)) ^ 2 = r := by
     dsimp only [r, Analysis.gaussianFloorRadius]
   have hrbound : (170 : ℝ) ≤ r := Analysis.gaussianFloor_radius_large f (Real.log n)
-  have hspos : 0 < Analysis.gaussianFloorRoot f (Real.log n) :=
-    Analysis.gaussianFloor_root_pos f _
+  have hspos : 0 < Analysis.gaussianFloorRoot f (Real.log n) := Analysis.gaussianFloor_root_pos f _
   have hsbound : (13 : ℝ) ≤ Analysis.gaussianFloorRoot f (Real.log n) :=
     Analysis.gaussianFloor_root_thirteen f (Real.log n)
   have hwidth : 0 < Analysis.gaussianMRRefinedWidth / Analysis.gaussianFloorRoot f (Real.log n) :=
     div_pos (by norm_num only [Analysis.gaussianMRRefinedWidth]) hspos
-  have hwidth1 : Analysis.gaussianMRRefinedWidth /
-    Analysis.gaussianFloorRoot f (Real.log n) ≤ 1 / 2 := by
+  have hwidth1 :
+    Analysis.gaussianMRRefinedWidth / Analysis.gaussianFloorRoot f (Real.log n) ≤ 1 / 2 := by
     rw [div_le_iff₀ hspos]
     norm_num only [Analysis.gaussianMRRefinedWidth]
     linarith only [hsbound]
   have hx : 4 ≤ x := by
     dsimp only [x]
     nlinarith only [hrbound]
-  have hprefix : Analysis.gaussianFloorPrefix f ≤
+  have hprefix :
+    Analysis.gaussianFloorPrefix f ≤
       ∑ n ∈ Finset.Ioc 0 (Analysis.gaussianFloorCutoff f),
         Analysis.gaussianResolventMangoldtWeight n := by
     cases f
-    · simpa only [Analysis.gaussianFloorPrefix, Analysis.gaussianFloorCutoff,
-        Bool.false_eq_true, ite_false, ite_true, Nat.floor_ofNat] using
+    · simpa only [Analysis.gaussianFloorPrefix, Analysis.gaussianFloorCutoff, Bool.false_eq_true,
+        ite_false, ite_true, Nat.floor_ofNat] using
         LLS.gaussian_prefix35000_sharp hGRH.riemann (le_refl (35000 : ℝ))
-    · simpa only [Analysis.gaussianFloorPrefix, Analysis.gaussianFloorCutoff,
-        Bool.false_eq_true, ite_false, ite_true, Nat.floor_ofNat] using
+    · simpa only [Analysis.gaussianFloorPrefix, Analysis.gaussianFloorCutoff, Bool.false_eq_true,
+        ite_false, ite_true, Nat.floor_ofNat] using
         LLS.gaussian_prefix50000_lower hGRH.riemann (le_refl (50000 : ℝ))
   have hcmp :=
-    LLS.PaperStatements.gaussian_relative_prefix_le hprefix hnlarge H hGRH
-      hwidth hwidth1 hx (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
+    LLS.PaperStatements.gaussian_relative_prefix_le hprefix hnlarge H hGRH hwidth hwidth1 hx
+      (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
   exact gaussianClipped_index_four f H hi hC hL hcmp
-
 
 /-- Under GRH at log n>=63, a pass-containing subgroup of index>=10^9 has a
 rejecting prime within either clipped cutoff. Reuse the signed Gaussian prefix
@@ -262,19 +266,20 @@ theorem gaussianClipped_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : O
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
   have hwidth : 0 < h := div_pos (by norm_num only [Analysis.gaussianMRRefinedWidth]) hspos
-  have hprefix : Analysis.gaussianFloorPrefix f ≤
+  have hprefix :
+    Analysis.gaussianFloorPrefix f ≤
       ∑ n ∈ Finset.Ioc 0 (Analysis.gaussianFloorCutoff f),
         Analysis.gaussianResolventMangoldtWeight n := by
     cases f
-    · simpa only [Analysis.gaussianFloorPrefix, Analysis.gaussianFloorCutoff,
-        Bool.false_eq_true, ite_false, ite_true, Nat.floor_ofNat] using
+    · simpa only [Analysis.gaussianFloorPrefix, Analysis.gaussianFloorCutoff, Bool.false_eq_true,
+        ite_false, ite_true, Nat.floor_ofNat] using
         LLS.gaussian_prefix35000_sharp hGRH.riemann (le_refl (35000 : ℝ))
-    · simpa only [Analysis.gaussianFloorPrefix, Analysis.gaussianFloorCutoff,
-        Bool.false_eq_true, ite_false, ite_true, Nat.floor_ofNat] using
+    · simpa only [Analysis.gaussianFloorPrefix, Analysis.gaussianFloorCutoff, Bool.false_eq_true,
+        ite_false, ite_true, Nat.floor_ofNat] using
         LLS.gaussian_prefix50000_lower hGRH.riemann (le_refl (50000 : ℝ))
   have hcmp :=
-    LLS.PaperStatements.gaussian_relative_prefix_le hprefix hnlarge H hGRH
-      hwidth hh1 hx (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
+    LLS.PaperStatements.gaussian_relative_prefix_le hprefix hnlarge H hGRH hwidth hh1 hx
+      (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
   have hcastIndex : ((H.index - 1 : ℕ) : ℝ) = (H.index : ℝ) - 1 := by
     have hidxReal : (1 : ℝ) ≤ (H.index : ℝ) := by
       have hK : (1 : ℝ) ≤ Analysis.gaussianMR6FifthsIndex := by
@@ -318,8 +323,10 @@ theorem gaussianClipped_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : O
       (m * Analysis.gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
-    (m / t) * (Analysis.gaussianMRRefinedMass * Analysis.gaussianMRRefinedWidth + 1 / (10 *
-      Analysis.gaussianMRRefinedWidth)) ≤ Analysis.gaussianMRRefinedBeta := by
+    (m / t) *
+        (Analysis.gaussianMRRefinedMass * Analysis.gaussianMRRefinedWidth +
+          1 / (10 * Analysis.gaussianMRRefinedWidth)) ≤
+      Analysis.gaussianMRRefinedBeta := by
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
     Analysis.gaussianMRRefinedD * r ≤
@@ -334,15 +341,18 @@ theorem gaussianClipped_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : O
     have ht : t = m - 1 := by rfl
     have hgamma := hcoeff.2.1
     have herr := Analysis.gaussianFloor_residual (f := f) (q := n) hL hi le_rfl
-    change (m / (m - 1)) *
-      (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * Analysis.gaussianMRRefinedWidth * s) +
-        1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) + 13 / (m - 1) + A <
+    change
+      (m / (m - 1)) *
+            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * Analysis.gaussianMRRefinedWidth * s) +
+              1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+          13 / (m - 1) +
+          A <
         Analysis.gaussianFloorConstant f at herr
     rw [ht] at hbudget
     linarith only [hbudget, hroot, herr]
   exact
-    Analysis.gaussianMR_compare_width (m := m) (t := t) (s := s) (r := r) (A := A)
-      (L := L) (I := I) (E := E) (C := C) (h := h) (M := Analysis.gaussianMRRefinedMass) (Ecap :=
+    Analysis.gaussianMR_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I)
+      (E := E) (C := C) (h := h) (M := Analysis.gaussianMRRefinedMass) (Ecap :=
       Analysis.gaussianMR6FifthsEndpoint) (conductor := Analysis.gaussianMRRefinedConductor) (D :=
       Analysis.gaussianMRRefinedD) (beta := Analysis.gaussianMRRefinedBeta)
       (by norm_num only [Analysis.gaussianMRRefinedWidth])
@@ -353,13 +363,12 @@ theorem gaussianClipped_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : O
       rfl hspos rfl hh hh1 hI hE hC (by norm_num only [Analysis.gaussianMRRefinedConductor]) hD
       hbeta hcmp' hfinish
 
-
 /-- For an odd uniform three-prime Korselt product, either clipped cutoff bounds a
 rejecting prime under GRH from log n>=63. Construct the existing index-four
 subgroup with its conductor-sum bound and apply the index-four witness theorem. -/
-theorem gaussianClipped_witness_triple (f : Bool) {n p q r : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q)
-    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
+theorem gaussianClipped_witness_triple (f : Bool) {n p q r : ℕ} (hp : p.Prime) (hq : q.Prime)
+    (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q) (hpr : p ≠ r)
+    (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
     (hrdiv : r - 1 ∣ n - 1) (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hprv : padicValNat 2 (p - 1) = padicValNat 2 (r - 1)) (hnlarge : 20000 ≤ n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
@@ -378,13 +387,11 @@ theorem gaussianClipped_witness_triple (f : Bool) {n p q r : ℕ} (hp : p.Prime)
       hqdiv hrdiv hpv hprv
   exact gaussianClipped_witness_four f hnOdd hnlarge H hi hpass hGRH hC.le hL
 
-
 /-- For a squarefree uniform Korselt triple specified by its factor set, extract
 the three primes and apply the clipped index-four witness theorem.
 This branch interface is internal to the all-input classification. -/
-theorem gaussianClipped_witness_card (f : Bool) {n : ℕ} (hnOdd : Odd n)
-    (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
-    (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
+theorem gaussianClipped_witness_card (f : Bool) {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree n)
+    (hc : n.primeFactors.card = 3) (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
       ∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hnlarge : 20000 ≤ n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -410,12 +417,10 @@ theorem gaussianClipped_witness_card (f : Bool) {n : ℕ} (hnOdd : Odd n)
     simpa only [Finset.prod_insert, Finset.prod_singleton, Finset.mem_insert, Finset.mem_singleton,
       hpq, hpr, hqr, or_self, not_false_eq_true, mul_assoc] using hprod
   exact
-    gaussianClipped_witness_triple f hp hq hr
-      (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
+    gaussianClipped_witness_triple f hp hq hr (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
       (hq.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hqn))
       (hr.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hrn)) hpq hpr hqr hnprod (hK p hp hpn)
       (hK q hq hqn) (hK r hr hrn) (hU p q hp hq hpn hqn) (hU p r hp hr hpn hrn) hnlarge hGRH hL
-
 
 /-- For log n>=63 and q^2<=10^9*n, the local subgroup envelope fits either clipped bound.
 Use log q<=(2/3)log n, the cutoff floor>=35000 and the bound>(15/32)log(n)^2.
@@ -430,8 +435,9 @@ theorem gaussianClipped_local (f : Bool) {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
   have hs := (sq_le_sq₀ (Real.log_natCast_nonneg q) hpos).mpr hcap
   have hwide := Analysis.gaussianFloor_bound_lower (f := f) hL
   have hN : (35000 : ℝ) ≤ (Analysis.gaussianFloorCutoff f : ℝ) := by
-    cases f <;> norm_num only [Analysis.gaussianFloorCutoff, Nat.cast_ofNat,
-      Bool.false_eq_true, ite_false, ite_true]
+    cases f <;>
+      norm_num only [Analysis.gaussianFloorCutoff, Nat.cast_ofNat, Bool.false_eq_true, ite_false,
+        ite_true]
   have hcut := hN.trans (Analysis.gaussianFloor_cutoff_le f (Real.log n))
   exact max_le (by linarith only [hcut]) (by nlinarith only [hs, hwide, sq_nonneg (Real.log n)])
 
@@ -440,10 +446,11 @@ either clipped Gaussian cutoff. Combine the coefficient-free finite-index
 classification, the ambient-to-local subgroup transfer, the uniform triple and
 large-index comparison. No squarefree or factor-count condition remains. -/
 theorem exists_prime_gaussianClipped (f : Bool) {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 63 ≤ Real.log n) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ Analysis.gaussianFloorBound f (Real.log n) ∧
-      ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
+    ∃ p : ℕ,
+      p.Prime ∧
+        (p : ℝ) ≤ Analysis.gaussianFloorBound f (Real.log n) ∧
+        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hnpos : 0 < n := ho.pos
   have hN := gaussian35000_size hnpos hL
   have hn1 : 1 < n := (by norm_num only : 1 < 10 ^ 27).trans_le hN
@@ -453,40 +460,41 @@ theorem exists_prime_gaussianClipped (f : Bool) {n : ℕ} (ho : Odd n) (hc : ¬n
   · have hJ : (10 ^ 9 : ℕ) ^ 3 ≤ n := by
       norm_num only [← pow_mul, Nat.reduceMul]
       exact hN
-    rcases finite_index_local_subgroup_or_uniform_korselt_triple hn1 ho hc
-      (PrimeTest.fermatSubgroup n) le_rfl (by norm_num only : 1 ≤ 10 ^ 9) hJ hi with
+    rcases
+      finite_index_local_subgroup_or_uniform_korselt_triple hn1 ho hc (PrimeTest.fermatSubgroup n)
+        le_rfl (by norm_num only : 1 ≤ 10 ^ 9) hJ hi with
       hl | ht
     · obtain ⟨q, hq, hqn, hqsize, K, hK, hpass⟩ := hl
       have hqp : 0 < q := (by norm_num only : 0 < 2).trans_le hq
       let : NeZero q := ⟨hqp.ne'⟩
-      obtain ⟨p, hp, hb, hr⟩ := exists_prime_witness_le_local_subgroup_envelope
-        hn1 ho hq hqn K hK hpass hGRH
+      obtain ⟨p, hp, hb, hr⟩ :=
+        exists_prime_witness_le_local_subgroup_envelope hn1 ho hq hqn K hK hpass hGRH
       exact ⟨p, hp, hb.trans (gaussianClipped_local f hnpos hqp hqsize hL), hr⟩
     · obtain ⟨hsf, hcard, hK, hUval⟩ := ht
       exact gaussianClipped_witness_card f ho hsf hcard hK hUval hnlarge hGRH hL
-  · have hiR : Analysis.gaussianMR6FifthsIndex ≤
-        ((PrimeTest.fermatSubgroup n).index : ℝ) := by
+  · have hiR : Analysis.gaussianMR6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
       norm_num only [Analysis.gaussianMR6FifthsIndex]
       exact_mod_cast (lt_of_not_ge hi).le
-    have hpass : ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z →
-        ∃ u : (ZMod n)ˣ, u ∈ PrimeTest.fermatSubgroup n ∧ (u : ZMod n) = z := by
+    have hpass :
+      ∀ z : ZMod n,
+        PrimeTest.StrongMillerRabinPass n z →
+          ∃ u : (ZMod n)ˣ, u ∈ PrimeTest.fermatSubgroup n ∧ (u : ZMod n) = z := by
       intro z hz
       exact PrimeTest.strongMillerRabinPass_mem_fermatSubgroup hn1 ho hz
-    exact gaussianClipped_witness_large f ho hnlarge (PrimeTest.fermatSubgroup n) hiR
-      hpass hGRH hL
-
+    exact gaussianClipped_witness_large f ho hnlarge (PrimeTest.fermatSubgroup n) hiR hpass hGRH hL
 
 /-- Under the clipped Gaussian assumptions, the least rejecting prime satisfies
 the selected profile cutoff. Apply least-prime extraction to the actual witness theorem. -/
 theorem exists_least_gaussianClipped (f : Bool) {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 63 ≤ Real.log n) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ Analysis.gaussianFloorBound f (Real.log n) ∧
-      ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-      ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
+    ∃ p : ℕ,
+      p.Prime ∧
+        (p : ℝ) ≤ Analysis.gaussianFloorBound f (Real.log n) ∧
+        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
+        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   let : NeZero n := ⟨ho.pos.ne'⟩
-  exact exists_least_prime_reject_of_exists_prime_reject
-    (exists_prime_gaussianClipped f ho hc hGRH hL)
+  exact
+    exists_least_prime_reject_of_exists_prime_reject (exists_prime_gaussianClipped f ho hc hGRH hL)
 
 /-- The minimum of the two certified clipped Gaussian cutoffs.
 Both all-input witness theorems apply from logarithmic scale 63 with no upper limit. -/
@@ -497,12 +505,13 @@ noncomputable def gaussianClippedEnvelope (L : ℝ) : ℝ :=
 within the clipped Gaussian envelope. Select the smaller certified profile
 and retain primality, the numerical bound and actual strong-MR rejection. -/
 theorem exists_prime_gaussianClippedEnvelope {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 63 ≤ Real.log n) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ gaussianClippedEnvelope (Real.log n) ∧
-      ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  by_cases h : Analysis.gaussianFloorBound false (Real.log n) ≤
-      Analysis.gaussianFloorBound true (Real.log n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
+    ∃ p : ℕ,
+      p.Prime ∧
+        (p : ℝ) ≤ gaussianClippedEnvelope (Real.log n) ∧
+        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
+  by_cases h :
+    Analysis.gaussianFloorBound false (Real.log n) ≤ Analysis.gaussianFloorBound true (Real.log n)
   · simpa only [gaussianClippedEnvelope, min_eq_left h] using
       exists_prime_gaussianClipped false ho hc hGRH hL
   · simpa only [gaussianClippedEnvelope, min_eq_right (le_of_not_ge h)] using
@@ -511,13 +520,15 @@ theorem exists_prime_gaussianClippedEnvelope {n : ℕ} (ho : Odd n) (hc : ¬n.Pr
 /-- Under the clipped-envelope assumptions, the least rejecting prime is within
 the two-profile envelope. Extract it from the actual prime-witness theorem. -/
 theorem exists_least_gaussianClippedEnvelope {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 63 ≤ Real.log n) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ gaussianClippedEnvelope (Real.log n) ∧
-      ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-      ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
+    ∃ p : ℕ,
+      p.Prime ∧
+        (p : ℝ) ≤ gaussianClippedEnvelope (Real.log n) ∧
+        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
+        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   let : NeZero n := ⟨ho.pos.ne'⟩
-  exact exists_least_prime_reject_of_exists_prime_reject
-    (exists_prime_gaussianClippedEnvelope ho hc hGRH hL)
+  exact
+    exists_least_prime_reject_of_exists_prime_reject
+      (exists_prime_gaussianClippedEnvelope ho hc hGRH hL)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

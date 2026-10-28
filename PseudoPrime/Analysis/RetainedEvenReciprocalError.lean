@@ -14,10 +14,10 @@ public import PseudoPrime.Analysis.Below64MainErrorBounds
 
 namespace PseudoPrime.Analysis
 
-/-- For `y ≥ 8`, the exact even reciprocal main error at `y^2` is bounded by
-`-1961/2000 + (2 log y + 103/80)/y^2`. The proof keeps the factor
-`1 - y⁻²` attached to the lower bound for `γ/2` before collecting terms. -/
-theorem primitiveReciprocalEvenMainError_le_exact_even_envelope {y : ℝ} (hy : 8 ≤ y) :
+/-- For y>=1, retain the exact even reciprocal error at the square radius.
+The nonnegative factor 1-y^(-2) permits the Euler constant lower bound.
+This supplies the low-radius endpoint comparison without a uniform error relaxation. -/
+theorem evenReciprocalError_le_exact {y : ℝ} (hy : 1 ≤ y) :
     primitiveReciprocalEvenMainError (y ^ 2) ≤
       -(1961 / 2000 : ℝ) + (2 * Real.log y + 103 / 80) / y ^ 2 := by
   have hypos : 0 < y := by linarith only [hy]
@@ -41,6 +41,14 @@ theorem primitiveReciprocalEvenMainError_le_exact_even_envelope {y : ℝ} (hy : 
     _ = -(1961 / 2000 : ℝ) + (2 * Real.log y + 103 / 80) / y ^ 2 := by
       field_simp
       ring
+
+/-- For `y ≥ 8`, the exact even reciprocal main error at `y^2` is bounded by
+`-1961/2000 + (2 log y + 103/80)/y^2`. The proof keeps the factor
+`1 - y⁻²` attached to the lower bound for `γ/2` before collecting terms. -/
+theorem primitiveReciprocalEvenMainError_le_exact_even_envelope {y : ℝ} (hy : 8 ≤ y) :
+    primitiveReciprocalEvenMainError (y ^ 2) ≤
+      -(1961 / 2000 : ℝ) + (2 * Real.log y + 103 / 80) / y ^ 2 := by
+  exact evenReciprocalError_le_exact (by linarith only [hy])
 
 /-- For x at least 64, the even reciprocal main error is at most -179/200.
 Use the exact half-ratio identity for the tail, monotonicity of the logarithmic

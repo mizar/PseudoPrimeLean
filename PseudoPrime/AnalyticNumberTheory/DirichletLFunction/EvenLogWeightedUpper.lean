@@ -23,25 +23,19 @@ nontrivial even character, and `x ≥ 64`.
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
-/--
-Input/assumptions: the generic residue ledger hypotheses, with an even primitive
-character and `x ≥ 64`.
-Conclusion: the residue sum is bounded by the zero-mass and conductor terms plus
-`π²/24 - (γ/2) log x - (log x)²/2`.
-Content: use the raw even zero-residue formula together with the completed-L derivative bound,
-then add the unchanged erased-zero ledger estimate.
-Role: refined residue input for the even square-radius upper bound.
--/
-theorem re_sum_dirichletLogResidueAt_le_of_grh_even_exact {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ}
-    (hx : 64 ≤ x) {z w : ℂ} (h0 : (0 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w)
+/-- For x>1, retain the exact even logarithmic main term.
+The contour and residue estimates require only this positive logarithmic scale.
+This is the general input for low-radius endpoint comparisons. -/
+theorem logResidues_even_exact {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
+    (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ} (hx : 1 < x) {z w : ℂ}
+    (h0 : (0 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w)
     (h1 : (1 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w) :
     (∑ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w, dirichletLogResidueAt hne x s).re ≤
       (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
         (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
         Analysis.primitiveLogEvenMainError x := by
-  have hxpos : (0 : ℝ) < x := lt_of_lt_of_le (show (0 : ℝ) < 64 by norm_num only) hx
+  have hxpos : (0 : ℝ) < x := by linarith only [hx]
   rw [dirichletSplitLogSingularitySum x hne h1 h0, dirichletLogResidueAt_one hne x]
   have hr0_bound :
     (dirichletLogResidueAt hne x 0).re ≤
@@ -51,7 +45,7 @@ theorem re_sum_dirichletLogResidueAt_le_of_grh_even_exact {N : ℕ} [NeZero N] (
     rw [re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two hN2 hGRH hprimitive hne
         hinv hxpos]
     have hD := neg_re_deriv_logDeriv_completedLFunction_zero_le_abs_BRe hGRH hprimitive hne hinv hN2
-    have hlogx_nn : (0 : ℝ) ≤ Real.log x := Real.log_nonneg (le_trans (by norm_num only) hx)
+    have hlogx_nn : (0 : ℝ) ≤ Real.log x := Real.log_nonneg hx.le
     unfold Analysis.primitiveLogEvenMainError
     have hstep :
       -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re +
@@ -97,11 +91,12 @@ theorem re_sum_dirichletLogResidueAt_le_of_grh_even_exact {N : ℕ} [NeZero N] (
           Analysis.primitiveLogEvenMainError x :=
       by ring
 
-/-- Fixed-`A` contour bound retaining the even main-error term. -/
-theorem re_characterLogWeightedSum_sub_leftVertical_le_even_exact {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ}
-    (hx : 64 ≤ x) (A : ℕ) (hA : 2 ≤ A) :
+/-- For x>1, retain the exact even logarithmic main term.
+The contour and residue estimates require only this positive logarithmic scale.
+This is the general input for low-radius endpoint comparisons. -/
+theorem logBoundary_even_exact {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
+    (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ} (hx : 1 < x) (A : ℕ) (hA : 2 ≤ A) :
     (Arithmetic.characterLogWeightedSum x χ).re -
         (2 * Real.pi)⁻¹ *
           (∫ t : ℝ,
@@ -110,7 +105,7 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le_even_exact {N : ℕ} [NeZ
       (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
         (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
         Analysis.primitiveLogEvenMainError x := by
-  have hx1 : (1 : ℝ) ≤ x := le_trans (by norm_num only) hx
+  have hx1 : (1 : ℝ) ≤ x := hx.le
   have htend :=
     tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh hN2 hGRH hprimitive hne hinv hx1 A hA
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
@@ -126,12 +121,12 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le_even_exact {N : ℕ} [NeZ
     filter_upwards with k
     have hid :=
       dirichletLogFiniteContourIdentity_heightSeq_normalized hN2 hGRH hprimitive hne hinv
-        (lt_of_lt_of_le (by norm_num only) hx) A k hA
+        (by linarith only [hx]) A k hA
     obtain ⟨h0, h1⟩ :=
       primitiveReciprocalMellinPoints_mem_singularities_heightSeq hN2 hGRH hprimitive hne hinv A k
         hA
     have hbound :=
-      re_sum_dirichletLogResidueAt_le_of_grh_even_exact hN2 hGRH hprimitive hne hinv heven hx (z :=
+      logResidues_even_exact hN2 hGRH hprimitive hne hinv heven hx (z :=
         primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k) (w :=
         primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k) h0 h1
     rw [hid]
@@ -154,16 +149,17 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le_even_exact {N : ℕ} [NeZ
   rw [hmulre] at hlimit
   exact hlimit
 
-/-- Whole-line logarithmic upper bound retaining the even main-error term. -/
-theorem primitiveLogWeightedUpper_of_grh_even_exact {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ}
-    (hx : 64 ≤ x) :
+/-- For x>1, retain the exact even logarithmic main term.
+The contour and residue estimates require only this positive logarithmic scale.
+This is the general input for low-radius endpoint comparisons. -/
+theorem logSum_even_exact {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
+    (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ} (hx : 1 < x) :
     (Arithmetic.characterLogWeightedSum x χ).re ≤
       (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
         (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
         Analysis.primitiveLogEvenMainError x := by
-  have hx1 : (1 : ℝ) < x := lt_of_lt_of_le (by norm_num only) hx
+  have hx1 : (1 : ℝ) < x := hx
   have htend :=
     tendsto_dirichletLogContourKernel_leftVertical_integral_atTop hprimitive hne hinv hx1
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
@@ -189,9 +185,53 @@ theorem primitiveLogWeightedUpper_of_grh_even_exact {N : ℕ} [NeZero N] (hN2 : 
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
           Analysis.primitiveLogEvenMainError x := by
     filter_upwards [Filter.eventually_ge_atTop 2] with A hA
-    exact
-      re_characterLogWeightedSum_sub_leftVertical_le_even_exact hN2 hGRH hprimitive hne hinv heven
-        hx A hA
+    exact logBoundary_even_exact hN2 hGRH hprimitive hne hinv heven hx A hA
   exact le_of_tendsto htendScaled hev
+
+/--
+Input/assumptions: the generic residue ledger hypotheses, with an even primitive
+character and `x ≥ 64`.
+Conclusion: the residue sum is bounded by the zero-mass and conductor terms plus
+`π²/24 - (γ/2) log x - (log x)²/2`.
+Content: use the raw even zero-residue formula together with the completed-L derivative bound,
+then add the unchanged erased-zero ledger estimate.
+Role: refined residue input for the even square-radius upper bound.
+-/
+theorem re_sum_dirichletLogResidueAt_le_of_grh_even_exact {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ}
+    (hx : 64 ≤ x) {z w : ℂ} (h0 : (0 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w)
+    (h1 : (1 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w) :
+    (∑ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w, dirichletLogResidueAt hne x s).re ≤
+      (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
+        (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
+        Analysis.primitiveLogEvenMainError x := by
+  exact logResidues_even_exact hN2 hGRH hprimitive hne hinv heven (by linarith only [hx]) h0 h1
+
+/-- Fixed-`A` contour bound retaining the even main-error term. -/
+theorem re_characterLogWeightedSum_sub_leftVertical_le_even_exact {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ}
+    (hx : 64 ≤ x) (A : ℕ) (hA : 2 ≤ A) :
+    (Arithmetic.characterLogWeightedSum x χ).re -
+        (2 * Real.pi)⁻¹ *
+          (∫ t : ℝ,
+              dirichletLogContourKernel x χ
+                (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I)).re ≤
+      (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
+        (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
+        Analysis.primitiveLogEvenMainError x := by
+  exact logBoundary_even_exact hN2 hGRH hprimitive hne hinv heven (by linarith only [hx]) A hA
+
+/-- Whole-line logarithmic upper bound retaining the even main-error term. -/
+theorem primitiveLogWeightedUpper_of_grh_even_exact {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ}
+    (hx : 64 ≤ x) :
+    (Arithmetic.characterLogWeightedSum x χ).re ≤
+      (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
+        (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
+        Analysis.primitiveLogEvenMainError x := by
+  exact logSum_even_exact hN2 hGRH hprimitive hne hinv heven (by linarith only [hx])
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

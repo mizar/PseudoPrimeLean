@@ -19,8 +19,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 constant-six witness bound for this classification branch. Use the signed comparison with
 principal error thirteen and the unchanged radius equation. Downstream wrappers remove the
 branch data. -/
-theorem gaussianMR6_index_four240 {n : ℕ} [NeZero n]
-    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
+theorem gaussianMR6_index_four240 {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 240 ≤ Real.log n) :
     let L := Real.log n
     let r := Analysis.gaussianMR6Radius L
@@ -93,10 +92,10 @@ theorem gaussianMR6_index_four240 {n : ℕ} [NeZero n]
     exact Analysis.gaussianMR6_triple_error240 hL le_rfl
   exact
     Analysis.gaussianMR_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
-      LLS.PaperStatements.gaussianPrefixError (47 / 10) n (r ^ 2)) (L :=
-      (2 / 3 : ℝ) * Real.log n) (I := I) (E := E) (C :=
-      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := Analysis.gaussianMR6FifthsMass)
-      (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor := (161 / 400 : ℝ)) (D :=
+      LLS.PaperStatements.gaussianPrefixError (47 / 10) n (r ^ 2)) (L := (2 / 3 : ℝ) * Real.log n)
+      (I := I) (E := E) (C := LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M :=
+      Analysis.gaussianMR6FifthsMass) (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor :=
+      (161 / 400 : ℝ)) (D :=
       (4 * Analysis.gaussianMR6FifthsMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
       (4 / 3 : ℝ) * (Analysis.gaussianMR6FifthsMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
@@ -117,8 +116,8 @@ theorem gaussianMR6_index_four240 {n : ℕ} [NeZero n]
 constant-six witness bound for this classification branch. Use the signed comparison with
 principal error thirteen and the unchanged radius equation. Downstream wrappers remove the
 branch data. -/
-theorem gaussianMR6_witness_four240 {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
+theorem gaussianMR6_witness_four240 {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge : 20000 ≤ n)
+    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -173,24 +172,23 @@ theorem gaussianMR6_witness_four240 {n : ℕ} [NeZero n] (hnOdd : Odd n)
   have hx : 4 ≤ x := by
     dsimp only [x]
     nlinarith only [hrbound]
-  have hprefix : (47 / 10 : ℝ) ≤
-      ∑ n ∈ Finset.Ioc 0 (35000 : ℕ), Analysis.gaussianResolventMangoldtWeight n := by
+  have hprefix :
+    (47 / 10 : ℝ) ≤ ∑ n ∈ Finset.Ioc 0 (35000 : ℕ), Analysis.gaussianResolventMangoldtWeight n := by
     have hp := LLS.gaussian_prefix35000_lower hGRH.riemann (le_refl (35000 : ℝ))
     have hf : ⌊(35000 : ℝ)⌋₊ = (35000 : ℕ) := Nat.floor_natCast 35000
     rw [hf] at hp
     exact hp
   have hcmp :=
-    LLS.PaperStatements.gaussian_relative_prefix_le_coarse hprefix hnlarge H hGRH
-      hwidth hwidth1 hx (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
+    LLS.PaperStatements.gaussian_relative_prefix_le_coarse hprefix hnlarge H hGRH hwidth hwidth1 hx
+      (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
   exact gaussianMR6_index_four240 H hi hC hL hcmp
 
 /-- At logarithmic scale at least 240, the certified 35000 prefix supplies the
 constant-six witness bound for this classification branch. Use the signed comparison with
 principal error thirteen and the unchanged radius equation. Downstream wrappers remove the
 branch data. -/
-theorem gaussianMR6_witness_large240 {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
-    (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
+theorem gaussianMR6_witness_large240 {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge : 20000 ≤ n)
+    (H : Subgroup (ZMod n)ˣ) (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 240 ≤ Real.log n) :
@@ -262,15 +260,15 @@ theorem gaussianMR6_witness_large240 {n : ℕ} [NeZero n] (hnOdd : Odd n)
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
   have hwidth : 0 < h := one_div_pos.mpr (mul_pos (by norm_num only) hspos)
-  have hprefix : (47 / 10 : ℝ) ≤
-      ∑ n ∈ Finset.Ioc 0 (35000 : ℕ), Analysis.gaussianResolventMangoldtWeight n := by
+  have hprefix :
+    (47 / 10 : ℝ) ≤ ∑ n ∈ Finset.Ioc 0 (35000 : ℕ), Analysis.gaussianResolventMangoldtWeight n := by
     have hp := LLS.gaussian_prefix35000_lower hGRH.riemann (le_refl (35000 : ℝ))
     have hf : ⌊(35000 : ℝ)⌋₊ = (35000 : ℕ) := Nat.floor_natCast 35000
     rw [hf] at hp
     exact hp
   have hcmp :=
-    LLS.PaperStatements.gaussian_relative_prefix_le_coarse hprefix hnlarge H hGRH
-      hwidth hh1 hx (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
+    LLS.PaperStatements.gaussian_relative_prefix_le_coarse hprefix hnlarge H hGRH hwidth hh1 hx
+      (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
   have hcastIndex : ((H.index - 1 : ℕ) : ℝ) = (H.index : ℝ) - 1 := by
     have hidxReal : (1 : ℝ) ≤ (H.index : ℝ) := by
       have hK : (1 : ℝ) ≤ Analysis.gaussianMR6FifthsIndex := by
@@ -328,9 +326,13 @@ theorem gaussianMR6_witness_large240 {n : ℕ} [NeZero n] (hnOdd : Odd n)
     have ht : t = m - 1 := by rfl
     have hgamma := hcoeff.2.1
     have herr := Analysis.gaussianMR6_residual240 (q := n) hL le_rfl hi
-    change (m / (m - 1)) *
-      (63 * Analysis.gaussianMR6FifthsEndpoint / (10 * s) +
-        1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) + 13 / (m - 1) + A < 6 at herr
+    change
+      (m / (m - 1)) *
+            (63 * Analysis.gaussianMR6FifthsEndpoint / (10 * s) +
+              1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+          13 / (m - 1) +
+          A <
+        6 at herr
     rw [ht] at hbudget
     linarith only [hbudget, hroot, herr]
   exact
@@ -349,10 +351,10 @@ theorem gaussianMR6_witness_large240 {n : ℕ} [NeZero n] (hnOdd : Odd n)
 constant-six witness bound for this classification branch. Use the signed comparison with
 principal error thirteen and the unchanged radius equation. Downstream wrappers remove the
 branch data. -/
-theorem gaussianMR6_witness_triple240 {n p q r : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q)
-    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
-    (hrdiv : r - 1 ∣ n - 1) (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
+theorem gaussianMR6_witness_triple240 {n p q r : ℕ} (hp : p.Prime) (hq : q.Prime) (hr : r.Prime)
+    (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r)
+    (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1) (hrdiv : r - 1 ∣ n - 1)
+    (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hprv : padicValNat 2 (p - 1) = padicValNat 2 (r - 1)) (hnlarge : 20000 ≤ n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 240 ≤ Real.log n) :
     ∃ s : ℕ,
@@ -374,9 +376,8 @@ theorem gaussianMR6_witness_triple240 {n p q r : ℕ} (hp : p.Prime)
 constant-six witness bound for this classification branch. Use the signed comparison with
 principal error thirteen and the unchanged radius equation. Downstream wrappers remove the
 branch data. -/
-theorem gaussianMR6_witness_card_three240 {n : ℕ} (hnOdd : Odd n)
-    (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
-    (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
+theorem gaussianMR6_witness_card_three240 {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree n)
+    (hc : n.primeFactors.card = 3) (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
       ∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hnlarge : 20000 ≤ n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -402,8 +403,7 @@ theorem gaussianMR6_witness_card_three240 {n : ℕ} (hnOdd : Odd n)
     simpa only [Finset.prod_insert, Finset.prod_singleton, Finset.mem_insert, Finset.mem_singleton,
       hpq, hpr, hqr, or_self, not_false_eq_true, mul_assoc] using hprod
   exact
-    gaussianMR6_witness_triple240 hp hq hr
-      (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
+    gaussianMR6_witness_triple240 hp hq hr (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
       (hq.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hqn))
       (hr.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hrn)) hpq hpr hqr hnprod (hK p hp hpn)
       (hK q hq hqn) (hK r hr hrn) (hU p q hp hq hpn hqn) (hU p r hp hr hpn hrn) hnlarge hGRH hL
@@ -412,8 +412,8 @@ theorem gaussianMR6_witness_card_three240 {n : ℕ} (hnOdd : Odd n)
 constant-six witness bound for this classification branch. Use the signed comparison with
 principal error thirteen and the unchanged radius equation. Downstream wrappers remove the
 branch data. -/
-theorem gaussianMR6_witness_small240 {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem gaussianMR6_witness_small240 {n : ℕ} [NeZero n] (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) (hL : 240 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
@@ -431,32 +431,32 @@ theorem gaussianMR6_witness_small240 {n : ℕ} [NeZero n] (hnOdd : Odd n)
     have hnlarge : 20000 ≤ n := by
       have h20000 : 20000 ≤ 10 ^ 27 := by norm_num only
       exact h20000.trans hN27
-    exact
-      gaussianMR6_witness_card_three240 hnOdd hsf hc hK hU hnlarge
-        hGRH hL
+    exact gaussianMR6_witness_card_three240 hnOdd hsf hc hK hU hnlarge hGRH hL
 
 /-- The Fermat subgroup contains every strong-MR pass. At log n>=240, its index bound
 therefore feeds the large-index Gaussian witness theorem. This discharges the subgroup
 input without adding it to the public all-composite statement. -/
-theorem gaussianMR6_fermat_large240 {n : ℕ} (hn1 : 1 < n)
-    (hnOdd : Odd n) (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
+theorem gaussianMR6_fermat_large240 {n : ℕ} (hn1 : 1 < n) (hnOdd : Odd n)
+    (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 240 ≤ Real.log n) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ Analysis.gaussianMR6Bound (Real.log n) ∧
-      ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
+    ∃ p : ℕ,
+      p.Prime ∧
+        (p : ℝ) ≤ Analysis.gaussianMR6Bound (Real.log n) ∧
+        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   have hnlarge : 20000 ≤ n :=
-    (by norm_num only : 20000 ≤ 10 ^ 27).trans
-      (Analysis.ten_pow_twentyseven_le_of_log_ge_240 hL)
+    (by norm_num only : 20000 ≤ 10 ^ 27).trans (Analysis.ten_pow_twentyseven_le_of_log_ge_240 hL)
   have hiR : Analysis.gaussianMR6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
     norm_num only [Analysis.gaussianMR6FifthsIndex]
     exact_mod_cast hi
-  have hpass : ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z →
-      ∃ u : (ZMod n)ˣ, u ∈ PrimeTest.fermatSubgroup n ∧ (u : ZMod n) = z := by
+  have hpass :
+    ∀ z : ZMod n,
+      PrimeTest.StrongMillerRabinPass n z →
+        ∃ u : (ZMod n)ˣ, u ∈ PrimeTest.fermatSubgroup n ∧ (u : ZMod n) = z := by
     intro z hz
     obtain ⟨u, hu, he⟩ := PrimeTest.strongMillerRabinPass_mem_fermatSubgroup hn1 hnOdd hz
     exact ⟨u, hu, he⟩
-  exact gaussianMR6_witness_large240 hnOdd hnlarge (PrimeTest.fermatSubgroup n) hiR
-    hpass hGRH hL
+  exact gaussianMR6_witness_large240 hnOdd hnlarge (PrimeTest.fermatSubgroup n) hiR hpass hGRH hL
 
 /-- Under GRH, every odd composite with log n>=240 has a prime rejecting strong MR below
 its unchanged constant-six Gaussian bound. Combine the small-index classification,
@@ -486,7 +486,6 @@ theorem exists_prime_witness_gaussianMR6_log240 {n : ℕ} (hnOdd : Odd n) (hcomp
       norm_num only at h
       exact h
     exact gaussianMR6_fermat_large240 hn1 hnOdd hlarge hGRH hL
-
 
 /-- Under GRH and log n>=240, the least prime rejecting strong MR obeys the unchanged
 constant-six Gaussian bound. Minimize the proved prime-witness existence with Nat.find.
