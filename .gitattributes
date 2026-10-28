@@ -1,0 +1,6 @@
+# Repository sources and byte-exact goldens are LF on every checkout. Product tests generate
+# CRLF and mixed inputs explicitly, independently of the user's core.autocrlf setting.
+* text=auto eol=lf
+
+# Preserve the exact input tables used by recorded search audits.
+scripts/data/** -text whitespace=cr-at-eol
