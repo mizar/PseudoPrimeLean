@@ -50,6 +50,27 @@ This preserves every already integral prime certificate. -/
 theorem primeRound_prime {p : ℕ} (hp : p.Prime) : primeRound (p : ℝ) = p := by
   exact le_antisymm (primeRound_le p) (prime_le_primeRound hp le_rfl)
 
+/-- Rounding is monotone on all real cutoffs. Below two it is the identity;
+above two, monotonicity of the natural floor and bounded prime search applies.
+This transfers comparisons between real envelopes to their rounded envelopes. -/
+theorem primeRound_mono : Monotone primeRound := by
+  intro R S hRS
+  by_cases hR : 2 ≤ R
+  · have hS : 2 ≤ S := hR.trans hRS
+    rw [primeRound, ite_eq_left hR, primeRound, ite_eq_left hS]
+    apply Nat.cast_le.mpr
+    apply max_le_max (le_refl 2)
+    classical exact Nat.findGreatest_mono_right _ (Nat.floor_mono hRS)
+  · have hsmall : primeRound R = R := ite_eq_right hR
+    rw [hsmall]
+    by_cases hS : 2 ≤ S
+    · have htwo : (2 : ℝ) ≤ primeRound S := by
+        rw [primeRound, ite_eq_left hS, Nat.cast_max, Nat.cast_ofNat]
+        exact le_max_left _ _
+      exact (lt_of_not_ge hR).le.trans htwo
+    · rw [primeRound, ite_eq_right hS]
+      exact hRS
+
 /-- An actual rejecting prime under any real cutoff also lies under its rounded
 cutoff. Prime inclusion transfers the bound without changing the witness. -/
 theorem exists_prime_round {n : ℕ} {R : ℝ}
