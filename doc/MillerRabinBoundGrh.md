@@ -3,9 +3,9 @@
 対数平方上界の入口は [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean)。名前空間は `PseudoPrime.PrimeTestBounds.MillerRabin` で、 `import PseudoPrime` からも利用できる。
 
 
-区間別の公開包絡線は [SharpWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SharpWitnessEnvelope.lean) の `sharpSelectedEnvelope` である。GRHの下で、すべての奇合成数 $n > 1$ について、 `exists_prime_sharpSelected` と `exists_least_sharpSelected` が実際の素数証人と最小素数証人の上界を与える。平方自由性、素因数の個数、Fermat部分群指数に関する追加条件はない。
+区間別の公開包絡線は [TunedWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TunedWitnessEnvelope.lean) の `tunedSelectedEnvelope` である。GRHの下で、すべての奇合成数 $n > 1$ について、 `exists_prime_tunedSelected` と `exists_least_tunedSelected` が実際の素数証人と最小素数証人の上界を与える。平方自由性、素因数の個数、Fermat部分群指数に関する追加条件はない。
 
-[SharpWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SharpWitnessEnvelope.lean) の `sharpWitnessEnvelope` は、各候補を証明済みの適用条件でのみ使う最小値である。 `sharp_eq_selected` が区間選択との一致を証明する。素数へ丸めた `sharpPrimeEnvelope` についても `exists_prime_sharpPrimeEnvelope` と `exists_least_sharpPrimeEnvelope` が同じ仮定で証人を与える。
+[TunedWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TunedWitnessEnvelope.lean) の `tunedWitnessEnvelope` は、各候補を証明済みの適用条件でのみ使う最小値である。 `tuned_eq_selected` が区間選択との一致を証明する。素数へ丸めた `tunedPrimeEnvelope` についても `exists_prime_tunedPrimeEnvelope` と `exists_least_tunedPrimeEnvelope` が同じ仮定で証人を与える。
 
 MRの最小素数証人の累積最大値について、既知の更新点を [3種類の最小素数証人の数表](WitnessRecords.md) に参考情報として掲載した。
 
@@ -167,15 +167,15 @@ $$
 q_{\mathrm{MR}}(n)=\min\lbrace p\in\mathbb P\mid\neg\mathrm{StrongMRPass}(n,p)\rbrace
 $$
 
-と書く。公開する実数上界を $U_{\mathrm{MR}}(n)=\mathrm{sharpSelectedEnvelope}(n)$ とする。GRHの下で $q_{\mathrm{MR}}(n) \le U_{\mathrm{MR}}(n)$ が成り立つ。
+と書く。公開する実数上界を $U_{\mathrm{MR}}(n)=\mathrm{tunedSelectedEnvelope}(n)$ とする。GRHの下で $q_{\mathrm{MR}}(n) \le U_{\mathrm{MR}}(n)$ が成り立つ。
 
 ### 有限区間 $9 \le n < 3000$ の上界
 
 $9 \le n < 2047$ では2、 $2047 \le n < 3000$ では3を返す。底2または底3での拒否を有限分類で証明し、素数証人と最小素数証人へ接続する。この範囲ではGRHは不要である。定義と証人定理は [SmallPointwiseBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallPointwiseBounds.lean) にある。
 
-公開数値関数の仕様としても、すべての自然数 $2047 \le n < 3000$ で `sharpSelectedEnvelope n` と `sharpPrimeEnvelope n` はともに3である。この等式には奇数性や合成数性を仮定しない。 $n < 2047$ では両関数が2を返す。対応する定理は [SharpIntervalSelection.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SharpIntervalSelection.lean) の `sharpSelected_small_two`、 `sharpSelected_small_three`、 `sharpPrime_small_two`、 `sharpPrime_small_three` である。
+公開数値関数の仕様としても、すべての自然数 $2047 \le n < 3000$ で `tunedSelectedEnvelope n` と `tunedPrimeEnvelope n` はともに3である。この等式には奇数性や合成数性を仮定しない。 $n < 2047$ では両関数が2を返す。対応する定理は [TunedIntervalSelection.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TunedIntervalSelection.lean) の `tunedSelected_small_two`、 `tunedSelected_small_three`、 `tunedPrime_small_two`、 `tunedPrime_small_three` である。
 
-### 固定素数上界23〜73と有限principal和
+### 固定素数上界23〜79と有限principal和
 
 固定半径 $y$ に対して、次の実際のvon Mangoldt和を使う。
 
@@ -194,7 +194,7 @@ $$
 y^2-\frac y{20}-\frac{1839}{500}\ln y-\frac{21}{20}+\delta_S \le S(y^2).
 $$
 
-23〜59には $(\delta_R,\delta_S)=(3/500,59/100)$、61〜73には $(1/250,1/2)$ を用いる。73以下の21素数について対数の有理区間をTaylor級数8項で検証し、相異なる最大30個の素数冪の寄与を加える。残りの項は非負なので、これらの部分和は元の和の下界となる。
+各半径で既存の有理部分和が与える余裕を使い、補強量を分母 $10^6$ の有理数に固定する。73以下の21素数について対数の有理区間をTaylor級数8項で検証し、相異なる最大30個の素数冪の寄与を加える。残りの項は非負なので、これらの部分和は元の和の下界となる。
 
 次節で定義する $D_e(y)$ と $F_{\mathrm{pt}}(y)$ を使うと、強化した比較gapは
 
@@ -205,23 +205,24 @@ $$
 
 となる。実際の $R(y^2)$ と $S(y^2)$ に対する下界を指標の比較定理へ渡し、 $G_+(L,y) > 0$ から $y^2$ 以下のMR拒否素数を得る。表の各行で $y^2$ は次の素数より小さいため、素数間の有限検証により表の上界へ丸められる。
 
-| 適用条件 | 固定半径 $y$ | 素数証人上界 |
-|---|---|---:|
-| $L \le 8.087$ | $53851/10000$ | 23 |
-| $L \le 8.325$ | $55677/10000$ | 29 |
-| $L \le 8.987$ | $60827/10000$ | 31 |
-| $L \le 9.390$ | $64031/10000$ | 37 |
-| $L \le 9.583$ | $65574/10000$ | 41 |
-| $L \le 9.952$ | $68556/10000$ | 43 |
-| $L \le 10.471$ | $72801/10000$ | 47 |
-| $L \le 10.955$ | $76811/10000$ | 53 |
-| $L \le 11.109$ | $78102/10000$ | 59 |
-| $L \le 11.546$ | $1637/200$ | 61 |
-| $L \le 11.830$ | $337/40$ | 67 |
-| $L \le 11.970$ | $1068/125$ | 71 |
-| $L \le 12.373$ | $1111/125$ | 73 |
+| 適用条件 | 固定半径 $y$ | $10^6\delta_R$ | $10^6\delta_S$ | 素数証人上界 |
+|---|---|---:|---:|---:|
+| $L \le 8.0901$ | $53851/10000$ | 7385 | 597822 | 23 |
+| $L \le 8.3320$ | $55677/10000$ | 7794 | 630000 | 29 |
+| $L \le 9.0031$ | $60827/10000$ | 9395 | 729227 | 31 |
+| $L \le 9.3961$ | $64031/10000$ | 6554 | 651721 | 37 |
+| $L \le 9.5875$ | $65574/10000$ | 6072 | 648651 | 41 |
+| $L \le 9.9619$ | $68556/10000$ | 6816 | 712934 | 43 |
+| $L \le 10.4895$ | $72801/10000$ | 8072 | 819332 | 47 |
+| $L \le 10.9671$ | $76811/10000$ | 6484 | 769482 | 53 |
+| $L \le 11.1199$ | $78102/10000$ | 6009 | 755180 | 59 |
+| $L \le 11.5654$ | $1637/200$ | 5520 | 761820 | 61 |
+| $L \le 11.8463$ | $337/40$ | 4829 | 739461 | 67 |
+| $L \le 11.9879$ | $1068/125$ | 4972 | 762726 | 71 |
+| $L \le 12.3975$ | $1111/125$ | 5757 | 856932 | 73 |
+| $L \le 12.6409$ | $5694/625$ | 3135 | 667896 | 79 |
 
-各行は記した上端以下の全域で使え、個別の証人定理には $n \ge 3000$ や前行の上端を仮定しない。有限データは [EndpointFiniteData.lean](../PseudoPrime/Analysis/EndpointFiniteData.lean)、実際のprincipal和への埋め込みは [EndpointFiniteSums.lean](../PseudoPrime/Analysis/EndpointFiniteSums.lean)、指標側の比較定理は [EndpointFinitePrincipal.lean](../PseudoPrime/LLS/PaperStatements/EndpointFinitePrincipal.lean) にある。全13行の素数証人・最小素数証人は [MillerRabin/EndpointFinitePrincipal.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointFinitePrincipal.lean) の `exists_prime_finitePrincipal` と `exists_least_finitePrincipal` である。
+各行は記した上端以下の全域で使え、個別の証人定理には $n \ge 3000$ や前行の上端を仮定しない。13行のデータは [EndpointFiniteCredits.lean](../PseudoPrime/Analysis/EndpointFiniteCredits.lean)、素数証人・最小素数証人は [EndpointFiniteTuned.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointFiniteTuned.lean) にある。固定79には既存の30項をそのまま使い、新半径の実際の和へ埋め込む。対数証明書を半径 $5694/625$ に1本追加し、素数79の寄与は追加しない。実際の和・gap・証人の接続は [Analysis/EndpointPrime79.lean](../PseudoPrime/Analysis/EndpointPrime79.lean)、[LLS/PaperStatements/EndpointPrime79.lean](../PseudoPrime/LLS/PaperStatements/EndpointPrime79.lean)、[MillerRabin/EndpointPrime79.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointPrime79.lean) に分けてある。
 
 ### pointwise補正の逆関数上界
 
@@ -259,7 +260,7 @@ $$
 
 pointwise gapは正確に $D_e(y)(F_{\mathrm{pt}}(y)-L)$ となる。逆関数半径でgapが0になる場合も、最小素数証人とその平方根の中点を用いる離散的な議論により証人上界が成り立つ。定義・単調性・逆関数は [LLS/EndpointPointwiseRoot.lean](../PseudoPrime/LLS/EndpointPointwiseRoot.lean)、全奇合成数の素数証人・最小素数証人は [MillerRabin/EndpointPointwiseRoot.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointPointwiseRoot.lean) にある。
 
-### 低床Gaussianの3profile
+### 低床Gaussianの4profile
 
 Gaussian候補に共通の定数を次のように置く。
 
@@ -286,66 +287,74 @@ $$
 A_{u,D}(L)=\max\left\lbrace\frac65u^4,V_D(L)\right\rbrace
 $$
 
-である。 $L \ge 63$ で次の3profileがそれぞれ素数証人上界を与える。
+である。 $L \ge 63$ で次の4profileがそれぞれ素数証人上界を与える。
 
 | 根の下限 $u$ | 残差予算 $D$ | 使用するprefix下界 |
 |---|---|---|
-| $91/10=9.1$ | $93/10=9.3$ | $901/250=3.604$ |
-| $19/2=9.5$ | $163/20=8.15$ | $721769/200000=3.608845$ |
-| $49/5=9.8$ | $813/100=8.13$ | $721769/200000=3.608845$ |
+| $91/10=9.1$ | $929/100=9.29$ | $901/250=3.604$ |
+| $93/10=9.3$ | $87/10=8.7$ | $901/250=3.604$ |
+| $237/25=9.48$ | $1629/200=8.145$ | $722517/200000=3.612585$ |
+| $979/100=9.79$ | $65/8=8.125$ | $722517/200000=3.612585$ |
 
-指標比較に現れる有限和は表のprefix値以上になる。大指数側の半径を $r=s^2$ とし、指数4側は $r_4=(7559/10000)r$、幅は両側とも $k/s$ とする。各profileの根の下限に合わせて零点tailとpoleの寄与を抑え、大指数・局所部分群・一様三素数の各場合を、実際の拒否素数へ接続する。
+実際の有限prefix和は表の値以上になる。大指数側の半径を $r=s^2$ とし、指数4側は $r_4=(7559/10000)r$、幅は両側とも $k/s$ とする。lowとbridgeはcoarse評価、middleとupperは符号を保った2項の評価を使う。指数4側の残差閾値は全profileで $204/5=40.8$ を保つ。大指数・指数4・局所部分群の分類を通じ、すべての奇合成数に対して実際の拒否素数を得る。
 
-3profileの最小を $A_+(L)$ と書く。切替境界を
+4profileの最小を $A_+(L)$ と書く。切替境界を
 
 $$
 \phi(u,D)=\frac{du^2-\beta u-D}{c},
 $$
 
 $$
-a_1=\phi(9.1,9.3),\quad a_2=\phi(9.5,9.3),\quad
- a_3=\phi(9.5,8.15),\quad a_4=\phi(9.8,8.15),\quad a_5=\phi(9.8,8.13)
+\begin{aligned}
+a_1&=\phi(9.1,9.29),& a_2&=\phi(9.3,9.29),& a_3&=\phi(9.3,8.7),\\
+a_4&=\phi(9.48,8.7),& a_5&=\phi(9.48,8.145),& a_6&=\phi(9.79,8.145),\\
+a_7&=\phi(9.79,8.125)
+\end{aligned}
 $$
 
-とすると、各区間で使う式は次のとおりである。境界はすべて有理数であり、数値的な根探索をguardに使わない。
+とする。境界は正確な有理数であり、数値的な根探索をguardに使わない。
 
 | 適用条件 | $A_+(L)$ |
 |---|---|
 | $63 \le L \le a_1$ | $(6/5)(9.1)^4$ |
-| $a_1 < L \le a_2$ | $V_{9.3}(L)$ |
-| $a_2 < L \le a_3$ | $(6/5)(9.5)^4$ |
-| $a_3 < L \le a_4$ | $V_{8.15}(L)$ |
-| $a_4 < L \le a_5$ | $(6/5)(9.8)^4$ |
-| $a_5 < L$ | $V_{8.13}(L)$ |
+| $a_1 < L \le a_2$ | $V_{9.29}(L)$ |
+| $a_2 < L \le a_3$ | $(6/5)(9.3)^4$ |
+| $a_3 < L \le a_4$ | $V_{8.7}(L)$ |
+| $a_4 < L \le a_5$ | $(6/5)(9.48)^4$ |
+| $a_5 < L \le a_6$ | $V_{8.145}(L)$ |
+| $a_6 < L \le a_7$ | $(6/5)(9.79)^4$ |
+| $a_7 < L$ | $V_{8.125}(L)$ |
 
-定義・切替の等式は [GaussianLowProfiles.lean](../PseudoPrime/Analysis/GaussianLowProfiles.lean) と [GaussianLowSwitches.lean](../PseudoPrime/Analysis/GaussianLowSwitches.lean)、素数証人・最小素数証人は [GaussianLowFloorBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianLowFloorBounds.lean) にある。
+数値証明書は [GaussianTunedProfiles.lean](../PseudoPrime/Analysis/GaussianTunedProfiles.lean)、素数証人・最小素数証人は [GaussianTunedBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianTunedBounds.lean) にある。
 
 ### prefix付きGaussian上界
+
+既存35行の対数moment下界と実際のsmoothed sum $S(100)$ の上界から、境界項の下界を強める。これを実際のGamma prefixへ輸送し、係数 $17/20$ でGaussian prefixに移す。新しい素数行やquadrature節点は使わない。対応する定理は [GammaSeedLogMoment.lean](../PseudoPrime/LLS/GammaSeedLogMoment.lean) にある。
 
 $N=35000$ と $N=50000$ の有限prefixを用い、次の2候補を定める。
 
 $$
-S_{35}(L)=\max\lbrace35000,V_{5.63}(L)\rbrace,\qquad
-S_{50}(L)=\max\lbrace50000,V_{5.41}(L)\rbrace.
+S_{35}(L)=\max\lbrace35000,V_{5.619}(L)\rbrace,\qquad
+S_{50}(L)=\max\lbrace50000,V_{5.372}(L)\rbrace.
 $$
 
-実際のprefix和の下界はそれぞれ $480743/100000=4.80743$ と $2455769/500000=4.911538$ である。cutoffの下限を保持することで、証明に必要なprefixの範囲を確保する。両候補は $L \ge 63$ で有効であり、その最小を $S_+(L)$ とする。
+実際のprefix和の下界はそれぞれ $481117/100000=4.81117$ と $983059/200000=4.915295$ である。cutoffの下限を保持することで、証明に必要なprefixの範囲を確保する。両候補は $L \ge 63$ で有効であり、その最小を $S_+(L)$ とする。
 
 $$
 \psi(N,D)=\phi\left(\left(\frac{5N}{6}\right)^{1/4},D\right),\qquad
-\sigma_1=\psi(35000,5.63),\quad
-\sigma_2=\psi(50000,5.63),\quad
-\sigma_3=\psi(50000,5.41).
+\sigma_1=\psi(35000,5.619),\quad
+\sigma_2=\psi(50000,5.619),\quad
+\sigma_3=\psi(50000,5.372).
 $$
 
 | 適用条件 | $S_+(L)$ |
 |---|---|
 | $63 \le L \le \sigma_1$ | $35000$ |
-| $\sigma_1 < L < \sigma_2$ | $V_{5.63}(L)$ |
+| $\sigma_1 < L < \sigma_2$ | $V_{5.619}(L)$ |
 | $\sigma_2 \le L \le \sigma_3$ | $50000$ |
-| $\sigma_3 < L$ | $V_{5.41}(L)$ |
+| $\sigma_3 < L$ | $V_{5.372}(L)$ |
 
-定義と厳密な切替等式は [GaussianSeededSharp.lean](../PseudoPrime/Analysis/GaussianSeededSharp.lean)、素数証人・最小素数証人は [GaussianSeededSharpBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianSeededSharpBounds.lean) にある。
+定義と厳密な切替等式は [GaussianSeededTuned.lean](../PseudoPrime/Analysis/GaussianSeededTuned.lean)、素数証人・最小素数証人は [GaussianSeededTunedBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianSeededTunedBounds.lean) にある。
 
 ### 高域のtriangular上界
 
@@ -353,86 +362,95 @@ triangular kernelの明示公式から、各行の適用条件で $C_iL^2$ 以�
 
 | $i$ | 適用条件 $T_i \le L$ | 係数 $C_i$ |
 |---:|---|---|
-| 1 | $3\cdot10^{10} \le L$ | $7/15$ |
-| 2 | $4\cdot10^{10} \le L$ | $21/50=0.42$ |
-| 3 | $10^{11} \le L$ | $1/3$ |
-| 4 | $2.5\cdot10^{11} \le L$ | $3/10$ |
-| 5 | $5\cdot10^{11} \le L$ | $29/100$ |
-| 6 | $1.08\cdot10^{12} \le L$ | $71/250=0.284$ |
-| 7 | $1.48\cdot10^{12} \le L$ | $2829/10000=0.2829$ |
+| 1 | $3\cdot10^{10} \le L$ | $4603/10000=0.4603$ |
+| 2 | $4\cdot10^{10} \le L$ | $829/2000=0.4145$ |
+| 3 | $10^{11} \le L$ | $663/2000=0.3315$ |
+| 4 | $2.5\cdot10^{11} \le L$ | $374/1250=0.2992$ |
+| 5 | $5\cdot10^{11} \le L$ | $2891/10000=0.2891$ |
+| 6 | $1.08\cdot10^{12} \le L$ | $28399/100000=0.28399$ |
+| 7 | $1.48\cdot10^{12} \le L$ | $28289/100000=0.28289$ |
 | 8 | $1.82\cdot10^{12} \le L$ | $1411811/5000000=0.2823622$ |
 
-各profileは自分の入口 $T_i$ 以上でのみ有効になる。定数の証明書は [TriangularProfiles.lean](../PseudoPrime/Analysis/TriangularProfiles.lean)、素数証人・最小素数証人は [TriangularProfileBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularProfileBounds.lean) にある。
+各profileは自分の入口 $T_i$ 以上でのみ有効になる。定数の証明書は [TriangularTunedProfiles.lean](../PseudoPrime/Analysis/TriangularTunedProfiles.lean)、素数証人・最小素数証人は [TriangularTunedBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularTunedBounds.lean) にある。
+
+最後の8行目は比較基準のsharpと共通で、定数と証人定理は [TriangularProfiles.lean](../PseudoPrime/Analysis/TriangularProfiles.lean) と [TriangularProfileBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularProfileBounds.lean) にある。新しい7profileの入口は変更しない。
 
 ## 上界式の適用区間と比較
 
 ### 上界式と証明済みの適用条件
 
-以下の解析候補と固定23〜73にはGRHを仮定する。有限区間の2と3は無条件である。
+以下の解析候補と固定23〜79にはGRHを仮定する。有限区間の2と3は無条件である。
 
 | 適用条件 | 上界式 |
 |---|---|
 | $9 \le n < 2047$ | $2$ |
 | $2047 \le n < 3000$ | $3$ |
-| 固定素数の表にある $L \le L_0$ | 表の各素数23〜73 |
+| 固定素数の表にある $L \le L_0$ | 表の各素数23〜79 |
 | すべての実数 $L$ | $U_{\mathrm{pt}}(L)$ |
-| $63 \le L$ | $A_{9.1,9.3}(L)$、 $A_{9.5,8.15}(L)$、 $A_{9.8,8.13}(L)$ |
+| $63 \le L$ | $A_{9.1,9.29}(L)$、 $A_{9.3,8.7}(L)$、 $A_{9.48,8.145}(L)$、 $A_{9.79,8.125}(L)$ |
 | $63 \le L$ | $S_{35}(L)$、 $S_{50}(L)$ |
 | 各 $T_i \le L$ | $C_iL^2$、 $i=1,\ldots,8$ |
 
 ### 区間ごとの包絡線
 
-下表は公開値 $U_{\mathrm{MR}}(n)$ に使う候補を示す。 $A_+$ と $S_+$ の内部区間は前節の表で定めたとおりである。 $63 \le L < 100$ ではpointwise候補とGaussian候補を、 $L \ge 100$ ではGaussian候補とprefix付き候補を比べる。候補間の交点による追加のguardは設けない。
+055559版の `sharpSelectedEnvelope` を $U_{\mathrm{sharp}}(n)$ と書く。新公開関数はこの比較基準を候補として保持し、14個の固定素数候補、4個のGaussian候補、2個のprefix付き候補、新しい7個の高域候補との最小値をとる。候補はそれぞれの証明済みguardでのみ有効になる。
 
 | 適用条件 | $U_{\mathrm{MR}}(n)$ |
 |---|---|
 | $9 \le n < 2047$ | $2$ |
 | $2047 \le n < 3000$ | $3$ |
-| $\ln3000 \le L \le 8.087$ | $23$ |
-| $8.087 < L \le 8.325$ | $29$ |
-| $8.325 < L \le 8.987$ | $31$ |
-| $8.987 < L \le 9.390$ | $37$ |
-| $9.390 < L \le 9.583$ | $41$ |
-| $9.583 < L \le 9.952$ | $43$ |
-| $9.952 < L \le 10.471$ | $47$ |
-| $10.471 < L \le 10.955$ | $53$ |
-| $10.955 < L \le 11.109$ | $59$ |
-| $11.109 < L \le 11.546$ | $61$ |
-| $11.546 < L \le 11.830$ | $67$ |
-| $11.830 < L \le 11.970$ | $71$ |
-| $11.970 < L \le 12.373$ | $73$ |
-| $12.373 < L < 63$ | $U_{\mathrm{pt}}(L)$ |
-| $63 \le L < 100$ | $\min\lbrace U_{\mathrm{pt}}(L),A_+(L)\rbrace$ |
-| $100 \le L < T_1$ | $\min\lbrace A_+(L),S_+(L)\rbrace$ |
-| $T_1 \le L < T_2$ | $\min\lbrace A_+(L),S_+(L),C_1L^2\rbrace$ |
-| $T_2 \le L < T_3$ | $\min\lbrace A_+(L),S_+(L),C_2L^2\rbrace$ |
-| $T_3 \le L < T_4$ | $\min\lbrace A_+(L),S_+(L),C_3L^2\rbrace$ |
-| $T_4 \le L < T_5$ | $\min\lbrace A_+(L),S_+(L),C_4L^2\rbrace$ |
-| $T_5 \le L < T_6$ | $\min\lbrace A_+(L),S_+(L),C_5L^2\rbrace$ |
-| $T_6 \le L < T_7$ | $\min\lbrace A_+(L),S_+(L),C_6L^2\rbrace$ |
-| $T_7 \le L < T_8$ | $\min\lbrace A_+(L),S_+(L),C_7L^2\rbrace$ |
-| $T_8 \le L$ | $\min\lbrace A_+(L),S_+(L),C_8L^2\rbrace$ |
+| $\ln3000 \le L \le 8.0901$ | $23$ |
+| $8.0901 < L \le 8.3320$ | $29$ |
+| $8.3320 < L \le 9.0031$ | $31$ |
+| $9.0031 < L \le 9.3961$ | $37$ |
+| $9.3961 < L \le 9.5875$ | $41$ |
+| $9.5875 < L \le 9.9619$ | $43$ |
+| $9.9619 < L \le 10.4895$ | $47$ |
+| $10.4895 < L \le 10.9671$ | $53$ |
+| $10.9671 < L \le 11.1199$ | $59$ |
+| $11.1199 < L \le 11.5654$ | $61$ |
+| $11.5654 < L \le 11.8463$ | $67$ |
+| $11.8463 < L \le 11.9879$ | $71$ |
+| $11.9879 < L \le 12.3975$ | $73$ |
+| $12.3975 < L \le 12.6409$ | $79$ |
+| $12.6409 < L < 63$ | $U_{\mathrm{pt}}(L)$ |
+| $63 \le L < T_1$ | $\min\lbrace U_{\mathrm{sharp}}(n),A_+(L),S_+(L)\rbrace$ |
+| $T_i \le L < T_{i+1}$、 $1 \le i \le 6$ | $\min\lbrace U_{\mathrm{sharp}}(n),A_+(L),S_+(L),C_iL^2\rbrace$ |
+| $T_7 \le L$ | $\min\lbrace U_{\mathrm{sharp}}(n),A_+(L),S_+(L),C_7L^2\rbrace$ |
 
-- $a_1 \approx 97.5013743$、 $a_2 \approx 108.86407995$、 $a_3 \approx 111.72255497$、 $a_4 \approx 120.57952463$、 $a_5 \approx 120.62923723$。
-- $\sigma_1 \approx 241.9380584$、 $\sigma_2 \approx 293.58147094$、 $\sigma_3 \approx 294.12830963$。
-- $T_1=3\cdot10^{10}$、 $T_2=4\cdot10^{10}$、 $T_3=10^{11}$、 $T_4=2.5\cdot10^{11}$、 $T_5=5\cdot10^{11}$、 $T_6=1.08\cdot10^{12}$、 $T_7=1.48\cdot10^{12}$、 $T_8=1.82\cdot10^{12}$。これらは正確な入口である。
+高域の入口は前節の正確な値を使う。新しい7profileでは入口が増加し係数が減少するため、有効なもののうち最後の候補だけを残せる。 $T_8$ 以降の既存の第8候補は $U_{\mathrm{sharp}}$ に含まれる。比較基準の候補も残すため、新しい上界は全入力で悪化しない。
 
-高域の最小値は適用条件を満たす候補集合
+数値関数と実証人の接続は [TunedWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TunedWitnessEnvelope.lean)、小入力の等式は [TunedIntervalSelection.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TunedIntervalSelection.lean) にある。有限区間の選択は [EndpointTunedEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointTunedEnvelope.lean) が与える。
+
+### 055559版からの厳密な改善
+
+13個の既存固定素数について、旧capを $L_{\mathrm{old}}$、上の表の新capを $L_{\mathrm{new}}$ とする。 $n \ge 3000$ かつ $L_{\mathrm{old}} < L \le L_{\mathrm{new}}$ では選択値・丸め値ともに旧sharpより小さい。旧capは順に8.087、8.325、8.987、9.390、9.583、9.952、10.471、10.955、11.109、11.546、11.830、11.970、12.373である。固定79も閉区間 $12.61 \le L \le 12.6409$ で両値を厳密に改善する。証明は [EndpointTunedComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointTunedComparison.lean) と [EndpointPrime79.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointPrime79.lean) にある。
+
+Gaussianの4候補の最小は旧Gaussianの3候補の最小より $L \ge 100$ で小さい。旧sharp全体に対する選択値の厳密改善は閉区間 $100 \le L \le 235.73$ で成り立つ。
+
+旧seededの切替点を $\tau_1=\mathrm{Switch}(\mathrm{false},35000)$、 $\tau_2=\mathrm{Switch}(\mathrm{false},50000)$、 $\tau_3=\mathrm{Switch}(\mathrm{true},50000)$ とし、profileごとの移動量を
 
 $$
-\mathcal C(L)=\lbrace A_+(L),S_+(L)\rbrace
- \cup\lbrace C_iL^2\mid 1 \le i \le 8, T_i \le L\rbrace
+\delta_{35}=\frac{550000}{20115621},\qquad
+\delta_{50}=\frac{1900000}{20115621}
 $$
 
-の最小である。入口は増加し係数は減少するため、その区間で最後に有効になった係数だけを残せる。 $C_iL^2$ がGaussian候補やprefix付き候補にも勝つとは仮定せず、表の最小値を評価する。
+とする。各profileの新数値関数は旧数値関数の $L-\delta_N$ での値と一致する。証人定理は元の入力 $L=\ln n$ に適用し、数値式の比較に限ってprofileごとに異なる移動量を使う。新しい切替は順に $\tau_1+\delta_{35}$、 $\tau_2+\delta_{35}$、 $\tau_3+\delta_{50}$ となる。旧sharpに対する選択値の厳密改善区間は
 
-数値関数の定義と実証人の接続は [SharpWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SharpWitnessEnvelope.lean)、区間の等式は [SharpIntervalSelection.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SharpIntervalSelection.lean) にある。通常域 $L < T_1$ の正規形は [SharpNormalForm.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SharpNormalForm.lean) で証明されている。高域の表は各候補の証明済みguardを整理したもので、guard付きの8候補の組立ては [SharpGuards.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SharpGuards.lean) にある。
+$$
+\tau_1 < L < \tau_2+\delta_{35},\qquad
+\tau_3 < L < 3\cdot10^{10}
+$$
+
+である。近似すると $(241.9380584,293.6088129)$ と $(294.1283096,3\cdot10^{10})$ になる。いずれも指定した端点は開く。
+
+高域の新7候補は $3\cdot10^{10} \le L < 1.82\cdot10^{12}$ で旧sharpの選択値を厳密に改善する。証明は [TriangularTunedOrder.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularTunedOrder.lean) にある。Gaussian・seeded・高域について、選択値の厳密改善だけから丸め値の厳密改善は結論しない。丸め値には全域での非悪化が成り立つ。
 
 ### 素数への丸め
 
 実数上界 $R \ge 2$ に対して、 $R$ 以下の最大素数を $\mathrm{primeRound}(R)$ とする。 $R < 2$ では値を変えない。すべての実数で $\mathrm{primeRound}(R) \le R$ が成り立ち、 $p \le R$ を満たす素数 $p$ は丸め後も範囲内にある。また、 `primeRound_mono` はこの丸めの単調性を示す。定義と定理は [PrimeCutoff.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/PrimeCutoff.lean) にある。
 
-`sharpPrimeEnvelope n` は `sharpWitnessEnvelope n` を丸める。2・3・固定23〜73は丸めても同じ値である。素数への丸めは調べる素数基数の集合を変えずに、実数上界をその集合の最大要素へ置き換える。
+`tunedPrimeEnvelope n` は `tunedWitnessEnvelope n` を丸める。2・3・固定23〜79は丸めても同じ値である。素数への丸めは調べる素数基数の集合を変えずに、実数上界をその集合の最大要素へ置き換える。
 
 ### 累積最大値と単調性
 
@@ -443,16 +461,18 @@ Q_{\mathrm{MR}}(N)=\max\lbrace q_{\mathrm{MR}}(n)\mid
  9 \le n \le N, n\text{ は奇合成数}\rbrace
 $$
 
-と定める。 `sharpSelected_mono_normal` と `sharpPrime_mono_normal` は、 $9 \le m \le n$ かつ $\ln n < 3\cdot10^{10}$ の範囲で公開数値関数が単調非減少であることを示す。これらは [SharpEnvelopeOrder.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SharpEnvelopeOrder.lean) にある。GRHの下で、通常域 $N \ge 9$、 $\ln N < 3\cdot10^{10}$ では
+と定める。 `tunedSelected_mono_normal` と `tunedPrime_mono_normal` は、 $9 \le m \le n$ かつ $\ln n < 3\cdot10^{10}$ の範囲で公開数値関数が単調非減少であることを示す。これらは [TunedEnvelopeOrder.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TunedEnvelopeOrder.lean) にある。GRHの下で、通常域 $N \ge 9$、 $\ln N < 3\cdot10^{10}$ では
 
 $$
 Q_{\mathrm{MR}}(N) \le U_{\mathrm{MR}}(N),\qquad
-Q_{\mathrm{MR}}(N) \le \mathrm{sharpPrimeEnvelope}(N)
+Q_{\mathrm{MR}}(N) \le \mathrm{tunedPrimeEnvelope}(N)
 $$
 
 が従う。各奇合成数に対する証人上界と、 $n \le N$ での単調性を組み合わせるためである。高域で新しいguardが有効になると、入力ごとの上界が下がることがある。その範囲全体を一律に覆う場合は、各区間内の上界の最大値を含めて評価する。累積最大値 $Q_{\mathrm{MR}}$ 自体は、すべての範囲で単調非減少である。
 
 ### 比較グラフ
+
+055559版のsharpと新しいtunedを重ねた [比較図](figures/mr_tuned_vs_sharp.svg) を用意した。低域の固定素数、Gaussianとseeded、高域のtriangularを3パネルで示す。 [PNG版](figures/mr_tuned_vs_sharp.png) も参照できる。
 
 ![Miller–Rabinの最小素数証人と上界式の比較](figures/mr_upper_bound_comparison.svg)
 

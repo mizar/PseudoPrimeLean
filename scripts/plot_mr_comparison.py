@@ -572,6 +572,57 @@ def upper(L: np.ndarray) -> np.ndarray:
     return np.where(L < math.log(3000), baseline, triangular)
 
 
+
+# The 055559 functions remain independent comparison baselines.
+sharp_upper = upper
+sharp_candidates = candidates
+TUNED_FINITE_STEPS = [
+    (23, 8.0901), (29, 8.3320), (31, 9.0031), (37, 9.3961),
+    (41, 9.5875), (43, 9.9619), (47, 10.4895), (53, 10.9671),
+    (59, 11.1199), (61, 11.5654), (67, 11.8463), (71, 11.9879),
+    (73, 12.3975), (79, 12.6409),
+]
+TUNED_GAUSSIAN_PROFILES = [(9.1, 9.29), (9.3, 8.7), (9.48, 8.145), (9.79, 8.125)]
+TUNED_TRIANGULAR_PROFILES = [
+    (.4603, 3e10), (.4145, 4e10), (.3315, 1e11), (.2992, 2.5e11),
+    (.2891, 5e11), (.28399, 1.08e12), (.28289, 1.48e12),
+]
+
+
+def gaussian_tuned_family(L: np.ndarray) -> np.ndarray:
+    return np.minimum.reduce([gaussian_low_profile(L, u, D)
+                              for u, D in TUNED_GAUSSIAN_PROFILES])
+
+
+def gaussian_seeded_tuned(L: np.ndarray) -> np.ndarray:
+    return np.minimum(np.maximum(35000, gaussian_raw_bound(L, 5.619)),
+                      np.maximum(50000, gaussian_raw_bound(L, 5.372)))
+
+
+def candidates(L: np.ndarray) -> np.ndarray:
+    """Independent guarded minimum for Lean tunedWitnessEnvelope."""
+    result = list(sharp_candidates(L))
+    result.extend(np.where(L <= cap, float(b), np.inf) for b, cap in TUNED_FINITE_STEPS)
+    result.extend(np.where(L >= 63, gaussian_low_profile(L, u, D), np.inf)
+                  for u, D in TUNED_GAUSSIAN_PROFILES)
+    result.extend(np.where(L >= 63, np.maximum(N, gaussian_raw_bound(L, D)), np.inf)
+                  for N, D in [(35000, 5.619), (50000, 5.372)])
+    result.extend(np.where(L >= T, C*L**2, np.inf) for C, T in TUNED_TRIANGULAR_PROFILES)
+    return np.array(result)
+
+
+def upper(L: np.ndarray) -> np.ndarray:
+    """Lean tunedSelectedEnvelope, preserving both total small-input branches."""
+    baseline = sharp_upper(L)
+    finite = np.select([L <= cap for _, cap in TUNED_FINITE_STEPS],
+        [np.minimum(baseline, b) for b, _ in TUNED_FINITE_STEPS], default=baseline)
+    analytic = np.where(L < 63, finite,
+        np.minimum.reduce([finite, gaussian_tuned_family(L), gaussian_seeded_tuned(L)]))
+    triangular = np.minimum.reduce([analytic] +
+        [np.where(L >= T, np.minimum(analytic, C*L**2), analytic)
+         for C, T in TUNED_TRIANGULAR_PROFILES])
+    return np.where(L < math.log(3000), baseline, triangular)
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path,
@@ -614,6 +665,11 @@ def main() -> None:
         [gaussian_floor_switch(u, D) for u, D in
             [(9.1, 9.3), (9.5, 9.3), (9.5, 8.15), (9.8, 8.15), (9.8, 8.13)]],
         [gaussian_switch(N, D) for N, D in [(35000, 5.63), (50000, 5.63), (50000, 5.41)]]])
+    entrances = np.concatenate([entrances, [cap for _, cap in TUNED_FINITE_STEPS],
+        [gaussian_floor_switch(u, D) for u, D in TUNED_GAUSSIAN_PROFILES],
+        [gaussian_floor_switch(v, D) for (_, D), (v, _) in
+         zip(TUNED_GAUSSIAN_PROFILES, TUNED_GAUSSIAN_PROFILES[1:])],
+        [gaussian_switch(N, D) for N, D in [(35000, 5.619), (50000, 5.619), (50000, 5.372)]]])
     entrances = entrances[entrances <= Lmax]
     L = np.unique(np.concatenate([
         np.exp(np.linspace(math.log(math.log(9)), math.log(Lmax), 10000)),
@@ -701,6 +757,21 @@ def main() -> None:
             np.maximum(35000, gaussian_raw_bound(scale, 5.63)),
             np.maximum(50000, gaussian_raw_bound(scale, 5.41))), rtol=4e-15)
 
+    # These sampled checks supplement the separate continuous Lean interval proofs.
+    assert np.all(U <= sharp_upper(L)*(1+3e-15))
+    for (b, old_cap), (_, cap) in zip(FINITE_PRINCIPAL_STEPS, TUNED_FINITE_STEPS):
+        cell = np.linspace(old_cap+1e-10, cap, 101)
+        assert np.all(upper(cell) == b) and np.all(upper(cell) < sharp_upper(cell))
+    for lo, hi in [(12.61, 12.6409), (100, 235.73), (3e10, 1.82e12-1)]:
+        cell = np.linspace(lo, hi, 3001)
+        assert np.all(upper(cell) < sharp_upper(cell))
+    t1 = gaussian_switch(35000, 5.63)
+    t2 = gaussian_switch(50000, 5.63)
+    t3 = gaussian_switch(50000, 5.41)
+    for lo, hi in [(t1+1e-8, t2+550000/20115621-1e-8), (t3+1e-8, 3e10-1)]:
+        cell = np.linspace(lo, hi, 3001)
+        assert np.all(upper(cell) < sharp_upper(cell))
+
     data = DATA_DIR / "mr_records.csv"
     with data.open(encoding="utf-8", newline="") as f:
         records = list(csv.DictReader(f))
@@ -782,27 +853,48 @@ def main() -> None:
                    + "\n", encoding="utf-8")
     fig.savefig(stem.with_suffix(".png"), dpi=180)
     plt.close(fig)
+    # Supplement the production plot with direct old-sharp versus tuned comparisons.
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4.3))
+    for ax, (lo, hi, label) in zip(axes, [(8.05, 12.7, "Fixed-prime cutoffs"),
+            (95., 300., "Gaussian and seeded"), (3e10, 1.9e12, "Triangular profiles")]):
+        x = np.linspace(lo, hi, 5000)
+        ax.plot(x, sharp_upper(x), label="055559 sharp", color="#667788", linewidth=1.6)
+        ax.plot(x, upper(x), label="Tuned", color="#d55e00", linewidth=1.6)
+        ax.set_title(label)
+        ax.set_xlabel(r"$L=\ln n$")
+        ax.set_ylabel("Selected witness bound")
+        ax.grid(color="#dddddd", linewidth=.5)
+        ax.legend(fontsize=8)
+    fig.tight_layout()
+    comparison = args.output_dir / "mr_tuned_vs_sharp"
+    fig.savefig(comparison.with_suffix(".svg"), metadata={"Date": None})
+    comparison_svg = comparison.with_suffix(".svg")
+    comparison_svg.write_text("\n".join(line.rstrip() for line in
+        comparison_svg.read_text(encoding="utf-8").splitlines()) + "\n", encoding="utf-8")
+    fig.savefig(comparison.with_suffix(".png"), dpi=160)
+    plt.close(fig)
     report = {"small_interval_switch": 2047,
               "small_three_interval": [2047, 3000],
-              "low_prime_steps": FINITE_PRINCIPAL_STEPS,
+              "low_prime_steps": TUNED_FINITE_STEPS,
               "pointwise_radius_floor": 8, "pointwise_inverse_bisections": 64,
               "gaussian_profiles": [{"floor": u, "residual": D} for u, D in
-                  [(9.1, 9.3), (9.5, 8.15), (9.8, 8.13)]],
+                  TUNED_GAUSSIAN_PROFILES],
               "gaussian_profile_switches": [gaussian_floor_switch(u, D) for u, D in
-                  [(9.1, 9.3), (9.5, 9.3), (9.5, 8.15), (9.8, 8.15), (9.8, 8.13)]],
-              "gaussian_prefix": 721769/200000,
-              "gaussian_seeded_residuals": [5.63, 5.41],
-              "gaussian_seeded_prefixes": [480743/100000, 2455769/500000],
+                  [(9.1,9.29), (9.3,9.29), (9.3,8.7), (9.48,8.7),
+                   (9.48,8.145), (9.79,8.145), (9.79,8.125)]],
+              "gaussian_prefix": 722517/200000,
+              "gaussian_seeded_residuals": [5.619, 5.372],
+              "gaussian_seeded_prefixes": [481117/100000, 983059/200000],
               "gaussian_seeded_switches": [gaussian_switch(N, D) for N, D in
-                  [(35000, 5.63), (50000, 5.63), (50000, 5.41)]],
+                  [(35000, 5.619), (50000, 5.619), (50000, 5.372)]],
               "triangular_log_entrances": [T for _, T in TRIANGULAR_PROFILES],
-              "triangular_coefficients": [C for C, _ in TRIANGULAR_PROFILES],
-              "lean_selected_envelope": "sharpSelectedEnvelope",
-              "lean_selection_equality": "sharp_eq_selected",
-              "comparison_baseline": "refinedSelectedEnvelope",
+              "triangular_coefficients": [C for C, _ in TUNED_TRIANGULAR_PROFILES] + [1411811/5000000],
+              "lean_selected_envelope": "tunedSelectedEnvelope",
+              "lean_selection_equality": "tuned_eq_selected",
+              "comparison_baseline": "sharpSelectedEnvelope",
               "sampled_selection_equality_checked": True,
               "sampled_plot_monotonicity_checked": True,
-              "gaussian_strict_sample_interval": [100, 235],
+              "gaussian_strict_sample_interval": [100, 235.73],
               "candidates_checked": len(candidates(L)),
               "plot_scale_points_checked": len(L), "high_scale_probe_count": len(probe),
               "record_points_checked": len(records)}
