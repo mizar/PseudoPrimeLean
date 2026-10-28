@@ -468,7 +468,7 @@ def gaussian_recovered_seeded(L: np.ndarray) -> np.ndarray:
          np.full_like(L, 50000)], default=gaussian_raw_bound(L, 136/25))
 
 
-def candidates(L: np.ndarray) -> np.ndarray:
+def refined_candidates(L: np.ndarray) -> np.ndarray:
     """Independent guarded minimum defining Lean refinedWitnessEnvelope."""
     result = list(next_candidates(L))
     result.extend(np.where(L <= cap, float(b), np.inf)
@@ -484,7 +484,7 @@ def candidates(L: np.ndarray) -> np.ndarray:
     return np.array(result)
 
 
-def upper(L: np.ndarray) -> np.ndarray:
+def refined_upper(L: np.ndarray) -> np.ndarray:
     """Lean refinedSelectedEnvelope with its unchanged small-input convention.
 
     Evaluate the ordered low-prime selection first, then exactly the active analytic
@@ -505,6 +505,71 @@ def upper(L: np.ndarray) -> np.ndarray:
          np.minimum.reduce([base, gaussian, gamma, seeded, (71/250)*L**2])],
         default=np.minimum.reduce([
             base, gaussian, gamma, seeded, (71/250)*L**2, (28237/100000)*L**2]))
+
+
+FINITE_PRINCIPAL_STEPS = [
+    (23, 8.087), (29, 8.325), (31, 8.987), (37, 9.390),
+    (41, 9.583), (43, 9.952), (47, 10.471), (53, 10.955),
+    (59, 11.109), (61, 11.546), (67, 11.830), (71, 11.970), (73, 12.373),
+]
+TRIANGULAR_PROFILES = [
+    (7/15, 3e10), (21/50, 4e10), (1/3, 1e11), (3/10, 2.5e11),
+    (29/100, 5e11), (71/250, 1.08e12), (2829/10000, 1.48e12),
+    (1411811/5000000, 1.82e12),
+]
+
+
+def gaussian_floor_switch(u: float, D: float) -> float:
+    d, beta, c = gaussian_coefficients()
+    return (d*u*u-beta*u-D)/c
+
+
+def gaussian_low_profile(L: np.ndarray, u: float, D: float) -> np.ndarray:
+    return np.maximum((6/5)*u**4, gaussian_raw_bound(L, D))
+
+
+def gaussian_low_family(L: np.ndarray) -> np.ndarray:
+    """Exact rational-switch selection of the three low-floor profiles."""
+    return np.select(
+        [L <= gaussian_floor_switch(9.5, 9.3),
+         L <= gaussian_floor_switch(9.8, 8.15)],
+        [gaussian_low_profile(L, 9.1, 9.3), gaussian_low_profile(L, 9.5, 8.15)],
+        default=gaussian_low_profile(L, 9.8, 8.13))
+
+
+def gaussian_seeded_sharp(L: np.ndarray) -> np.ndarray:
+    t1, t2, t3 = (gaussian_switch(35000, 5.63), gaussian_switch(50000, 5.63),
+                  gaussian_switch(50000, 5.41))
+    return np.select([L <= t1, L < t2, L <= t3],
+        [np.full_like(L, 35000), gaussian_raw_bound(L, 5.63),
+         np.full_like(L, 50000)], default=gaussian_raw_bound(L, 5.41))
+
+
+def candidates(L: np.ndarray) -> np.ndarray:
+    """Independent guarded minimum for Lean sharpWitnessEnvelope."""
+    result = list(refined_candidates(L))
+    result.extend(np.where(L <= cap, float(b), np.inf)
+                  for b, cap in FINITE_PRINCIPAL_STEPS)
+    result.extend(np.where(L >= 63, gaussian_low_profile(L, u, D), np.inf)
+                  for u, D in [(9.1, 9.3), (9.5, 8.15), (9.8, 8.13)])
+    result.extend(np.where(L >= 63, np.maximum(N, gaussian_raw_bound(L, D)), np.inf)
+                  for N, D in [(35000, 5.63), (50000, 5.41)])
+    result.extend(np.where(L >= T, C*L**2, np.inf) for C, T in TRIANGULAR_PROFILES)
+    return np.array(result)
+
+
+def upper(L: np.ndarray) -> np.ndarray:
+    """Lean sharpSelectedEnvelope; 2047 <= n < 3000 retains value three."""
+    baseline = refined_upper(L)
+    finite = np.select([L <= cap for _, cap in FINITE_PRINCIPAL_STEPS],
+        [np.minimum(baseline, b) for b, _ in FINITE_PRINCIPAL_STEPS], default=baseline)
+    analytic = np.where(L < 63, finite,
+        np.minimum.reduce([finite, gaussian_low_family(L), gaussian_seeded_sharp(L)]))
+    # Entrances increase and coefficients decrease, so the last active profile wins.
+    triangular = np.select([L < T for _, T in TRIANGULAR_PROFILES],
+        [analytic] + [np.minimum(analytic, C*L**2) for C, _ in TRIANGULAR_PROFILES[:-1]],
+        default=np.minimum(analytic, TRIANGULAR_PROFILES[-1][0]*L**2))
+    return np.where(L < math.log(3000), baseline, triangular)
 
 
 def main() -> None:
@@ -544,6 +609,11 @@ def main() -> None:
         [63, 101, 108, 126, 132, 215, 235, 1.1e12, 1.5e12, 2e12,
          gaussian_switch(35000, 283/50), gaussian_switch(50000, 283/50),
          gaussian_switch(50000, 136/25)]])
+    entrances = np.concatenate([entrances,
+        [cap for _, cap in FINITE_PRINCIPAL_STEPS], [T for _, T in TRIANGULAR_PROFILES],
+        [gaussian_floor_switch(u, D) for u, D in
+            [(9.1, 9.3), (9.5, 9.3), (9.5, 8.15), (9.8, 8.15), (9.8, 8.13)]],
+        [gaussian_switch(N, D) for N, D in [(35000, 5.63), (50000, 5.63), (50000, 5.41)]]])
     entrances = entrances[entrances <= Lmax]
     L = np.unique(np.concatenate([
         np.exp(np.linspace(math.log(math.log(9)), math.log(Lmax), 10000)),
@@ -571,6 +641,9 @@ def main() -> None:
         [1.1e12, np.nextafter(1.1e12, -np.inf), np.nextafter(1.1e12, np.inf),
          1.5e12, np.nextafter(1.5e12, -np.inf), np.nextafter(1.5e12, np.inf),
          2e12, np.nextafter(2e12, -np.inf), np.nextafter(2e12, np.inf)]]))
+    high_boundaries = np.array([T for _, T in TRIANGULAR_PROFILES])
+    probe = np.unique(np.concatenate([probe, high_boundaries,
+        np.nextafter(high_boundaries, -np.inf), np.nextafter(high_boundaries, np.inf)]))
     np.testing.assert_allclose(upper(probe), np.min(candidates(probe), axis=0), rtol=3e-15)
     assert np.all(upper(probe) <= compatible_upper(probe)*(1+3e-15))
     assert np.all(upper(probe) <= next_upper(probe)*(1+3e-15))
@@ -587,9 +660,9 @@ def main() -> None:
                                                     TIGHT_LOW_PRIME_STEPS):
         assert bound == new_bound and old_cap < new_cap
         segment = np.linspace(np.nextafter(old_cap, np.inf), new_cap, 17)
-        assert np.all(upper(segment) == float(bound))
+        assert np.all(refined_upper(segment) == float(bound))
         assert np.all(upper(segment) < next_upper(segment))
-        assert upper(np.array([np.nextafter(new_cap, np.inf)]))[0] > bound
+        assert refined_upper(np.array([np.nextafter(new_cap, np.inf)]))[0] > bound
     for scale in [L, probe]:
         selected = gaussian_recovered_seeded(scale)
         profiles = np.minimum(np.maximum(35000, gaussian_raw_bound(scale, 283/50)),
@@ -601,6 +674,32 @@ def main() -> None:
     assert 209 < gamma_sharp_switch() < 210
     assert 240 < gaussian_switch(35000, 29/5) < 242
     assert 293 < gaussian_switch(50000, 29/5) < gaussian_switch(50000, 111/20) < 294
+
+    # Current-baseline strict cells and the normal-range monotonicity check.
+    assert np.all(U <= refined_upper(L)*(1+3e-15))
+    assert np.all(np.diff(U) >= -1e-9)
+    gaussian_band = np.linspace(100, 235, 3001)
+    assert np.all(upper(gaussian_band) < refined_upper(gaussian_band))
+    for old, new in zip(TIGHT_LOW_PRIME_STEPS, FINITE_PRINCIPAL_STEPS[:9]):
+        b, old_cap = old
+        segment = np.linspace(np.nextafter(old_cap, np.inf), new[1], 31)
+        assert np.all(upper(segment) == b)
+        assert np.all(upper(segment) < refined_upper(segment))
+    for lo, hi, b in [(11.52, 11.53, 61), (11.8, 11.82, 67),
+                      (11.94, 11.96, 71), (12.35, 12.37, 73)]:
+        cell = np.linspace(lo, hi, 51)
+        assert np.all(upper(cell) == b)
+        assert np.all(upper(cell) < refined_upper(cell))
+    for lo, hi in [(3e10, np.nextafter(1.1e12, -np.inf)), (1.82e12, 4e13)]:
+        cell = np.geomspace(lo, hi, 3001)
+        assert np.all(upper(cell) < refined_upper(cell))
+    for scale in [L, probe]:
+        np.testing.assert_allclose(gaussian_low_family(scale), np.minimum.reduce([
+            gaussian_low_profile(scale, 9.1, 9.3), gaussian_low_profile(scale, 9.5, 8.15),
+            gaussian_low_profile(scale, 9.8, 8.13)]), rtol=4e-15)
+        np.testing.assert_allclose(gaussian_seeded_sharp(scale), np.minimum(
+            np.maximum(35000, gaussian_raw_bound(scale, 5.63)),
+            np.maximum(50000, gaussian_raw_bound(scale, 5.41))), rtol=4e-15)
 
     data = DATA_DIR / "mr_records.csv"
     with data.open(encoding="utf-8", newline="") as f:
@@ -683,24 +782,27 @@ def main() -> None:
                    + "\n", encoding="utf-8")
     fig.savefig(stem.with_suffix(".png"), dpi=180)
     plt.close(fig)
-    report = {"small_interval_switch": 2047, "low_prime_steps": TIGHT_LOW_PRIME_STEPS,
+    report = {"small_interval_switch": 2047,
+              "small_three_interval": [2047, 3000],
+              "low_prime_steps": FINITE_PRINCIPAL_STEPS,
               "pointwise_radius_floor": 8, "pointwise_inverse_bisections": 64,
-              "fixed_step_log_caps": [11.509, 11.79, 11.93, 12.337],
-              "guard_log_entrances": [63, 101, 1.1e12, 2e12],
-              "gaussian_single_residual": 407/50,
-              "gamma_fixed_stencil_offset": 36174637/11856000,
-              "gaussian_seeded_switches": seed_switches,
-              "triangular_log_entrances": [1.1e12, 2e12],
-              "triangular_coefficients": [71/250, 28237/100000],
-              "lean_selected_envelope": "refinedSelectedEnvelope",
-              "lean_selection_equality": "refined_eq_selected",
+              "gaussian_profiles": [{"floor": u, "residual": D} for u, D in
+                  [(9.1, 9.3), (9.5, 8.15), (9.8, 8.13)]],
+              "gaussian_profile_switches": [gaussian_floor_switch(u, D) for u, D in
+                  [(9.1, 9.3), (9.5, 9.3), (9.5, 8.15), (9.8, 8.15), (9.8, 8.13)]],
+              "gaussian_prefix": 721769/200000,
+              "gaussian_seeded_residuals": [5.63, 5.41],
+              "gaussian_seeded_prefixes": [480743/100000, 2455769/500000],
+              "gaussian_seeded_switches": [gaussian_switch(N, D) for N, D in
+                  [(35000, 5.63), (50000, 5.63), (50000, 5.41)]],
+              "triangular_log_entrances": [T for _, T in TRIANGULAR_PROFILES],
+              "triangular_coefficients": [C for C, _ in TRIANGULAR_PROFILES],
+              "lean_selected_envelope": "sharpSelectedEnvelope",
+              "lean_selection_equality": "sharp_eq_selected",
+              "comparison_baseline": "refinedSelectedEnvelope",
               "sampled_selection_equality_checked": True,
-              "strict_sample_intervals": [
-                  {"lower": 108, "upper": 126, "upper_inclusive": True, "samples": 1001},
-                  {"lower": 132, "upper": 235, "upper_inclusive": True, "samples": 2001},
-                  {"lower": 1.1e12, "upper": 1.5e12,
-                   "upper_inclusive": False, "samples": 1001},
-                  {"lower": 2e12, "upper": 4e13, "upper_inclusive": True, "samples": 1001}],
+              "sampled_plot_monotonicity_checked": True,
+              "gaussian_strict_sample_interval": [100, 235],
               "candidates_checked": len(candidates(L)),
               "plot_scale_points_checked": len(L), "high_scale_probe_count": len(probe),
               "record_points_checked": len(records)}
