@@ -24,7 +24,7 @@ Alford–Granville–Pomerance（AGP）の構成に基づく、次の存在定�
 ### 1.1 二つの数を先に指定する
 
 まず、自然数 $B,C$ を任意に指定する。
-$B$ は**調べる底の値の上限**、$C$ は**見つけたい数の大きさの下限**である。
+$B$ は**調べる底の値の上限**、 $C$ は**見つけたい数の大きさの下限**である。
 
 そのとき、次の条件を同時に満たす自然数 $a$ が存在する。
 
@@ -39,12 +39,12 @@ a\text{ はカーマイケル数},\\
 $$
 
 $B$ は「最初の $B$ 個の素数」という意味ではない。
-例えば $B=10$ なら、$2,3,5,7$ だけでなく、$1,4,6,8,9,10$ も対象になる。
+例えば $B=10$ なら、 $2,3,5,7$ だけでなく、 $1,4,6,8,9,10$ も対象になる。
 また、**一つの $a$ がすべての指定底を通過する**のであり、底ごとに別の数を選ぶわけではない。
 
 $B$ を固定しても $C$ はいくらでも大きくできる。
 したがって、その初期底をすべて通過するカーマイケル数は無限に存在する。
-ただし、$B$ を増やしたときには別の $a$ を選んでよく、
+ただし、 $B$ を増やしたときには別の $a$ を選んでよく、
 「一つの合成数が、すべての正整数底を通過する」という主張ではない。
 
 底ごとの通過条件を $\mathrm{MRPass}(a,b)$ と書けば、定理は
@@ -57,8 +57,8 @@ $$
 \end{aligned}
 $$
 
-と表せる。$B,C$ の間に大小関係は要求しない。
-$B=0$ では調べる底が空になるが、$C$ を超えるカーマイケル数の存在は依然として要求される。
+と表せる。 $B,C$ の間に大小関係は要求しない。
+$B=0$ では調べる底が空になるが、 $C$ を超えるカーマイケル数の存在は依然として要求される。
 
 <details>
 <summary>Lean で確認する：命題の定義と量化の順序</summary>
@@ -81,7 +81,7 @@ def AGPInitialBasesUnbounded : Prop :=
 ```
 
 `∀ B C` の後に `∃ a` があり、その後に `∀ b` がある。
-つまり、$a$ は $B,C$ に応じて選べるが、対象の底 $b$ ごとに選び直すことはできない。
+つまり、 $a$ は $B,C$ に応じて選べるが、対象の底 $b$ ごとに選び直すことはできない。
 
 `def ... : Prop` は**証明する命題に名前を付ける定義**であり、証明そのものではない。
 その証明を与えるのが、[第5節](#lean-entry)の `agp_initial_bases_unbounded` である。
@@ -91,7 +91,7 @@ def AGPInitialBasesUnbounded : Prop :=
 ### 1.2 強い Miller–Rabin テストの通過条件
 
 「底」は、検査に使うべき乗の底 $b$ を指す。素数かどうかを調べる数 $a$ とは別の数である。
-奇数 $a > 1$ に対して、$a-1$ から因子 $2$ を取り除き、
+奇数 $a > 1$ に対して、 $a-1$ から因子 $2$ を取り除き、
 
 $$
 a-1=2^s d,\qquad d\text{ は奇数}
@@ -109,8 +109,8 @@ $$
 b^{2^j d}\equiv-1\pmod a
 $$
 
-が成り立つことである。$j=0$ も許されるため、最初の $b^d$ が $-1$ に合同でも通過する。
-ここで $x\equiv y\pmod a$ は、$x,y$ を $a$ で割った余りが等しいことを表す。
+が成り立つことである。 $j=0$ も許されるため、最初の $b^d$ が $-1$ に合同でも通過する。
+ここで $x\equiv y\pmod a$ は、 $x,y$ を $a$ で割った余りが等しいことを表す。
 
 合成数でありながらこの条件を満たす数を、その底に対する**強擬素数**という。
 通過したことだけで、素数と確定するわけではない。
@@ -146,7 +146,7 @@ def StrongMillerRabinPass (n : ℕ) (x : ZMod n) : Prop :=
 
 ### 1.3 カーマイケル数と Korselt の判定条件
 
-**カーマイケル数**とは、合成数 $a$ であり、$a$ と互いに素なすべての整数 $b$ に対して
+**カーマイケル数**とは、合成数 $a$ であり、 $a$ と互いに素なすべての整数 $b$ に対して
 
 $$
 \gcd(a,b)=1\quad\Longrightarrow\quad b^{a-1}\equiv1\pmod a
@@ -183,7 +183,7 @@ theorem isCarmichael_finset_prime_product {S : Finset ℕ} {K : ℕ} (hprime : �
 ```
 
 **前提：** `S` は相異なる素数の有限集合で2要素以上を持ち、
-各 $p-1$ は共通の整数 $K$ の約数で、$K$ は積から $1$ を引いた数の約数である。
+各 $p-1$ は共通の整数 $K$ の約数で、 $K$ は積から $1$ を引いた数の約数である。
 
 **結論：** `S` の要素の積はカーマイケル数である。
 
@@ -208,17 +208,17 @@ a-1=3215031750=2\cdot1607515875
 $$
 
 は $150,750,28350$ のそれぞれで割り切れる。
-したがって Korselt の判定条件を満たし、$a$ はカーマイケル数である。
+したがって Korselt の判定条件を満たし、 $a$ はカーマイケル数である。
 
 $d=1607515875$ とすると、剰余累乗は次のようになる。
 
 | 底 $b$ | $b^d\bmod a$ | 通過条件 |
 |---|---:|---|
 | $1,2,4,5,8,9,10$ | $1$ | 第一の条件 |
-| $3,6,7$ | $3215031750=a-1$ | 第二の条件、$j=0$ |
+| $3,6,7$ | $3215031750=a-1$ | 第二の条件、 $j=0$ |
 | $11$ | $2129160099$ | どちらも満たさない |
 
-この数は、例えば $B=10$、$C=10^9$ に対する証人になる。
+この数は、例えば $B=10$、 $C=10^9$ に対する証人になる。
 一方、底 $11$ では通過しない。ここでは $s=1$ なので、第二の条件に使える $j$ は $0$ だけである。
 
 この具体例は、任意の $B,C$ に対する存在証明の代わりではない。
@@ -275,20 +275,20 @@ $$
 ### 4.1 条件の揃った素数を十分多数用意する
 
 補助整数 $L,k$ と有限素数集合 $P$ を用意する。
-各素数 $p\in P$ は、$L$ のある約数 $e_p$ を使って
+各素数 $p\in P$ は、 $L$ のある約数 $e_p$ を使って
 
 $$
 p=e_p k+1,\qquad e_p\mid L
 $$
 
-と書ける。ここで $e_p\mid L$ は、$e_p$ が $L$ の約数であることを表す。
+と書ける。ここで $e_p\mid L$ は、 $e_p$ が $L$ の約数であることを表す。
 **$k$ は素数ごとに変えず、すべての候補に共通に取る。**
 
-さらに $k,L$ は互いに素で、各 $p$ は $L$ と互いに素、$p\equiv3\pmod4$、$p > C$ とする。
+さらに $k,L$ は互いに素で、各 $p$ は $L$ と互いに素、 $p\equiv3\pmod4$、 $p > C$ とする。
 どの $p$ も対象の底 $b\in W$ の約数にならないようにする。
 
 これらはそれぞれ、後の別々の仕事に使う条件である。
-$p=e_pk+1$ は積の合同式を揃え、$p\equiv3\pmod4$ は強いテストで使う指数を揃える。
+$p=e_pk+1$ は積の合同式を揃え、 $p\equiv3\pmod4$ は強いテストで使う指数を揃える。
 $p > C$ は積の下限を保証する。
 
 難しいのは、この条件を満たす素数が単に存在するだけでなく、
@@ -317,10 +317,10 @@ def AGPProgressionPrimeSupply : Prop :=
 
 **入力：** 正整数だけからなる有限底集合 `W` と、任意の下限 `C`。
 
-**出力：** $L > 2$、$\lambda(L)\ge3$、$\gcd(k,L)=1$ を満たす $L,k$ と素数集合 $P$。
+**出力：** $L > 2$、 $\lambda(L)\ge3$、 $\gcd(k,L)=1$ を満たす $L,k$ と素数集合 $P$。
 ここで $\lambda(L)$ は、法 $L$ の可逆な剰余類すべてについて
 $g^{\lambda(L)}=1$ となる最小の正整数、すなわちカーマイケル関数である。
-「$a$ がカーマイケル数である」という性質とは区別する。
+「 $a$ がカーマイケル数である」という性質とは区別する。
 
 個数条件は
 
@@ -328,7 +328,7 @@ $$
 |P| > 2^{|W|}\left\lfloor\lambda(L)\log L\right\rfloor
 $$
 
-である。$|P|$ は集合の要素数、$\lfloor x\rfloor$ は $x$ 以下の最大の整数を表す。
+である。 $|P|$ は集合の要素数、 $\lfloor x\rfloor$ は $x$ 以下の最大の整数を表す。
 $2^{|W|}$ は次段階の符号分類、残りの因子は有限群の部分積のために必要になる。
 
 この仕様への変換は、同ファイルの
@@ -340,7 +340,7 @@ $2^{|W|}$ は次段階の符号分類、残りの因子は有限群の部分積�
 <a id="signatures"></a>
 ### 4.2 ルジャンドル記号の符号を揃える
 
-奇素数 $p$ と、$p$ で割り切れない底 $b$ に対し、ルジャンドル記号
+奇素数 $p$ と、 $p$ で割り切れない底 $b$ に対し、ルジャンドル記号
 $\left(\frac bp\right)$ は次を表す。
 
 $$
@@ -374,7 +374,7 @@ $$
 
 `exists_large_common_legendre_signature_class` は、素数集合 $P$、有限底集合 $W$、自然数 $N$ に対し、
 各素数が各底の約数でないことと $2^{|W|}N < |P|$ を仮定する。
-結論は、$Q\subseteq P$、$N < |Q|$、および各底についてルジャンドル記号が素数間で一致することである。
+結論は、 $Q\subseteq P$、 $N < |Q|$、および各底についてルジャンドル記号が素数間で一致することである。
 
 適用時は
 
@@ -382,7 +382,7 @@ $$
 N=\left\lfloor\lambda(L)\log L\right\rfloor
 $$
 
-と取る。$|Q|$ が整数なので、$N < |Q|$ から
+と取る。 $|Q|$ が整数なので、 $N < |Q|$ から
 $\lambda(L)\log L < |Q|$ が得られる。
 
 実装は、底を添字とする `Bool` の列で分類する。
@@ -426,17 +426,17 @@ $$
 
 中心となる宣言は `exists_two_or_more_unit_product_eq_one_of_progression` である。
 
-**主な前提：** $L > 2$、$\lambda(L)\ge3$、$\gcd(k,L)=1$、
-各候補が $L$ と互いに素で $p=e_pk+1$、$e_p\mid L$ と表せること、
+**主な前提：** $L > 2$、 $\lambda(L)\ge3$、 $\gcd(k,L)=1$、
+各候補が $L$ と互いに素で $p=e_pk+1$、 $e_p\mid L$ と表せること、
 および $|Q| > \lambda(L)\log L$。
 
-**結論：** $U\subseteq Q\setminus\{kL+1\}$、$|U|\ge2$、法 $L$ での積が $1$。
+**結論：** $U\subseteq Q\setminus\{kL+1\}$、 $|U|\ge2$、法 $L$ での積が $1$。
 
 一要素の例外を特定するのが `eq_exception_of_unit_eq_one_of_progression` である。
 もし $p=e_pk+1\equiv1\pmod L$ なら $L\mid e_pk$。
-$\gcd(k,L)=1$ より $L\mid e_p$ となり、$e_p\mid L$ と合わせて $e_p=L$、すなわち $p=kL+1$ である。
+$\gcd(k,L)=1$ より $L\mid e_p$ となり、 $e_p\mid L$ と合わせて $e_p=L$、すなわち $p=kL+1$ である。
 
-個数評価の中身も確認できる。$m=\lambda(L)$ とすると、有限群の定理に必要な長さは
+個数評価の中身も確認できる。 $m=\lambda(L)$ とすると、有限群の定理に必要な長さは
 
 $$
 r=\left\lfloor m\log\frac Lm\right\rfloor+m
@@ -464,7 +464,7 @@ $$
 a=\prod_{p\in U}p
 $$
 
-と置く。$U$ は相異なる素数を2個以上含むため、$a$ は**平方自由な合成数**である。
+と置く。 $U$ は相異なる素数を2個以上含むため、 $a$ は**平方自由な合成数**である。
 あとは Korselt の整除条件を示せばよい。
 
 各素数が $p=e_pk+1$ という形なので、その積は
@@ -480,7 +480,7 @@ $$
 k\mid a-1,\qquad L\mid a-1
 $$
 
-であり、$k,L$ はともに $a-1$ の約数である。
+であり、 $k,L$ はともに $a-1$ の約数である。
 さらに $\gcd(k,L)=1$ なので、
 
 $$
@@ -489,14 +489,14 @@ $$
 
 すなわち **$kL$ は $a-1$ の約数である**。
 
-一方、$e_p\mid L$ と $p-1=e_pk$ から
+一方、 $e_p\mid L$ と $p-1=e_pk$ から
 
 $$
 p-1\mid kL\mid a-1.
 $$
 
 よって、各素因数について **$p-1$ は $a-1$ の約数である**。
-Korselt の三条件が揃い、$a$ はカーマイケル数となる。
+Korselt の三条件が揃い、 $a$ はカーマイケル数となる。
 
 > この接続には、法 $L$ の合同式だけでなく、**法 $k$ の合同式と $\gcd(k,L)=1$** も必要である。
 > $p-1\mid kL$ と $L\mid a-1$ だけから結論を出しているのではない。
@@ -553,7 +553,7 @@ $$
 p-1=2u_p,\qquad u_p=\frac{p-1}{2}\text{ は奇数}
 $$
 
-と書ける。一方、$a-1=2^s d$ の $d$ も奇数である。
+と書ける。一方、 $a-1=2^s d$ の $d$ も奇数である。
 Korselt 条件 $p-1\mid a-1$ から $u_p\mid d$、すなわち $u_p$ は $d$ の約数となる。
 したがって、ある奇数 $t_p$ を使って $d=u_pt_p$ と書ける。
 
@@ -578,11 +578,11 @@ $$
 
 を得る。
 
-$\sigma_b=1$ なら第一の通過条件、$\sigma_b=-1$ なら第二の条件を **$j=0$** で満たす。
-$a > 1$ は奇数なので $s\ge1$ であり、$j=0$ は許される範囲に入っている。
+$\sigma_b=1$ なら第一の通過条件、 $\sigma_b=-1$ なら第二の条件を **$j=0$** で満たす。
+$a > 1$ は奇数なので $s\ge1$ であり、 $j=0$ は許される範囲に入っている。
 $b$ は任意だったから、すべての底 $1,\ldots,B$ で通過する。
 
-こうして、$a > C$、カーマイケル性、すべての初期底での通過性が、一つの $a$ について揃う。
+こうして、 $a > C$、カーマイケル性、すべての初期底での通過性が、一つの $a$ について揃う。
 
 <details>
 <summary>Lean で確認する：局所的な累乗、平方自由性、通過条件への接続</summary>
@@ -610,7 +610,7 @@ theorem strongMillerRabinPass_of_common_legendre_sign {n b : ℕ} (hn : 1 < n) (
 
 | 宣言 | 確認できる内容 |
 |---|---|
-| `residual_power_eq_legendre_at_prime` | 素因数 $p$ ごとに、$b^d$ がルジャンドル記号に等しい |
+| `residual_power_eq_legendre_at_prime` | 素因数 $p$ ごとに、 $b^d$ がルジャンドル記号に等しい |
 | `residual_power_eq_sign_of_squarefree` | 同じ符号を、各素因数の法から積全体の法へまとめる |
 | `strongMillerRabinPass_of_residual_power_eq_sign` | $b^d=1$ または $-1$ から通過条件へ進む。負符号では実際に $j=0$ を選ぶ |
 
@@ -622,7 +622,7 @@ Euler の規準を奇数乗へ拡張する部分は、
 [`PseudoPrime/PrimeTest/MillerRabin/LocalLegendrePowers.lean`](../PseudoPrime/PrimeTest/MillerRabin/LocalLegendrePowers.lean#L27) の `pow_half_mul_odd_eq_legendre` である。
 
 必要なのは各素因数の $v_2(p-1)=1$ であり、積全体の $v_2(a-1)=1$ ではない。
-$a\equiv1\pmod4$ でも、$j=0$ による同じ議論を使える。
+$a\equiv1\pmod4$ でも、 $j=0$ による同じ議論を使える。
 
 </details>
 
@@ -749,7 +749,7 @@ theorem exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes
 
 **データの定義：** [`PseudoPrime/AnalyticNumberTheory/AGP/ProgressionCountData.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionCountData.lean#L36)
 
-`AGPProgressionCountData W C c₀ x₀` は、$L,k$、候補の上限 $x$、約数の上限 $y$、
+`AGPProgressionCountData W C c₀ x₀` は、 $L,k$、候補の上限 $x$、約数の上限 $y$、
 小さい素数を除く閾値 $q$ と、それらの必要条件をまとめた構造体である。
 
 **存在証明の入口：** [`PseudoPrime/AnalyticNumberTheory/AGP/UnconditionalProgressionCountData.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/UnconditionalProgressionCountData.lean#L21)
@@ -771,7 +771,7 @@ $$
 H_W(L)=2^{|W|}\left\lfloor\lambda(L)\log L\right\rfloor
 $$
 
-と置く。$\mathcal{D}(L,y)$ は、$L$ の約数のうち $y$ 以下のものを集めた集合である。
+と置く。 $\mathcal{D}(L,y)$ は、 $L$ の約数のうち $y$ 以下のものを集めた集合である。
 計数データの `hlower` と `hProp15` は、
 
 $$
@@ -792,22 +792,22 @@ $\varphi(m)$ は $m$ 以下で $m$ と互いに素な正整数の個数を表す
 
 | フィールド | 確認する条件 |
 |---|---|
-| `hL`、`hSquarefree`、`hlambda` | $L > 2$、$L$ の平方自由性、$\lambda(L)\ge3$ |
-| `hk`、`hcoprime` | $k > 0$、$\gcd(k,L)=1$ |
+| `hL`、`hSquarefree`、`hlambda` | $L > 2$、 $L$ の平方自由性、 $\lambda(L)\ge3$ |
+| `hk`、`hcoprime` | $k > 0$、 $\gcd(k,L)=1$ |
 | `hCq` | $q\ge\max(C,\sup W)$ |
 | `hfactor` | $L$ のすべての素因数は $q$ 以下 |
 | `hProp15Input` | 約数範囲など、計数に必要な算術条件 |
 | `hlower`、`hProp15` | 上の二段の個数評価 |
 
-存在命題 `AGPProgressionCountDataExists` では、最初に共通定数 $c_0 > 0$、$x_0\ge2$ を選び、
+存在命題 `AGPProgressionCountDataExists` では、最初に共通定数 $c_0 > 0$、 $x_0\ge2$ を選び、
 **その後で任意の $W,C$** に対応するデータを取る。
-さらに $X\ge2^{56}$、$x=X^5$、$q\le X$ となるスケールも要求する。
+さらに $X\ge2^{56}$、 $x=X^5$、 $q\le X$ となるスケールも要求する。
 
 `agp_prime_supply_of_progression_count_data` は、この候補から $p\le q$ を除く。
 $k > 0$ なので $e\mapsto ek+1$ は単射であり、除く候補は高々 $q$ 個。
 元の下界に $q$ 個分の余裕があるため、残った $P$ は $|P| > H_W(L)$ を満たす。
 
-残った $p > q$ は、$p > C$、$\gcd(p,L)=1$、そしてどの正の底 $b\in W$ の約数でもないことを、
+残った $p > q$ は、 $p > C$、 $\gcd(p,L)=1$、そしてどの正の底 $b\in W$ の約数でもないことを、
 同時に満たす。これが `AGPProgressionPrimeSupply` への接続である。
 
 </details>
@@ -843,7 +843,7 @@ $$
 \forall m,e,r\ \cdots
 $$
 
-であり、$J\ge2$、$|E_Z|\le D$ となる。
+であり、 $J\ge2$、 $|E_Z|\le D$ となる。
 例外 $h\in E_Z$ は $h > 1$ かつ $4$ の約数でない。
 次の条件を満たすとき、
 
@@ -864,14 +864,14 @@ $$
 零点密度の入口は、
 [`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyDensity.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyDensity.lean#L210) の
 `exists_primitiveCharacterFamily_log_free_density` である。
-ここでは、ある定数 $A_*,C_* > 0$ が存在し、整数 $R\ge2$、$1/2\le\sigma\le1$ に対して
+ここでは、ある定数 $A_*,C_* > 0$ が存在し、整数 $R\ge2$、 $1/2\le\sigma\le1$ に対して
 
 $$
 N_{\mathrm{fam}}(R,\sigma)\le C_*R^{A_*(1-\sigma)}
 $$
 
-を満たす。$N_{\mathrm{fam}}$ は、導手が $R$ 以下の原始非主指標について、
-$\sigma\le\Re\rho\le1$、$|\Im\rho|\le R$ の範囲にある零点を、
+を満たす。 $N_{\mathrm{fam}}$ は、導手が $R$ 以下の原始非主指標について、
+$\sigma\le\Re\rho\le1$、 $|\Im\rho|\le R$ の範囲にある零点を、
 解析的重複度を含めて数えたものである。
 
 $\log R\ge2$ となる十分大きい $R$ で $\sigma=1-1/\log R$ とすると、
@@ -905,7 +905,7 @@ $\log R\ge2$ となる十分大きい $R$ で $\sigma=1-1/\log R$ とすると�
 有限群で必要な量 $\lambda(L)\log L$ を制御しやすい $L$ を作る。
 
 **二段目では、最終的な素因数の候補を作る。**
-$L$ の約数 $e$ を使い、$p=ek+1\equiv3\pmod4$ となる素数を数える。
+$L$ の約数 $e$ を使い、 $p=ek+1\equiv3\pmod4$ となる素数を数える。
 ただし $k$ が $L$ と共通因子を持つ候補は除く必要がある。
 その候補数を篩法で上から抑え、除いた後も必要な個数が残ると示す。
 最後に有限平均を使い、一つの共通係数 $k$ を選ぶ。
@@ -927,9 +927,9 @@ $$
 z=2^u,\qquad N_0=\prod_{p\le z,\ p\text{ は素数}}p,\qquad X=N_0^J,\qquad q=X^5
 $$
 
-と取る。$N_0$ は小さい素数を重複なく掛けた数、すなわち primorial である。
+と取る。 $N_0$ は小さい素数を重複なく掛けた数、すなわち primorial である。
 法 $m=1$ の素数下界から、共通係数 $k_1$ に対し
-$r=e k_1+1$、$e\mid N_0$ という形の相異なる素数を $t$ 個選ぶ。
+$r=e k_1+1$、 $e\mid N_0$ という形の相異なる素数を $t$ 個選ぶ。
 この $k_1$ は、二段目の係数 $k$ とは異なる。
 
 そのうち $r > 1024t$ のものの積を $L$ とする。
@@ -941,7 +941,7 @@ $$
 \lambda(L)\le q^2,\qquad L\le q^t
 $$
 
-を確保する。$\omega(L)$ は相異なる素因数の個数である。
+を確保する。 $\omega(L)$ は相異なる素因数の個数である。
 
 二段目では
 
@@ -950,7 +950,7 @@ Y=(4qL)^J,\qquad x=Y^5,\qquad y=Y^2
 $$
 
 と取る。すべての $e\mid L$ で $(4e)^J\le Y$ となり、素数下界の適用範囲に入る。
-また、$L$ の全約数が $y$ 以下になるので、
+また、 $L$ の全約数が $y$ 以下になるので、
 
 $$
 |\mathcal{D}(L,y)|=2^{\omega(L)}\ge2^{\lfloor t/2\rfloor}.
@@ -972,7 +972,7 @@ $$
 `exceptionalFreePartForModulus` を使う。
 高々 $D$ 個の素因数を除くことによる約数個数の損失を、高々 $2^D$ 倍として管理する。
 
-さらに、$L$ の素因数 $r$ が $k$ の約数になると、候補 $p=ek+1$ は
+さらに、 $L$ の素因数 $r$ が $k$ の約数になると、候補 $p=ek+1$ は
 法 $4er$ のより狭い算術級数に入る。
 この不要な候補数を抑えるのが、
 [`PseudoPrime/AnalyticNumberTheory/AGP/BrunTitchmarshSpecialization.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/BrunTitchmarshSpecialization.lean#L302) の `agp_coarse_sieve_bound` である。
@@ -990,7 +990,7 @@ $$
 
 共通係数を $c_0=1/(128\cdot2^D)$ と選ぶため、
 $16\cdot2^D c_0=1/8 < 1/4$ となり、例外による損失などを吸収する余裕が残る。
-この余裕を使って有限平均を取り、$\gcd(k,L)=1$ を満たす一つの $k$ で必要な素数個数を得る。
+この余裕を使って有限平均を取り、 $\gcd(k,L)=1$ を満たす一つの $k$ で必要な素数個数を得る。
 最後にデータを組み立てる定義は、
 [`PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean#L3624) の
 `agpProgressionCountData_of_fifth_power_theta_and_brun_titchmarsh` である。
@@ -1042,8 +1042,8 @@ $16\cdot2^D c_0=1/8 < 1/4$ となり、例外による損失などを吸収す�
 <summary>指標を使う零和証明の概要と対応宣言</summary>
 
 有限アーベル群 $G$ を加法表記で考える。
-$|G|\le L$、$3\le m\le L$、すべての $g\in G$ について $mg=0$ とする。
-今回の適用では $G$ は法 $L$ の単元群を加法表記に直したもの、$m=\lambda(L)$ である。
+$|G|\le L$、 $3\le m\le L$、すべての $g\in G$ について $mg=0$ とする。
+今回の適用では $G$ は法 $L$ の単元群を加法表記に直したもの、 $m=\lambda(L)$ である。
 
 群の複素指標 $\chi:G\to\mathbb{C}^\times$ は、各 $g$ に $m$ 乗根を対応させる。
 固定した $g$ での指標値は高々 $m$ 通りなので、まだ処理していない指標の少なくとも $1/m$ は同じ値を取る。
@@ -1072,7 +1072,7 @@ F=\prod_i(c_i[0]-[g_i])
 $$
 
 と置くと、どの指標で評価しても一つの因子が零になり、フーリエ反転により $F=0$ となる。
-一方、非空の零和部分集合がないなら、$[0]$ の係数は $\prod_i c_i\ne0$ になる。
+一方、非空の零和部分集合がないなら、 $[0]$ の係数は $\prod_i c_i\ne0$ になる。
 これは矛盾なので、非空の零和部分集合が存在する。
 
 同ファイルで、順に次の宣言を読むとよい。
@@ -1128,7 +1128,7 @@ a > 1,\quad a\text{ は奇数かつ合成数},\quad
 $$
 
 という条件にしている。
-さらに `IsA006945Term n a` は、$a$ がその候補集合の最小元であることを表す。
+さらに `IsA006945Term n a` は、 $a$ がその候補集合の最小元であることを表す。
 
 $$
 \boxed{\texttt{IsA006945Term n a}\text{ は、OEIS の第 }n+1\text{ 項に対応する。}}
@@ -1154,7 +1154,7 @@ S_n=\{p_0,\ldots,p_{n-1}\}
 $$
 
 に `agp_finite_prime_bases` を適用する。
-得られるカーマイケル数は奇合成数であり、$S_n$ の全底を通過するので、A006945 の候補になる。
+得られるカーマイケル数は奇合成数であり、 $S_n$ の全底を通過するので、A006945 の候補になる。
 したがって、候補集合はどの $n$ でも空でない。
 
 自然数の空でない集合には最小元がある。
