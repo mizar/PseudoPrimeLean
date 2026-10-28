@@ -102,6 +102,9 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.MidscaleIntervalSelection
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ImprovedIntervalSelection
 public import PseudoPrime.PrimeTestBounds.MillerRabin.NextIntervalSelection
 public import PseudoPrime.PrimeTestBounds.MillerRabin.NextEnvelopeStrict
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSingleRootBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PointwisePrimeRound
+public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedIntervalSelection
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedWitnessBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RationalWitnessProfiles
 public import PseudoPrime.PrimeTestBounds.MillerRabin.OEISA006945Bounds
