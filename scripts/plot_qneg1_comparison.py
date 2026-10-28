@@ -143,7 +143,7 @@ def main() -> None:
     powers = sorted({k for k in [2**j for j in range(16)] if k < args.max_power}
                     | {args.max_power})
     power_ticks(ax, powers)
-    ax.set_xlabel(r"Odd nonsquare integer $n$", labelpad=10)
+    ax.set_xlabel(r"Odd nonsquare integer $n$ / upper bound $N$", labelpad=10)
     ax.set_ylabel("Least odd-prime witness / upper bound")
     ax.grid(which="major", color="#d8dde3", linewidth=0.7)
     bit_powers = [64, 80, 128]
