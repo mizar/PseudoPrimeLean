@@ -1,121 +1,71 @@
-# `agp_initial_bases_unbounded` の証明詳解と、その系
+# AGP の定理：任意の初期底を通過するカーマイケル数
 
-> **対象宣言**：
-> `PseudoPrime.PrimeTest.MillerRabin.AGP.agp_initial_bases_unbounded`
->
-> **対象ファイル**：
-> `PseudoPrime/PrimeTest/MillerRabin/AGP/InitialBasesUnbounded.lean`
->
-> **系として説明する宣言**：
-> `agp_finite_prime_bases`、`exists_a006945_candidate`、`exists_a006945_term`
+Alford–Granville–Pomerance（AGP）の構成に基づく、次の存在定理を説明する。
 
-## 1. 何を証明しているのか
+> **調べる底を $1,2,\ldots,B$ のどこまで増やしても、そのすべての強い Miller–Rabin テストを
+> 通過するカーマイケル数が、いくらでも大きく存在する。**
 
-`agp_initial_bases_unbounded` は、次の命題を証明する。
+カーマイケル数は合成数なので、これは「有限個の底での通過」だけでは、
+大きさを制限しないすべての整数について素数性を保証できないことを意味する。
+証明では、条件を満たす素数を多数集め、その中から適切な素数を選んで掛け合わせる。
 
-> **任意の自然数 $B,C$ に対して、$C$ より大きいカーマイケル数 $n$ で、
-> すべての正の整数基底 $1\le b\le B$ の強い Miller–Rabin テストを通過するものが存在する。**
+**数学的な流れを知りたい場合**は、[定理と用語](#statement)、[具体例](#example)、
+[証明の5段階](#proof)を読むとよい。
+**Lean の前提と結論を確認したい場合**は、[宣言の入口](#lean-entry)から入り、
+各段階の「Lean で確認する」欄へ進める。
+解析的な素数供給と有限群の議論は、後半の[専門向け補足](#analytic)に分けた。
 
-数学的には、
+以下のファイル名はリポジトリのルートを基準とし、宣言へのリンクには対象版の行番号を付けた。
+ソースの更新で行が移動した場合は、併記した宣言名で検索できる。
+
+<a id="statement"></a>
+## 1. 何を証明するのか
+
+### 1.1 二つの数を先に指定する
+
+まず、自然数 $B,C$ を任意に指定する。
+$B$ は**調べる底の値の上限**、$C$ は**見つけたい数の大きさの下限**である。
+
+そのとき、次の条件を同時に満たす自然数 $a$ が存在する。
 
 $$
 \boxed{
-\forall B,C\in\mathbb{N},\quad
-\exists n\in\mathbb{N},\quad
-C<n\ \land\ \operatorname{Carmichael}(n)\
-\land\
-\forall b\in\mathbb{N},\
-0<b\le B\Rightarrow\operatorname{MRPass}(n,b).
+\begin{gathered}
+a > C,\\
+a\text{ はカーマイケル数},\\
+\text{底 }1,2,\ldots,B\text{ のすべてで強いテストを通過する。}
+\end{gathered}
 }
 $$
 
-という主張である。対象版の公開定理には、GRH や解析的な素数供給命題を仮定として渡す必要はない。
-無条件の計数データ存在定理を、初期基底の通過性と下限条件を構成する定理へ渡している。[F2]・[F4]・[A1]
+$B$ は「最初の $B$ 個の素数」という意味ではない。
+例えば $B=10$ なら、$2,3,5,7$ だけでなく、$1,4,6,8,9,10$ も対象になる。
+また、**一つの $a$ がすべての指定底を通過する**のであり、底ごとに別の数を選ぶわけではない。
 
-ここで、二つのパラメータの役割を区別する。
+$B$ を固定しても $C$ はいくらでも大きくできる。
+したがって、その初期底をすべて通過するカーマイケル数は無限に存在する。
+ただし、$B$ を増やしたときには別の $a$ を選んでよく、
+「一つの合成数が、すべての正整数底を通過する」という主張ではない。
 
-- **$B$ は基底の値の上限**である。対象は整数 $1,2,\ldots,B$ であり、最初の $B$ 個の素数という意味ではない。
-  $B\ge4$ なら合成数基底も含まれる。
-- **$C$ は構成する数の下限**である。結論は $n>C$ という厳密不等式である。
-- **$B$ と $C$ は独立に指定できる。** $B=C$ や $B\le C$ を仮定していない。
-- **一つの $n$ が対象のすべての基底を同時に通過する。** 基底ごとに異なる $n$ を選ぶ命題ではない。
-
-特に、$B$ を固定したまま $C$ を任意に大きくできる。
-このため、固定した初期区間の全基底を通過するカーマイケル数は非有界であり、無限に存在する。
-この非有界性は、今回の公開命題そのものに含まれている。
-第9節では、その系として有限素数基底での通過数の存在、OEIS A006945 の候補の存在、
-そして自然数の最小元としての各項の存在を順に導く。
-
-### 1.1 Miller–Rabin の通過条件
-
-奇数 $n>1$ に対し、
-
-$$
-n-1=2^s d,\qquad d\text{ は奇数}
-$$
-
-と分解する。ここで、
-
-$$
-s=v_2(n-1),\qquad d=\frac{n-1}{2^s}
-$$
-
-である。底 $b$ が強い Miller–Rabin テストを通過する条件は、
-
-$$
-\operatorname{MRPass}(n,b)
-\iff
-b^d\equiv1\pmod n
-\quad\lor\quad
-\exists j\in\mathbb{N},\ 
-j<s\ \land\ b^{2^j d}\equiv-1\pmod n.
-$$
-
-後半は「最初に $b^d$ を計算し、その後の平方操作の途中で、$s$ 回分の候補のいずれかが
-$-1$ になる」という条件である。$j=0$ も許されるので、最初の $b^d$ が $-1$ の場合も通過する。
-
-Lean では、分解を `Nat.maxPowDvdDiv 2 (n - 1)` で表すか、
-
-- `padicValNat 2 (n - 1)`：$s$。
-- `Nat.divMaxPow (n - 1) 2`：$d$。
-
-で表す。合同式は `ZMod n` 内の等式として記述される。
-
-`StrongMillerRabinPass` がこの条件を名前付きの述語にしたものであり、
-`strongMillerRabinWithBase_eq_true_iff_pass` が実行可能な単一底テストとの対応を与える。
-したがって、ここでの通過条件はプロジェクトの実装と接続されている。[F5]
-
-### 1.2 カーマイケル数と Korselt の判定法
-
-カーマイケル数とは、合成数 $n$ で、$n$ と互いに素なすべての整数 $b$ に対して、
-
-$$
-b^{n-1}\equiv1\pmod n
-$$
-
-が成り立つものである。証明では、次の Korselt の判定条件を使う。
+底ごとの通過条件を $\operatorname{MRPass}(a,b)$ と書けば、定理は
 
 $$
 \begin{aligned}
-n\text{ はカーマイケル数}
-\iff {}&
-n>2,\quad n\text{ は合成数},\\
-&n\text{ は平方自由},\\
-&\forall p\mid n,\quad
-p\text{ が素数なら }p-1\mid n-1.
+\forall B,C\in\mathbb{N},\quad\exists a\in\mathbb{N}:\quad
+&a > C\ \land\ \operatorname{Carmichael}(a)\\
+&\land\ \forall b\in\{1,\ldots,B\},\ \operatorname{MRPass}(a,b).
 \end{aligned}
 $$
 
-「平方自由」とは、どの素数の二乗でも割り切れないことである。実装は
-`Nat.isCarmichael_iff_korselt` に上の条件を渡す。[F8]
+と表せる。$B,C$ の間に大小関係は要求しない。
+$B=0$ では調べる底が空になるが、$C$ を超えるカーマイケル数の存在は依然として要求される。
 
-カーマイケル性だけで、指定した底の強い Miller–Rabin テストを通過するとは限らない。
-この証明は、さらに各素因数における二次剰余の符号を揃え、強い通過条件まで保証する。
-その仕組みを第7節で説明する。
+<details>
+<summary>Lean で確認する：命題の定義と量化の順序</summary>
 
-### 1.3 命題の Lean 定義
+**定義の場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/FiniteBases.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/FiniteBases.lean#L44)
 
-`AGPInitialBasesUnbounded` は `FiniteBases.lean` で次のように定義されている。[F2]
+名前空間は `PseudoPrime.PrimeTest.MillerRabin.AGP` である。
 
 ```lean
 def AGPInitialBasesUnbounded : Prop :=
@@ -130,51 +80,562 @@ def AGPInitialBasesUnbounded : Prop :=
                 (b : ZMod a) ^ d = 1 ∨ ∃ j < s, (b : ZMod a) ^ (2 ^ j * d) = -1
 ```
 
-ここで `a` が本文の $n$ に対応する。量化の順序は、
+`∀ B C` の後に `∃ a` があり、その後に `∀ b` がある。
+つまり、$a$ は $B,C$ に応じて選べるが、対象の底 $b$ ごとに選び直すことはできない。
+
+`def ... : Prop` は**証明する命題に名前を付ける定義**であり、証明そのものではない。
+その証明を与えるのが、[第5節](#lean-entry)の `agp_initial_bases_unbounded` である。
+
+</details>
+
+### 1.2 強い Miller–Rabin テストの通過条件
+
+「底」は、検査に使うべき乗の底 $b$ を指す。素数かどうかを調べる数 $a$ とは別の数である。
+奇数 $a > 1$ に対して、$a-1$ から因子 $2$ を取り除き、
 
 $$
-\forall B\ \forall C\ \exists n\ \forall b
+a-1=2^s d,\qquad d\text{ は奇数}
 $$
 
-である。$n$ は $B,C$ に応じて選べるが、一度選んだ $n$ は $1\le b\le B$ のすべてを通過する。
-Miller–Rabin の負符号の枝で使う $j$ は、各基底 $b$ に応じて選んでよい。
+と書く。底 $b$ で通過する条件は、次のいずれかである。
 
-$B=0$ の場合、$0<b\le B$ を満たす基底はないので、通過性の条件は空虚になる。
-それでも $C$ を超えるカーマイケル数の存在は要求される。
-基底 $0$ は定義から除外されている。奇数 $n>1$ に対するその剰余累乗は $0$ となり、
-通過条件を満たさないためである。
+$$
+b^d\equiv1\pmod a,
+$$
 
-### 1.4 記号の使い分け
+または、**$0\le j < s$ を満たすある整数 $j$ について**
 
-解析部分と Miller–Rabin 部分では、ソース中の `d` や `q` が異なる役割で使われる。
-本文では次のように区別する。
+$$
+b^{2^j d}\equiv-1\pmod a
+$$
 
-| 記号 | 意味 |
+が成り立つことである。$j=0$ も許されるため、最初の $b^d$ が $-1$ に合同でも通過する。
+ここで $x\equiv y\pmod a$ は、$x,y$ を $a$ で割った余りが等しいことを表す。
+
+合成数でありながらこの条件を満たす数を、その底に対する**強擬素数**という。
+通過したことだけで、素数と確定するわけではない。
+
+<details>
+<summary>Lean で確認する：通過述語、指数の分解、実行可能な判定との対応</summary>
+
+**定義の場所：** [`PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean`](../PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean#L37)
+
+名前空間は `PseudoPrime.PrimeTest` である。
+
+```lean
+def StrongMillerRabinPass (n : ℕ) (x : ZMod n) : Prop :=
+  x ^ Nat.divMaxPow (n - 1) 2 = 1 ∨
+    ∃ j : ℕ, j < padicValNat 2 (n - 1) ∧ x ^ (2 ^ j * Nat.divMaxPow (n - 1) 2) = -1
+```
+
+`padicValNat 2 (a - 1)` が $s$、`Nat.divMaxPow (a - 1) 2` が $d$ に対応する。
+`Nat.maxPowDvdDiv 2 (a - 1)` は同じ二つを組として扱う表記である。
+`ZMod a` の等式は、法 $a$ の合同式を表す。
+
+`StrongMillerRabinPass` 自体は奇数性や合成数性を含まない。
+本稿では、それらを別途確認した数に適用している。
+実行可能な単一底テストとの対応は、同ファイルの
+`strongMillerRabinWithBase_eq_true_iff_pass` で確認できる。
+
+明示的な分解を含む主命題と、`StrongMillerRabinPass` を使う表記の対応は、
+[`PseudoPrime/PrimeTest/MillerRabin/AGP/FiniteBasesIff.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/FiniteBasesIff.lean#L50) の
+`agpInitialBasesUnbounded_iff` である。証明は `rfl` であり、定義を展開すると一致する。
+これは、初期整数底の命題と有限素数底の命題との同値を述べるものではない。
+
+</details>
+
+### 1.3 カーマイケル数と Korselt の判定条件
+
+**カーマイケル数**とは、合成数 $a$ であり、$a$ と互いに素なすべての整数 $b$ に対して
+
+$$
+\gcd(a,b)=1\quad\Longrightarrow\quad b^{a-1}\equiv1\pmod a
+$$
+
+を満たす数である。「互いに素」とは、共通の正の約数が $1$ だけという意味である。
+素数に対するフェルマーの小定理と同じ合同式を、合成数なのに満たす点が特徴となる。
+
+証明では、これと同値な **Korselt の判定条件**を使う。自然数 $a$ がカーマイケル数であることは、
+次の三条件と同値である。
+
+1. $a$ は合成数である。
+2. $a$ は平方自由である。すなわち、素因数分解に同じ素数が2回以上現れない。
+3. $a$ の任意の素因数 $p$ について $p-1\mid a-1$、すなわち **$p-1$ は $a-1$ の約数である**。
+
+この形なら、「相異なる素数を掛け合わせ、各素因数で3番目の条件を確認する」という方法で
+カーマイケル数を構成できる。
+
+ただし、カーマイケル数であることだけでは強い Miller–Rabin テストの通過は保証されない。
+本証明では、各素因数における累乗の値も揃える。
+そのために使うのが、[第4.2節](#signatures)のルジャンドル記号である。
+
+<details>
+<summary>Lean で確認する：Korselt 条件への接続</summary>
+
+**構成をまとめる場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/CarmichaelConstruction.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/CarmichaelConstruction.lean#L43)
+
+`isCarmichael_finset_prime_product` の型は次のとおりである。以下は証明本体を省いた抜粋である。
+
+```lean
+theorem isCarmichael_finset_prime_product {S : Finset ℕ} {K : ℕ} (hprime : ∀ p ∈ S, Nat.Prime p)
+    (hcard : 2 ≤ S.card) (horder : ∀ p ∈ S, p - 1 ∣ K) (hproductMod : K ∣ (∏ p ∈ S, p) - 1) :
+    Nat.IsCarmichael (∏ p ∈ S, p)
+```
+
+**前提：** `S` は相異なる素数の有限集合で2要素以上を持ち、
+各 $p-1$ は共通の整数 $K$ の約数で、$K$ は積から $1$ を引いた数の約数である。
+
+**結論：** `S` の要素の積はカーマイケル数である。
+
+証明内部で `Nat.isCarmichael_iff_korselt` を使う。
+mathlib 側で要求される $2 < a$ などの条件も、積の性質からここで確認している。
+
+</details>
+
+<a id="example"></a>
+## 2. 一つの数で確かめる
+
+定理の意味と通過の仕組みは、次の例で見ることができる。
+
+$$
+a=3215031751=151\cdot751\cdot28351.
+$$
+
+三つは相異なる素数であり、
+
+$$
+a-1=3215031750=2\cdot1607515875
+$$
+
+は $150,750,28350$ のそれぞれで割り切れる。
+したがって Korselt の判定条件を満たし、$a$ はカーマイケル数である。
+
+$d=1607515875$ とすると、剰余累乗は次のようになる。
+
+| 底 $b$ | $b^d\bmod a$ | 通過条件 |
+|---|---:|---|
+| $1,2,4,5,8,9,10$ | $1$ | 第一の条件 |
+| $3,6,7$ | $3215031750=a-1$ | 第二の条件、$j=0$ |
+| $11$ | $2129160099$ | どちらも満たさない |
+
+この数は、例えば $B=10$、$C=10^9$ に対する証人になる。
+一方、底 $11$ では通過しない。ここでは $s=1$ なので、第二の条件に使える $j$ は $0$ だけである。
+
+この具体例は、任意の $B,C$ に対する存在証明の代わりではない。
+また、この三素数だけで後述する解析的な個数条件を満たす、と主張するものでもない。
+
+<details>
+<summary>具体例の計算の内訳</summary>
+
+| 素因数 $p$ | $p\bmod4$ | $(a-1)/(p-1)$ |
+|---|---:|---:|
+| $151$ | $3$ | $21433545$ |
+| $751$ | $3$ | $4286709$ |
+| $28351$ | $3$ | $113405$ |
+
+各底 $1,\ldots,10$ について、三つの素因数におけるルジャンドル記号は一致する。
+底 $1,2,4,5,8,9,10$ ではすべて $1$、底 $3,6,7$ ではすべて $-1$ である。
+底 $11$ では $(1,-1,-1)$ となり、一致しない。
+
+これが、[第4.5節](#mr-proof)で説明する「素因数ごとの同じ符号を、積全体へまとめる」仕組みの具体例である。
+表は合同式の数値例であり、各項の最小性を証明する計算ではない。
+
+</details>
+
+<a id="proof"></a>
+## 3. 証明の見取り図
+
+固定した $B,C$ に対し、調べる底の集合を $W=\{1,\ldots,B\}$ とする。
+証明では、素数集合を
+
+$$
+P\supseteq Q\supseteq U
+$$
+
+と順に絞り込み、最後に $a=\prod_{p\in U}p$ を作る。
+各段階の目的は異なる。
+
+| 段階 | 何をするか | 次の段階に渡すもの |
+|---|---|---|
+| 1. 素数の供給 | 共通の算術条件を持つ素数を十分多数集める | 素数集合 $P$ と補助整数 $L,k$ |
+| 2. 符号を揃える | 各底に対するルジャンドル記号が一致する素数を集める | 大きな部分集合 $Q$ |
+| 3. 積を選ぶ | 法 $L$ で積が $1$ になる、2個以上の素数を選ぶ | 部分集合 $U$ |
+| 4. カーマイケル性を確認 | 相異なる素数の積と Korselt 条件を使う | カーマイケル数 $a=\prod_{p\in U}p$ |
+| 5. 強いテストの通過を確認 | 素因数ごとの共通符号を法 $a$ にまとめる | 全底で $b^d\equiv1$ または $-1\pmod a$ |
+
+**解析的整数論が担うのは、主に第1段階の「十分多数集める」部分である。**
+第2段階以降では、鳩の巣原理、有限アーベル群、合同式、二次剰余の性質を組み合わせる。
+最後の数が $C$ を超えることは、最初から各素数を $C$ より大きく取ることで保証する。
+
+以下では各段階の理由を説明し、その直後に対応する Lean 宣言を置く。
+
+## 4. 証明の5段階
+
+<a id="prime-supply"></a>
+### 4.1 条件の揃った素数を十分多数用意する
+
+補助整数 $L,k$ と有限素数集合 $P$ を用意する。
+各素数 $p\in P$ は、$L$ のある約数 $e_p$ を使って
+
+$$
+p=e_p k+1,\qquad e_p\mid L
+$$
+
+と書ける。ここで $e_p\mid L$ は、$e_p$ が $L$ の約数であることを表す。
+**$k$ は素数ごとに変えず、すべての候補に共通に取る。**
+
+さらに $k,L$ は互いに素で、各 $p$ は $L$ と互いに素、$p\equiv3\pmod4$、$p > C$ とする。
+どの $p$ も対象の底 $b\in W$ の約数にならないようにする。
+
+これらはそれぞれ、後の別々の仕事に使う条件である。
+$p=e_pk+1$ は積の合同式を揃え、$p\equiv3\pmod4$ は強いテストで使う指数を揃える。
+$p > C$ は積の下限を保証する。
+
+難しいのは、この条件を満たす素数が単に存在するだけでなく、
+**後で分類して一部を捨てても足りるほど多数存在する**ことを示す点である。
+その個数を確保する解析的な議論は、[第6節](#analytic)で説明する。
+
+<details>
+<summary>Lean で確認する：素数供給の正確な仕様と個数条件</summary>
+
+**仕様：** [`PseudoPrime/AnalyticNumberTheory/AGP/PrimeSupply.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/PrimeSupply.lean#L43)
+
+```lean
+def AGPProgressionPrimeSupply : Prop :=
+  ∀ (W : Finset ℕ) (C : ℕ),
+    (∀ b ∈ W, 0 < b) →
+      ∃ (L k : ℕ) (P : Finset ℕ),
+        2 < L ∧
+          3 ≤ ArithmeticFunction.carmichael L ∧
+          Nat.Coprime k L ∧
+          (∀ p ∈ P,
+            Nat.Prime p ∧
+              Nat.Coprime p L ∧
+              (∃ d, d ∣ L ∧ p = d * k + 1) ∧ p % 4 = 3 ∧ C < p ∧ ∀ b ∈ W, ¬p ∣ b) ∧
+          2 ^ W.card * Nat.floor ((ArithmeticFunction.carmichael L : ℝ) * Real.log L) < P.card
+```
+
+**入力：** 正整数だけからなる有限底集合 `W` と、任意の下限 `C`。
+
+**出力：** $L > 2$、$\lambda(L)\ge3$、$\gcd(k,L)=1$ を満たす $L,k$ と素数集合 $P$。
+ここで $\lambda(L)$ は、法 $L$ の可逆な剰余類すべてについて
+$g^{\lambda(L)}=1$ となる最小の正整数、すなわちカーマイケル関数である。
+「$a$ がカーマイケル数である」という性質とは区別する。
+
+個数条件は
+
+$$
+|P| > 2^{|W|}\left\lfloor\lambda(L)\log L\right\rfloor
+$$
+
+である。$|P|$ は集合の要素数、$\lfloor x\rfloor$ は $x$ 以下の最大の整数を表す。
+$2^{|W|}$ は次段階の符号分類、残りの因子は有限群の部分積のために必要になる。
+
+この仕様への変換は、同ファイルの
+`agp_prime_supply_of_progression_count_data` が担う。
+その入力 `AGPProgressionCountDataExists` と実際の存在証明は、[第6.1節](#count-data)にまとめた。
+
+</details>
+
+<a id="signatures"></a>
+### 4.2 ルジャンドル記号の符号を揃える
+
+奇素数 $p$ と、$p$ で割り切れない底 $b$ に対し、ルジャンドル記号
+$\left(\frac bp\right)$ は次を表す。
+
+$$
+\left(\frac bp\right)=
+\begin{cases}
+1 & \text{法 }p\text{ で、ある数の二乗が }b\text{ に合同になるとき},\\
+-1 & \text{そうならないとき}.
+\end{cases}
+$$
+
+各 $p\in P$ に、底 $1,\ldots,B$ それぞれに対する符号を並べた「符号の列」を対応させる。
+各欄は $1$ または $-1$ なので、列は高々 $2^{|W|}$ 通りしかない。
+
+素数が十分多数あれば、鳩の巣原理により、同じ符号の列を持つ大きな部分集合 $Q\subseteq P$ が取れる。
+つまり、各底 $b$ に対して符号 $\sigma_b\in\{1,-1\}$ が定まり、
+
+$$
+\left(\frac bp\right)=\sigma_b\qquad\text{すべての }p\in Q
+$$
+
+となる。
+
+**揃えるのは、同じ底に対する、異なる素数での符号である。**
+底 $2$ ではすべて $1$、底 $3$ ではすべて $-1$、という組合せでもよい。
+すべての底の符号を同じにする必要はなく、あらかじめ符号の列を指定する必要もない。
+
+<details>
+<summary>Lean で確認する：鳩の巣原理の入力と出力</summary>
+
+**場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/LegendreSignature.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/LegendreSignature.lean#L40)
+
+`exists_large_common_legendre_signature_class` は、素数集合 $P$、有限底集合 $W$、自然数 $N$ に対し、
+各素数が各底の約数でないことと $2^{|W|}N < |P|$ を仮定する。
+結論は、$Q\subseteq P$、$N < |Q|$、および各底についてルジャンドル記号が素数間で一致することである。
+
+適用時は
+
+$$
+N=\left\lfloor\lambda(L)\log L\right\rfloor
+$$
+
+と取る。$|Q|$ が整数なので、$N < |Q|$ から
+$\lambda(L)\log L < |Q|$ が得られる。
+
+実装は、底を添字とする `Bool` の列で分類する。
+各記号が零でないという前提により、この分類から符号の等しさを回復できる。
+ペアごとの等しさを一つの $\sigma_b$ にまとめる補題は、同ファイルの
+`common_legendre_sign_of_pairwise_signatures` である。
+
+</details>
+
+<a id="subset-product"></a>
+### 4.3 積が法 $L$ で $1$ になる素数を選ぶ
+
+$Q$ の各素数は $L$ と互いに素なので、法 $L$ で逆数を持つ剰余類を定める。
+法 $L$ で逆数を持つ剰余類全体は、乗法について有限アーベル群
+
+$$
+G=(\mathbb{Z}/L\mathbb{Z})^\times
+$$
+
+をなす。「アーベル」は、掛ける順序を入れ替えても結果が変わらないことを表す。
+ここに、十分長い列から「積が $1$ になる部分」を選ぶ有限群の定理を適用する。
+加法で表したときの名前は、**零和部分集合定理**である。
+
+必要な結論は、
+
+$$
+U\subseteq Q,\qquad |U|\ge2,\qquad
+\prod_{p\in U}p\equiv1\pmod L
+$$
+
+となる部分集合 $U$ の存在である。
+
+ここで「非空」だけでは不十分である。一つの素数だけを選ぶと、積が合成数にならない。
+本証明では、一要素だけで積が $1$ になる唯一の候補 $kL+1$ を先に除き、
+残りに有限群の定理を適用する。第1段階の個数条件には、その一要素を除く余裕も含まれている。
+
+<details>
+<summary>Lean で確認する：2個以上を確保する理由と、有限群の個数条件</summary>
+
+**場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/UnitSubsetProduct.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/UnitSubsetProduct.lean#L282)
+
+中心となる宣言は `exists_two_or_more_unit_product_eq_one_of_progression` である。
+
+**主な前提：** $L > 2$、$\lambda(L)\ge3$、$\gcd(k,L)=1$、
+各候補が $L$ と互いに素で $p=e_pk+1$、$e_p\mid L$ と表せること、
+および $|Q| > \lambda(L)\log L$。
+
+**結論：** $U\subseteq Q\setminus\{kL+1\}$、$|U|\ge2$、法 $L$ での積が $1$。
+
+一要素の例外を特定するのが `eq_exception_of_unit_eq_one_of_progression` である。
+もし $p=e_pk+1\equiv1\pmod L$ なら $L\mid e_pk$。
+$\gcd(k,L)=1$ より $L\mid e_p$ となり、$e_p\mid L$ と合わせて $e_p=L$、すなわち $p=kL+1$ である。
+
+個数評価の中身も確認できる。$m=\lambda(L)$ とすると、有限群の定理に必要な長さは
+
+$$
+r=\left\lfloor m\log\frac Lm\right\rfloor+m
+\le\left\lfloor m\log L\right\rfloor
+$$
+
+である。最後の不等式には $m\ge3$ を使う。
+$|Q| > m\log L$ なら、一要素を除いても少なくともこの長さが残る。
+この処理は `exists_nonempty_unit_product_eq_one_of_card_gt_carmichael_log_erase` にある。
+
+異なる素数が法 $L$ で同じ剰余類になる場合も、元の素数のラベルは保持される。
+像の集合を取って重複を消すのではない。
+元の有限集合から各素数を一度ずつ選ぶため、次段階の平方自由性が保たれる。
+
+零和定理そのものは、[`PseudoPrime/Combinatorics/Additive/FiniteAbelianZeroSum.lean`](../PseudoPrime/Combinatorics/Additive/FiniteAbelianZeroSum.lean#L1238) の
+`exists_nonempty_zero_sum_label_subset_of_segmented_length`。
+証明の仕組みは[第7節](#zero-sum)で補足する。
+
+</details>
+
+<a id="carmichael-proof"></a>
+### 4.4 積がカーマイケル数になることを示す
+
+$$
+a=\prod_{p\in U}p
+$$
+
+と置く。$U$ は相異なる素数を2個以上含むため、$a$ は**平方自由な合成数**である。
+あとは Korselt の整除条件を示せばよい。
+
+各素数が $p=e_pk+1$ という形なので、その積は
+
+$$
+a\equiv1\pmod k
+$$
+
+を満たす。第3段階から $a\equiv1\pmod L$ も満たす。
+したがって
+
+$$
+k\mid a-1,\qquad L\mid a-1
+$$
+
+であり、$k,L$ はともに $a-1$ の約数である。
+さらに $\gcd(k,L)=1$ なので、
+
+$$
+kL\mid a-1,
+$$
+
+すなわち **$kL$ は $a-1$ の約数である**。
+
+一方、$e_p\mid L$ と $p-1=e_pk$ から
+
+$$
+p-1\mid kL\mid a-1.
+$$
+
+よって、各素因数について **$p-1$ は $a-1$ の約数である**。
+Korselt の三条件が揃い、$a$ はカーマイケル数となる。
+
+> この接続には、法 $L$ の合同式だけでなく、**法 $k$ の合同式と $\gcd(k,L)=1$** も必要である。
+> $p-1\mid kL$ と $L\mid a-1$ だけから結論を出しているのではない。
+
+また、各素因数は $C$ より大きいので、積 $a$ も $C$ より大きい。
+平方自由性は「相異なる素数を一度ずつ掛ける」ことから従い、
+$p\equiv3\pmod4$ から従うわけではない。
+
+<details>
+<summary>Lean で確認する：合同条件から Korselt 条件への正確な橋渡し</summary>
+
+**場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/CarmichaelConstruction.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/CarmichaelConstruction.lean#L136)
+
+定理の型は次のとおりである。
+
+```lean
+theorem isCarmichael_finset_prime_product_of_progression_unit_product {S : Finset ℕ} (L k : ℕ)
+    (hkL : Nat.Coprime k L) (hprime : ∀ p ∈ S, Nat.Prime p) (hcard : 2 ≤ S.card)
+    (hprogression : ∀ p ∈ S, ∃ d, d ∣ L ∧ p = d * k + 1) (hproductL : (∏ p ∈ S, (p : ZMod L)) = 1) :
+    Nat.IsCarmichael (∏ p ∈ S, p) ∧ (∀ p ∈ S, p - 1 ∣ k * L) ∧ k * L ∣ (∏ p ∈ S, p) - 1
+```
+
+注目する前提は `hkL`、`hprogression`、`hproductL` の三つである。
+結論にはカーマイケル性だけでなく、
+$\forall p\in U,\ p-1\mid kL$ と $kL\mid a-1$ も保持される。
+これらは次の強いテストの証明でも使われる。
+
+部分集合の選択からこの構成までをまとめるのが、
+[`PseudoPrime/PrimeTest/MillerRabin/AGP/LegendreSignature.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/LegendreSignature.lean#L140) の
+`exists_carmichael_subset_of_progression_primes` である。
+
+$a > C$ の確認は、[`PseudoPrime/PrimeTest/MillerRabin/AGP/InitialBasesUnbounded.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/InitialBasesUnbounded.lean#L42) の
+`agp_initial_bases_unbounded_of_prime_supply` 内にある。
+$U$ の要素 $p$ を一つ取り、他の素数の積が正であることから
+$C < p\le\prod_{q\in U}q$ と評価する。
+
+</details>
+
+<a id="mr-proof"></a>
+### 4.5 すべての指定底で強いテストを通過させる
+
+最後に、固定した一つの底 $b\in W$ を考える。
+第2段階により、すべての $p\in U$ で
+
+$$
+\left(\frac bp\right)=\sigma_b\in\{1,-1\}
+$$
+
+となっている。
+
+各 $p$ は $p\equiv3\pmod4$ なので、
+
+$$
+p-1=2u_p,\qquad u_p=\frac{p-1}{2}\text{ は奇数}
+$$
+
+と書ける。一方、$a-1=2^s d$ の $d$ も奇数である。
+Korselt 条件 $p-1\mid a-1$ から $u_p\mid d$、すなわち $u_p$ は $d$ の約数となる。
+したがって、ある奇数 $t_p$ を使って $d=u_pt_p$ と書ける。
+
+Euler の規準により、
+
+$$
+b^{u_p}\equiv\left(\frac bp\right)=\sigma_b\pmod p.
+$$
+
+$1$ と $-1$ は奇数乗しても変わらないため、
+
+$$
+b^d=(b^{u_p})^{t_p}\equiv\sigma_b\pmod p
+$$
+
+となる。これが $a$ の**すべての素因数で、同じ符号について**成立する。
+$a$ は相異なる素数の積なので、これらをまとめて
+
+$$
+\boxed{b^d\equiv\sigma_b\pmod a}
+$$
+
+を得る。
+
+$\sigma_b=1$ なら第一の通過条件、$\sigma_b=-1$ なら第二の条件を **$j=0$** で満たす。
+$a > 1$ は奇数なので $s\ge1$ であり、$j=0$ は許される範囲に入っている。
+$b$ は任意だったから、すべての底 $1,\ldots,B$ で通過する。
+
+こうして、$a > C$、カーマイケル性、すべての初期底での通過性が、一つの $a$ について揃う。
+
+<details>
+<summary>Lean で確認する：局所的な累乗、平方自由性、通過条件への接続</summary>
+
+**中心となる場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/LocalLegendreCriterion.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/LocalLegendreCriterion.lean#L185)
+
+局所条件をまとめた `strongMillerRabinPass_of_common_legendre_sign` の型は次のとおりである。
+
+```lean
+theorem strongMillerRabinPass_of_common_legendre_sign {n b : ℕ} (hn : 1 < n) (hnOdd : Odd n)
+    (hnSquarefree : Squarefree n) (hn0 : n ≠ 0) (hb : 0 < b)
+    (hpMod : ∀ p : ℕ, Nat.Prime p → p ∣ n → p % 4 = 3)
+    (hpK : ∀ p : ℕ, Nat.Prime p → p ∣ n → p - 1 ∣ n - 1)
+    (hbp : ∀ p : ℕ, Nat.Prime p → p ∣ n → ¬p ∣ b) {σ : ℤ} (hσ : σ = 1 ∨ σ = -1)
+    (hleg : ∀ p : ℕ, (hp : Nat.Prime p) → p ∣ n → @legendreSym p ⟨hp⟩ b = σ) :
+    PrimeTest.StrongMillerRabinPass n (b : ZMod n)
+```
+
+**前提：** 奇数 $a > 1$ の平方自由性、正の底 $b$、各素因数での $3\bmod4$ 条件と Korselt 条件、
+底が各素因数で割り切れないこと、ルジャンドル記号が共通の $\sigma\in\{1,-1\}$ に等しいこと。
+
+**結論：** 底 $b$ で `StrongMillerRabinPass` が成立する。
+
+同ファイル内の分担は次のとおりである。
+
+| 宣言 | 確認できる内容 |
 |---|---|
-| $S$ | 第9節で系として扱う有限素数基底集合 |
-| $W$ | 同時に扱う有限基底集合。主定理では $W=\{1,\ldots,B\}$ |
-| $B$ | 初期基底 $1,\ldots,B$ の上限 |
-| $C$ | 構成するカーマイケル数に要求する下限 |
-| $L$ | 部分集合積を $1$ にするための補助法 |
-| $\lambda(L)$ | カーマイケル関数。単元群 $(\mathbb{Z}/L\mathbb{Z})^\times$ の指数 |
-| $k$ | 素数候補を $p=d_p k+1$ と表す共通の係数 |
-| $d_p$ | $p-1=d_p k$ を満たす $L$ の約数 |
-| $P$ | 解析的計数から供給される素数集合 |
-| $Q$ | $P$ のうち、基底ごとのルジャンドル記号が一致する部分集合 |
-| $U$ | $Q$ から選ぶ、積が $1\bmod L$ となる部分集合 |
-| $n$ | 最終的な積 $\prod_{p\in U}p$ |
-| $s,d$ | $n-1=2^s d$ における二進指数と奇数部分 |
-| $q$ | 計数データで、小さい素数を除去するための閾値 |
-| $x,y$ | 素数候補の上限と、$L$ の約数を数える上限 |
+| `residual_power_eq_legendre_at_prime` | 素因数 $p$ ごとに、$b^d$ がルジャンドル記号に等しい |
+| `residual_power_eq_sign_of_squarefree` | 同じ符号を、各素因数の法から積全体の法へまとめる |
+| `strongMillerRabinPass_of_residual_power_eq_sign` | $b^d=1$ または $-1$ から通過条件へ進む。負符号では実際に $j=0$ を選ぶ |
 
-$\lambda(L)$ と「$n$ がカーマイケル数である」という性質は別の概念である。
-前者は任意の正整数 $L$ に付随する算術関数で、後者は構成する合成数 $n$ の性質である。
+素因数ごとの合同式をまとめる部分は、中国剰余定理と同じ内容を使うが、
+実装では環の同型を組み立てず、平方自由な数の整除性を用いている。
 
-## 2. 対象ファイルの証明を読む
+指数の奇数部分の関係は、[`PseudoPrime/PrimeTest/MillerRabin/KorseltCanonicalSign.lean`](../PseudoPrime/PrimeTest/MillerRabin/KorseltCanonicalSign.lean#L25) の `odd_part_korselt`。
+Euler の規準を奇数乗へ拡張する部分は、
+[`PseudoPrime/PrimeTest/MillerRabin/LocalLegendrePowers.lean`](../PseudoPrime/PrimeTest/MillerRabin/LocalLegendrePowers.lean#L27) の `pow_half_mul_odd_eq_legendre` である。
 
-### 2.1 公開定理の本体
+必要なのは各素因数の $v_2(p-1)=1$ であり、積全体の $v_2(a-1)=1$ ではない。
+$a\equiv1\pmod4$ でも、$j=0$ による同じ議論を使える。
 
-新しい対象版の公開定理は、次の証明項で与えられている。[F4]
+</details>
+
+<a id="lean-entry"></a>
+## 5. Lean の証明を確認する入口
+
+### 5.1 まず公開定理を見る
+
+**対象ファイル：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/InitialBasesUnbounded.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/InitialBasesUnbounded.lean#L117)
+
+完全修飾名は
+`PseudoPrime.PrimeTest.MillerRabin.AGP.agp_initial_bases_unbounded` である。
+公開定理の本体は短い。
 
 ```lean
 theorem agp_initial_bases_unbounded :
@@ -183,922 +644,461 @@ theorem agp_initial_bases_unbounded :
     AnalyticNumberTheory.AGP.agp_progression_count_data_exists_unconditional
 ```
 
-型の観点では、次の二つを合成している。
+これは、計数データの存在証明を、そのデータから主命題を導く定理へ渡している。
+短い証明項の中にすべての数学が書かれているのではなく、次の接続をたどる構造である。
 
-$$
-\begin{aligned}
-&\texttt{agp\_progression\_count\_data\_exists\_unconditional}
-:
-\texttt{AGPProgressionCountDataExists},\\
-&\texttt{agp\_initial\_bases\_unbounded\_of\_progression\_count\_data}
-:
-\texttt{AGPProgressionCountDataExists}
-\to
-\texttt{AGPInitialBasesUnbounded}.
-\end{aligned}
-$$
-
-ここは `by` で始まる tactic 証明ではなく、定理を関数として直接適用する証明項である。
-必要な解析的データの存在証明を、そのデータから目標の数を構成する定理に渡すと、
-`AGPInitialBasesUnbounded` の証明が得られる。
-
-### 2.2 計数データから初期基底の非有界性への橋渡し
-
-同じファイルの中間定理は次のとおりである。[F4]
-
-```lean
-theorem agp_initial_bases_unbounded_of_progression_count_data
-    (hdata : PseudoPrime.AnalyticNumberTheory.AGP.AGPProgressionCountDataExists) :
-    AGPInitialBasesUnbounded :=
+```text
+計数データの存在
+  agp_progression_count_data_exists_unconditional
+    ↓
+素数供給への変換
+  agp_prime_supply_of_progression_count_data
+    ↓
+初期底と下限への適用
   agp_initial_bases_unbounded_of_prime_supply
-    (PseudoPrime.AnalyticNumberTheory.AGP.agp_prime_supply_of_progression_count_data hdata)
+    └─ 有限構成を呼び出す
+       exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes
+    ↓
+主命題 AGPInitialBasesUnbounded
 ```
 
-これは、計数データを素数集合の供給命題へ変換し、次に有限構成を適用するという二段の合成である。
+### 5.2 どの宣言の前提を読めばよいか
 
-| 段階 | 実際に使う宣言 | 得られる内容 |
+| 確認したいこと | 最初に読む宣言 | 本文の対応箇所 |
 |---|---|---|
-| 無条件の解析的存在 | `agp_progression_count_data_exists_unconditional` | 必要な計数データがすべての有限正基底集合 $W$ と下限 $C$ に対して存在 |
-| 計数から素数集合 | `agp_prime_supply_of_progression_count_data` | 十分多数の、指定条件を持つ素数 $P$ |
-| 有限構成 | `exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes` | $W$ の全基底を通過するカーマイケル数となる部分積 |
-| 初期区間と下限の処理 | `agp_initial_bases_unbounded_of_prime_supply` | 任意の $C$ を超え、$1,\ldots,B$ をすべて通過する数 |
-| 上二層の合成 | `agp_initial_bases_unbounded_of_progression_count_data` | 計数データから `AGPInitialBasesUnbounded` |
-| 公開結論 | `agp_initial_bases_unbounded` | 解析的入力を外部仮定に残さない初期基底の非有界性 |
+| 最終的に何を述べているか | `AGPInitialBasesUnbounded` | [1.1](#statement) |
+| 解析部分から何を受け取るか | `AGPProgressionPrimeSupply` | [4.1](#prime-supply) |
+| 有限構成全体に何が必要か | `exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes` | この節の次の折り畳み欄 |
+| 合成数であることをどう保証するか | `exists_two_or_more_unit_product_eq_one_of_progression` | [4.3](#subset-product) |
+| Korselt 条件の整除性をどう作るか | `isCarmichael_finset_prime_product_of_progression_unit_product` | [4.4](#carmichael-proof) |
+| 共通符号から強い通過条件がどう従うか | `strongMillerRabinPass_of_common_legendre_sign` | [4.5](#mr-proof) |
+| 計数データの存在を何から導くか | `agp_progression_count_data_exists_unconditional` | [6.1](#count-data) |
 
-有限素数集合へ制限する `agp_finite_prime_bases` は、この公開定理から導く下流の系である。
-その位置付けは第9節で述べる。[F1]
+<details>
+<summary>有限構成全体の定理型：供給された素数から何を取り出すか</summary>
 
-### 2.3 中心となる有限構成の接続を逐行で説明する
-
-`agp_initial_bases_unbounded_of_prime_supply` が、
-初期基底区間と任意の下限を、有限の素数集合からの構成へ接続する。
-対象版の証明は次のとおりである。[F4]
+**場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/LegendreSignature.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/LegendreSignature.lean#L256)
 
 ```lean
-theorem agp_initial_bases_unbounded_of_prime_supply
-    (hsupply : PseudoPrime.AnalyticNumberTheory.AGP.AGPProgressionPrimeSupply) :
-    AGPInitialBasesUnbounded := by
-  apply agpInitialBasesUnbounded_iff.mpr
-  intro B C
-  let W : Finset ℕ := Finset.Icc 1 B
-  have hWpos : ∀ b ∈ W, 0 < b := by
-    intro b hb
-    have hmem : b ∈ Finset.Icc 1 B := by simpa only [W] using hb
-    exact lt_of_lt_of_le Nat.zero_lt_one (Finset.mem_Icc.mp hmem).1
-  obtain ⟨L, k, P, hL, hlambda, hkL, hP, hsize⟩ := hsupply W C hWpos
-  have hNeZeroL : NeZero L := ⟨Nat.ne_of_gt (Nat.lt_trans Nat.zero_lt_two hL)⟩
-  have hNeZeroLambda : NeZero (ArithmeticFunction.carmichael L) :=
-    ⟨Nat.ne_of_gt (lt_of_lt_of_le (by decide : 0 < 3) hlambda)⟩
-  obtain ⟨U, hUP, hUcard, hUcar, hpass⟩ :=
-    @exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes L hNeZeroL hL hlambda
-      hNeZeroLambda W P k hkL (fun p hp => (hP p hp).1) (fun p hp => (hP p hp).2.1)
-      (fun p hp => (hP p hp).2.2.1) (fun p hp => (hP p hp).2.2.2.1) hWpos
-      (fun p hp b hb => (hP p hp).2.2.2.2.2 b hb) hsize
-  refine ⟨∏ p ∈ U, p, ?_, hUcar, ?_⟩
-  · have hUpos : 0 < U.card := lt_of_lt_of_le (by decide : 0 < 2) hUcard
-    obtain ⟨p, hpU⟩ := Finset.card_pos.mp hUpos
-    have hpC : C < p := (hP p (hUP hpU)).2.2.2.2.1
-    have hprodPos : 0 < ∏ q ∈ U.erase p, q := by
-      apply Finset.prod_pos
-      intro q hq
-      exact Nat.Prime.pos ((hP q (hUP (Finset.mem_erase.mp hq).2)).1)
-    calc
-      C < p := hpC
-      _ ≤ p * ∏ q ∈ U.erase p, q := Nat.le_mul_of_pos_right p hprodPos
-      _ = (∏ q ∈ U.erase p, q) * p := Nat.mul_comm _ _
-      _ = ∏ q ∈ U, q := Finset.prod_erase_mul U id hpU
-  · intro b hb hbB
-    have hbW : b ∈ W := by
-      change b ∈ Finset.Icc 1 B
-      exact Finset.mem_Icc.mpr ⟨Nat.succ_le_iff.mpr hb, hbB⟩
-    exact hpass b hbW
+theorem exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes (L : ℕ) [NeZero L]
+    (hL : 2 < L) (hlambda : 3 ≤ ArithmeticFunction.carmichael L)
+    [NeZero (ArithmeticFunction.carmichael L)] (W P : Finset ℕ) (k : ℕ) (hkL : Nat.Coprime k L)
+    (hprime : ∀ p ∈ P, Nat.Prime p) (hcoprime : ∀ p ∈ P, Nat.Coprime p L)
+    (hprogression : ∀ p ∈ P, ∃ d, d ∣ L ∧ p = d * k + 1) (hpMod : ∀ p ∈ P, p % 4 = 3)
+    (hbase : ∀ b ∈ W, 0 < b) (hnotdiv : ∀ p ∈ P, ∀ b ∈ W, ¬p ∣ b)
+    (hsize : 2 ^ W.card * Nat.floor ((ArithmeticFunction.carmichael L : ℝ) * Real.log L) < P.card) :
+    ∃ U : Finset ℕ,
+      U ⊆ P ∧
+        2 ≤ U.card ∧
+        Nat.IsCarmichael (∏ p ∈ U, p) ∧
+        ∀ b ∈ W, PrimeTest.StrongMillerRabinPass (∏ p ∈ U, p) (b : ZMod (∏ p ∈ U, p))
 ```
 
-この証明の各段階を説明する。
+この定理が、第4.2〜4.5節をまとめている。
+`W` に含まれる底について素数性は要求せず、正であることだけを要求する。
+したがって、合成数底も初めから同じ議論で扱っている。
 
-#### ① 通過条件を名前付き述語へ揃える
+結論の `U ⊆ P` と `2 ≤ U.card` は、外側で $a > C$ を示すときにも使う。
+この有限構成の定理そのものには、下限 `C` は登場しない。
 
-```lean
-apply agpInitialBasesUnbounded_iff.mpr
-```
+`[NeZero L]` と `[NeZero (ArithmeticFunction.carmichael L)]` は、法や群の指数が零でないことを
+型クラスとして受け取る記述である。
+呼出し側では `2 < L`、`3 ≤ ArithmeticFunction.carmichael L` から用意している。
 
-`agpInitialBasesUnbounded_iff` は、
+</details>
 
-```lean
-AGPInitialBasesUnbounded ↔ AGPInitialBasesUnboundedWithDecomposition
-```
+<details>
+<summary>外側の接続：初期底集合と大きさの下限をどう処理するか</summary>
 
-という同値であり、証明は `by rfl` である。
-明示的な `let (s, d)` の式と、`StrongMillerRabinPass` による式は定義上同じなので、
-この一行で以後の証明に使う表記へ目標を揃える。[F3]
+**場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/InitialBasesUnbounded.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/InitialBasesUnbounded.lean#L42)
 
-これは初期基底の命題と有限素数基底の命題との相互同値を使う操作ではない。
+`agp_initial_bases_unbounded_of_prime_supply` の入力は
+`hsupply : AGPProgressionPrimeSupply` であり、結論は `AGPInitialBasesUnbounded` である。
+証明内部では、次の局所名を追うと要点が分かる。
 
-#### ② 任意の $B,C$ を固定し、対象基底の有限集合を作る
-
-```lean
-intro B C
-let W : Finset ℕ := Finset.Icc 1 B
-```
-
-$B,C$ はここで任意の自然数として固定される。$W$ は閉区間の有限集合で、
-
-$$
-W=\{b\in\mathbb{N}:1\le b\le B\}
-$$
-
-である。
-
-続く `hWpos` は、各 $b\in W$ が正であることを確認する。
-`Finset.mem_Icc.mp hmem` は $1\le b$ と $b\le B$ の組を返すので、
-その第一成分と $0<1$ をつなぐ。
-
-$B=0$ なら $W=\varnothing$ であり、この正値性条件は空虚に成立する。
-この場合のための特別な分岐は必要ない。
-
-#### ③ 素数供給命題を適用する
-
-```lean
-obtain ⟨L, k, P, hL, hlambda, hkL, hP, hsize⟩ := hsupply W C hWpos
-```
-
-ここで `hsupply` に基底集合 $W$、下限 $C$、正値性を渡す。
-返されるデータは次のとおりである。
-
-| Lean の名前 | 数学的内容 |
+| ソース中の位置・局所名 | 数学的な役割 |
 |---|---|
-| `L`、`k`、`P` | 補助法、共通係数、有限素数集合 |
-| `hL` | $2<L$ |
-| `hlambda` | $3\le\lambda(L)$ |
-| `hkL` | $\gcd(k,L)=1$ |
-| `hP` | 各 $p\in P$ の算術条件と下限条件 |
-| `hsize` | $2^{\lvert W\rvert}\lfloor\lambda(L)\log L\rfloor<\lvert P\rvert$ |
+| `let W := Finset.Icc 1 B`、`hWpos` | 初期底 $1,\ldots,B$ を有限集合にし、すべて正であると確認 |
+| `hsupply W C hWpos` | $L,k,P$ とその全条件を取得 |
+| `hNeZeroL`、`hNeZeroLambda` | 有限構成が要求する非零性の型クラスを用意 |
+| `⟨U, hUP, hUcard, hUcar, hpass⟩` | 部分集合、要素数、カーマイケル性、全底での通過性を取得 |
+| `refine ⟨∏ p ∈ U, p, ...⟩` | 積を存在命題の証人に選ぶ |
+| `hpC` と続く `calc` | $C < p\le a$ により積の下限を確認 |
+| `hbW` と `hpass b hbW` | $0 < b\le B$ を集合への所属に戻し、通過性を返す |
 
-`hP p hp` は、右に結合した六つの論理積である。
-長い `.2.2...` は、そのうち必要な成分を取り出している。
+同ファイルの `agp_initial_bases_unbounded_of_progression_count_data` は、
+計数データから素数供給へ変換して、この定理を適用する中継である。
 
-| 式 | 取り出す条件 |
-|---|---|
-| `(hP p hp).1` | $p$ は素数 |
-| `(hP p hp).2.1` | $\gcd(p,L)=1$ |
-| `(hP p hp).2.2.1` | ある $d_p\mid L$ に対して $p=d_pk+1$ |
-| `(hP p hp).2.2.2.1` | $p\bmod4=3$ |
-| `(hP p hp).2.2.2.2.1` | $C<p$ |
-| `(hP p hp).2.2.2.2.2` | すべての $b\in W$ に対して $p\nmid b$ |
+途中の定理の前提を読むときは、それを**呼出し側のどの定理が満たしているか**も確認するとよい。
+一部の説明コメントには構築途中の記述が残っているため、ここでは定理の型と実際の証明項を基準にしている。
 
-これらの供給条件が、解析的計数からどのように得られるかは第4節と第10節で説明する。
+</details>
 
-#### ④ 非零性を、後続の定理が要求する型の形で用意する
+<a id="analytic"></a>
+## 6. 専門向け補足：素数を「十分多数」供給する部分
 
-```lean
-have hNeZeroL : NeZero L := ...
-have hNeZeroLambda : NeZero (ArithmeticFunction.carmichael L) := ...
-```
+第4節の構成は、条件を満たす素数が十分あれば進む。
+解析部分の仕事は、底の個数や要求された下限がどれほど大きくても、その入力を実際に用意することである。
 
-$2<L$ より $L\ne0$、$3\le\lambda(L)$ より $\lambda(L)\ne0$ である。
-この二行は、新しい仮定を追加するものではなく、すでに得た下界から
-`NeZero` の証明を構成している。
+単に「ある算術級数に素数が無限にある」だけでは、今回の有限構成には足りない。
+共通の $L,k$ に対して、符号分類と部分積選択に必要な個数を同時に確保しなければならない。
+対象版では、**算術級数の素数下界、補助法の構成、不要な候補の除去、有限平均**を組み合わせている。
 
-後続の適用には先頭に `@` が付いている。
-そのため、本来は暗黙に補われる非零性の型クラス引数も、
-`hNeZeroL`、`hNeZeroLambda` として明示的に渡している。
-この箇所は `letI` によって新しいインスタンスを登録するコードではない。
+<a id="count-data"></a>
+### 6.1 有限構成に渡す計数データ
 
-#### ⑤ 有限構成を適用する
+**データの定義：** [`PseudoPrime/AnalyticNumberTheory/AGP/ProgressionCountData.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionCountData.lean#L36)
 
-`exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes` に、
-上の算術条件、基底の正値性、個数下界を渡すと、次の結果が得られる。
+`AGPProgressionCountData W C c₀ x₀` は、$L,k$、候補の上限 $x$、約数の上限 $y$、
+小さい素数を除く閾値 $q$ と、それらの必要条件をまとめた構造体である。
 
-| 名前 | 内容 |
-|---|---|
-| `U` | 選ばれた素数の有限集合 |
-| `hUP` | $U\subseteq P$ |
-| `hUcard` | $2\le\lvert U\rvert$ |
-| `hUcar` | $\prod_{p\in U}p$ はカーマイケル数 |
-| `hpass` | すべての $b\in W$ が、その積を法とする強いテストを通過 |
-
-この内部で行われるのが、符号クラスの選択、単元群の部分集合積、
-Korselt 条件、局所符号からの通過性である。第5〜7節で詳述する。[F6]
-
-**$C<p$ は、この有限構成の定理には渡していない。**
-カーマイケル性と通過性を作る部分には不要であり、
-後で積の下界を示すために、外側の `hP` の中へ保持している。
-
-#### ⑥ 積を存在量化の証人に選ぶ
+**存在証明の入口：** [`PseudoPrime/AnalyticNumberTheory/AGP/UnconditionalProgressionCountData.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/UnconditionalProgressionCountData.lean#L21)
 
 ```lean
-refine ⟨∏ p ∈ U, p, ?_, hUcar, ?_⟩
+theorem agp_progression_count_data_exists_unconditional : AGPProgressionCountDataExists := by
+  obtain ⟨J, D, Xtheta, hJ, hSupply⟩ := exists_unconditional_narrow_theta_supply
+  exact agp_progression_count_data_exists_of_primorial_p2_and_theta_supply J D Xtheta hJ hSupply
 ```
 
-ここで、
+最初の定理が算術級数の素数下界を与え、次の定理がそれを使って必要な計数データを組み立てる。
+構造体を定義しただけでは存在証明にならず、この証明項がその値の存在を供給している。
+
+<details>
+<summary>計数データの正確な目標と、小さい素数を除いても個数が残る理由</summary>
 
 $$
-n=\prod_{p\in U}p
-$$
-
-を存在証人として提示する。カーマイケル性は `hUcar` ですでに埋まる。
-残る目標は、
-
-1. $C<n$。
-2. 任意の $0<b\le B$ に対する通過性。
-
-の二つである。
-
-#### ⑦ 積が任意の下限を超えることを示す
-
-`hUcard` から $U$ は非空なので、一つの $p\in U$ を選ぶ。
-`hUP hpU` により $p\in P$ となり、`hP` の第五成分から $C<p$ を得る。
-
-次に、残りの因子の積、
-
-$$
-R_p=\prod_{q\in U\setminus\{p\}}q
-$$
-
-が正であることを証明する。
-`Finset.mem_erase.mp hq` の第二成分で $q\in U$ を得て、
-$U\subseteq P$、$P$ の各要素の素数性、`Nat.Prime.pos` を順に用いる。
-`Finset.prod_pos` がこれらをまとめて $0<R_p$ を与える。
-
-最後の `calc` は、
-
-$$
-\begin{aligned}
-C
-&<p\\
-&\le pR_p\\
-&=R_p\,p\\
-&=\prod_{q\in U}q
-\end{aligned}
-$$
-
-という不等式の連鎖である。
-
-自然数の正の積は少なくとも $1$ なので、$p\le pR_p$ が成立する。
-最後の `Finset.prod_erase_mul` は、取り除いた一因子を積へ戻す等式である。
-
-下限の証明だけなら $U$ の非空性で十分である。
-$|U|\ge2$ という強い条件は、上流で積が合成数となることを保証するためにも使われている。
-
-#### ⑧ 初期区間の全基底に通過性を返す
-
-```lean
-intro b hb hbB
-have hbW : b ∈ W := by
-  change b ∈ Finset.Icc 1 B
-  exact Finset.mem_Icc.mpr ⟨Nat.succ_le_iff.mpr hb, hbB⟩
-exact hpass b hbW
-```
-
-`hb : 0 < b` と `hbB : b ≤ B` を受け取る。
-自然数について $0<b$ は $1\le b$ と同値なので、
-`Nat.succ_le_iff.mpr hb` を使い、二つの不等式を $b\in W$ にまとめる。
-
-後は `hpass b hbW` を適用するだけである。
-合成数基底も最初から $W$ に含まれているため、
-素数基底の通過性から積の基底の通過性を推論する必要はない。
-
-この最後の枝が終わると、任意に固定した $B,C$ に対して
-$n>C$、カーマイケル性、初期区間の全通過性が揃う。
-それが `AGPInitialBasesUnbounded` の証明である。
-
-## 3. 証明全体の数学的な構成
-
-固定した $B,C$ に対し、$W=\{1,\ldots,B\}$ とする。
-構成の目標は、一つの数 $n$ について、次の三条件を揃えることである。
-
-$$
-n>C,\qquad n\text{ はカーマイケル数},\qquad
-\forall b\in W,\quad b^d\equiv\sigma_b\pmod n,\quad \sigma_b\in\{1,-1\}.
-$$
-
-ここで $d$ は $n-1$ の奇数部分である。
-最後の条件は、Miller–Rabin の通過性を保証する十分条件になる。
-
-```mermaid
-flowchart TD
-    A["W と C に応じた素数集合 P"] --> B["共通のルジャンドル符号を持つ Q"]
-    B --> C["部分集合 U を選び、積 n を作る"]
-    B --> D["各底の符号を素因数間で揃える"]
-    C --> E["Korselt 条件と平方自由性"]
-    E --> F["n はカーマイケル数"]
-    E --> G["法 n の奇数部分累乗が 1 または -1"]
-    D --> G
-    A --> H["供給した各素数が C を超える"]
-    C --> I["n が C を超える"]
-    H --> I
-    G --> J["すべての初期基底を通過"]
-    F --> K["初期基底の非有界性"]
-    I --> K
-    J --> K
-```
-
-解析部分は、必要な算術条件を満たす素数を十分多数供給する。
-有限構成はその素数からカーマイケル数と通過性を作り、
-外側の積の下界の議論が $n>C$ を保証する。
-
-## 4. 計数データから素数集合を取り出す
-
-### 4.1 計数データに記録されるもの
-
-`AGPProgressionCountData W C c₀ x₀` は、必要な整数と不等式をまとめた構造体である。
-構造体の定義自体は存在証明ではない。そのインスタンスを実際に作る定理が第10節の解析部分にある。
-[A3]
-
-約数集合を、
-
-$$
-\mathcal{D}(L,y)=\{e\in\mathbb{N}:e\mid L,\ e\le y\}
-$$
-
-と書く。$L>2$ なので、この集合の要素は正である。
-
-主要なデータは次のように整理できる。
-
-| データ | 意味 |
-|---|---|
-| $L>2$、$L$ は平方自由 | 補助法の算術条件 |
-| $\lambda(L)\ge3$ | 有限群の長さ評価を使うための条件 |
-| $k>0$、$\gcd(k,L)=1$ | 候補 $ek+1$ の単射性と、後の合同条件の結合 |
-| $q\ge\max(C,\sup W)$ | 小さい素数を除くための閾値 |
-| $r\mid L$、$r$ 素数なら $r\le q$ | 残った素数を $L$ と互いに素にする条件 |
-| $x\ge x_0$ | 解析的評価を適用できる範囲 |
-| `hProp15Input` | 約数範囲や算術条件を含む Proposition 1.5 型の入力 |
-| `hlower`、`hProp15` | 必要な個数より候補素数が多いという二段の評価 |
-
-具体的に、
-
-$$
+\mathcal{D}(L,y)=\{e\in\mathbb{N}:e\mid L,\ e\le y\},\qquad
 H_W(L)=2^{|W|}\left\lfloor\lambda(L)\log L\right\rfloor
 $$
 
-と置く。`hlower` と `hProp15` は、
-
-$$
-H_W(L)+q
-<
-\frac{c_0}{\varphi(4)\log x}\,|\mathcal{D}(L,y)|
-\le
-\#\left\{
-e\in\mathcal{D}(L,y):
-\begin{array}{l}
-ek+1\text{ は素数},\\
-ek+1\le x,\\
-ek+1\equiv3\pmod4
-\end{array}
-\right\}
-$$
-
-を与える。$\varphi(4)=2$ なので中央の係数は $c_0/(2\log x)$ である。
-`reliableProp15Coefficient` がこの係数を定義している。[A3]・[A4]
-
-`AGPProgressionCountDataExists` の量化順序は、
-
-$$
-\exists c_0>0,\ \exists x_0\ge2,\ 
-\forall W,C,\ 
-\bigl(\forall b\in W,\ b>0\bigr)
-\Rightarrow
-\exists X,\ \exists\text{計数データ}
-$$
-
-である。$c_0,x_0$ は $W,C$ に依存しない。さらに、
-
-$$
-X\ge2^{56},\qquad x=X^5,\qquad q\le X
-$$
-
-も含まれる。これらのスケール条件は、有限構成が直接必要とするものより強いが、
-解析的構成を接続する際の仕様になっている。[A3]
-
-### 4.2 小さい候補を高々 $q$ 個捨てる
-
-`agp_prime_supply_of_progression_count_data` は、上の候補から、
-
-$$
-p=ek+1\le q
-$$
-
-となるものを除く。[A2]
-
-$k>0$ なので $e\mapsto ek+1$ は単射である。$q$ 以下の正整数は $q$ 個しかないから、
-取り除く候補は高々 $q$ 個である。従って、残った素数集合 $P$ は、
-
-$$
-|P|>H_W(L)
-=
-2^{|W|}\left\lfloor\lambda(L)\log L\right\rfloor
-$$
-
-を満たす。
-
-ここで元の下界が $H_W(L)+q$ **より厳密に大きい**ことが、除去後の厳密不等式を保証する。
-
-### 4.3 一つの閾値で三つの条件を保証する
-
-残った素数 $p$ は $p>q$ なので、次の三つが同時に得られる。
-
-1. **要求された下限を超える**：$q\ge C$ より $p>C$。
-2. **補助法と互いに素**：$L$ の素因数は $q$ 以下なので $p\nmid L$。従って $\gcd(p,L)=1$。
-3. **どの基底も割らない**：各 $b\in W$ は $0<b\le q<p$ なので $p\nmid b$。
-
-最後の点には、基底が正であることが必要である。$b=0$ では、どの素数も $b$ を割ってしまう。
-
-この結果をまとめたものが `AGPProgressionPrimeSupply` である。後続の有限構成で使う条件を
-式で書くと、
-
-$$
-\begin{gathered}
-L>2,\qquad \lambda(L)\ge3,\qquad \gcd(k,L)=1,\\
-\forall p\in P:\quad
-p\text{ は素数},\quad
-\gcd(p,L)=1,\quad
-p=d_p k+1\ (d_p\mid L),\\
-p\equiv3\pmod4,\qquad p>C,\qquad
-\forall b\in W,\ p\nmid b,\\
-|P|>
-2^{|W|}\left\lfloor\lambda(L)\log L\right\rfloor.
-\end{gathered}
-$$
-
-解析の大部分は、この条件群を実現するために使われる。[A2]
-
-## 5. ルジャンドル記号の符号を揃える
-
-### 5.1 素数を符号ベクトルで分類する
-
-各 $p\in P$ に対し、
-
-$$
-\operatorname{sig}_W(p)=
-\left(\left(\frac bp\right)\right)_{b\in W}
-$$
-
-というベクトルを考える。$\left(\frac bp\right)$ はルジャンドル記号で、
-
-- $p\nmid b$ で $b$ が法 $p$ の平方なら $1$。
-- $p\nmid b$ で平方でなければ $-1$。
-
-である。すでに $p\nmid b$ を確保したので、$0$ という値は現れない。
-
-したがって、符号ベクトルは高々 $2^{|W|}$ 通りである。[F6]
-
-### 5.2 鳩の巣原理を適用する
-
-$$
-N=\left\lfloor\lambda(L)\log L\right\rfloor
-$$
-
-と置く。$|P|>2^{|W|}N$ だから、鳩の巣原理より、同じ符号ベクトルを持つ集合
-$Q\subseteq P$ があり、
-
-$$
-|Q|>N
-$$
-
-を満たす。
-
-$|Q|$ が整数であることから、これは、
-
-$$
-|Q|>\lambda(L)\log L
-$$
-
-を意味する。一般に、非負実数 $x$ と整数 $m$ について、
-$\lfloor x\rfloor<m$ と $x<m$ は同値だからである。
-
-この操作は `exists_large_common_legendre_signature_class` で実装されている。
-Lean では、
-
-```lean
-Base := {b // b ∈ W}
-Color := Base → Bool
-```
-
-という型を使い、各座標で「ルジャンドル記号が $1$ か」を記録する。
-その後、記号が $0$ ではないことを使って、同じ色から同じ符号を回復する。[F6]
-
-### 5.3 揃う符号は基底ごとに異なってよい
-
-得られる条件は、
-
-$$
-\forall b\in W,\ \exists\sigma_b\in\{1,-1\},\ 
-\forall p\in Q,\quad
-\left(\frac bp\right)=\sigma_b
-$$
-
-である。
-
-例えば、底 $2$ の符号は全素因数で $1$、底 $3$ の符号は全素因数で $-1$、という状況でよい。
-揃える対象は、**固定した一つの底に対する、異なる素因数での符号**である。
-
-`common_legendre_sign_of_pairwise_signatures` は、$Q$ の素数を一つ基準に選び、
-ペアごとの等式から、この一つの符号 $\sigma_b$ を取り出す。[F6]
-
-## 6. 積が $1\bmod L$ になる部分集合を選ぶ
-
-### 6.1 単元群に移す
-
-$Q$ の各素数は $L$ と互いに素なので、
-
-$$
-G=(\mathbb{Z}/L\mathbb{Z})^\times
-$$
-
-の元を定める。この群の指数は $\lambda(L)$ である。つまり、すべての $g\in G$ に対して、
-
-$$
-g^{\lambda(L)}=1
-$$
-
-となる。
-
-有限アーベル群における零和部分集合定理を、乗法表記で適用すると、十分長い列には積が $1$ となる
-非空部分集合が存在する。実装は `Additive` を使って単元群を加法表記に直し、零和定理を適用してから、
-積の等式へ戻している。[F7]・[C1]
-
-### 6.2 同じ剰余類に来る異なる素数を区別する
-
-異なる素数 $p,q$ が、法 $L$ で同じ剰余類になることはあり得る。その場合も、元の素数は異なる
-因子として保持する必要がある。
-
-実装は、$Q$ の要素をラベルとして保った列を使う。群に写した像を単純に集合化して重複を消す処理は
-行わない。選び出されるのは元のラベルの部分集合なので、最終積には各素数を一回ずつ使える。
-このことが後の平方自由性にもつながる。[F7]・[C1]
-
-### 6.3 $\lambda(L)\log L$ という閾値の理由
-
-$m=\lambda(L)$ とする。利用する有限群の評価では、
-
-$$
-r=
-\left\lfloor m\log\frac Lm\right\rfloor+m
-$$
-
-個のラベルがあれば、非空の積 $1$ の部分集合を確保できる。
-
-$m\ge3$ より $\log m\ge1$ であるため、
-
-$$
-m\log\frac Lm+m
-=
-m\log L-m\log m+m
-\le m\log L.
-$$
-
-従って、
-
-$$
-r\le\lfloor m\log L\rfloor.
-$$
-
-一方、$|Q|>m\log L$ だから、
-
-$$
-|Q|-1\ge\lfloor m\log L\rfloor.
-$$
-
-つまり、**$Q$ から一つの要素を除いても**、有限群定理に必要な長さが残る。
-これを使うのが、
-
-`exists_nonempty_unit_product_eq_one_of_card_gt_carmichael_log_erase`
-
-である。零和定理そのもののフーリエ的な証明は付録Aで説明する。[F7]・[C1]
-
-### 6.4 なぜ $kL+1$ を除くのか
-
-非空の部分集合が一つの素数だけだった場合、その積は合成数にならない。
-この可能性を除くため、あらかじめ $kL+1$ を候補から取り除く。
-
-実際、
-
-$$
-p=d_p k+1,\qquad d_p\mid L,\qquad p\equiv1\pmod L
-$$
-
-なら、
-
-$$
-L\mid d_p k.
-$$
-
-$\gcd(k,L)=1$ だから $L\mid d_p$。すでに $d_p\mid L$ なので $d_p=L$、従って、
-
-$$
-p=kL+1
-$$
-
-となる。これは、一要素の積が $1\bmod L$ になる唯一の候補である。
-
-`eq_exception_of_unit_eq_one_of_progression` がこの事実を証明する。
-その候補を除いて零和定理を適用すれば、
-
-$$
-U\subseteq Q\setminus\{kL+1\},\qquad
-|U|\ge2,\qquad
-\prod_{p\in U}p\equiv1\pmod L
-$$
-
-を得る。対応する補題は、
-
-`exists_two_or_more_unit_product_eq_one_of_progression`
-
-である。[F7]
-
-### 6.5 Korselt 条件を満たす積を作る
-
-$$
-n=\prod_{p\in U}p
-$$
-
-と置く。
-
-各 $p=d_p k+1$ は $1\bmod k$ なので、
-
-$$
-n\equiv1\pmod k.
-$$
-
-部分集合の選び方から $n\equiv1\pmod L$ でもある。$\gcd(k,L)=1$ より、
-
-$$
-kL\mid n-1.
-$$
-
-さらに各 $p\in U$ について、
-
-$$
-p-1=d_p k\mid kL.
-$$
-
-従って、
-
-$$
-p-1\mid kL\mid n-1.
-$$
-
-$U$ は異なる素数の集合で、$|U|\ge2$ だから、$n$ は平方自由な合成数である。
-これで Korselt の全条件が揃い、$n$ はカーマイケル数となる。
-
-この段階をまとめる主要な補題は、
-
-- `isCarmichael_finset_prime_product`。
-- `isCarmichael_finset_prime_product_of_progression_unit_product`。
-- `exists_carmichael_subset_of_progression_primes`。
-
-である。[F6]・[F8]
-
-補助法 $L$ の平方自由性と、最終積 $n$ の平方自由性は、証明上の由来が異なる。
-前者は解析的な約数計数に用いられ、後者は異なる素数を一度ずつ掛けたことから得られる。
-有限構成の部分だけを見ると、$n$ の平方自由性を $L$ の平方自由性から移しているわけではない。
-
-## 7. すべての対象基底で強いテストを通過する理由
-
-ここが、単なるカーマイケル数の構成を、強擬素数の構成へ進める段階である。
-
-### 7.1 素因数側の二進指数を $1$ に揃える
-
-各 $p\in U$ は、
-
-$$
-p\equiv3\pmod4
-$$
-
-なので、
-
-$$
-p-1=2u_p,\qquad u_p=\frac{p-1}{2}\text{ は奇数}
-$$
-
-と書ける。
-
-一方、$n$ は奇数で、
-
-$$
-n-1=2^s d,\qquad d\text{ は奇数},\qquad s\ge1.
-$$
-
-Korselt 条件 $p-1\mid n-1$ から、
-
-$$
-u_p\mid d.
-$$
-
-したがって、ある奇数 $t_p$ により、
-
-$$
-d=u_p t_p
-$$
-
-と書ける。$d$ と $u_p$ がともに奇数なので、商 $t_p$ も奇数である。
-
-ソースでは一般的な奇数部分の整除補題 `odd_part_korselt` を使い、
-$p\bmod4=3$ から `Nat.divMaxPow (p - 1) 2 = p / 2` を確認している。
-奇素数 $p$ の自然数除算 $p/2$ は $(p-1)/2$ に等しい。[F9]・[F10]
-
-### 7.2 Euler の規準で局所的な累乗を求める
-
-固定した $b\in W$ を考える。$p\nmid b$ なので Euler の規準により、
-
-$$
-b^{u_p}
-\equiv
-\left(\frac bp\right)
-\pmod p.
-$$
-
-よって、
+と置く。$\mathcal{D}(L,y)$ は、$L$ の約数のうち $y$ 以下のものを集めた集合である。
+計数データの `hlower` と `hProp15` は、
 
 $$
 \begin{aligned}
-b^d
-&=b^{u_p t_p}\\
-&=\left(b^{u_p}\right)^{t_p}\\
-&\equiv
-\left(\frac bp\right)^{t_p}\\
-&=\left(\frac bp\right)\\
-&=\sigma_b
-\pmod p.
+H_W(L)+q
+&<\frac{c_0}{2\log x}|\mathcal{D}(L,y)|\\
+&\le
+\#\{e\in\mathcal{D}(L,y):
+ ek+1\text{ は素数},\ ek+1\le x,\ ek+1\equiv3\pmod4\}
 \end{aligned}
 $$
 
-$t_p$ が奇数であるため、$1$ も $-1$ も、そのまま保存される。
+を与える。係数の定義は、[`PseudoPrime/AnalyticNumberTheory/AGP/ReliableProp15.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ReliableProp15.lean#L35) の
+`reliableProp15Coefficient` で、一般には $c_0/(\varphi(m)\log x)$、ここでは $m=4$ である。
+$\varphi(m)$ は $m$ 以下で $m$ と互いに素な正整数の個数を表す。
 
-これが `residual_power_eq_legendre_at_prime` の内容である。
-Euler の規準を奇数倍の指数へ拡張する部分では、
-`pow_half_mul_odd_eq_legendre` を使う。[F9]・[F11]
+主要な構造体フィールドは次のとおりである。
 
-### 7.3 同じ符号を法 $n$ へ持ち上げる
+| フィールド | 確認する条件 |
+|---|---|
+| `hL`、`hSquarefree`、`hlambda` | $L > 2$、$L$ の平方自由性、$\lambda(L)\ge3$ |
+| `hk`、`hcoprime` | $k > 0$、$\gcd(k,L)=1$ |
+| `hCq` | $q\ge\max(C,\sup W)$ |
+| `hfactor` | $L$ のすべての素因数は $q$ 以下 |
+| `hProp15Input` | 約数範囲など、計数に必要な算術条件 |
+| `hlower`、`hProp15` | 上の二段の個数評価 |
 
-以上により、$n$ のどの素因数 $p$ に対しても、
+存在命題 `AGPProgressionCountDataExists` では、最初に共通定数 $c_0 > 0$、$x_0\ge2$ を選び、
+**その後で任意の $W,C$** に対応するデータを取る。
+さらに $X\ge2^{56}$、$x=X^5$、$q\le X$ となるスケールも要求する。
 
-$$
-b^d\equiv\sigma_b\pmod p
-$$
+`agp_prime_supply_of_progression_count_data` は、この候補から $p\le q$ を除く。
+$k > 0$ なので $e\mapsto ek+1$ は単射であり、除く候補は高々 $q$ 個。
+元の下界に $q$ 個分の余裕があるため、残った $P$ は $|P| > H_W(L)$ を満たす。
 
-となる。$n$ は平方自由なので、
+残った $p > q$ は、$p > C$、$\gcd(p,L)=1$、そしてどの正の底 $b\in W$ の約数でもないことを、
+同時に満たす。これが `AGPProgressionPrimeSupply` への接続である。
 
-$$
-b^d\equiv\sigma_b\pmod n
-$$
+</details>
 
-が従う。
+### 6.2 算術級数の素数下界を得る
 
-数学的には中国剰余定理に対応する議論だが、実装は環の同型を明示的に構成せず、整除性で処理する。
+**入口：** [`PseudoPrime/AnalyticNumberTheory/AGP/UnconditionalNarrowThetaSupply.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/UnconditionalNarrowThetaSupply.lean#L23)
 
-- $\sigma_b=1$ なら、各素因数 $p$ が $b^d-1$ を割る。
-- $\sigma_b=-1$ なら、各素因数 $p$ が $b^d+1$ を割る。
-- 平方自由な $n$ は、その相異なる素因数の積なので、$n$ 自身が同じ整数を割る。
+`exists_unconditional_narrow_theta_supply` は、多数の法を同時に扱える素数下界を与える。
+問題になる法を有限個の例外で管理し、それを避けた算術級数では、必要な大きさまでに十分な素数があると示す。
 
-`residual_power_eq_sign_of_squarefree` がこの処理を行い、
-`dvd_of_squarefree_prime_dvd` によって素因数ごとの整除性をまとめる。[F9]
+解析的な核心は、ディリクレ $L$ 関数の零点を族全体で数える評価にある。
+この評価から例外の個数を制御し、明示公式を通じて素数の個数の下界に戻す。
 
-正符号の場合に `0 < b` を使う一つの理由は、自然数の差 $b^d-1$ を環に写すために
-$1\le b^d$ を必要とすることである。
+<details>
+<summary>素数下界の前提・量化順序と、零点密度からの接続</summary>
 
-### 7.4 $j=0$ だけで負符号の枝を満たせる
-
-結局、
-
-$$
-b^d\equiv1\pmod n
-\quad\text{または}\quad
-b^d\equiv-1\pmod n
-$$
-
-である。
-
-- 正符号なら、Miller–Rabin の第一の通過条件。
-- 負符号なら、第二の通過条件で $j=0$ を選ぶ。
-
-$n>1$ は奇数なので $s\ge1$ であり、$0<s$ という範囲条件も満たす。
-
-`strongMillerRabinPass_of_residual_power_eq_sign` の負符号の枝は、
-実際に `⟨0, hs, ...⟩` という証人を返している。[F9]
-
-ここで必要なのは **各素因数に対する $v_2(p-1)=1$** である。
-$n$ 自身について $v_2(n-1)=1$ を仮定してはいない。
-$n\equiv1\pmod4$ で $s$ が大きい場合でも、$j=0<s$ は使える。
-
-### 7.5 有限構成をまとめる定理
-
-`exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes` は、
-第5節から第7節までを合成し、
+対数の重みを付けた素数計数を
 
 $$
-\exists U\subseteq P,\quad
-|U|\ge2,\quad
-\operatorname{Carmichael}\!\left(\prod_{p\in U}p\right),\quad
-\forall b\in W,\ 
-\operatorname{MRPass}\!\left(\prod_{p\in U}p,b\right)
+\theta(x;M,r)=
+\sum_{\substack{p\le x\\p\text{ は素数}\\p\equiv r\pmod M}}\log p
 $$
 
-を返す。[F6]
+と書く。対応する定義は、[`PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean#L136) の `thetaInProgressionReal` である。
 
-内部の流れは、
+供給定理の量化順序は
 
-1. 共通符号クラス $Q$ を選ぶ。
-2. $|Q|>\lambda(L)\log L$ に変換する。
-3. 部分集合積からカーマイケル数を作る。
-4. $Q$ の共通符号を $U$ に制限する。
-5. `strongMillerRabinPass_all_of_signature_class` を適用する。
+$$
+\exists J,D,X_\theta,\quad
+\forall Z\ge X_\theta,\quad
+\exists E_Z,\quad
+\forall m,e,r\ \cdots
+$$
+
+であり、$J\ge2$、$|E_Z|\le D$ となる。
+例外 $h\in E_Z$ は $h > 1$ かつ $4$ の約数でない。
+次の条件を満たすとき、
+
+$$
+\begin{gathered}
+m\in\{1,4\},\qquad e > 0,\qquad \gcd(e,m)=1,\\
+M=em > 1,\qquad M^J\le Z,\qquad\gcd(r,M)=1,\\
+\text{どの }h\in E_Z\text{ も }M\text{ の約数ではない},
+\end{gathered}
+$$
+
+$$
+\theta(eZ^3;M,r)\ge\frac{eZ^3}{2\varphi(M)}
+$$
+
+を得る。例外集合を法や剰余類より先に選ぶ点が、多数の約数を一度に扱うために重要である。
+
+零点密度の入口は、
+[`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyDensity.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyDensity.lean#L210) の
+`exists_primitiveCharacterFamily_log_free_density` である。
+ここでは、ある定数 $A_*,C_* > 0$ が存在し、整数 $R\ge2$、$1/2\le\sigma\le1$ に対して
+
+$$
+N_{\mathrm{fam}}(R,\sigma)\le C_*R^{A_*(1-\sigma)}
+$$
+
+を満たす。$N_{\mathrm{fam}}$ は、導手が $R$ 以下の原始非主指標について、
+$\sigma\le\operatorname{Re}\rho\le1$、$|\operatorname{Im}\rho|\le R$ の範囲にある零点を、
+解析的重複度を含めて数えたものである。
+
+$\log R\ge2$ となる十分大きい $R$ で $\sigma=1-1/\log R$ とすると、
+右辺は $C_*e^{A_*}$ になる。
+これにより、実部が $1$ に近い零点を持つ導手を、スケールに依存しない個数の例外にまとめられる。
+対応する個数評価は、
+[`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyExceptionalConductors.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyExceptionalConductors.lean#L64) の
+`exists_uniform_exceptionalFamilyConductors_card_bound` で確認できる。
+
+例外を避けた零点和の評価は [`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyExceptionalWeightedGap.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyExceptionalWeightedGap.lean)、
+素数下界への接続は [`PseudoPrime/AnalyticNumberTheory/AGP/UniformPolynomialThetaSupply.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/UniformPolynomialThetaSupply.lean#L50) の
+`exists_uniform_polynomial_theta_supply` にある。
+必要な法 $4$ を排除してしまわないため、導手 $4$ の寄与は別途扱う。
+その評価は [`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyFullHalfScaleBudget.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyFullHalfScaleBudget.lean) にある。
+
+最後の整数スケールへの変換は `exists_unconditional_narrow_theta_supply` が担い、
+天井関数を使う高さ選択の評価は [`PseudoPrime/AnalyticNumberTheory/AGP/RoundedPolynomialHeight.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/RoundedPolynomialHeight.lean#L29) の
+`rounded_polynomial_height_bounds` が担う。
+
+</details>
+
+### 6.3 補助法と共通係数を、二段階で構成する
+
+**組立ての入口：** [`PseudoPrime/AnalyticNumberTheory/AGP/PrimorialProgressionCountData.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/PrimorialProgressionCountData.lean#L32)
+
+対象版は、素数下界を二段階で利用する。
+
+**一段目では、補助法 $L$ を作る。**
+小さい素数の積から多数の約数を用意し、その約数を使った算術級数で素数を集める。
+得られた素数のうち十分大きいものを掛け合わせて、約数が多く、
+有限群で必要な量 $\lambda(L)\log L$ を制御しやすい $L$ を作る。
+
+**二段目では、最終的な素因数の候補を作る。**
+$L$ の約数 $e$ を使い、$p=ek+1\equiv3\pmod4$ となる素数を数える。
+ただし $k$ が $L$ と共通因子を持つ候補は除く必要がある。
+その候補数を篩法で上から抑え、除いた後も必要な個数が残ると示す。
+最後に有限平均を使い、一つの共通係数 $k$ を選ぶ。
+
+この二段構成が、[第4.1節](#prime-supply)で要求した算術条件と個数条件を同時に実現する。
+
+<details>
+<summary>専門向け：二段階のスケールと個数の余裕</summary>
+
+一段目の入口は、[`PseudoPrime/AnalyticNumberTheory/AGP/PrimorialSeedCount.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/PrimorialSeedCount.lean#L901) の
+`exists_primorial_seed_tail_modulus_of_count_margin` である。
+全体のスケール選択は、
+[`PseudoPrime/AnalyticNumberTheory/AGP/P2SeedScale.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/P2SeedScale.lean#L1056) の
+`exists_p2_full_divisor_concentration_bound_above_with_seed_margin` にある。
+
+十分大きい $u$ に対して
+
+$$
+z=2^u,\qquad N_0=\prod_{p\le z,\ p\text{ は素数}}p,\qquad X=N_0^J,\qquad q=X^5
+$$
+
+と取る。$N_0$ は小さい素数を重複なく掛けた数、すなわち primorial である。
+法 $m=1$ の素数下界から、共通係数 $k_1$ に対し
+$r=e k_1+1$、$e\mid N_0$ という形の相異なる素数を $t$ 個選ぶ。
+この $k_1$ は、二段目の係数 $k$ とは異なる。
+
+そのうち $r > 1024t$ のものの積を $L$ とする。
+小さい素数を除いても十分な個数が残るように $t$ を選ぶことで、
+
+$$
+\omega(L)\ge t/2,\qquad
+\sum_{r\text{ は }L\text{ の素因数}}\frac1r\le\frac1{1024},\qquad
+\lambda(L)\le q^2,\qquad L\le q^t
+$$
+
+を確保する。$\omega(L)$ は相異なる素因数の個数である。
+
+二段目では
+
+$$
+Y=(4qL)^J,\qquad x=Y^5,\qquad y=Y^2
+$$
+
+と取る。すべての $e\mid L$ で $(4e)^J\le Y$ となり、素数下界の適用範囲に入る。
+また、$L$ の全約数が $y$ 以下になるので、
+
+$$
+|\mathcal{D}(L,y)|=2^{\omega(L)}\ge2^{\lfloor t/2\rfloor}.
+$$
+
+スケール選択は、これを使って
+
+$$
+2^{|W|}\left\lfloor\lambda(L)\log L\right\rfloor+q
+<\frac{c_0}{2\log x}|\mathcal{D}(L,y)|
+$$
+
+を実現する。対応する評価は、同じ
+`PseudoPrime/AnalyticNumberTheory/AGP/P2SeedScale.lean` の
+`p2_full_divisor_hlower_of_boxed` である。
+補助データの接続は [`PseudoPrime/AnalyticNumberTheory/AGP/PrimorialP2SeedBridge.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/PrimorialP2SeedBridge.lean) にある。
+
+例外となる法を避けるときは、[`PseudoPrime/AnalyticNumberTheory/AGP/ExceptionalModuli.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ExceptionalModuli.lean#L393) の
+`exceptionalFreePartForModulus` を使う。
+高々 $D$ 個の素因数を除くことによる約数個数の損失を、高々 $2^D$ 倍として管理する。
+
+さらに、$L$ の素因数 $r$ が $k$ の約数になると、候補 $p=ek+1$ は
+法 $4er$ のより狭い算術級数に入る。
+この不要な候補数を抑えるのが、
+[`PseudoPrime/AnalyticNumberTheory/AGP/BrunTitchmarshSpecialization.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/BrunTitchmarshSpecialization.lean#L302) の `agp_coarse_sieve_bound` である。
+対象版では、その係数 $640/3$ と上の逆数和 $1/1024$ を用い、残る個数の係数を
+
+$$
+\left(\frac12-10^{-6}\right)-\frac{640}{3}\cdot\frac1{1024}
+=\frac7{24}-10^{-6} > \frac14
+$$
+
+と評価する。
+係数計算は、[`PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean#L1465) の
+`agp_fifth_power_average_coefficient_640_1024_value` と
+`agp_fifth_power_average_coefficient_640_1024_gt_quarter` にある。
+
+共通係数を $c_0=1/(128\cdot2^D)$ と選ぶため、
+$16\cdot2^D c_0=1/8 < 1/4$ となり、例外による損失などを吸収する余裕が残る。
+この余裕を使って有限平均を取り、$\gcd(k,L)=1$ を満たす一つの $k$ で必要な素数個数を得る。
+最後にデータを組み立てる定義は、
+[`PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean#L3624) の
+`agpProgressionCountData_of_fifth_power_theta_and_brun_titchmarsh` である。
+
+この二段構成では、狭い範囲への約数の集中を別途仮定するのではなく、
+二段目で全約数を含む範囲を選んで、その個数を利用している。
+
+</details>
+
+<details>
+<summary>さらに零点密度の証明を追う場合の入口</summary>
+
+主定理の理解にはこの段階まで下る必要はないが、解析的な前提の由来を確認する場合は、
+まず `exists_primitiveCharacterFamily_log_free_density` から依存先へ進む。
+
+**零点数から平均二乗の下界へ：**
+[`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/GeneralScaleIncidence.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/GeneralScaleIncidence.lean#L276) の
+`exists_uniform_general_scale_occurrence_meanSquare_bound`。
+零点の出現と重複度を保って、共通の族・高さ格子の計数へつなぐ部分である。
+
+**同じ平均二乗の上界：**
+[`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/HighPrimeIncidence.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/HighPrimeIncidence.lean#L822) の
+`highPrimeFamilyGridMeanSquareSum_hybrid_bound`。
+族全体の hybrid 大篩評価により上から抑える部分である。
+
+**密度評価への合成：**
+[`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/GeneralScaleDensity.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/GeneralScaleDensity.lean)、続いて [`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyDensity.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyDensity.lean)。
+上の上下評価の比較と、適用範囲外での粗い評価を合わせる。
+
+**明示公式の残りの誤差：**
+[`PseudoPrime/AnalyticNumberTheory/AGP/ScalarThetaBudget.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ScalarThetaBudget.lean)。
+主項以外の実数誤差項を吸収する評価を確認できる。
+
+「ある指標の零点を抑える」ことと、「必要な指標族の総数を重複度込みで抑える」ことを
+区別して読むと、有限群側へ渡す一様な個数評価の由来が分かる。
+
+</details>
+
+<a id="zero-sum"></a>
+## 7. 専門向け補足：有限群の零和定理は何をしているか
+
+第4.3節で使った定理は、「群が有限だから、どこかで同じ積が現れる」というだけの粗い議論ではない。
+群の要素数全体ではなく、群の指数を使って必要な列の長さを抑えている。
+この違いにより、素数供給に要求する個数を $\lambda(L)\log L$ という形にできる。
+
+**入口：** [`PseudoPrime/Combinatorics/Additive/FiniteAbelianZeroSum.lean`](../PseudoPrime/Combinatorics/Additive/FiniteAbelianZeroSum.lean#L1238)
+
+<details>
+<summary>指標を使う零和証明の概要と対応宣言</summary>
+
+有限アーベル群 $G$ を加法表記で考える。
+$|G|\le L$、$3\le m\le L$、すべての $g\in G$ について $mg=0$ とする。
+今回の適用では $G$ は法 $L$ の単元群を加法表記に直したもの、$m=\lambda(L)$ である。
+
+群の複素指標 $\chi:G\to\mathbb{C}^\times$ は、各 $g$ に $m$ 乗根を対応させる。
+固定した $g$ での指標値は高々 $m$ 通りなので、まだ処理していない指標の少なくとも $1/m$ は同じ値を取る。
+
+各座標でその値を選び、対応する指標を処理済みにする。
+
+$$
+\ell=\left\lfloor m\log\frac Lm\right\rfloor+1
+$$
+
+個の座標を使うと、未処理の指標は $m$ 個未満になる。
+残りを $m-1$ 座標で一つずつ処理でき、全長は
+
+$$
+\ell+(m-1)=\left\lfloor m\log\frac Lm\right\rfloor+m
+$$
 
 となる。
 
-## 8. 証明全体を数学の文章でまとめる
-
-これまでの構成を使えば、`agp_initial_bases_unbounded` の数学的な証明は、
-次のようにまとめられる。[F4]・[F6]・[A1]・[A2]
-
-任意の自然数 $B,C$ を固定し、$W=\{1,\ldots,B\}$ と置く。
-無条件の解析的存在定理と計数データから素数集合への変換により、
-第4節の条件を満たす $L,k,P$ を取る。
-
-各 $p\in P$ を $W$ に対するルジャンドル符号で分類する。
-$P$ の個数下界と鳩の巣原理により、同じ符号ベクトルを持ち、
-$|Q|>\lambda(L)\log L$ を満たす $Q\subseteq P$ が存在する。
-
-単元群の部分集合積の定理を使い、$kL+1$ を避けた集合 $U\subseteq Q$ で、
-$|U|\ge2$ かつ $\prod_{p\in U}p\equiv1\pmod L$ を満たすものを選ぶ。
-$n=\prod_{p\in U}p$ と置くと、$p-1\mid kL\mid n-1$ と平方自由性・合成数性により、
-$n$ はカーマイケル数である。
-
-$n-1=2^s d$ と分解する。各素因数は $3\bmod4$ で、
-各基底 $b\in W$ に対するルジャンドル符号は素因数間で共通だから、
-$b^d\equiv\sigma_b\pmod n$、$\sigma_b\in\{1,-1\}$ となる。
-従って $W$ のすべての基底が強いテストを通過する。
-
-さらに $U$ は非空で、各 $p\in U$ が $C$ より大きい。
-残りの素因数の積は正なので、$C<p\le n$ が成立する。
-以上で $n>C$、カーマイケル性、全初期基底の通過性が得られた。
-
-$B,C$ は任意だったから、`AGPInitialBasesUnbounded` が成り立つ。
-この構成で必要な解析的存在定理の内容は第10節で説明する。
-
-## 9. 主定理の系：有限素数基底と OEIS A006945
-
-### 9.1 固定した初期区間について無限に存在する
-
-$B$ を固定し、
+この処理で、各指標 $\chi$ について少なくとも一つの座標 $i$ で
+$c_i=\chi(g_i)$ となる非零複素数 $c_i$ を選べる。
+群環で
 
 $$
-\mathcal{A}_B
-=
-\left\{
-n\in\mathbb{N}:
-\operatorname{Carmichael}(n)
-\land
-\forall b,\ 1\le b\le B\Rightarrow\operatorname{MRPass}(n,b)
-\right\}
+F=\prod_i(c_i[0]-[g_i])
 $$
 
-と置く。定理は、
+と置くと、どの指標で評価しても一つの因子が零になり、フーリエ反転により $F=0$ となる。
+一方、非空の零和部分集合がないなら、$[0]$ の係数は $\prod_i c_i\ne0$ になる。
+これは矛盾なので、非空の零和部分集合が存在する。
 
-$$
-\forall C\in\mathbb{N},\quad
-\exists n\in\mathcal{A}_B,\quad C<n
-$$
+同ファイルで、順に次の宣言を読むとよい。
 
-を直接述べている。
+| 宣言 | 役割 |
+|---|---|
+| `exists_greedy_character_prefix_residual_lt` | 前半の座標で未処理の指標を減らす |
+| `exists_nonempty_zero_sum_of_log_prefix_and_tail` | 残りの指標も処理して零和部分集合を得る |
+| `exists_nonempty_zero_sum_of_character_matches` | 指標と群環の議論による矛盾 |
+| `log_length_with_tail_le_floor_log` | 必要な長さを評価する |
+| `exists_nonempty_zero_sum_label_subset_of_segmented_length` | 元のラベルを保つ形で部分集合を返す |
 
-もし $\mathcal{A}_B$ が有限なら、そのすべての要素を上から抑える自然数 $C$ が取れる。
-しかし定理は、その $C$ を超える $\mathcal{A}_B$ の要素を与えるので矛盾する。
-従って $\mathcal{A}_B$ は無限集合である。
+</details>
 
-これは「$B$ を大きくするたびに別の反例がある」という主張だけではない。
-**同じ $B$ に対して、反例を任意に大きく取れる**という主張である。
+<a id="consequences"></a>
+## 8. 系：有限素数底と OEIS A006945
 
-### 9.2 任意の有限正基底集合にも適用できる
+### 8.1 任意の有限素数底への特殊化
 
-正の整数からなる有限基底集合 $W_0$ と下限 $C$ を与え、
-$B=\sup W_0$ と置く。
+有限個の素数底の集合 $S$ を指定する。
+その最大値以下の整数底をすべて通過する数を主定理で作れば、当然 $S$ のすべての底も通過する。
+これが `AGPFinitePrimeBases` に対応する。
 
-各 $b\in W_0$ は $0<b\le B$ だから、定理から得られる $n>C$ は
-$W_0$ のすべての基底を通過する。
-従って、任意の有限な正の整数基底集合についても、その全基底を通過する
-カーマイケル数が任意に大きく存在する。
+**場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/FiniteBasesTheorem.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/FiniteBasesTheorem.lean#L60)
 
-$W_0$ の要素に素数性は必要ない。
-必要なのは、その要素が正で、有限集合であることである。
-
-### 9.3 系1：任意の有限素数基底集合を通過するカーマイケル数
-
-`agp_finite_prime_bases` は、主定理から次の命題を取り出す系である。
-
-$$
-\forall S\subseteq\mathbb{P},\quad
-S\text{ が有限}
-\Rightarrow
-\exists a\in\mathbb{N},\quad
-\operatorname{Carmichael}(a)
-\land
-\forall p\in S,\ \operatorname{MRPass}(a,p).
-$$
-
-つまり、どの有限素数集合を選んでも、そのすべてを底とする強い Miller–Rabin テストを
-通過するカーマイケル数が一つ存在する。定義 `AGPFinitePrimeBases` は
-`FiniteBases.lean` にあり、系の証明は `FiniteBasesTheorem.lean` にある。[F1]・[F2]
+公開定理は次の形である。
 
 ```lean
 theorem agp_finite_prime_bases :
@@ -1106,262 +1106,68 @@ theorem agp_finite_prime_bases :
   agp_finite_prime_bases_of_initial agp_initial_bases_unbounded
 ```
 
-#### 初期区間の主定理から有限集合への帰着
+同ファイルの `private theorem agp_finite_prime_bases_of_initial` が、
+最大値を使う帰着を行う。実装では `B := S.sup id` として、主定理を $B,C=B$ に適用している。
+空集合の場合にも `S.sup id = 0` で扱える。
 
-与えられた有限素数集合 $S$ に対して、
+この系は、初期整数底の主定理から**検査対象を素数底へ制限する**ものである。
+「素数底で通過するから、その積を底にしても通過する」という議論は使っていない。
 
-$$
-B=\sup S
-$$
+### 8.2 A006945 の候補と最小元
 
-とする。Lean では `S.sup id` を用いる。空集合でもこの値は $0$ と定義される。
+OEIS A006945 は、素数底 $2,3,5,7,\ldots$ を順に使うとき、
+**最初の $m-1$ 個のテストをすべて通過する最小の奇合成数**を第 $m$ 項とする数列である。
+初項は、通過条件をまだ課していない最小の奇合成数 $9$ となる。
 
-主定理へ、基底上限として $B$、数に対する下限としても $B$ を渡すと、
-
-$$
-B<a,\qquad
-\operatorname{Carmichael}(a),\qquad
-\forall b,\ 0<b\le B\Rightarrow\operatorname{MRPass}(a,b)
-$$
-
-を満たす $a$ が得られる。
-
-各 $p\in S$ は素数なので $p>0$ であり、上限の定義から $p\le B$ である。
-したがって、この通過性を $b=p$ に適用すればよい。
-
-実際の補題 `agp_finite_prime_bases_of_initial` の中心部分は、
-
-```lean
-  let B : ℕ := S.sup id
-  obtain ⟨a, _, haCar, haPass⟩ := hDep B B
-  refine ⟨a, haCar, ?_⟩
-  intro p hp
-  have hp_le : p ≤ B := by
-    simpa [B] using (Finset.le_sup (s := S) (f := id) hp)
-  exact haPass p (Nat.Prime.pos (hS p hp)) hp_le
-```
-
-となっている。`hDep` は、主定理の通過条件を `StrongMillerRabinPass` の表記へ直したもの、
-`hS` は $S$ の各要素が素数であるという仮定である。[F1]・[F3]
-
-`obtain ⟨a, _, haCar, haPass⟩` の `_` は、$B<a$ の証明を落としている。
-この系の結論は、下限を伴わない存在形式であるためである。
-固定した $S$ に対する非有界性も第9.2節から得られるが、
-`agp_finite_prime_bases` の表示された結論には、その不等式は残さない。
-
-### 9.4 OEIS A006945 の候補集合と添字
-
-次の二つの系を述べるために、まず候補と最小項の意味を定める。
-
-主定理で使った合成数 $n$ と、数列の添字を混同しないよう、
-この節の数学的説明では、**通過を要求する素数基底の個数を $r$、候補の整数を $a$** と書く。
-以下の Lean コードの引数 `n` は、この $r$ に対応する。
-
-素数を、
+Lean 側では $p_0=2,p_1=3,p_2=5,\ldots$ と0から添字を付け、
+`A006945Candidate n a` を
 
 $$
-p_0=2,\quad p_1=3,\quad p_2=5,\quad p_3=7,\quad\ldots
+a > 1,\quad a\text{ は奇数かつ合成数},\quad
+\forall k < n,\ \operatorname{MRPass}(a,p_k)
 $$
 
-と $0$ 始まりで並べる。Lean の `Nat.nth Nat.Prime k` が $p_k$ に対応する。
-
-候補集合を、
-
-$$
-\mathcal{C}_r
-=
-\left\{
-a\in\mathbb{N}:
-\begin{array}{l}
-1<a,\quad a\text{ は奇数},\quad a\text{ は非素数},\\
-\forall k<r,\quad \operatorname{MRPass}(a,p_k)
-\end{array}
-\right\}
-$$
-
-とする。$a>1$ と非素数性を合わせて、$a$ が合成数であることを表している。
-
-`A006945Candidate r a` は、$a\in\mathcal{C}_r$ という条件を表す。
-ソースの定義は次のとおりである。[F12]
-
-```lean
-noncomputable def A006945Candidate (n a : ℕ) : Prop :=
-  let (s, d) := Nat.maxPowDvdDiv 2 (a - 1)
-  1 < a ∧
-    Odd a ∧
-    ¬Nat.Prime a ∧
-    ∀ k < n,
-      (Nat.nth Nat.Prime k : ZMod a) ^ d = 1 ∨
-        ∃ j < s, (Nat.nth Nat.Prime k : ZMod a) ^ (2 ^ j * d) = -1
-```
-
-条件は `k < n` なので、調べるのは最初の $r$ 個の素数である。
-$r=0$ なら基底条件だけが空虚になり、$\mathcal{C}_0$ はすべての奇合成数の集合となる。
-その最小元は $9$ である。
-
-#### OEIS の公式添字との対応
-
-OEIS A006945 は公式には添字 $1$ から始まり、最初の項は $9$ である。
-このソースは $0$ 始まりで扱うので、コードの添字 $r$ は、公式 OEIS の添字 $r+1$ に対応する。
-[OEIS]
-
-次の二つの系で存在を保証する最小元を $\mu_r=\min\mathcal{C}_r$ と書くと、対応は次のようになる。
-数値は OEIS に記載された値であり、この節の一般的な存在証明が各数値の最小性まで
-計算して証明するという意味ではない。
-
-| Lean の引数 $r$ | 通過を要求する素数基底 | $\mu_r$ | OEIS A006945 の公式添字 |
-|---:|---|---:|---:|
-| $0$ | なし | $9$ | $1$ |
-| $1$ | $2$ | $2047$ | $2$ |
-| $2$ | $2,3$ | $1373653$ | $3$ |
-| $3$ | $2,3,5$ | $25326001$ | $4$ |
-| $4$ | $2,3,5,7$ | $3215031751$ | $5$ |
-
-このように、**素数列の添字 $k$、素数基底の個数 $r$、OEIS の公式添字 $r+1$** を区別する必要がある。
-
-### 9.5 系2：`exists_a006945_candidate` — どの基底数でも候補が存在する
-
-`exists_a006945_candidate` は、
+という条件にしている。
+さらに `IsA006945Term n a` は、$a$ がその候補集合の最小元であることを表す。
 
 $$
-\boxed{
-\forall r\in\mathbb{N},\quad
-\exists a\in\mathbb{N},\quad a\in\mathcal{C}_r
-}
+\boxed{\texttt{IsA006945Term n a}\text{ は、OEIS の第 }n+1\text{ 項に対応する。}}
 $$
 
-を述べる。すなわち、最初の何個の素数を調べる場合であっても、
-それらをすべて通過する奇合成数が存在する。[F14]
-
-公開定理は、有限素数基底の系を、そのまま条件付きの候補構成へ渡す形である。
-
-```lean
-theorem exists_a006945_candidate (n : ℕ) : ∃ a : ℕ, A006945Candidate n a :=
-  exists_a006945_candidate_of_agp MillerRabin.AGP.agp_finite_prime_bases n
-```
-
-この定理と次節の `exists_a006945_term` の名前空間は、
-`PseudoPrime.PrimeTest` である。ファイルは `MillerRabin/` 以下に置かれているが、
-この二つの宣言の完全修飾名に `MillerRabin` は入らない。
-
-#### 候補を構成する補題の証明
-
-条件付きの `exists_a006945_candidate_of_agp` の証明は次のとおりである。[F14]
-
-```lean
-theorem exists_a006945_candidate_of_agp (hAGP : MillerRabin.AGP.AGPFinitePrimeBases) (n : ℕ) :
-    ∃ a : ℕ, A006945Candidate n a := by
-  let S : Finset ℕ := (Finset.range n).image (Nat.nth Nat.Prime)
-  have hS : ∀ p ∈ S, Nat.Prime p := by
-    intro p hp
-    obtain ⟨k, _, rfl⟩ := Finset.mem_image.mp hp
-    exact Nat.prime_nth_prime k
-  have hAGPWithDecomposition := MillerRabin.AGP.agpFinitePrimeBases_iff.mp hAGP
-  obtain ⟨a, haCarmichael, haPass⟩ := hAGPWithDecomposition S hS
-  have ha1 : 1 < a := lt_trans (by decide : 1 < 2) haCarmichael.two_lt
-  refine ⟨a, (a006945Candidate_iff n a).mpr ?_⟩
-  refine ⟨ha1, haCarmichael.odd, haCarmichael.not_prime, ?_⟩
-  intro k hk
-  have hmem : Nat.nth Nat.Prime k ∈ S := by
-    exact Finset.mem_image.mpr ⟨k, Finset.mem_range.mpr hk, rfl⟩
-  exact haPass _ hmem
-```
-
-数学的な流れは四段階である。
-
-**第一に、最初の $r$ 個の素数を有限集合へまとめる。**
-
-$$
-S_r=\{p_k:0\le k<r\}.
-$$
-
-これが、
-
-```lean
-(Finset.range n).image (Nat.nth Nat.Prime)
-```
-
-に対応する。`Finset.range n` は $0,\ldots,n-1$ の集合であり、その素数列への像を取っている。
-$r=0$ の場合も自然に空集合となるため、最後の素数 $p_{r-1}$ を個別に扱う必要がない。
-
-**第二に、この集合へ有限素数基底の系を適用する。**
-
-$S_r$ の各要素が素数であることは `Nat.prime_nth_prime k` で証明できる。
-通過条件を名前付き述語へ直した `hAGPWithDecomposition` に $S_r$ とその素数性を渡すと、
-
-$$
-\operatorname{Carmichael}(a),\qquad
-\forall p\in S_r,\quad\operatorname{MRPass}(a,p)
-$$
-
-を得る。
-
-この適用に必要なのは集合の有限性と各要素の素数性であり、
-この箇所で $|S_r|=r$ を別途証明する必要はない。
-
-**第三に、カーマイケル性から候補の基礎条件を取り出す。**
-
-| 使用する証明 | 得られる条件 |
-|---|---|
-| `haCarmichael.two_lt` | $2<a$ |
-| $1<2$ との推移律 | $1<a$ |
-| `haCarmichael.odd` | $a$ は奇数 |
-| `haCarmichael.not_prime` | $a$ は非素数 |
-
-これで `A006945Candidate` の最初の三条件が揃う。
-
-**第四に、添字ごとの通過性を取り出す。**
-
-$k<r$ なら $k\in\operatorname{range}(r)$ なので、$p_k\in S_r$ である。
-Lean では、
-
-```lean
-Finset.mem_image.mpr ⟨k, Finset.mem_range.mpr hk, rfl⟩
-```
-
-がこの所属を構成する。最後に `haPass _ hmem` を適用すれば、
-$p_k$ を底とする通過性が得られる。
-
-`a006945Candidate_iff` は、候補の定義を `StrongMillerRabinPass` の形で書き直す
-定義的同値である。その証明は `by rfl` なので、ここで新たな数論的主張を使っているわけではない。
-[F13]
-
-以上により、$\mathcal{C}_r$ の非空性が、すべての $r$ について無条件に得られる。
-
-### 9.6 系3：`exists_a006945_term` — 各添字で最小項が存在する
-
-`IsA006945Term` は、候補集合の最小元であることを表す述語である。[F12]
+**定義：** [`PseudoPrime/PrimeTest/MillerRabin/OEISA006945.lean`](../PseudoPrime/PrimeTest/MillerRabin/OEISA006945.lean#L19)
 
 ```lean
 noncomputable def IsA006945Term (n a : ℕ) : Prop :=
   IsLeast {b : ℕ | A006945Candidate n b} a
 ```
 
-数学的には、
+`IsLeast` は、集合に属し、かつ集合のどの要素以下でもあるという意味である。
+候補条件を共通の通過述語で表す同値は、
+[`PseudoPrime/PrimeTest/MillerRabin/OEISA006945Iff.lean`](../PseudoPrime/PrimeTest/MillerRabin/OEISA006945Iff.lean#L18) の `a006945Candidate_iff` にある。
+
+### 8.3 どの添字でも候補があり、最小元がある
+
+最初の $n$ 個の素数からなる有限集合
 
 $$
-\operatorname{IsA006945Term}(r,a)
-\iff
-a\in\mathcal{C}_r
-\ \land\
-\forall b\in\mathcal{C}_r,\quad a\le b.
+S_n=\{p_0,\ldots,p_{n-1}\}
 $$
 
-すなわち、$a$ 自身が候補であり、ほかのどの候補よりも大きくないことを要求する。
-単に一つの候補を見つけただけでは、この最小性はまだ得られていない。
+に `agp_finite_prime_bases` を適用する。
+得られるカーマイケル数は奇合成数であり、$S_n$ の全底を通過するので、A006945 の候補になる。
+したがって、候補集合はどの $n$ でも空でない。
 
-しかし、第9.5節により $\mathcal{C}_r$ は非空であり、自然数の非空部分集合には最小元が存在する。
-従って、
+自然数の空でない集合には最小元がある。
+この整列性により、**A006945 の任意の項の存在**が従う。
 
-$$
-\boxed{
-\forall r\in\mathbb{N},\quad
-\exists a\in\mathbb{N},\quad
-\operatorname{IsA006945Term}(r,a)
-}
-$$
+**存在定理の場所：** [`PseudoPrime/PrimeTest/MillerRabin/OEISA006945Existence.lean`](../PseudoPrime/PrimeTest/MillerRabin/OEISA006945Existence.lean#L24)
 
-が従う。これが `exists_a006945_term` である。[F14]
+```lean
+theorem exists_a006945_candidate (n : ℕ) : ∃ a : ℕ, A006945Candidate n a :=
+  exists_a006945_candidate_of_agp MillerRabin.AGP.agp_finite_prime_bases n
+```
+
+続く最小元の存在証明は、次のとおりである。
 
 ```lean
 theorem exists_a006945_term (n : ℕ) : ∃ a : ℕ, IsA006945Term n a := by
@@ -1371,1043 +1177,58 @@ theorem exists_a006945_term (n : ℕ) : ∃ a : ℕ, IsA006945Term n a := by
   exact ⟨Nat.find h, Nat.isLeast_find h⟩
 ```
 
-証明の各行は、次の役割を持つ。
+`Nat.find h` が候補集合の最小元を選び、`Nat.isLeast_find h` がその最小性を与える。
+最小元の一意性も、二つの最小元を互いに比較すれば従う。
+ただし、このファイルの `exists_a006945_term` が直接述べる型は `∃ a` であり、
+`∃! a` という別の定理がここに宣言されているわけではない。
 
-1. `classical` により、後続の最小値選択に必要な古典的な判定可能性などを使えるようにする。
-2. `exists_a006945_candidate n` から、ある候補 `a` とその証明 `ha` を得る。
-3. `h : ∃ b, A006945Candidate n b` として、候補集合の非空性をまとめる。
-4. `Nat.find h` を最小の候補として選び、`Nat.isLeast_find h` によって最小性を証明する。
+<details>
+<summary>候補の存在証明で、どの前提がどの性質を与えるか</summary>
 
-`Nat.find` には、条件を満たす自然数が実際に存在するという証明 `h` を渡している。
-候補が存在しない場合に既定値を置いているわけではない。
+`exists_a006945_candidate_of_agp` の入力は
+`hAGP : MillerRabin.AGP.AGPFinitePrimeBases` と添字 `n`。
+結論は `∃ a, A006945Candidate n a` である。
 
-この段階では新しい素数分布の評価は必要ない。
-数論的な存在証明で非空性を確保した後、自然数の整列性によって最小元を選んでいる。
-
-#### 一意性も最小性から従う
-
-公開定理の型は `∃ a` であり、`∃! a` ではない。
-それでも、$a,a'$ がどちらも同じ候補集合の最小元なら、
-
-$$
-a\le a',\qquad a'\le a
-$$
-
-なので、反対称性から $a=a'$ が従う。したがって各添字の最小項は一意に定まる。
-
-ここで述べた一意性は最小性からの数学的帰結であり、
-このファイルに別の一意性定理が公開されているという意味ではない。
-
-### 9.7 カーマイケルな存在証人と、全候補の最小元を区別する
-
-第9.5節の構成で最初に得る $a$ はカーマイケル数である。
-一方、`A006945Candidate` の定義はカーマイケル性を要求しない。
-その条件は、奇合成数であることと、指定された素数基底を通過することだけである。
-
-従って `Nat.find` が最小化する範囲は、
-
-$$
-\{\text{最初の }r\text{ 個の素数基底をすべて通過する奇合成数}\}
-$$
-
-全体である。カーマイケル数だけを取り出して、その中で最小化するものではない。
-
-例えば $r=0$ の最小元は $9$ であるが、$9$ は平方自由ではないのでカーマイケル数ではない。
-また $r=1$ の最小元は OEIS の表に対応する $2047=23\cdot89$ であり、
-
-$$
-89-1=88\nmid2046=2047-1
-$$
-
-なので、これもカーマイケル数ではない。[OEIS]
-
-つまり、AGP によるカーマイケル数は候補集合の非空性を保証するための証人である。
-そこから選ばれる最小元に、同じカーマイケル性が自動的に引き継がれるわけではない。
-
-### 9.8 三つの系が保証する範囲
-
-主定理からの各段階を並べると、次のように役割が分かれる。
-
-| 定理 | 結論 | 導出で使うこと |
-|---|---|---|
-| `agp_initial_bases_unbounded` | 任意の $B,C$ について、$C$ を超え初期基底 $1,\ldots,B$ を全通過するカーマイケル数 | 解析的計数と有限構成 |
-| `agp_finite_prime_bases` | 任意の有限素数基底集合を全通過するカーマイケル数 | 有限集合の上界を初期基底上限に選ぶ |
-| `exists_a006945_candidate` | 任意の $r$ について、最初の $r$ 個の素数基底を全通過する奇合成数 | 最初の $r$ 個の素数を有限集合にする |
-| `exists_a006945_term` | そのような奇合成数の最小元 | 非空な自然数集合の整列性 |
-
-最後の二つの系にも GRH などの追加仮定はない。
-
-また、`A006945Candidate r a` は、最初の $r$ 個の素数基底での通過だけを要求する。
-次の基底 $p_r$ で棄却されることまでは要求しない。
-そのため最小項が隣接する添字で同じ値になることも、定義に反しない。
-
-実際、候補集合は、
-
-$$
-\mathcal{C}_{r+1}\subseteq\mathcal{C}_r
-$$
-
-という関係を持つので、最小値は $\mu_r\le\mu_{r+1}$ となる。
-ただし、真の不等式 $\mu_r<\mu_{r+1}$ が必ず成り立つとは限らない。
-
-`exists_a006945_term` は、全添字における最小項の存在を保証する定理である。
-個々の項の具体的数値を確定するには、その値の通過性に加え、
-それより小さい奇合成数が候補にならないことを別に示す必要がある。
-第11節の剰余累乗の計算も、その数の候補性を確認するものであり、
-その計算だけで候補集合の最小性まで証明するものではない。
-
-
-## 10. 必要な計数データを無条件に構成する
-
-有限構成の難しい入力は、第4節の大きな個数下界である。
-この節では、それをどこから得るかを、現在のソースで使われている経路に沿って説明する。
-
-対象版の経路は、一般的な Proposition 1.5 型の一様計数命題を外から仮定する形ではない。
-必要な法 $m=1,4$ と選択したスケールに対する素数計数を用い、
-最終的に必要な有限データを直接作っている。[A1]・[A5]
-
-### 10.1 最初に確保する算術級数の素数下界
-
-素数の対数重み付き計数関数を、
-
-$$
-\theta(x;M,a)
-=
-\sum_{\substack{p\le x\\p\ {\rm prime}\\p\equiv a\pmod M}}\log p
-$$
-
-とする。ソースの `thetaInProgressionReal` がこの関数に対応する。[A6]
-
-`exists_unconditional_narrow_theta_supply` は、絶対定数
-
-$$
-J\ge2,\qquad D,\qquad X_\theta
-$$
-
-の存在を与える。任意の整数 $Z\ge X_\theta$ に対して例外集合 $E_Z$ を選べ、
-
-$$
-|E_Z|\le D,\qquad
-e\in E_Z\Rightarrow e>1\text{ かつ }e\nmid4
-$$
-
-となる。
-
-そして、
-
-$$
-\begin{gathered}
-m\in\{1,4\},\qquad e_0>0,\qquad \gcd(e_0,m)=1,\\
-M=e_0m>1,\qquad M^J\le Z,\qquad \gcd(a,M)=1,\\
-\forall e\in E_Z,\quad e\nmid M
-\end{gathered}
-$$
-
-を満たすとき、
-
-$$
-\boxed{
-\theta(e_0Z^3;M,a)
-\ge
-\frac{e_0Z^3}{2\varphi(M)}.
-}
-\tag{10.1}
-$$
-
-ここでは Miller–Rabin の奇数部分 $d$ と区別するため、ソースで `d` と書かれた約数変数を
-$e_0$ と記した。[A7]
-
-この命題で重要なのは、量化の順序である。
-
-$$
-\exists J,D,X_\theta\quad
-\forall Z\ge X_\theta\quad
-\exists E_Z\quad
-\forall M,a\ \cdots
-$$
-
-例外集合は、法や剰余類を選ぶ前に一つ選ばれる。
-したがって同じスケールで多数の約数をまとめて扱える。
-一方、異なるスケールでは、例外集合が異なってよい。
-
-### 10.2 零点密度が、一様に有限な例外集合を与える
-
-上の素数下界の解析的な基盤には、`exists_primitiveCharacterFamily_log_free_density` がある。
-これは、ある絶対定数 $A_*,C_*>0$ により、
-
-$$
-N_{\mathrm{fam}}(R,\sigma)
-\le
-C_*R^{A_*(1-\sigma)}
-\qquad
-\left(R\ge2,\ \frac12\le\sigma\le1\right)
-\tag{10.2}
-$$
-
-を与える。[A8]
-
-ここで $N_{\mathrm{fam}}$ は、導手が $R$ 以下の原始非主ディリクレ指標について、
-完成 $L$ 関数の
-
-$$
-\sigma\le\Re\rho\le1,\qquad |\Im\rho|\le R
-$$
-
-にある零点を、解析的重複度も含めて数えた総数である。
-
-現在の依存経路は、おおむね次の内容を実装している。
-
-| 段階 | 役割 |
+| ソース中の項 | 役割 |
 |---|---|
-| 零点検出 | 零点があると、対数微分の適切な高階導関数が大きくなることを使う |
-| 有限和への変換 | 大きな素数に支えを持つ有限 Dirichlet 多項式の大きな値へ移す |
-| 共通の高さ格子 | 指標・零点ごとにばらばらな評価を、一つの有限族の評価へまとめる |
-| 重複度を保つ計数 | 零点の重複度添字を保持して、零点数から平均二乗の下界を得る |
-| hybrid 大篩の上界 | 同じ平均二乗を上から評価する |
-| 密度評価 | 上下の評価を比較し、$\exp(O((1-\sigma)\log R))$ 型の個数評価を得る |
+| `(Finset.range n).image (Nat.nth Nat.Prime)` | 最初の $n$ 個の素数の集合を作る |
+| `Nat.prime_nth_prime` | 集合の各要素が素数であると確認 |
+| `agpFinitePrimeBases_iff` | AGP 命題を共通の通過述語で使える表記に揃える |
+| `haCarmichael.two_lt`、`.odd`、`.not_prime` | 得られた数が $1$ より大きい奇合成数であると確認 |
+| `a006945Candidate_iff` | これらの条件を候補述語へまとめる |
 
-対応する主要ファイルは `GeneralScaleDensity.lean`、
-`GeneralScaleIncidence.lean`、`HighPrimeIncidence.lean` である。
-$\sigma$ が $1$ に近い帯で得た評価を、その他の範囲での粗い $O(R^5)$ 評価と合わせ、
-(10.2) の全範囲へ延長している。[A8]・[A9]
+存在証明で選んだ数はカーマイケル数だが、**最小候補がカーマイケル数であるとは限らない**。
+最小化の対象には、条件を満たすすべての奇合成数が含まれるからである。
+例えば `n = 0` の最小候補は $9$ であり、平方自由ではないためカーマイケル数ではない。
 
-次に、$\log R\ge2$ を満たす十分大きい $R$ に対して、
+また、`IsA006945Term` の定義は最小元の性質を指定するだけで、その存在を保証するものではない。
+候補の存在と自然数の整列性を接続する部分が、上の二つの存在定理である。
 
-$$
-\sigma_R=1-\frac1{\log R}
-$$
+</details>
 
-と置く。導手が $R$ 以下の原始非主指標について、$\Re\rho\ge\sigma_R$、
-$|\Im\rho|\le R$ を満たす零点を持つ導手を例外に選ぶと、
+## 9. この定理が保証する範囲
 
-$$
-|E_R|
-\le
-N_{\mathrm{fam}}(R,\sigma_R)
-\le
-C_*R^{A_*/\log R}
-=
-C_*e^{A_*}.
-$$
+固定した有限個の底だけを使う判定では、入力の大きさを制限しないすべての合成数を検出できない。
+任意の有限正整数底集合についても、最大の底を $B$ とすれば同じ結論が得られる。
 
-従って、
+一方で、入力 $a$ の大きさに応じて検査する底を増やす方法や、
+あらかじめ限定した入力範囲について十分な固定底集合を選ぶ方法は否定していない。
+定理は $B$ を先に固定して、その $B$ に応じて $a$ を選ぶ命題だからである。
 
-$$
-D=\left\lceil C_*e^{A_*}\right\rceil
-$$
+また、存在することと、実用的に見つけられることは別である。
+主定理は最小の証人を返す計算手順や小さな探索上限を述べていない。
+A006945 の各項の存在を証明することも、個々の項の数値を計算して最小性まで確定することとは区別される。
 
-のように、$R$ に依存しない個数上限を取れる。
-`exceptionalFamilyConductors` は零点出現集合の「導手への有限像」であり、
-`exists_uniform_exceptionalFamilyConductors_card_bound` がこの計算を実装する。[A10]
+## 10. 参考文献とソースについて
 
-この方法は、すべての $L$ 関数に同じ強い零点排除を要求するのではなく、
-必要な一様性を保ちながら、悪い導手を一定個数の例外にまとめている。
+この文書の証明構成と宣言名は、対象版の Lean ソースに沿っている。
+一般向けの本文で省略した条件は、各段階の折り畳み欄から、実際の宣言型へたどれるようにした。
 
-### 10.3 法 $4$ を使うための処理と、明示公式からの下界
+元文書にあった解析的な議論は、第6節の入口と詳細に整理している。
+対象版の二段階の構成や篩の係数を、原論文の全補題と同じ順序・同じ定数の翻訳であるとは位置付けていない。
 
-最後には $p\equiv3\pmod4$ を満たす素数が必要である。
-そのため、例外集合に導手 $4$ が残っていると、法 $4e_0$ がすべて排除されるおそれがある。
-
-実装では `exceptionalFamilyConductorsAwayFromFour` により導手 $4$ を集合から外し、
-その寄与を別の無条件評価で処理する。
-これは「導手 $4$ の $L$ 関数には問題になる零点がない」と仮定する操作ではない。
-固定導手 $4$ の寄与は
-[FamilyFullHalfScaleBudget.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyFullHalfScaleBudget.lean)
-などで別に評価する。例外集合の側では、導手 $4$ の除去と導手 $1,2$ の排除により、
-残る例外について $e\nmid4$ を保証する。[A10]・[A11]
-
-原始導手が $4$ でなく、例外を避けた指標については、有限の高さまで、
-
-$$
-\Re\rho<1-\frac1{\log R}
-$$
-
-という隔たりが得られる。これを重み付き零点密度と組み合わせて、
-明示公式中の零点和を主項に比べて小さくする。
-
-この過程では、平滑化した指標和
-
-$$
-F_\chi(x)
-=
-\sum_{n\le x}\Lambda(n)\log(x/n)\chi(n)
-$$
-
-の差 $F_\chi(x)-F_\chi(x/2)$ を使う。
-非主指標の寄与の総和を小さくし、主指標の主項、素数冪の補正、切断誤差を合わせることで、
-
-$$
-\theta(x;M,a)\ge\frac{x}{2\varphi(M)}
-$$
-
-を得る。[A11]・[A12]
-
-`exists_uniform_polynomial_theta_supply` は、ある整数 $b\ge1$ と一様な閾値により、
-
-$$
-M\le\sqrt R,\qquad x\ge R^{8b}
-$$
-
-などの条件下で、この下界を与える。
-
-`exists_unconditional_narrow_theta_supply` は、これを (10.1) の整数スケールへ変換する。
-具体的には、
-
-$$
-h=4b,\qquad J=2h=8b,\qquad
-R=\left\lceil Z^{1/h}\right\rceil
-$$
-
-と選ぶ。
-
-すると、
-
-$$
-M^J\le Z
-\Rightarrow
-M^2\le Z^{1/h}\le R
-\Rightarrow
-M\le\sqrt R.
-$$
-
-また、$Z$ を十分大きくして丸め誤差を吸収すれば、
-
-$$
-R^{8b}=R^{2h}
-\le2^{2h}Z^2
-\le Z^3
-\le e_0Z^3.
-$$
-
-これで $x=e_0Z^3$ に対して多項式スケールの素数下界を適用できる。
-`rounded_polynomial_height_bounds` が天井関数を含む評価を担う。[A7]・[A12]
-
-### 10.4 最初の素数集合から補助法 $L$ を作る
-
-以後、$W$ と下限 $C$ を固定する。例外個数の上限 $D$ から、
-
-$$
-c_0=\frac1{128\cdot2^D},
-\qquad
-x_0=\max(2,X_\theta)
-$$
-
-を選ぶ。これらは $W,C$ に依存しない。[A5]
-
-十分大きい整数 $u$ を取り、
-
-$$
-z=2^u,\qquad
-N_0=\prod_{p\le z}p,\qquad
-X=N_0^J,\qquad
-q=X^5
-$$
-
-とする。$N_0$ は $z$ 以下の全素数の積であり、平方自由なので約数を $2^{\pi(z)}$ 個持つ。
-
-さらに、
-
-$$
-t=
-\left\lfloor
-\frac{c_0z^2}{20Ju\log2}
-\right\rfloor+1
-$$
-
-とする。スケール選択の定理は、下限条件に加えて、
-
-$$
-t-1<
-\frac{c_0}{\log q}\,2^{\pi(z)},
-\qquad
-2\pi(1024t)\le t
-\tag{10.3}
-$$
-
-および、
-
-$$
-\boxed{
-10J(t+3)\log q
-\left(
-2^{|W|}q^2t\log q+q
-\right)
-<
-c_0\,2^{\lfloor t/2\rfloor}
-}
-\tag{10.4}
-$$
-
-を同時に満たすように $u$ を選ぶ。[A13]
-
-尺度 $X$ の例外集合を避けるように $N_0$ から素因数を除き、
-$1$ を除く残存約数 $e_0>1$ に対して $m=1$ の素数下界を適用する。約数 $e_0\mid N_0$ は、
-
-$$
-e_0^J\le N_0^J=X
-$$
-
-を満たすので、この下界の適用範囲に入る。
-
-その後、$1\le k_1\le X^3$ について有限平均を取り、一つの共通の $k_1$ に対して、
-
-$$
-r=e_0k_1+1,\qquad e_0\mid N_0,\qquad r\le q
-$$
-
-という形の異なる素数を $t$ 個選ぶ。ここで $k_1$ は初期構成の係数で、
-最後に $p=d_pk+1$ を作る係数 $k$ とは区別する。[A14]
-
-得られた素数集合を $S_0$ として、
-
-$$
-L=\prod_{\substack{r\in S_0\\r>1024t}}r
-$$
-
-と置く。小さい素数の個数は (10.3) により高々 $t/2$ だから、
-
-$$
-\omega(L)\ge t/2.
-$$
-
-また、残した素因数はすべて $1024t$ より大きいので、
-
-$$
-\sum_{\substack{r\mid L\\r\ {\rm prime}}}\frac1r
-\le\frac1{1024}.
-\tag{10.5}
-$$
-
-各 $r-1$ は $k_1N_0$ を割る。$L$ が平方自由であることとカーマイケル関数の性質から、
-
-$$
-\lambda(L)\mid k_1N_0.
-$$
-
-ソースでは、後に十分となる粗い評価、
-
-$$
-\lambda(L)\le q^2,\qquad
-L\le q^t
-\tag{10.6}
-$$
-
-を保持する。この $L$ は平方自由な奇数で、$L>2$、$\lambda(L)\ge3$ も満たす。
-[A14]・[A15]
-
-### 10.5 全約数が範囲に入る二段目のスケールを使う
-
-次に、
-
-$$
-Y=(4qL)^J,\qquad x=Y^5,\qquad
-y=\left\lfloor x^{2/5}\right\rfloor=Y^2
-$$
-
-を選ぶ。このため、すべての $e_0\mid L$ に対して、
-
-$$
-(4e_0)^J\le Y,\qquad e_0\le Y^2
-$$
-
-となる。[A13]・[A15]
-
-従って「$y$ 以下の約数」は、このスケールでは $L$ の全約数であり、
-
-$$
-|\mathcal{D}(L,y)|
-=
-2^{\omega(L)}
-\ge
-2^{\lfloor t/2\rfloor}.
-\tag{10.7}
-$$
-
-さらに、$L\le q^t$ から、
-
-$$
-2\log x
-=
-2\log(Y^5)
-\le
-10J(t+3)\log q.
-\tag{10.8}
-$$
-
-(10.4)、(10.6)、(10.7)、(10.8) を合わせると、
-
-$$
-\begin{aligned}
-2^{|W|}
-\left\lfloor\lambda(L)\log L\right\rfloor+q
-&\le
-2^{|W|}q^2t\log q+q\\
-&<
-\frac{c_0\,2^{\lfloor t/2\rfloor}}
-     {10J(t+3)\log q}\\
-&\le
-\frac{c_0}{2\log x}\,|\mathcal{D}(L,y)|.
-\end{aligned}
-\tag{10.9}
-$$
-
-これが第4節で必要だった `hlower` の不等式である。
-
-#### (10.4) を実現できる増大率
-
-スケール選択を支えるのは、
-
-$$
-\log q\le10J\,2^u u\log2,
-\qquad
-t=
-\left\lfloor
-\frac{c_0\,4^u}{20Ju\log2}
-\right\rfloor+1
-$$
-
-という比較である。$t$ は $2^u u$ より速く増大するため、
-$\lfloor t/2\rfloor\log2$ が $\log q$ の固定倍と定数項を上回るようにできる。
-
-実装では、より具体的に、
-
-$$
-\log\frac{40J(2^{|W|}+1)}{c_0}
-+
-6\log q
-<
-\lfloor t/2\rfloor\log2
-$$
-
-を確保し、指数を取って、
-
-$$
-40J(2^{|W|}+1)q^6
-<
-c_0\,2^{\lfloor t/2\rfloor}
-$$
-
-を得る。(10.4) の左辺はこの左辺以下に抑えられる。[A13]
-
-この経路では、特定の小さい範囲に約数がどれだけ集中するかを精密に推定する必要はない。
-二段目のスケールに全約数を含め、約数個数の指数的な増大を利用している。
-
-### 10.6 法 $4$ の素数を数え、$\gcd(k,L)=1$ を確保する
-
-ここまでで、候補を生み出すだけの約数の個数が揃った。
-次は、ある共通 $k$ に対して、
-
-$$
-p=e_0k+1,\qquad p\equiv3\pmod4
-$$
-
-となる素数が十分あることを示す。
-
-尺度 $Y$ で改めて例外集合 $E_Y$ を選び、
-`exceptionalFreePartForModulus L E_Y 4` により、例外を避けた部分 $L'\mid L$ を作る。
-$L$ の平方自由性と $e\nmid4$ を使い、各例外について必要なら素因数を一つ取り除くことで、
-対象法 $4e_0$ を例外から外す。除去する素因数は高々 $D$ 個なので、約数数の損失は高々
-$2^D$ 倍で済む。[A16]
-
-$L'$ の大きい約数 $e_0>q$ に対し、中国剰余定理で、
-
-$$
-p\equiv1\pmod{e_0},
-\qquad
-p\equiv3\pmod4
-$$
-
-を表す法 $4e_0$ の剰余類を選ぶ。$L$ は奇数だから $\gcd(e_0,4)=1$ であり、
-この剰余類は法 $4e_0$ と互いに素になる。
-
-(10.1) を $Z=Y$ で適用し、対数重みを外して素数個数の下界を得る。
-候補素数を $p=e_0k+1$ と書くと、$p\le e_0Y^3$ なので $k$ は $Y^3$ 以下の範囲に入る。
-[A5]・[A6]
-
-ただし、後の Korselt 構成には $\gcd(k,L)=1$ が必要である。
-もし素因数 $r\mid L$ が $k$ を割るなら、その素数候補は、
-
-$$
-p\equiv1\pmod{e_0r},
-\qquad
-p\equiv3\pmod4
-$$
-
-という、より細かい算術級数に含まれる。
-
-`agp_coarse_sieve_bound` は、この悪い候補の数について、
-
-$$
-\pi(e_0Y^3;4e_0r,a)
-\le
-\frac{640}{3}\frac1r
-\frac{e_0Y^3}{\varphi(4e_0)\log(Y^5)}
-\tag{10.10}
-$$
-
-という無条件の篩評価を与える。[A17]
-
-素数個数への変換では、ソースは既存の汎用補題を再利用し、$\theta\le\psi$ を経由して
-素数冪の寄与を上から抑える。このため主項の係数として $1/2-10^{-6}$ を確保する。
-$10^{-6}$ はこの変換に用いる誤差の余裕であり、$\theta$ 自体に高次の素数冪が含まれるという
-意味ではない。対応する補題は
-`primeCountInProgression_ge_half_minus_epsilon_main_term_of_theta_lower` と
-`progressionTheta_millionth_error_bound_of_modulus_square_bound` である。[A6]
-
-ここで (10.5) の逆数和を使うと、残る素数個数の係数は、
-
-$$
-\begin{aligned}
-\beta
-&=
-\left(\frac12-\frac1{10^6}\right)
--
-\frac{640}{3}\cdot\frac1{1024}\\
-&=
-\frac7{24}-\frac1{10^6}\\
-&>\frac14.
-\end{aligned}
-$$
-
-一方、$c_0=1/(128\cdot2^D)$ だから、
-
-$$
-16\cdot2^D c_0=\frac18<\frac14<\beta.
-\tag{10.11}
-$$
-
-この余裕により、例外因子、小さい約数、有限平均の端数に伴う損失を吸収できる。
-係数の等式と不等式は、それぞれ、
-
-- `agp_fifth_power_average_coefficient_640_1024_value`。
-- `agp_fifth_power_average_coefficient_640_1024_gt_quarter`。
-
-で確認されている。[A6]
-
-最後に、残った $(e_0,k)$ の組を $k$ ごとに数える有限平均により、
-正の共通 $k$ で $\gcd(k,L)=1$ を満たし、
-
-$$
-\frac{c_0}{2\log x}\,|\mathcal{D}(L,y)|
-\le
-\#\left\{
-e_0\in\mathcal{D}(L,y):
-\begin{array}{l}
-e_0k+1\text{ は素数},\\
-e_0k+1\le x,\\
-e_0k+1\equiv3\pmod4
-\end{array}
-\right\}
-$$
-
-となるものを選ぶ。
-
-`agpProgressionCountData_of_fifth_power_theta_and_brun_titchmarsh` が、
-この計数と (10.9) を組み合わせて、計数データのインスタンスを返す。
-名前に `brun_titchmarsh` を含むが、今回渡される具体的な上界は、上記の係数 $640/3$ の
-粗い篩評価である。[A5]・[A6]・[A17]
-
-### 10.7 解析的存在定理の最後の合成
-
-`UnconditionalProgressionCountData.lean` の証明は次のとおりである。[A1]
-
-```lean
-theorem agp_progression_count_data_exists_unconditional : AGPProgressionCountDataExists := by
-  obtain ⟨J, D, Xtheta, hJ, hSupply⟩ := exists_unconditional_narrow_theta_supply
-  exact agp_progression_count_data_exists_of_primorial_p2_and_theta_supply J D Xtheta hJ hSupply
-```
-
-ここまでの議論を対応させると、
-
-- `exists_unconditional_narrow_theta_supply`：第10.1〜10.3節。
-- `agp_progression_count_data_exists_of_primorial_p2_and_theta_supply`：第10.4〜10.6節。
-
-である。
-
-初期素数集合の構成も同じ無条件の $\theta$ 供給から行うため、
-「必要な計数データを作るために、その計数データの存在を仮定する」という循環はない。
-その後は第4〜8節の有限構成に接続され、第2節の公開定理の証明が成立する。
-
-## 11. 初期基底をすべて通過する具体例
-
-今回の命題に合わせて、
-
-$$
-n=3215031751=151\cdot751\cdot28351
-$$
-
-を考える。この数は、合成数基底を含む $1,\ldots,10$ のすべてを通過する。
-従って、例えば、
-
-$$
-B=10,\qquad C=10^9
-$$
-
-に対する具体的な証人になる。
-
-この例は、定理の一つの有限インスタンスと、局所符号による通過機構を確認するものである。
-解析的な素数供給の全仮定を、この三素数で満たすと主張するものではない。
-
-### 11.1 因数と Korselt 条件
-
-$$
-n-1=3215031750=2\cdot1607515875
-$$
-
-なので、$s=1$、$d=1607515875$ である。
-
-| 素因数 $p$ | $p\bmod4$ | $p-1$ | $(n-1)/(p-1)$ |
-|---|---:|---:|---:|
-| $151$ | $3$ | $150$ | $21433545$ |
-| $751$ | $3$ | $750$ | $4286709$ |
-| $28351$ | $3$ | $28350$ | $113405$ |
-
-三つは相異なる素数で、すべて $p-1\mid n-1$ を満たす。
-従って $n$ は平方自由な合成数であり、Korselt の判定法によりカーマイケル数である。
-また $n>10^9$ が成立する。
-
-### 11.2 基底 $1,\ldots,10$ の通過性
-
-各基底のルジャンドル符号と奇数部分累乗は次のとおりである。
-
-| 基底 $b$ | $\left(\frac b{151}\right)$ | $\left(\frac b{751}\right)$ | $\left(\frac b{28351}\right)$ | $b^d\bmod n$ |
-|---|---:|---:|---:|---:|
-| $1$ | $1$ | $1$ | $1$ | $1$ |
-| $2$ | $1$ | $1$ | $1$ | $1$ |
-| $3$ | $-1$ | $-1$ | $-1$ | $3215031750$ |
-| $4$ | $1$ | $1$ | $1$ | $1$ |
-| $5$ | $1$ | $1$ | $1$ | $1$ |
-| $6$ | $-1$ | $-1$ | $-1$ | $3215031750$ |
-| $7$ | $-1$ | $-1$ | $-1$ | $3215031750$ |
-| $8$ | $1$ | $1$ | $1$ | $1$ |
-| $9$ | $1$ | $1$ | $1$ | $1$ |
-| $10$ | $1$ | $1$ | $1$ | $1$ |
-
-どの行でも素因数間で符号が揃っている。
-正符号の場合は $b^d\equiv1\pmod n$、負符号の場合は $b^d\equiv-1\pmod n$ なので、
-すべての基底で強いテストを通過する。
-
-特に $4,6,8,9,10$ は合成数基底であり、定理が正の整数の初期区間全体を対象とすることが
-具体的に表れている。表の各基底について、剰余累乗を個別に確認した。
-
-### 11.3 同じ数が、さらに大きい基底上限にも使えるとは限らない
-
-基底 $11$ では符号が、
-
-$$
-\left(
-\left(\frac{11}{151}\right),
-\left(\frac{11}{751}\right),
-\left(\frac{11}{28351}\right)
-\right)
-=
-(1,-1,-1)
-$$
-
-となり、揃わない。実際に、
-
-$$
-11^{1607515875}\bmod3215031751=2129160099
-$$
-
-であり、$1$ でも $n-1$ でもない。$s=1$ なので他の負符号候補はなく、この基底では不通過となる。
-
-これは定理と矛盾しない。定理の順序は $\forall B,C\,\exists n$ なので、
-$B$ を増やしたときには、新たな $n$ を選んでよい。
-同じ一つの合成数がすべての正の整数基底を通過する、と主張しているのではない。
-
-## 12. この定理から分かることと、定理文に含まれないこと
-
-### 12.1 固定した初期基底だけでは、すべての整数の素数性を判定できない
-
-どんな基底上限 $B$ を固定しても、$1,\ldots,B$ をすべて通過するカーマイケル数が
-任意に大きく存在する。
-
-したがって、入力サイズにかかわらず固定した初期区間だけを調べ、
-通過したら常に素数と結論する方法は、すべての自然数に対して正しくはならない。
-任意の固定有限正基底集合についても、第9.2節により同じ結論が得られる。
-
-### 12.2 入力に依存する証人上界とは両立する
-
-今回の命題の量化は、
-
-$$
-\forall B,C,\quad
-\exists n>C,\quad
-\forall b,\ 1\le b\le B\Rightarrow\operatorname{MRPass}(n,b)
-$$
-
-である。これに対して、入力 $n$ に応じた上界定理は、
-
-$$
-\forall n\text{ 合成数},\quad
-\exists\text{証人 }p\le f(n)
-$$
-
-という形を取る。
-
-前者では固定した $B$ に対して $n$ を選ぶ。
-後者では選ばれた $n$ に応じて探索範囲 $f(n)$ が変わる。
-そのため両者は矛盾しない。
-有限の入力範囲に対する固定基底セットの正しさも、この定理によって否定されない。
-
-### 12.3 明示的な最小反例や、最小証人の増大率は結論に含まれない
-
-`agp_initial_bases_unbounded` は、与えられた $B,C$ に対する存在命題である。
-条件を満たす最小の $n$ を返す実行可能なアルゴリズムや、その小さい明示上界を述べてはいない。
-
-第9.6節の系 `exists_a006945_term` は、最初の一定個数の素数基底を通過する奇合成数の
-最小元の存在まで保証する。この存在・最小性の証明と、具体的な項の数値を計算して確定することは
-区別される。
-
-また、原論文に含まれる最小証人の定量的下界すべてを、この一つの定理文が表しているわけでもない。
-今回の公開命題が直接述べるのは、固定した初期区間の全基底を通過するカーマイケル数の非有界性である。
-
-### 12.4 条件付き補題と、無条件の最終結論を区別する
-
-`agp_initial_bases_unbounded_of_prime_supply` と
-`agp_initial_bases_unbounded_of_progression_count_data` は、
-供給命題を引数として受け取る条件付き補題である。
-
-一方、公開定理 `agp_initial_bases_unbounded` は、その入力を
-`agp_progression_count_data_exists_unconditional` で埋めている。
-途中の補題に解析的入力があることは、最終結論にその入力が仮定として残ることを意味しない。
-[F4]・[A1]
-
-添付版の一部の説明コメントには、構築途中の段階を反映した
-「解析的入力はまだ証明する必要がある」といった文言が残っている。
-本文では、現在の定理型と実際の適用関係を優先して説明した。
-
-## 付録A. 有限アーベル群の零和定理は何をしているか
-
-第6節では零和定理を一つの道具として使った。
-この付録では、ソースの `FiniteAbelianZeroSum.lean` に沿って、その証明の機構を説明する。
-[C1]
-
-### A.1 目標と指標
-
-$G$ を有限アーベル群とし、加法表記を使う。整数 $m,L$ は $3\le m\le L$、$|G|\le L$ を
-満たし、すべての $g\in G$ に対して $mg=0$ とする。今回の適用では $m=\lambda(L)$ であり、
-$\lambda(L)\mid\varphi(L)$ と $\varphi(L)\le L$ により $m\le L$ が保証される。
-$G$ の複素指標は、群準同型、
-
-$$
-\chi:G\to\mathbb{C}^\times
-$$
-
-である。
-
-$\chi(g)^m=1$ だから、固定した $g$ における指標値は高々 $m$ 種類の $m$ 乗根になる。
-また複素指標の個数は $|G|$ であり、この適用では $|G|\le L$ である。
-
-列 $g_1,\ldots,g_r$ に、非空の零和部分集合、
-
-$$
-\varnothing\ne I\subseteq\{1,\ldots,r\},\qquad
-\sum_{i\in I}g_i=0
-$$
-
-があることを示したい。
-
-### A.2 前半で指標を減らし、後半で残りを処理する
-
-各座標 $g_i$ に対して、まだ処理していない指標を、値 $\chi(g_i)$ ごとに分類する。
-高々 $m$ クラスなので、最大のクラスには少なくとも $1/m$ の割合の指標が入る。
-
-その値を $a_i$ に選び、そのクラスの指標を処理済みにする。
-すると残る指標数は各段で高々 $1-1/m$ 倍になる。
-
-前半の長さを、
-
-$$
-\ell=\left\lfloor m\log\frac Lm\right\rfloor+1
-$$
-
-とすれば、
-
-$$
-\left(1-\frac1m\right)^\ell L
-\le e^{-\ell/m}L
-<m.
-$$
-
-残る指標は整数個なので高々 $m-1$ 個である。
-後半に $m-1$ 座標を用意し、それぞれの指標を一つずつ処理する。
-
-こうして、すべての指標 $\chi$ に対し、
-
-$$
-a_i=\chi(g_i)
-$$
-
-となる座標 $i$ が少なくとも一つ存在するように、非零複素数 $a_i$ を選べる。
-全長は、
-
-$$
-\ell+(m-1)
-=
-\left\lfloor m\log\frac Lm\right\rfloor+m
-$$
-
-であり、第6節の長さと一致する。
-
-### A.3 群環のフーリエ変換で矛盾を得る
-
-群環で、群元 $g$ に対応する基底を $[g]$ と書き、
-
-$$
-F=\prod_{i=1}^r\bigl(a_i[0]-[g_i]\bigr)
-$$
-
-を考える。
-
-どの指標 $\chi$ で評価しても、
-
-$$
-\widehat F(\chi)
-=
-\prod_{i=1}^r\bigl(a_i-\chi(g_i)\bigr)
-=
-0
-$$
-
-となる。必ず一つの因子が零になるからである。
-フーリエ反転によって $F=0$ が従う。
-
-一方、非空の零和部分集合がないと仮定する。
-積を展開したとき $[0]$ の係数に寄与するのは、すべての因子で $a_i[0]$ を選ぶ項だけになる。
-従ってその係数は、
-
-$$
-\prod_{i=1}^r a_i\ne0.
-$$
-
-これは $F=0$ に矛盾する。よって非空の零和部分集合が存在する。
-
-対応する主要宣言は、
-
-- `exists_nonempty_zero_sum_of_character_matches`。
-- `exists_greedy_character_prefix_residual_lt`。
-- `exists_nonempty_zero_sum_of_log_prefix_and_tail`。
-- `log_length_with_tail_le_floor_log`。
-- `exists_nonempty_zero_sum_label_subset_of_segmented_length`。
-
-である。最後のラベル付きの形を使うことで、法 $L$ で同じ剰余類になる異なる素数も
-区別したまま部分集合を取り出せる。
-
-## 付録B. ソースを読み直すための対応表
-
-以下のパスはリポジトリ内のもの。各行のリンク先で、列挙した宣言名を検索すると、
-本文に対応する証明へ進める。
-
-### B.1 主定理と有限構成
-
-| 参照 | ファイル | 主要宣言・役割 |
-|---|---|---|
-| F1 | [FiniteBasesTheorem.lean][F1] | `agp_finite_prime_bases`、主定理から有限素数基底へ制限した系 |
-| F2 | [FiniteBases.lean][F2] | `AGPFinitePrimeBases`、`AGPInitialBasesUnbounded` |
-| F3 | [FiniteBasesIff.lean][F3] | 二つの表記上の `_iff` |
-| F4 | [InitialBasesUnbounded.lean][F4] | 主定理 `agp_initial_bases_unbounded` と、供給命題からの二つの橋渡し |
-| F5 | [Decomposition.lean][F5] | `StrongMillerRabinPass`、実行可能なテストとの同値 |
-| F6 | [LegendreSignature.lean][F6] | 共通符号クラスと有限構成の合成 |
-| F7 | [UnitSubsetProduct.lean][F7] | 部分集合積、例外 $kL+1$ の除去 |
-| F8 | [CarmichaelConstruction.lean][F8] | 素数積と Korselt の判定法 |
-| F9 | [LocalLegendreCriterion.lean][F9] | 局所の符号から強い通過条件 |
-| F10 | [KorseltCanonicalSign.lean][F10] | `odd_part_korselt` |
-| F11 | [LocalLegendrePowers.lean][F11] | Euler の規準と奇数倍の指数 |
-| F12 | [OEISA006945.lean][F12] | `A006945Candidate`、`IsA006945Term` |
-| F13 | [OEISA006945Iff.lean][F13] | `a006945Candidate_iff` |
-| F14 | [OEISA006945Existence.lean][F14] | `exists_a006945_candidate`、`exists_a006945_term` と AGP からの橋渡し |
-| C1 | [FiniteAbelianZeroSum.lean][C1] | 指標を使う零和部分集合定理 |
-
-### B.2 解析的構成
-
-| 参照 | ファイル | 主要宣言・役割 |
-|---|---|---|
-| A1 | [UnconditionalProgressionCountData.lean][A1] | 無条件の計数データ存在 |
-| A2 | [PrimeSupply.lean][A2] | 計数データから大きい素数集合 |
-| A3 | [ProgressionCountData.lean][A3] | 計数データの構造体と存在命題 |
-| A4 | [ReliableProp15.lean][A4] | 係数 $c_0/(\varphi(m)\log x)$ と約数の上限 |
-| A5 | [PrimorialProgressionCountData.lean][A5] | $\theta$ 供給から計数データへの全体の組立て |
-| A6 | [ProgressionTheta.lean][A6] | $\theta$ 計数、有限平均、係数の余裕 |
-| A7 | [UnconditionalNarrowThetaSupply.lean][A7] | $M^J\le Z$ に対する無条件の供給 |
-| A8 | [FamilyDensity.lean][A8] | 指標族の無条件 log-free 零点密度 |
-| A9 | [GeneralScaleDensity.lean][A9] | $1$ に近い帯での密度評価 |
-| A10 | [FamilyExceptionalConductors.lean][A10] | 例外導手集合と一様な個数上限 |
-| A11 | [FamilyExceptionalWeightedGap.lean][A11] | 例外を避けた重み付き零点和 |
-| A12 | [UniformPolynomialThetaSupply.lean][A12] | 多項式スケールの $\theta$ 下界 |
-| A13 | [P2SeedScale.lean][A13] | 増大率の比較、全約数スケールの下界 |
-| A14 | [PrimorialSeedCount.lean][A14] | 初期素数集合とその大きい素数因子の積 |
-| A15 | [PrimorialP2SeedBridge.lean][A15] | 二段目のスケールと補助データ |
-| A16 | [ExceptionalModuli.lean][A16] | 例外を避ける補助法の部分 |
-| A17 | [BrunTitchmarshSpecialization.lean][A17] | `agp_coarse_sieve_bound` |
-
-さらに深い零点密度と明示公式の経路を読む場合は、以下が接続点になる。
-
-- [GeneralScaleIncidence.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/GeneralScaleIncidence.lean)：
-  `exists_uniform_general_scale_occurrence_meanSquare_bound`。
-- [HighPrimeIncidence.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/HighPrimeIncidence.lean)：
-  `highPrimeFamilyGridMeanSquareSum_hybrid_bound`。
-- [FamilyUniformHalfScale.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyUniformHalfScale.lean)：
-  `exists_uniform_character_family_half_scale_bound`。
-- [FamilyFullHalfScaleBudget.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyFullHalfScaleBudget.lean)：
-  導手 $4$ を含めた指標族の評価。
-- [ScalarThetaBudget.lean](../PseudoPrime/AnalyticNumberTheory/AGP/ScalarThetaBudget.lean)：
-  主項以外の実数誤差項を一様に吸収する評価。
-- [RoundedPolynomialHeight.lean](../PseudoPrime/AnalyticNumberTheory/AGP/RoundedPolynomialHeight.lean)：
-  天井関数による高さ選択の評価。
-
-## 付録C. 原論文との関係と今回の確認範囲
-
-### C.1 参考文献
-
-W. R. Alford, Andrew Granville, Carl Pomerance,
+参考文献：W. R. Alford, Andrew Granville, Carl Pomerance,
 *On the difficulty of finding reliable witnesses*,
-Algorithmic Number Theory, ANTS-I, Lecture Notes in Computer Science 877 (1994), pp. 1–16.
-
-- [Granville による書誌情報と内容紹介](https://dms.umontreal.ca/~andrew/1994.php)
-- [Granville による公開 PDF](https://dms.umontreal.ca/~andrew/PDF/carmichael.pdf)
-- [Pomerance による公開 PDF](https://math.dartmouth.edu/~carlp/PDF/reliable.pdf)
-- [OEIS A006945：公式の定義・添字・既知の項][OEIS]
-
-著者による紹介にも、任意の有限素数集合について、それらのすべてを底とする強擬素数でもある
-カーマイケル数が無限に存在する、という主張が明記されている。
-
-本解説の証明手順と定数の説明は、添付された Lean ソースを根拠にしている。
-特に、第10節の primorial を使う二段階の構成、全約数を含めるスケール、係数 $640/3$ の篩評価は、
-今回のソースが最終結論へ到達する経路として説明したものである。
-原論文の全補題を同じ順序・同じ定数で翻訳した、と主張するものではない。
-
-[F1]: ../PseudoPrime/PrimeTest/MillerRabin/AGP/FiniteBasesTheorem.lean
-[F2]: ../PseudoPrime/PrimeTest/MillerRabin/AGP/FiniteBases.lean
-[F3]: ../PseudoPrime/PrimeTest/MillerRabin/AGP/FiniteBasesIff.lean
-[F4]: ../PseudoPrime/PrimeTest/MillerRabin/AGP/InitialBasesUnbounded.lean
-[F5]: ../PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean
-[F6]: ../PseudoPrime/PrimeTest/MillerRabin/AGP/LegendreSignature.lean
-[F7]: ../PseudoPrime/PrimeTest/MillerRabin/AGP/UnitSubsetProduct.lean
-[F8]: ../PseudoPrime/PrimeTest/MillerRabin/AGP/CarmichaelConstruction.lean
-[F9]: ../PseudoPrime/PrimeTest/MillerRabin/AGP/LocalLegendreCriterion.lean
-[F10]: ../PseudoPrime/PrimeTest/MillerRabin/KorseltCanonicalSign.lean
-[F11]: ../PseudoPrime/PrimeTest/MillerRabin/LocalLegendrePowers.lean
-[F12]: ../PseudoPrime/PrimeTest/MillerRabin/OEISA006945.lean
-[F13]: ../PseudoPrime/PrimeTest/MillerRabin/OEISA006945Iff.lean
-[F14]: ../PseudoPrime/PrimeTest/MillerRabin/OEISA006945Existence.lean
-[C1]: ../PseudoPrime/Combinatorics/Additive/FiniteAbelianZeroSum.lean
-[A1]: ../PseudoPrime/AnalyticNumberTheory/AGP/UnconditionalProgressionCountData.lean
-[A2]: ../PseudoPrime/AnalyticNumberTheory/AGP/PrimeSupply.lean
-[A3]: ../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionCountData.lean
-[A4]: ../PseudoPrime/AnalyticNumberTheory/AGP/ReliableProp15.lean
-[A5]: ../PseudoPrime/AnalyticNumberTheory/AGP/PrimorialProgressionCountData.lean
-[A6]: ../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean
-[A7]: ../PseudoPrime/AnalyticNumberTheory/AGP/UnconditionalNarrowThetaSupply.lean
-[A8]: ../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyDensity.lean
-[A9]: ../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/GeneralScaleDensity.lean
-[A10]: ../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyExceptionalConductors.lean
-[A11]: ../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyExceptionalWeightedGap.lean
-[A12]: ../PseudoPrime/AnalyticNumberTheory/AGP/UniformPolynomialThetaSupply.lean
-[A13]: ../PseudoPrime/AnalyticNumberTheory/AGP/P2SeedScale.lean
-[A14]: ../PseudoPrime/AnalyticNumberTheory/AGP/PrimorialSeedCount.lean
-[A15]: ../PseudoPrime/AnalyticNumberTheory/AGP/PrimorialP2SeedBridge.lean
-[A16]: ../PseudoPrime/AnalyticNumberTheory/AGP/ExceptionalModuli.lean
-[A17]: ../PseudoPrime/AnalyticNumberTheory/AGP/BrunTitchmarshSpecialization.lean
-[OEIS]: https://oeis.org/A006945
+Algorithmic Number Theory, ANTS-I, Lecture Notes in Computer Science 877 (1994), pp. 1–16。
+[著者公開版](https://math.dartmouth.edu/~carlp/PDF/reliable.pdf)。
+数列の定義・添字については [OEIS A006945](https://oeis.org/A006945) を参照。
