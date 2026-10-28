@@ -324,12 +324,10 @@ $g^{\lambda(L)}=1$ となる最小の正整数、すなわちカーマイケル�
 
 個数条件は
 
-$$
-|P| > 2^{|W|}\left\lfloor\lambda(L)\log L\right\rfloor
-$$
+$$\lvert P\rvert > 2^{\lvert W\rvert}\left\lfloor\lambda(L)\log L\right\rfloor$$
 
-である。 $|P|$ は集合の要素数、 $\lfloor x\rfloor$ は $x$ 以下の最大の整数を表す。
-$2^{|W|}$ は次段階の符号分類、残りの因子は有限群の部分積のために必要になる。
+$\lvert P\rvert$ は集合の要素数、 $\lfloor x\rfloor$ は $x$ 以下の最大の整数を表す。
+$2^{\lvert W\rvert}$ は次段階の符号分類、残りの因子は有限群の部分積のために必要になる。
 
 この仕様への変換は、同ファイルの
 `agp_prime_supply_of_progression_count_data` が担う。
@@ -352,7 +350,7 @@ $$
 $$
 
 各 $p\in P$ に、底 $1,\ldots,B$ それぞれに対する符号を並べた「符号の列」を対応させる。
-各欄は $1$ または $-1$ なので、列は高々 $2^{|W|}$ 通りしかない。
+各欄は $1$ または $-1$ なので、列は高々 $2^{\lvert W\rvert}$ 通りしかない。
 
 素数が十分多数あれば、鳩の巣原理により、同じ符号の列を持つ大きな部分集合 $Q\subseteq P$ が取れる。
 つまり、各底 $b$ に対して符号 $\sigma_b\in\{1,-1\}$ が定まり、
@@ -373,17 +371,15 @@ $$
 **場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/LegendreSignature.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/LegendreSignature.lean#L40)
 
 `exists_large_common_legendre_signature_class` は、素数集合 $P$、有限底集合 $W$、自然数 $N$ に対し、
-各素数が各底の約数でないことと $2^{|W|}N < |P|$ を仮定する。
+各素数が各底の約数でないことと $2^{\lvert W\rvert}N < \lvert P\rvert$ を仮定する。
 結論は、 $Q\subseteq P$、 $N < |Q|$、および各底についてルジャンドル記号が素数間で一致することである。
 
 適用時は
 
-$$
-N=\left\lfloor\lambda(L)\log L\right\rfloor
-$$
+$$N=\left\lfloor\lambda(L)\log L\right\rfloor$$
 
-と取る。 $|Q|$ が整数なので、 $N < |Q|$ から
-$\lambda(L)\log L < |Q|$ が得られる。
+と取る。 $\lvert Q\rvert$ が整数なので、 $N < \lvert Q\rvert$ から
+$\lambda(L)\log L < \lvert Q\rvert$ が得られる。
 
 実装は、底を添字とする `Bool` の列で分類する。
 各記号が零でないという前提により、この分類から符号の等しさを回復できる。
@@ -438,10 +434,8 @@ $\gcd(k,L)=1$ より $L\mid e_p$ となり、 $e_p\mid L$ と合わせて $e_p=L
 
 個数評価の中身も確認できる。 $m=\lambda(L)$ とすると、有限群の定理に必要な長さは
 
-$$
-r=\left\lfloor m\log\frac Lm\right\rfloor+m
-\le\left\lfloor m\log L\right\rfloor
-$$
+$$r=\left\lfloor m\log\frac Lm\right\rfloor+m
+\le\left\lfloor m\log L\right\rfloor$$
 
 である。最後の不等式には $m\ge3$ を使う。
 $|Q| > m\log L$ なら、一要素を除いても少なくともこの長さが残る。
@@ -767,8 +761,8 @@ theorem agp_progression_count_data_exists_unconditional : AGPProgressionCountDat
 <summary>計数データの正確な目標と、小さい素数を除いても個数が残る理由</summary>
 
 $$
-\mathcal{D}(L,y)=\{e\in\mathbb{N}:e\mid L,\ e\le y\},\qquad
-H_W(L)=2^{|W|}\left\lfloor\lambda(L)\log L\right\rfloor
+\mathcal{D}(L,y)=\lbrace e\in\mathbb{N}:e\mid L,\ e\le y\rbrace,\qquad
+H_W(L)=2^{\lvert W\rvert}\left\lfloor\lambda(L)\log L\right\rfloor
 $$
 
 と置く。 $\mathcal{D}(L,y)$ は、 $L$ の約数のうち $y$ 以下のものを集めた集合である。
@@ -777,10 +771,9 @@ $$
 $$
 \begin{aligned}
 H_W(L)+q
-&<\frac{c_0}{2\log x}|\mathcal{D}(L,y)|\\
-&\le
-\#\{e\in\mathcal{D}(L,y):
- ek+1\text{ は素数},\ ek+1\le x,\ ek+1\equiv3\pmod4\}
+& < \frac{c_0}{2\log x}\lvert\mathcal{D}(L,y)\rvert\\
+&\le\#\lbrace e\in\mathcal{D}(L,y):
+ek+1\text{ は素数},\ ek+1\le x,\ ek+1\equiv3\pmod4\rbrace
 \end{aligned}
 $$
 
@@ -827,37 +820,21 @@ $k > 0$ なので $e\mapsto ek+1$ は単射であり、除く候補は高々 $q$
 
 対数の重みを付けた素数計数を
 
-$$
-\theta(x;M,r)=
-\sum_{\substack{p\le x\\p\text{ は素数}\\p\equiv r\pmod M}}\log p
-$$
+$$\theta(x;M,r)=\sum_{\substack{p\le x\\ p\text{ は素数}\\ p\equiv r\pmod M}}\log p$$
 
 と書く。対応する定義は、[`PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean#L136) の `thetaInProgressionReal` である。
 
 供給定理の量化順序は
 
-$$
-\exists J,D,X_\theta,\quad
-\forall Z\ge X_\theta,\quad
-\exists E_Z,\quad
-\forall m,e,r\ \cdots
-$$
+$$\exists J,D,X_{\theta},\quad\forall Z\ge X_{\theta},\quad\exists E_Z,\quad\forall m,e,r\ \cdots$$
 
 であり、 $J\ge2$、 $|E_Z|\le D$ となる。
 例外 $h\in E_Z$ は $h > 1$ かつ $4$ の約数でない。
 次の条件を満たすとき、
 
-$$
-\begin{gathered}
-m\in\{1,4\},\qquad e > 0,\qquad \gcd(e,m)=1,\\
-M=em > 1,\qquad M^J\le Z,\qquad\gcd(r,M)=1,\\
-\text{どの }h\in E_Z\text{ も }M\text{ の約数ではない},
-\end{gathered}
-$$
+$$\begin{gathered}m\in\lbrace 1,4\rbrace,\qquad e > 0,\qquad \gcd(e,m)=1,\\ M=em > 1,\qquad M^J\le Z,\qquad\gcd(r,M)=1,\\ \text{どの }h\in E_Z\text{ も }M\text{ の約数ではない},\end{gathered}$$
 
-$$
-\theta(eZ^3;M,r)\ge\frac{eZ^3}{2\varphi(M)}
-$$
+$$\theta(eZ^3;M,r)\ge\frac{eZ^3}{2\varphi(M)}$$
 
 を得る。例外集合を法や剰余類より先に選ぶ点が、多数の約数を一度に扱うために重要である。
 
@@ -866,9 +843,7 @@ $$
 `exists_primitiveCharacterFamily_log_free_density` である。
 ここでは、ある定数 $A_*,C_* > 0$ が存在し、整数 $R\ge2$、 $1/2\le\sigma\le1$ に対して
 
-$$
-N_{\mathrm{fam}}(R,\sigma)\le C_*R^{A_*(1-\sigma)}
-$$
+$$N_{\mathrm{fam}}(R,\sigma)\le C_*R^{A_*(1-\sigma)}$$
 
 を満たす。 $N_{\mathrm{fam}}$ は、導手が $R$ 以下の原始非主指標について、
 $\sigma\le\Re\rho\le1$、 $|\Im\rho|\le R$ の範囲にある零点を、
@@ -923,9 +898,7 @@ $L$ の約数 $e$ を使い、 $p=ek+1\equiv3\pmod4$ となる素数を数える
 
 十分大きい $u$ に対して
 
-$$
-z=2^u,\qquad N_0=\prod_{p\le z,\ p\text{ は素数}}p,\qquad X=N_0^J,\qquad q=X^5
-$$
+$$z=2^u,\qquad N_0=\prod_{p\le z,\ p\text{ は素数}}p,\qquad X=N_0^J,\qquad q=X^5$$
 
 と取る。 $N_0$ は小さい素数を重複なく掛けた数、すなわち primorial である。
 法 $m=1$ の素数下界から、共通係数 $k_1$ に対し
@@ -935,33 +908,22 @@ $r=e k_1+1$、 $e\mid N_0$ という形の相異なる素数を $t$ 個選ぶ。
 そのうち $r > 1024t$ のものの積を $L$ とする。
 小さい素数を除いても十分な個数が残るように $t$ を選ぶことで、
 
-$$
-\omega(L)\ge t/2,\qquad
-\sum_{r\text{ は }L\text{ の素因数}}\frac1r\le\frac1{1024},\qquad
-\lambda(L)\le q^2,\qquad L\le q^t
-$$
+$$\omega(L)\ge t/2,\qquad\sum_{r\text{ は }L\text{ の素因数}}\frac1r\le\frac1{1024},\qquad\lambda(L)\le q^2,\qquad L\le q^t$$
 
 を確保する。 $\omega(L)$ は相異なる素因数の個数である。
 
 二段目では
 
-$$
-Y=(4qL)^J,\qquad x=Y^5,\qquad y=Y^2
-$$
+$$Y=(4qL)^J,\qquad x=Y^5,\qquad y=Y^2$$
 
 と取る。すべての $e\mid L$ で $(4e)^J\le Y$ となり、素数下界の適用範囲に入る。
 また、 $L$ の全約数が $y$ 以下になるので、
 
-$$
-|\mathcal{D}(L,y)|=2^{\omega(L)}\ge2^{\lfloor t/2\rfloor}.
-$$
+$$\lvert\mathcal{D}(L,y)\rvert=2^{\omega(L)}\ge2^{\lfloor t/2\rfloor}.$$
 
 スケール選択は、これを使って
 
-$$
-2^{|W|}\left\lfloor\lambda(L)\log L\right\rfloor+q
-<\frac{c_0}{2\log x}|\mathcal{D}(L,y)|
-$$
+$$2^{\lvert W\rvert}\left\lfloor\lambda(L)\log L\right\rfloor+q < \frac{c_0}{2\log x}\lvert\mathcal{D}(L,y)\rvert$$
 
 を実現する。対応する評価は、同じ
 `PseudoPrime/AnalyticNumberTheory/AGP/P2SeedScale.lean` の
@@ -978,10 +940,7 @@ $$
 [`PseudoPrime/AnalyticNumberTheory/AGP/BrunTitchmarshSpecialization.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/BrunTitchmarshSpecialization.lean#L302) の `agp_coarse_sieve_bound` である。
 対象版では、その係数 $640/3$ と上の逆数和 $1/1024$ を用い、残る個数の係数を
 
-$$
-\left(\frac12-10^{-6}\right)-\frac{640}{3}\cdot\frac1{1024}
-=\frac7{24}-10^{-6} > \frac14
-$$
+$$\left(\frac12-10^{-6}\right)-\frac{640}{3}\cdot\frac1{1024}=\frac7{24}-10^{-6} > \frac14$$
 
 と評価する。
 係数計算は、[`PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean#L1465) の
@@ -1050,16 +1009,12 @@ $|G|\le L$、 $3\le m\le L$、すべての $g\in G$ について $mg=0$ とす�
 
 各座標でその値を選び、対応する指標を処理済みにする。
 
-$$
-\ell=\left\lfloor m\log\frac Lm\right\rfloor+1
-$$
+$$\ell=\left\lfloor m\log\frac Lm\right\rfloor+1$$
 
 個の座標を使うと、未処理の指標は $m$ 個未満になる。
 残りを $m-1$ 座標で一つずつ処理でき、全長は
 
-$$
-\ell+(m-1)=\left\lfloor m\log\frac Lm\right\rfloor+m
-$$
+$$\ell+(m-1)=\left\lfloor m\log\frac Lm\right\rfloor+m$$
 
 となる。
 
@@ -1067,9 +1022,7 @@ $$
 $c_i=\chi(g_i)$ となる非零複素数 $c_i$ を選べる。
 群環で
 
-$$
-F=\prod_i(c_i[0]-[g_i])
-$$
+$$F=\prod_{i}(c_i[0]-[g_i])$$
 
 と置くと、どの指標で評価しても一つの因子が零になり、フーリエ反転により $F=0$ となる。
 一方、非空の零和部分集合がないなら、 $[0]$ の係数は $\prod_i c_i\ne0$ になる。
@@ -1150,7 +1103,7 @@ noncomputable def IsA006945Term (n a : ℕ) : Prop :=
 最初の $n$ 個の素数からなる有限集合
 
 $$
-S_n=\{p_0,\ldots,p_{n-1}\}
+S_n=\lbrace p_0,\ldots,p_{n-1}\rbrace
 $$
 
 に `agp_finite_prime_bases` を適用する。
