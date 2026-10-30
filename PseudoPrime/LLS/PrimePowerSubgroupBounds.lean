@@ -37,8 +37,8 @@ subgroup modulo the prime. The cyclic index criterion gives kernel inclusion,
 and positive powers preserve prime support. Least primes therefore agree. -/
 theorem prime_pow_primesOutside_reduction {p k : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) (hk : 0 < k)
     [NeZero p] [NeZero (p ^ k)] (H : Subgroup (ZMod (p ^ k))ˣ) (hc : Nat.Coprime H.index p) :
-    NumberTheory.primesOutside (p ^ k) H = NumberTheory.primesOutside p (H.map (ZMod.unitsMap
-      (dvd_pow_self p hk.ne'))) := by
+    NumberTheory.primesOutside (p ^ k) H =
+      NumberTheory.primesOutside p (H.map (ZMod.unitsMap (dvd_pow_self p hk.ne'))) := by
   let : IsCyclic (ZMod (p ^ k))ˣ := ZMod.isCyclic_units_of_prime_pow p hp hp2 k
   apply primesOutside_reduction (dvd_pow_self p hk.ne') H
   · apply reduction_kernel_le_subgroup_of_cyclic

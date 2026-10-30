@@ -17,12 +17,10 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- Up to scale 240 the fine seeded selection is still its 35000 floor.
 Its first exact switch lies strictly above 240. -/
-theorem seededSharp_le35000_240 {L : ℝ} (hU : L ≤ 240) :
-    gaussianSeededSharp L ≤ (35000 : ℝ) := by
+theorem seededSharp_le35000_240 {L : ℝ} (hU : L ≤ 240) : gaussianSeededSharp L ≤ (35000 : ℝ) := by
   have h35 : L ≤ gaussianSeededSharpSwitch false 35000 :=
     hU.trans gaussianSeededSharp_switch35_bounds.1.le
-  simp only [gaussianSeededSharp, gaussianSeededSharpSelected, ite_eq_left h35,
-    le_refl]
+  simp only [gaussianSeededSharp, gaussianSeededSharpSelected, ite_eq_left h35, le_refl]
 
 /-- Above scale 100 and below the first new high guard, the minimum of the
 fine Gaussian and seeded candidates is at most the old baseline selection.
@@ -51,8 +49,7 @@ theorem gaussianSeeded_min_le_next {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log
       · rw [next_eq_seeded hn (le_of_not_gt h240) (by linarith only [hU])]
         exact
           (min_le_right _ _).trans
-            ((gaussianSeededSharp_le_seeded h63).trans
-              (gaussianRecoveredSeeded_le_seeded h63))
+            ((gaussianSeededSharp_le_seeded h63).trans (gaussianRecoveredSeeded_le_seeded h63))
 
 /-- In the analytic normal range, the current refined envelope is redundant
 beside the fine Gaussian and seeded candidates. Compare every active current
@@ -60,10 +57,8 @@ candidate and exclude both old high guards with the explicit logarithmic upper b
 theorem min_refined_gaussianSeeded_eq {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n)
     (hU : Real.log n < 30000000000) :
     min (refinedSelectedEnvelope n)
-        (min (gaussianLowFamily (Real.log n))
-          (gaussianSeededSharp (Real.log n))) =
-      min (gaussianLowFamily (Real.log n))
-        (gaussianSeededSharp (Real.log n)) := by
+        (min (gaussianLowFamily (Real.log n)) (gaussianSeededSharp (Real.log n))) =
+      min (gaussianLowFamily (Real.log n)) (gaussianSeededSharp (Real.log n)) := by
   let A := min (gaussianLowFamily (Real.log n)) (gaussianSeededSharp (Real.log n))
   have h63 : (63 : ℝ) ≤ Real.log n := by linarith only [hL]
   apply min_eq_right

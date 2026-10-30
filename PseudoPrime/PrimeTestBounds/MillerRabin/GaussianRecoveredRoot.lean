@@ -95,8 +95,8 @@ theorem gaussianRecovered_error_cap {L eta eps D s : ℝ} {q : ℕ} (hs0 : 10 �
     (h2 : 0 ≤ gaussian1000ResidualA eta * 10 + 2 * gaussianRecoveredResidualV eta)
     (hstrict :
       (12871 / 1000 : ℝ) - 2 * (901 / 250) +
-          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-            gaussianMRRefinedConductor) +
+          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+            (6 * gaussianMRRefinedConductor) +
           gaussian1000ResidualA eta / 10 +
           gaussianRecoveredResidualV eta / 100 +
           eps +
@@ -132,16 +132,16 @@ theorem gaussianRecovered_error_cap {L eta eps D s : ℝ} {q : ℕ} (hs0 : 10 �
     eta *
           (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
             1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
-        (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-          gaussianMRRefinedConductor) -
+        (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+              (6 * gaussianMRRefinedConductor) -
             (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
                 (6 * gaussianMRRefinedConductor)) /
               s +
-          (Analysis.gaussianMR6FifthsEndpoint * (4 - 7 * (407 / 50) / (6 *
-            gaussianMRRefinedConductor))) /
+          (Analysis.gaussianMR6FifthsEndpoint *
+              (4 - 7 * (407 / 50) / (6 * gaussianMRRefinedConductor))) /
             s ^ 2) =
-      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-        gaussianMRRefinedConductor) +
+      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+          (6 * gaussianMRRefinedConductor) +
         gaussian1000ResidualA eta / s +
         gaussianRecoveredResidualV eta / s ^ 2 := by
     rw [hreq]
@@ -161,8 +161,8 @@ theorem gaussianRecovered_large_checks :
       0 < gaussian1000ResidualA eta * 10 + gaussianRecoveredResidualV eta ∧
       0 < gaussian1000ResidualA eta * 10 + 2 * gaussianRecoveredResidualV eta ∧
       (12871 / 1000 : ℝ) - 2 * (901 / 250) +
-          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-            gaussianMRRefinedConductor) +
+          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+            (6 * gaussianMRRefinedConductor) +
           gaussian1000ResidualA eta / 10 +
           gaussianRecoveredResidualV eta / 100 +
           13 / (Analysis.gaussianMR6FifthsIndex - 1) +
@@ -170,8 +170,8 @@ theorem gaussianRecovered_large_checks :
         407 / 50 := by
   norm_num only [gaussian1000ResidualA, gaussianRecoveredResidualV, gaussianMRRefinedD,
     gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
-    gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint, and_self]
+    gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint,
+    and_self]
 
 /-- For L>=0, index m>=10^9 and log q<=L, the normalized error is below
 407/50. Bound the ratio and independent error by their large-index caps,
@@ -208,8 +208,8 @@ theorem gaussianRecovered_large_error {L m : ℝ} {q : ℕ} (hL : 0 ≤ L)
   have hden : Analysis.gaussianMR6FifthsIndex - 1 ≤ m - 1 := by linarith only [hm]
   have heps :=
     div_le_div_of_nonneg_left (by norm_num only : (0 : ℝ) ≤ 13)
-      (by norm_num only [Analysis.gaussianMR6FifthsIndex] : 0 < Analysis.gaussianMR6FifthsIndex -
-        1) hden
+      (by norm_num only [Analysis.gaussianMR6FifthsIndex] : 0 < Analysis.gaussianMR6FifthsIndex - 1)
+      hden
   change _ + _ + LLS.PaperStatements.gaussianPrefixError (901 / 250) q (r ^ 2) < _ at herr
   change
     (Analysis.gaussianMR6FifthsIndex / (Analysis.gaussianMR6FifthsIndex - 1)) *

@@ -36,8 +36,7 @@ theorem elevenFourthsRoot_branch_polynomials_pos_from_96 {n : ℕ} (hnpos : 0 < 
   have hy1 : 1 ≤ y := by linarith only [hy]
   have hz0 : 0 ≤ Real.log y := Real.log_nonneg hy1
   have ht :=
-    LLS.elevenFourthsRoot_tangent_coupling_of_pos
-      (by linarith only [hL] : 0 < Real.log (n : ℝ)) hy0
+    LLS.elevenFourthsRoot_tangent_coupling_of_pos (by linarith only [hL] : 0 < Real.log (n : ℝ)) hy0
   have hb : Real.log (2 : ℝ) ≤ 7 / 10 := by linarith only [Real.log_two_lt_d9]
   have hq : Real.log ((4 * n : ℕ) : ℝ) ≤ L + 7 / 5 := by
     rw [Nat.cast_mul, Nat.cast_ofNat,

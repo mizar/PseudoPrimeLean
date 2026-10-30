@@ -40,8 +40,8 @@ private theorem exists_scaled_kernel_comparison
               H.index = h →
                 ∀ x : ℝ,
                   0 < x →
-                    (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ b * x → NumberTheory.residueInSubgroup q
-                      H p) →
+                    (∀ p : ℕ,
+                      p.Prime → ¬p ∣ q → (p : ℝ) ≤ b * x → NumberTheory.residueInSubgroup q H p) →
                     ((h : ℝ) * (∫ u in 0..b, (K.transform u).re / Real.sqrt u) -
                           (K.function (1 / 2)).re) *
                         Real.sqrt x ≤

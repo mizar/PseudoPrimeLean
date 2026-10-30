@@ -20,8 +20,7 @@ namespace PseudoPrime.PrimeTestBounds.Selfridge
 unconditional max(27,QNegOne) comparison after casting. The empty maximum is included,
 and later analytic bounds need no new first-stop argument. -/
 theorem classicalMaximum_le_of_QNegOne {B : ℕ} {X : ℝ} (h27 : 27 ≤ X)
-    (hQ : (PseudoSquare.QNegOne B : ℝ) ≤ X) :
-    (classicalNegOneMaximum B : ℝ) ≤ X := by
+    (hQ : (PseudoSquare.QNegOne B : ℝ) ≤ X) : (classicalNegOneMaximum B : ℝ) ≤ X := by
   have hm : (classicalNegOneMaximum B : ℝ) ≤ (max 27 (PseudoSquare.QNegOne B) : ℕ) :=
     Nat.cast_le.mpr (classicalNegOneMaximum_le_max_twenty_seven_QNegOne B)
   rw [Nat.cast_max, Nat.cast_ofNat] at hm
@@ -32,12 +31,14 @@ Use the negative maximum transfer, equality of both scans and inclusion of non-o
 stops. No analytic or GRH assumption is added by this generic consumer. -/
 theorem selfridgeMaxima_le_of_QNegOne {B : ℕ} {X : ℝ} (h27 : 27 ≤ X)
     (hQ : (PseudoSquare.QNegOne B : ℝ) ≤ X) :
-    (classicalNegOneMaximum B : ℝ) ≤ X ∧ (wheel30NegOneMaximum B : ℝ) ≤ X ∧
+    (classicalNegOneMaximum B : ℝ) ≤ X ∧
+      (wheel30NegOneMaximum B : ℝ) ≤ X ∧
       (classicalNeOneMaximum B : ℝ) ≤ X ∧ (wheel30NeOneMaximum B : ℝ) ≤ X := by
   have hc := classicalMaximum_le_of_QNegOne h27 hQ
   have hn := (Nat.cast_le.mpr (classicalNeOneMaximum_le_classicalNegOneMaximum B)).trans hc
-  exact ⟨hc, (wheel30NegOneMaximum_eq_classicalNegOneMaximum B) ▸ hc,
-    hn, (wheel30NeOneMaximum_eq_classicalNeOneMaximum B) ▸ hn⟩
+  exact
+    ⟨hc, (wheel30NegOneMaximum_eq_classicalNegOneMaximum B) ▸ hc, hn,
+      (wheel30NeOneMaximum_eq_classicalNeOneMaximum B) ▸ hn⟩
 
 /-- For B>=3, the combined envelope absorbs the exceptional negative stopping value 27.
 The elementary radius exceeds 31 and both endpoint candidates exceed 27. This permits
@@ -65,33 +66,34 @@ theorem selfridgeMaxima_le_common_envelope {B : ℕ}
       (wheel30NegOneMaximum B : ℝ) ≤ PseudoSquare.commonEndpointEnvelope B ∧
       (classicalNeOneMaximum B : ℝ) ≤ PseudoSquare.commonEndpointEnvelope B ∧
       (wheel30NeOneMaximum B : ℝ) ≤ PseudoSquare.commonEndpointEnvelope B := by
-  exact selfridgeMaxima_le_of_QNegOne (commonEnvelope_ge_twenty_seven hB)
-    (PseudoSquare.witnessMaxima_le_common_envelope hGRH hB).1
+  exact
+    selfridgeMaxima_le_of_QNegOne (commonEnvelope_ge_twenty_seven hB)
+      (PseudoSquare.witnessMaxima_le_common_envelope hGRH hB).1
 
 /-- Under GRH and log B<=1609/25, all stopping maxima are at most 4093, including empty
 input domains. Apply the full low-domain QNegOne bound and absorb 27. The result is
 natural-valued and feeds the exact classical trial-count bound. -/
 theorem selfridgeMaxima_le_fixed_cap {B : ℕ}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hlog : Real.log B ≤ 1609 / 25) :
-    classicalNegOneMaximum B ≤ 4093 ∧ wheel30NegOneMaximum B ≤ 4093 ∧
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hlog : Real.log B ≤ 1609 / 25) :
+    classicalNegOneMaximum B ≤ 4093 ∧
+      wheel30NegOneMaximum B ≤ 4093 ∧
       classicalNeOneMaximum B ≤ 4093 ∧ wheel30NeOneMaximum B ≤ 4093 := by
-  have h := selfridgeMaxima_le_of_QNegOne (by norm_num only : (27 : ℝ) ≤ (4093 : ℕ))
-    (Nat.cast_le.mpr (PseudoSquare.witnessMaxima_le_fixed_cap hGRH hlog).1)
-  exact ⟨Nat.cast_le.mp h.1, Nat.cast_le.mp h.2.1,
-    Nat.cast_le.mp h.2.2.1, Nat.cast_le.mp h.2.2.2⟩
+  have h :=
+    selfridgeMaxima_le_of_QNegOne (by norm_num only : (27 : ℝ) ≤ (4093 : ℕ))
+      (Nat.cast_le.mpr (PseudoSquare.witnessMaxima_le_fixed_cap hGRH hlog).1)
+  exact ⟨Nat.cast_le.mp h.1, Nat.cast_le.mp h.2.1, Nat.cast_le.mp h.2.2.1, Nat.cast_le.mp h.2.2.2⟩
 
 /-- Under GRH and log B<=1609/25, both classical trial maxima are at most 2045.
 Transport stopping maxima <=4093 through count monotonicity and compute the single
 scalar count. On an empty domain the conventional count one also satisfies the bound. -/
 theorem classicalTrials_le_fixed_cap {B : ℕ}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hlog : Real.log B ≤ 1609 / 25) :
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hlog : Real.log B ≤ 1609 / 25) :
     classicalNegOneTrialMaximum B ≤ 2045 ∧ classicalNeOneTrialMaximum B ≤ 2045 := by
   have h := selfridgeMaxima_le_fixed_cap hGRH hlog
   have hc : PrimeTest.classicalTrialCountThrough 4093 = 2045 := by decide
-  exact ⟨(PrimeTest.classicalTrialCountThrough_mono h.1).trans hc.le,
-    (PrimeTest.classicalTrialCountThrough_mono h.2.2.1).trans hc.le⟩
+  exact
+    ⟨(PrimeTest.classicalTrialCountThrough_mono h.1).trans hc.le,
+      (PrimeTest.classicalTrialCountThrough_mono h.2.2.1).trans hc.le⟩
 
 /-- Under GRH and B>=3, both classical real trial maxima obey envelope/2+1.
 Combine the stopping bounds with the unconditional real count inequality. This is a

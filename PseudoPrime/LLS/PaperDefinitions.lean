@@ -144,8 +144,8 @@ structure MellinKernel where
   mellin_eq :
     ∀ c u : ℝ,
       -1 / 2 < c →
-        c ≤ 1 / 2 + delta → 0 < u → Analysis.inverseMellin function c u =
-      Analysis.inverseMellin function 0 u
+        c ≤ 1 / 2 + delta →
+        0 < u → Analysis.inverseMellin function c u = Analysis.inverseMellin function 0 u
   /-- Nonnegativity of the real inverse Mellin transform on positive arguments. -/
   mellin_nonneg : ∀ u : ℝ, 0 < u → 0 ≤ (Analysis.inverseMellin function 0 u).re
   /-- The real transform is nonzero at some positive argument. Together with

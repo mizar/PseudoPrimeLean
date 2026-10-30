@@ -75,8 +75,7 @@ theorem gaussianSeeded_index_four (f : Bool) {n : ℕ} [NeZero n] (H : Subgroup 
       gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
         4 * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * Real.exp (1 / 16 : ℝ)) +
         13 +
-        3 *
-          LLS.PaperStatements.gaussianPrefixError (gaussianSeededPrefix f) n (r ^ 2) := by
+        3 * LLS.PaperStatements.gaussianPrefixError (gaussianSeededPrefix f) n (r ^ 2) := by
     dsimp only [x] at hcmp
     simpa only [hindex, hi, Nat.cast_ofNat, Nat.reduceSub] using hcmp
   have hCscaled : LLS.PaperStatements.subgroupConductorLogSum H / 3 ≤ (2 / 3 : ℝ) * Real.log n := by
@@ -94,18 +93,15 @@ theorem gaussianSeeded_index_four (f : Bool) {n : ℕ} [NeZero n] (H : Subgroup 
     Analysis.gaussianMR_compare_width (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianPrefixError (gaussianSeededPrefix f) n (r ^ 2)) (L :=
       (2 / 3 : ℝ) * Real.log n) (I := I) (E := E) (C :=
-      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := gaussianMRRefinedMass)
-      (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor :=
-      gaussianMRRefinedConductor) (D :=
+      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := gaussianMRRefinedMass) (Ecap :=
+      Analysis.gaussianMR6FifthsEndpoint) (conductor := gaussianMRRefinedConductor) (D :=
       (4 * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
       (4 / 3 : ℝ) *
-        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
-          1 / (10 * gaussianMRRefinedWidth)))
+        (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)))
       (by norm_num only [gaussianMRRefinedWidth]) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
-      (by norm_num only [gaussianMRRefinedConductor] :
-        (0 : ℝ) ≤ gaussianMRRefinedConductor)
-      le_rfl le_rfl hcmp'
+      (by norm_num only [gaussianMRRefinedConductor] : (0 : ℝ) ≤ gaussianMRRefinedConductor) le_rfl
+      le_rfl hcmp'
       (by
         intro hbudget
         have hnorm :
@@ -116,8 +112,7 @@ theorem gaussianSeeded_index_four (f : Bool) {n : ℕ} [NeZero n] (H : Subgroup 
                   1 / (10 * gaussianMRRefinedWidth)) *
                 s +
               11 := by
-          dsimp only [gaussianMRRefinedMass,
-            Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
+          dsimp only [gaussianMRRefinedMass, Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
           nlinarith only [hbudget, herror]
         exact gaussianSeeded_triple_absurd (f := f) hL hnorm)
 
@@ -158,22 +153,19 @@ theorem gaussianSeeded_witness_four (f : Bool) {n : ℕ} [NeZero n] (hnOdd : Odd
     exact PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn1 hnOdd hp hpdvd (hpass p hp hbound)
   have hsmall :
     ∀ p : ℕ,
-      p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
+      p.Prime → ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
   have hrootSq : (gaussianSeededRoot f (Real.log n)) ^ 2 = r := by
     dsimp only [r, gaussianSeededRadius]
   have hrbound : (170 : ℝ) ≤ r := gaussianSeeded_radius_large f (Real.log n)
-  have hspos : 0 < gaussianSeededRoot f (Real.log n) :=
-    gaussianSeeded_root_pos f _
+  have hspos : 0 < gaussianSeededRoot f (Real.log n) := gaussianSeeded_root_pos f _
   have hsbound : (13 : ℝ) ≤ gaussianSeededRoot f (Real.log n) :=
     gaussianSeeded_root_thirteen f (Real.log n)
   have hwidth : 0 < gaussianMRRefinedWidth / gaussianSeededRoot f (Real.log n) :=
     div_pos (by norm_num only [gaussianMRRefinedWidth]) hspos
-  have hwidth1 :
-    gaussianMRRefinedWidth / gaussianSeededRoot f (Real.log n) ≤ 1 / 2 := by
+  have hwidth1 : gaussianMRRefinedWidth / gaussianSeededRoot f (Real.log n) ≤ 1 / 2 := by
     rw [div_le_iff₀ hspos]
     norm_num only [gaussianMRRefinedWidth]
     linarith only [hsbound]
@@ -182,14 +174,13 @@ theorem gaussianSeeded_witness_four (f : Bool) {n : ℕ} [NeZero n] (hnOdd : Odd
     nlinarith only [hrbound]
   have hprefix :
     gaussianSeededPrefix f ≤
-      ∑ n ∈ Finset.Ioc 0 (gaussianSeededCutoff f),
-        Analysis.gaussianResolventMangoldtWeight n := by
+      ∑ n ∈ Finset.Ioc 0 (gaussianSeededCutoff f), Analysis.gaussianResolventMangoldtWeight n := by
     cases f
-    · simpa only [gaussianSeededPrefix, gaussianSeededCutoff, Bool.false_eq_true,
-        ite_false, ite_true, Nat.floor_ofNat] using
+    · simpa only [gaussianSeededPrefix, gaussianSeededCutoff, Bool.false_eq_true, ite_false,
+        ite_true, Nat.floor_ofNat] using
         LLS.gaussian_prefix35000_seeded hGRH.riemann (le_refl (35000 : ℝ))
-    · simpa only [gaussianSeededPrefix, gaussianSeededCutoff, Bool.false_eq_true,
-        ite_false, ite_true, Nat.floor_ofNat] using
+    · simpa only [gaussianSeededPrefix, gaussianSeededCutoff, Bool.false_eq_true, ite_false,
+        ite_true, Nat.floor_ofNat] using
         LLS.gaussian_prefix50000_seeded hGRH.riemann (le_refl (50000 : ℝ))
   have hcmp :=
     LLS.PaperStatements.gaussian_relative_prefix_le hprefix hnlarge H hGRH hwidth hwidth1 hx
@@ -263,22 +254,20 @@ theorem gaussianSeeded_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : Od
     exact PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn1 hnOdd hp hpdvd (hpass p hp hbound)
   have hsmall :
     ∀ p : ℕ,
-      p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
+      p.Prime → ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
   have hwidth : 0 < h := div_pos (by norm_num only [gaussianMRRefinedWidth]) hspos
   have hprefix :
     gaussianSeededPrefix f ≤
-      ∑ n ∈ Finset.Ioc 0 (gaussianSeededCutoff f),
-        Analysis.gaussianResolventMangoldtWeight n := by
+      ∑ n ∈ Finset.Ioc 0 (gaussianSeededCutoff f), Analysis.gaussianResolventMangoldtWeight n := by
     cases f
-    · simpa only [gaussianSeededPrefix, gaussianSeededCutoff, Bool.false_eq_true,
-        ite_false, ite_true, Nat.floor_ofNat] using
+    · simpa only [gaussianSeededPrefix, gaussianSeededCutoff, Bool.false_eq_true, ite_false,
+        ite_true, Nat.floor_ofNat] using
         LLS.gaussian_prefix35000_seeded hGRH.riemann (le_refl (35000 : ℝ))
-    · simpa only [gaussianSeededPrefix, gaussianSeededCutoff, Bool.false_eq_true,
-        ite_false, ite_true, Nat.floor_ofNat] using
+    · simpa only [gaussianSeededPrefix, gaussianSeededCutoff, Bool.false_eq_true, ite_false,
+        ite_true, Nat.floor_ofNat] using
         LLS.gaussian_prefix50000_seeded hGRH.riemann (le_refl (50000 : ℝ))
   have hcmp :=
     LLS.PaperStatements.gaussian_relative_prefix_le hprefix hnlarge H hGRH hwidth hh1 hx
@@ -309,8 +298,7 @@ theorem gaussianSeeded_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : Od
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
     gaussianMRRefinedD * r ≥
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
-        gaussianSeededConstant f := by
+      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + gaussianSeededConstant f := by
     dsimp only [r, s, L]
     exact gaussianSeeded_equation_le f (by linarith only [hL] : 0 ≤ Real.log n)
   have hcmp' :
@@ -322,13 +310,10 @@ theorem gaussianSeeded_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : Od
     simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
   have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD :
-    gaussianMRRefinedD ≤
-      (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+    gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
-    (m / t) *
-        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
-          1 / (10 * gaussianMRRefinedWidth)) ≤
+    (m / t) * (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)) ≤
       gaussianMRRefinedBeta := by
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
@@ -363,8 +348,8 @@ theorem gaussianSeeded_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : Od
         have hi' : (1000000000 : ℝ) ≤ m := by
           simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD
-      hbeta hcmp' hfinish
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD hbeta hcmp'
+      hfinish
 
 /-- For an odd uniform three-prime Korselt product, either clipped cutoff bounds a
 rejecting prime under GRH from log n>=63. Construct the existing index-four
@@ -439,8 +424,7 @@ theorem gaussianSeeded_local (f : Bool) {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
   have hwide := gaussianSeeded_bound_lower (f := f) hL
   have hN : (35000 : ℝ) ≤ (gaussianSeededCutoff f : ℝ) := by
     cases f <;>
-      norm_num only [gaussianSeededCutoff, Nat.cast_ofNat, Bool.false_eq_true, ite_false,
-        ite_true]
+      norm_num only [gaussianSeededCutoff, Nat.cast_ofNat, Bool.false_eq_true, ite_false, ite_true]
   have hcut := hN.trans (gaussianSeeded_cutoff_le f (Real.log n))
   exact max_le (by linarith only [hcut]) (by nlinarith only [hs, hwide, sq_nonneg (Real.log n)])
 
@@ -513,8 +497,7 @@ theorem exists_prime_gaussianSeededEnvelope {n : ℕ} (ho : Odd n) (hc : ¬n.Pri
       p.Prime ∧
         (p : ℝ) ≤ gaussianSeededEnvelope (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  by_cases h :
-    gaussianSeededBound false (Real.log n) ≤ gaussianSeededBound true (Real.log n)
+  by_cases h : gaussianSeededBound false (Real.log n) ≤ gaussianSeededBound true (Real.log n)
   · simpa only [gaussianSeededEnvelope, min_eq_left h] using
       exists_prime_gaussianSeeded false ho hc hGRH hL
   · simpa only [gaussianSeededEnvelope, min_eq_right (le_of_not_ge h)] using

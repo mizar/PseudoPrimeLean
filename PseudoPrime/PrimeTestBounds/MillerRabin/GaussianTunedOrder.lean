@@ -36,8 +36,7 @@ theorem gaussianLowBound_lt_params {u v D E L : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ 
 /-- A smaller residual strictly lowers a fixed-floor cutoff once the old root exceeds its floor.
 The raw roots compare strictly, and the displayed floor assumption excludes a shared plateau. -/
 theorem gaussianLowBound_lt_residual {u D E L : ℝ} (hu : 0 ≤ u) (hDE : D < E)
-    (hC : 0 ≤ gaussianMRRefinedConductor * L + D) (hfloor : u < gaussianLowRoot
-      u E L) :
+    (hC : 0 ≤ gaussianMRRefinedConductor * L + D) (hfloor : u < gaussianLowRoot u E L) :
     gaussianLowBound u D L < gaussianLowBound u E L := by
   have hraw :=
     Analysis.gaussianBudgetRoot_strictMono (b := gaussianMRRefinedBeta)
@@ -58,8 +57,7 @@ theorem gaussianTunedLow_lt_low {L : ℝ} (hL : 100 ≤ L) :
   have h0 : (0 : ℝ) ≤ L := by linarith only [hL]
   have hswitch : gaussianLowSwitch (91 / 10) (93 / 10) < (100 : ℝ) := by
     norm_num only [gaussianLowSwitch, gaussianMRRefinedD, gaussianMRRefinedBeta,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth,
-        Analysis.gaussianMR6FifthsIndex,
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
       Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
   have hraw :
     (91 / 10 : ℝ) <

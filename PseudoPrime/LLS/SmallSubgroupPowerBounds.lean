@@ -29,8 +29,7 @@ theorem eventually_exists_prime_outside_le_log_power_of_card_rpow {beta A : ℝ}
         ∀ H : Subgroup (ZMod q)ˣ,
           (Nat.card H : ℝ) ≤ (q : ℝ) ^ beta →
             ∃ r : ℕ,
-              r.Prime ∧
-                ¬r ∣ q ∧ (r : ℝ) ≤ (Real.log q) ^ A ∧ ¬NumberTheory.residueInSubgroup q H r)
+              r.Prime ∧ ¬r ∣ q ∧ (r : ℝ) ≤ (Real.log q) ^ A ∧ ¬NumberTheory.residueInSubgroup q H r)
       Filter.atTop := by
   obtain ⟨b, c, hb, hbA, hc, hcA, hcb⟩ := Analysis.choose_subgroup_count_parameters hbeta hb1 hA
   have hAp : 0 < A := (zero_lt_one.trans hb).trans hbA
@@ -92,8 +91,7 @@ theorem eventually_exists_prime_outside_le_log_power_of_small_card {eta A : ℝ}
         ∀ H : Subgroup (ZMod q)ˣ,
           (Nat.card H : ℝ) ≤ (q : ℝ) ^ (1 - eta) →
             ∃ r : ℕ,
-              r.Prime ∧
-                ¬r ∣ q ∧ (r : ℝ) ≤ (Real.log q) ^ A ∧ ¬NumberTheory.residueInSubgroup q H r)
+              r.Prime ∧ ¬r ∣ q ∧ (r : ℝ) ≤ (Real.log q) ^ A ∧ ¬NumberTheory.residueInSubgroup q H r)
       Filter.atTop := by
   have hb0 : 0 < 1 - eta := sub_pos.mpr he1
   have hb1 : 1 - eta < 1 := by linarith only [he0]

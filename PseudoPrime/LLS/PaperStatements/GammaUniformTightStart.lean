@@ -37,8 +37,9 @@ private theorem exists_prime_outside_of_uniform_gamma_local_budget {q : ℕ} [Ne
               Real.sqrt ((32 / 99 : ℝ) * (Real.log q) ^ 2)) <
         Real.log q / 795) :
     ∃ p : ℕ,
-      p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log
-        q) ^ 2 := by
+      p.Prime ∧
+        ¬p ∣ q ∧
+        ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q) ^ 2 := by
   classical
   have hq0 : (0 : ℝ) < q := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne q))
   have ht := Real.log_le_sub_one_of_pos hq0
@@ -64,8 +65,9 @@ theorem exists_prime_outside_le_gamma_four_fifths_log_45561 {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 45561 ≤ Real.log q) :
     ∃ p : ℕ,
-      p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log
-        q) ^ 2 := by
+      p.Prime ∧
+        ¬p ∣ q ∧
+        ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q) ^ 2 := by
   apply
     exists_prime_outside_of_uniform_gamma_local_budget H hH hGRH
       ((by norm_num only : (35000 : ℝ) ≤ 45561).trans hL)
@@ -87,8 +89,9 @@ theorem exists_prime_outside_le_gamma_four_fifths_19787 {q : ℕ} (H : Subgroup 
     (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hq : 10 ^ 19787 ≤ q) :
     ∃ p : ℕ,
-      p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log
-        q) ^ 2 := by
+      p.Prime ∧
+        ¬p ∣ q ∧
+        ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q) ^ 2 := by
   have hq0 : q ≠ 0 :=
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 19787).trans_le hq)
   let : NeZero q := ⟨hq0⟩

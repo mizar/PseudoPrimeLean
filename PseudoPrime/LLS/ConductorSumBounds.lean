@@ -290,8 +290,8 @@ theorem exists_uniform_principal_sum_le_conductor_sum_of_noSmallPrimes (K : Mell
                   Q ≤ q →
                     ∀ (H : Subgroup (ZMod q)ˣ) (x X : ℝ),
                       2 ≤ x →
-                        (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q
-                          H p) →
+                        (∀ p : ℕ,
+                          p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) →
                         (H.index : ℝ) *
                             ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
                               (K.summand (1 : DirichletCharacter ℂ q) x n).re ≤

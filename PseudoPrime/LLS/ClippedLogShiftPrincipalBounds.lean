@@ -345,8 +345,7 @@ theorem clippedShiftPrincipalLower_ge_mass133 (x h : ℝ) :
         (clippedShiftPrincipalErrorNumerator x h + Real.log (2 * Real.pi) * Real.exp (-(1 / x))) /
           Real.sqrt x ≤
       clippedShiftPrincipalLower x h := by
-  have hm :=
-    mul_le_mul_of_nonneg_right ramp_mass_coefficient_ge_133_160 (Real.sqrt_nonneg x)
+  have hm := mul_le_mul_of_nonneg_right ramp_mass_coefficient_ge_133_160 (Real.sqrt_nonneg x)
   dsimp only [clippedShiftPrincipalLower]
   linarith only [hm]
 

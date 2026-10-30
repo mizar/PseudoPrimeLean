@@ -63,8 +63,7 @@ theorem gaussianSeededSurplus_constant_shift (f : Bool) :
         gaussianMRRefinedConductor * gaussianSeededSurplusShift f := by
   cases f <;>
     norm_num only [gaussianSeededSurplusConstant, gaussianSeededSharpConstant,
-      gaussianMRRefinedConductor, gaussianSeededSurplusShift, Bool.false_eq_true,
-        ite_false,
+      gaussianMRRefinedConductor, gaussianSeededSurplusShift, Bool.false_eq_true, ite_false,
       ite_true]
 
 /-- For numerical comparison, each surplus raw root is its current raw root at the displaced scale.
@@ -78,8 +77,7 @@ theorem gaussianSeededSurplus_raw_shift (f : Bool) (L : ℝ) :
         gaussianSeededSharpConstant f := by
     rw [gaussianSeededSurplus_constant_shift]
     ring
-  rw [gaussianSeededSurplusRawRoot, Analysis.gaussianBudgetRoot,
-    gaussianSeededSharpRawRoot, he]
+  rw [gaussianSeededSurplusRawRoot, Analysis.gaussianBudgetRoot, gaussianSeededSharpRawRoot, he]
 
 /-- The clipped roots inherit the same profile-specific numerical displacement. -/
 theorem gaussianSeededSurplus_root_shift (f : Bool) (L : ℝ) :
@@ -91,14 +89,12 @@ theorem gaussianSeededSurplus_root_shift (f : Bool) (L : ℝ) :
 theorem gaussianSeededSurplus_bound_shift (f : Bool) (L : ℝ) :
     gaussianSeededSurplusBound f L =
       gaussianSeededSharpBound f (L - gaussianSeededSurplusShift f) := by
-  simp only [gaussianSeededSurplusBound, gaussianSeededSurplusRadius,
-    gaussianSeededSharpBound,
+  simp only [gaussianSeededSurplusBound, gaussianSeededSurplusRadius, gaussianSeededSharpBound,
     gaussianSeededSharpRadius, gaussianSeededSurplus_root_shift]
 
 /-- The positive beta and denominator make the surplus raw root positive at every real scale. -/
 theorem gaussianSeededSurplus_raw_pos (f : Bool) (L : ℝ) : 0 < gaussianSeededSurplusRawRoot f L :=
-  Analysis.gaussianBudgetRoot_pos gaussianMRRefined_coefficients.1
-    gaussianMRRefined_coefficients.2
+  Analysis.gaussianBudgetRoot_pos gaussianMRRefined_coefficients.1 gaussianMRRefined_coefficients.2
 
 /-- The clipped root is positive because it dominates the positive raw root. -/
 theorem gaussianSeededSurplus_root_pos (f : Bool) (L : ℝ) : 0 < gaussianSeededSurplusRoot f L :=
@@ -113,11 +109,9 @@ theorem gaussianSeededSurplus_root_anchor (f : Bool) (L : ℝ) :
   have ha : 0 ≤ gaussianSeededSurplusAnchor f := by
     cases f <;> norm_num only [gaussianSeededSurplusAnchor, Bool.false_eq_true, ite_false, ite_true]
   have h4 :
-    gaussianSeededSurplusAnchor f ^ 4 ≤ (5 / 6 : ℝ) * (gaussianSeededSharpCutoff f : ℝ) :=
-      by
+    gaussianSeededSurplusAnchor f ^ 4 ≤ (5 / 6 : ℝ) * (gaussianSeededSharpCutoff f : ℝ) := by
     cases f <;>
-      norm_num only [gaussianSeededSurplusAnchor, gaussianSeededSharpCutoff,
-        Bool.false_eq_true,
+      norm_num only [gaussianSeededSurplusAnchor, gaussianSeededSharpCutoff, Bool.false_eq_true,
         ite_false, ite_true, Nat.cast_ofNat]
   have h2 :=
     (Real.le_sqrt (sq_nonneg (gaussianSeededSurplusAnchor f)) h0).mpr (by nlinarith only [h4])
@@ -145,31 +139,25 @@ theorem gaussianSeededSurplus_radius170 (f : Bool) (L : ℝ) :
 /-- At nonnegative scale, the clipped root satisfies the surplus quadratic budget.
 Increasing the raw root to the fixed prefix floor preserves the required inequality. -/
 theorem gaussianSeededSurplus_budget (f : Bool) {L : ℝ} (hL : 0 ≤ L) :
-    gaussianMRRefinedConductor * L + gaussianMRRefinedBeta *
-      gaussianSeededSurplusRoot f L +
+    gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * gaussianSeededSurplusRoot f L +
         gaussianSeededSurplusConstant f ≤
       gaussianMRRefinedD * gaussianSeededSurplusRadius f L := by
   have hC : 0 ≤ gaussianMRRefinedConductor * L + gaussianSeededSurplusConstant f := by
-    have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only
-      [gaussianMRRefinedConductor]
+    have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
     have hD : 0 ≤ gaussianSeededSurplusConstant f := by
       cases f <;>
         norm_num only [gaussianSeededSurplusConstant, Bool.false_eq_true, ite_false, ite_true]
     exact add_nonneg (mul_nonneg hc hL) hD
   have hd :=
-    mul_le_mul_of_nonneg_left (gaussianSeededSurplus_root13 f L)
-      gaussianMRRefined_coefficients.1.le
-  have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD *
-    gaussianSeededSurplusRoot f L := by
-    norm_num only [gaussianMRRefinedBeta, gaussianMRRefinedD,
-      gaussianMRRefinedMass,
+    mul_le_mul_of_nonneg_left (gaussianSeededSurplus_root13 f L) gaussianMRRefined_coefficients.1.le
+  have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * gaussianSeededSurplusRoot f L := by
+    norm_num only [gaussianMRRefinedBeta, gaussianMRRefinedD, gaussianMRRefinedMass,
       gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-        Analysis.gaussianMR6FifthsEndpoint] at hd ⊢
+      Analysis.gaussianMR6FifthsEndpoint] at hd ⊢
     linarith only [hd]
   have he :=
     Analysis.gaussianBudget_of_root_le gaussianMRRefined_coefficients.1
-      gaussianMRRefined_coefficients.2 hC
-      hcoef (le_max_right _ _)
+      gaussianMRRefined_coefficients.2 hC hcoef (le_max_right _ _)
   change _ ≤ gaussianMRRefinedD * gaussianSeededSurplusRadius f L at he
   linarith only [he]
 
@@ -205,8 +193,8 @@ theorem gaussianSeededSurplus_residual_checks (f : Bool) :
         gaussian1000ResidualA eta * gaussianSeededSurplusAnchor f +
           2 * gaussianLowResidualV eta (gaussianSeededSurplusConstant f) ∧
       (12871 / 1000 : ℝ) - 2 * gaussianSeededSurplusPrefix f +
-          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-            gaussianMRRefinedConductor) +
+          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+            (6 * gaussianMRRefinedConductor) +
           gaussian1000ResidualA eta / gaussianSeededSurplusAnchor f +
           gaussianLowResidualV eta (gaussianSeededSurplusConstant f) /
             gaussianSeededSurplusAnchor f ^ 2 +
@@ -216,10 +204,8 @@ theorem gaussianSeededSurplus_residual_checks (f : Bool) :
   cases f <;>
     norm_num only [gaussianSeededSurplusAnchor, gaussianSeededSurplusConstant,
       gaussianSeededSurplusPrefix, gaussianSeededSurplusTail, gaussian1000ResidualA,
-      gaussianLowResidualV, gaussianMRRefinedD, gaussianMRRefinedBeta,
-        gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, gaussianMRRefinedConductor,
-        Analysis.gaussianMR6FifthsIndex,
+      gaussianLowResidualV, gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
+      gaussianMRRefinedWidth, gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
       Analysis.gaussianMR6FifthsEndpoint, Bool.false_eq_true, ite_false, ite_true, and_self]
 
 /-- For every index at least one billion, the actual normalized prefix error is below the surplus
@@ -252,8 +238,7 @@ the normalized index-four error is below ten. Retain the signed pole savings and
   tail. -/
 theorem surplusBudget_four_error {L s r P D : ℝ} {q : ℕ} (h13 : 13 ≤ s) (hr170 : 170 ≤ r)
     (hreq : r = s ^ 2)
-    (hG : gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + D ≤
-      gaussianMRRefinedD * r)
+    (hG : gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + D ≤ gaussianMRRefinedD * r)
     (hD : 1967 / 500 ≤ D) (hP : 277 / 50 ≤ P) (hq : Real.log q ≤ L) :
     (4 / 3 : ℝ) *
           (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
@@ -268,23 +253,22 @@ theorem surplusBudget_four_error {L s r P D : ℝ} {q : ℕ} (h13 : 13 ≤ s) (h
   have hqDiv := div_le_div_of_nonneg_right hqmul hr.le
   have hqPole :=
     mul_le_mul_of_nonneg_left (add_le_add hqDiv (le_refl (4 / r)))
-      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] : (0 : ℝ) ≤
-        Analysis.gaussianMR6FifthsEndpoint)
-  have hneg : Analysis.gaussianMR6FifthsEndpoint * (4 - 7 * D / (6 *
-    gaussianMRRefinedConductor)) ≤ 0 := by
+      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] :
+        (0 : ℝ) ≤ Analysis.gaussianMR6FifthsEndpoint)
+  have hneg :
+    Analysis.gaussianMR6FifthsEndpoint * (4 - 7 * D / (6 * gaussianMRRefinedConductor)) ≤ 0 := by
     norm_num only [Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
     linarith only [hD]
   have hnegDiv := div_nonpos_of_nonpos_of_nonneg hneg (sq_nonneg s)
   have hposDiv :
     0 ≤
-      (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta / (6 *
-        gaussianMRRefinedConductor)) /
+      (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
+          (6 * gaussianMRRefinedConductor)) /
         s := by
     apply div_nonneg _ hs.le
     norm_num only [Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth,
-      gaussianMRRefinedMass, Analysis.gaussianMR6FifthsIndex,
-        gaussianMRRefinedConductor]
+      gaussianMRRefinedWidth, gaussianMRRefinedMass, Analysis.gaussianMR6FifthsIndex,
+      gaussianMRRefinedConductor]
   have hqId (t : ℝ) :
     Analysis.gaussianMR6FifthsEndpoint * ((7 / 6) * t / r + 4 / r) =
       Analysis.gaussianMR6FifthsEndpoint * (((7 / 6) * t + 4) / r) := by
@@ -292,41 +276,36 @@ theorem surplusBudget_four_error {L s r P D : ℝ} {q : ℕ} (h13 : 13 ≤ s) (h
   rw [hqId (Real.log q), hqId L] at hqPole
   have hPcap :
     Analysis.gaussianMR6FifthsEndpoint * (((7 / 6 : ℝ) * Real.log q + 4) / r) ≤
-      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-        gaussianMRRefinedConductor) := by
+      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+        (6 * gaussianMRRefinedConductor) := by
     linarith only [hqPole, hpole, hnegDiv, hposDiv]
   have hS :=
     div_le_div_of_nonneg_left
-      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] : (0 : ℝ) ≤ 21 *
-        Analysis.gaussianMR6FifthsEndpoint)
-      (by norm_num only [gaussianMRRefinedWidth] : (0 : ℝ) < 10 *
-        gaussianMRRefinedWidth * 13)
+      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] :
+        (0 : ℝ) ≤ 21 * Analysis.gaussianMR6FifthsEndpoint)
+      (by norm_num only [gaussianMRRefinedWidth] : (0 : ℝ) < 10 * gaussianMRRefinedWidth * 13)
       (mul_le_mul_of_nonneg_left h13
-        (by norm_num only [gaussianMRRefinedWidth] : (0 : ℝ) ≤ 10 *
-          gaussianMRRefinedWidth))
+        (by norm_num only [gaussianMRRefinedWidth] : (0 : ℝ) ≤ 10 * gaussianMRRefinedWidth))
   have hR :=
     div_le_div_of_nonneg_left
-      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] : (0 : ℝ) ≤ 1839 *
-        Analysis.gaussianMR6FifthsEndpoint)
+      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] :
+        (0 : ℝ) ≤ 1839 * Analysis.gaussianMR6FifthsEndpoint)
       (by norm_num only : (0 : ℝ) < 1000 * 170)
       (mul_le_mul_of_nonneg_left hr170 (by norm_num only : (0 : ℝ) ≤ 1000))
   have htail := Analysis.gaussianMR6_tail240 hr170
   have hcap :
     (4 / 3 : ℝ) *
-              (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth *
-                13) +
+              (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * 13) +
                 1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * 170)) +
             13 / 3 +
             12871 / 1000 -
           2 * (277 / 50) +
         148 / 1000 +
-        7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-          gaussianMRRefinedConductor) <
+        7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+          (6 * gaussianMRRefinedConductor) <
       10 := by
-    norm_num only [Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedD,
-      gaussianMRRefinedMass,
-      Analysis.gaussianMR6FifthsIndex, gaussianMRRefinedConductor,
-        gaussianMRRefinedWidth]
+    norm_num only [Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedD, gaussianMRRefinedMass,
+      Analysis.gaussianMR6FifthsIndex, gaussianMRRefinedConductor, gaussianMRRefinedWidth]
   dsimp only [LLS.PaperStatements.gaussianPrefixError]
   rw [Real.sqrt_sq hr.le]
   dsimp only [Analysis.gaussianMR6FifthsEndpoint] at hPcap hS hR hcap ⊢
@@ -343,22 +322,17 @@ theorem surplusBudget_four_main {s D : ℝ} (h13 : 13 ≤ s) (hD : 1967 / 500 �
   let a := gaussianMRRefinedTripleD - (2 / 3) * gaussianMRRefinedD
   let b := gaussianMRRefinedTripleBeta - (2 / 3) * gaussianMRRefinedBeta
   have ha : 0 < a := by
-    norm_num only [a, gaussianMRRefinedTripleD, gaussianMRRefinedD,
-      gaussianMRRefinedMass,
+    norm_num only [a, gaussianMRRefinedTripleD, gaussianMRRefinedD, gaussianMRRefinedMass,
       Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex]
   have hab : 0 < 26 * a - b := by
-    norm_num only [a, b, gaussianMRRefinedTripleD, gaussianMRRefinedTripleBeta,
-      gaussianMRRefinedD,
-      gaussianMRRefinedBeta, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth,
+    norm_num only [a, b, gaussianMRRefinedTripleD, gaussianMRRefinedTripleBeta, gaussianMRRefinedD,
+      gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
       Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex]
   have hp :=
     mul_nonneg (sub_nonneg.mpr h13) (by nlinarith only [ha, hab, h13] : 0 ≤ a * (s + 13) - b)
   have hbase : (10 : ℝ) < a * 13 ^ 2 - b * 13 + (2 / 3) * (1967 / 500) := by
-    norm_num only [a, b, gaussianMRRefinedTripleD, gaussianMRRefinedTripleBeta,
-      gaussianMRRefinedD,
-      gaussianMRRefinedBeta, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth,
+    norm_num only [a, b, gaussianMRRefinedTripleD, gaussianMRRefinedTripleBeta, gaussianMRRefinedD,
+      gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
       Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex]
   change (10 : ℝ) < a * s ^ 2 - b * s + (2 / 3) * D
   nlinarith only [hp, hD, hbase]
@@ -399,8 +373,7 @@ theorem gaussianSeededSurplus_four_absurd (f : Bool) {L : ℝ} (hL : 0 ≤ L) :
   have hG := gaussianSeededSurplus_budget f hL
   change
     _ <
-      (gaussianMRRefinedTripleD - (2 / 3) * gaussianMRRefinedD) *
-        gaussianSeededSurplusRadius f L -
+      (gaussianMRRefinedTripleD - (2 / 3) * gaussianMRRefinedD) * gaussianSeededSurplusRadius f L -
           (gaussianMRRefinedTripleBeta - (2 / 3) * gaussianMRRefinedBeta) *
             gaussianSeededSurplusRoot f L +
         (2 / 3) * gaussianSeededSurplusConstant f at hm
@@ -417,10 +390,8 @@ theorem gaussianSeededSurplus_radius_linear {f : Bool} {L : ℝ} (hL : 63 ≤ L)
       cases f <;>
         norm_num only [gaussianSeededSurplusConstant, Bool.false_eq_true, ite_false, ite_true] :
       (0 : ℝ) < gaussianSeededSurplusConstant f)
-  have hcoef : 0 < gaussianMRRefinedConductor - (5 / 8 : ℝ) * gaussianMRRefinedD
-    := by
-    norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedD,
-      gaussianMRRefinedMass,
+  have hcoef : 0 < gaussianMRRefinedConductor - (5 / 8 : ℝ) * gaussianMRRefinedD := by
+    norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedD, gaussianMRRefinedMass,
       Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex]
   have hm := mul_pos hcoef (by linarith only [hL] : (0 : ℝ) < L)
   have hd := gaussianMRRefined_coefficients.1
@@ -458,8 +429,7 @@ theorem seededSurplus_raw_le_tuned (f : Bool) (L : ℝ) :
     gaussianSeededSurplusRawRoot f L ≤ gaussianSeededTunedRawRoot f L := by
   have hD : gaussianSeededSurplusConstant f ≤ gaussianSeededTunedConstant f := by
     cases f <;>
-      norm_num only [gaussianSeededSurplusConstant, gaussianSeededTunedConstant,
-        Bool.false_eq_true,
+      norm_num only [gaussianSeededSurplusConstant, gaussianSeededTunedConstant, Bool.false_eq_true,
         ite_false, ite_true]
   exact
     Analysis.gaussianBudgetRoot_mono gaussianMRRefined_coefficients.1
@@ -472,8 +442,7 @@ theorem seededSurplus_le_tuned (f : Bool) (L : ℝ) :
   have hr : gaussianSeededSurplusRoot f L ≤ gaussianSeededTunedRoot f L :=
     max_le_max (le_refl _) (seededSurplus_raw_le_tuned f L)
   have h2 :=
-    (sq_le_sq₀ (gaussianSeededSurplus_root_pos f L).le (gaussianSeededTuned_root_pos f
-      L).le).mpr hr
+    (sq_le_sq₀ (gaussianSeededSurplus_root_pos f L).le (gaussianSeededTuned_root_pos f L).le).mpr hr
   have h4 := (sq_le_sq₀ (sq_nonneg _) (sq_nonneg _)).mpr h2
   exact mul_le_mul_of_nonneg_left h4 (by norm_num only : (0 : ℝ) ≤ 6 / 5)
 

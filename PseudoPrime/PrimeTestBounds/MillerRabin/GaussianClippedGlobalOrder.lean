@@ -23,12 +23,11 @@ theorem six_radius_linear_upper {L : ℝ} (hL : 240 ≤ L) :
   have hp := Analysis.gaussianMR6_root_pos L
   have hs : 13 * Analysis.gaussianMR6Root L ≤ Analysis.gaussianMR6Radius L := by
     dsimp only [Analysis.gaussianMR6Radius]
-    nlinarith only [ht, mul_nonneg hp.le (by linarith only [ht] : (0 : ℝ) ≤
-      Analysis.gaussianMR6Root L - 13)]
+    nlinarith only [ht,
+      mul_nonneg hp.le (by linarith only [ht] : (0 : ℝ) ≤ Analysis.gaussianMR6Root L - 13)]
   norm_num only [Analysis.gaussianMR6FifthsD, Analysis.gaussianMR6FifthsBeta,
-    Analysis.gaussianMR6FifthsConductor,
-    Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsMass,
-      Analysis.gaussianMR6FifthsEndpoint] at he
+    Analysis.gaussianMR6FifthsConductor, Analysis.gaussianMR6FifthsIndex,
+    Analysis.gaussianMR6FifthsMass, Analysis.gaussianMR6FifthsEndpoint] at he
   linarith only [he, hs, hL]
 
 /-- For L>=240, B6<=15987 L squared/25000. Square the nonnegative linear

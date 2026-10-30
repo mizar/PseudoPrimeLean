@@ -68,8 +68,8 @@ is integrable. This verifies the vertical-integrability hypothesis of Mellin inv
 theorem verticalIntegrable_resolventKernel {α : ℂ} (hα : α.re < 0) {τ : ℝ} (hτ : 0 < τ) :
     Complex.VerticalIntegrable (fun z : ℂ ↦ 1 / (z ^ 2 * (z - α))) τ := by
   have hδ : 0 < τ - α.re := sub_pos.mpr (hα.trans hτ)
-  have hz : ∀ y : ℝ, (τ : ℂ) + y * Complex.I ≠ 0 :=
-    fun y ↦ Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
+  have hz : ∀ y : ℝ, (τ : ℂ) + y * Complex.I ≠ 0 := fun y ↦
+    Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
   have hd : ∀ y : ℝ, τ - α.re ≤ ‖(τ : ℂ) + y * Complex.I - α‖ := by
     intro y
     have h := Complex.re_le_norm ((τ : ℂ) + y * Complex.I - α)
@@ -102,8 +102,9 @@ theorem continuousAt_mellinResolventWeight {α : ℂ} {t : ℝ} (ht : 0 < t) (ht
     ContinuousAt (mellinResolventWeight α) t := by
   have he : ∀ᶠ u in nhds t, u ∈ Set.Ioc (0 : ℝ) 1 :=
     Filter.Eventually.mono (isOpen_Ioo.mem_nhds ⟨ht, ht1⟩) (fun u hu ↦ ⟨hu.1, hu.2.le⟩)
-  have hc : ContinuousAt
-      (fun u : ℝ ↦ (α ^ 2)⁻¹ * ((u : ℂ) ^ (-α) - 1 - α * Analysis.mellinWeightTwo u)) t :=
+  have hc :
+    ContinuousAt (fun u : ℝ ↦ (α ^ 2)⁻¹ * ((u : ℂ) ^ (-α) - 1 - α * Analysis.mellinWeightTwo u))
+      t :=
     continuousAt_const.mul
       (((Complex.continuous_ofReal.continuousAt.cpow continuousAt_const
                 (Complex.ofReal_mem_slitPlane.mpr ht)).sub
@@ -152,8 +153,7 @@ theorem mellinResolventWeight_inv {α : ℂ} {x : ℝ} (hx : 1 < x) :
   have hx0 : 0 < x := zero_lt_one.trans hx
   have hi : x⁻¹ ∈ Set.Ioc (0 : ℝ) 1 := ⟨inv_pos.mpr hx0, (inv_lt_one₀ hx0).mpr hx |>.le⟩
   rw [mellinResolventWeight, Analysis.mellinWeightZero, Analysis.mellinWeightTwo,
-    Set.indicator_of_mem hi,
-    Set.indicator_of_mem hi, Set.indicator_of_mem hi, Complex.ofReal_inv,
+    Set.indicator_of_mem hi, Set.indicator_of_mem hi, Set.indicator_of_mem hi, Complex.ofReal_inv,
     Complex.inv_cpow_ofReal_nonneg hx0.le, Complex.cpow_neg, inv_inv, Real.log_inv,
     Complex.ofReal_neg, neg_neg, div_eq_mul_inv]
   exact mul_comm _ _

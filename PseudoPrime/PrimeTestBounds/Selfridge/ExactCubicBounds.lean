@@ -12,7 +12,9 @@ public import PseudoPrime.PseudoSquare.Bounds.ExactCubicJacobiBounds
 /-! # Selfridge bounds with exact quadratic conductor and exclusion costs -/
 
 @[expose] public section
+
 namespace PseudoPrime.PrimeTestBounds.Selfridge
+
 /-- Under GRH, the classical factor-detecting and pure negative stopping magnitudes
 obey the exact-conductor cubic bound. Transfer the actual negative odd-prime witness
 and absorb the small exceptions using the bound of at least 27.
@@ -35,9 +37,11 @@ theorem classicalSelfridgeD_cubic_exact_bound {n : ℕ} {hn : Odd n} {hns : ¬Is
         PseudoSquare.cubicExactConductorBound bridge := by
   let hw := NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
   have hb := PseudoSquare.primeNegOneWitness_le_cubic_exact bridge hGRH hw
-  exact ⟨classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs_cast hn hns,
-    classicalSelfridgeD_neg_natAbs_le_of_prime_witness_bound hn hns hw
-      (PseudoSquare.cubicExactConductorBound_ge27 bridge) hb⟩
+  exact
+    ⟨classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs_cast hn hns,
+      classicalSelfridgeD_neg_natAbs_le_of_prime_witness_bound hn hns hw
+        (PseudoSquare.cubicExactConductorBound_ge27 bridge) hb⟩
+
 /-- Under GRH, both Wheel30 stopping magnitudes obey the same exact cubic bound.
 Rewrite the candidate scans by their unconditional equality with the classical scans.
 This preserves the actual conductor and prime-two cost in the public stopping API. -/
@@ -64,4 +68,5 @@ theorem wheel30SelfridgeD_cubic_exact_bound {n : ℕ} {hn : Odd n} {hns : ¬IsSq
         (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns)
         (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns)] using
     classicalSelfridgeD_cubic_exact_bound bridge hGRH
+
 end PseudoPrime.PrimeTestBounds.Selfridge

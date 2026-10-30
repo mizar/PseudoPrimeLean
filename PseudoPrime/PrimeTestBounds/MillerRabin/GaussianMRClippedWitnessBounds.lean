@@ -93,18 +93,15 @@ theorem gaussianClipped_index_four (f : Bool) {n : ℕ} [NeZero n] (H : Subgroup
     Analysis.gaussianMR_compare_width (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianPrefixError (gaussianFloorPrefix f) n (r ^ 2)) (L :=
       (2 / 3 : ℝ) * Real.log n) (I := I) (E := E) (C :=
-      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := gaussianMRRefinedMass)
-      (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor :=
-      gaussianMRRefinedConductor) (D :=
+      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := gaussianMRRefinedMass) (Ecap :=
+      Analysis.gaussianMR6FifthsEndpoint) (conductor := gaussianMRRefinedConductor) (D :=
       (4 * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
       (4 / 3 : ℝ) *
-        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
-          1 / (10 * gaussianMRRefinedWidth)))
+        (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)))
       (by norm_num only [gaussianMRRefinedWidth]) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
-      (by norm_num only [gaussianMRRefinedConductor] :
-        (0 : ℝ) ≤ gaussianMRRefinedConductor)
-      le_rfl le_rfl hcmp'
+      (by norm_num only [gaussianMRRefinedConductor] : (0 : ℝ) ≤ gaussianMRRefinedConductor) le_rfl
+      le_rfl hcmp'
       (by
         intro hbudget
         have hnorm :
@@ -115,8 +112,7 @@ theorem gaussianClipped_index_four (f : Bool) {n : ℕ} [NeZero n] (H : Subgroup
                   1 / (10 * gaussianMRRefinedWidth)) *
                 s +
               11 := by
-          dsimp only [gaussianMRRefinedMass,
-            Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
+          dsimp only [gaussianMRRefinedMass, Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
           nlinarith only [hbudget, herror]
         exact gaussianFloor_triple_absurd (f := f) hL hnorm)
 
@@ -157,8 +153,7 @@ theorem gaussianClipped_witness_four (f : Bool) {n : ℕ} [NeZero n] (hnOdd : Od
     exact PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn1 hnOdd hp hpdvd (hpass p hp hbound)
   have hsmall :
     ∀ p : ℕ,
-      p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
+      p.Prime → ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -170,8 +165,7 @@ theorem gaussianClipped_witness_four (f : Bool) {n : ℕ} [NeZero n] (hnOdd : Od
     gaussianFloor_root_thirteen f (Real.log n)
   have hwidth : 0 < gaussianMRRefinedWidth / gaussianFloorRoot f (Real.log n) :=
     div_pos (by norm_num only [gaussianMRRefinedWidth]) hspos
-  have hwidth1 :
-    gaussianMRRefinedWidth / gaussianFloorRoot f (Real.log n) ≤ 1 / 2 := by
+  have hwidth1 : gaussianMRRefinedWidth / gaussianFloorRoot f (Real.log n) ≤ 1 / 2 := by
     rw [div_le_iff₀ hspos]
     norm_num only [gaussianMRRefinedWidth]
     linarith only [hsbound]
@@ -180,15 +174,12 @@ theorem gaussianClipped_witness_four (f : Bool) {n : ℕ} [NeZero n] (hnOdd : Od
     nlinarith only [hrbound]
   have hprefix :
     gaussianFloorPrefix f ≤
-      ∑ n ∈ Finset.Ioc 0 (gaussianFloorCutoff f),
-        Analysis.gaussianResolventMangoldtWeight n := by
+      ∑ n ∈ Finset.Ioc 0 (gaussianFloorCutoff f), Analysis.gaussianResolventMangoldtWeight n := by
     cases f
-    · simpa only [gaussianFloorPrefix, gaussianFloorCutoff, Bool.false_eq_true,
-        ite_false, ite_true, Nat.floor_ofNat] using
-        LLS.gaussian_prefix35000_sharp hGRH.riemann (le_refl (35000 : ℝ))
-    · simpa only [gaussianFloorPrefix, gaussianFloorCutoff, Bool.false_eq_true,
-        ite_false, ite_true, Nat.floor_ofNat] using
-        LLS.gaussian_prefix50000_lower hGRH.riemann (le_refl (50000 : ℝ))
+    · simpa only [gaussianFloorPrefix, gaussianFloorCutoff, Bool.false_eq_true, ite_false, ite_true,
+        Nat.floor_ofNat] using LLS.gaussian_prefix35000_sharp hGRH.riemann (le_refl (35000 : ℝ))
+    · simpa only [gaussianFloorPrefix, gaussianFloorCutoff, Bool.false_eq_true, ite_false, ite_true,
+        Nat.floor_ofNat] using LLS.gaussian_prefix50000_lower hGRH.riemann (le_refl (50000 : ℝ))
   have hcmp :=
     LLS.PaperStatements.gaussian_relative_prefix_le hprefix hnlarge H hGRH hwidth hwidth1 hx
       (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
@@ -261,23 +252,19 @@ theorem gaussianClipped_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : O
     exact PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn1 hnOdd hp hpdvd (hpass p hp hbound)
   have hsmall :
     ∀ p : ℕ,
-      p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
+      p.Prime → ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
   have hwidth : 0 < h := div_pos (by norm_num only [gaussianMRRefinedWidth]) hspos
   have hprefix :
     gaussianFloorPrefix f ≤
-      ∑ n ∈ Finset.Ioc 0 (gaussianFloorCutoff f),
-        Analysis.gaussianResolventMangoldtWeight n := by
+      ∑ n ∈ Finset.Ioc 0 (gaussianFloorCutoff f), Analysis.gaussianResolventMangoldtWeight n := by
     cases f
-    · simpa only [gaussianFloorPrefix, gaussianFloorCutoff, Bool.false_eq_true,
-        ite_false, ite_true, Nat.floor_ofNat] using
-        LLS.gaussian_prefix35000_sharp hGRH.riemann (le_refl (35000 : ℝ))
-    · simpa only [gaussianFloorPrefix, gaussianFloorCutoff, Bool.false_eq_true,
-        ite_false, ite_true, Nat.floor_ofNat] using
-        LLS.gaussian_prefix50000_lower hGRH.riemann (le_refl (50000 : ℝ))
+    · simpa only [gaussianFloorPrefix, gaussianFloorCutoff, Bool.false_eq_true, ite_false, ite_true,
+        Nat.floor_ofNat] using LLS.gaussian_prefix35000_sharp hGRH.riemann (le_refl (35000 : ℝ))
+    · simpa only [gaussianFloorPrefix, gaussianFloorCutoff, Bool.false_eq_true, ite_false, ite_true,
+        Nat.floor_ofNat] using LLS.gaussian_prefix50000_lower hGRH.riemann (le_refl (50000 : ℝ))
   have hcmp :=
     LLS.PaperStatements.gaussian_relative_prefix_le hprefix hnlarge H hGRH hwidth hh1 hx
       (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
@@ -307,8 +294,7 @@ theorem gaussianClipped_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : O
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
     gaussianMRRefinedD * r ≥
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
-        gaussianFloorConstant f := by
+      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + gaussianFloorConstant f := by
     dsimp only [r, s, L]
     exact gaussianFloor_equation_le f (by linarith only [hL] : 0 ≤ Real.log n)
   have hcmp' :
@@ -320,13 +306,10 @@ theorem gaussianClipped_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : O
     simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
   have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD :
-    gaussianMRRefinedD ≤
-      (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+    gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
-    (m / t) *
-        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
-          1 / (10 * gaussianMRRefinedWidth)) ≤
+    (m / t) * (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)) ≤
       gaussianMRRefinedBeta := by
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
@@ -361,8 +344,8 @@ theorem gaussianClipped_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd : O
         have hi' : (1000000000 : ℝ) ≤ m := by
           simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD
-      hbeta hcmp' hfinish
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD hbeta hcmp'
+      hfinish
 
 /-- For an odd uniform three-prime Korselt product, either clipped cutoff bounds a
 rejecting prime under GRH from log n>=63. Construct the existing index-four
@@ -437,8 +420,7 @@ theorem gaussianClipped_local (f : Bool) {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
   have hwide := gaussianFloor_bound_lower (f := f) hL
   have hN : (35000 : ℝ) ≤ (gaussianFloorCutoff f : ℝ) := by
     cases f <;>
-      norm_num only [gaussianFloorCutoff, Nat.cast_ofNat, Bool.false_eq_true, ite_false,
-        ite_true]
+      norm_num only [gaussianFloorCutoff, Nat.cast_ofNat, Bool.false_eq_true, ite_false, ite_true]
   have hcut := hN.trans (gaussianFloor_cutoff_le f (Real.log n))
   exact max_le (by linarith only [hcut]) (by nlinarith only [hs, hwide, sq_nonneg (Real.log n)])
 
@@ -511,8 +493,7 @@ theorem exists_prime_gaussianClippedEnvelope {n : ℕ} (ho : Odd n) (hc : ¬n.Pr
       p.Prime ∧
         (p : ℝ) ≤ gaussianClippedEnvelope (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  by_cases h :
-    gaussianFloorBound false (Real.log n) ≤ gaussianFloorBound true (Real.log n)
+  by_cases h : gaussianFloorBound false (Real.log n) ≤ gaussianFloorBound true (Real.log n)
   · simpa only [gaussianClippedEnvelope, min_eq_left h] using
       exists_prime_gaussianClipped false ho hc hGRH hL
   · simpa only [gaussianClippedEnvelope, min_eq_right (le_of_not_ge h)] using

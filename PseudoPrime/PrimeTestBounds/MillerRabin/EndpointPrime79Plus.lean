@@ -23,11 +23,9 @@ theorem exists_prime_endpoint79Plus {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ 79 ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   obtain ⟨p, hp, hb, hr⟩ :=
     exists_prime_of_finitePrincipal_gap hn ho hc hGRH
-      LLS.PaperStatements.prime79Plus_radius_bounds.1
-      LLS.PaperStatements.prime79PlusCreditR LLS.PaperStatements.prime79PlusCreditS
-      LLS.PaperStatements.prime79Plus_reciprocal
-      LLS.PaperStatements.prime79Plus_smoothed
-      (LLS.PaperStatements.prime79Plus_gap hL)
+      LLS.PaperStatements.prime79Plus_radius_bounds.1 LLS.PaperStatements.prime79PlusCreditR
+      LLS.PaperStatements.prime79PlusCreditS LLS.PaperStatements.prime79Plus_reciprocal
+      LLS.PaperStatements.prime79Plus_smoothed (LLS.PaperStatements.prime79Plus_gap hL)
   have hq : (p : ℝ) < 83 := hb.trans_lt LLS.PaperStatements.prime79Plus_radius_bounds.2
   have hg : ∀ k ∈ Finset.Ioo 79 83, ¬Nat.Prime k := by decide +kernel
   have h79 : p ≤ 79 := by

@@ -50,8 +50,8 @@ theorem gaussianTuned_prefix (f : GaussianTunedProfile)
 
 /-- The generic large-index consumer, actual prefix and new profile budget
 yield a rejecting prime under the tuned cutoff for every sufficiently large index. -/
-theorem gaussianTuned_witness_large (f : GaussianTunedProfile) {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
+theorem gaussianTuned_witness_large (f : GaussianTunedProfile) {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
     (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -75,8 +75,8 @@ theorem gaussianTuned_witness_large (f : GaussianTunedProfile) {n : ℕ} [NeZero
 2 log n has an actual rejecting prime below the tuned single-root cutoff. Scale the comparison
 radius by 7559/10000 while retaining width k/s. Both the strict residual and the main-term
 budgets use 204/5. -/
-theorem gaussianTuned_witness_four (f : GaussianTunedProfile) {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
+theorem gaussianTuned_witness_four (f : GaussianTunedProfile) {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -162,9 +162,8 @@ theorem gaussianTuned_local (f : GaussianTunedProfile) {n q : ℕ} (hn : 0 < n) 
 
 /-- Under GRH and log n at least 63, every odd composite has a rejecting prime
 under the profile cutoff. Reuse the shared large/local/uniform-triple classification. -/
-theorem exists_prime_gaussianTuned (f : GaussianTunedProfile) {n : ℕ} (ho : Odd n)
-    (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 63 ≤ Real.log n) :
+theorem exists_prime_gaussianTuned (f : GaussianTunedProfile) {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ f.bound (Real.log n) ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -181,9 +180,8 @@ theorem exists_prime_gaussianTuned (f : GaussianTunedProfile) {n : ℕ} (ho : Od
 
 /-- Extract the least rejecting prime from the all-input actual witness and
 preserve the tuned profile cutoff without factorization assumptions. -/
-theorem exists_least_gaussianTuned (f : GaussianTunedProfile) {n : ℕ} (ho : Odd n)
-    (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 63 ≤ Real.log n) :
+theorem exists_least_gaussianTuned (f : GaussianTunedProfile) {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ f.bound (Real.log n) ∧

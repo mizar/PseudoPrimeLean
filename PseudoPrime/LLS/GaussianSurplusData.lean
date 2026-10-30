@@ -304,19 +304,19 @@ theorem gaussianSurplus_check_97 : gaussianSurplusNatCheck 97 = true := by decid
 theorem gaussianSurplus_all_checks :
     Analysis.smallSeedRows.Forall (fun r ↦ gaussianSurplusNatCheck r.index = true) := by
   norm_num only [Analysis.smallSeedRows, Analysis.smallSeedRow, Analysis.GammaFiniteEulerRow.index,
-    Nat.reducePow,
-    List.forall_cons, gaussianSurplus_check_2, gaussianSurplus_check_4, gaussianSurplus_check_8,
-    gaussianSurplus_check_16, gaussianSurplus_check_32, gaussianSurplus_check_64,
-    gaussianSurplus_check_3, gaussianSurplus_check_9, gaussianSurplus_check_27,
-    gaussianSurplus_check_81, gaussianSurplus_check_5, gaussianSurplus_check_25,
-    gaussianSurplus_check_7, gaussianSurplus_check_49, gaussianSurplus_check_11,
-    gaussianSurplus_check_13, gaussianSurplus_check_17, gaussianSurplus_check_19,
-    gaussianSurplus_check_23, gaussianSurplus_check_29, gaussianSurplus_check_31,
-    gaussianSurplus_check_37, gaussianSurplus_check_41, gaussianSurplus_check_43,
-    gaussianSurplus_check_47, gaussianSurplus_check_53, gaussianSurplus_check_59,
-    gaussianSurplus_check_61, gaussianSurplus_check_67, gaussianSurplus_check_71,
-    gaussianSurplus_check_73, gaussianSurplus_check_79, gaussianSurplus_check_83,
-    gaussianSurplus_check_89, gaussianSurplus_check_97, and_self, true_and]
+    Nat.reducePow, List.forall_cons, gaussianSurplus_check_2, gaussianSurplus_check_4,
+    gaussianSurplus_check_8, gaussianSurplus_check_16, gaussianSurplus_check_32,
+    gaussianSurplus_check_64, gaussianSurplus_check_3, gaussianSurplus_check_9,
+    gaussianSurplus_check_27, gaussianSurplus_check_81, gaussianSurplus_check_5,
+    gaussianSurplus_check_25, gaussianSurplus_check_7, gaussianSurplus_check_49,
+    gaussianSurplus_check_11, gaussianSurplus_check_13, gaussianSurplus_check_17,
+    gaussianSurplus_check_19, gaussianSurplus_check_23, gaussianSurplus_check_29,
+    gaussianSurplus_check_31, gaussianSurplus_check_37, gaussianSurplus_check_41,
+    gaussianSurplus_check_43, gaussianSurplus_check_47, gaussianSurplus_check_53,
+    gaussianSurplus_check_59, gaussianSurplus_check_61, gaussianSurplus_check_67,
+    gaussianSurplus_check_71, gaussianSurplus_check_73, gaussianSurplus_check_79,
+    gaussianSurplus_check_83, gaussianSurplus_check_89, gaussianSurplus_check_97, and_self,
+    true_and]
   exact True.intro
 
 /-- Every signed rational Euler lower bound is nonnegative, and the total Mangoldt allowance
@@ -324,8 +324,9 @@ is at least 0.73. These checks involve only the small rational endpoint payload.
 theorem gaussianSurplus_rational_checks :
     Analysis.smallSeedRows.Forall
         (fun r ↦
-          0 ≤ Analysis.finiteSignedEulerLower gaussianSurplusCoefficients (gaussianSurplusRatios
-            r.index)) ∧
+          0 ≤
+            Analysis.finiteSignedEulerLower gaussianSurplusCoefficients
+              (gaussianSurplusRatios r.index)) ∧
       (73 / 100 : ℚ) ≤
         (Analysis.smallSeedRows.map
             (fun r ↦

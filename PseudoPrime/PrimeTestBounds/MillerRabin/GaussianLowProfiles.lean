@@ -74,8 +74,7 @@ theorem signs (f : GaussianLowProfile) : (91 / 10 : ℝ) ≤ f.floor ∧ 0 < f.r
 
 /-- The floored root satisfies its quadratic large-index budget for nonnegative L. -/
 theorem budget (f : GaussianLowProfile) {L : ℝ} (hL : 0 ≤ L) :
-    gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * f.root L +
-      f.residual ≤
+    gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * f.root L + f.residual ≤
       gaussianMRRefinedD * f.radius L := by
   have hu : (9 : ℝ) ≤ f.floor := by cases f <;> norm_num only [floor]
   have hD : (0 : ℝ) ≤ f.residual := by cases f <;> norm_num only [residual]
@@ -146,10 +145,8 @@ theorem radius_linear (f : GaussianLowProfile) {L : ℝ} (hL : 63 ≤ L) :
     (5 / 8 : ℝ) * L < f.radius L := by
   have hG := f.budget (by linarith only [hL] : (0 : ℝ) ≤ L)
   have hp := mul_pos gaussianMRRefined_coefficients.2 (f.root_pos L)
-  have hcoef : 0 < gaussianMRRefinedConductor - (5 / 8 : ℝ) * gaussianMRRefinedD
-    := by
-    norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedD,
-      gaussianMRRefinedMass,
+  have hcoef : 0 < gaussianMRRefinedConductor - (5 / 8 : ℝ) * gaussianMRRefinedD := by
+    norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedD, gaussianMRRefinedMass,
       Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex]
   have hm := mul_pos hcoef (by linarith only [hL] : (0 : ℝ) < L)
   have hd := gaussianMRRefined_coefficients.1
@@ -163,8 +160,8 @@ theorem four_error (f : GaussianLowProfile) {L s : ℝ} {q : ℕ} (hs : f.floor 
         gaussianMRRefinedD * s ^ 2)
     (hq : Real.log q ≤ L) :
     4 *
-          (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * (7559
-            / 10000) * s) +
+          (21 * Analysis.gaussianMR6FifthsEndpoint /
+              (10 * gaussianMRRefinedWidth * (7559 / 10000) * s) +
             1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * (7559 / 10000) * s ^ 2)) +
         13 +
         3 *
@@ -178,23 +175,19 @@ theorem four_error (f : GaussianLowProfile) {L s : ℝ} {q : ℕ} (hs : f.floor 
       hs hG
   · cases f <;>
       norm_num only [floor, residual, gaussianLowFourA, gaussianLowFourV,
-        Analysis.gaussianMR6FifthsEndpoint,
-        gaussianMRRefinedD, gaussianMRRefinedBeta,
-          gaussianMRRefinedMass, gaussianMRRefinedWidth,
-        Analysis.gaussianMR6FifthsIndex, gaussianMRRefinedConductor]
+        Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedD, gaussianMRRefinedBeta,
+        gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
+        gaussianMRRefinedConductor]
   · cases f <;>
       norm_num only [floor, residual, gaussianLowFourA, gaussianLowFourV,
-        Analysis.gaussianMR6FifthsEndpoint,
-        gaussianMRRefinedD, gaussianMRRefinedBeta,
-          gaussianMRRefinedMass, gaussianMRRefinedWidth,
-        Analysis.gaussianMR6FifthsIndex, gaussianMRRefinedConductor]
+        Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedD, gaussianMRRefinedBeta,
+        gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
+        gaussianMRRefinedConductor]
   · cases f <;>
-      norm_num only [floor, residual, prefixValue, fourTail, gaussianLowFourA,
-        gaussianLowFourV,
-        Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedD,
-          gaussianMRRefinedBeta, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-          gaussianMRRefinedConductor]
+      norm_num only [floor, residual, prefixValue, fourTail, gaussianLowFourA, gaussianLowFourV,
+        Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedD, gaussianMRRefinedBeta,
+        gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
+        gaussianMRRefinedConductor]
   · exact f.four_tail_bound hs
   · exact hq
 
@@ -246,118 +239,85 @@ theorem large_cap (f : GaussianLowProfile) {L s : ℝ} {q : ℕ} (hs : f.floor �
     · exact gaussianLow_tail_upper hsq
   cases f
   · apply
-      gaussianLow_coarse_error (u := 91 / 10) (P := 901 / 250) (T := 333 / 1000) (by
-        norm_num only)
+      gaussianLow_coarse_error (u := 91 / 10) (P := 901 / 250) (T := 333 / 1000) (by norm_num only)
         hs (by norm_num only [residual]) hG hq
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+        Analysis.gaussianMR6FifthsEndpoint]
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
+        Analysis.gaussianMR6FifthsEndpoint]
     · exact htail
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
+        Analysis.gaussianMR6FifthsEndpoint]
   · apply
-      gaussianLow_error_cap (u := 19 / 2) (P := 901 / 250) (T := 301 / 1000) (by norm_num
-        only) hs
+      gaussianLow_error_cap (u := 19 / 2) (P := 901 / 250) (T := 301 / 1000) (by norm_num only) hs
         hG hq
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+        Analysis.gaussianMR6FifthsEndpoint]
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
+        Analysis.gaussianMR6FifthsEndpoint]
     · exact htail
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
+        Analysis.gaussianMR6FifthsEndpoint]
   · apply
-      gaussianLow_error_cap (u := 49 / 5) (P := 901 / 250) (T := 281 / 1000) (by norm_num
-        only) hs
+      gaussianLow_error_cap (u := 49 / 5) (P := 901 / 250) (T := 281 / 1000) (by norm_num only) hs
         hG hq
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+        Analysis.gaussianMR6FifthsEndpoint]
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
+        Analysis.gaussianMR6FifthsEndpoint]
     · exact htail
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
+        Analysis.gaussianMR6FifthsEndpoint]
   · apply
       gaussianLow_error_cap (u := 19 / 2) (P := 721769 / 200000) (T := 301 / 1000)
         (by norm_num only) hs hG hq
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+        Analysis.gaussianMR6FifthsEndpoint]
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
+        Analysis.gaussianMR6FifthsEndpoint]
     · exact htail
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
+        Analysis.gaussianMR6FifthsEndpoint]
   · apply
       gaussianLow_error_cap (u := 49 / 5) (P := 721769 / 200000) (T := 281 / 1000)
         (by norm_num only) hs hG hq
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+        Analysis.gaussianMR6FifthsEndpoint]
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
+        Analysis.gaussianMR6FifthsEndpoint]
     · exact htail
-    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV,
-      gaussianMRRefinedD,
-        gaussianMRRefinedBeta, gaussianMRRefinedMass,
-          gaussianMRRefinedWidth,
+    · norm_num only [residual, gaussian1000ResidualA, gaussianLowResidualV, gaussianMRRefinedD,
+        gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
         gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsIndex,
-          Analysis.gaussianMR6FifthsEndpoint]
+        Analysis.gaussianMR6FifthsEndpoint]
 
 end GaussianLowProfile
 

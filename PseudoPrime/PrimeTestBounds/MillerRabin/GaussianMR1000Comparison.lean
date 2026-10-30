@@ -63,8 +63,7 @@ theorem gaussian1000_lt_gammaSharp {L : ℝ} (hL : 132 ≤ L) :
 is strictly below the existing public envelope. Use its exact Gamma/fixed
 selection and the continuous comparisons, without sampled crossings. -/
 theorem gaussian1000_lt_improved {n : ℕ} (hn : 1 < n) (hL : 132 ≤ Real.log n)
-    (hU : Real.log n ≤ 235) :
-    gaussian1000Bound (Real.log n) < improvedSelectedEnvelope n := by
+    (hU : Real.log n ≤ 235) : gaussian1000Bound (Real.log n) < improvedSelectedEnvelope n := by
   rw [← improved_eq_selected hn]
   by_cases hS : Real.log n ≤ gammaSharpFixedSwitch
   · rw [improved_eq_sharp hn (by linarith only [hL]) hS]

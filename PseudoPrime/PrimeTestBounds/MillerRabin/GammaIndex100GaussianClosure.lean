@@ -1393,8 +1393,7 @@ theorem exists_prime_witness_le_gammaIndex100_of_index_four_conductor {n : ℕ} 
         (lt_of_lt_of_le (by decide : 1 < 20000) hnlarge) hnOdd hp hpdvd (hpass p hp hpbound)
   have hsmall :
     ∀ p : ℕ,
-      p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (21 / 10 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
+      p.Prime → ¬p ∣ n → (p : ℝ) ≤ (21 / 10 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -1516,8 +1515,7 @@ theorem exists_prime_witness_le_gammaIndex100GaussianTripleBound29_of_index_four
         (lt_of_lt_of_le (by decide : 1 < 20000) hnlarge) hnOdd hp hpdvd (hpass p hp hpbound)
   have hsmall :
     ∀ p : ℕ,
-      p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (21 / 10 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
+      p.Prime → ¬p ∣ n → (p : ℝ) ≤ (21 / 10 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩

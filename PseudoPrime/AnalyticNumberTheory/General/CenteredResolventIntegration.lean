@@ -91,8 +91,8 @@ theorem integrable_centeredResolventKernel {α : ℂ} (hα : α.re < 0) {τ x : 
   have ha : α ≠ 0 := fun h ↦ by
     rw [h, Complex.zero_re] at hα
     exact lt_irrefl _ hα
-  have hz : ∀ y : ℝ, (τ : ℂ) + y * Complex.I ≠ 0 :=
-    fun y ↦ Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
+  have hz : ∀ y : ℝ, (τ : ℂ) + y * Complex.I ≠ 0 := fun y ↦
+    Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
   have hd : ∀ y : ℝ, (τ : ℂ) + y * Complex.I - α ≠ 0 := by
     intro y h
     have he := congrArg Complex.re h

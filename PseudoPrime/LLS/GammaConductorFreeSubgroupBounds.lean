@@ -127,8 +127,9 @@ theorem gamma_ramp_subgroup_comparison_conductor_free {q : ℕ} [NeZero q] (hq :
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 30000 ≤ Real.log q)
     (hsmall :
       ∀ p : ℕ,
-        p.Prime → ¬p ∣ q → (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q) ^ 2 →
-          NumberTheory.residueInSubgroup q H p) :
+        p.Prime →
+          ¬p ∣ q →
+          (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q) ^ 2 → NumberTheory.residueInSubgroup q H p) :
     let x := (32 / 99 : ℝ) * (Real.log q) ^ 2;
     (2 * (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) - 1) * Real.sqrt x ≤
       (11783423 / 25000000 : ℝ) * Real.log q + 899 / 25 +
@@ -140,8 +141,9 @@ theorem gamma_ramp_subgroup_comparison_conductor_free {q : ℕ} [NeZero q] (hq :
   have hx : 1 ≤ x := by
     dsimp only [x]
     nlinarith only [hL, sq_nonneg (Real.log q - 30000)]
-  have hs : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x →
-    NumberTheory.residueInSubgroup q H p := by
+  have hs :
+    ∀ p : ℕ,
+      p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.residueInSubgroup q H p := by
     intro p hp hd hc
     apply hsmall p hp hd
     convert hc using 1

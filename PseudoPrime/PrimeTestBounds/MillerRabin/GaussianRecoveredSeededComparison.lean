@@ -202,15 +202,13 @@ theorem gaussianRecoveredSeeded_switch35_bounds :
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
       Analysis.gaussianMR6FifthsIndex, gaussianRecoveredSeededConstant, Bool.false_eq_true,
-        ite_false,
-      ite_true] at hRlo hRhi hSlo hShi ⊢
+      ite_false, ite_true] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRlo, hShi]
   · apply (div_lt_iff₀ hc).mpr
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
       Analysis.gaussianMR6FifthsIndex, gaussianRecoveredSeededConstant, Bool.false_eq_true,
-        ite_false,
-      ite_true] at hRlo hRhi hSlo hShi ⊢
+      ite_false, ite_true] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRhi, hSlo]
 
 /-- Both switches at floor 50000 lie strictly between 293 and 295.

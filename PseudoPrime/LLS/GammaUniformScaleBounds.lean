@@ -110,8 +110,9 @@ theorem gamma_ramp_subgroup_comparison_uniform_scale {q : ℕ} [NeZero q] (hq : 
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {T : ℝ} (hT : 35000 ≤ T)
     (hambient : Real.log q ≤ T + 2)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (4 / 5 : ℝ) * T ^ 2 →
-      NumberTheory.residueInSubgroup q H p) :
+    (hsmall :
+      ∀ p : ℕ,
+        p.Prime → ¬p ∣ q → (p : ℝ) ≤ (4 / 5 : ℝ) * T ^ 2 → NumberTheory.residueInSubgroup q H p) :
     let x := (32 / 99 : ℝ) * T ^ 2;
     (2 * (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) - 1) * Real.sqrt x ≤
       (11783423 / 25000000 : ℝ) * Real.log q + 40159 / 900 +
@@ -123,8 +124,9 @@ theorem gamma_ramp_subgroup_comparison_uniform_scale {q : ℕ} [NeZero q] (hq : 
   have hxlarge := Analysis.common_nonOne_ramp_scale_large hT
   have hx : 1 ≤ x := (by norm_num only : (1 : ℝ) ≤ (17 / 5) ^ 16).trans hxlarge
   have hs0 := Real.sqrt_pos.mpr (zero_lt_one.trans_le hx)
-  have hs : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x →
-    NumberTheory.residueInSubgroup q H p := by
+  have hs :
+    ∀ p : ℕ,
+      p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.residueInSubgroup q H p := by
     intro p hp hd hc
     apply hsmall p hp hd
     convert hc using 1
@@ -188,8 +190,8 @@ theorem exists_prime_outside_le_gamma_four_fifths_scale {q : ℕ} [NeZero q] (hq
                 ((4 / 5 : ℝ) * T ^ 2) q /
               Real.sqrt ((32 / 99 : ℝ) * T ^ 2)) <
         (11783423 / 25000000 + 1 / 795 : ℝ) * T) :
-    ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * T ^
-      2 := by
+    ∃ p : ℕ,
+      p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * T ^ 2 := by
   classical
   by_contra hn
   have hsmall (p : ℕ) (hp : p.Prime) (hd : ¬p ∣ q) (hb : (p : ℝ) ≤ (4 / 5 : ℝ) * T ^ 2) :

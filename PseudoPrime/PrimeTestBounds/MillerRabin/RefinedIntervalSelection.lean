@@ -123,8 +123,7 @@ candidates together with the low-prime base. Resolve the ordered interval guards
 theorem refinedSelected_eq_before101 {n : ℕ} (hL : 63 ≤ Real.log n) (hU : Real.log n < 101) :
     refinedSelectedEnvelope n =
       min (lowPrimeTightSelected n)
-        (min (gaussianRecoveredBound (Real.log n))
-          (gaussianRecoveredSeeded (Real.log n))) := by
+        (min (gaussianRecoveredBound (Real.log n)) (gaussianRecoveredSeeded (Real.log n))) := by
   simp only [refinedSelectedEnvelope, refinedGuardSelected, ite_eq_right (not_lt.mpr hL),
     ite_eq_left hU]
 
@@ -135,8 +134,7 @@ theorem refinedSelected_eq_analytic {n : ℕ} (hL : 101 ≤ Real.log n)
     refinedSelectedEnvelope n =
       min (lowPrimeTightSelected n)
         (min (gaussianRecoveredBound (Real.log n))
-          (min (gammaRecoveredBound (Real.log n))
-            (gaussianRecoveredSeeded (Real.log n)))) := by
+          (min (gammaRecoveredBound (Real.log n)) (gaussianRecoveredSeeded (Real.log n)))) := by
   have h63 : ¬Real.log n < 63 := by linarith only [hL]
   simp only [refinedSelectedEnvelope, refinedGuardSelected, ite_eq_right h63,
     ite_eq_right (not_lt.mpr hL), ite_eq_left hU]
@@ -149,8 +147,7 @@ theorem refinedSelected_eq_earlier {n : ℕ} (hL : 1100000000000 ≤ Real.log n)
       min (lowPrimeTightSelected n)
         (min (gaussianRecoveredBound (Real.log n))
           (min (gammaRecoveredBound (Real.log n))
-            (min (gaussianRecoveredSeeded (Real.log n))
-              ((71 / 250) * Real.log n ^ 2)))) := by
+            (min (gaussianRecoveredSeeded (Real.log n)) ((71 / 250) * Real.log n ^ 2)))) := by
   have h63 : ¬Real.log n < 63 := by linarith only [hL]
   have h101 : ¬Real.log n < 101 := by linarith only [hL]
   simp only [refinedSelectedEnvelope, refinedGuardSelected, ite_eq_right h63, ite_eq_right h101,
@@ -164,8 +161,7 @@ theorem refinedSelected_eq_high {n : ℕ} (hL : 2000000000000 ≤ Real.log n) :
       min (lowPrimeTightSelected n)
         (min (gaussianRecoveredBound (Real.log n))
           (min (gammaRecoveredBound (Real.log n))
-            (min (gaussianRecoveredSeeded (Real.log n))
-              ((28237 / 100000) * Real.log n ^ 2)))) := by
+            (min (gaussianRecoveredSeeded (Real.log n)) ((28237 / 100000) * Real.log n ^ 2)))) := by
   have h63 : ¬Real.log n < 63 := by linarith only [hL]
   have h101 : ¬Real.log n < 101 := by linarith only [hL]
   have he : ¬Real.log n < 1100000000000 := by linarith only [hL]

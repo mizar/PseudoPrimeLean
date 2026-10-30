@@ -30,8 +30,7 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
       ∀ m : ℝ,
         Analysis.gaussianMR6FifthsIndex ≤ m →
           (m / (m - 1)) *
-                (21 * Analysis.gaussianMR6FifthsEndpoint /
-                    (10 * gaussianMRRefinedWidth * s0) +
+                (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s0) +
                   1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * s0 ^ 2)) +
               13 / (m - 1) +
               LLS.PaperStatements.gaussianPrefixError P n ((s0 ^ 2) ^ 2) <
@@ -95,8 +94,7 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
     exact PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn1 hnOdd hp hpdvd (hpass p hp hbound)
   have hsmall :
     ∀ p : ℕ,
-      p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
+      p.Prime → ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -129,8 +127,7 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
       exact LLS.PaperStatements.subgroupConductorLogSum_le H
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
-    gaussianMRRefinedD * r ≥
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + (D) := by
+    gaussianMRRefinedD * r ≥ gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + (D) := by
     dsimp only [r, s, L]
     exact hbudget
   have hcmp' :
@@ -142,13 +139,10 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
     simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
   have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD :
-    gaussianMRRefinedD ≤
-      (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+    gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
-    (m / t) *
-        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
-          1 / (10 * gaussianMRRefinedWidth)) ≤
+    (m / t) * (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)) ≤
       gaussianMRRefinedBeta := by
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
@@ -183,8 +177,8 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
         have hi' : (1000000000 : ℝ) ≤ m := by
           simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD
-      hbeta hcmp' hfinish
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD hbeta hcmp'
+      hfinish
 
 /-- A uniform squarefree Korselt triple is handled by any actual index-four
 witness rule with conductor at most twice log n. Extract its three factors,

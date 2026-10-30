@@ -76,9 +76,7 @@ theorem gaussianSelected_lt_old {n : ℕ} (hn : 1 < n) (hL : 240 < Real.log n)
   by_cases h300 : 300 ≤ Real.log n
   · rw [ite_eq_left h300, gaussianMRRefinedEnvelope_eq h300]
     have hs := gaussianFloor50_lt_refined h300
-    have hmin :
-      gaussianFloorSelected (Real.log n) ≤
-        gaussianFloorBound true (Real.log n) := by
+    have hmin : gaussianFloorSelected (Real.log n) ≤ gaussianFloorBound true (Real.log n) := by
       rw [← gaussianFloor_min_eq_selected (by linarith only [hL])]
       exact min_le_right _ _
     exact hmin.trans_lt hs

@@ -528,8 +528,7 @@ theorem exists_prime_witness_of_gamma_index100_gap {n : ℕ} [NeZero n] (hn : 1 
     by_contra hreject
     exact hnone ⟨p, hp, hpbound, hreject⟩
   have hsmall :
-    ∀ p : ℕ,
-      p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * r ^ 2 → NumberTheory.residueInSubgroup n H p :=
+    ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * r ^ 2 → NumberTheory.residueInSubgroup n H p :=
     fun p hp hpb ↦ hHpass (p : ZMod n) (hpass p hp hpb)
   have hu :=
     LLS.PaperStatements.gamma_primitive_average_re_le_even_prime_prefix hQ le_rfl H hGRH

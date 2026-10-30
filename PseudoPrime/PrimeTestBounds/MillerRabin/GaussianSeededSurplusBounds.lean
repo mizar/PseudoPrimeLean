@@ -36,12 +36,11 @@ theorem seededSurplus_large (f : Bool)
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have h0 : (0 : ℝ) ≤ Real.log n := by linarith only [hL]
   apply
-    gaussianBudget_large_witness (gaussianSeededSharpCutoff f)
-      (gaussianSeededSurplusPrefix f) (gaussianSeededSurplusConstant f)
-      (gaussianSeededSurplusRoot f (Real.log n))
+    gaussianBudget_large_witness (gaussianSeededSharpCutoff f) (gaussianSeededSurplusPrefix f)
+      (gaussianSeededSurplusConstant f) (gaussianSeededSurplusRoot f (Real.log n))
       ((by norm_num only : (91 / 10 : ℝ) ≤ 13).trans (gaussianSeededSurplus_root13 f _))
-      (gaussianSeededSurplus_budget f h0) hprefix
-      (gaussianSeededSurplus_cutoff_le f _) _ ho hnlarge H hi hp hGRH
+      (gaussianSeededSurplus_budget f h0) hprefix (gaussianSeededSurplus_cutoff_le f _) _ ho hnlarge
+      H hi hp hGRH
   intro m hm
   exact gaussianSeededSurplus_residual f h0 hm (le_refl (Real.log n))
 
@@ -65,9 +64,8 @@ theorem seededSurplus_four (f : Bool)
   have h0 : (0 : ℝ) ≤ Real.log n := by linarith only [hL]
   exact
     gaussianBudget_four_witness_threshold (gaussianSeededSharpCutoff f)
-      (gaussianSeededSurplusPrefix f) (gaussianSeededSurplusRoot f (Real.log n))
-      10 (gaussianSeededSurplus_root13 f _) hprefix
-      (gaussianSeededSurplus_cutoff_le f _)
+      (gaussianSeededSurplusPrefix f) (gaussianSeededSurplusRoot f (Real.log n)) 10
+      (gaussianSeededSurplus_root13 f _) hprefix (gaussianSeededSurplus_cutoff_le f _)
       (gaussianSeededSurplus_four_error f h0 (le_refl (Real.log n)))
       (gaussianSeededSurplus_four_absurd f h0) ho hnlarge H hi hp hGRH hC
 
@@ -140,8 +138,8 @@ theorem seededSurplus_prefix (f : Bool)
       ∑ j ∈ Finset.Ioc 0 (gaussianSeededSharpCutoff f),
         Analysis.gaussianResolventMangoldtWeight j := by
   cases f
-  · simpa only [gaussianSeededSurplusPrefix, gaussianSeededSharpCutoff,
-      Bool.false_eq_true, ite_false, Nat.floor_ofNat] using
+  · simpa only [gaussianSeededSurplusPrefix, gaussianSeededSharpCutoff, Bool.false_eq_true,
+      ite_false, Nat.floor_ofNat] using
       LLS.gaussian_prefix35000_surplus hGRH.riemann (le_refl (35000 : ℝ))
   · simpa only [gaussianSeededSurplusPrefix, gaussianSeededSharpCutoff, ite_true,
       Nat.floor_ofNat] using LLS.gaussian_prefix50000_surplus hGRH.riemann (le_refl (50000 : ℝ))

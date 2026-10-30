@@ -118,8 +118,7 @@ theorem next_eq_fixed61 {n : ℕ} (hn : 1 < n) (hN : 3000 ≤ n) (hL : 553 / 50 
   · intro h; exfalso; linarith only [hU, h]
 
 /-- The seeded selected cutoff retains its 35000 prefix floor in its certified domain. -/
-theorem seededSelected_floor {L : ℝ} (hL : 63 ≤ L) :
-    (35000 : ℝ) ≤ gaussianSeededSelected L := by
+theorem seededSelected_floor {L : ℝ} (hL : 63 ≤ L) : (35000 : ℝ) ≤ gaussianSeededSelected L := by
   rw [← gaussianSeeded_min_eq_selected hL]
   have h35 := gaussianSeeded_cutoff_le false L
   have h50 := gaussianSeeded_cutoff_le true L
@@ -251,8 +250,7 @@ theorem seeded_le_improved {n : ℕ} (hn : 1 < n) (hL : 240 ≤ Real.log n)
     exact gaussianSeeded_selected_le_old (by linarith only [hL])
   · have h240 : Real.log n ≤ 240 := le_of_not_gt h
     rw [improved_eq_fixed35000 hn (by linarith only [hL, gammaSharpFixedSwitch_bounds.2]) h240]
-    rw [gaussianSeededSelected_eq_fixed
-        (h240.trans gaussianSeeded_switch35_bounds.1.le)]
+    rw [gaussianSeededSelected_eq_fixed (h240.trans gaussianSeeded_switch35_bounds.1.le)]
 
 /-- From L=240 to the triangular entrance, the seeded Gaussian interval formula is selected. -/
 theorem next_eq_seeded {n : ℕ} (hn : 1 < n) (hL : 240 ≤ Real.log n)
@@ -338,8 +336,7 @@ theorem next_eq_middle_three {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n) (h
       (min (gammaReflectedBound (Real.log n)) (gaussian1000Bound (Real.log n)))
   have hp : C ≤ LLS.PaperStatements.pointwiseCutoff (Real.log n) := min_le_left _ _
   have hg : C ≤ gammaReflectedBound (Real.log n) := (min_le_right _ _).trans (min_le_left _ _)
-  have ha : C ≤ gaussian1000Bound (Real.log n) :=
-    (min_le_right _ _).trans (min_le_right _ _)
+  have ha : C ≤ gaussian1000Bound (Real.log n) := (min_le_right _ _).trans (min_le_right _ _)
   have h63 : (63 : ℝ) ≤ Real.log n := by linarith only [hL]
   apply
     le_antisymm
@@ -375,10 +372,8 @@ theorem next_eq_middle_three {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n) (h
 /-- From L=132 through L=235 only the pointwise and two-root Gaussian cutoffs remain. -/
 theorem next_eq_middle_two {n : ℕ} (hn : 1 < n) (hL : 132 ≤ Real.log n) (hU : Real.log n ≤ 235) :
     nextWitnessEnvelope n =
-      min (LLS.PaperStatements.pointwiseCutoff (Real.log n))
-        (gaussian1000Bound (Real.log n)) := by
-  let C :=
-    min (LLS.PaperStatements.pointwiseCutoff (Real.log n)) (gaussian1000Bound (Real.log n))
+      min (LLS.PaperStatements.pointwiseCutoff (Real.log n)) (gaussian1000Bound (Real.log n)) := by
+  let C := min (LLS.PaperStatements.pointwiseCutoff (Real.log n)) (gaussian1000Bound (Real.log n))
   have hp : C ≤ LLS.PaperStatements.pointwiseCutoff (Real.log n) := min_le_left _ _
   have ha : C ≤ gaussian1000Bound (Real.log n) := min_le_right _ _
   have h63 : (63 : ℝ) ≤ Real.log n := by linarith only [hL]
@@ -392,8 +387,7 @@ theorem next_eq_middle_two {n : ℕ} (hn : 1 < n) (hL : 132 ≤ Real.log n) (hU 
   · intro h
     exact
       ha.trans
-        ((gaussian1000_lt_fixed (by linarith only [hL]) hU).le.trans
-          (seededSelected_floor h))
+        ((gaussian1000_lt_fixed (by linarith only [hL]) hU).le.trans (seededSelected_floor h))
   · intro h; exfalso; linarith only [hL, h]
   · intro h; exfalso; linarith only [hL, h]
   · intro h; exfalso; linarith only [hL, h]

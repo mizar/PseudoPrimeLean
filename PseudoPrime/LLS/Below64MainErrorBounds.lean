@@ -63,8 +63,8 @@ theorem primitiveReciprocalOddMainError_le_fixed_of_ge59 {x : ℝ} (hx : 59 ≤ 
   have hi : 1 / x ≤ (1 / 59 : ℝ) :=
     div_le_div_of_nonneg_left (by norm_num only) (by norm_num only) hx
   have hc : 0 ≤ 1 - 1 / x := by linarith only [hi]
-  have hg := mul_le_mul_of_nonneg_right
-    Analysis.twentyThree_fortieths_lt_eulerMascheroniConstant.le hc
+  have hg :=
+    mul_le_mul_of_nonneg_right Analysis.twentyThree_fortieths_lt_eulerMascheroniConstant.le hc
   have hl := mul_le_mul_of_nonneg_right Real.log_two_lt_d9.le (inv_nonneg.mpr hxp.le)
   unfold Analysis.primitiveReciprocalOddMainError
   simp only [div_eq_mul_inv] at hi hg ⊢
@@ -127,8 +127,8 @@ exceeds 15/2 and its square is at least 59. Certify the endpoint logarithm
 and use its tangent to control all larger inputs. Both conditions needed
 by the lower-cutoff comparison follow from this single root estimate. -/
 theorem sharperPart2Root_height_and_cutoff {L : ℝ} (hL : (695939 / 100000 : ℝ) ≤ L) :
-    (15 / 2 : ℝ) < Analysis.sharperPart2CutoffRoot L ∧ 59 ≤ (Analysis.sharperPart2CutoffRoot L) ^
-      2 := by
+    (15 / 2 : ℝ) < Analysis.sharperPart2CutoffRoot L ∧
+      59 ≤ (Analysis.sharperPart2CutoffRoot L) ^ 2 := by
   have hL0 : 0 < L := by linarith only [hL]
   have hc :
     Analysis.rationalLogIntervalCheck (695939 / 100000) 3 12 (194 / 100) (1940093 / 1000000) =
@@ -136,8 +136,8 @@ theorem sharperPart2Root_height_and_cutoff {L : ℝ} (hL : (695939 / 100000 : �
     decide +kernel
   have hl := (Analysis.rationalLogIntervalCheck_sound hc).2
   norm_num only [Rat.cast_ofNat, Rat.cast_div] at hl
-  have ht := Analysis.log_le_log_add_sub_div (a := (695939 / 100000 : ℝ)) (y := L) (by norm_num
-    only) hL0
+  have ht :=
+    Analysis.log_le_log_add_sub_div (a := (695939 / 100000 : ℝ)) (y := L) (by norm_num only) hL0
   have hb : (19203 / 2500 : ℝ) ≤ Analysis.sharperPart2CutoffRoot L := by
     unfold Analysis.sharperPart2CutoffRoot
     linarith only [ht, hl, hL]

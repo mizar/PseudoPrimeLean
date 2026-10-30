@@ -22,30 +22,26 @@ theorem triangularTuned_stage_data (i : Fin 7) :
       (triangularTunedProfile i).C < (triangularProfile i.castSucc).C ∧
       (triangularProfile i.castSucc).C ≤ (7 / 15 : ℝ) := by
   fin_cases i <;> dsimp only [Fin.castSucc, Fin.castAdd, Fin.castLE, Fin.succ] at * <;>
-    norm_num only [triangularProfile, triangularTunedProfile,
-      triangularP0466, triangularP042, triangularP0333,
-      triangularP030, triangularP029, triangularP0284,
-      triangularP02829, triangularP02823622, triangularP04603,
-      triangularP04145, triangularP03315, triangularP02992,
-      triangularP02891, triangularP028399, triangularP028289,
-      Fin.castSucc, Fin.castAdd, Fin.castLE, Fin.succ, Nat.reduceAdd, and_self]
+    norm_num only [triangularProfile, triangularTunedProfile, triangularP0466, triangularP042,
+      triangularP0333, triangularP030, triangularP029, triangularP0284, triangularP02829,
+      triangularP02823622, triangularP04603, triangularP04145, triangularP03315, triangularP02992,
+      triangularP02891, triangularP028399, triangularP028289, Fin.castSucc, Fin.castAdd, Fin.castLE,
+      Fin.succ, Nat.reduceAdd, and_self]
   all_goals
     change (1480000000000 : ℝ) = 1480000000000 ∧ (28289 / 100000 : ℝ) < 2829 / 10000 ∧ True
     norm_num only [and_self]
 
 /-- Before the next entrance the currently active coefficient is the smallest valid one. -/
-theorem triangularStage_best (i : Fin 7) {L : ℝ} (hU : L < (triangularProfile i.succ).T)
-    (j : Fin 8) (hj : (triangularProfile j).T ≤ L) :
+theorem triangularStage_best (i : Fin 7) {L : ℝ} (hU : L < (triangularProfile i.succ).T) (j : Fin 8)
+    (hj : (triangularProfile j).T ≤ L) :
     (triangularProfile i.castSucc).C ≤ (triangularProfile j).C := by
   fin_cases i <;> fin_cases j <;>
     dsimp only [Fin.castSucc, Fin.castAdd, Fin.castLE, Fin.succ] at * <;>
-    norm_num only [triangularProfile, triangularTunedProfile,
-      triangularP0466, triangularP042, triangularP0333,
-      triangularP030, triangularP029, triangularP0284,
-      triangularP02829, triangularP02823622, triangularP04603,
-      triangularP04145, triangularP03315, triangularP02992,
-      triangularP02891, triangularP028399, triangularP028289,
-      Fin.castSucc, Fin.castAdd, Fin.castLE, Fin.succ, Nat.reduceAdd] at hU hj ⊢ <;>
+    norm_num only [triangularProfile, triangularTunedProfile, triangularP0466, triangularP042,
+      triangularP0333, triangularP030, triangularP029, triangularP0284, triangularP02829,
+      triangularP02823622, triangularP04603, triangularP04145, triangularP03315, triangularP02992,
+      triangularP02891, triangularP028399, triangularP028289, Fin.castSucc, Fin.castAdd, Fin.castLE,
+      Fin.succ, Nat.reduceAdd] at hU hj ⊢ <;>
     first
     | linarith only [hU, hj]
     | (change (1820000000000 : ℝ) ≤ L at hj; linarith only [hU, hj])
@@ -54,40 +50,33 @@ theorem triangularStage_best (i : Fin 7) {L : ℝ} (hU : L < (triangularProfile 
 theorem triangularStage_after11 (i : Fin 7) {L : ℝ} (hU : L < (triangularProfile i.succ).T)
     (hL : 1100000000000 ≤ L) : (triangularProfile i.castSucc).C ≤ (71 / 250 : ℝ) := by
   fin_cases i <;> dsimp only [Fin.castSucc, Fin.castAdd, Fin.castLE, Fin.succ] at * <;>
-    norm_num only [triangularProfile, triangularTunedProfile,
-      triangularP0466, triangularP042, triangularP0333,
-      triangularP030, triangularP029, triangularP0284,
-      triangularP02829, triangularP02823622, triangularP04603,
-      triangularP04145, triangularP03315, triangularP02992,
-      triangularP02891, triangularP028399, triangularP028289,
-      Fin.castSucc, Fin.castAdd, Fin.castLE, Fin.succ, Nat.reduceAdd] at hU ⊢ <;>
+    norm_num only [triangularProfile, triangularTunedProfile, triangularP0466, triangularP042,
+      triangularP0333, triangularP030, triangularP029, triangularP0284, triangularP02829,
+      triangularP02823622, triangularP04603, triangularP04145, triangularP03315, triangularP02992,
+      triangularP02891, triangularP028399, triangularP028289, Fin.castSucc, Fin.castAdd, Fin.castLE,
+      Fin.succ, Nat.reduceAdd] at hU ⊢ <;>
     linarith only [hU, hL]
 
 /-- After scale 1.5 trillion, the active pre-final coefficient is at most 0.282924. -/
 theorem triangularStage_after15 (i : Fin 7) {L : ℝ} (hU : L < (triangularProfile i.succ).T)
-    (hL : 1500000000000 ≤ L) :
-    (triangularProfile i.castSucc).C ≤ (282924 / 1000000 : ℝ) := by
+    (hL : 1500000000000 ≤ L) : (triangularProfile i.castSucc).C ≤ (282924 / 1000000 : ℝ) := by
   fin_cases i <;> dsimp only [Fin.castSucc, Fin.castAdd, Fin.castLE, Fin.succ] at * <;>
-    norm_num only [triangularProfile, triangularTunedProfile,
-      triangularP0466, triangularP042, triangularP0333,
-      triangularP030, triangularP029, triangularP0284,
-      triangularP02829, triangularP02823622, triangularP04603,
-      triangularP04145, triangularP03315, triangularP02992,
-      triangularP02891, triangularP028399, triangularP028289,
-      Fin.castSucc, Fin.castAdd, Fin.castLE, Fin.succ, Nat.reduceAdd] at hU ⊢ <;>
+    norm_num only [triangularProfile, triangularTunedProfile, triangularP0466, triangularP042,
+      triangularP0333, triangularP030, triangularP029, triangularP0284, triangularP02829,
+      triangularP02823622, triangularP04603, triangularP04145, triangularP03315, triangularP02992,
+      triangularP02891, triangularP028399, triangularP028289, Fin.castSucc, Fin.castAdd, Fin.castLE,
+      Fin.succ, Nat.reduceAdd] at hU ⊢ <;>
     linarith only [hU, hL]
 
 /-- The next entrance of each of the first seven stages is no later than 1.82 trillion. -/
 theorem triangularStage_next_le (i : Fin 7) :
     (triangularProfile i.succ).T ≤ (1820000000000 : ℝ) := by
   fin_cases i <;> dsimp only [Fin.castSucc, Fin.castAdd, Fin.castLE, Fin.succ] at * <;>
-    norm_num only [triangularProfile, triangularTunedProfile,
-      triangularP0466, triangularP042, triangularP0333,
-      triangularP030, triangularP029, triangularP0284,
-      triangularP02829, triangularP02823622, triangularP04603,
-      triangularP04145, triangularP03315, triangularP02992,
-      triangularP02891, triangularP028399, triangularP028289,
-      Fin.castSucc, Fin.castAdd, Fin.castLE, Fin.succ, Nat.reduceAdd]
+    norm_num only [triangularProfile, triangularTunedProfile, triangularP0466, triangularP042,
+      triangularP0333, triangularP030, triangularP029, triangularP0284, triangularP02829,
+      triangularP02823622, triangularP04603, triangularP04145, triangularP03315, triangularP02992,
+      triangularP02891, triangularP028399, triangularP028289, Fin.castSucc, Fin.castAdd, Fin.castLE,
+      Fin.succ, Nat.reduceAdd]
   all_goals
     change (1820000000000 : ℝ) ≤ 1820000000000
     exact le_rfl
@@ -133,9 +122,7 @@ theorem gaussianLowFamily_quadratic_lower {L : ℝ} (hL : 63 ≤ L) :
 theorem seededSharp_quadratic_lower {L : ℝ} (hL : 63 ≤ L) :
     (15 / 32 : ℝ) * L ^ 2 < gaussianSeededSharp L := by
   rw [gaussianSeededSharp_eq_min hL]
-  exact
-    lt_min (gaussianSeededSharp_bound_lower hL)
-      (gaussianSeededSharp_bound_lower hL)
+  exact lt_min (gaussianSeededSharp_bound_lower hL) (gaussianSeededSharp_bound_lower hL)
 
 /-- Throughout a current high stage, the refined base is no smaller than its
 active triangular cutoff. The 1.1--1.5 trillion subrange retains the stronger 0.284 floor. -/
@@ -173,14 +160,11 @@ theorem sharpSelected_eq_triangularStage (i : Fin 7) {n : ℕ} (hn : 1 < n)
   rw [← lowFiniteSelected_eq_refined hn (by linarith only [hentry])] at hB
   have hcoef :=
     mul_le_mul_of_nonneg_right (triangularTuned_stage_data i).2.2 (sq_nonneg (Real.log n))
-  have hG :
-    (triangularProfile i.castSucc).C * Real.log n ^ 2 ≤
-      gaussianLowFamily (Real.log n) := by
+  have hG : (triangularProfile i.castSucc).C * Real.log n ^ 2 ≤ gaussianLowFamily (Real.log n) := by
     have hs := gaussianLowFamily_quadratic_lower h63
     nlinarith only [hcoef, hs, sq_nonneg (Real.log n)]
   have hS :
-    (triangularProfile i.castSucc).C * Real.log n ^ 2 ≤
-      gaussianSeededSharp (Real.log n) := by
+    (triangularProfile i.castSucc).C * Real.log n ^ 2 ≤ gaussianSeededSharp (Real.log n) := by
     have hs := seededSharp_quadratic_lower h63
     nlinarith only [hcoef, hs, sq_nonneg (Real.log n)]
   rw [sharpSelectedEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 h63)), sharpGuardSelected,
@@ -203,9 +187,7 @@ theorem triangularTuned_strict_stage (i : Fin 7) {n : ℕ} (hn : 1 < n)
 /-- Every scale in the union of the first seven current high stages has one active stage.
 Successive exact rational entrances cover the entire half-open interval. -/
 theorem triangularStage_exists {L : ℝ} (hL : (30000000000 : ℝ) ≤ L) (hU : L < 1820000000000) :
-    ∃ i : Fin 7,
-      (triangularProfile i.castSucc).T ≤ L ∧
-        L < (triangularProfile i.succ).T := by
+    ∃ i : Fin 7, (triangularProfile i.castSucc).T ≤ L ∧ L < (triangularProfile i.succ).T := by
   by_cases h0 : L < 40000000000
   · exact ⟨0, hL, h0⟩
   by_cases h1 : L < 100000000000

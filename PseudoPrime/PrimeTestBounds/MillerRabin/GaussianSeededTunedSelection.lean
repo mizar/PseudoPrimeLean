@@ -45,8 +45,7 @@ theorem seededTuned_raw_profiles_lt {L : ℝ} (hL : 0 ≤ L) :
       ite_false, ite_true]
   have hroot :=
     Analysis.gaussianBudgetRoot_strictMono (b := gaussianMRRefinedBeta)
-      gaussianMRRefined_coefficients.1
-      (add_nonneg (mul_nonneg hc hL) hD)
+      gaussianMRRefined_coefficients.1 (add_nonneg (mul_nonneg hc hL) hD)
       (add_lt_add_of_le_of_lt (le_refl (gaussianMRRefinedConductor * L)) hlt)
   change gaussianSeededTunedRawRoot true L < gaussianSeededTunedRawRoot false L at hroot
   have h2 :=

@@ -38,8 +38,7 @@ theorem integral_centeredResolventKernel_eq {α : ℂ} (hα : α.re < 0) {τ x :
     have hi : (1 : ℝ) / x ∈ Set.Ioc (0 : ℝ) 1 :=
       ⟨div_pos zero_lt_one hx0, (div_lt_one hx0).mpr hx |>.le⟩
     rw [Analysis.mellinWeightTwo, Set.indicator_of_mem hi, one_div, Real.log_inv,
-      Complex.ofReal_neg,
-      neg_neg]
+      Complex.ofReal_neg, neg_neg]
   rw [hm] at hig
   let H := fun y : ℝ ↦
     (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) /

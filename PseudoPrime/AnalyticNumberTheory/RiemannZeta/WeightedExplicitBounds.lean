@@ -18,6 +18,7 @@ public import PseudoPrime.Analysis.ExplicitFormulaHelpers
 public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+
 /-- RH bounds the reciprocal residue-ledger error after its exact finite trivial-zero sum
 is removed. This retains both signs of the error needed in Lemma 2.4. -/
 theorem abs_reciprocalResidueLedger_error_le (hRH : RiemannHypothesis) {x τ : ℝ} (hx : 1 < x)
@@ -73,7 +74,6 @@ theorem abs_reciprocalResidueLedger_error_le (hRH : RiemannHypothesis) {x τ : �
   rw [he]
   exact (Complex.abs_re_le_norm _).trans hb
 
-
 /-- RH bounds the error in the full reciprocal zeta explicit formula by
 `2 * RiemannXi.riemannZeroMass / sqrt x`. Both the contour ledger and the exact trivial-zero
 partial sums are passed to their limits, so no sign of the error is discarded. -/
@@ -99,7 +99,6 @@ theorem abs_reciprocalWeightedMangoldtSum_error_le (hRH : RiemannHypothesis) {x 
       (Filter.Eventually.of_forall (fun m ↦ abs_reciprocalResidueLedger_error_le hRH hx h2 m))
   simpa only [sub_neg_eq_add] using hb
 
-
 /-- The reciprocal trivial-zero series agrees with the denominator convention
 in the paper statement; this is only the inverse-power identity. -/
 theorem riemannReciprocalTrivialZeroSeries_eq_paper (x : ℝ) :
@@ -111,15 +110,13 @@ theorem riemannReciprocalTrivialZeroSeries_eq_paper (x : ℝ) :
   simp only [inv_pow, div_eq_mul_inv, mul_inv_rev, one_mul]
   ring
 
-
 /-- RH bounds the logarithmic residue-ledger error after the exact trivial-zero sum
 is removed. The derivative of the xi logarithmic derivative accounts for the constant error. -/
 theorem abs_logResidueLedger_error_le (hRH : RiemannHypothesis) {x τ : ℝ} (hx : 1 < x) (hτ : 1 < τ)
     (m : ℕ) :
     |(riemannZetaLogContourResidueLedger x (unifiedRectangleLower m)
               (unifiedTauRectangleUpper τ m)).re -
-          (x -
-        Real.log (2 * Real.pi) * Real.log x - 1 + Real.pi ^ 2 / 24) -
+          (x - Real.log (2 * Real.pi) * Real.log x - 1 + Real.pi ^ 2 / 24) -
           (∑
               ρ ∈
                 (riemannZetaZerosInAnyRectangle (unifiedRectangleLower m)
@@ -146,7 +143,7 @@ theorem abs_logResidueLedger_error_le (hRH : RiemannHypothesis) {x τ : ℝ} (hx
       ← Complex.ofReal_ofNat 24, ← Complex.ofReal_div, Complex.ofReal_re] using hbridge
   have hre0 :
     (-RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero -
-        Complex.log (2 * Real.pi) * Complex.log x).re =
+          Complex.log (2 * Real.pi) * Complex.log x).re =
       -RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero.re -
         Real.log (2 * Real.pi) * Real.log x := by
     rw [← Complex.ofReal_ofNat 2, ← Complex.ofReal_mul, ←
@@ -156,24 +153,22 @@ theorem abs_logResidueLedger_error_le (hRH : RiemannHypothesis) {x τ : ℝ} (hx
   rw [riemannZetaLogContourResidueLedger_unifiedTau_eq hτ, riemannZetaLogResidueAtZero_eq hxpos,
     riemannZetaLogResidueAtOne_eq, Complex.add_re, Complex.add_re, hre0, Complex.ofReal_re]
   change
-    |-RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero.re -
-        Real.log (2 * Real.pi) * Real.log x + x +
+    |-RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero.re - Real.log (2 * Real.pi) * Real.log x +
+            x +
             (∑ ρ ∈ S, riemannZetaLogZeroContribution x ρ).re -
-          (x -
-        Real.log (2 * Real.pi) * Real.log x - 1 + Real.pi ^ 2 / 24) -
+          (x - Real.log (2 * Real.pi) * Real.log x - 1 + Real.pi ^ 2 / 24) -
           (∑ ρ ∈ S.filter (fun ρ ↦ ρ.re < 0), riemannZetaLogZeroContribution x ρ).re| ≤
       _
   rw [← hsplit, Complex.add_re]
   have he :
-    -RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero.re -
-        Real.log (2 * Real.pi) * Real.log x + x +
+    -RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero.re - Real.log (2 * Real.pi) * Real.log x +
+          x +
           ((∑ ρ ∈ S.filter (fun ρ ↦ ρ.re < 0), riemannZetaLogZeroContribution x ρ).re +
             (∑ ρ ∈ Sn, riemannZetaLogZeroContribution x ρ).re) -
-        (x -
-        Real.log (2 * Real.pi) * Real.log x - 1 + Real.pi ^ 2 / 24) -
+        (x - Real.log (2 * Real.pi) * Real.log x - 1 + Real.pi ^ 2 / 24) -
         (∑ ρ ∈ S.filter (fun ρ ↦ ρ.re < 0), riemannZetaLogZeroContribution x ρ).re =
       ((∑ ρ ∈ Sn, riemannZetaLogZeroContribution x ρ) -
-        deriv (logDeriv RiemannXi.riemannXi) 0).re := by
+          deriv (logDeriv RiemannXi.riemannXi) 0).re := by
     rw [Complex.sub_re, hbridge']
     ring
   rw [he]
@@ -181,13 +176,11 @@ theorem abs_logResidueLedger_error_le (hRH : RiemannHypothesis) {x τ : ℝ} (hx
     (Complex.abs_re_le_norm _).trans
       ((norm_sub_le _ _).trans ((add_le_add hb hD).trans_eq (by ring)))
 
-
 /-- RH bounds the logarithmic explicit-formula error after the full trivial-zero series
 has been retained. The finite zero norm estimate passes to the weighted sum limit. -/
 theorem abs_logWeightedMangoldtSum_error_le (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     |Arithmetic.logWeightedMangoldtSum x -
-            (x -
-        Real.log (2 * Real.pi) * Real.log x - 1 + Real.pi ^ 2 / 24) +
+            (x - Real.log (2 * Real.pi) * Real.log x - 1 + Real.pi ^ 2 / 24) +
           riemannZetaLogTrivialZeroSeries x| ≤
       2 * RiemannXi.riemannZeroMass * (Real.sqrt x + 1) := by
   have h2 : (1 : ℝ) < 2 := by norm_num only
@@ -199,13 +192,11 @@ theorem abs_logWeightedMangoldtSum_error_le (hRH : RiemannHypothesis) {x : ℝ} 
   simp only [Complex.ofReal_re] at hRe
   have ht := tendsto_sum_logTrivialZeros_unifiedRectangle hx h2
   have hlim :=
-    ((hRe.sub_const (x -
-        Real.log (2 * Real.pi) * Real.log x - 1 + Real.pi ^ 2 / 24)).sub ht).abs
+    ((hRe.sub_const (x - Real.log (2 * Real.pi) * Real.log x - 1 + Real.pi ^ 2 / 24)).sub ht).abs
   have hb :=
     le_of_tendsto hlim
       (Filter.Eventually.of_forall (fun m ↦ abs_logResidueLedger_error_le hRH hx h2 m))
   simpa only [sub_neg_eq_add] using hb
-
 
 /-- For `x > 1`, the paper's logarithmic correction series is the Basel constant
 minus the logarithmic trivial-zero tail. Both component series are summable. -/
@@ -230,7 +221,6 @@ theorem logTrivialZeroSeries_paper_eq {x : ℝ} (hx : 1 < x) :
   rw [he, hb.tsum_sub hs, tsum_mul_left, Analysis.tsum_shifted_basel_eq]
   unfold riemannZetaLogTrivialZeroSeries
   ring
-
 
 /-- Under RH and x > 1, the unsigned reciprocal Mangoldt sum is bounded by
 log x-1-gamma+log(2 pi)/x+2 RiemannXi.riemannZeroMass/sqrt x.

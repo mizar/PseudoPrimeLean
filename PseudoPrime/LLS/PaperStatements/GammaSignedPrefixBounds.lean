@@ -60,8 +60,8 @@ Unpack its unit representative and the annihilator membership criterion.
 No primality or analytic hypothesis is required; this transfers a no-witness
 subgroup condition to the common Euler-prefix character bound. -/
 theorem annihilator_apply_one_of_residue_mem {q k : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
-    (χ : NumberTheory.subgroupAnnihilator H) (hk : NumberTheory.residueInSubgroup q H k) : χ.val k
-      = 1 := by
+    (χ : NumberTheory.subgroupAnnihilator H) (hk : NumberTheory.residueInSubgroup q H k) :
+    χ.val k = 1 := by
   obtain ⟨u, hu, he⟩ := hk
   rw [← he]
   exact (NumberTheory.mem_subgroupAnnihilator_iff H χ.val).mp χ.property u hu

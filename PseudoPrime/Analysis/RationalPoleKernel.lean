@@ -32,7 +32,8 @@ construction additionally requires the strip and decay conditions. -/
 noncomputable def rationalPoleProfile (m : ℕ) (a c u : ℝ) : ℝ :=
   if 0 < u ∧ Real.log u ≤ 2 * c then
     (((2 * c - Real.log u) / (2 * a)) ^ (2 * m - 1) *
-      Real.exp (-((2 * c - Real.log u) / (2 * a)))) / ((2 * m - 1).factorial : ℕ)
+        Real.exp (-((2 * c - Real.log u) / (2 * a)))) /
+      ((2 * m - 1).factorial : ℕ)
   else 0
 
 /-- For a>0 the proposed real profile is nonnegative at every argument. Its support
@@ -42,16 +43,19 @@ theorem rationalPoleProfile_nonneg (m : ℕ) {a : ℝ} (ha : 0 < a) (c u : ℝ) 
     0 ≤ rationalPoleProfile m a c u := by
   unfold rationalPoleProfile
   split_ifs with h
-  · exact div_nonneg (mul_nonneg (pow_nonneg
-      (div_nonneg (sub_nonneg.mpr h.2) (mul_pos (by norm_num only) ha).le) _)
-      (Real.exp_pos _).le) (Nat.cast_nonneg _)
+  · exact
+      div_nonneg
+        (mul_nonneg
+          (pow_nonneg (div_nonneg (sub_nonneg.mpr h.2) (mul_pos (by norm_num only) ha).le) _)
+          (Real.exp_pos _).le)
+        (Nat.cast_nonneg _)
   · exact le_refl 0
 
 /-- Beyond exp(2c), the proposed profile is zero. Taking logarithms identifies the
 upper support cutoff; no positivity of the pole parameter is needed here. Later
 principal-sum estimates can therefore retain a finite upper support endpoint. -/
-theorem rationalPoleProfile_eq_zero (m : ℕ) (a c : ℝ) {u : ℝ}
-    (hu : Real.exp (2 * c) < u) : rationalPoleProfile m a c u = 0 := by
+theorem rationalPoleProfile_eq_zero (m : ℕ) (a c : ℝ) {u : ℝ} (hu : Real.exp (2 * c) < u) :
+    rationalPoleProfile m a c u = 0 := by
   have hp := (Real.exp_pos (2 * c)).trans hu
   have hl : 2 * c < Real.log u := (Real.lt_log_iff_exp_lt hp).mpr hu
   exact ite_eq_right (fun h ↦ (not_le_of_gt hl) h.2)
@@ -64,14 +68,13 @@ theorem norm_rationalPoleFunction (m : ℕ) {a c : ℝ} (ha : 0 < a) (t : ℝ) :
   have he : ‖Complex.exp (2 * (c : ℂ) * (Complex.I * t))‖ = 1 := by
     rw [Complex.norm_exp]
     simp only [Complex.mul_re, Complex.re_ofNat, Complex.ofReal_re, Complex.im_ofNat,
-      Complex.ofReal_im, mul_zero, sub_zero, Complex.I_re, zero_mul, Complex.I_im,
-      Complex.mul_im, add_zero, Real.exp_zero]
-  have hd : ‖1 + 2 * (a : ℂ) * (Complex.I * t)‖ ^ 2 = 1 + (2 * a * t)^2 := by
+      Complex.ofReal_im, mul_zero, sub_zero, Complex.I_re, zero_mul, Complex.I_im, Complex.mul_im,
+      add_zero, Real.exp_zero]
+  have hd : ‖1 + 2 * (a : ℂ) * (Complex.I * t)‖ ^ 2 = 1 + (2 * a * t) ^ 2 := by
     rw [Complex.sq_norm, Complex.normSq_apply]
-    simp only [Complex.add_re, Complex.one_re, Complex.mul_re, Complex.re_ofNat,
-      Complex.ofReal_re, Complex.im_ofNat, Complex.ofReal_im, mul_zero, sub_zero,
-      Complex.I_re, zero_mul, Complex.I_im, Complex.mul_im, add_zero, zero_add,
-      mul_one, Complex.add_im, Complex.one_im]
+    simp only [Complex.add_re, Complex.one_re, Complex.mul_re, Complex.re_ofNat, Complex.ofReal_re,
+      Complex.im_ofNat, Complex.ofReal_im, mul_zero, sub_zero, Complex.I_re, zero_mul, Complex.I_im,
+      Complex.mul_im, add_zero, zero_add, mul_one, Complex.add_im, Complex.one_im]
     ring
   rw [rationalPoleFunction, norm_div, norm_mul, he, mul_one, norm_pow, pow_mul, hd,
     Complex.norm_real, Real.norm_eq_abs, abs_of_pos (mul_pos (by norm_num only) ha)]

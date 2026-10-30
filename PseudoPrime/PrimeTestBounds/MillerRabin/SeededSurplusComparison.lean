@@ -19,25 +19,21 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 The mass, width and conductor agree, while the residual is strictly smaller. -/
 theorem seededSurplus_raw_lt_tuned (f : Bool) {L : ℝ} (hL : 0 ≤ L) :
     gaussianSeededSurplusRawBound f L < gaussianSeededTunedRawBound f L := by
-  have hc : 0 ≤ gaussianMRRefinedConductor := by
-    norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
   have hD : 0 ≤ gaussianSeededSurplusConstant f := by
     cases f <;>
-      norm_num only [gaussianSeededSurplusConstant, Bool.false_eq_true, ite_false,
-        ite_true]
+      norm_num only [gaussianSeededSurplusConstant, Bool.false_eq_true, ite_false, ite_true]
   have hlt : gaussianSeededSurplusConstant f < gaussianSeededTunedConstant f := by
     cases f <;>
-      norm_num only [gaussianSeededSurplusConstant, gaussianSeededTunedConstant,
-        Bool.false_eq_true, ite_false, ite_true]
+      norm_num only [gaussianSeededSurplusConstant, gaussianSeededTunedConstant, Bool.false_eq_true,
+        ite_false, ite_true]
   have hr :=
     Analysis.gaussianBudgetRoot_strictMono (b := gaussianMRRefinedBeta)
       gaussianMRRefined_coefficients.1 (add_nonneg (mul_nonneg hc hL) hD)
       (add_lt_add_of_le_of_lt (le_refl (gaussianMRRefinedConductor * L)) hlt)
   change gaussianSeededSurplusRawRoot f L < gaussianSeededTunedRawRoot f L at hr
   have h2 :=
-    (sq_lt_sq₀ (gaussianSeededSurplus_raw_pos f L).le
-          (gaussianSeededTuned_raw_pos f L).le).mpr
-      hr
+    (sq_lt_sq₀ (gaussianSeededSurplus_raw_pos f L).le (gaussianSeededTuned_raw_pos f L).le).mpr hr
   have h4 := (sq_lt_sq₀ (sq_nonneg _) (sq_nonneg _)).mpr h2
   exact mul_lt_mul_of_pos_left h4 (by norm_num only : (0 : ℝ) < 6 / 5)
 
@@ -71,8 +67,7 @@ theorem seededSurplus35_lt_tuned {n : ℕ} (hN : 3000 ≤ n) (hL : 245 ≤ Real.
   apply seededSurplus_lt_raw false (by linarith only [hL])
   norm_num only [gaussianSeededSharpCutoff, Bool.false_eq_true, ite_false, Nat.cast_ofNat]
   dsimp only [gaussianSeededTunedSwitch]
-  linarith only [hL, gaussianSeededSharp_switch35_bounds.2,
-    (seededTuned_shift_bounds false).2]
+  linarith only [hL, gaussianSeededSharp_switch35_bounds.2, (seededTuned_shift_bounds false).2]
 
 /-- From scale 300 to the first high entrance, the surplus 50000 profile strictly improves the
 full tuned selection. This includes the initial comparison band [300,310]. -/

@@ -22,8 +22,7 @@ theorem mellinResolventWeight_eq_zero_of_one_lt (α : ℂ) {t : ℝ} (ht : 1 < t
     mellinResolventWeight α t = 0 := by
   have hn : t ∉ Set.Ioc (0 : ℝ) 1 := fun h ↦ (not_le_of_gt ht) h.2
   simp only [mellinResolventWeight, Analysis.mellinWeightZero, Analysis.mellinWeightTwo,
-    Set.indicator_of_notMem hn,
-    mul_zero, sub_zero]
+    Set.indicator_of_notMem hn, mul_zero, sub_zero]
 
 /-- For an argument greater than one, the resolvent weight is continuous.
 It is locally zero. This supplies inversion outside the support. -/

@@ -92,29 +92,23 @@ theorem gaussian1000_index_four {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ) (
     Analysis.gaussianMR_compare_width (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianPrefixError ((7191 / 2000)) n (r ^ 2)) (L :=
       (2 / 3 : ℝ) * Real.log n) (I := I) (E := E) (C :=
-      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := gaussianMRRefinedMass)
-      (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor :=
-      gaussianMRRefinedConductor) (D :=
+      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := gaussianMRRefinedMass) (Ecap :=
+      Analysis.gaussianMR6FifthsEndpoint) (conductor := gaussianMRRefinedConductor) (D :=
       (4 * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
       (4 / 3 : ℝ) *
-        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
-          1 / (10 * gaussianMRRefinedWidth)))
+        (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)))
       (by norm_num only [gaussianMRRefinedWidth]) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
-      (by norm_num only [gaussianMRRefinedConductor] :
-        (0 : ℝ) ≤ gaussianMRRefinedConductor)
-      le_rfl le_rfl hcmp'
+      (by norm_num only [gaussianMRRefinedConductor] : (0 : ℝ) ≤ gaussianMRRefinedConductor) le_rfl
+      le_rfl hcmp'
       (by
         intro hbudget
-        have hroot :=
-          gaussian1000_four_budget (by linarith only [hL] : (0 : ℝ) ≤ Real.log n)
+        have hroot := gaussian1000_four_budget (by linarith only [hL] : (0 : ℝ) ≤ Real.log n)
         change
           gaussian1000FourD * r ≥
-            (2 / 3 : ℝ) * gaussianMRRefinedConductor * L +
-              gaussian1000FourBeta * s +
+            (2 / 3 : ℝ) * gaussianMRRefinedConductor * L + gaussian1000FourBeta * s +
               127 / 10 at hroot
-        dsimp only [gaussian1000FourD, gaussian1000FourBeta,
-          gaussianMRRefinedMass,
+        dsimp only [gaussian1000FourD, gaussian1000FourBeta, gaussianMRRefinedMass,
           Analysis.gaussianMR6FifthsEndpoint] at hroot hbudget herror
         nlinarith only [hbudget, herror, hroot])
 
@@ -138,9 +132,7 @@ theorem gaussian1000_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge 
     dsimp only [x, gaussian1000Bound, gaussian1000Radius, r]
   have hX : ((1000 : ℕ) : ℝ) ≤ (6 / 5 : ℝ) * x := by
     rw [hcut]
-    exact
-      (by norm_num only : (1000 : ℝ) ≤ 12000).trans
-        (gaussian1000_cutoff_floor (Real.log n))
+    exact (by norm_num only : (1000 : ℝ) ≤ 12000).trans (gaussian1000_cutoff_floor (Real.log n))
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -157,21 +149,17 @@ theorem gaussian1000_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge 
     exact PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn1 hnOdd hp hpdvd (hpass p hp hbound)
   have hsmall :
     ∀ p : ℕ,
-      p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
+      p.Prime → ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
-  have hrootSq : (gaussian1000Root (Real.log n)) ^ 2 = r := by
-    dsimp only [r, gaussian1000Radius]
+  have hrootSq : (gaussian1000Root (Real.log n)) ^ 2 = r := by dsimp only [r, gaussian1000Radius]
   have hrbound : (100 : ℝ) ≤ r := gaussian1000_radius_hundred (Real.log n)
   have hspos : 0 < gaussian1000Root (Real.log n) := gaussian1000_root_pos _
-  have hsbound : (10 : ℝ) ≤ gaussian1000Root (Real.log n) :=
-    gaussian1000_root_ten (Real.log n)
+  have hsbound : (10 : ℝ) ≤ gaussian1000Root (Real.log n) := gaussian1000_root_ten (Real.log n)
   have hwidth : 0 < gaussianMRRefinedWidth / gaussian1000Root (Real.log n) :=
     div_pos (by norm_num only [gaussianMRRefinedWidth]) hspos
-  have hwidth1 :
-    gaussianMRRefinedWidth / gaussian1000Root (Real.log n) ≤ 1 / 2 := by
+  have hwidth1 : gaussianMRRefinedWidth / gaussian1000Root (Real.log n) ≤ 1 / 2 := by
     rw [div_le_iff₀ hspos]
     norm_num only [gaussianMRRefinedWidth]
     linarith only [hsbound]
@@ -236,9 +224,7 @@ theorem gaussian1000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
     dsimp only [gaussian1000Bound, gaussian1000Radius, r, L, x]
   have hX : ((1000 : ℕ) : ℝ) ≤ (6 / 5 : ℝ) * x := by
     rw [hcut]
-    exact
-      (by norm_num only : (1000 : ℝ) ≤ 12000).trans
-        (gaussian1000_cutoff_floor (Real.log n))
+    exact (by norm_num only : (1000 : ℝ) ≤ 12000).trans (gaussian1000_cutoff_floor (Real.log n))
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -254,8 +240,7 @@ theorem gaussian1000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
     exact PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn1 hnOdd hp hpdvd (hpass p hp hbound)
   have hsmall :
     ∀ p : ℕ,
-      p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
+      p.Prime → ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -293,8 +278,7 @@ theorem gaussian1000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
     gaussianMRRefinedD * r ≥
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
-        (163 / 20) := by
+      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + (163 / 20) := by
     dsimp only [r, s, L]
     exact gaussian1000_large_budget (by linarith only [hL] : 0 ≤ Real.log n)
   have hcmp' :
@@ -306,13 +290,10 @@ theorem gaussian1000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
     simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
   have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD :
-    gaussianMRRefinedD ≤
-      (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+    gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
-    (m / t) *
-        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
-          1 / (10 * gaussianMRRefinedWidth)) ≤
+    (m / t) * (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)) ≤
       gaussianMRRefinedBeta := by
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
@@ -347,8 +328,8 @@ theorem gaussian1000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
         have hi' : (1000000000 : ℝ) ≤ m := by
           simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD
-      hbeta hcmp' hfinish
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD hbeta hcmp'
+      hfinish
 
 /-- For an odd uniform three-prime Korselt product, GRH and log n>=63
 yield an actual rejecting prime within the 1000-prefix cutoff. Construct the
@@ -413,8 +394,7 @@ theorem gaussian1000_witness_card {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree n)
 the 1000-prefix bound. Combine log q<=2 log n/3, the floor 12000 and
 the quadratic lower bound; keep the ambient passing-residue containment upstream. -/
 theorem gaussian1000_local {n q : ℕ} (hn : 0 < n) (hq : 0 < q) (hsize : q ^ 2 ≤ 10 ^ 9 * n)
-    (hL : 63 ≤ Real.log n) :
-    max (3000 : ℝ) (Real.log q ^ 2) ≤ gaussian1000Bound (Real.log n) := by
+    (hL : 63 ≤ Real.log n) : max (3000 : ℝ) (Real.log q ^ 2) ≤ gaussian1000Bound (Real.log n) := by
   have hlog := Analysis.mr_local_log_le_of_square_le hn hq hsize
   have hcap : Real.log q ≤ (2 / 3 : ℝ) * Real.log n := by
     linarith only [hlog, hL, Analysis.log_ten_lt_seven_thirds]

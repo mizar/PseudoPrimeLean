@@ -12,7 +12,6 @@ public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.LinearCombination
 
-
 /-! # Relative Gaussian comparison with independently scaled radius -/
 
 @[expose] public section

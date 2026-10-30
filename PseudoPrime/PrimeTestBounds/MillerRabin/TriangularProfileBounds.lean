@@ -43,8 +43,8 @@ theorem triangularProfile_local (f : TriangularProfile) {n q : ℕ} (hn : 0 < n)
 
 /-- The generic signed gap gives an actual rejecting prime in the large-index
 branch. A factor prime is nonunit; a subgroup-external prime cannot pass MR. -/
-theorem exists_prime_triangularProfileIndex (f : TriangularProfile) {n : ℕ} [NeZero n]
-    (hn : 1 < n) (ho : Odd n) (hi : 1000000000000 ≤ (PrimeTest.fermatSubgroup n).index)
+theorem exists_prime_triangularProfileIndex (f : TriangularProfile) {n : ℕ} [NeZero n] (hn : 1 < n)
+    (ho : Odd n) (hi : 1000000000000 ≤ (PrimeTest.fermatSubgroup n).index)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : f.T ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -78,14 +78,12 @@ theorem triangularProfile_triple (f : TriangularProfile) {n : ℕ} (hnOdd : Odd 
   rcases f.triple with hcommon | hsharp
   · have hentry : gaussianRelativeCommon.T ≤ Real.log n := f.entry.trans hL
     obtain ⟨p, hp, hb, hr⟩ :=
-      gaussianProfile_witness_card gaussianRelativeCommon hnOdd hsf hc hK hU hnlarge hGRH
-        hentry
+      gaussianProfile_witness_card gaussianRelativeCommon hnOdd hsf hc hK hU hnlarge hGRH hentry
     refine ⟨p, hp, hb.trans ?_, hr⟩
     exact mul_le_mul_of_nonneg_right hcommon (sq_nonneg (Real.log n))
   · have hentry : gaussianRelativeSharper.T ≤ Real.log n := hsharp.2.trans hL
     obtain ⟨p, hp, hb, hr⟩ :=
-      gaussianProfile_witness_card gaussianRelativeSharper hnOdd hsf hc hK hU hnlarge hGRH
-        hentry
+      gaussianProfile_witness_card gaussianRelativeSharper hnOdd hsf hc hK hU hnlarge hGRH hentry
     refine ⟨p, hp, hb.trans ?_, hr⟩
     exact mul_le_mul_of_nonneg_right hsharp.1 (sq_nonneg (Real.log n))
 
@@ -93,8 +91,8 @@ theorem triangularProfile_triple (f : TriangularProfile) {n : ℕ} (hnOdd : Odd 
 an actual rejecting prime at most C(log n)². The index-10¹² classification is
 exhaustive: transfer the local cutoff, use the actual relative triple bound,
 or apply the signed large-index gap. No factorization hypotheses remain. -/
-theorem exists_prime_triangularProfile (f : TriangularProfile) {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_prime_triangularProfile (f : TriangularProfile) {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : f.T ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -123,8 +121,8 @@ theorem exists_prime_triangularProfile (f : TriangularProfile) {n : ℕ} (hn : 1
 
 /-- The least rejecting prime satisfies the same profile bound. Extract the
 least element from the actual all-odd-composite prime-witness theorem. -/
-theorem exists_least_triangularProfile (f : TriangularProfile) {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_least_triangularProfile (f : TriangularProfile) {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : f.T ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧

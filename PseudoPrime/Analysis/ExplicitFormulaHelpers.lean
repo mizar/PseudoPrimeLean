@@ -16,6 +16,7 @@ public import Mathlib.Tactic.Ring
 public section
 
 namespace PseudoPrime.Analysis
+
 /-- Remove the nonzero contour normalization from a residue-ledger limit.
 The resulting limit can be combined with convergent trivial-zero partial sums. -/
 theorem tendsto_residueLedger_of_normalized {f : ℕ → ℂ} {L : ℂ}
@@ -35,7 +36,6 @@ theorem tendsto_residueLedger_of_normalized {f : ℕ → ℂ} {L : ℂ}
   exact
     (h.const_mul (((2 * Real.pi : ℂ) * Complex.I)⁻¹)).congr (fun m ↦ inv_mul_cancel_left₀ hn (f m))
 
-
 /-- An absolute error bounded by a nonnegative radius is a multiple of that
 radius by a real number of absolute value at most one. The zero radius is handled directly. -/
 theorem exists_theta_mul_of_abs_le {y c : ℝ} (h : |y| ≤ c) : ∃ θ : ℝ, |θ| ≤ 1 ∧ y = θ * c := by
@@ -46,7 +46,6 @@ theorem exists_theta_mul_of_abs_le {y c : ℝ} (h : |y| ≤ c) : ∃ θ : ℝ, |
     refine ⟨y / c, ?_, (div_mul_cancel₀ y hc).symm⟩
     rw [abs_div, abs_of_pos hcpos]
     exact (div_le_one hcpos).mpr h
-
 
 /-- The shifted Basel series has sum `pi^2/6`. Its missing zero-index term vanishes. -/
 theorem tsum_shifted_basel_eq : (∑' k : ℕ, (1 : ℝ) / ((k : ℝ) + 1) ^ 2) = Real.pi ^ 2 / 6 := by

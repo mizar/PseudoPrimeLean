@@ -88,8 +88,7 @@ theorem sharpSelected_mono_normal {m n : ℕ} (hm : 9 ≤ m) (hmn : m ≤ n)
       rw [sharpSelected_eq_regular hmlarge (hlog.trans_lt hU), sharpSelected_eq_regular hnlarge hU]
       exact
         min_le_min (lowFinitePointwise_mono hlog)
-          (min_le_min (gaussianLowFamily_mono hlog)
-            (gaussianSeededSharp_mono hlog))
+          (min_le_min (gaussianLowFamily_mono hlog) (gaussianSeededSharp_mono hlog))
 
 /-- Prime rounding preserves the public selection's monotonicity on the
 same natural-input range. Rewrite the analytic cutoff to its selection and

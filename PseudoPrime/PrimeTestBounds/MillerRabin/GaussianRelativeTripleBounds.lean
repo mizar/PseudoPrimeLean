@@ -59,8 +59,7 @@ theorem gaussianRelative_witness {n N : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
     have hb : (p : ℝ) ≤ lambda * x := (Nat.le_floor_iff' hp.ne_zero).mp hfloor
     exact PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn1 hnOdd hp hpdvd (hpass p hp hb)
   have hsmall :
-    ∀ p : ℕ,
-      p.Prime → ¬p ∣ n → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup n H p := by
+    ∀ p : ℕ, p.Prime → ¬p ∣ n → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp _ hb
     exact hHpass _ (hpass p hp hb)
   exact
@@ -133,8 +132,7 @@ theorem gaussianRefined_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
       (by norm_num only [gaussianMRRefinedConductor]) hcmp'
   have hA := gaussianRefinedTriple_error hL (le_refl (Real.log n))
-  apply
-    gaussianRefinedTriple_contradiction hL hroots.1 hroots.2.1 hroots.2.2.1 hroots.2.2.2 hA
+  apply gaussianRefinedTriple_contradiction hL hroots.1 hroots.2.1 hroots.2.2.1 hroots.2.2.2 hA
   norm_num only [one_mul, gaussianMRRefinedConductor] at hscalar ⊢
   exact hscalar
 

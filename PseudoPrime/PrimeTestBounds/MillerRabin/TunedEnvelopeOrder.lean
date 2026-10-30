@@ -30,14 +30,13 @@ Certified floors remove the scale-63 guard even before its analytic entrance. -/
 theorem tunedSelected_eq_regular {n : ℕ} (hN : 3000 ≤ n) (hU : Real.log n < 30000000000) :
     tunedSelectedEnvelope n =
       min (tunedFiniteSelected n)
-        (min (gaussianTunedFamily (Real.log n))
-          (gaussianSeededTunedFamily (Real.log n))) := by
+        (min (gaussianTunedFamily (Real.log n)) (gaussianSeededTunedFamily (Real.log n))) := by
   have hn : 1 < n := (by norm_num only : 1 < 3000).trans_le hN
   rw [← tuned_eq_selected hn, ← tunedFinite_eq_selected hn]
   rw [tunedWitnessEnvelope, ite_eq_right (not_lt.mpr hN), tunedHigh_eq_base hU]
   by_cases h63 : 63 ≤ Real.log n
-  · simp only [sharpGuardMin, ite_eq_left h63, gaussianSeededTunedFamily, min_assoc,
-      min_comm, min_left_comm, min_self]
+  · simp only [sharpGuardMin, ite_eq_left h63, gaussianSeededTunedFamily, min_assoc, min_comm,
+      min_left_comm, min_self]
   · have hlow : Real.log n < 63 := lt_of_not_ge h63
     have h8 := Analysis.eight_lt_log_level hN
     have hP := LLS.PaperStatements.pointwiseCutoff_lt_square h8
@@ -50,8 +49,7 @@ theorem tunedSelected_eq_regular {n : ℕ} (hN : 3000 ≤ n) (hU : Real.log n < 
     have hS := seededTunedFamily_floor (Real.log n)
     have he :
       min (tunedFiniteWitness n)
-          (min (gaussianTunedFamily (Real.log n))
-            (gaussianSeededTunedFamily (Real.log n))) =
+          (min (gaussianTunedFamily (Real.log n)) (gaussianSeededTunedFamily (Real.log n))) =
         tunedFiniteWitness n :=
       min_eq_left (le_min (by linarith only [hb, hP, hsq, hG]) (by linarith only [hb, hP, hsq, hS]))
     rw [he]
@@ -90,8 +88,7 @@ theorem tunedSelected_mono_normal {m n : ℕ} (hm : 9 ≤ m) (hmn : m ≤ n)
         tunedSelected_eq_regular hnlarge hU]
       exact
         min_le_min (tunedFiniteSelected_mono_normal hm hmn hU)
-          (min_le_min (gaussianTunedFamily_mono hlog)
-            (seededTunedFamily_mono hlog))
+          (min_le_min (gaussianTunedFamily_mono hlog) (seededTunedFamily_mono hlog))
 
 /-- Monotone prime rounding preserves order of the tuned selection on the same normal domain. -/
 theorem tunedPrime_mono_normal {m n : ℕ} (hm : 9 ≤ m) (hmn : m ≤ n)

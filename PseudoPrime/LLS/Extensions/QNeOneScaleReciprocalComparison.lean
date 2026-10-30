@@ -25,8 +25,7 @@ noncomputable def qNeOneScaleReciprocalLoss (y : ℝ) : ℝ :=
 This compares the variable condition with the published fixed-loss condition. -/
 theorem qNeOneScaleReciprocalLoss_le {y : ℝ} (hy : (8 : ℝ) ≤ y) :
     qNeOneScaleReciprocalLoss y ≤ 1483 / 1000 := by
-  have h :=
-    primitiveReciprocalEvenMainError_le_neg_179_div_200 (Analysis.sq_ge_64_of_ge_8 hy)
+  have h := primitiveReciprocalEvenMainError_le_neg_179_div_200 (Analysis.sq_ge_64_of_ge_8 hy)
   unfold qNeOneScaleReciprocalLoss
   linarith only [h]
 

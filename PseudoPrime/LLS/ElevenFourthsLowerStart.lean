@@ -27,8 +27,8 @@ and certified upper bounds for log two and log three. This lowers the radius
 height needed by the continuous branch certificates. -/
 theorem elevenFourthsRoot_ge_94 {L : ℝ} (hL : 96 ≤ L) : 94 ≤ L - Real.log L + 11 / 4 := by
   have ht :=
-    Analysis.log_le_log_add_sub_div (a := (96 : ℝ)) (by norm_num only) (by linarith only [hL] : 0
-      < L)
+    Analysis.log_le_log_add_sub_div (a := (96 : ℝ)) (by norm_num only)
+      (by linarith only [hL] : 0 < L)
   rw [log_ninety_six_eq] at ht
   linarith only [ht, hL, Real.log_two_lt_d9, Real.log_three_lt_d9]
 
@@ -37,8 +37,8 @@ the lower endpoint at 94 from log 96, then use the tangent from y back to 94
 and the upper bound y<=120. This preserves logarithm growth with the radius. -/
 theorem log_lower_coupling_of_94_le_le_120 {y : ℝ} (hy : 94 ≤ y) (hy120 : y ≤ 120) :
     4543 / 1000 + (y - 94) / 120 ≤ Real.log y := by
-  have ht := Analysis.log_le_log_add_sub_div (a := (94 : ℝ)) (y := 96) (by norm_num only) (by
-    norm_num only)
+  have ht :=
+    Analysis.log_le_log_add_sub_div (a := (94 : ℝ)) (y := 96) (by norm_num only) (by norm_num only)
   rw [log_ninety_six_eq] at ht
   have h94 : (4543 / 1000 : ℝ) ≤ Real.log 94 := by
     linarith only [ht, Real.log_two_gt_d9, Real.log_three_gt_d9]

@@ -63,8 +63,8 @@ theorem not_characterTrivialBelow_of_below64CoupledRoot {q : ℕ} [NeZero q]
   have hP := Analysis.log_pi_ge_2096_div_1831
   exact
     Analysis.refinedPart2_bounds_incompatible_of_root_gt_fifteen_halves htRoot hz hlevel
-      (log_le_third_of_ge_six (by linarith only [htRoot]))
-      (log_conductor_div_pi_le_of_lower χ hP) hR hb (by linarith only [hu]) hl
+      (log_le_third_of_ge_six (by linarith only [htRoot])) (log_conductor_div_pi_le_of_lower χ hP)
+      hR hb (by linarith only [hu]) hl
 
 /-- Under the arbitrary coupled-root assumptions, a nonprincipal character
 has a prime non-one value through t squared. Negate prime triviality and

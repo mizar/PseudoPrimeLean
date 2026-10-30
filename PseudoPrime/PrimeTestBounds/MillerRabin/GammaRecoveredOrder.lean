@@ -241,9 +241,8 @@ theorem gaussian1000_radius_affine_lower {L : ℝ} (hL : 0 ≤ L) :
     (20115621 / 37554500 : ℝ) * L + 2918336 / 75109 ≤ gaussian1000Radius L := by
   have hb := gaussian1000_four_budget hL
   have ht := gaussian1000_root_ten L
-  norm_num only [gaussian1000FourD, gaussian1000FourBeta,
-    gaussianMRRefinedConductor, gaussianMRRefinedMass,
-    gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint] at hb
+  norm_num only [gaussian1000FourD, gaussian1000FourBeta, gaussianMRRefinedConductor,
+    gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint] at hb
   linarith only [hb, ht]
 
 /-- On the real interval [108,126], the recovered Gamma cutoff is strictly
@@ -256,8 +255,7 @@ theorem gammaRecovered_lt_gaussian1000 {L : ℝ} (hL : 108 ≤ L) (hU : L ≤ 12
   have hpos : (0 : ℝ) ≤ (20115621 / 37554500 : ℝ) * L + 2918336 / 75109 := by linarith only [hL]
   have hs :=
     (sq_le_sq₀ hpos
-          (by linarith only [gaussian1000_radius_hundred L] :
-            (0 : ℝ) ≤ gaussian1000Radius L)).mpr
+          (by linarith only [gaussian1000_radius_hundred L] : (0 : ℝ) ≤ gaussian1000Radius L)).mpr
       hold
   have hp := mul_nonneg (sub_nonneg.mpr hL) (sub_nonneg.mpr hU)
   have hquad :

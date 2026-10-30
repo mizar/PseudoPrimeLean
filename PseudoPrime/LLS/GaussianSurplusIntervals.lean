@@ -32,14 +32,12 @@ def gaussianSurplusCoefficients : List (ℚ × ℚ) :=
 Expand both finite lists and use exact coefficient arithmetic. -/
 theorem gaussianSurplus_euler_eq (m : ℝ) :
     Analysis.finiteSignedEulerWeight gaussianSurplusCoefficients m =
-      Analysis.gaussianResolventEulerWeight m - (17 / 20 : ℝ) * Analysis.gammaResolventEulerWeight
-        m := by
+      Analysis.gaussianResolventEulerWeight m -
+        (17 / 20 : ℝ) * Analysis.gammaResolventEulerWeight m := by
   norm_num only [Analysis.finiteSignedEulerWeight, gaussianSurplusCoefficients,
-    Analysis.gaussianResolventEulerWeight,
-    Analysis.gammaResolventEulerWeight, Analysis.gaussianResolventCoefficients,
-      Analysis.gammaResolventCoefficients,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, Rat.cast_div, Rat.cast_ofNat,
-    Rat.cast_neg]
+    Analysis.gaussianResolventEulerWeight, Analysis.gammaResolventEulerWeight,
+    Analysis.gaussianResolventCoefficients, Analysis.gammaResolventCoefficients, List.map_cons,
+    List.map_nil, List.sum_cons, List.sum_nil, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg]
   ring
 
 /-- Two natural-number power inequalities certify the real power interval with denominator ten

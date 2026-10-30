@@ -31,8 +31,8 @@ theorem exists_prime_outside_le_gamma_four_fifths_log_minus_two {q : ℕ} [NeZer
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 46330 ≤ Real.log q) :
     ∃ p : ℕ,
       p.Prime ∧
-        ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q - 2) ^
-          2 := by
+        ¬p ∣ q ∧
+        ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q - 2) ^ 2 := by
   have hqpos : (0 : ℝ) < q := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne q))
   have ht := Real.log_le_sub_one_of_pos hqpos
   have hq : 20000 ≤ q := by exact_mod_cast (show (20000 : ℝ) ≤ q by linarith only [ht, hL])

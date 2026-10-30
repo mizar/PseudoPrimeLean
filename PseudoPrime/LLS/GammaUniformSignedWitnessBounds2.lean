@@ -32,8 +32,7 @@ theorem exists_prime_character_ne_one_of_uniform_subgroup_cutoff {q : ℕ} {B : 
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hbound :
       ∀ H : Subgroup (ZMod q)ˣ,
-        H ≠ ⊤ →
-          ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ B) :
+        H ≠ ⊤ → ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ B) :
     ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ χ p ≠ 1 ∧ (p : ℝ) ≤ B := by
   obtain ⟨p, hp, hd, hout, hb⟩ :=
     hbound χ.toUnitHom.ker (NumberTheory.ker_toUnitHom_ne_top_of_ne_one χ hne)

@@ -29,9 +29,8 @@ theorem triangular18_left_kernelIntegral :
   have hi :=
     inverseMellin_triangular (by norm_num only : (0 : ℝ) < 18)
       (by norm_num only : |(-9 / 16 : ℝ)| ≤ 1) (by norm_num only : (0 : ℝ) < 1)
-  simp only [Analysis.inverseMellin,
-    Complex.ofReal_one, Complex.one_cpow, mul_one, triangularKernelProfile,
-    Real.log_one, abs_zero, sub_zero] at hi
+  simp only [Analysis.inverseMellin, Complex.ofReal_one, Complex.one_cpow, mul_one,
+    triangularKernelProfile, Real.log_one, abs_zero, sub_zero] at hi
   norm_num only at hi
   simpa only [max_eq_right (by norm_num only : (0 : ℝ) ≤ 36), Complex.ofReal_ofNat, neg_div] using
     hi

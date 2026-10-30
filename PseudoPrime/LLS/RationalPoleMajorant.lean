@@ -20,7 +20,7 @@ rho^3/(rho^2+t^2)^2, rho=25/26. Normalize the general norm formula by rational
 algebra. The exponential shift does not affect this whole-height identity. -/
 theorem norm_rationalPole_four (c t : ℝ) :
     ‖Analysis.rationalPoleFunction 2 (13 / 25) c (Complex.I * t)‖ =
-    (25 / 26 : ℝ) ^ 3 / ((25 / 26 : ℝ) ^ 2 + t ^ 2) ^ 2 := by
+      (25 / 26 : ℝ) ^ 3 / ((25 / 26 : ℝ) ^ 2 + t ^ 2) ^ 2 := by
   rw [Analysis.norm_rationalPoleFunction 2 (by norm_num only : (0 : ℝ) < 13 / 25)]
   have h : (25 / 26 : ℝ) ^ 2 + t ^ 2 ≠ 0 :=
     ne_of_gt (add_pos_of_pos_of_nonneg (by norm_num only) (sq_nonneg t))
@@ -32,12 +32,14 @@ theorem norm_rationalPole_four (c t : ℝ) :
 /-- The left Poisson distance 1237/1300 is rho-1/100, with rho=25/26.
 It exceeds one half and is smaller than the right distance. This fixed rational
 node is shared by the height majorant and the actual zero-series consumer. -/
-noncomputable abbrev poleFourAlpha : ℝ := 1237 / 1300
+noncomputable abbrev poleFourAlpha : ℝ :=
+  1237 / 1300
 
 /-- The right Poisson distance 1578581/1625000 is the perturbed companion to alpha.
 The two rational distances meet the sum-of-squares and product constraints needed
 for the fourth-order majorant. No parameter search is used in the formal certificate. -/
-noncomputable abbrev poleFourBeta : ℝ := 1578581 / 1625000
+noncomputable abbrev poleFourBeta : ℝ :=
+  1578581 / 1625000
 
 /-- The positive coefficient of the left Poisson profile, rho^3/(alpha(beta^2-alpha^2)).
 Together with poleFourLowerWeight it represents the product majorant exactly and
@@ -55,7 +57,8 @@ noncomputable def poleFourLowerWeight : ℝ :=
 weight at most the upper weight. Exact rational normalization proves all conditions.
 These are the sign and evaluation-domain inputs to the paired Euler API. -/
 theorem poleFour_node_data :
-    1 / 2 < poleFourAlpha ∧ poleFourAlpha < poleFourBeta ∧
+    1 / 2 < poleFourAlpha ∧
+      poleFourAlpha < poleFourBeta ∧
       0 ≤ poleFourLowerWeight ∧ poleFourLowerWeight ≤ poleFourUpperWeight := by
   norm_num only [poleFourAlpha, poleFourBeta, poleFourUpperWeight, poleFourLowerWeight, and_self]
 
@@ -64,14 +67,15 @@ fixed signed Poisson difference. The rational node certificate covers all height
 This is the actual analytic majorant, independent of Mellin admissibility. -/
 theorem norm_poleFour_le_poisson (c t : ℝ) :
     ‖Analysis.rationalPoleFunction 2 (13 / 25) c (Complex.I * t)‖ ≤
-      Analysis.poissonDifferenceWeight poleFourAlpha poleFourBeta
-        poleFourUpperWeight poleFourLowerWeight t := by
-  rw [norm_rationalPole_four, poleFourUpperWeight, poleFourLowerWeight,
-    ← Analysis.pole_product_eq_poisson_difference (ρ := (25 / 26 : ℝ))
-    (by norm_num only : 0 < poleFourAlpha) poleFour_node_data.2.1]
-  exact Analysis.pole_four_product_majorant (by norm_num only) (by norm_num only)
-    poleFour_node_data.2.1 (by norm_num only [poleFourAlpha, poleFourBeta])
-    (by norm_num only [poleFourAlpha, poleFourBeta])
+      Analysis.poissonDifferenceWeight poleFourAlpha poleFourBeta poleFourUpperWeight
+        poleFourLowerWeight t := by
+  rw [norm_rationalPole_four, poleFourUpperWeight, poleFourLowerWeight, ←
+    Analysis.pole_product_eq_poisson_difference (ρ := (25 / 26 : ℝ))
+      (by norm_num only : 0 < poleFourAlpha) poleFour_node_data.2.1]
+  exact
+    Analysis.pole_four_product_majorant (by norm_num only) (by norm_num only) poleFour_node_data.2.1
+      (by norm_num only [poleFourAlpha, poleFourBeta])
+      (by norm_num only [poleFourAlpha, poleFourBeta])
 
 /-- The conductor coefficient in the two-node zero bound is exactly the stated
 rational number, slightly larger than 1/4. Normalize the difference of node weights.

@@ -150,8 +150,7 @@ by the nonnegative square root. This is the explicit anchor consumer input. -/
 theorem logShiftRampPrincipalLower_ge_133_160 (x h : ℝ) :
     (133 / 160 : ℝ) * Real.sqrt x - logShiftRampPrincipalErrorNumerator x h / Real.sqrt x ≤
       logShiftRampPrincipalLower x h := by
-  have hm :=
-    mul_le_mul_of_nonneg_right ramp_mass_coefficient_ge_133_160 (Real.sqrt_nonneg x)
+  have hm := mul_le_mul_of_nonneg_right ramp_mass_coefficient_ge_133_160 (Real.sqrt_nonneg x)
   dsimp only [logShiftRampPrincipalLower]
   linarith only [hm]
 

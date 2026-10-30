@@ -32,8 +32,8 @@ and use the certified lower bound for log two, then logarithmic monotonicity.
 This supplies the logarithm height for the shifted certificates. -/
 theorem log_ge_nineteen_fourths_of_ge_120 {y : ℝ} (hy : 120 ≤ y) : 19 / 4 ≤ Real.log y := by
   have ht :=
-    Analysis.log_le_log_add_sub_div (a := (120 : ℝ)) (y := 128) (by norm_num only) (by norm_num
-      only)
+    Analysis.log_le_log_add_sub_div (a := (120 : ℝ)) (y := 128) (by norm_num only)
+      (by norm_num only)
   have he : Real.log (128 : ℝ) = 7 * Real.log 2 := by
     rw [show (128 : ℝ) = 2 ^ 7 by norm_num only, Real.log_pow]
     norm_num only [Nat.cast_ofNat]

@@ -65,11 +65,9 @@ theorem tuned_le_seeded {n : ℕ} (f : Bool) (hL : 63 ≤ Real.log n) :
   · exact hs.trans (min_le_right _ _)
 
 /-- At each triangular entrance the public witness minimum lies below that profile. -/
-theorem tuned_le_triangular {n : ℕ} (i : Fin 7)
-    (hL : (triangularTunedProfile i).T ≤ Real.log n) :
+theorem tuned_le_triangular {n : ℕ} (i : Fin 7) (hL : (triangularTunedProfile i).T ≤ Real.log n) :
     tunedWitnessEnvelope n ≤ (triangularTunedProfile i).C * Real.log n ^ 2 := by
-  have h63 : (63 : ℝ) ≤ Real.log n := by
-    linarith only [(triangularTunedProfile i).entry, hL]
+  have h63 : (63 : ℝ) ≤ Real.log n := by linarith only [(triangularTunedProfile i).entry, hL]
   rw [tunedWitnessEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 h63))]
   exact
     (min_le_right _ _).trans
@@ -123,11 +121,8 @@ theorem tuned_le_seededFamily {n : ℕ} (hL : 63 ≤ Real.log n) :
 /-- The first open seeded improvement band strictly improves the current public sharp selection.
 Its upper endpoint uses the 35000 profile displacement only. -/
 theorem tunedSeeded_strict_first {n : ℕ} (hn : 1 < n) (hN : 3000 ≤ n)
-    (hU : Real.log n < 30000000000)
-    (hS : gaussianSeededSharpSwitch false 35000 < Real.log n)
-    (hT :
-      Real.log n <
-        gaussianSeededSharpSwitch false 50000 + gaussianSeededTunedShift false) :
+    (hU : Real.log n < 30000000000) (hS : gaussianSeededSharpSwitch false 35000 < Real.log n)
+    (hT : Real.log n < gaussianSeededSharpSwitch false 50000 + gaussianSeededTunedShift false) :
     tunedSelectedEnvelope n < sharpSelectedEnvelope n := by
   have hL : (240 : ℝ) ≤ Real.log n := gaussianSeededSharp_switch35_bounds.1.le.trans hS.le
   rw [← tuned_eq_selected hn, sharpSelected_eq_seeded hN hL hU]

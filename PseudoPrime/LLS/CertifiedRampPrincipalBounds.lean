@@ -20,8 +20,8 @@ namespace PseudoPrime.LLS
 Use the outward fixed-point upper Taylor evaluator at scale 10^12 and twenty terms,
 then check its integer endpoint in the kernel. This supplies a sharp mass bound. -/
 theorem exp_neg_ramp_left_le : Real.exp (-(247 / 100 : ℝ)) ≤ (8458486 / 100000000 : ℝ) := by
-  have h := Analysis.expNegFixedUpper_ge 247 100 1000000000000 20 (by norm_num only) (by norm_num
-    only)
+  have h :=
+    Analysis.expNegFixedUpper_ge 247 100 1000000000000 20 (by norm_num only) (by norm_num only)
   have hc : Analysis.expNegFixedUpper 247 100 1000000000000 20 ≤ 84584860000 := by decide +kernel
   have hr := Nat.cast_le (α := ℝ).mpr hc
   norm_num only [Nat.cast_ofNat, neg_div] at h hr
@@ -47,7 +47,6 @@ theorem ramp_mass_coefficient_ge_133_160 :
   rw [Analysis.exponentialRampWeight_integral]
   linarith only [exp_neg_ramp_left_le, exp_neg_ramp_right_ge]
 
-
 /-- For the totalized scalar lower cap, replace the exact ramp mass coefficient by
 133/160 while retaining the full variable-width error budget. Multiply the certified
 mass bound by the nonnegative square root. This gives an explicit scalar input
@@ -55,8 +54,7 @@ for positive-scale witness separation. -/
 theorem variableRampPrincipalLower_ge_133_160 (x h : ℝ) :
     (133 / 160 : ℝ) * Real.sqrt x - variableRampPrincipalErrorNumerator x h / Real.sqrt x ≤
       variableRampPrincipalLower x h := by
-  have hm :=
-    mul_le_mul_of_nonneg_right ramp_mass_coefficient_ge_133_160 (Real.sqrt_nonneg x)
+  have hm := mul_le_mul_of_nonneg_right ramp_mass_coefficient_ge_133_160 (Real.sqrt_nonneg x)
   dsimp only [variableRampPrincipalLower]
   linarith only [hm]
 

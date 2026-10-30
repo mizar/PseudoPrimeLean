@@ -72,8 +72,7 @@ Use its exact value three at both endpoints, including the boundary 2047. -/
 theorem nextTunedSelected_small_mono :
     MonotoneOn nextTunedSelectedEnvelope (Set.Ico 2047 3000) := by
   intro m hm n hn _
-  rw [nextTunedSelected_small_three hm.1 hm.2,
-    nextTunedSelected_small_three hn.1 hn.2]
+  rw [nextTunedSelected_small_three hm.1 hm.2, nextTunedSelected_small_three hn.1 hn.2]
 
 /-- The combined rounded cutoff is nondecreasing on [2047,3000). Its exact
 constant-three theorem proves the whole interval without finite sampling. -/
@@ -100,6 +99,5 @@ theorem nextTunedPrime_le_endpoint79 {n : ℕ} (hn : 1 < n) :
     nextTunedPrimeEnvelope n ≤ endpoint79Prime n := by
   rw [nextTunedPrimeEnvelope, endpoint79Prime, nextTuned_eq_selected hn]
   exact primeRound_mono (nextTunedSelected_le_endpoint79 hn)
-
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

@@ -57,9 +57,7 @@ selected cutoff is strictly below the current refined public selection. -/
 theorem seededSharp_lt_refinedSelected {n : ℕ} (hn : 1 < n) (hU : Real.log n < 1100000000000)
     (hstrict :
       (gaussianRecoveredSeededSwitch false 35000 < Real.log n ∧
-          Real.log n <
-            gaussianRecoveredSeededSwitch false 50000 +
-              gaussianSeededSharpShift) ∨
+          Real.log n < gaussianRecoveredSeededSwitch false 50000 + gaussianSeededSharpShift) ∨
         gaussianRecoveredSeededSwitch true 50000 < Real.log n) :
     gaussianSeededSharp (Real.log n) < refinedSelectedEnvelope n := by
   have h240 : (240 : ℝ) ≤ Real.log n := by

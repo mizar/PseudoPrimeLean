@@ -159,8 +159,8 @@ theorem gamma_cutoff_bound_of_coefficient
               H.index = h →
                 ∀ X : ℝ,
                   0 < X →
-                    (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H
-                      p) →
+                    (∀ p : ℕ,
+                      p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) →
                     X < c * (Real.log q) ^ 2 := by
   obtain ⟨Q, hQ⟩ :=
     gamma_kernel_inequality MellinKernel.proposition61 hg h hh l hl (1 / 10000) (by norm_num only)
@@ -190,8 +190,8 @@ theorem gamma_prime_bound_of_certificate
           Q ≤ q →
             ∀ H : Subgroup (ZMod q)ˣ,
               H.index = h →
-                ∃ p : ℕ, IsLeast (NumberTheory.primesOutside q H) p ∧ (p : ℝ) ≤ c * (Real.log q) ^
-                  2 := by
+                ∃ p : ℕ,
+                  IsLeast (NumberTheory.primesOutside q H) p ∧ (p : ℝ) ≤ c * (Real.log q) ^ 2 := by
   obtain ⟨Q, hQ2, hQ⟩ :=
     gamma_cutoff_bound_of_coefficient hg h hh hl hd
       (gamma_mass_coefficient_of_certificate h hh hl hc)
@@ -216,8 +216,8 @@ theorem gamma_prime_bound_659 (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannH
             ∀ H : Subgroup (ZMod q)ˣ,
               H.index = h →
                 ∃ p : ℕ,
-                  IsLeast (NumberTheory.primesOutside q H) p ∧ (p : ℝ) ≤ (659 / 1000) * (Real.log
-                    q) ^ 2 := by
+                  IsLeast (NumberTheory.primesOutside q H) p ∧
+                    (p : ℝ) ≤ (659 / 1000) * (Real.log q) ^ 2 := by
   have hhR : (4 : ℝ) ≤ h := Nat.cast_le.mpr hh
   have he := gamma_four_exp_bound
   have hd : 0 < (h : ℝ) - 1 - h * Real.exp (-(73 / 40 : ℝ)) := by

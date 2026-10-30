@@ -24,18 +24,19 @@ theorem inverseMellin_eq_mellinInv (F : ℂ → ℂ) (σ u : ℝ) :
   rw [Complex.real_smul]
   congr 1
   apply MeasureTheory.integral_congr_ae
-  exact Filter.Eventually.of_forall fun t ↦ by
-    dsimp only
-    rw [mul_comm (t : ℂ) Complex.I, smul_eq_mul]
-    exact mul_comm _ _
+  exact
+    Filter.Eventually.of_forall fun t ↦ by
+      dsimp only
+      rw [mul_comm (t : ℂ) Complex.I, smul_eq_mul]
+      exact mul_comm _ _
 
 /-- Multiplying a complex kernel by A multiplies its inverse Mellin transform by A.
 Pull the constant through the Bochner integral and commute scalar factors. This
 linear identity has no integrability premise and normalizes rational kernel powers. -/
 theorem inverseMellin_const_mul (F : ℂ → ℂ) (A : ℂ) (σ u : ℝ) :
     inverseMellin (fun z ↦ A * F z) σ u = A * inverseMellin F σ u := by
-  have he (t : ℝ) : A * F ((σ : ℂ) + Complex.I * t) *
-      (u : ℂ) ^ (-((σ : ℂ) + Complex.I * t)) =
+  have he (t : ℝ) :
+    A * F ((σ : ℂ) + Complex.I * t) * (u : ℂ) ^ (-((σ : ℂ) + Complex.I * t)) =
       A * (F ((σ : ℂ) + Complex.I * t) * (u : ℂ) ^ (-((σ : ℂ) + Complex.I * t))) :=
     mul_assoc _ _ _
   unfold inverseMellin
@@ -47,16 +48,14 @@ theorem inverseMellin_const_mul (F : ℂ → ℂ) (A : ℂ) (σ u : ℝ) :
 u exp(-A). Expand complex powers with real logarithms and combine exponentials.
 This scalar identity implements the upper support translation in Mellin inversion. -/
 theorem exp_mul_inverseMellin_power (A : ℝ) {u : ℝ} (hu : 0 < u) (z : ℂ) :
-    Complex.exp ((A : ℂ) * z) * (u : ℂ) ^ (-z) =
-      ((u * Real.exp (-A) : ℝ) : ℂ) ^ (-z) := by
+    Complex.exp ((A : ℂ) * z) * (u : ℂ) ^ (-z) = ((u * Real.exp (-A) : ℝ) : ℂ) ^ (-z) := by
   have hp := mul_pos hu (Real.exp_pos (-A))
   have hl : Real.log (u * Real.exp (-A)) = Real.log u - A := by
     rw [Real.log_mul hu.ne' (Real.exp_ne_zero _), Real.log_exp]
     exact rfl
   rw [Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hu.ne'),
-    Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hp.ne'),
-    ← Complex.ofReal_log hu.le, ← Complex.ofReal_log hp.le, ← Complex.exp_add, hl,
-    Complex.ofReal_sub]
+    Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hp.ne'), ← Complex.ofReal_log hu.le, ←
+    Complex.ofReal_log hp.le, ← Complex.exp_add, hl, Complex.ofReal_sub]
   congr 1
   ring
 
@@ -69,9 +68,10 @@ theorem inverseMellin_exp_mul (F : ℂ → ℂ) (A σ : ℝ) {u : ℝ} (hu : 0 <
   unfold inverseMellin
   congr 1
   apply MeasureTheory.integral_congr_ae
-  exact Filter.Eventually.of_forall fun t ↦ by
-    dsimp only
-    rw [mul_right_comm, exp_mul_inverseMellin_power A hu]
-    exact mul_comm _ _
+  exact
+    Filter.Eventually.of_forall fun t ↦ by
+      dsimp only
+      rw [mul_right_comm, exp_mul_inverseMellin_power A hu]
+      exact mul_comm _ _
 
 end PseudoPrime.Analysis

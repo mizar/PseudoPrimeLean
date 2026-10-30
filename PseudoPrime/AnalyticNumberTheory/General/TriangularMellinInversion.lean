@@ -132,7 +132,7 @@ inverse-square Mellin transform computes each summand. -/
 theorem mellinInv_triangular_weight_combination {a c u : ℝ} (ha : a ≠ 0) (hc : 0 < c) (hu : 0 < u) :
     mellinInv c (Analysis.triangularMellinFunction a) u =
       Analysis.mellinWeightTwo (u / Real.exp (2 * a)) +
-        Analysis.mellinWeightTwo (u / Real.exp (-2 * a)) -
+          Analysis.mellinWeightTwo (u / Real.exp (-2 * a)) -
         2 * Analysis.mellinWeightTwo u := by
   let f := fun (v t : ℝ) ↦ (v : ℂ) ^ (-((c : ℂ) + t * Complex.I)) / ((c : ℂ) + t * Complex.I) ^ 2
   have hf {v : ℝ} (hv : 0 < v) : MeasureTheory.Integrable (f v) := integrable_log_inverse hc.ne' hv

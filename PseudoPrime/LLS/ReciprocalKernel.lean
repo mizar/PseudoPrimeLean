@@ -44,8 +44,7 @@ Claim: the unshifted reciprocal inverse is the elementary weight max(1-u,0).
 Proof: translate the existing Mellin inversion between integral conventions.
 Role: provide the scalar base for the shifted compact kernel. -/
 theorem inverseMellin_reciprocal_base {c u : ℝ} (hc : 0 < c) (hu : 0 < u) :
-    Analysis.inverseMellin (fun s : ℂ ↦ 1 / (s * (s + 1))) c u =
-      Analysis.mellinWeightOne u := by
+    Analysis.inverseMellin (fun s : ℂ ↦ 1 / (s * (s + 1))) c u = Analysis.mellinWeightOne u := by
   rw [← Analysis.mellinInv_mellinWeightOne_eq hc hu]
   unfold Analysis.inverseMellin mellinInv
   rw [Complex.real_smul]

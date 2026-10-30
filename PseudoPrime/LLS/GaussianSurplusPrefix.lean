@@ -35,11 +35,10 @@ theorem gaussianSurplus_ratio_sound {m : ℕ} (hm : 0 < m) (hc : gaussianSurplus
 The identity holds for every natural index, including zero. -/
 theorem gaussianSurplus_mangoldt_eq (n : ℕ) :
     Analysis.finiteSignedMangoldtWeight gaussianSurplusCoefficients n =
-      Analysis.gaussianResolventMangoldtWeight n - (17 / 20 : ℝ) *
-        Analysis.gammaResolventMangoldtWeight n := by
+      Analysis.gaussianResolventMangoldtWeight n -
+        (17 / 20 : ℝ) * Analysis.gammaResolventMangoldtWeight n := by
   rw [Analysis.finiteSignedMangoldtWeight, gaussianSurplus_euler_eq,
-    Analysis.gaussianResolventMangoldtWeight,
-    Analysis.gammaResolventMangoldtWeight]
+    Analysis.gaussianResolventMangoldtWeight, Analysis.gammaResolventMangoldtWeight]
   ring
 
 /-- The exact surplus is nonnegative at every input. Positive inputs use the existing
@@ -57,18 +56,19 @@ theorem gaussianSurplus_nonneg (n : ℕ) :
 Only the power intervals are new: the logarithm certificate and prime-power identity are reused. -/
 theorem gaussianSurplus_row_lower (r : Analysis.GammaFiniteEulerRow) (hp : r.prime.Prime)
     (hc : r.check = true) (hpow : gaussianSurplusNatCheck r.index = true)
-    (hlo : 0 ≤ Analysis.finiteSignedEulerLower gaussianSurplusCoefficients (gaussianSurplusRatios
-      r.index)) :
+    (hlo :
+      0 ≤
+        Analysis.finiteSignedEulerLower gaussianSurplusCoefficients
+          (gaussianSurplusRatios r.index)) :
     ((r.logLower *
-            Analysis.finiteSignedEulerLower gaussianSurplusCoefficients (gaussianSurplusRatios
-              r.index) :
+            Analysis.finiteSignedEulerLower gaussianSurplusCoefficients
+              (gaussianSurplusRatios r.index) :
           ℚ) :
         ℝ) ≤
       Analysis.finiteSignedMangoldtWeight gaussianSurplusCoefficients r.index := by
   have he :=
-    (Analysis.finiteSigned_euler_interval_bounds gaussianSurplusCoefficients (gaussianSurplusRatios
-      r.index)
-        (gaussianSurplus_ratio_sound (pow_pos hp.pos _) hpow)).1
+    (Analysis.finiteSigned_euler_interval_bounds gaussianSurplusCoefficients
+        (gaussianSurplusRatios r.index) (gaussianSurplus_ratio_sound (pow_pos hp.pos _) hpow)).1
   have hlog := (Bool.and_eq_true_iff.mp (Bool.and_eq_true_iff.mp hc).1).2
   have hl := (Analysis.rationalLogIntervalCheck_sound hlog).1
   norm_num only [Rat.cast_natCast] at hl
@@ -82,18 +82,18 @@ theorem gaussianSurplus_row_lower (r : Analysis.GammaFiniteEulerRow) (hp : r.pri
 The unselected terms are nonnegative, so complete prime-power enumeration is unnecessary. -/
 theorem gaussianSurplus_prefix100 :
     (73 / 100 : ℝ) ≤
-      ∑ n ∈ Finset.Ioc 0 100, Analysis.finiteSignedMangoldtWeight gaussianSurplusCoefficients n :=
-        by
+      ∑ n ∈ Finset.Ioc 0 100,
+        Analysis.finiteSignedMangoldtWeight gaussianSurplusCoefficients n := by
   have h :=
-    Analysis.nonnegative_weight_prefix_le_of_rows (Analysis.finiteSignedMangoldtWeight
-      gaussianSurplusCoefficients)
-      gaussianSurplus_nonneg Analysis.smallSeedRows Analysis.GammaFiniteEulerRow.index
+    Analysis.nonnegative_weight_prefix_le_of_rows
+      (Analysis.finiteSignedMangoldtWeight gaussianSurplusCoefficients) gaussianSurplus_nonneg
+      Analysis.smallSeedRows Analysis.GammaFiniteEulerRow.index
       (fun r ↦
         r.logLower *
-          Analysis.finiteSignedEulerLower gaussianSurplusCoefficients (gaussianSurplusRatios
-            r.index))
-      Analysis.small_seed_distinct (fun r hr ↦ List.forall_iff_forall_mem.mp
-        Analysis.small_seed_members r hr)
+          Analysis.finiteSignedEulerLower gaussianSurplusCoefficients
+            (gaussianSurplusRatios r.index))
+      Analysis.small_seed_distinct
+      (fun r hr ↦ List.forall_iff_forall_mem.mp Analysis.small_seed_members r hr)
       (fun r hr ↦
         gaussianSurplus_row_lower r (List.forall_iff_forall_mem.mp Analysis.small_seed_primes r hr)
           (List.forall_iff_forall_mem.mp Analysis.small_seed_rows_check r hr)
@@ -107,8 +107,8 @@ theorem gaussianSurplus_prefix100 :
 Enlarge the positive interval and use nonnegativity for the additional terms. -/
 theorem gaussianSurplus_prefix {b : ℝ} (hb : 100 ≤ b) :
     (73 / 100 : ℝ) ≤
-      ∑ n ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.finiteSignedMangoldtWeight gaussianSurplusCoefficients n :=
-        by
+      ∑ n ∈ Finset.Ioc 0 ⌊b⌋₊,
+        Analysis.finiteSignedMangoldtWeight gaussianSurplusCoefficients n := by
   have hB : 100 ≤ ⌊b⌋₊ := (Nat.le_floor_iff (by linarith only [hb] : (0 : ℝ) ≤ b)).mpr hb
   have hsub : Finset.Ioc 0 100 ⊆ Finset.Ioc 0 ⌊b⌋₊ := by
     intro n hn

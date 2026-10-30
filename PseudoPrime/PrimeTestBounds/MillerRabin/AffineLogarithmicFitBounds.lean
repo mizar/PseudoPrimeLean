@@ -54,8 +54,8 @@ theorem gaussian_square_le_mrFit_nineTenths {L : ℝ} (hL : 1000 ≤ L) :
 Use the same upper logarithm bound with its negative logarithmic coefficient.
 This is the second fitting root's initial continuation certificate. -/
 theorem mrFit_one_at_thousand :
-    (4 / 5 : ℝ) * 1000 ≤ Analysis.affineLogarithmicRoot 1000 1 (-96439 / 15625) (1681239 / 250000)
-      := by
+    (4 / 5 : ℝ) * 1000 ≤
+      Analysis.affineLogarithmicRoot 1000 1 (-96439 / 15625) (1681239 / 250000) := by
   have h := mrFit_log_thousand_le_seven
   norm_num only [Analysis.affineLogarithmicRoot, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg]
   linarith only [h]
@@ -64,12 +64,11 @@ theorem mrFit_one_at_thousand :
 Apply the continuation criterion with comparison slope 4/5 and the checked initial root.
 This transfers the Gaussian witness to the second fitted formula. -/
 theorem gaussian_square_le_mrFit_one {L : ℝ} (hL : 1000 ≤ L) :
-    (16 / 25 : ℝ) * L ^ 2 ≤ Analysis.affineLogarithmicRoot L 1 (-96439 / 15625) (1681239 / 250000)
-      ^ 2 := by
+    (16 / 25 : ℝ) * L ^ 2 ≤
+      Analysis.affineLogarithmicRoot L 1 (-96439 / 15625) (1681239 / 250000) ^ 2 := by
   have h :=
-    Analysis.affineLogarithmicSquare_ge_linear_square_on_tail (r := 4 / 5) (a := 1) (b := -96439 /
-      15625)
-      (c := 1681239 / 250000) (by norm_num only) (by norm_num only)
+    Analysis.affineLogarithmicSquare_ge_linear_square_on_tail (r := 4 / 5) (a := 1) (b :=
+      -96439 / 15625) (c := 1681239 / 250000) (by norm_num only) (by norm_num only)
       (by norm_num only : (0 : ℝ) < 1000) hL
       (by norm_num only [Rat.cast_sub, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg])
       (by simpa only [Rat.cast_div, Rat.cast_ofNat] using mrFit_one_at_thousand)

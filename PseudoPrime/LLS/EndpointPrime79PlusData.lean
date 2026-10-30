@@ -48,13 +48,12 @@ theorem prime79Plus_atom_count :
 
 /-- A single Taylor-eight certificate encloses log 79 at scale six. -/
 theorem prime79Plus_log79 :
-    (4369444 / 1000000 : ℝ) ≤ Real.log (79 : ℝ) ∧
-      Real.log (79 : ℝ) ≤ (4369451 / 1000000 : ℝ) := by
+    (4369444 / 1000000 : ℝ) ≤ Real.log (79 : ℝ) ∧ Real.log (79 : ℝ) ≤ (4369451 / 1000000 : ℝ) := by
   have h :=
     Analysis.rationalLogIntervalCheck_sound
       (by decide +kernel :
-        Analysis.rationalLogIntervalCheck (79 : ℚ) 6 8
-          (4369444 / 1000000) (4369451 / 1000000) = true)
+        Analysis.rationalLogIntervalCheck (79 : ℚ) 6 8 (4369444 / 1000000) (4369451 / 1000000) =
+          true)
   simpa only [Rat.cast_div, Rat.cast_ofNat] using h
 
 /-- Every prime base in the enlarged support has the stated real logarithm interval.
@@ -201,8 +200,8 @@ theorem prime79Plus_log_sum :
     rcases prime79Plus_atom_data m hm with ⟨_, hpm, hprime, hk, heq, _, _, hw⟩
     have hwR :
       (0 : ℝ) ≤ 2 * prime79PlusLogLo - prime79PlusAtomExp m * prime79PlusPrimeLogHi m.minFac := by
-      simpa only [Rat.cast_zero, Rat.cast_sub, Rat.cast_mul, Rat.cast_ofNat,
-        Rat.cast_natCast] using (Rat.cast_le (K := ℝ)).mpr hw
+      simpa only [Rat.cast_zero, Rat.cast_sub, Rat.cast_mul, Rat.cast_ofNat, Rat.cast_natCast] using
+        (Rat.cast_le (K := ℝ)).mpr hw
     have ht :=
       Analysis.finitePrincipal_log_atom hprime hk hy (prime79Plus_prime_log_bounds hpm).1
         (prime79Plus_prime_log_bounds hpm).2 prime79Plus_log_bounds.1 hwR

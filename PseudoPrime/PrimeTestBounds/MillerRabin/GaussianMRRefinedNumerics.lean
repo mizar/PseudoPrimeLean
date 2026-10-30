@@ -192,9 +192,8 @@ theorem gaussianMRRefined_lt_gaussianMR6 {L : ℝ} (hL : 300 ≤ L) :
         Analysis.gaussianMR6FifthsConductor * L + Analysis.gaussianMR6FifthsBeta * t + 6 at hf
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsD,
-        Analysis.gaussianMR6FifthsBeta,
-      Analysis.gaussianMR6FifthsConductor, Analysis.gaussianMR6FifthsIndex,
-        Analysis.gaussianMR6FifthsMass,
+      Analysis.gaussianMR6FifthsBeta, Analysis.gaussianMR6FifthsConductor,
+      Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsMass,
       Analysis.gaussianMR6FifthsEndpoint] at he hf
     nlinarith only [he, hf, hp, hts, hL, hs, ht, sq_nonneg t]
   have hrad : gaussianMRRefinedRadius L < Analysis.gaussianMR6Radius L := by
@@ -308,9 +307,8 @@ theorem gaussianMRRefined_budget {L : ℝ} (hL : 300 ≤ L) :
     ring
   have ha : 0 ≤ a := by
     norm_num only [a, g, e, b, c, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint,
-      gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussianMRRefinedWidth,
-      gaussianMRRefinedConductor]
+      Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedBeta, gaussianMRRefinedMass,
+      gaussianMRRefinedWidth, gaussianMRRefinedWidth, gaussianMRRefinedConductor]
   have hv : v ≤ 0 := by
     norm_num only [v, g, e, c, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint,
       gaussianMRRefinedConductor]
@@ -322,9 +320,9 @@ theorem gaussianMRRefined_budget {L : ℝ} (hL : 300 ≤ L) :
         13 / (Analysis.gaussianMR6FifthsIndex - 1) <
       28 / 5 := by
     norm_num only [a, g, e, b, c, d, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint,
-      gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussianMRRefinedWidth,
-      gaussianMRRefinedConductor, gaussianMRRefinedD]
+      Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedBeta, gaussianMRRefinedMass,
+      gaussianMRRefinedWidth, gaussianMRRefinedWidth, gaussianMRRefinedConductor,
+      gaussianMRRefinedD]
   change
     g * (21 * e / (10 * gaussianMRRefinedWidth * s) + 1839 * e / (1000 * r)) +
         13 / (Analysis.gaussianMR6FifthsIndex - 1) +
@@ -365,16 +363,16 @@ theorem gaussianMRRefined_residual {q : ℕ} {L m : ℝ} (hL : 300 ≤ L) (hq : 
   have hm1 : 0 < m - 1 := by
     norm_num only [Analysis.gaussianMR6FifthsIndex] at hm
     linarith only [hm]
-  have hJ : 0 < Analysis.gaussianMR6FifthsIndex - 1 := by norm_num only
-    [Analysis.gaussianMR6FifthsIndex]
+  have hJ : 0 < Analysis.gaussianMR6FifthsIndex - 1 := by
+    norm_num only [Analysis.gaussianMR6FifthsIndex]
   have hT : 0 ≤ T :=
     add_nonneg
-      (div_nonneg (mul_nonneg (by norm_num only) (by norm_num only
-        [Analysis.gaussianMR6FifthsEndpoint]))
+      (div_nonneg
+        (mul_nonneg (by norm_num only) (by norm_num only [Analysis.gaussianMR6FifthsEndpoint]))
         (mul_nonneg (mul_nonneg (by norm_num only) (by norm_num only [gaussianMRRefinedWidth]))
           hs.le))
-      (div_nonneg (mul_nonneg (by norm_num only) (by norm_num only
-        [Analysis.gaussianMR6FifthsEndpoint]))
+      (div_nonneg
+        (mul_nonneg (by norm_num only) (by norm_num only [Analysis.gaussianMR6FifthsEndpoint]))
         (mul_nonneg (by norm_num only) hr.le))
   have hmT := mul_le_mul_of_nonneg_right (Analysis.gaussianMR6Fifths_index_coefficients hm).2.1 hT
   have h13 : (13 : ℝ) / (m - 1) ≤ 13 / (Analysis.gaussianMR6FifthsIndex - 1) :=
@@ -421,14 +419,14 @@ theorem gaussianMRRefined_triple_error {q : ℕ} {L : ℝ} (hL : 300 ≤ L) (hq 
     nlinarith only [h, hL]
   have ht :=
     div_le_div_of_nonneg_left
-      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] : 0 ≤ 21 *
-        Analysis.gaussianMR6FifthsEndpoint)
+      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] :
+        0 ≤ 21 * Analysis.gaussianMR6FifthsEndpoint)
       (by norm_num only [gaussianMRRefinedWidth] : (0 : ℝ) < 10 * gaussianMRRefinedWidth * 14)
       (mul_le_mul_of_nonneg_left hs (by norm_num only [gaussianMRRefinedWidth]))
   have hu :=
     div_le_div_of_nonneg_left
-      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] : 0 ≤ 1839 *
-        Analysis.gaussianMR6FifthsEndpoint)
+      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] :
+        0 ≤ 1839 * Analysis.gaussianMR6FifthsEndpoint)
       (by norm_num only : (0 : ℝ) < 1000 * (415 / 2))
       (mul_le_mul_of_nonneg_left hr (by norm_num only))
   have hA := gaussianMRRefined_ambient hL hq
@@ -480,16 +478,14 @@ theorem gaussianMRRefined_triple {L : ℝ} (hL : 300 ≤ L)
       0 := by
     norm_num only [gaussianMRRefinedTripleD, gaussianMRRefinedTripleBeta, gaussianMRRefinedD,
       gaussianMRRefinedBeta, Analysis.gaussianMR6FifthsIndex, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth,
-      Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
+      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
   have hmargin :
     (109 / 15 : ℝ) <
       (gaussianMRRefinedTripleD - (2 / 3 : ℝ) * gaussianMRRefinedD) * ((415 / 2)) -
         (gaussianMRRefinedTripleBeta - (2 / 3 : ℝ) * gaussianMRRefinedBeta) * ((415 / 28)) := by
     norm_num only [gaussianMRRefinedTripleD, gaussianMRRefinedTripleBeta, gaussianMRRefinedD,
       gaussianMRRefinedBeta, Analysis.gaussianMR6FifthsIndex, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth,
-      Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
+      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
   have hstrict :
     (109 / 15 : ℝ) <
       (gaussianMRRefinedTripleD - (2 / 3 : ℝ) * gaussianMRRefinedD) * r -
@@ -504,18 +500,18 @@ theorem gaussianMRRefined_triple {L : ℝ} (hL : 300 ≤ L)
 and root coefficient by their endpoint values. Exact rational signs justify cross-multiplication.
 These are the coefficient inputs to variable-width scalar normalization. -/
 theorem gaussianMRRefined_index_coeffs {m : ℝ} (hm : Analysis.gaussianMR6FifthsIndex ≤ m) :
-    gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / (m -
-      1) ∧
+    gaussianMRRefinedD ≤
+        (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / (m - 1) ∧
       m / (m - 1) ≤ Analysis.gaussianMR6FifthsIndex / (Analysis.gaussianMR6FifthsIndex - 1) ∧
       (m / (m - 1)) *
           (gaussianMRRefinedWidth * gaussianMRRefinedMass + 1 / (10 * gaussianMRRefinedWidth)) ≤
         gaussianMRRefinedBeta := by
-  have hK : (1 : ℝ) < Analysis.gaussianMR6FifthsIndex := by norm_num only
-    [Analysis.gaussianMR6FifthsIndex]
+  have hK : (1 : ℝ) < Analysis.gaussianMR6FifthsIndex := by
+    norm_num only [Analysis.gaussianMR6FifthsIndex]
   have hden : 0 < m - 1 := by linarith only [hm, hK]
   have hKden : 0 < Analysis.gaussianMR6FifthsIndex - 1 := by linarith only [hK]
-  have hgamma : m / (m - 1) ≤ Analysis.gaussianMR6FifthsIndex / (Analysis.gaussianMR6FifthsIndex -
-    1) := by
+  have hgamma :
+    m / (m - 1) ≤ Analysis.gaussianMR6FifthsIndex / (Analysis.gaussianMR6FifthsIndex - 1) := by
     rw [div_le_div_iff₀ hden hKden]
     norm_num only [Analysis.gaussianMR6FifthsIndex] at hm ⊢
     nlinarith only [hm]

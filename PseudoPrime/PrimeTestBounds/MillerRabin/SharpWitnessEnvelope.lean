@@ -98,8 +98,7 @@ theorem sharp_lower_of_candidates {n : ℕ} (hN : 3000 ≤ n) {C : ℝ} (hB : C 
     (hS : 63 ≤ Real.log n → C ≤ gaussianSeededSharp (Real.log n))
     (hH :
       ∀ i : Fin 8,
-        (triangularProfile i).T ≤ Real.log n →
-          C ≤ (triangularProfile i).C * Real.log n ^ 2) :
+        (triangularProfile i).T ≤ Real.log n → C ≤ (triangularProfile i).C * Real.log n ^ 2) :
     C ≤ sharpWitnessEnvelope n := by
   rw [sharpWitnessEnvelope, ite_eq_right (not_lt.mpr hN)]
   exact sharpGuard_lower hB hG hS (sharpHigh_lower hB hH)
@@ -117,8 +116,7 @@ theorem sharp_le_gaussian {n : ℕ} (hL : 63 ≤ Real.log n) :
   rw [sharpWitnessEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 hL))]
   have h :
     sharpGuardMin (Real.log n) (lowFiniteWitness n) (gaussianLowFamily (Real.log n))
-        (gaussianSeededSharp (Real.log n))
-        (sharpHighMin (Real.log n) (lowFiniteWitness n)) ≤
+        (gaussianSeededSharp (Real.log n)) (sharpHighMin (Real.log n) (lowFiniteWitness n)) ≤
       if 63 ≤ Real.log n then gaussianLowFamily (Real.log n) else lowFiniteWitness n :=
     (min_le_right _ _).trans (min_le_left _ _)
   simpa only [ite_eq_left hL] using h
@@ -130,16 +128,14 @@ theorem sharp_le_seeded {n : ℕ} (hL : 63 ≤ Real.log n) :
   rw [sharpWitnessEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 hL))]
   have h :
     sharpGuardMin (Real.log n) (lowFiniteWitness n) (gaussianLowFamily (Real.log n))
-        (gaussianSeededSharp (Real.log n))
-        (sharpHighMin (Real.log n) (lowFiniteWitness n)) ≤
+        (gaussianSeededSharp (Real.log n)) (sharpHighMin (Real.log n) (lowFiniteWitness n)) ≤
       if 63 ≤ Real.log n then gaussianSeededSharp (Real.log n) else lowFiniteWitness n :=
     (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_left _ _))
   simpa only [ite_eq_left hL] using h
 
 /-- Above a triangular profile entrance, the sharp cutoff is below that profile.
 Project the active high minimum after excluding the small-input branch. -/
-theorem sharp_le_triangular {n : ℕ} (i : Fin 8)
-    (hL : (triangularProfile i).T ≤ Real.log n) :
+theorem sharp_le_triangular {n : ℕ} (i : Fin 8) (hL : (triangularProfile i).T ≤ Real.log n) :
     sharpWitnessEnvelope n ≤ (triangularProfile i).C * Real.log n ^ 2 := by
   have h63 : (63 : ℝ) ≤ Real.log n := by linarith only [(triangularProfile i).entry, hL]
   rw [sharpWitnessEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 h63))]

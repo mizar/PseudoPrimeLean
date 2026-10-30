@@ -54,27 +54,23 @@ theorem gaussianLow_radius_affine {L : ℝ} (hL : 100 ≤ L) :
     dsimp only [w]; linarith only [hL]
   have hz : 0 < z := by
     dsimp only [z, w]
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint]
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
+      Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
     linarith only [hL]
   have hpoly : gaussianMRRefinedBeta ^ 2 * w < z ^ 2 := by
     dsimp only [z, w]
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
+      gaussianMRRefinedBeta, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
       Analysis.gaussianMR6FifthsEndpoint]
     nlinarith only [sq_nonneg (L - 152), hL]
   have hbudget :
-    gaussianMRRefinedConductor * L + 93 / 10 +
-        gaussianMRRefinedBeta * Real.sqrt w <
+    gaussianMRRefinedConductor * L + 93 / 10 + gaussianMRRefinedBeta * Real.sqrt w <
       gaussianMRRefinedD * (Real.sqrt w) ^ 2 := by
     have hs := Real.sq_sqrt hw.le
     have hp := mul_nonneg gaussianMRRefined_coefficients.2.le (Real.sqrt_nonneg w)
     dsimp only [z] at hz hpoly
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
+      gaussianMRRefinedBeta, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
       Analysis.gaussianMR6FifthsEndpoint] at hz hpoly hp ⊢
     nlinarith only [hpoly, hz, hs, hp]
   have hfloor : (91 / 10 : ℝ) < Real.sqrt w := by
@@ -83,16 +79,16 @@ theorem gaussianLow_radius_affine {L : ℝ} (hL : 100 ≤ L) :
     linarith only [hL]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * Real.sqrt w := by
     have hm := mul_lt_mul_of_pos_left hfloor gaussianMRRefined_coefficients.1
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass,
-      gaussianMRRefinedBeta, gaussianMRRefinedWidth,
-      Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint] at hm ⊢
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
+      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
+      Analysis.gaussianMR6FifthsEndpoint] at hm ⊢
     linarith only [hm]
   have hC : 0 ≤ gaussianMRRefinedConductor * L + 93 / 10 := by
     norm_num only [gaussianMRRefinedConductor]
     linarith only [hL]
   have hraw :=
-    lowGaussian_root_lt gaussianMRRefined_coefficients.1
-      gaussianMRRefined_coefficients.2 hC hcoef hbudget
+    lowGaussian_root_lt gaussianMRRefined_coefficients.1 gaussianMRRefined_coefficients.2 hC hcoef
+      hbudget
   have hr : gaussianLowRoot (91 / 10) (93 / 10) L < Real.sqrt w := max_lt hfloor hraw
   have hp : 0 ≤ gaussianLowRoot (91 / 10) (93 / 10) L := by
     linarith only [gaussianLow_root_floor (91 / 10) (93 / 10) L]
@@ -135,8 +131,7 @@ theorem gammaReflected_affine_lower100 {L : ℝ} (hL : 100 ≤ L) :
 /-- The low-profile cutoff is bounded by six fifths of the squared affine
 radius. Positivity of the radius permits the strict square comparison. -/
 theorem gaussianLow_bound_affine {L : ℝ} (hL : 100 ≤ L) :
-    gaussianLowBound (91 / 10) (93 / 10) L <
-      (6 / 5 : ℝ) * ((13 / 20 : ℝ) * L + 99 / 5) ^ 2 := by
+    gaussianLowBound (91 / 10) (93 / 10) L < (6 / 5 : ℝ) * ((13 / 20 : ℝ) * L + 99 / 5) ^ 2 := by
   have hr := gaussianLow_radius_affine hL
   have hp : 0 ≤ gaussianLowRadius (91 / 10) (93 / 10) L := sq_nonneg _
   have hs := (sq_lt_sq₀ hp (by linarith only [hL])).mpr hr
@@ -269,20 +264,18 @@ theorem gaussianLowMiddleOld_lt12000 {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 126) :
     norm_num only [gaussianMRRefinedConductor]
     linarith only [hL]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * 10 := by
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass,
-      gaussianMRRefinedBeta, gaussianMRRefinedWidth,
-      Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
+      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
   have hbudget :
     gaussianMRRefinedConductor * L + 204 / 25 + gaussianMRRefinedBeta * 10 <
       gaussianMRRefinedD * (10 : ℝ) ^ 2 := by
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
+      gaussianMRRefinedBeta, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
       Analysis.gaussianMR6FifthsEndpoint]
     linarith only [hU]
   have hraw :=
-    lowGaussian_root_lt gaussianMRRefined_coefficients.1
-      gaussianMRRefined_coefficients.2 hC hcoef hbudget
+    lowGaussian_root_lt gaussianMRRefined_coefficients.1 gaussianMRRefined_coefficients.2 hC hcoef
+      hbudget
   have hroot : GaussianLowProfile.middleOld.root L < (10 : ℝ) :=
     max_lt (by norm_num only [GaussianLowProfile.floor]) hraw
   have hp := GaussianLowProfile.root_pos .middleOld L
@@ -315,9 +308,7 @@ theorem gaussianLowUpper_lt_recovered {L : ℝ} (hL : 0 ≤ L) :
   have hraw :=
     Analysis.gaussianBudgetRoot_strictMono (b := gaussianMRRefinedBeta)
       gaussianMRRefined_coefficients.1 hC
-      (show
-        gaussianMRRefinedConductor * L + 813 / 100 <
-          gaussianMRRefinedConductor * L + 407 / 50
+      (show gaussianMRRefinedConductor * L + 813 / 100 < gaussianMRRefinedConductor * L + 407 / 50
         by linarith only [])
   have hfloor : (49 / 5 : ℝ) < gaussianRecoveredRoot L := by
     linarith only [gaussianRecovered_root_ten L]
@@ -326,12 +317,9 @@ theorem gaussianLowUpper_lt_recovered {L : ℝ} (hL : 0 ≤ L) :
         (gaussianMRRefinedConductor * L + 813 / 100) <
       gaussianRecoveredRoot L :=
     hraw.trans_le (le_max_right _ _)
-  have hr : GaussianLowProfile.upper.root L < gaussianRecoveredRoot L :=
-    max_lt hfloor hraw'
+  have hr : GaussianLowProfile.upper.root L < gaussianRecoveredRoot L := max_lt hfloor hraw'
   have hs :=
-    (sq_lt_sq₀ (GaussianLowProfile.root_pos .upper L).le
-          (gaussianRecovered_root_pos L).le).mpr
-      hr
+    (sq_lt_sq₀ (GaussianLowProfile.root_pos .upper L).le (gaussianRecovered_root_pos L).le).mpr hr
   have hs' := (sq_lt_sq₀ (sq_nonneg _) (sq_nonneg _)).mpr hs
   exact mul_lt_mul_of_pos_left hs' (by norm_num only : (0 : ℝ) < 6 / 5)
 
@@ -343,21 +331,18 @@ theorem gaussianLowUpper_lt35000 {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 235) :
     norm_num only [gaussianMRRefinedConductor]
     linarith only [hL]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * (653 / 50) := by
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass,
-      gaussianMRRefinedBeta, gaussianMRRefinedWidth,
-      Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
+      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
   have hbudget :
-    gaussianMRRefinedConductor * L + 813 / 100 +
-        gaussianMRRefinedBeta * (653 / 50) <
+    gaussianMRRefinedConductor * L + 813 / 100 + gaussianMRRefinedBeta * (653 / 50) <
       gaussianMRRefinedD * (653 / 50 : ℝ) ^ 2 := by
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
+      gaussianMRRefinedBeta, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
       Analysis.gaussianMR6FifthsEndpoint]
     linarith only [hU]
   have hraw :=
-    lowGaussian_root_lt gaussianMRRefined_coefficients.1
-      gaussianMRRefined_coefficients.2 hC hcoef hbudget
+    lowGaussian_root_lt gaussianMRRefined_coefficients.1 gaussianMRRefined_coefficients.2 hC hcoef
+      hbudget
   have hroot : GaussianLowProfile.upper.root L < (653 / 50 : ℝ) :=
     max_lt (by norm_num only [GaussianLowProfile.floor]) hraw
   have hp := GaussianLowProfile.root_pos .upper L
@@ -393,8 +378,7 @@ candidate is strictly below the current refined selection. Resolve the
 baseline's 132 split and the recovered Gamma entrance 101 explicitly. -/
 theorem gaussianFamily_lt_refined {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n)
     (hU : Real.log n ≤ 235) {A : ℝ} (hP : A < LLS.PaperStatements.pointwiseCutoff (Real.log n))
-    (hRef : A < gammaReflectedBound (Real.log n))
-    (hG : A < gaussianRecoveredBound (Real.log n))
+    (hRef : A < gammaReflectedBound (Real.log n)) (hG : A < gaussianRecoveredBound (Real.log n))
     (hR : A < gammaRecoveredBound (Real.log n)) (hS : A < 35000) :
     A < refinedSelectedEnvelope n := by
   have h63 : (63 : ℝ) ≤ Real.log n := by linarith only [hL]
@@ -417,8 +401,7 @@ theorem gaussianFamily_lt_refined {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log 
 improves the current refined selection on the whole closed interval [100,126].
 All active baseline and analytic candidates are compared explicitly. -/
 theorem gaussianLowOldFamily_lt_refined {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n)
-    (hU : Real.log n ≤ 126) :
-    gaussianLowOldFamily (Real.log n) < refinedSelectedEnvelope n := by
+    (hU : Real.log n ≤ 126) : gaussianLowOldFamily (Real.log n) < refinedSelectedEnvelope n := by
   have hfloor := gaussianLowOldFamily_lt12000 hL hU
   apply gaussianFamily_lt_refined hn hL (by linarith only [hU])
   · exact (gaussianLowOldFamily_le_low _).trans_lt (gaussianLow_lt_pointwise hL)
@@ -431,8 +414,7 @@ theorem gaussianLowOldFamily_lt_refined {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Rea
 the current refined selection throughout [100,235]. Its upper component is
 strictly below recovered Gaussian and remains below the seeded floor 35000. -/
 theorem gaussianLowFamily_lt_refined {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n)
-    (hU : Real.log n ≤ 235) :
-    gaussianLowFamily (Real.log n) < refinedSelectedEnvelope n := by
+    (hU : Real.log n ≤ 235) : gaussianLowFamily (Real.log n) < refinedSelectedEnvelope n := by
   have h0 : (0 : ℝ) ≤ Real.log n := by linarith only [hL]
   exact
     gaussianFamily_lt_refined hn hL hU (gaussianLowFamily_lt_pointwise hL)

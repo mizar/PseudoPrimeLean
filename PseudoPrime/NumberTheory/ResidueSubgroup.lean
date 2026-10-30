@@ -60,8 +60,7 @@ theorem not_residueInSubgroup_of_not_isUnit (H : Subgroup (ZMod q)ˣ) {n : ℕ}
 Every Dirichlet character vanishes there. This removes nonunits from the
 smoothed sum, independently of subgroup membership or GRH. -/
 theorem sum_subgroupAnnihilator_eq_zero_of_not_isUnit (H : Subgroup (ZMod q)ˣ) {n : ℕ}
-    (hn : ¬IsUnit (n : ZMod q)) :
-    ∑ χ : subgroupAnnihilator H, χ.val (n : ZMod q) = 0 := by
+    (hn : ¬IsUnit (n : ZMod q)) : ∑ χ : subgroupAnnihilator H, χ.val (n : ZMod q) = 0 := by
   exact Finset.sum_eq_zero (fun χ _ ↦ χ.val.map_nonunit hn)
 
 /-- At a natural residue in `H`, the annihilator sum equals the subgroup index.
@@ -78,13 +77,11 @@ theorem sum_subgroupAnnihilator_eq_index_of_residue (H : Subgroup (ZMod q)ˣ) {n
 For a unit, use character cancellation; for a nonunit, every character vanishes.
 This excludes all other arithmetic terms from the averaged sum. -/
 theorem sum_subgroupAnnihilator_eq_zero_of_not_residue (H : Subgroup (ZMod q)ˣ) {n : ℕ}
-    (hm : ¬residueInSubgroup q H n) :
-    ∑ χ : subgroupAnnihilator H, χ.val (n : ZMod q) = 0 := by
+    (hm : ¬residueInSubgroup q H n) : ∑ χ : subgroupAnnihilator H, χ.val (n : ZMod q) = 0 := by
   by_cases hn : IsUnit (n : ZMod q)
   · rw [← hn.unit_spec]
     exact
-      sum_subgroupAnnihilator_eq_zero H
-        (fun hu ↦ hm ((residueInSubgroup_iff_unit_mem H hn).mpr hu))
+      sum_subgroupAnnihilator_eq_zero H (fun hu ↦ hm ((residueInSubgroup_iff_unit_mem H hn).mpr hu))
   · exact sum_subgroupAnnihilator_eq_zero_of_not_isUnit H hn
 
 /-- The complete subgroup orthogonality relation at every natural index: the

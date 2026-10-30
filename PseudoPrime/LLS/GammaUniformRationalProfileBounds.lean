@@ -73,8 +73,9 @@ theorem exists_prime_outside_le_gamma_199_div_250_plus_117_log {q : ℕ} [NeZero
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 34971 ≤ Real.log q) :
     ∃ p : ℕ,
       p.Prime ∧
-        ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (199 / 250 : ℝ) * (Real.log q +
-          117) ^ 2 := by
+        ¬p ∣ q ∧
+        ¬NumberTheory.residueInSubgroup q H p ∧
+        (p : ℝ) ≤ (199 / 250 : ℝ) * (Real.log q + 117) ^ 2 := by
   let L := Real.log q
   let T := Real.sqrt (199 / 200 : ℝ) * (L + 117)
   let x := (32 / 99 : ℝ) * T ^ 2
@@ -140,8 +141,9 @@ theorem exists_prime_outside_le_gamma_199_div_250_plus_117_15188 {q : ℕ} (H : 
     (hq : 10 ^ 15188 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
-        ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (199 / 250 : ℝ) * (Real.log q +
-          117) ^ 2 := by
+        ¬p ∣ q ∧
+        ¬NumberTheory.residueInSubgroup q H p ∧
+        (p : ℝ) ≤ (199 / 250 : ℝ) * (Real.log q + 117) ^ 2 := by
   have hq0 : q ≠ 0 :=
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 15188).trans_le hq)
   let : NeZero q := ⟨hq0⟩

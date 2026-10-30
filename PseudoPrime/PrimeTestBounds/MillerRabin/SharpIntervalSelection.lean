@@ -88,8 +88,7 @@ theorem sharpSelected_eq_analytic {n : ℕ} (hN : 3000 ≤ n) (hL : 63 ≤ Real.
     (hU : Real.log n < 30000000000) :
     sharpSelectedEnvelope n =
       min (lowFiniteSelected n)
-        (min (gaussianLowFamily (Real.log n))
-          (gaussianSeededSharp (Real.log n))) := by
+        (min (gaussianLowFamily (Real.log n)) (gaussianSeededSharp (Real.log n))) := by
   rw [sharpSelectedEnvelope, ite_eq_right (not_lt.mpr hN), sharpGuardSelected,
     ite_eq_right (not_lt.mpr hL), sharpHigh_eq_base hU]
   rw [min_comm (gaussianSeededSharp (Real.log n)) (lowFiniteSelected n),
@@ -115,9 +114,7 @@ The first band includes the initial part of the current 50000 plateau. -/
 theorem sharpSelected_lt_refined_seeded {n : ℕ} (hn : 1 < n) (hU : Real.log n < 1100000000000)
     (hstrict :
       (gaussianRecoveredSeededSwitch false 35000 < Real.log n ∧
-          Real.log n <
-            gaussianRecoveredSeededSwitch false 50000 +
-              gaussianSeededSharpShift) ∨
+          Real.log n < gaussianRecoveredSeededSwitch false 50000 + gaussianSeededSharpShift) ∨
         gaussianRecoveredSeededSwitch true 50000 < Real.log n) :
     sharpSelectedEnvelope n < refinedSelectedEnvelope n := by
   have h63 : (63 : ℝ) ≤ Real.log n := by

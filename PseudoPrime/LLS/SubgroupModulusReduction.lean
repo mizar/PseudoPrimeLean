@@ -53,8 +53,8 @@ Coercions commute with reduction, and the preimage of the image is `H`.
 This transports subgroup membership without choosing new prime witnesses. -/
 theorem residueInSubgroup_reduction_iff {q m n : ℕ} (hm : m ∣ q) (H : Subgroup (ZMod q)ˣ)
     (hk : (ZMod.unitsMap hm).ker ≤ H) (hn : IsUnit (n : ZMod q)) :
-    NumberTheory.residueInSubgroup q H n ↔ NumberTheory.residueInSubgroup m (H.map (ZMod.unitsMap
-      hm)) n := by
+    NumberTheory.residueInSubgroup q H n ↔
+      NumberTheory.residueInSubgroup m (H.map (ZMod.unitsMap hm)) n := by
   constructor
   · rintro ⟨u, hu, he⟩
     refine ⟨ZMod.unitsMap hm u, Subgroup.mem_map.mpr ⟨u, hu, rfl⟩, ?_⟩
@@ -107,8 +107,8 @@ theorem gamma_prime_bound_659_of_reduction
                   (ZMod.unitsMap hm).ker ≤ H →
                   (∀ p : ℕ, p.Prime → (p ∣ q ↔ p ∣ m)) →
                   ∃ p : ℕ,
-                    IsLeast (NumberTheory.primesOutside q H) p ∧ (p : ℝ) ≤ (659 / 1000) * (Real.log
-                      m) ^ 2 := by
+                    IsLeast (NumberTheory.primesOutside q H) p ∧
+                      (p : ℝ) ≤ (659 / 1000) * (Real.log m) ^ 2 := by
   obtain ⟨Q, hQ2, hQ⟩ := gamma_prime_bound_659 hg h hh
   refine ⟨Q, hQ2, ?_⟩
   intro q m _ _ hmQ hm H hH hk hs
@@ -135,8 +135,8 @@ theorem gamma_prime_bound_659_of_cyclic_reduction
                 h ∣ Nat.totient m →
                 (∀ p : ℕ, p.Prime → (p ∣ q ↔ p ∣ m)) →
                 ∃ p : ℕ,
-                  IsLeast (NumberTheory.primesOutside q H) p ∧ (p : ℝ) ≤ (659 / 1000) * (Real.log
-                    m) ^ 2 := by
+                  IsLeast (NumberTheory.primesOutside q H) p ∧
+                    (p : ℝ) ≤ (659 / 1000) * (Real.log m) ^ 2 := by
   obtain ⟨Q, hQ2, hQ⟩ := gamma_prime_bound_659_of_reduction hg h hh
   refine ⟨Q, hQ2, ?_⟩
   intro q m _ _ _ hmQ hm H hH hdiv hs

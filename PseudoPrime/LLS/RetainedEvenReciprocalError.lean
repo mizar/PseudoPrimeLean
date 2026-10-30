@@ -60,8 +60,8 @@ theorem primitiveReciprocalEvenMainError_le_neg_179_div_200 {x : ℝ} (hx : 64 �
   have hi : 1 / x ≤ (1 / 64 : ℝ) :=
     div_le_div_of_nonneg_left (by norm_num only) (by norm_num only) hx
   have hc : 0 ≤ 1 - 1 / x := by linarith only [hi]
-  have hg := mul_le_mul_of_nonneg_right
-    Analysis.twentyThree_fortieths_lt_eulerMascheroniConstant.le hc
+  have hg :=
+    mul_le_mul_of_nonneg_right Analysis.twentyThree_fortieths_lt_eulerMascheroniConstant.le hc
   have hm : Analysis.logLinearRatio x ≤ Analysis.logLinearRatio 64 :=
     Analysis.strictAntiOn_logLinearRatio.antitoneOn (by norm_num only [Set.mem_Ici])
       (by

@@ -365,8 +365,8 @@ def lls_proposition61 : Prop :=
                             ∀ X : ℝ,
                               0 < X →
                                 (∀ p : ℕ,
-                                  p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q
-                                    H p) →
+                                  p.Prime →
+                                    ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) →
                                 ((h : ℝ) *
                                         intervalIntegral
                                           (fun u : ℝ ↦ (K.transform u).re / Real.sqrt u) 0 lambda

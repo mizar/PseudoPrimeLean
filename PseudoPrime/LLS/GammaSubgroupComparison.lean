@@ -99,8 +99,8 @@ bound. The remaining modulus loss is stated explicitly for later local refinemen
 theorem gamma_noSmallPrimes_explicit_inequality {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x lambda : ℝ} (hx : 1 ≤ x) (hl : 0 ≤ lambda) (hcut : 1 ≤ lambda * x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
-      p) :
+    (hsmall :
+      ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H p) :
     ((H.index : ℝ) * (1 - Real.exp (-lambda)) - 1) * Real.sqrt x ≤
       (11783423 / 25000000 : ℝ) * subgroupConductorLogSum H +
         13 * ((H.index : ℝ) + 1) * x ^ (1 / 4 : ℝ) +
@@ -126,8 +126,8 @@ theorem gamma_noSmallPrimes_explicit_inequality_of_no_small_divisor {q : ℕ} [N
     (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 1 ≤ x)
     (hl : 0 ≤ lambda) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
-      p) :
+    (hsmall :
+      ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H p) :
     ((H.index : ℝ) * (1 - Real.exp (-lambda)) - 1) * Real.sqrt x ≤
       (11783423 / 25000000 : ℝ) * subgroupConductorLogSum H +
         13 * ((H.index : ℝ) + 1) * x ^ (1 / 4 : ℝ) +

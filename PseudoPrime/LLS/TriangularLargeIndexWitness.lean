@@ -26,8 +26,8 @@ theorem exists_prime_factor_or_outside_triangular18_large_index {q : ℕ} [NeZer
     (hlog : (100000000000000000000 : ℝ) ≤ Real.log q) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ (283 / 1000 : ℝ) * (Real.log q) ^ 2 ∧ (p ∣ q ∨ ¬NumberTheory.residueInSubgroup q
-          H p) := by
+        (p : ℝ) ≤ (283 / 1000 : ℝ) * (Real.log q) ^ 2 ∧
+        (p ∣ q ∨ ¬NumberTheory.residueInSubgroup q H p) := by
   have hx := (Analysis.triangular18_large_scale_bounds hlog).1
   have hh : (1000000000 : ℝ) ≤ (H.index : ℝ) := by exact_mod_cast hi
   exact

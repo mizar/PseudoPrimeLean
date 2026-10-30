@@ -33,8 +33,7 @@ This function is numerically equal to the guarded witness minimum for inputs abo
 noncomputable def tunedSelectedEnvelope (n : ℕ) : ℝ :=
   if n < 3000 then smallIntervalBound n
   else
-    sharpGuardSelected (Real.log n) (tunedFiniteSelected n)
-      (gaussianTunedFamily (Real.log n))
+    sharpGuardSelected (Real.log n) (tunedFiniteSelected n) (gaussianTunedFamily (Real.log n))
       (min (gaussianSeededTunedBound false (Real.log n))
         (gaussianSeededTunedBound true (Real.log n)))
       (tunedHighMin (Real.log n) (tunedFiniteSelected n))

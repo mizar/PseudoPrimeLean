@@ -282,8 +282,8 @@ theorem mellinWeightTwo_tsum_eq_logarithmicWeightedSum (a : ℕ → ℂ) (ha : a
     · have hnxlt : x < n := (Nat.floor_lt hx.le).mp (hn hn0)
       have ht : 0 < (n : ℝ) / x := div_pos (by exact_mod_cast hn0) hx
       rw [Analysis.mellinWeightTwo_eq_ofReal_neg_log_min ht,
-        min_eq_right ((one_le_div hx).mpr hnxlt.le),
-        Real.log_one, neg_zero, Complex.ofReal_zero, mul_zero]
+        min_eq_right ((one_le_div hx).mpr hnxlt.le), Real.log_one, neg_zero, Complex.ofReal_zero,
+        mul_zero]
   rw [tsum_eq_sum hvanish, logarithmicWeightedSum]
   apply Finset.sum_congr rfl
   intro n hn
@@ -332,8 +332,7 @@ theorem logarithmicMellin_integrable_and_integral {τ x : ℝ} (hτ : 0 < τ) (h
     have ht : (1 : ℝ) / x ∈ Set.Ioc (0 : ℝ) 1 :=
       ⟨div_pos zero_lt_one hx0, (div_lt_one hx0).mpr hx |>.le⟩
     rw [Analysis.mellinWeightTwo, Set.indicator_of_mem ht, one_div, Real.log_inv,
-      Complex.ofReal_neg,
-      neg_neg]
+      Complex.ofReal_neg, neg_neg]
   rw [hm] at hi
   exact ⟨hg, hi.symm⟩
 

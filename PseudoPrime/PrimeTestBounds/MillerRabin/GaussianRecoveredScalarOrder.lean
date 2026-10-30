@@ -28,8 +28,7 @@ theorem gaussianLargeRoot_gt_ten {L : ℝ} (hL : 132 ≤ L) : (10 : ℝ) < gauss
   by_contra ht
   have hbudget :=
     Analysis.gaussianBudget_of_root_le gaussianMRRefined_coefficients.1
-      gaussianMRRefined_coefficients.2 hC
-      hb (le_of_not_gt ht)
+      gaussianMRRefined_coefficients.2 hC hb (le_of_not_gt ht)
   change
     gaussianMRRefinedConductor * L + 163 / 20 + gaussianMRRefinedBeta * 10 ≤
       gaussianMRRefinedD * 10 ^ 2 at hbudget
@@ -162,9 +161,8 @@ theorem gaussianSingle_lt_original {L : ℝ} (hL : 132 ≤ L) (hU : L ≤ 215) :
   have hfour : t < gaussian1000FourRoot L := by
     by_contra hh
     have hg :=
-      Analysis.gaussianBudget_of_root_le gaussian1000_coefficients.1 gaussian1000_coefficients.2
-        hC4 hcoef
-        (le_of_not_gt hh)
+      Analysis.gaussianBudget_of_root_le gaussian1000_coefficients.1 gaussian1000_coefficients.2 hC4
+        hcoef (le_of_not_gt hh)
     change
       (2 / 3 : ℝ) * gaussianMRRefinedConductor * L + 127 / 10 + gaussian1000FourBeta * t ≤
         gaussian1000FourD * t ^ 2 at hg

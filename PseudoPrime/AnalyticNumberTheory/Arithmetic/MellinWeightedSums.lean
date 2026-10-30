@@ -50,8 +50,7 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
   have hlog : Real.log ((n : ℝ) / x) = -Real.log (x / (n : ℝ)) := by
     rw [← inv_div x (n : ℝ), Real.log_inv]
   rw [Analysis.mellinWeightTwo_eq_ofReal_neg_log_min ht, min_eq_left hnxdiv,
-    logWeightedMangoldtTerm,
-    hlog]
+    logWeightedMangoldtTerm, hlog]
   push_cast
   ring
 

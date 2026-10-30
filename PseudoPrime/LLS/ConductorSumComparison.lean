@@ -82,8 +82,9 @@ theorem exists_conductor_comparison_scale (K : MellinKernel)
                     ∀ x : ℝ,
                       T ≤ x →
                         Real.sqrt x ≤ d * Real.log q →
-                        (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ b * x →
-                          NumberTheory.residueInSubgroup q H p) →
+                        (∀ p : ℕ,
+                          p.Prime →
+                            ¬p ∣ q → (p : ℝ) ≤ b * x → NumberTheory.residueInSubgroup q H p) →
                         ((h : ℝ) * (∫ u in 0..b, (K.transform u).re / Real.sqrt u) -
                               (K.function (1 / 2)).re) *
                             Real.sqrt x ≤
@@ -226,8 +227,8 @@ theorem exists_least_prime_outside_le_conductor_sum (K : MellinKernel)
   have hbx : b * x = B ^ 2 := by
     dsimp only [x]
     rw [mul_comm, div_mul_cancel₀ _ hb.ne']
-  have hsmall : ∀ r : ℕ, r.Prime → ¬r ∣ q → (r : ℝ) ≤ b * x → NumberTheory.residueInSubgroup q H r
-    := by
+  have hsmall :
+    ∀ r : ℕ, r.Prime → ¬r ∣ q → (r : ℝ) ≤ b * x → NumberTheory.residueInSubgroup q H r := by
     intro r hr hnd hle
     by_contra hnr
     have hmin : (p : ℝ) ≤ r := Nat.cast_le.mpr (hp.2 ⟨hr, hnd, hnr⟩)

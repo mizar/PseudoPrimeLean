@@ -16,8 +16,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- A tuned triangular cutoff is active at its certified entrance; otherwise use the base. -/
 noncomputable def tunedHighGuard (L B : ℝ) (i : Fin 7) : ℝ :=
-  if (triangularTunedProfile i).T ≤ L then (triangularTunedProfile i).C * L ^ 2
-  else B
+  if (triangularTunedProfile i).T ≤ L then (triangularTunedProfile i).C * L ^ 2 else B
 
 /-- Intersect the base with all seven certified high-range cutoffs. -/
 noncomputable def tunedHighMin (L B : ℝ) : ℝ :=
@@ -31,9 +30,7 @@ noncomputable def tunedHighMin (L B : ℝ) : ℝ :=
 /-- A common lower bound for the base and all active profiles bounds their guarded minimum. -/
 theorem tunedHigh_lower {L B C : ℝ} (hB : C ≤ B)
     (hH :
-      ∀ i : Fin 7,
-        (triangularTunedProfile i).T ≤ L →
-          C ≤ (triangularTunedProfile i).C * L ^ 2) :
+      ∀ i : Fin 7, (triangularTunedProfile i).T ≤ L → C ≤ (triangularTunedProfile i).C * L ^ 2) :
     C ≤ tunedHighMin L B := by
   have hg (i : Fin 7) : C ≤ tunedHighGuard L B i := by
     by_cases hi : (triangularTunedProfile i).T ≤ L
@@ -45,8 +42,7 @@ theorem tunedHigh_lower {L B C : ℝ} (hB : C ≤ B)
         (le_min (hg 1) (le_min (hg 2) (le_min (hg 3) (le_min (hg 4) (le_min (hg 5) (hg 6)))))))
 
 /-- Above a certified entrance the guarded minimum is below the corresponding profile. -/
-theorem tunedHigh_le_profile (L B : ℝ) (i : Fin 7)
-    (hi : (triangularTunedProfile i).T ≤ L) :
+theorem tunedHigh_le_profile (L B : ℝ) (i : Fin 7) (hi : (triangularTunedProfile i).T ≤ L) :
     tunedHighMin L B ≤ (triangularTunedProfile i).C * L ^ 2 := by
   have hg : tunedHighMin L B ≤ tunedHighGuard L B i := by
     fin_cases i

@@ -20,8 +20,7 @@ theorem currentSeeded_raw13 {L : ℝ} (hL : 240 ≤ L) :
     (13 : ℝ) ≤ gaussianRecoveredSeededRawRoot false L := by
   let s := gaussianRecoveredSeededRawRoot false L
   have hs : 0 < s := gaussianRecoveredSeeded_raw_pos false L
-  have he :=
-    gaussianRecoveredSeeded_raw_equation false (by linarith only [hL] : (0 : ℝ) ≤ L)
+  have he := gaussianRecoveredSeeded_raw_equation false (by linarith only [hL] : (0 : ℝ) ≤ L)
   change
     gaussianMRRefinedD * s ^ 2 =
       gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
@@ -29,20 +28,18 @@ theorem currentSeeded_raw13 {L : ℝ} (hL : 240 ≤ L) :
   by_contra hn
   have hlt : s < 13 := lt_of_not_ge hn
   have ha : 0 < 13 * gaussianMRRefinedD - gaussianMRRefinedBeta := by
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth,
-      Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex]
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
+      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex]
   have hm :=
     mul_nonneg (sub_nonneg.mpr hlt.le)
       (show 0 ≤ gaussianMRRefinedD * (13 + s) - gaussianMRRefinedBeta
         by
         have hd := mul_nonneg gaussianMRRefined_coefficients.1.le hs.le
         linarith only [ha, hd])
-  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta,
-    gaussianMRRefinedMass, gaussianMRRefinedWidth,
-    Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex,
-    gaussianMRRefinedConductor, gaussianRecoveredSeededConstant,
-    Bool.false_eq_true, ite_false] at he hm
+  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
+    gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex,
+    gaussianMRRefinedConductor, gaussianRecoveredSeededConstant, Bool.false_eq_true,
+    ite_false] at he hm
   nlinarith only [he, hm, hL]
 
 /-- For logarithmic scale at least 240, the current raw35 radius is at most 18L/25.
@@ -51,18 +48,16 @@ theorem currentSeeded_raw_radius {L : ℝ} (hL : 240 ≤ L) :
     gaussianRecoveredSeededRawRoot false L ^ 2 ≤ (18 / 25 : ℝ) * L := by
   let s := gaussianRecoveredSeededRawRoot false L
   have hs : (13 : ℝ) ≤ s := currentSeeded_raw13 hL
-  have he :=
-    gaussianRecoveredSeeded_raw_equation false (by linarith only [hL] : (0 : ℝ) ≤ L)
+  have he := gaussianRecoveredSeeded_raw_equation false (by linarith only [hL] : (0 : ℝ) ≤ L)
   change
     gaussianMRRefinedD * s ^ 2 =
       gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
         gaussianRecoveredSeededConstant false at he
   have hm := mul_nonneg (by linarith only [hs] : (0 : ℝ) ≤ s) (sub_nonneg.mpr hs)
-  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta,
-    gaussianMRRefinedMass, gaussianMRRefinedWidth,
-    Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex,
-    gaussianMRRefinedConductor, gaussianRecoveredSeededConstant,
-    Bool.false_eq_true, ite_false] at he
+  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
+    gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex,
+    gaussianMRRefinedConductor, gaussianRecoveredSeededConstant, Bool.false_eq_true,
+    ite_false] at he
   change s ^ 2 ≤ (18 / 25 : ℝ) * L
   nlinarith only [he, hm, hL]
 
@@ -75,8 +70,7 @@ theorem currentSeeded_quadratic {L : ℝ} (hL : 240 ≤ L) :
   apply (min_le_left _ _).trans
   rw [gaussianRecoveredSeeded_eq_max]
   apply max_le
-  · norm_num only [gaussianRecoveredSeededCutoff, Bool.false_eq_true, ite_false,
-      Nat.cast_ofNat]
+  · norm_num only [gaussianRecoveredSeededCutoff, Bool.false_eq_true, ite_false, Nat.cast_ofNat]
     nlinarith only [hL, sq_nonneg (L - 240)]
   · have hr := currentSeeded_raw_radius hL
     have hs := (sq_le_sq₀ (sq_nonneg _) (by linarith only [hL] : (0 : ℝ) ≤ (18 / 25) * L)).mpr hr
@@ -122,15 +116,14 @@ theorem currentSeeded_le_gaussian {L : ℝ} (hL : 240 ≤ L) :
     by_contra hn
     have ht : s < 131 / 10 := lt_of_not_ge hn
     have hm := mul_nonneg (sub_nonneg.mpr ht.le) (by linarith only [hs] : 0 ≤ s + 131 / 10)
-    norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedBeta,
-      gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedWidth,
-      Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex] at hG
+    norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedBeta, gaussianMRRefinedD,
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
+      Analysis.gaussianMR6FifthsIndex] at hG
     nlinarith only [hG, hs, hm, hL]
   have hraw : gaussianRecoveredSeededRawRoot false L ≤ s := by
     change
       Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-          (gaussianMRRefinedConductor * L +
-            gaussianRecoveredSeededConstant false) ≤
+          (gaussianMRRefinedConductor * L + gaussianRecoveredSeededConstant false) ≤
         s
     apply
       Analysis.gaussianBudgetRoot_le_of_budget gaussianMRRefined_coefficients.1
@@ -139,9 +132,9 @@ theorem currentSeeded_le_gaussian {L : ℝ} (hL : 240 ≤ L) :
         Bool.false_eq_true, ite_false]
       linarith only [hL]
     · have hm := mul_le_mul_of_nonneg_left h13 gaussianMRRefined_coefficients.1.le
-      norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta,
-        gaussianMRRefinedMass, gaussianMRRefinedWidth,
-        Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex] at hm ⊢
+      norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
+        gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
+        Analysis.gaussianMR6FifthsIndex] at hm ⊢
       linarith only [hm]
     · norm_num only [gaussianRecoveredSeededConstant, Bool.false_eq_true, ite_false]
       linarith only [hG]
@@ -149,8 +142,7 @@ theorem currentSeeded_le_gaussian {L : ℝ} (hL : 240 ≤ L) :
   apply (min_le_left _ _).trans
   rw [gaussianRecoveredSeeded_eq_max]
   apply max_le
-  · norm_num only [gaussianRecoveredSeededCutoff, Bool.false_eq_true, ite_false,
-      Nat.cast_ofNat]
+  · norm_num only [gaussianRecoveredSeededCutoff, Bool.false_eq_true, ite_false, Nat.cast_ofNat]
     change (35000 : ℝ) ≤ (6 / 5 : ℝ) * (s ^ 2) ^ 2
     have hs2 :=
       (sq_le_sq₀ (by norm_num only : (0 : ℝ) ≤ 131 / 10) (by linarith only [h13] : (0 : ℝ) ≤ s)).mpr
@@ -163,8 +155,7 @@ theorem currentSeeded_le_gaussian {L : ℝ} (hL : 240 ≤ L) :
         hraw
     have hs4 := (sq_le_sq₀ (sq_nonneg _) (sq_nonneg s)).mpr hs2
     change
-      (6 / 5 : ℝ) * (gaussianRecoveredSeededRawRoot false L ^ 2) ^ 2 ≤
-        (6 / 5 : ℝ) * (s ^ 2) ^ 2
+      (6 / 5 : ℝ) * (gaussianRecoveredSeededRawRoot false L ^ 2) ^ 2 ≤ (6 / 5 : ℝ) * (s ^ 2) ^ 2
     linarith only [hs4]
 
 /-- For inputs above one with scale in [240,1.1 trillion), the current refined selection

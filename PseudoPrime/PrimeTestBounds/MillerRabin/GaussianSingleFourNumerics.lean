@@ -17,8 +17,9 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- The inverse-root coefficient after scaling the index-four radius by three quarters. -/
 noncomputable def gaussianSingleFourA : ℝ :=
   (16 / 3 : ℝ) * (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth)) -
-    4 * (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta / (6 *
-      gaussianMRRefinedConductor))
+    4 *
+      (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
+        (6 * gaussianMRRefinedConductor))
 
 /-- Given residual allowance D, retain its signed inverse-radius contribution after pole
 elimination. -/
@@ -115,15 +116,16 @@ theorem gaussianSingle_four_error {L s P D : ℝ} (hs : 10 ≤ s)
           (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * (3 / 4) * s) +
             1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * (3 / 4) * r)) +
         4 *
-          (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-            gaussianMRRefinedConductor) -
+          (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+                (6 * gaussianMRRefinedConductor) -
               (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
                   (6 * gaussianMRRefinedConductor)) /
                 s +
-            (Analysis.gaussianMR6FifthsEndpoint * (4 - 7 * D / (6 * gaussianMRRefinedConductor)))
-              / s ^ 2) =
-      4 * (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-        gaussianMRRefinedConductor)) +
+            (Analysis.gaussianMR6FifthsEndpoint * (4 - 7 * D / (6 * gaussianMRRefinedConductor))) /
+              s ^ 2) =
+      4 *
+          (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+            (6 * gaussianMRRefinedConductor)) +
         gaussianSingleFourA / s +
         gaussianSingleFourV D / s ^ 2 := by
     dsimp only [gaussianSingleFourA, gaussianSingleFourV, r]
@@ -131,8 +133,9 @@ theorem gaussianSingle_four_error {L s P D : ℝ} (hs : 10 ≤ s)
     norm_num only
     ring
   have hpoleEq :
-    3 * (Analysis.gaussianMR6FifthsEndpoint * (((7 / 6 : ℝ) * Real.log n + 4) / ((3 / 4 : ℝ) *
-      r))) =
+    3 *
+        (Analysis.gaussianMR6FifthsEndpoint *
+          (((7 / 6 : ℝ) * Real.log n + 4) / ((3 / 4 : ℝ) * r))) =
       4 * (Analysis.gaussianMR6FifthsEndpoint * (((7 / 6 : ℝ) * Real.log n + 4) / r)) := by
     simp only [div_eq_mul_inv, mul_inv_rev]
     norm_num only

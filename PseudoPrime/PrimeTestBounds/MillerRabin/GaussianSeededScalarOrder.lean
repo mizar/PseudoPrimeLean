@@ -346,11 +346,10 @@ theorem gaussianSeeded35_raw_lt_six {L : ℝ} (hL : 240 ≤ L) :
         Analysis.gaussianMR6FifthsConductor * L + Analysis.gaussianMR6FifthsBeta * t + 6 at hf
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsD,
-        Analysis.gaussianMR6FifthsBeta,
-      Analysis.gaussianMR6FifthsConductor, Analysis.gaussianMR6FifthsIndex,
-        Analysis.gaussianMR6FifthsMass,
-      Analysis.gaussianMR6FifthsEndpoint, gaussianSeededConstant, Bool.false_eq_true, ite_false]
-        at he hf
+      Analysis.gaussianMR6FifthsBeta, Analysis.gaussianMR6FifthsConductor,
+      Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsMass,
+      Analysis.gaussianMR6FifthsEndpoint, gaussianSeededConstant, Bool.false_eq_true,
+      ite_false] at he hf
     nlinarith only [he, hf, hp, hts, hL, hs, ht, sq_nonneg t]
   have h2 := (sq_lt_sq₀ hs.le (by linarith only [ht] : (0 : ℝ) ≤ t)).mpr hst
   have h4 := (sq_lt_sq₀ (sq_nonneg _) (sq_nonneg _)).mpr h2

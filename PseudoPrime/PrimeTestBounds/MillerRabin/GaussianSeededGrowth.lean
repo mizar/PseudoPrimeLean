@@ -77,8 +77,7 @@ theorem gaussian1000_large_above {L : ℝ} (hL : 240 ≤ L) :
       gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
   have h :=
     Analysis.gaussianBudget_of_root_le gaussianMRRefined_coefficients.1
-      gaussianMRRefined_coefficients.2 h0
-      hb (le_of_not_gt hn)
+      gaussianMRRefined_coefficients.2 h0 hb (le_of_not_gt hn)
   norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
     gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint,
     gaussianMRRefinedConductor] at h

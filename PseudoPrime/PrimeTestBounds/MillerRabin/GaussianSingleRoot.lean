@@ -83,8 +83,8 @@ theorem gaussianSingle_error_cap {L eta eps D s : ℝ} {q : ℕ} (hs0 : 10 ≤ s
     (h2 : 0 ≤ gaussian1000ResidualA eta * 10 + 2 * gaussian1000ResidualV eta)
     (hstrict :
       (12871 / 1000 : ℝ) - 2 * (7191 / 2000) +
-          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-            gaussianMRRefinedConductor) +
+          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+            (6 * gaussianMRRefinedConductor) +
           gaussian1000ResidualA eta / 10 +
           gaussian1000ResidualV eta / 100 +
           eps +
@@ -120,16 +120,16 @@ theorem gaussianSingle_error_cap {L eta eps D s : ℝ} {q : ℕ} (hs0 : 10 ≤ s
     eta *
           (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
             1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
-        (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-          gaussianMRRefinedConductor) -
+        (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+              (6 * gaussianMRRefinedConductor) -
             (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
                 (6 * gaussianMRRefinedConductor)) /
               s +
-          (Analysis.gaussianMR6FifthsEndpoint * (4 - 7 * (163 / 20) / (6 *
-            gaussianMRRefinedConductor))) /
+          (Analysis.gaussianMR6FifthsEndpoint *
+              (4 - 7 * (163 / 20) / (6 * gaussianMRRefinedConductor))) /
             s ^ 2) =
-      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-        gaussianMRRefinedConductor) +
+      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+          (6 * gaussianMRRefinedConductor) +
         gaussian1000ResidualA eta / s +
         gaussian1000ResidualV eta / s ^ 2 := by
     rw [hreq]
@@ -143,9 +143,8 @@ theorem gaussianSingle_error_cap {L eta eps D s : ℝ} {q : ℕ} (hs0 : 10 ≤ s
 /-- For L>=0, index m>=10^9 and log q<=L, the normalized error is below
 163/20. Bound the ratio and independent error by their large-index caps,
 then apply the common paired residual estimate. -/
-theorem gaussianSingle_large_error {L m : ℝ} {q : ℕ} (hL : 0 ≤ L) (hm :
-  Analysis.gaussianMR6FifthsIndex ≤ m)
-    (hq : Real.log q ≤ L) :
+theorem gaussianSingle_large_error {L m : ℝ} {q : ℕ} (hL : 0 ≤ L)
+    (hm : Analysis.gaussianMR6FifthsIndex ≤ m) (hq : Real.log q ≤ L) :
     let s := gaussianSingleRoot L
     let r := gaussianSingleRadius L
     (m / (m - 1)) *
@@ -176,8 +175,8 @@ theorem gaussianSingle_large_error {L m : ℝ} {q : ℕ} (hL : 0 ≤ L) (hm :
   have hden : Analysis.gaussianMR6FifthsIndex - 1 ≤ m - 1 := by linarith only [hm]
   have heps :=
     div_le_div_of_nonneg_left (by norm_num only : (0 : ℝ) ≤ 13)
-      (by norm_num only [Analysis.gaussianMR6FifthsIndex] : 0 < Analysis.gaussianMR6FifthsIndex -
-        1) hden
+      (by norm_num only [Analysis.gaussianMR6FifthsIndex] : 0 < Analysis.gaussianMR6FifthsIndex - 1)
+      hden
   change _ + _ + LLS.PaperStatements.gaussianPrefixError (7191 / 2000) q (r ^ 2) < _ at herr
   change
     (Analysis.gaussianMR6FifthsIndex / (Analysis.gaussianMR6FifthsIndex - 1)) *

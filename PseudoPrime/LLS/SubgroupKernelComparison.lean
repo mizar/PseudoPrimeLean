@@ -58,9 +58,8 @@ cases. This pointwise identity is the basis for finite and infinite sum comparis
 theorem sum_summand_eq_indicator (K : MellinKernel) (H : Subgroup (ZMod q)ˣ) (x : ℝ) (n : ℕ) :
     ∑ χ : NumberTheory.subgroupAnnihilator H, K.summand χ.val x n =
       (H.index : ℂ) *
-        {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator (K.summand (1 : DirichletCharacter
-          ℂ q) x)
-          n := by
+        {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator
+          (K.summand (1 : DirichletCharacter ℂ q) x) n := by
   classical
   by_cases hm : NumberTheory.residueInSubgroup q H n
   · rw [Set.indicator_of_mem (s := {m : ℕ | NumberTheory.residueInSubgroup q H m}) hm]
@@ -77,9 +76,8 @@ theorem sum_tsum_eq_subgroup_indicator (K : MellinKernel) (H : Subgroup (ZMod q)
     ∑ χ : NumberTheory.subgroupAnnihilator H, ∑' n : ℕ, K.summand χ.val x n =
       (H.index : ℂ) *
         ∑' n : ℕ,
-          {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator (K.summand (1 :
-            DirichletCharacter ℂ q) x)
-            n := by
+          {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator
+            (K.summand (1 : DirichletCharacter ℂ q) x) n := by
   have he :=
     Summable.tsum_finsetSum (s := Finset.univ) (f :=
       fun (χ : NumberTheory.subgroupAnnihilator H) n ↦ K.summand χ.val x n)
@@ -117,8 +115,8 @@ theorem sum_re_tsum_eq_subgroup_indicator (K : MellinKernel) (H : Subgroup (ZMod
           {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator
             (fun n ↦ (K.summand (1 : DirichletCharacter ℂ q) x n).re) n := by
   have hs :=
-    (summable_summand K (1 : DirichletCharacter ℂ q) hx).indicator {m : ℕ |
-      NumberTheory.residueInSubgroup q H m}
+    (summable_summand K (1 : DirichletCharacter ℂ q) hx).indicator
+      {m : ℕ | NumberTheory.residueInSubgroup q H m}
   rw [← Complex.re_sum, sum_tsum_eq_subgroup_indicator K H hx, Complex.mul_re, Complex.natCast_re,
     Complex.natCast_im, zero_mul, sub_zero, Complex.re_tsum hs]
   apply congrArg (fun z : ℝ ↦ (H.index : ℝ) * z)
@@ -171,9 +169,8 @@ outside the subgroup image is zero. Nonzero terms would be coprime prime powers,
 whose prime bases and powers already lie in `H`. This removes the indicator below `X`. -/
 theorem principal_summand_eq_zero_of_not_residue_of_noSmallPrimes (K : MellinKernel)
     (H : Subgroup (ZMod q)ˣ) (x : ℝ) {X : ℝ}
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) {n :
-      ℕ}
-    (hbound : (n : ℝ) ≤ X) (hm : ¬NumberTheory.residueInSubgroup q H n) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p)
+    {n : ℕ} (hbound : (n : ℝ) ≤ X) (hm : ¬NumberTheory.residueInSubgroup q H n) :
     K.summand (1 : DirichletCharacter ℂ q) x n = 0 := by
   by_cases hp : IsPrimePow n
   · by_cases hu : IsUnit (n : ZMod q)
@@ -190,8 +187,8 @@ omit [NeZero q] in
 any real principal term below `X`. Inside `H` it acts as the identity; outside,
 the principal term is zero. This identifies the entire finite Mangoldt sum. -/
 theorem subgroup_indicator_eq_principal_of_noSmallPrimes (K : MellinKernel) (H : Subgroup (ZMod q)ˣ)
-    (x : ℝ) {X : ℝ} (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X →
-      NumberTheory.residueInSubgroup q H p)
+    (x : ℝ) {X : ℝ}
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p)
     {n : ℕ} (hbound : (n : ℝ) ≤ X) :
     {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator
         (fun n ↦ (K.summand (1 : DirichletCharacter ℂ q) x n).re) n =

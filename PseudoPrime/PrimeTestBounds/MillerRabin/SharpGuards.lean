@@ -33,9 +33,7 @@ noncomputable def sharpHighMin (L B : ℝ) : ℝ :=
 /-- A common lower bound for the base and every active triangular candidate
 bounds their guarded minimum. Resolve each guard before combining the inequalities. -/
 theorem sharpHigh_lower {L B C : ℝ} (hB : C ≤ B)
-    (hH :
-      ∀ i : Fin 8,
-        (triangularProfile i).T ≤ L → C ≤ (triangularProfile i).C * L ^ 2) :
+    (hH : ∀ i : Fin 8, (triangularProfile i).T ≤ L → C ≤ (triangularProfile i).C * L ^ 2) :
     C ≤ sharpHighMin L B := by
   have hg (i : Fin 8) : C ≤ sharpHighGuard L B i := by
     by_cases hi : (triangularProfile i).T ≤ L
@@ -134,8 +132,7 @@ its cutoff intersected with the base. The proof compares every active branch dir
 theorem sharpHigh_eq_active {L B : ℝ} (i : Fin 8) (hi : (triangularProfile i).T ≤ L)
     (hbest :
       ∀ j : Fin 8,
-        (triangularProfile j).T ≤ L →
-          (triangularProfile i).C ≤ (triangularProfile j).C) :
+        (triangularProfile j).T ≤ L → (triangularProfile i).C ≤ (triangularProfile j).C) :
     sharpHighMin L B = min B ((triangularProfile i).C * L ^ 2) := by
   apply le_antisymm
   · exact le_min (sharpHigh_le_base L B) (sharpHigh_le_profile L B i hi)

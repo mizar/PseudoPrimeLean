@@ -26,17 +26,15 @@ theorem gaussianLow_root_gt131 (f : GaussianLowProfile) {L : ℝ} (hL : 240 ≤ 
   change _ ≤ gaussianMRRefinedD * f.root L ^ 2 at hG
   by_contra hn
   have hr : f.root L ≤ (131 / 10 : ℝ) := le_of_not_gt hn
-  have hfac :
-    0 ≤ gaussianMRRefinedD * (131 / 10 + f.root L) - gaussianMRRefinedBeta := by
+  have hfac : 0 ≤ gaussianMRRefinedD * (131 / 10 + f.root L) - gaussianMRRefinedBeta := by
     have hd := mul_nonneg gaussianMRRefined_coefficients.1.le hp.le
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth,
-      Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint] at hd ⊢
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
+      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
+      Analysis.gaussianMR6FifthsEndpoint] at hd ⊢
     linarith only [hd]
   have hm := mul_nonneg (sub_nonneg.mpr hr) hfac
-  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta,
-    gaussianMRRefinedMass, gaussianMRRefinedWidth,
-    Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint,
+  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
+    gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint,
     gaussianMRRefinedConductor] at hm hG
   nlinarith only [hm, hG, hL, hD]
 
@@ -54,11 +52,10 @@ theorem seededSharp35_le_low (f : GaussianLowProfile) {L : ℝ} (hL : 240 ≤ L)
     nlinarith only [h4]
   have hD : gaussianSeededSharpConstant false ≤ f.residual := by
     cases f <;>
-      norm_num only [gaussianSeededSharpConstant, GaussianLowProfile.residual,
-        Bool.false_eq_true, ite_false]
+      norm_num only [gaussianSeededSharpConstant, GaussianLowProfile.residual, Bool.false_eq_true,
+        ite_false]
   have hraw : gaussianSeededSharpRawRoot false L ≤ f.root L :=
-    (Analysis.gaussianBudgetRoot_mono (b := gaussianMRRefinedBeta)
-          gaussianMRRefined_coefficients.1
+    (Analysis.gaussianBudgetRoot_mono (b := gaussianMRRefinedBeta) gaussianMRRefined_coefficients.1
           (add_le_add (le_refl (gaussianMRRefinedConductor * L)) hD)).trans
       (le_max_right _ _)
   have h2 := (sq_le_sq₀ (gaussianSeededSharp_raw_pos false L).le hp.le).mpr hraw

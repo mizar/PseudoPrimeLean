@@ -213,16 +213,16 @@ using the clipped-root inequality and the large-index ratio cap. -/
 noncomputable def gaussianFloorResidualA : ℝ :=
   (Analysis.gaussianMR6FifthsIndex / (Analysis.gaussianMR6FifthsIndex - 1)) *
       (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth)) -
-    7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta / (6 *
-      gaussianMRRefinedConductor)
+    7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
+      (6 * gaussianMRRefinedConductor)
 
 /-- The profile-dependent negative inverse-radius coefficient in the residual.
 It must be estimated jointly with the positive inverse-root term. -/
 noncomputable def gaussianFloorResidualV (f : Bool) : ℝ :=
   (Analysis.gaussianMR6FifthsIndex / (Analysis.gaussianMR6FifthsIndex - 1)) *
       (1839 * Analysis.gaussianMR6FifthsEndpoint / 1000) +
-    Analysis.gaussianMR6FifthsEndpoint * (4 - 7 * gaussianFloorConstant f / (6 *
-      gaussianMRRefinedConductor))
+    Analysis.gaussianMR6FifthsEndpoint *
+      (4 - 7 * gaussianFloorConstant f / (6 * gaussianMRRefinedConductor))
 
 /-- Both profiles satisfy the signed coefficient and strict residual inequalities.
 Exact rational evaluation checks the anchors; no input enumeration is used. -/
@@ -232,8 +232,8 @@ theorem gaussianFloor_residual_checks (f : Bool) :
       0 < gaussianFloorResidualA * gaussianFloorAnchor f + 2 * gaussianFloorResidualV f ∧
       0 < gaussianFloorResidualA * gaussianFloorAnchor f + gaussianFloorResidualV f ∧
       (12871 / 1000 : ℝ) - 2 * gaussianFloorPrefix f +
-          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-            gaussianMRRefinedConductor) +
+          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+            (6 * gaussianMRRefinedConductor) +
           gaussianFloorResidualA / gaussianFloorAnchor f +
           gaussianFloorResidualV f / gaussianFloorAnchor f ^ 2 +
           13 / (Analysis.gaussianMR6FifthsIndex - 1) +
@@ -244,8 +244,7 @@ theorem gaussianFloor_residual_checks (f : Bool) :
       gaussianFloorPrefix, gaussianFloorConstant, gaussianMRRefinedD, gaussianMRRefinedBeta,
       gaussianMRRefinedConductor, gaussianMRRefinedWidth, gaussianMRRefinedMass,
       Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint, Bool.false_eq_true,
-        ite_false, ite_true,
-      and_self]
+      ite_false, ite_true, and_self]
 
 /-- For r=s^2>0 satisfying the clipped budget, bound the pole term by the
 retained inverse-root and inverse-square expression. Multiply by the positive radius
@@ -255,8 +254,8 @@ theorem gaussianFloor_pole_bound {f : Bool} {L r s : ℝ} (hr : 0 < r) (hreq : r
       gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + gaussianFloorConstant f ≤
         gaussianMRRefinedD * r) :
     Analysis.gaussianMR6FifthsEndpoint * (((7 / 6 : ℝ) * L + 4) / r) ≤
-      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-        gaussianMRRefinedConductor) -
+      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+            (6 * gaussianMRRefinedConductor) -
           (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
               (6 * gaussianMRRefinedConductor)) /
             s +
@@ -273,8 +272,8 @@ theorem gaussianFloor_pole_bound {f : Bool} {L r s : ℝ} (hr : 0 < r) (hreq : r
         (0 : ℝ) ≤ 7 * Analysis.gaussianMR6FifthsEndpoint / (6 * gaussianMRRefinedConductor))
   have hcne : gaussianMRRefinedConductor ≠ 0 := by norm_num only [gaussianMRRefinedConductor]
   have hid :
-    (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-      gaussianMRRefinedConductor) -
+    (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+              (6 * gaussianMRRefinedConductor) -
             (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
                 (6 * gaussianMRRefinedConductor)) /
               s +
@@ -323,8 +322,8 @@ theorem gaussianFloor_residual {f : Bool} {L m : ℝ} {q : ℕ} (hL : 63 ≤ L)
   have hpole := gaussianFloor_pole_bound hrpos hreq hG
   have hqmul :=
     mul_le_mul_of_nonneg_left hq
-      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] : (0 : ℝ) ≤
-        Analysis.gaussianMR6FifthsEndpoint * (7 / 6))
+      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] :
+        (0 : ℝ) ≤ Analysis.gaussianMR6FifthsEndpoint * (7 / 6))
   have hqPole :
     Analysis.gaussianMR6FifthsEndpoint * (((7 / 6 : ℝ) * Real.log q + 4) / r) ≤
       Analysis.gaussianMR6FifthsEndpoint * (((7 / 6 : ℝ) * L + 4) / r) := by
@@ -347,8 +346,8 @@ theorem gaussianFloor_residual {f : Bool} {L m : ℝ} {q : ℕ} (hL : 63 ≤ L)
   have hmden : Analysis.gaussianMR6FifthsIndex - 1 ≤ m - 1 := by linarith only [hm]
   have h13div :=
     div_le_div_of_nonneg_left (by norm_num only : (0 : ℝ) ≤ 13)
-      (by norm_num only [Analysis.gaussianMR6FifthsIndex] : 0 < Analysis.gaussianMR6FifthsIndex -
-        1) hmden
+      (by norm_num only [Analysis.gaussianMR6FifthsIndex] : 0 < Analysis.gaussianMR6FifthsIndex - 1)
+      hmden
   have hchecks := gaussianFloor_residual_checks f
   have hsanchor : 0 < gaussianFloorAnchor f := by
     cases f <;> norm_num only [gaussianFloorAnchor, Bool.false_eq_true, ite_false, ite_true]
@@ -357,16 +356,16 @@ theorem gaussianFloor_residual {f : Bool} {L m : ℝ} {q : ℕ} (hL : 63 ≤ L)
     (Analysis.gaussianMR6FifthsIndex / (Analysis.gaussianMR6FifthsIndex - 1)) *
           (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
             1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
-        (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-          gaussianMRRefinedConductor) -
+        (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+              (6 * gaussianMRRefinedConductor) -
             (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
                 (6 * gaussianMRRefinedConductor)) /
               s +
           (Analysis.gaussianMR6FifthsEndpoint *
               (4 - 7 * gaussianFloorConstant f / (6 * gaussianMRRefinedConductor))) /
             s ^ 2) =
-      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-        gaussianMRRefinedConductor) +
+      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+          (6 * gaussianMRRefinedConductor) +
         gaussianFloorResidualA / s +
         gaussianFloorResidualV f / s ^ 2 := by
     rw [hreq]
@@ -402,26 +401,25 @@ theorem gaussianFloor_triple_error {f : Bool} {L : ℝ} {q : ℕ} (hL : 63 ≤ L
   have hqDiv := div_le_div_of_nonneg_right hqmul hr.le
   have hqPole :=
     mul_le_mul_of_nonneg_left (add_le_add hqDiv (le_refl (4 / r)))
-      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] : (0 : ℝ) ≤
-        Analysis.gaussianMR6FifthsEndpoint)
+      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] :
+        (0 : ℝ) ≤ Analysis.gaussianMR6FifthsEndpoint)
   have hneg :
     Analysis.gaussianMR6FifthsEndpoint *
         (4 - 7 * gaussianFloorConstant f / (6 * gaussianMRRefinedConductor)) ≤
       0 := by
     cases f <;>
       norm_num only [Analysis.gaussianMR6FifthsEndpoint, gaussianFloorConstant,
-        gaussianMRRefinedConductor,
-        Bool.false_eq_true, ite_false, ite_true]
+        gaussianMRRefinedConductor, Bool.false_eq_true, ite_false, ite_true]
   have hnegDiv := div_nonpos_of_nonpos_of_nonneg hneg (sq_nonneg s)
   have hposDiv :
     0 ≤
-      (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta / (6 *
-        gaussianMRRefinedConductor)) /
+      (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
+          (6 * gaussianMRRefinedConductor)) /
         s := by
     apply div_nonneg _ hs.le
     norm_num only [Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth,
-      gaussianMRRefinedMass, Analysis.gaussianMR6FifthsIndex, gaussianMRRefinedConductor]
+      gaussianMRRefinedWidth, gaussianMRRefinedMass, Analysis.gaussianMR6FifthsIndex,
+      gaussianMRRefinedConductor]
   have hqId (t : ℝ) :
     Analysis.gaussianMR6FifthsEndpoint * ((7 / 6) * t / r + 4 / r) =
       Analysis.gaussianMR6FifthsEndpoint * (((7 / 6) * t + 4) / r) := by
@@ -429,20 +427,20 @@ theorem gaussianFloor_triple_error {f : Bool} {L : ℝ} {q : ℕ} (hL : 63 ≤ L
   rw [hqId (Real.log q), hqId L] at hqPole
   have hPcap :
     Analysis.gaussianMR6FifthsEndpoint * (((7 / 6 : ℝ) * Real.log q + 4) / r) ≤
-      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-        gaussianMRRefinedConductor) := by
+      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+        (6 * gaussianMRRefinedConductor) := by
     linarith only [hqPole, hpole, hnegDiv, hposDiv]
   have hS :=
     div_le_div_of_nonneg_left
-      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] : (0 : ℝ) ≤ 21 *
-        Analysis.gaussianMR6FifthsEndpoint)
+      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] :
+        (0 : ℝ) ≤ 21 * Analysis.gaussianMR6FifthsEndpoint)
       (by norm_num only [gaussianMRRefinedWidth] : (0 : ℝ) < 10 * gaussianMRRefinedWidth * 13)
       (mul_le_mul_of_nonneg_left h13
         (by norm_num only [gaussianMRRefinedWidth] : (0 : ℝ) ≤ 10 * gaussianMRRefinedWidth))
   have hR :=
     div_le_div_of_nonneg_left
-      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] : (0 : ℝ) ≤ 1839 *
-        Analysis.gaussianMR6FifthsEndpoint)
+      (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] :
+        (0 : ℝ) ≤ 1839 * Analysis.gaussianMR6FifthsEndpoint)
       (by norm_num only : (0 : ℝ) < 1000 * 170)
       (mul_le_mul_of_nonneg_left hr170 (by norm_num only : (0 : ℝ) ≤ 1000))
   have htail := Analysis.gaussianMR6_tail240 hr170
@@ -456,8 +454,8 @@ theorem gaussianFloor_triple_error {f : Bool} {L : ℝ} {q : ℕ} (hL : 63 ≤ L
             12871 / 1000 -
           2 * (189499 / 40000) +
         148 / 1000 +
-        7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-          gaussianMRRefinedConductor) <
+        7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+          (6 * gaussianMRRefinedConductor) <
       11 := by
     norm_num only [Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedD, gaussianMRRefinedMass,
       Analysis.gaussianMR6FifthsIndex, gaussianMRRefinedConductor, gaussianMRRefinedWidth]

@@ -164,8 +164,7 @@ theorem improved_eq_fourStep {n : ℕ} (hn : 1 < n) (hL : 47 / 4 < Real.log n)
     exfalso
     linarith only [hU, h]
   · intro _
-    rw [gaussianFloorSelected_eq_fixed
-        (by linarith only [hU, gaussianFloor_switch35_bounds.1])]
+    rw [gaussianFloorSelected_eq_fixed (by linarith only [hU, gaussianFloor_switch35_bounds.1])]
     exact (fourStep_lt_fixed_low (by linarith only [hL]) (by linarith only [hU])).le
   · intro h
     exfalso
@@ -199,8 +198,7 @@ theorem improved_eq_middle_min {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n)
   · intro _
     exact min_le_right _ _
   · intro _
-    rw [gaussianFloorSelected_eq_fixed
-        (by linarith only [hU, gaussianFloor_switch35_bounds.1])]
+    rw [gaussianFloorSelected_eq_fixed (by linarith only [hU, gaussianFloor_switch35_bounds.1])]
     exact
       (min_le_left _ _).trans
         (fourStep_lt_fixed_low (by linarith only [hL]) (by linarith only [hU])).le
@@ -262,8 +260,7 @@ theorem improved_eq_sharp {n : ℕ} (hn : 1 < n) (hL : 112 ≤ Real.log n)
   · intro _
     exact le_refl _
   · intro _
-    rw [gaussianFloorSelected_eq_fixed
-        (h240.trans gaussianFloor_switch35_bounds.1.le)]
+    rw [gaussianFloorSelected_eq_fixed (h240.trans gaussianFloor_switch35_bounds.1.le)]
     exact gammaSharp_le_fixed (by linarith only [hL]) hS
   · intro h
     exfalso

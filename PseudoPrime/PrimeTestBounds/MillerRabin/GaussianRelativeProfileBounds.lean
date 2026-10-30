@@ -84,11 +84,10 @@ theorem gaussianProfile_witness_four (f : GaussianRelativeProfile) {n : ℕ} [Ne
 /-- For an odd uniform three-prime Korselt product, GRH and log n>=T
 yield an actual rejecting prime within the coefficient-C cutoff. Construct the
 index-four subgroup and retain its conductor-sum saving. -/
-theorem gaussianProfile_witness_triple (f : GaussianRelativeProfile) {n p q r : ℕ}
-    (hp : p.Prime) (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r)
-    (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1)
-    (hqdiv : q - 1 ∣ n - 1) (hrdiv : r - 1 ∣ n - 1)
-    (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
+theorem gaussianProfile_witness_triple (f : GaussianRelativeProfile) {n p q r : ℕ} (hp : p.Prime)
+    (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q)
+    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
+    (hrdiv : r - 1 ∣ n - 1) (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hprv : padicValNat 2 (p - 1) = padicValNat 2 (r - 1)) (hnlarge : 20000 ≤ n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : f.T ≤ Real.log n) :
     ∃ s : ℕ,

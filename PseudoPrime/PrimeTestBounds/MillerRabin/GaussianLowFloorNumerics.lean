@@ -30,8 +30,8 @@ theorem gaussianLow_error_cap {L eta eps D s u P T : ℝ} {q : ℕ} (hu : 0 < u)
     (htail : (473 / 10 : ℝ) * ((s ^ 2) ^ 2) ^ (-9 / 16 : ℝ) + (512 / 27 : ℝ) / (s ^ 2) ^ 2 ≤ T)
     (hstrict :
       (12871 / 1000 : ℝ) - 2 * P +
-          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-            gaussianMRRefinedConductor) +
+          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+            (6 * gaussianMRRefinedConductor) +
           gaussian1000ResidualA eta / u +
           gaussianLowResidualV eta D / u ^ 2 +
           eps +
@@ -63,15 +63,15 @@ theorem gaussianLow_error_cap {L eta eps D s u P T : ℝ} {q : ℕ} (hu : 0 < u)
     eta *
           (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
             1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
-        (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-          gaussianMRRefinedConductor) -
+        (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+              (6 * gaussianMRRefinedConductor) -
             (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
                 (6 * gaussianMRRefinedConductor)) /
               s +
-          (Analysis.gaussianMR6FifthsEndpoint * (4 - 7 * (D) / (6 * gaussianMRRefinedConductor)))
-            / s ^ 2) =
-      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-        gaussianMRRefinedConductor) +
+          (Analysis.gaussianMR6FifthsEndpoint * (4 - 7 * (D) / (6 * gaussianMRRefinedConductor))) /
+            s ^ 2) =
+      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+          (6 * gaussianMRRefinedConductor) +
         gaussian1000ResidualA eta / s +
         gaussianLowResidualV eta D / s ^ 2 := by
     rw [hreq]
@@ -86,8 +86,8 @@ theorem gaussianLow_error_cap {L eta eps D s u P T : ℝ} {q : ℕ} (hu : 0 < u)
 noncomputable def gaussianLowFourA : ℝ :=
   (4 / (7559 / 10000)) * (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth)) -
     (3 / (7559 / 10000)) *
-      (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta / (6 *
-        gaussianMRRefinedConductor))
+      (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
+        (6 * gaussianMRRefinedConductor))
 
 /-- The signed inverse-radius coefficient for the scaled index-four comparison. -/
 noncomputable def gaussianLowFourV (D : ℝ) : ℝ :=
@@ -120,8 +120,8 @@ theorem gaussianLow_four_error {L s P D u T : ℝ} (hu : 0 < u) (hs : u ≤ s)
     {n : ℕ} (hn : Real.log n ≤ L) :
     let r := s ^ 2
     4 *
-          (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * (7559 / 10000)
-            * s) +
+          (21 * Analysis.gaussianMR6FifthsEndpoint /
+              (10 * gaussianMRRefinedWidth * (7559 / 10000) * s) +
             1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * (7559 / 10000) * r)) +
         13 +
         3 * LLS.PaperStatements.gaussianPrefixError P n (((7559 / 10000 : ℝ) * r) ^ 2) <
@@ -143,20 +143,20 @@ theorem gaussianLow_four_error {L s P D u T : ℝ} (hu : 0 < u) (hs : u ≤ s)
   have hinverse := inverse_pair_le_anchor hu hs h1 h2
   have hid :
     4 *
-          (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * (7559 / 10000)
-            * s) +
+          (21 * Analysis.gaussianMR6FifthsEndpoint /
+              (10 * gaussianMRRefinedWidth * (7559 / 10000) * s) +
             1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * (7559 / 10000) * r)) +
         (3 / (7559 / 10000)) *
-          (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-            gaussianMRRefinedConductor) -
+          (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+                (6 * gaussianMRRefinedConductor) -
               (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedBeta /
                   (6 * gaussianMRRefinedConductor)) /
                 s +
-            (Analysis.gaussianMR6FifthsEndpoint * (4 - 7 * D / (6 * gaussianMRRefinedConductor)))
-              / s ^ 2) =
+            (Analysis.gaussianMR6FifthsEndpoint * (4 - 7 * D / (6 * gaussianMRRefinedConductor))) /
+              s ^ 2) =
       (3 / (7559 / 10000)) *
-          (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-            gaussianMRRefinedConductor)) +
+          (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+            (6 * gaussianMRRefinedConductor)) +
         gaussianLowFourA / s +
         gaussianLowFourV D / s ^ 2 := by
     dsimp only [gaussianLowFourA, gaussianLowFourV, r]
@@ -164,8 +164,9 @@ theorem gaussianLow_four_error {L s P D u T : ℝ} (hu : 0 < u) (hs : u ≤ s)
     norm_num only
     ring
   have hpoleEq :
-    3 * (Analysis.gaussianMR6FifthsEndpoint * (((7 / 6 : ℝ) * Real.log n + 4) / ((7559 / 10000 :
-      ℝ) * r))) =
+    3 *
+        (Analysis.gaussianMR6FifthsEndpoint *
+          (((7 / 6 : ℝ) * Real.log n + 4) / ((7559 / 10000 : ℝ) * r))) =
       (3 / (7559 / 10000)) *
         (Analysis.gaussianMR6FifthsEndpoint * (((7 / 6 : ℝ) * Real.log n + 4) / r)) := by
     simp only [div_eq_mul_inv, mul_inv_rev]
@@ -203,10 +204,8 @@ theorem gaussianLow_four_checks_low :
           gaussianLowFourV (93 / 10) / (91 / 10) ^ 2 <
         204 / 5 := by
   norm_num only [gaussianLowFourA, gaussianLowFourV, Analysis.gaussianMR6FifthsEndpoint,
-    gaussianMRRefinedD,
-    gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
-      Analysis.gaussianMR6FifthsIndex,
-    gaussianMRRefinedConductor, and_self]
+    gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
+    Analysis.gaussianMR6FifthsIndex, gaussianMRRefinedConductor, and_self]
 
 /-- Above the upper anchor and its minimum allowance, the main quadratic
 exceeds 204/5. Rational coefficients and a square at the anchor prove the margin. -/
@@ -235,10 +234,8 @@ theorem gaussianLow_four_checks_upper :
           gaussianLowFourV (813 / 100) / (19 / 2) ^ 2 <
         204 / 5 := by
   norm_num only [gaussianLowFourA, gaussianLowFourV, Analysis.gaussianMR6FifthsEndpoint,
-    gaussianMRRefinedD,
-    gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
-      Analysis.gaussianMR6FifthsIndex,
-    gaussianMRRefinedConductor, and_self]
+    gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
+    Analysis.gaussianMR6FifthsIndex, gaussianMRRefinedConductor, and_self]
 
 /-- The low floor uses a coarse pole estimate from c*L<=d*s squared.
 Positive inverse coefficients avoid the signed-pair condition that fails at 9.1.
@@ -251,21 +248,22 @@ theorem gaussianLow_coarse_error {L eta eps D s u P T : ℝ} {q : ℕ} (hu : 0 <
     (h1 :
       0 ≤
         (eta * (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth))) * u +
-          (eta * (1839 * Analysis.gaussianMR6FifthsEndpoint / 1000) + 4 *
-            Analysis.gaussianMR6FifthsEndpoint))
+          (eta * (1839 * Analysis.gaussianMR6FifthsEndpoint / 1000) +
+            4 * Analysis.gaussianMR6FifthsEndpoint))
     (h2 :
       0 ≤
         (eta * (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth))) * u +
-          2 * (eta * (1839 * Analysis.gaussianMR6FifthsEndpoint / 1000) + 4 *
-            Analysis.gaussianMR6FifthsEndpoint))
+          2 *
+            (eta * (1839 * Analysis.gaussianMR6FifthsEndpoint / 1000) +
+              4 * Analysis.gaussianMR6FifthsEndpoint))
     (htail : (473 / 10 : ℝ) * ((s ^ 2) ^ 2) ^ (-9 / 16 : ℝ) + (512 / 27 : ℝ) / (s ^ 2) ^ 2 ≤ T)
     (hstrict :
       (12871 / 1000 : ℝ) - 2 * P +
-          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-            gaussianMRRefinedConductor) +
+          7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+            (6 * gaussianMRRefinedConductor) +
           (eta * (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth))) / u +
-          (eta * (1839 * Analysis.gaussianMR6FifthsEndpoint / 1000) + 4 *
-            Analysis.gaussianMR6FifthsEndpoint) /
+          (eta * (1839 * Analysis.gaussianMR6FifthsEndpoint / 1000) +
+              4 * Analysis.gaussianMR6FifthsEndpoint) /
             u ^ 2 +
           eps +
           T <
@@ -287,8 +285,8 @@ theorem gaussianLow_coarse_error {L eta eps D s u P T : ℝ} {q : ℕ} (hu : 0 <
     linarith only [hG, hb, hD]
   have hpole :
     Analysis.gaussianMR6FifthsEndpoint * (((7 / 6 : ℝ) * L + 4) / r) ≤
-      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-        gaussianMRRefinedConductor) +
+      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+          (6 * gaussianMRRefinedConductor) +
         (4 * Analysis.gaussianMR6FifthsEndpoint) / s ^ 2 := by
     have hratio : L / r ≤ gaussianMRRefinedD / gaussianMRRefinedConductor := by
       apply (div_le_iff₀ hrpos).mpr
@@ -296,19 +294,19 @@ theorem gaussianLow_coarse_error {L eta eps D s u P T : ℝ} {q : ℕ} (hu : 0 <
       linarith only [hweak]
     have hm :=
       mul_le_mul_of_nonneg_left hratio
-        (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] : 0 ≤
-          Analysis.gaussianMR6FifthsEndpoint * (7 / 6))
+        (by norm_num only [Analysis.gaussianMR6FifthsEndpoint] :
+          0 ≤ Analysis.gaussianMR6FifthsEndpoint * (7 / 6))
     have hid :
       Analysis.gaussianMR6FifthsEndpoint * (((7 / 6 : ℝ) * L + 4) / r) =
-        Analysis.gaussianMR6FifthsEndpoint * (7 / 6) * (L / r) + (4 *
-          Analysis.gaussianMR6FifthsEndpoint) / r := by
+        Analysis.gaussianMR6FifthsEndpoint * (7 / 6) * (L / r) +
+          (4 * Analysis.gaussianMR6FifthsEndpoint) / r := by
       ring
     rw [hid, hreq]
     have he :
-      Analysis.gaussianMR6FifthsEndpoint * (7 / 6) * (gaussianMRRefinedD /
-        gaussianMRRefinedConductor) =
-        7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-          gaussianMRRefinedConductor) := by
+      Analysis.gaussianMR6FifthsEndpoint * (7 / 6) *
+          (gaussianMRRefinedD / gaussianMRRefinedConductor) =
+        7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+          (6 * gaussianMRRefinedConductor) := by
       ring
     rw [he] at hm
     rw [hreq] at hm
@@ -327,14 +325,14 @@ theorem gaussianLow_coarse_error {L eta eps D s u P T : ℝ} {q : ℕ} (hu : 0 <
     eta *
           (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
             1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
-        (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-          gaussianMRRefinedConductor) +
+        (7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+            (6 * gaussianMRRefinedConductor) +
           (4 * Analysis.gaussianMR6FifthsEndpoint) / s ^ 2) =
-      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD / (6 *
-        gaussianMRRefinedConductor) +
+      7 * Analysis.gaussianMR6FifthsEndpoint * gaussianMRRefinedD /
+          (6 * gaussianMRRefinedConductor) +
         (eta * (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth))) / s +
-        (eta * (1839 * Analysis.gaussianMR6FifthsEndpoint / 1000) + 4 *
-          Analysis.gaussianMR6FifthsEndpoint) /
+        (eta * (1839 * Analysis.gaussianMR6FifthsEndpoint / 1000) +
+            4 * Analysis.gaussianMR6FifthsEndpoint) /
           s ^ 2 := by
     rw [hreq]
     ring
@@ -377,8 +375,8 @@ theorem gaussianLow_index_error {m s r P D : ℝ} {q : ℕ} (hs : 0 < s) (hr : 0
   have hden : Analysis.gaussianMR6FifthsIndex - 1 ≤ m - 1 := by linarith only [hm]
   have heps :=
     div_le_div_of_nonneg_left (by norm_num only : (0 : ℝ) ≤ 13)
-      (by norm_num only [Analysis.gaussianMR6FifthsIndex] : 0 < Analysis.gaussianMR6FifthsIndex -
-        1) hden
+      (by norm_num only [Analysis.gaussianMR6FifthsIndex] : 0 < Analysis.gaussianMR6FifthsIndex - 1)
+      hden
   linarith only [hcap, hratio, heps]
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

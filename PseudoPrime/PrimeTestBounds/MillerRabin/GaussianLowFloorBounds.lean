@@ -62,8 +62,8 @@ Proof: apply the actual relative-prefix comparison and the recovered-prefix
 single-root large-index budget.
 Role: supplies the large-index branch of the all-input recovered-prefix single-root witness theorem.
 -/
-theorem gaussianLow_witness_large (f : GaussianLowProfile) {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
+theorem gaussianLow_witness_large (f : GaussianLowProfile) {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
     (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -126,8 +126,7 @@ theorem gaussianLow_witness_large (f : GaussianLowProfile) {n : ℕ} [NeZero n]
     exact PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn1 hnOdd hp hpdvd (hpass p hp hbound)
   have hsmall :
     ∀ p : ℕ,
-      p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
+      p.Prime → ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -164,8 +163,7 @@ theorem gaussianLow_witness_large (f : GaussianLowProfile) {n : ℕ} [NeZero n]
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
     gaussianMRRefinedD * r ≥
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
-        (f.residual) := by
+      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + (f.residual) := by
     dsimp only [r, s, L]
     exact f.budget (by linarith only [hL] : 0 ≤ Real.log n)
   have hcmp' :
@@ -177,13 +175,10 @@ theorem gaussianLow_witness_large (f : GaussianLowProfile) {n : ℕ} [NeZero n]
     simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
   have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD :
-    gaussianMRRefinedD ≤
-      (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+    gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
-    (m / t) *
-        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
-          1 / (10 * gaussianMRRefinedWidth)) ≤
+    (m / t) * (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)) ≤
       gaussianMRRefinedBeta := by
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
@@ -220,15 +215,15 @@ theorem gaussianLow_witness_large (f : GaussianLowProfile) {n : ℕ} [NeZero n]
         have hi' : (1000000000 : ℝ) ≤ m := by
           simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD
-      hbeta hcmp' hfinish
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD hbeta hcmp'
+      hfinish
 
 /-- Under GRH, an index-four pass-containing subgroup with conductor at most
 2 log n has an actual rejecting prime below the recovered one-root cutoff. Scale the comparison
 radius by 7559/10000 while retaining width k/s. Both the strict residual and the main-term
 budgets use 204/5. -/
-theorem gaussianLow_witness_four (f : GaussianLowProfile) {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
+theorem gaussianLow_witness_four (f : GaussianLowProfile) {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -373,9 +368,8 @@ theorem gaussianLow_local (f : GaussianLowProfile) {n q : ℕ} (hn : 0 < n) (hq 
 /-- Under GRH, every odd composite with log n>=63 has an actual prime
 rejecting strong MR within the recovered-prefix single-root bound. Combine the large-index,
 local and uniform-triple branches without public factorization restrictions. -/
-theorem exists_prime_gaussianLow (f : GaussianLowProfile) {n : ℕ} (ho : Odd n)
-    (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 63 ≤ Real.log n) :
+theorem exists_prime_gaussianLow (f : GaussianLowProfile) {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ f.bound (Real.log n) ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -414,9 +408,8 @@ theorem exists_prime_gaussianLow (f : GaussianLowProfile) {n : ℕ} (ho : Odd n)
 /-- Under the all-input recovered-prefix single-root assumptions, the least rejecting prime
 satisfies the same cutoff. Extract it from the actual rejecting-prime theorem;
 no squarefreeness, index or prime-factor count condition remains. -/
-theorem exists_least_gaussianLow (f : GaussianLowProfile) {n : ℕ} (ho : Odd n)
-    (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 63 ≤ Real.log n) :
+theorem exists_least_gaussianLow (f : GaussianLowProfile) {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ f.bound (Real.log n) ∧

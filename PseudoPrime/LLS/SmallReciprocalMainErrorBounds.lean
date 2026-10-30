@@ -28,8 +28,8 @@ theorem primitiveReciprocalOddMainError_le_fixed_of_ge_twenty_six_half {x : ℝ}
     norm_num only [one_div_div] at h
     exact h
   have hc : 0 ≤ 1 - 1 / x := by linarith only [hi]
-  have hg := mul_le_mul_of_nonneg_right
-    Analysis.twentyThree_fortieths_lt_eulerMascheroniConstant.le hc
+  have hg :=
+    mul_le_mul_of_nonneg_right Analysis.twentyThree_fortieths_lt_eulerMascheroniConstant.le hc
   have hl := mul_le_mul_of_nonneg_right Real.log_two_lt_d9.le (inv_nonneg.mpr hxp.le)
   unfold Analysis.primitiveReciprocalOddMainError
   simp only [div_eq_mul_inv] at hi hg ⊢

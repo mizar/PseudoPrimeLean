@@ -49,8 +49,7 @@ theorem gaussianLow_budget {u D L : ℝ} (hu : 9 ≤ u) (hD : 0 ≤ D) (hL : 0 �
     linarith only [hb, hm]
   have he :=
     Analysis.gaussianBudget_of_root_le gaussianMRRefined_coefficients.1
-      gaussianMRRefined_coefficients.2
-      (add_nonneg (mul_nonneg hc hL) hD) hcoef
+      gaussianMRRefined_coefficients.2 (add_nonneg (mul_nonneg hc hL) hD) hcoef
       (show
         Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
             (gaussianMRRefinedConductor * L + D) ≤

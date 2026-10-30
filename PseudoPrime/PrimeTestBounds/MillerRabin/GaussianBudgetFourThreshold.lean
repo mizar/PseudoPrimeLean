@@ -29,8 +29,7 @@ theorem gaussianBudget_four_index_threshold (P s0 K : ℝ) {n : ℕ} [NeZero n] 
         K)
     (hnot :
       ¬(gaussianMRRefinedTripleD * s0 ^ 2 ≤
-          (2 / 3 : ℝ) * gaussianMRRefinedConductor * Real.log n +
-            gaussianMRRefinedTripleBeta * s0 +
+          (2 / 3 : ℝ) * gaussianMRRefinedConductor * Real.log n + gaussianMRRefinedTripleBeta * s0 +
             K)) :
     let _L := Real.log n
     let r := s0 ^ 2
@@ -103,13 +102,11 @@ theorem gaussianBudget_four_index_threshold (P s0 K : ℝ) {n : ℕ} [NeZero n] 
       gaussianMRRefinedConductor) (D :=
       (4 * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
       (4 / 3 : ℝ) *
-        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
-          1 / (10 * gaussianMRRefinedWidth)))
+        (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)))
       (by norm_num only [gaussianMRRefinedWidth]) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
-      (by norm_num only [gaussianMRRefinedConductor] :
-        (0 : ℝ) ≤ gaussianMRRefinedConductor)
-      le_rfl le_rfl hcmp'
+      (by norm_num only [gaussianMRRefinedConductor] : (0 : ℝ) ≤ gaussianMRRefinedConductor) le_rfl
+      le_rfl hcmp'
       (by
         intro hbudget
         have hnorm :
@@ -120,8 +117,7 @@ theorem gaussianBudget_four_index_threshold (P s0 K : ℝ) {n : ℕ} [NeZero n] 
                   1 / (10 * gaussianMRRefinedWidth)) *
                 s +
               K := by
-          dsimp only [gaussianMRRefinedMass,
-            Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
+          dsimp only [gaussianMRRefinedMass, Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
           nlinarith only [hbudget, herror]
         exact hnot hnorm)
 
@@ -140,8 +136,7 @@ theorem gaussianBudget_four_witness_threshold (N : ℕ) (P s0 K : ℝ) (hs13 : 1
         K)
     (hnot :
       ¬(gaussianMRRefinedTripleD * s0 ^ 2 ≤
-          (2 / 3 : ℝ) * gaussianMRRefinedConductor * Real.log n +
-            gaussianMRRefinedTripleBeta * s0 +
+          (2 / 3 : ℝ) * gaussianMRRefinedConductor * Real.log n + gaussianMRRefinedTripleBeta * s0 +
             K))
     (ho : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :

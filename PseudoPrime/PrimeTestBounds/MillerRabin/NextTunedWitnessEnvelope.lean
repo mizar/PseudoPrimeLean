@@ -71,8 +71,8 @@ theorem nextTunedPrime_le_tunedPrime (n : ℕ) : nextTunedPrimeEnvelope n ≤ tu
 /-- A common lower bound for the old cutoff and each active new candidate bounds their min.
 This transfers the same least rejecting prime through all available certificates. -/
 theorem nextTuned_lower_of_candidates {n : ℕ} (hN : 3000 ≤ n) {C : ℝ}
-    (hB : C ≤ tunedWitnessEnvelope n) (hF : Real.log n ≤ LLS.PaperStatements.prime79PlusCap → C ≤
-      79)
+    (hB : C ≤ tunedWitnessEnvelope n)
+    (hF : Real.log n ≤ LLS.PaperStatements.prime79PlusCap → C ≤ 79)
     (hS : 63 ≤ Real.log n → C ≤ gaussianSeededSurplusFamily (Real.log n)) :
     C ≤ nextTunedWitnessEnvelope n := by
   rw [nextTunedWitnessEnvelope, ite_eq_right (not_lt.mpr hN)]
@@ -86,9 +86,8 @@ theorem nextTuned_lower_of_candidates {n : ℕ} (hN : 3000 ≤ n) {C : ℝ}
     · exact hB.trans_eq (ite_eq_right h).symm
 
 /-- At the fixed-79 entrance the new cutoff is at most 79 above the small branch. -/
-theorem nextTuned_le79 {n : ℕ} (hN : 3000 ≤ n) (hL : Real.log n ≤
-  LLS.PaperStatements.prime79PlusCap) :
-    nextTunedWitnessEnvelope n ≤ 79 := by
+theorem nextTuned_le79 {n : ℕ} (hN : 3000 ≤ n)
+    (hL : Real.log n ≤ LLS.PaperStatements.prime79PlusCap) : nextTunedWitnessEnvelope n ≤ 79 := by
   rw [nextTunedWitnessEnvelope, ite_eq_right (not_lt.mpr hN)]
   exact (min_le_right _ _).trans ((min_le_left _ _).trans (le_of_eq (ite_eq_left hL)))
 
@@ -98,8 +97,8 @@ theorem nextTuned_le_seeded {n : ℕ} (f : Bool) (hL : 63 ≤ Real.log n) :
   rw [nextTunedWitnessEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 hL))]
   have h :
     min (tunedWitnessEnvelope n)
-        (min (if Real.log n ≤ LLS.PaperStatements.prime79PlusCap then 79 else tunedWitnessEnvelope
-          n)
+        (min
+          (if Real.log n ≤ LLS.PaperStatements.prime79PlusCap then 79 else tunedWitnessEnvelope n)
           (if 63 ≤ Real.log n then gaussianSeededSurplusFamily (Real.log n)
           else tunedWitnessEnvelope n)) ≤
       gaussianSeededSurplusFamily (Real.log n) :=

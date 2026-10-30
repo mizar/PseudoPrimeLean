@@ -10,11 +10,10 @@ public import PseudoPrime.LLS.RationalPoleFiniteEntrance
 
 /-! # Explicit finite entrance for the fourth-pole quadratic bound -/
 
-
-
 public section
 
 namespace PseudoPrime.LLS.PaperStatements
+
 /-- The exact fourth-pole principal gap is at least 28379/100000.
 Rewrite the public cutoff certificate into its closed form.
 This supplies the sharper principal margin for the explicit coefficient 777/1000. -/
@@ -23,7 +22,8 @@ theorem fourPole_sharp_principal_gap :
       2 * ((484820459 / 528581976 : ℝ) * Real.exp (-(14 / 13))) -
         (2 * (13 / 25 : ℝ) * Real.exp (14 / 25) / (1 + 13 / 25) ^ 4) := by
   have hA := rationalPole_four_principal_gap
-  have he : (rationalPoleFourKernel.function (1 / 2)).re =
+  have he :
+    (rationalPoleFourKernel.function (1 / 2)).re =
       2 * (13 / 25 : ℝ) * Real.exp (14 / 25) / (1 + 13 / 25) ^ 4 := by
     rw [rationalPoleFourKernel, rationalPole_half_value]
   rw [rationalPole_four_cutoff, he] at hA
@@ -33,9 +33,12 @@ theorem fourPole_sharp_principal_gap :
 square-root, quarter-power, negative-power and logarithmic comparison bounds. -/
 theorem fourPole_sharp_finite_scale_bounds {L : ℝ} (hL : 2 ≤ L) :
     let x := (777 / 1000 : ℝ) * L ^ 2
-    L ≤ x ∧ x ≤ L ^ 2 ∧ (8814 / 10000 : ℝ) * L ≤ Real.sqrt x ∧
-    Real.sqrt x ≤ L ∧ x ^ (1 / 4 : ℝ) ≤ Real.sqrt L ∧
-    x ^ (-3 / 4 : ℝ) ≤ 1 / Real.sqrt L ∧ Real.log x ≤ 4 * Real.sqrt L := by
+    L ≤ x ∧
+      x ≤ L ^ 2 ∧
+      (8814 / 10000 : ℝ) * L ≤ Real.sqrt x ∧
+      Real.sqrt x ≤ L ∧
+      x ^ (1 / 4 : ℝ) ≤ Real.sqrt L ∧
+      x ^ (-3 / 4 : ℝ) ≤ 1 / Real.sqrt L ∧ Real.log x ≤ 4 * Real.sqrt L := by
   let x := (777 / 1000 : ℝ) * L ^ 2
   have hL0 : 0 < L := (by norm_num only : (0 : ℝ) < 2).trans_le hL
   have hL1 : 1 ≤ L := (by norm_num only : (1 : ℝ) ≤ 2).trans hL
@@ -57,10 +60,9 @@ theorem fourPole_sharp_finite_scale_bounds {L : ℝ} (hL : 2 ≤ L) :
     norm_num only at h
     simpa only [Real.sqrt_eq_rpow] using h
   have hn : x ^ (-3 / 4 : ℝ) ≤ 1 / Real.sqrt L := by
-    have h := (Real.rpow_le_rpow_of_nonpos hL0 hxl
-      (by norm_num only : (-3 / 4 : ℝ) ≤ 0)).trans
-      (Real.rpow_le_rpow_of_exponent_le hL1
-        (by norm_num only : (-3 / 4 : ℝ) ≤ -(1 / 2)))
+    have h :=
+      (Real.rpow_le_rpow_of_nonpos hL0 hxl (by norm_num only : (-3 / 4 : ℝ) ≤ 0)).trans
+        (Real.rpow_le_rpow_of_exponent_le hL1 (by norm_num only : (-3 / 4 : ℝ) ≤ -(1 / 2)))
     rw [Real.rpow_neg hL0.le] at h
     change x ^ (-3 / 4 : ℝ) ≤ (L ^ (1 / 2 : ℝ))⁻¹ at h
     simpa only [Real.sqrt_eq_rpow, one_div] using h
@@ -78,8 +80,8 @@ fourth-pole budget at scale `(777/1000)L^2` is at most `(2501/10000)L+3000 sqrt 
 theorem fourPole_sharp_finite_budget_le {L F G : ℝ} (hL : 2 ≤ L) (hF : F ≤ L + 2) (hG : G ≤ L + 2) :
     let x := (777 / 1000 : ℝ) * L ^ 2
     (2501 / 10000 : ℝ) * F + 1003 + (24 * F + 793) * x ^ (-3 / 4 : ℝ) +
-      (65 * x ^ (1 / 4 : ℝ) + 120 / Real.sqrt x) +
-      (20 / Real.sqrt x) * (Real.log x / Real.log 2) * G ≤
+        (65 * x ^ (1 / 4 : ℝ) + 120 / Real.sqrt x) +
+        (20 / Real.sqrt x) * (Real.log x / Real.log 2) * G ≤
       (2501 / 10000 : ℝ) * L + 3000 * Real.sqrt L := by
   let x := (777 / 1000 : ℝ) * L ^ 2
   obtain ⟨hxl, hxu, hsl, hsu, hp, hn, hlog⟩ := fourPole_sharp_finite_scale_bounds hL
@@ -87,8 +89,8 @@ theorem fourPole_sharp_finite_budget_le {L F G : ℝ} (hL : 2 ≤ L) (hF : F ≤
   have hx0 : 0 < x := hL0.trans_le hxl
   have hsx : 0 < Real.sqrt x := Real.sqrt_pos.mpr hx0
   have hsL : 0 < Real.sqrt L := Real.sqrt_pos.mpr hL0
-  have hs1 : 1 ≤ Real.sqrt L := (Real.le_sqrt (by norm_num only) hL0.le).mpr
-    (by nlinarith only [hL])
+  have hs1 : 1 ≤ Real.sqrt L :=
+    (Real.le_sqrt (by norm_num only) hL0.le).mpr (by nlinarith only [hL])
   have hsx1 : 1 ≤ Real.sqrt x := by linarith only [hsl, hL]
   have hc : (24 * F + 793) * x ^ (-3 / 4 : ℝ) ≤ 1000 * Real.sqrt L := by
     have hcoeff : 24 * F + 793 ≤ 1000 * L := by linarith only [hF, hL]
@@ -101,10 +103,9 @@ theorem fourPole_sharp_finite_budget_le {L F G : ℝ} (hL : 2 ≤ L) (hF : F ≤
   have hi : 120 / Real.sqrt x ≤ (120 : ℝ) := by
     apply (div_le_iff₀ hsx).mpr
     linarith only [hsx1]
-  have hlog0 : 0 ≤ Real.log x := Real.log_nonneg
-    ((by norm_num only : (1 : ℝ) ≤ 2).trans (hL.trans hxl))
-  have htwo : (1 / 2 : ℝ) ≤ Real.log 2 := by
-    linarith only [Real.log_two_gt_d9]
+  have hlog0 : 0 ≤ Real.log x :=
+    Real.log_nonneg ((by norm_num only : (1 : ℝ) ≤ 2).trans (hL.trans hxl))
+  have htwo : (1 / 2 : ℝ) ≤ Real.log 2 := by linarith only [Real.log_two_gt_d9]
   have htwo0 : 0 < Real.log 2 := (by norm_num only : (0 : ℝ) < 1 / 2).trans_le htwo
   have hlogcap : Real.log x / Real.log 2 ≤ 8 * Real.sqrt L := by
     apply (div_le_iff₀ htwo0).mpr
@@ -113,8 +114,7 @@ theorem fourPole_sharp_finite_budget_le {L F G : ℝ} (hL : 2 ≤ L) (hF : F ≤
     apply (div_le_div_iff₀ hsx hL0).mpr
     change (8814 / 10000 : ℝ) * L ≤ Real.sqrt x at hsl
     linarith only [hsl, hL0]
-  have hlocal : (20 / Real.sqrt x) * (Real.log x / Real.log 2) * G ≤
-      640 * Real.sqrt L := by
+  have hlocal : (20 / Real.sqrt x) * (Real.log x / Real.log 2) * G ≤ 640 * Real.sqrt L := by
     calc
       _ ≤ (20 / Real.sqrt x) * (Real.log x / Real.log 2) * (2 * L) :=
         mul_le_mul_of_nonneg_left (by linarith only [hG, hL])
@@ -135,20 +135,21 @@ theorem fourPole_sharp_finite_budget_le {L F G : ℝ} (hL : 2 ≤ L) (hF : F ≤
   have hpow := mul_le_mul_of_nonneg_left hp (by norm_num only : (0 : ℝ) ≤ 65)
   nlinarith only [hmain, hpow, hc, hi, hlocal, hs1]
 
-
 /-- For `L ≥ 10^18`, the explicit scalar budget is strictly below the full principal
 main gap at scale `(777/1000)L^2`. The square-root error is absorbed by the rational
 linear margin, without finite enumeration. -/
-theorem fourPole_sharp_finite_scalar_gap {L F G : ℝ} (hL : (10 : ℝ) ^ 18 ≤ L)
-    (hF : F ≤ L + 2) (hG : G ≤ L + 2) :
+theorem fourPole_sharp_finite_scalar_gap {L F G : ℝ} (hL : (10 : ℝ) ^ 18 ≤ L) (hF : F ≤ L + 2)
+    (hG : G ≤ L + 2) :
     let x := (777 / 1000 : ℝ) * L ^ 2
     (2501 / 10000 : ℝ) * F + 1003 + (24 * F + 793) * x ^ (-3 / 4 : ℝ) +
-      (65 * x ^ (1 / 4 : ℝ) + 120 / Real.sqrt x) +
-      (20 / Real.sqrt x) * (Real.log x / Real.log 2) * G <
-      Real.sqrt x * (2 * ((484820459 / 528581976 : ℝ) * Real.exp (-(14 / 13))) -
-        (2 * (13 / 25 : ℝ) * Real.exp (14 / 25) / (1 + 13 / 25) ^ 4)) := by
+        (65 * x ^ (1 / 4 : ℝ) + 120 / Real.sqrt x) +
+        (20 / Real.sqrt x) * (Real.log x / Real.log 2) * G <
+      Real.sqrt x *
+        (2 * ((484820459 / 528581976 : ℝ) * Real.exp (-(14 / 13))) -
+          (2 * (13 / 25 : ℝ) * Real.exp (14 / 25) / (1 + 13 / 25) ^ 4)) := by
   let x := (777 / 1000 : ℝ) * L ^ 2
-  have hL2 : 2 ≤ L := by norm_num only at hL; linarith only [hL]
+  have hL2 : 2 ≤ L := by
+    norm_num only at hL; linarith only [hL]
   have hL0 : 0 < L := (by norm_num only : (0 : ℝ) < 2).trans_le hL2
   have hb := fourPole_sharp_finite_budget_le hL2 hF hG
   have hsbig : (10 : ℝ) ^ 9 ≤ Real.sqrt L := by
@@ -158,8 +159,7 @@ theorem fourPole_sharp_finite_scalar_gap {L F G : ℝ} (hL : (10 : ℝ) ^ 18 ≤
   have hspos := Real.sqrt_pos.mpr hL0
   have hsmul := mul_le_mul_of_nonneg_right hsbig hspos.le
   have hsq := Real.sq_sqrt hL0.le
-  have herr : (2501 / 10000 : ℝ) * L + 3000 * Real.sqrt L <
-      (25013 / 100000 : ℝ) * L := by
+  have herr : (2501 / 10000 : ℝ) * L + 3000 * Real.sqrt L < (25013 / 100000 : ℝ) * L := by
     norm_num only at hsmul
     nlinarith only [hsmul, hsq, hL0]
   obtain ⟨hxl, _, hsl, _, _, _, _⟩ := fourPole_sharp_finite_scale_bounds hL2
@@ -170,7 +170,6 @@ theorem fourPole_sharp_finite_scalar_gap {L F G : ℝ} (hL : (10 : ℝ) ^ 18 ≤
     linarith only [hsl, hL0]
   exact hb.trans_lt (herr.trans_le (hlow.trans hmain))
 
-
 /-- Under GRH, every odd nonsquare with `log n ≥ 10^18` has an odd prime
 negative Jacobi witness at most `(777/1000)(log n)^2`.
 The primitive conductor divides `4*n`, so both logarithmic inputs are at most
@@ -179,10 +178,11 @@ theorem fourPole_sharp_jacobi_explicit_entrance {n : ℕ} {hn : Odd n} {hns : ¬
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (10 : ℝ) ^ 18 ≤ Real.log n) :
-    ∃ p : ℕ, p.Prime ∧ Odd p ∧
-      (p : ℝ) ≤ (777 / 1000 : ℝ) * (Real.log n) ^ 2 ∧ jacobiSym n p = -1 := by
+    ∃ p : ℕ,
+      p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (777 / 1000 : ℝ) * (Real.log n) ^ 2 ∧ jacobiSym n p = -1 := by
   let : NeZero (4 * n) := ⟨(Nat.mul_pos (by norm_num only : (0 : ℕ) < 4) hn.pos).ne'⟩
-  have hL2 : 2 ≤ Real.log n := by norm_num only at hL; linarith only [hL]
+  have hL2 : 2 ≤ Real.log n := by
+    norm_num only at hL; linarith only [hL]
   have hnR : 0 < (n : ℝ) := Nat.cast_pos.mpr hn.pos
   have hlog4 : Real.log (4 : ℝ) ≤ 2 := by
     have h := Real.log_le_sub_one_of_pos (by norm_num only : (0 : ℝ) < 2)
@@ -197,21 +197,21 @@ theorem fourPole_sharp_jacobi_explicit_entrance {n : ℕ} {hn : Odd n} {hns : ¬
       (DirichletCharacter.conductor_dvd_level (NumberTheory.complexQuadraticCharacter n hn))
   have hcon0 : 0 < (NumberTheory.complexQuadraticCharacter n hn).conductor :=
     Nat.pos_of_ne_zero (NumberTheory.complexQuadraticCharacter n hn).conductor_ne_zero
-  have hF : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤
-      Real.log n + 2 := by
+  have hF : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ Real.log n + 2 := by
     have h := Real.log_le_log (Nat.cast_pos.mpr hcon0) (Nat.cast_le.mpr hcon)
     norm_num only [Nat.cast_mul, Nat.cast_ofNat] at h
     exact h.trans hG
   obtain ⟨hxl, _, _, _, _, _, _⟩ := fourPole_sharp_finite_scale_bounds hL2
   apply fourPole_exists_jacobi_scalar bridge hGRH (hL2.trans hxl)
   exact fourPole_sharp_finite_scalar_gap hL hF hG
+
 /-- Under GRH, every odd nonsquare with `log n ≥ 10^18` has an actual negative
 odd-prime witness through `(777/1000)(log n)^2`, without a supplied arithmetic bridge. -/
 theorem fourPole_sharp_jacobi_finite_witness {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (10 : ℝ) ^ 18 ≤ Real.log n) :
-    ∃ p : ℕ, p ∈ NumberTheory.primeNegOneWitnessSet n ∧
-      (p : ℝ) ≤ (777 / 1000 : ℝ) * (Real.log n) ^ 2 := by
+    ∃ p : ℕ,
+      p ∈ NumberTheory.primeNegOneWitnessSet n ∧ (p : ℝ) ≤ (777 / 1000 : ℝ) * (Real.log n) ^ 2 := by
   obtain ⟨bridge⟩ := NumberTheory.exists_jacobiCharacterArithmeticData hn.pos hn hns
   obtain ⟨p, hp, ho, hb, hj⟩ := fourPole_sharp_jacobi_explicit_entrance bridge hGRH hL
   exact ⟨p, ⟨hp, ho, hj⟩, hb⟩
@@ -219,8 +219,7 @@ theorem fourPole_sharp_jacobi_finite_witness {n : ℕ} (hn : Odd n) (hns : ¬IsS
 /-- Under the explicit logarithmic entrance, the least actual negative odd-prime
 Jacobi witness obeys the certified coefficient `777/1000`. Minimize the witness set. -/
 theorem fourPole_sharp_jacobi_finite_least {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : (10 : ℝ) ^ 18 ≤ Real.log n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (10 : ℝ) ^ 18 ≤ Real.log n)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (777 / 1000 : ℝ) * (Real.log n) ^ 2 := by
   obtain ⟨p, hp, hb⟩ := fourPole_sharp_jacobi_finite_witness hn hns hGRH hL

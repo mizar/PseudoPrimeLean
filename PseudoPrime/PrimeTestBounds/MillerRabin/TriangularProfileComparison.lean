@@ -20,9 +20,7 @@ Both certified component roots have the same strict quadratic lower bound. -/
 theorem currentSeeded_quadratic_lower {L : ℝ} (hL : 63 ≤ L) :
     (15 / 32 : ℝ) * L ^ 2 < gaussianRecoveredSeeded L := by
   rw [gaussianRecoveredSeeded_eq_min hL]
-  exact
-    lt_min (gaussianRecoveredSeeded_bound_lower hL)
-      (gaussianRecoveredSeeded_bound_lower hL)
+  exact lt_min (gaussianRecoveredSeeded_bound_lower hL) (gaussianRecoveredSeeded_bound_lower hL)
 
 /-- Between 1.1 and two trillion the current refined envelope is bounded
 below by coefficient 0.282924. Compare every active candidate, splitting

@@ -373,8 +373,9 @@ theorem exists_norm_transform_le_sqrt (K : MellinKernel) :
     rw [Complex.norm_cpow_eq_rpow_re_of_pos hu, Real.sqrt_eq_rpow]
     simp only [Complex.div_ofNat_re, Complex.one_re]
   calc
-    _ ≤ ‖Analysis.inverseMellin K.function c u‖ +
-      ‖K.regularized (-1 / 2) * (u : ℂ) ^ (1 / 2 : ℂ)‖ :=
+    _ ≤
+        ‖Analysis.inverseMellin K.function c u‖ +
+          ‖K.regularized (-1 / 2) * (u : ℂ) ^ (1 / 2 : ℂ)‖ :=
       norm_add_le _ _
     _ ≤ A * Real.sqrt u + ‖K.regularized (-1 / 2)‖ * Real.sqrt u := by
       rw [norm_mul, hr]

@@ -89,17 +89,15 @@ recovered Gaussian, fixed-stencil Gamma, seeded Gaussian, and triangular bounds.
 Each candidate is used only in its proved logarithmic domain. This is the
 unrounded public analytic cutoff for actual and least prime MR witnesses. -/
 noncomputable def refinedWitnessEnvelope (n : ℕ) : ℝ :=
-  refinedGuardMin (Real.log n) (lowPrimeTightEnvelope n)
-    (gaussianRecoveredBound (Real.log n)) (gammaRecoveredBound (Real.log n))
-    (gaussianRecoveredSeeded (Real.log n))
+  refinedGuardMin (Real.log n) (lowPrimeTightEnvelope n) (gaussianRecoveredBound (Real.log n))
+    (gammaRecoveredBound (Real.log n)) (gaussianRecoveredSeeded (Real.log n))
 
 /-- The interval form of the refined analytic envelope, using the nine extended
 low-prime steps and the baseline selection as the base. The five larger-scale
 regions retain exactly the certified candidates, with their original guards. -/
 noncomputable def refinedSelectedEnvelope (n : ℕ) : ℝ :=
-  refinedGuardSelected (Real.log n) (lowPrimeTightSelected n)
-    (gaussianRecoveredBound (Real.log n)) (gammaRecoveredBound (Real.log n))
-    (gaussianRecoveredSeeded (Real.log n))
+  refinedGuardSelected (Real.log n) (lowPrimeTightSelected n) (gaussianRecoveredBound (Real.log n))
+    (gammaRecoveredBound (Real.log n)) (gaussianRecoveredSeeded (Real.log n))
 
 /-- Round the refined analytic cutoff to its greatest admissible prime.
 The total prime-rounding function retains two and does not enlarge any real cutoff;

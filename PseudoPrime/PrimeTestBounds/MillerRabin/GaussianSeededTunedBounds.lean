@@ -24,9 +24,8 @@ theorem seededTuned_prefix (f : Bool)
       ∑ j ∈ Finset.Ioc 0 (gaussianSeededSharpCutoff f),
         Analysis.gaussianResolventMangoldtWeight j := by
   cases f
-  · simpa only [gaussianSeededTunedPrefix, gaussianSeededSharpCutoff,
-      Bool.false_eq_true, ite_false, Nat.floor_ofNat] using
-      LLS.gaussian_prefix35000_moment hGRH.riemann (le_refl (35000 : ℝ))
+  · simpa only [gaussianSeededTunedPrefix, gaussianSeededSharpCutoff, Bool.false_eq_true, ite_false,
+      Nat.floor_ofNat] using LLS.gaussian_prefix35000_moment hGRH.riemann (le_refl (35000 : ℝ))
   · simpa only [gaussianSeededTunedPrefix, gaussianSeededSharpCutoff, ite_true,
       Nat.floor_ofNat] using LLS.gaussian_prefix50000_moment hGRH.riemann (le_refl (50000 : ℝ))
 
@@ -43,9 +42,8 @@ theorem seededTuned_large (f : Bool) {n : ℕ} [NeZero n] (ho : Odd n) (hnlarge 
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have h0 : (0 : ℝ) ≤ Real.log n := by linarith only [hL]
   apply
-    gaussianBudget_large_witness (gaussianSeededSharpCutoff f)
-      (gaussianSeededTunedPrefix f) (gaussianSeededTunedConstant f)
-      (gaussianSeededTunedRoot f (Real.log n))
+    gaussianBudget_large_witness (gaussianSeededSharpCutoff f) (gaussianSeededTunedPrefix f)
+      (gaussianSeededTunedConstant f) (gaussianSeededTunedRoot f (Real.log n))
       ((by norm_num only : (91 / 10 : ℝ) ≤ 13).trans (gaussianSeededTuned_root13 f _))
       (gaussianSeededTuned_budget f h0) (seededTuned_prefix f hGRH)
       (gaussianSeededTuned_cutoff_le f _) _ ho hnlarge H hi hp hGRH
@@ -66,10 +64,9 @@ theorem seededTuned_four (f : Bool) {n : ℕ} [NeZero n] (ho : Odd n) (hnlarge :
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have h0 : (0 : ℝ) ≤ Real.log n := by linarith only [hL]
   exact
-    gaussianBudget_four_witness (gaussianSeededSharpCutoff f)
-      (gaussianSeededTunedPrefix f) (gaussianSeededTunedRoot f (Real.log n))
-      (gaussianSeededTuned_root13 f _) (seededTuned_prefix f hGRH)
-      (gaussianSeededTuned_cutoff_le f _)
+    gaussianBudget_four_witness (gaussianSeededSharpCutoff f) (gaussianSeededTunedPrefix f)
+      (gaussianSeededTunedRoot f (Real.log n)) (gaussianSeededTuned_root13 f _)
+      (seededTuned_prefix f hGRH) (gaussianSeededTuned_cutoff_le f _)
       (gaussianSeededTuned_four_error f h0 (le_refl (Real.log n)))
       (gaussianSeededTuned_four_absurd f h0) ho hnlarge H hi hp hGRH hC
 

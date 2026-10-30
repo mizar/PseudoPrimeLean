@@ -20,8 +20,7 @@ Claim: translation of the kernel multiplies its inverse by the corresponding rea
 Proof: split the complex power and pull the constant through the integral.
 Role: reuse scalar inversion formulas for shifted rational kernels. -/
 theorem inverseMellin_shift (F : ℂ → ℂ) (a c : ℝ) {u : ℝ} (hu : 0 < u) :
-    inverseMellin (fun s ↦ F (s + a)) c u =
-      (u : ℂ) ^ (a : ℂ) * inverseMellin F (c + a) u := by
+    inverseMellin (fun s ↦ F (s + a)) c u = (u : ℂ) ^ (a : ℂ) * inverseMellin F (c + a) u := by
   have he (t : ℝ) :
     F (((c : ℂ) + Complex.I * t) + a) * (u : ℂ) ^ (-((c : ℂ) + Complex.I * t)) =
       (u : ℂ) ^ (a : ℂ) *

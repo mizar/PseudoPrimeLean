@@ -105,7 +105,8 @@ theorem exists_least_prime_outside_le_of_cutoff_bound {q : ℕ} [NeZero q] (H : 
     (hH : H ≠ ⊤) {A : ℝ} (hA : 0 ≤ A)
     (hc :
       ∀ X : ℝ,
-        0 < X → (∀ r : ℕ, r.Prime → ¬r ∣ q → (r : ℝ) ≤ X → NumberTheory.residueInSubgroup q H r) →
+        0 < X →
+          (∀ r : ℕ, r.Prime → ¬r ∣ q → (r : ℝ) ≤ X → NumberTheory.residueInSubgroup q H r) →
           X ≤ A) :
     ∃ p : ℕ, IsLeast (NumberTheory.primesOutside q H) p ∧ (p : ℝ) ≤ A := by
   obtain ⟨p, hp⟩ := exists_least_prime_outside H hH
@@ -136,8 +137,8 @@ theorem exists_uniform_least_prime_bound_of_modulus_le (Q : ℕ) :
     ∃ B : ℕ,
       ∀ (m : ℕ) [NeZero m],
         m ≤ Q →
-          ∀ H : Subgroup (ZMod m)ˣ, H ≠ ⊤ → ∃ p : ℕ, IsLeast (NumberTheory.primesOutside m H) p ∧ p
-            ≤ B := by
+          ∀ H : Subgroup (ZMod m)ˣ,
+            H ≠ ⊤ → ∃ p : ℕ, IsLeast (NumberTheory.primesOutside m H) p ∧ p ≤ B := by
   classical
   let I := Σ q : Fin Q, { H : Subgroup (ZMod (q.val + 1))ˣ // H ≠ ⊤ }
   have hex (i : I) : ∃ p : ℕ, IsLeast (NumberTheory.primesOutside (i.1.val + 1) i.2.val) p :=
