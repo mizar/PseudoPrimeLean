@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.Analysis.TriangularMellin
 public import PseudoPrime.AnalyticNumberTheory.General.TriangularMellinInversion
 public import PseudoPrime.AnalyticNumberTheory.General.TriangularMellinContour
@@ -28,11 +29,11 @@ triangular kernel is its real triangular profile for positive parameter
 and argument. Convert integral conventions and apply the computed
 three-logarithmic-weight inversion. This supplies the Section 6.2 identity. -/
 theorem inverseMellin_triangular_pos {a c u : ℝ} (ha : 0 < a) (hc : 0 < c) (hu : 0 < u) :
-    inverseMellin (Analysis.triangularMellinFunction a) c u =
+    Analysis.inverseMellin (Analysis.triangularMellinFunction a) c u =
       ((triangularKernelProfile a u : ℝ) : ℂ) := by
   unfold triangularKernelProfile
   rw [← AnalyticNumberTheory.General.mellinInv_triangular_of_pos ha hc hu]
-  unfold inverseMellin mellinInv
+  unfold Analysis.inverseMellin mellinInv
   rw [Complex.real_smul]
   congr 1
   apply MeasureTheory.integral_congr_ae
@@ -66,7 +67,7 @@ theorem triangular_mass_eq_transform_one (K : MellinKernel) {a : ℝ} (ha : a �
     simp only [Analysis.norm_triangularMellinFunction_imaginary ha]
     simp only [Analysis.triangularMellinFunction_imaginary ha, integral_complex_ofReal,
       Complex.ofReal_re]
-  rw [MellinKernel.transform, inverseMellin]
+  rw [MellinKernel.transform, Analysis.inverseMellin]
   simp only [Complex.ofReal_zero, zero_add, Complex.ofReal_one, Complex.one_cpow, mul_one,
     Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero, hi]
   unfold MellinKernel.mass
@@ -90,15 +91,15 @@ the imaginary axis. Line independence reduces the computation to a positive
 line where the three logarithmic weights have already been inverted. This
 supplies the transform fields of the concrete triangular Mellin kernel. -/
 theorem inverseMellin_triangular {a c u : ℝ} (ha : 0 < a) (hc : |c| ≤ 1) (hu : 0 < u) :
-    inverseMellin (Analysis.triangularMellinFunction a) c u =
+    Analysis.inverseMellin (Analysis.triangularMellinFunction a) c u =
       (triangularKernelProfile a u : ℂ) := by
   have he :=
     AnalyticNumberTheory.General.integral_triangular_vertical_eq ha hu hc (c := c) (d := 1 / 4)
       (by norm_num only [abs_of_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 4)])
   have hi :
-    inverseMellin (Analysis.triangularMellinFunction a) c u =
-      inverseMellin (Analysis.triangularMellinFunction a) (1 / 4) u := by
-    unfold inverseMellin
+    Analysis.inverseMellin (Analysis.triangularMellinFunction a) c u =
+      Analysis.inverseMellin (Analysis.triangularMellinFunction a) (1 / 4) u := by
+    unfold Analysis.inverseMellin
     rw [he]
   exact hi.trans (inverseMellin_triangular_pos ha (by norm_num only) hu)
 

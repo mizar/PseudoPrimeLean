@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.TriangularSignedZeroInteriorComparison
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PoissonNumericalBounds
 
@@ -236,7 +237,7 @@ theorem exists_prime_factor_or_outside_of_triangular18_low_height_gap {q : ℕ} 
             (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
               36 * Real.log q / (Real.sqrt x - 1)) +
           triangular18_annihilator_lowZeroRealSum H x) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ (p ∣ q ∨ ¬residueInSubgroup q H p) := by
+    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ (p ∣ q ∨ ¬NumberTheory.residueInSubgroup q H p) := by
   have hz := triangular18_annihilator_zeroRealSum_lower_by_low_height H hGRH (zero_lt_one.trans hx)
   have hc :=
     mul_le_mul_of_nonneg_left (subgroupConductorLogSum_le H) (by norm_num only : (0 : ℝ) ≤ 4)

@@ -9,7 +9,7 @@ module
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LowPrimeTightEnvelope
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaRecoveredOrder
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRecoveredSeededOrder
-public import PseudoPrime.Analysis.GaussianRecoveredRoot
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRecoveredRoot
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRecoveredBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularRefinedComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeCutoff
@@ -90,16 +90,16 @@ Each candidate is used only in its proved logarithmic domain. This is the
 unrounded public analytic cutoff for actual and least prime MR witnesses. -/
 noncomputable def refinedWitnessEnvelope (n : ℕ) : ℝ :=
   refinedGuardMin (Real.log n) (lowPrimeTightEnvelope n)
-    (Analysis.gaussianRecoveredBound (Real.log n)) (gammaRecoveredBound (Real.log n))
-    (Analysis.gaussianRecoveredSeeded (Real.log n))
+    (gaussianRecoveredBound (Real.log n)) (gammaRecoveredBound (Real.log n))
+    (gaussianRecoveredSeeded (Real.log n))
 
 /-- The interval form of the refined analytic envelope, using the nine extended
 low-prime steps and the baseline selection as the base. The five larger-scale
 regions retain exactly the certified candidates, with their original guards. -/
 noncomputable def refinedSelectedEnvelope (n : ℕ) : ℝ :=
   refinedGuardSelected (Real.log n) (lowPrimeTightSelected n)
-    (Analysis.gaussianRecoveredBound (Real.log n)) (gammaRecoveredBound (Real.log n))
-    (Analysis.gaussianRecoveredSeeded (Real.log n))
+    (gaussianRecoveredBound (Real.log n)) (gammaRecoveredBound (Real.log n))
+    (gaussianRecoveredSeeded (Real.log n))
 
 /-- Round the refined analytic cutoff to its greatest admissible prime.
 The total prime-rounding function retains two and does not enlarge any real cutoff;
@@ -136,9 +136,9 @@ theorem refined_eq_selected {n : ℕ} (hn : 1 < n) :
 candidate also bounds the refined envelope. Resolve each guard with the base
 as fallback, then combine the inequalities by minimum. -/
 theorem refined_lower_of_candidates {n : ℕ} {C : ℝ} (hB : C ≤ lowPrimeTightEnvelope n)
-    (hG : 63 ≤ Real.log n → C ≤ Analysis.gaussianRecoveredBound (Real.log n))
+    (hG : 63 ≤ Real.log n → C ≤ gaussianRecoveredBound (Real.log n))
     (hR : 101 ≤ Real.log n → C ≤ gammaRecoveredBound (Real.log n))
-    (hS : 63 ≤ Real.log n → C ≤ Analysis.gaussianRecoveredSeeded (Real.log n))
+    (hS : 63 ≤ Real.log n → C ≤ gaussianRecoveredSeeded (Real.log n))
     (hE : 1100000000000 ≤ Real.log n → C ≤ (71 / 250) * Real.log n ^ 2)
     (hT : 2000000000000 ≤ Real.log n → C ≤ (28237 / 100000) * Real.log n ^ 2) :
     C ≤ refinedWitnessEnvelope n := by
@@ -157,10 +157,10 @@ theorem refined_lower_of_candidates {n : ℕ} {C : ℝ} (hB : C ≤ lowPrimeTigh
 single-root Gaussian candidate. Project from the guarded minimum and resolve
 the active guard; this is a numerical inequality without GRH assumptions. -/
 theorem refined_le_gaussian {n : ℕ} (hL : (63 : ℝ) ≤ Real.log n) :
-    refinedWitnessEnvelope n ≤ Analysis.gaussianRecoveredBound (Real.log n) := by
+    refinedWitnessEnvelope n ≤ gaussianRecoveredBound (Real.log n) := by
   have h :
     refinedWitnessEnvelope n ≤
-      (if 63 ≤ Real.log n then Analysis.gaussianRecoveredBound (Real.log n)
+      (if 63 ≤ Real.log n then gaussianRecoveredBound (Real.log n)
       else lowPrimeTightEnvelope n) := by
     exact (min_le_right _ _).trans (min_le_left _ _)
   simpa only [ite_eq_left hL] using h
@@ -180,10 +180,10 @@ theorem refined_le_gamma {n : ℕ} (hL : (101 : ℝ) ≤ Real.log n) :
 recovered seeded Gaussian candidate. Project from the guarded minimum and resolve
 the active guard; this is a numerical inequality without GRH assumptions. -/
 theorem refined_le_seeded {n : ℕ} (hL : (63 : ℝ) ≤ Real.log n) :
-    refinedWitnessEnvelope n ≤ Analysis.gaussianRecoveredSeeded (Real.log n) := by
+    refinedWitnessEnvelope n ≤ gaussianRecoveredSeeded (Real.log n) := by
   have h :
     refinedWitnessEnvelope n ≤
-      (if 63 ≤ Real.log n then Analysis.gaussianRecoveredSeeded (Real.log n)
+      (if 63 ≤ Real.log n then gaussianRecoveredSeeded (Real.log n)
       else lowPrimeTightEnvelope n) := by
     exact
       (min_le_right _ _).trans

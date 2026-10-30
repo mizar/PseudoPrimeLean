@@ -29,9 +29,9 @@ noncomputable def nextWitnessEnvelope (n : ℕ) : ℝ :=
   let B := lowPrimeEnvelope n
   min B <|
     min (LLS.PaperStatements.pointwiseCutoff L) <|
-    min (if 63 ≤ L then Analysis.gaussian1000Bound L else B) <|
+    min (if 63 ≤ L then gaussian1000Bound L else B) <|
     min (if 100 ≤ L then gammaReflectedBound L else B) <|
-    min (if 63 ≤ L then Analysis.gaussianSeededSelected L else B) <|
+    min (if 63 ≤ L then gaussianSeededSelected L else B) <|
     min (if L ≤ 11509 / 1000 then 61 else B) <|
     min (if L ≤ 1179 / 100 then 67 else B) <|
     min (if L ≤ 1193 / 100 then 71 else B) <|
@@ -57,10 +57,10 @@ theorem next_le_pointwise {n : ℕ} :
 
 /-- The next envelope is bounded by the certified gaussian1000 candidate. -/
 theorem next_le_gaussian1000 {n : ℕ} (h : 63 ≤ Real.log n) :
-    nextWitnessEnvelope n ≤ Analysis.gaussian1000Bound (Real.log n) := by
+    nextWitnessEnvelope n ≤ gaussian1000Bound (Real.log n) := by
   have hb :
     nextWitnessEnvelope n ≤
-      (if 63 ≤ Real.log n then Analysis.gaussian1000Bound (Real.log n)
+      (if 63 ≤ Real.log n then gaussian1000Bound (Real.log n)
       else lowPrimeEnvelope n) := by
     exact (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_left _ _))
   simpa only [ite_eq_left h] using hb
@@ -78,10 +78,10 @@ theorem next_le_reflected {n : ℕ} (h : 100 ≤ Real.log n) :
 
 /-- The next envelope is bounded by the certified seeded candidate. -/
 theorem next_le_seeded {n : ℕ} (h : 63 ≤ Real.log n) :
-    nextWitnessEnvelope n ≤ Analysis.gaussianSeededSelected (Real.log n) := by
+    nextWitnessEnvelope n ≤ gaussianSeededSelected (Real.log n) := by
   have hb :
     nextWitnessEnvelope n ≤
-      (if 63 ≤ Real.log n then Analysis.gaussianSeededSelected (Real.log n)
+      (if 63 ≤ Real.log n then gaussianSeededSelected (Real.log n)
       else lowPrimeEnvelope n) := by
     exact
       (min_le_right _ _).trans
@@ -201,7 +201,7 @@ theorem exists_least_nextEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.
     exact transfer (exists_prime_pointwiseRoot hn ho hc hGRH)
   have h_gaussian1000 :
     (p : ℝ) ≤
-      (if 63 ≤ Real.log n then Analysis.gaussian1000Bound (Real.log n)
+      (if 63 ≤ Real.log n then gaussian1000Bound (Real.log n)
       else lowPrimeEnvelope n) := by
     by_cases h : 63 ≤ Real.log n
     · rw [ite_eq_left h]
@@ -218,11 +218,11 @@ theorem exists_least_nextEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.
       exact hb
   have h_seeded :
     (p : ℝ) ≤
-      (if 63 ≤ Real.log n then Analysis.gaussianSeededSelected (Real.log n)
+      (if 63 ≤ Real.log n then gaussianSeededSelected (Real.log n)
       else lowPrimeEnvelope n) := by
     by_cases h : 63 ≤ Real.log n
     · rw [ite_eq_left h]
-      rw [← Analysis.gaussianSeeded_min_eq_selected h]
+      rw [← gaussianSeeded_min_eq_selected h]
       exact transfer (exists_prime_gaussianSeededEnvelope ho hc hGRH h)
     · rw [ite_eq_right h]
       exact hb

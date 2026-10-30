@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaCharacterUpperBounds
 public import PseudoPrime.LLS.GammaPrincipalUpperBounds
 public import PseudoPrime.LLS.ConductorSumComparison
@@ -71,7 +72,7 @@ This is the analytic upper side of the finite-cutoff contradiction. -/
 theorem gamma_principal_sum_le_conductor_bound_of_noSmallPrimes {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x X : ℝ} (hx : 1 ≤ x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊, (gammaMellinKernel.summand (1 : DirichletCharacter ℂ q) x n).re ≤
       Real.sqrt x + 13 * x ^ (1 / 4 : ℝ) + (11783423 / 25000000 : ℝ) * subgroupConductorLogSum H +
@@ -98,7 +99,8 @@ bound. The remaining modulus loss is stated explicitly for later local refinemen
 theorem gamma_noSmallPrimes_explicit_inequality {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x lambda : ℝ} (hx : 1 ≤ x) (hl : 0 ≤ lambda) (hcut : 1 ≤ lambda * x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) * (1 - Real.exp (-lambda)) - 1) * Real.sqrt x ≤
       (11783423 / 25000000 : ℝ) * subgroupConductorLogSum H +
         13 * ((H.index : ℝ) + 1) * x ^ (1 / 4 : ℝ) +
@@ -124,7 +126,8 @@ theorem gamma_noSmallPrimes_explicit_inequality_of_no_small_divisor {q : ℕ} [N
     (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 1 ≤ x)
     (hl : 0 ≤ lambda) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) * (1 - Real.exp (-lambda)) - 1) * Real.sqrt x ≤
       (11783423 / 25000000 : ℝ) * subgroupConductorLogSum H +
         13 * ((H.index : ℝ) + 1) * x ^ (1 / 4 : ℝ) +

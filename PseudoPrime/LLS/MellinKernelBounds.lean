@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.PaperDefinitions
 public import Mathlib.NumberTheory.LSeries.Dirichlet
 
@@ -45,7 +46,7 @@ theorem norm_transform_le_line (K : MellinKernel) {c u : ℝ} (hc : -1 / 2 < c)
         (MeasureTheory.integral MeasureTheory.volume
           (fun t : ℝ ↦ ‖K.function ((c : ℂ) + Complex.I * t)‖)) *
         u ^ (-c) := by
-  rw [MellinKernel.transform, ← K.mellin_eq c u hc hc' hu, inverseMellin, norm_mul]
+  rw [MellinKernel.transform, ← K.mellin_eq c u hc hc' hu, Analysis.inverseMellin, norm_mul]
   have hconst : ‖((1 / (2 * Real.pi) : ℝ) : ℂ)‖ = 1 / (2 * Real.pi) := by
     rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg]
     exact one_div_nonneg.mpr (mul_nonneg (by norm_num only) Real.pi_pos.le)

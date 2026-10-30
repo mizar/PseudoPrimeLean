@@ -43,21 +43,21 @@ theorem tunedPrime_small_three {n : ℕ} (hN : 2047 ≤ n) (hU : n < 3000) :
 
 /-- Above scale 63 the public witness minimum lies below the tuned Gaussian family. -/
 theorem tuned_le_gaussian {n : ℕ} (hL : 63 ≤ Real.log n) :
-    tunedWitnessEnvelope n ≤ Analysis.gaussianTunedFamily (Real.log n) := by
+    tunedWitnessEnvelope n ≤ gaussianTunedFamily (Real.log n) := by
   rw [tunedWitnessEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 hL))]
   exact (min_le_right _ _).trans ((min_le_left _ _).trans (le_of_eq (ite_eq_left hL)))
 
 /-- Above scale 63 the public witness minimum lies below either tuned seeded profile. -/
 theorem tuned_le_seeded {n : ℕ} (f : Bool) (hL : 63 ≤ Real.log n) :
-    tunedWitnessEnvelope n ≤ Analysis.gaussianSeededTunedBound f (Real.log n) := by
+    tunedWitnessEnvelope n ≤ gaussianSeededTunedBound f (Real.log n) := by
   rw [tunedWitnessEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 hL))]
   have hs :
-    sharpGuardMin (Real.log n) (tunedFiniteWitness n) (Analysis.gaussianTunedFamily (Real.log n))
-        (min (Analysis.gaussianSeededTunedBound false (Real.log n))
-          (Analysis.gaussianSeededTunedBound true (Real.log n)))
+    sharpGuardMin (Real.log n) (tunedFiniteWitness n) (gaussianTunedFamily (Real.log n))
+        (min (gaussianSeededTunedBound false (Real.log n))
+          (gaussianSeededTunedBound true (Real.log n)))
         (tunedHighMin (Real.log n) (tunedFiniteWitness n)) ≤
-      min (Analysis.gaussianSeededTunedBound false (Real.log n))
-        (Analysis.gaussianSeededTunedBound true (Real.log n)) :=
+      min (gaussianSeededTunedBound false (Real.log n))
+        (gaussianSeededTunedBound true (Real.log n)) :=
     (min_le_right _ _).trans
       ((min_le_right _ _).trans ((min_le_left _ _).trans (le_of_eq (ite_eq_left hL))))
   cases f
@@ -66,10 +66,10 @@ theorem tuned_le_seeded {n : ℕ} (f : Bool) (hL : 63 ≤ Real.log n) :
 
 /-- At each triangular entrance the public witness minimum lies below that profile. -/
 theorem tuned_le_triangular {n : ℕ} (i : Fin 7)
-    (hL : (Analysis.triangularTunedProfile i).T ≤ Real.log n) :
-    tunedWitnessEnvelope n ≤ (Analysis.triangularTunedProfile i).C * Real.log n ^ 2 := by
+    (hL : (triangularTunedProfile i).T ≤ Real.log n) :
+    tunedWitnessEnvelope n ≤ (triangularTunedProfile i).C * Real.log n ^ 2 := by
   have h63 : (63 : ℝ) ≤ Real.log n := by
-    linarith only [(Analysis.triangularTunedProfile i).entry, hL]
+    linarith only [(triangularTunedProfile i).entry, hL]
   rw [tunedWitnessEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 h63))]
   exact
     (min_le_right _ _).trans
@@ -117,34 +117,34 @@ theorem tunedHigh_strict {n : ℕ} (hn : 1 < n) (hL : (30000000000 : ℝ) ≤ Re
 
 /-- The public tuned cutoff lies below the whole seeded family above its certified entrance. -/
 theorem tuned_le_seededFamily {n : ℕ} (hL : 63 ≤ Real.log n) :
-    tunedWitnessEnvelope n ≤ Analysis.gaussianSeededTunedFamily (Real.log n) :=
+    tunedWitnessEnvelope n ≤ gaussianSeededTunedFamily (Real.log n) :=
   le_min (tuned_le_seeded false hL) (tuned_le_seeded true hL)
 
 /-- The first open seeded improvement band strictly improves the current public sharp selection.
 Its upper endpoint uses the 35000 profile displacement only. -/
 theorem tunedSeeded_strict_first {n : ℕ} (hn : 1 < n) (hN : 3000 ≤ n)
     (hU : Real.log n < 30000000000)
-    (hS : Analysis.gaussianSeededSharpSwitch false 35000 < Real.log n)
+    (hS : gaussianSeededSharpSwitch false 35000 < Real.log n)
     (hT :
       Real.log n <
-        Analysis.gaussianSeededSharpSwitch false 50000 + Analysis.gaussianSeededTunedShift false) :
+        gaussianSeededSharpSwitch false 50000 + gaussianSeededTunedShift false) :
     tunedSelectedEnvelope n < sharpSelectedEnvelope n := by
-  have hL : (240 : ℝ) ≤ Real.log n := Analysis.gaussianSeededSharp_switch35_bounds.1.le.trans hS.le
+  have hL : (240 : ℝ) ≤ Real.log n := gaussianSeededSharp_switch35_bounds.1.le.trans hS.le
   rw [← tuned_eq_selected hn, sharpSelected_eq_seeded hN hL hU]
   exact
     (tuned_le_seededFamily (by linarith only [hL])).trans_lt
-      (Analysis.seededTunedFamily_strict_first (by linarith only [hL]) hS hT)
+      (seededTunedFamily_strict_first (by linarith only [hL]) hS hT)
 
 /-- Above the last old seeded switch and below the first high entrance,
 the tuned selection is strict. -/
 theorem tunedSeeded_strict_last {n : ℕ} (hn : 1 < n) (hN : 3000 ≤ n) (hU : Real.log n < 30000000000)
-    (hS : Analysis.gaussianSeededSharpSwitch true 50000 < Real.log n) :
+    (hS : gaussianSeededSharpSwitch true 50000 < Real.log n) :
     tunedSelectedEnvelope n < sharpSelectedEnvelope n := by
   have hL : (240 : ℝ) ≤ Real.log n := by
-    linarith only [(Analysis.gaussianSeededSharp_switch50_bounds true).1, hS]
+    linarith only [(gaussianSeededSharp_switch50_bounds true).1, hS]
   rw [← tuned_eq_selected hn, sharpSelected_eq_seeded hN hL hU]
   exact
     (tuned_le_seededFamily (by linarith only [hL])).trans_lt
-      (Analysis.seededTunedFamily_strict_last (by linarith only [hL]) hS)
+      (seededTunedFamily_strict_last (by linarith only [hL]) hS)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

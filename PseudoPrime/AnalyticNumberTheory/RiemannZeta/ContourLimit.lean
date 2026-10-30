@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GrowthBounds
 public import PseudoPrime.Analysis.IntegralLimits
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SmoothedContour
@@ -91,7 +92,7 @@ theorem integrable_riemannZetaLogContourKernel {x : ℝ} (hx : 0 < x) {τ : ℝ}
   have hτ0 : τ ≠ 0 := ne_of_gt (lt_trans zero_lt_one hτ)
   apply
     MeasureTheory.Integrable.mono'
-      (((General.verticalIntegrable_mellinLogKernel hτ0).norm).const_mul (C * x ^ τ))
+      (((Analysis.verticalIntegrable_mellinLogKernel hτ0).norm).const_mul (C * x ^ τ))
   · exact (continuous_riemannZetaLogContourKernel_line hx hτ).aestronglyMeasurable
   · filter_upwards with y
     set s : ℂ := (τ : ℂ) + y * Complex.I with hs_def
@@ -126,7 +127,7 @@ theorem integrable_riemannZetaReciprocalContourKernel {x : ℝ} (hx : 0 < x) {τ
     linarith only [hτ, h]
   apply
     MeasureTheory.Integrable.mono'
-      (((General.verticalIntegrable_mellinReciprocalKernel hσ0 hσ1).norm).const_mul (C * x ^ σ))
+      (((Analysis.verticalIntegrable_mellinReciprocalKernel hσ0 hσ1).norm).const_mul (C * x ^ σ))
   · exact (continuous_riemannZetaReciprocalContourKernel_line hx hτ).aestronglyMeasurable
   · filter_upwards with y
     set s : ℂ := (τ : ℂ) + y * Complex.I with hs_def

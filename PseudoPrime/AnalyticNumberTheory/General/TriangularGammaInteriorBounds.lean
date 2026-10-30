@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.LLS.TriangularGammaPositiveScale
 public import PseudoPrime.LLS.TriangularSignedGammaBounds
 
@@ -28,7 +29,7 @@ theorem mellinResolventWeight_realPole_exp_neg {c v : ℝ} (hv : 0 ≤ v) :
       (((Real.exp (-2 * c * v) - 1 + 2 * c * v) / (4 * c ^ 2) : ℝ) : ℂ) := by
   have ht : Real.exp (-v) ∈ Set.Ioc (0 : ℝ) 1 :=
     ⟨Real.exp_pos _, Real.exp_le_one_iff.mpr (neg_nonpos.mpr hv)⟩
-  unfold mellinResolventWeight mellinWeightZero mellinWeightTwo
+  unfold mellinResolventWeight Analysis.mellinWeightZero Analysis.mellinWeightTwo
   rw [Set.indicator_of_mem ht, Set.indicator_of_mem ht, Set.indicator_of_mem ht]
   rw [← Complex.ofReal_neg, ← Complex.ofReal_cpow (Real.exp_pos _).le,
     Real.rpow_def_of_pos (Real.exp_pos _), Real.log_exp]

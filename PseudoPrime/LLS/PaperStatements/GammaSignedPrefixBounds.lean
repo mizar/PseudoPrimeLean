@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaSignedPrefixCharacterBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaConductorFreeBounds
 public import PseudoPrime.PrimeTest.MillerRabin.SignSubgroupIndex
@@ -59,7 +60,8 @@ Unpack its unit representative and the annihilator membership criterion.
 No primality or analytic hypothesis is required; this transfers a no-witness
 subgroup condition to the common Euler-prefix character bound. -/
 theorem annihilator_apply_one_of_residue_mem {q k : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
-    (χ : NumberTheory.subgroupAnnihilator H) (hk : residueInSubgroup q H k) : χ.val k = 1 := by
+    (χ : NumberTheory.subgroupAnnihilator H) (hk : NumberTheory.residueInSubgroup q H k) : χ.val k
+      = 1 := by
   obtain ⟨u, hu, he⟩ := hk
   rw [← he]
   exact (NumberTheory.mem_subgroupAnnihilator_iff H χ.val).mp χ.property u hu
@@ -72,7 +74,7 @@ No logarithmic entrance or numerical Gamma-parity cap is assumed. -/
 theorem gamma_primitive_average_re_le_signed_prime_prefix {q Q : ℕ} [NeZero q] (hQ : 20000 ≤ Q)
     (hqQ : q ≤ Q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
-    (hb : 0 ≤ b) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → residueInSubgroup q H p) :
+    (hb : 0 ≤ b) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → NumberTheory.residueInSubgroup q H p) :
     (∑ χ : NumberTheory.subgroupAnnihilator H,
         (∑' k : ℕ, gammaMellinKernel.summand χ.val.primitiveCharacter x k).re) ≤
       (∑' k : ℕ, gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re +
@@ -109,7 +111,7 @@ theorem gamma_primitive_average_re_le_even_prime_prefix {q Q : ℕ} [NeZero q] (
     (hqQ : q ≤ Q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (heven : ∀ χ : NumberTheory.subgroupAnnihilator H, χ.val.Even) {x b : ℝ} (hx : 2 ≤ x)
-    (hb : 0 ≤ b) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → residueInSubgroup q H p) :
+    (hb : 0 ≤ b) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → NumberTheory.residueInSubgroup q H p) :
     (∑ χ : NumberTheory.subgroupAnnihilator H,
         (∑' k : ℕ, gammaMellinKernel.summand χ.val.primitiveCharacter x k).re) ≤
       (∑' k : ℕ, gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re +

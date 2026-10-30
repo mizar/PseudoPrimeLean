@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.TriangularSignedGammaBounds
 public import PseudoPrime.LLS.TriangularDigammaIntegralExchange
 
@@ -124,7 +125,7 @@ theorem triangular_central_gammaIntegral_eq_vertical_resolvent_series {q : ℕ}
           ring))
   have hm :=
     inverseMellin_triangular ha (c := 0) (u := x⁻¹) (by norm_num only [abs_zero]) (inv_pos.mpr hx)
-  unfold inverseMellin at hm
+  unfold Analysis.inverseMellin at hm
   simp only [Complex.ofReal_zero, zero_add, Complex.ofReal_inv, Complex.cpow_neg,
     Complex.inv_cpow_ofReal_nonneg hx.le, inv_inv] at hm
   unfold triangularKernelProfile at hm

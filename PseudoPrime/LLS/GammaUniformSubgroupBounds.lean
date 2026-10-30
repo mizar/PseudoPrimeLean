@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformSubgroupComparison
 public import PseudoPrime.LLS.GammaUniformSubgroupNumerics
 
@@ -28,14 +29,15 @@ theorem exists_prime_outside_le_gamma_four_fifths_log {q : ℕ} [NeZero q] (H : 
     (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 46000 ≤ Real.log q) :
     ∃ p : ℕ,
-      p.Prime ∧ ¬p ∣ q ∧ ¬residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q) ^ 2 := by
+      p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log
+        q) ^ 2 := by
   classical
   have hq0 : (0 : ℝ) < q := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne q))
   have ht := Real.log_le_sub_one_of_pos hq0
   have hq : 20000 ≤ q := by exact_mod_cast (show (20000 : ℝ) ≤ q by linarith only [ht, hL])
   by_contra hn
   have hsmall (p : ℕ) (hp : p.Prime) (hd : ¬p ∣ q) (hb : (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q) ^ 2) :
-    residueInSubgroup q H p := by
+    NumberTheory.residueInSubgroup q H p := by
     by_contra hout
     exact hn ⟨p, hp, hd, hout, hb⟩
   have hc :=
@@ -53,7 +55,8 @@ The start is uniform in the index; no parity, squarefree or small-factor premise
 theorem exists_prime_outside_le_gamma_four_fifths {q : ℕ} (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 20000 ≤ q) :
     ∃ p : ℕ,
-      p.Prime ∧ ¬p ∣ q ∧ ¬residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q) ^ 2 := by
+      p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log
+        q) ^ 2 := by
   have hq0 : q ≠ 0 :=
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 20000).trans_le hq)
   let : NeZero q := ⟨hq0⟩

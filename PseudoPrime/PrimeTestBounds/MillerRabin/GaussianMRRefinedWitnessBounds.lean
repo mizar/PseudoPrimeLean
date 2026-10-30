@@ -6,9 +6,10 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianKorseltTriple
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexClassification
-public import PseudoPrime.Analysis.GaussianMRRefinedNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRRefinedNumerics
 
 /-! # The refined Gaussian MR bound from logarithmic scale 300 -/
 
@@ -23,16 +24,16 @@ branch data. -/
 theorem gaussianMRRefined_index_four {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 300 ≤ Real.log n) :
     let L := Real.log n
-    let r := Analysis.gaussianMRRefinedRadius L
-    let s := Analysis.gaussianMRRefinedRoot L
-    let h := Analysis.gaussianMRRefinedWidth / s
+    let r := gaussianMRRefinedRadius L
+    let s := gaussianMRRefinedRoot L
+    let h := gaussianMRRefinedWidth / s
     let x := r ^ 2
     ¬(((H.index : ℝ) * (1 - h) *
               (∫ u in (0 : ℝ)..(6 / 5 : ℝ),
                 (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
             Real.exp (1 / 16 : ℝ)) *
           Real.sqrt x ≤
-        Analysis.gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+        gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
           (H.index : ℝ) *
             (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / Real.sqrt x) * Real.exp (1 / 16 : ℝ)) +
           13 +
@@ -46,36 +47,36 @@ theorem gaussianMRRefined_index_four {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)
   let E : ℝ := Real.exp (1 / 16 : ℝ)
   have hrpos : 0 < r := by
     dsimp only [r]
-    exact sq_pos_of_pos (Analysis.gaussianMRRefined_root_pos _)
+    exact sq_pos_of_pos (gaussianMRRefined_root_pos _)
   have hspos : 0 < s := by
     dsimp only [s]
-    exact Analysis.gaussianMRRefined_root_pos _
-  have hrootSq : s ^ 2 = r := by dsimp only [s, r, Analysis.gaussianMRRefinedRadius]
+    exact gaussianMRRefined_root_pos _
+  have hrootSq : s ^ 2 = r := by dsimp only [s, r, gaussianMRRefinedRadius]
   have hrbound : 415 / 2 ≤ r := by
     dsimp only [r]
-    have hr := Analysis.gaussianMRRefined_radius_lower hL
+    have hr := gaussianMRRefined_radius_lower hL
     nlinarith only [hL, hr]
   have hsbound : 14 ≤ s := by
     dsimp only [s]
-    exact le_trans (by norm_num only) (Analysis.gaussianMRRefined_root_lower hL)
+    exact le_trans (by norm_num only) (gaussianMRRefined_root_lower hL)
   have hsqrtx : Real.sqrt x = r := by
     dsimp only [x]
     exact Real.sqrt_sq hrpos.le
   rw [hsqrtx] at hcmp
-  have hI : Analysis.gaussianMRRefinedMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMRRefinedMass]
-    exact Analysis.gaussianMRRefined_mass.le
+  have hI : gaussianMRRefinedMass ≤ I := by
+    dsimp only [I, gaussianMRRefinedMass]
+    exact gaussianMRRefined_mass.le
   have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
     dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
-  have hh : h = Analysis.gaussianMRRefinedWidth / s := by rfl
+  have hh : h = gaussianMRRefinedWidth / s := by rfl
   have hh1 : h ≤ 1 / 2 := by
     rw [hh, div_le_iff₀ hspos]
-    norm_num only [Analysis.gaussianMRRefinedWidth]
+    norm_num only [gaussianMRRefinedWidth]
     linarith only [hsbound]
   have hcmp' :
     (4 * (1 - h) * I - E) * r ≤
-      Analysis.gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
         4 * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * Real.exp (1 / 16 : ℝ)) +
         13 +
         3 * LLS.PaperStatements.gaussianPrefixError (484381 / 100000) n (r ^ 2) := by
@@ -86,42 +87,42 @@ theorem gaussianMRRefined_index_four {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)
     nlinarith only [hC]
   have herror :
     (4 / 3 : ℝ) *
-          (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * Analysis.gaussianMRRefinedWidth * s) +
+          (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
             1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
         13 / 3 +
         LLS.PaperStatements.gaussianPrefixError (484381 / 100000) n (r ^ 2) <
       11 := by
-    exact Analysis.gaussianMRRefined_triple_error hL le_rfl
+    exact gaussianMRRefined_triple_error hL le_rfl
   exact
     Analysis.gaussianMR_compare_width (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianPrefixError (484381 / 100000) n (r ^ 2)) (L :=
       (2 / 3 : ℝ) * Real.log n) (I := I) (E := E) (C :=
-      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := Analysis.gaussianMRRefinedMass)
+      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := gaussianMRRefinedMass)
       (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor :=
-      Analysis.gaussianMRRefinedConductor) (D :=
-      (4 * Analysis.gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
+      gaussianMRRefinedConductor) (D :=
+      (4 * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
       (4 / 3 : ℝ) *
-        (Analysis.gaussianMRRefinedMass * Analysis.gaussianMRRefinedWidth +
-          1 / (10 * Analysis.gaussianMRRefinedWidth)))
-      (by norm_num only [Analysis.gaussianMRRefinedWidth]) (by norm_num only : (4 : ℝ) ≤ 4)
+        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
+          1 / (10 * gaussianMRRefinedWidth)))
+      (by norm_num only [gaussianMRRefinedWidth]) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
-      (by norm_num only [Analysis.gaussianMRRefinedConductor] :
-        (0 : ℝ) ≤ Analysis.gaussianMRRefinedConductor)
+      (by norm_num only [gaussianMRRefinedConductor] :
+        (0 : ℝ) ≤ gaussianMRRefinedConductor)
       le_rfl le_rfl hcmp'
       (by
         intro hbudget
         have hnorm :
-          ((4 * Analysis.gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) * r ≤
-            (2 / 3 : ℝ) * Analysis.gaussianMRRefinedConductor * Real.log n +
+          ((4 * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) * r ≤
+            (2 / 3 : ℝ) * gaussianMRRefinedConductor * Real.log n +
               (4 / 3 : ℝ) *
-                (Analysis.gaussianMRRefinedMass * Analysis.gaussianMRRefinedWidth +
-                  1 / (10 * Analysis.gaussianMRRefinedWidth)) *
+                (gaussianMRRefinedMass * gaussianMRRefinedWidth +
+                  1 / (10 * gaussianMRRefinedWidth)) *
                 s +
               11 := by
-          dsimp only [Analysis.gaussianMRRefinedMass,
+          dsimp only [gaussianMRRefinedMass,
             Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
           nlinarith only [hbudget, herror]
-        exact Analysis.gaussianMRRefined_triple hL hnorm)
+        exact gaussianMRRefined_triple hL hnorm)
 
 /-- At logarithmic scale at least 300, the certified 50000 prefix supplies the
 refined witness bound for this classification branch. Use the signed comparison with
@@ -135,16 +136,16 @@ theorem gaussianMRRefined_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnl
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMRRefinedBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussianMRRefinedBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
-  let r := Analysis.gaussianMRRefinedRadius (Real.log n)
+  let r := gaussianMRRefinedRadius (Real.log n)
   let x := r ^ 2
-  have hcut : (6 / 5 : ℝ) * x = Analysis.gaussianMRRefinedBound (Real.log n) := by
-    dsimp only [x, Analysis.gaussianMRRefinedBound, Analysis.gaussianMRRefinedRadius, r]
+  have hcut : (6 / 5 : ℝ) * x = gaussianMRRefinedBound (Real.log n) := by
+    dsimp only [x, gaussianMRRefinedBound, gaussianMRRefinedRadius, r]
   have hX : 50000 ≤ (6 / 5 : ℝ) * x := by
     rw [hcut]
-    exact (Analysis.gaussianMRRefined_prefix50000 hL).le
+    exact (gaussianMRRefined_prefix50000 hL).le
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -162,26 +163,26 @@ theorem gaussianMRRefined_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnl
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
-  have hrootSq : (Analysis.gaussianMRRefinedRoot (Real.log n)) ^ 2 = r := by
-    dsimp only [r, Analysis.gaussianMRRefinedRadius]
+  have hrootSq : (gaussianMRRefinedRoot (Real.log n)) ^ 2 = r := by
+    dsimp only [r, gaussianMRRefinedRadius]
   have hrbound : 415 / 2 ≤ r := by
     dsimp only [r]
-    have hr := Analysis.gaussianMRRefined_radius_lower hL
+    have hr := gaussianMRRefined_radius_lower hL
     nlinarith only [hr, hL]
-  have hspos : 0 < Analysis.gaussianMRRefinedRoot (Real.log n) :=
-    Analysis.gaussianMRRefined_root_pos _
-  have hsbound : 14 ≤ Analysis.gaussianMRRefinedRoot (Real.log n) :=
-    le_trans (by norm_num only) (Analysis.gaussianMRRefined_root_lower hL)
-  have hwidth : 0 < Analysis.gaussianMRRefinedWidth / Analysis.gaussianMRRefinedRoot (Real.log n) :=
-    div_pos (by norm_num only [Analysis.gaussianMRRefinedWidth]) hspos
+  have hspos : 0 < gaussianMRRefinedRoot (Real.log n) :=
+    gaussianMRRefined_root_pos _
+  have hsbound : 14 ≤ gaussianMRRefinedRoot (Real.log n) :=
+    le_trans (by norm_num only) (gaussianMRRefined_root_lower hL)
+  have hwidth : 0 < gaussianMRRefinedWidth / gaussianMRRefinedRoot (Real.log n) :=
+    div_pos (by norm_num only [gaussianMRRefinedWidth]) hspos
   have hwidth1 :
-    Analysis.gaussianMRRefinedWidth / Analysis.gaussianMRRefinedRoot (Real.log n) ≤ 1 / 2 := by
+    gaussianMRRefinedWidth / gaussianMRRefinedRoot (Real.log n) ≤ 1 / 2 := by
     rw [div_le_iff₀ hspos]
-    norm_num only [Analysis.gaussianMRRefinedWidth]
+    norm_num only [gaussianMRRefinedWidth]
     linarith only [hsbound]
   have hx : 4 ≤ x := by
     dsimp only [x]
@@ -209,14 +210,14 @@ theorem gaussianMRRefined_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hn
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMRRefinedBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussianMRRefinedBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
   let L := Real.log n
-  let r := Analysis.gaussianMRRefinedRadius L
-  let s := Analysis.gaussianMRRefinedRoot L
+  let r := gaussianMRRefinedRadius L
+  let s := gaussianMRRefinedRoot L
   let x := r ^ 2
-  let h := Analysis.gaussianMRRefinedWidth / s
+  let h := gaussianMRRefinedWidth / s
   let m : ℝ := H.index
   let t : ℝ := m - 1
   let I : ℝ :=
@@ -226,21 +227,21 @@ theorem gaussianMRRefined_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hn
   let C : ℝ := LLS.PaperStatements.subgroupConductorLogSum H
   let A : ℝ := LLS.PaperStatements.gaussianPrefixError (484381 / 100000) n x
   have hn1 : 1 < n := lt_of_lt_of_le (by decide : 1 < 20000) hnlarge
-  have hrootSq : s ^ 2 = r := by dsimp only [s, r, Analysis.gaussianMRRefinedRadius]
+  have hrootSq : s ^ 2 = r := by dsimp only [s, r, gaussianMRRefinedRadius]
   have hrbound : 415 / 2 ≤ r := by
     dsimp only [r, L]
-    have hr := Analysis.gaussianMRRefined_radius_lower hL
+    have hr := gaussianMRRefined_radius_lower hL
     nlinarith only [hL, hr]
   have hspos : 0 < s := by
     dsimp only [s, L]
-    exact Analysis.gaussianMRRefined_root_pos _
+    exact gaussianMRRefined_root_pos _
   have hs14 : 14 ≤ s := by
     dsimp only [s, L]
-    exact le_trans (by norm_num only) (Analysis.gaussianMRRefined_root_lower hL)
-  have hh : h = Analysis.gaussianMRRefinedWidth / s := by rfl
+    exact le_trans (by norm_num only) (gaussianMRRefined_root_lower hL)
+  have hh : h = gaussianMRRefinedWidth / s := by rfl
   have hh1 : h ≤ 1 / 2 := by
     rw [hh, div_le_iff₀ hspos]
-    norm_num only [Analysis.gaussianMRRefinedWidth]
+    norm_num only [gaussianMRRefinedWidth]
     linarith only [hs14]
   have hrpos : 0 < r := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 415 / 2) hrbound
   have hsqrtx : Real.sqrt x = r := by
@@ -249,11 +250,11 @@ theorem gaussianMRRefined_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hn
   have hx : 4 ≤ x := by
     dsimp only [x]
     nlinarith only [hrbound]
-  have hcut : (6 / 5 : ℝ) * x = Analysis.gaussianMRRefinedBound (Real.log n) := by
-    dsimp only [Analysis.gaussianMRRefinedBound, Analysis.gaussianMRRefinedRadius, r, L, x]
+  have hcut : (6 / 5 : ℝ) * x = gaussianMRRefinedBound (Real.log n) := by
+    dsimp only [gaussianMRRefinedBound, gaussianMRRefinedRadius, r, L, x]
   have hX : 50000 ≤ (6 / 5 : ℝ) * x := by
     rw [hcut]
-    exact (Analysis.gaussianMRRefined_prefix50000 hL).le
+    exact (gaussianMRRefined_prefix50000 hL).le
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -270,11 +271,11 @@ theorem gaussianMRRefined_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hn
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
-  have hwidth : 0 < h := div_pos (by norm_num only [Analysis.gaussianMRRefinedWidth]) hspos
+  have hwidth : 0 < h := div_pos (by norm_num only [gaussianMRRefinedWidth]) hspos
   have hprefix :
     (484381 / 100000 : ℝ) ≤
       ∑ n ∈ Finset.Ioc 0 (50000 : ℕ), Analysis.gaussianResolventMangoldtWeight n := by
@@ -293,9 +294,9 @@ theorem gaussianMRRefined_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hn
     have hidxNat : 1 ≤ H.index := by exact_mod_cast hidxReal
     rw [Nat.cast_sub hidxNat, Nat.cast_one]
   rw [hsqrtx, hcastIndex] at hcmp
-  have hI : Analysis.gaussianMRRefinedMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMRRefinedMass]
-    exact Analysis.gaussianMRRefined_mass.le
+  have hI : gaussianMRRefinedMass ≤ I := by
+    dsimp only [I, gaussianMRRefinedMass]
+    exact gaussianMRRefined_mass.le
   have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
     dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
@@ -310,33 +311,33 @@ theorem gaussianMRRefined_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hn
       exact LLS.PaperStatements.subgroupConductorLogSum_le H
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
-    Analysis.gaussianMRRefinedD * r =
-      Analysis.gaussianMRRefinedConductor * L + Analysis.gaussianMRRefinedBeta * s + 28 / 5 := by
+    gaussianMRRefinedD * r =
+      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + 28 / 5 := by
     dsimp only [r, s, L]
-    exact Analysis.gaussianMRRefined_equation (by linarith only [hL] : 0 ≤ Real.log n)
+    exact gaussianMRRefined_equation (by linarith only [hL] : 0 ≤ Real.log n)
   have hcmp' :
     (m * (1 - h) * I - E) * r ≤
-      Analysis.gaussianMRRefinedConductor * C +
+      gaussianMRRefinedConductor * C +
         m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 +
         t * A := by
-    simpa only [m, t, I, E, C, A, Analysis.gaussianMRRefinedConductor] using hcmp
-  have hcoeff := Analysis.gaussianMRRefined_index_coeffs hi
+    simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
+  have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD :
-    Analysis.gaussianMRRefinedD ≤
-      (m * Analysis.gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+    gaussianMRRefinedD ≤
+      (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
     (m / t) *
-        (Analysis.gaussianMRRefinedMass * Analysis.gaussianMRRefinedWidth +
-          1 / (10 * Analysis.gaussianMRRefinedWidth)) ≤
-      Analysis.gaussianMRRefinedBeta := by
+        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
+          1 / (10 * gaussianMRRefinedWidth)) ≤
+      gaussianMRRefinedBeta := by
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
-    Analysis.gaussianMRRefinedD * r ≤
-        Analysis.gaussianMRRefinedConductor * L + Analysis.gaussianMRRefinedBeta * s +
+    gaussianMRRefinedD * r ≤
+        gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
           (m / t) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * Analysis.gaussianMRRefinedWidth * s) +
+            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
               1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
           13 / t +
           A →
@@ -344,10 +345,10 @@ theorem gaussianMRRefined_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hn
     intro hbudget
     have ht : t = m - 1 := by rfl
     have hgamma := hcoeff.2.1
-    have herr := Analysis.gaussianMRRefined_residual (q := n) hL le_rfl hi
+    have herr := gaussianMRRefined_residual (q := n) hL le_rfl hi
     change
       (m / (m - 1)) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * Analysis.gaussianMRRefinedWidth * s) +
+            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
               1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
           13 / (m - 1) +
           A <
@@ -356,15 +357,15 @@ theorem gaussianMRRefined_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hn
     linarith only [hbudget, hroot, herr]
   exact
     Analysis.gaussianMR_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I)
-      (E := E) (C := C) (h := h) (M := Analysis.gaussianMRRefinedMass) (Ecap :=
-      Analysis.gaussianMR6FifthsEndpoint) (conductor := Analysis.gaussianMRRefinedConductor) (D :=
-      Analysis.gaussianMRRefinedD) (beta := Analysis.gaussianMRRefinedBeta)
-      (by norm_num only [Analysis.gaussianMRRefinedWidth])
+      (E := E) (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap :=
+      Analysis.gaussianMR6FifthsEndpoint) (conductor := gaussianMRRefinedConductor) (D :=
+      gaussianMRRefinedD) (beta := gaussianMRRefinedBeta)
+      (by norm_num only [gaussianMRRefinedWidth])
       (by
         have hi' : (1000000000 : ℝ) ≤ m := by
           simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [Analysis.gaussianMRRefinedConductor]) hD
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD
       hbeta hcmp' hfinish
 
 /-- At logarithmic scale at least 300, the certified 50000 prefix supplies the
@@ -379,7 +380,7 @@ theorem gaussianMRRefined_witness_triple {n p q r : ℕ} (hp : p.Prime) (hq : q.
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMRRefinedBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianMRRefinedBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hnOdd : Odd n := hn ▸ (hpOdd.mul hqOdd).mul hrOdd
   have hn1 : 1 < n :=
@@ -404,7 +405,7 @@ theorem gaussianMRRefined_witness_card {n : ℕ} (hnOdd : Odd n) (hsf : Squarefr
     (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMRRefinedBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianMRRefinedBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   obtain ⟨p, q, r, hpq, hpr, hqr, hset⟩ := Finset.card_eq_three.mp hc
   have hpMem : p ∈ n.primeFactors := hset ▸ Finset.mem_insert_self p _
@@ -437,14 +438,14 @@ theorem gaussianMRRefined_witness_small {n : ℕ} [NeZero n] (hnOdd : Odd n) (hc
     (hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMRRefinedBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianMRRefinedBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   rcases
     finite_index_witness_or_uniform_korselt_triple_log240 hnOdd hcomp (PrimeTest.fermatSubgroup n)
       le_rfl hi hGRH (by linarith only [hL]) with
     hlocal | htriple
   · obtain ⟨s, hs, hbound, hfail⟩ := hlocal
-    have hbound' := Analysis.gaussianMRRefined_local hL
+    have hbound' := gaussianMRRefined_local hL
     exact ⟨s, hs, hbound.trans (le_of_lt hbound'), hfail⟩
   · obtain ⟨hsf, hc, hK, hU⟩ := htriple
     have hN27 := Analysis.ten_pow_twentyseven_le_of_log_ge_240 (by linarith only [hL])
@@ -461,7 +462,7 @@ theorem gaussianMRRefined_fermat_large {n : ℕ} (hn1 : 1 < n) (hnOdd : Odd n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMRRefinedBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussianMRRefinedBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   have hnlarge : 20000 ≤ n :=
@@ -486,7 +487,7 @@ theorem exists_prime_witness_gaussianMRRefined {n : ℕ} (hnOdd : Odd n) (hcomp 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMRRefinedBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianMRRefinedBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hn0 : 0 < n := by
     by_contra hnot
@@ -516,7 +517,7 @@ theorem exists_least_witness_gaussianMRRefined {n : ℕ} (hnOdd : Odd n) (hcomp 
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        (p : ℝ) ≤ Analysis.gaussianMRRefinedBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussianMRRefinedBound (Real.log n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   classical
   obtain ⟨p, hp, hbound, hreject⟩ := exists_prime_witness_gaussianMRRefined hnOdd hcomp hGRH hL

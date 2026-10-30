@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.ParameterizedReciprocalWeightedBounds
-public import PseudoPrime.Analysis.RetainedEvenReciprocalError
+public import PseudoPrime.LLS.RetainedEvenReciprocalError
 
 /-! # Parity-conditional even reciprocal bound with retained error -/
 
@@ -28,7 +28,7 @@ theorem primitiveReciprocalRaw_even_le_neg_179_div_200 {N : ℕ} [NeZero N] (hN2
   have hx1 : (1 : ℝ) < x := by linarith only [hx]
   have h :=
     primitiveReciprocalRaw_even_le_of_mainError hN2 hGRH hp hne (inv_ne_one.mpr hne) heven hx1
-      (Analysis.primitiveReciprocalEvenMainError_le_neg_179_div_200 hx)
+      (primitiveReciprocalEvenMainError_le_neg_179_div_200 hx)
   linarith only [h]
 
 end PseudoPrime.LLS.Extensions

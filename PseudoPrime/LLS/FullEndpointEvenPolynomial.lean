@@ -13,7 +13,7 @@ public import PseudoPrime.Analysis.ExplicitLogSqrtAbsorption
 public import PseudoPrime.LLS.ReciprocalGapEvenGamma
 public import PseudoPrime.LLS.GammaSignedPrefixCharacterBounds
 public import PseudoPrime.LLS.MidscaleEndpointRadius
-public import PseudoPrime.Analysis.RetainedEvenReciprocalError
+public import PseudoPrime.LLS.RetainedEvenReciprocalError
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.EvenLogWeightedUpper
 public import PseudoPrime.LLS.FullEndpointEightNinthsRange
 public import PseudoPrime.LLS.FullEndpointEightyOneRange
@@ -1287,7 +1287,7 @@ theorem exists_prime_not_one_of_positive_exact_even_endpoint_gap {q : ℕ} [NeZe
       y ^ 2) hGRH.riemann (by linarith only [hy2])
   rw [← hRecId] at hRecLower
   rw [Real.log_pow] at hRecLower
-  have hError := Analysis.primitiveReciprocalEvenMainError_le_exact_even_envelope hy
+  have hError := primitiveReciprocalEvenMainError_le_exact_even_envelope hy
   have hRaw :=
     PseudoPrime.LLS.primitiveReciprocalRaw_even_le_of_mainError hq hGRH hp hne hinv heven
       (by linarith only [hx]) hError

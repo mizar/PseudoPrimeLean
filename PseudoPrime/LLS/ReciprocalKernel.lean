@@ -6,36 +6,16 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
+public import PseudoPrime.Analysis.InverseMellinShift
 public import PseudoPrime.LLS.MellinKernelBounds
-public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+public import PseudoPrime.Analysis.MellinWeights
 
 /-! # A compact reciprocal Mellin kernel for finite-scale comparisons -/
 
 @[expose] public section
 
 namespace PseudoPrime.LLS.PaperStatements
-
-/-- Input: a complex function, real shifts and a positive argument.
-Claim: translation of the kernel multiplies its inverse by the corresponding real-base power.
-Proof: split the complex power and pull the constant through the integral.
-Role: reuse scalar inversion formulas for shifted rational kernels. -/
-theorem inverseMellin_shift (F : ℂ → ℂ) (a c : ℝ) {u : ℝ} (hu : 0 < u) :
-    inverseMellin (fun s ↦ F (s + a)) c u = (u : ℂ) ^ (a : ℂ) * inverseMellin F (c + a) u := by
-  have he (t : ℝ) :
-    F (((c : ℂ) + Complex.I * t) + a) * (u : ℂ) ^ (-((c : ℂ) + Complex.I * t)) =
-      (u : ℂ) ^ (a : ℂ) *
-        (F (((c + a : ℝ) : ℂ) + Complex.I * t) *
-          (u : ℂ) ^ (-(((c + a : ℝ) : ℂ) + Complex.I * t))) := by
-    rw [Complex.ofReal_add]
-    have hs : (c : ℂ) + Complex.I * t + a = (c : ℂ) + a + Complex.I * t := by ring
-    rw [hs]
-    have hp : -(↑c + Complex.I * ↑t) = (a : ℂ) + -(↑c + ↑a + Complex.I * ↑t) := by ring
-    rw [hp, Complex.cpow_add _ _ (Complex.ofReal_ne_zero.mpr hu.ne')]
-    ring
-  unfold inverseMellin
-  rw [MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall he),
-    MeasureTheory.integral_const_mul]
-  ring
 
 /-- Input: a kernel integrable on a vertical line and a positive Mellin argument.
 Claim: multiplying by the inverse Mellin power preserves integrability.
@@ -64,10 +44,10 @@ Claim: the unshifted reciprocal inverse is the elementary weight max(1-u,0).
 Proof: translate the existing Mellin inversion between integral conventions.
 Role: provide the scalar base for the shifted compact kernel. -/
 theorem inverseMellin_reciprocal_base {c u : ℝ} (hc : 0 < c) (hu : 0 < u) :
-    inverseMellin (fun s : ℂ ↦ 1 / (s * (s + 1))) c u =
-      AnalyticNumberTheory.General.mellinWeightOne u := by
-  rw [← AnalyticNumberTheory.General.mellinInv_mellinWeightOne_eq hc hu]
-  unfold inverseMellin mellinInv
+    Analysis.inverseMellin (fun s : ℂ ↦ 1 / (s * (s + 1))) c u =
+      Analysis.mellinWeightOne u := by
+  rw [← Analysis.mellinInv_mellinWeightOne_eq hc hu]
+  unfold Analysis.inverseMellin mellinInv
   rw [Complex.real_smul]
   congr 1
   apply MeasureTheory.integral_congr_ae
@@ -79,7 +59,7 @@ Claim: the reciprocal inverse is the real profile sqrt(u) max(1-u,0).
 Proof: translate the unshifted inverse and identify the half power with the square root.
 Role: prove positivity, compact support and line independence. -/
 theorem inverseMellin_reciprocal {c u : ℝ} (hc : -1 / 2 < c) (hu : 0 < u) :
-    inverseMellin reciprocalMellinFunction c u = (Real.sqrt u * max (1 - u) 0 : ℝ) := by
+    Analysis.inverseMellin reciprocalMellinFunction c u = (Real.sqrt u * max (1 - u) 0 : ℝ) := by
   have hf :
     reciprocalMellinFunction = fun s : ℂ ↦ (fun z : ℂ ↦ 1 / (z * (z + 1))) (s + (1 / 2 : ℝ)) := by
     funext s
@@ -87,9 +67,9 @@ theorem inverseMellin_reciprocal {c u : ℝ} (hc : -1 / 2 < c) (hu : 0 < u) :
     norm_num only [Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]
     congr 2
     ring
-  rw [hf, inverseMellin_shift (fun z : ℂ ↦ 1 / (z * (z + 1))) (1 / 2) c hu,
+  rw [hf, Analysis.inverseMellin_shift (fun z : ℂ ↦ 1 / (z * (z + 1))) (1 / 2) c hu,
     inverseMellin_reciprocal_base (by linarith only [hc]) hu,
-    AnalyticNumberTheory.General.mellinWeightOne_eq_ofReal_max hu]
+    Analysis.mellinWeightOne_eq_ofReal_max hu]
   rw [← Complex.ofReal_cpow hu.le, ← Real.sqrt_eq_rpow, ← Complex.ofReal_mul]
 
 /-- Input: c > -1/2 and u > 0.
@@ -103,7 +83,7 @@ theorem integrable_inverseMellin_reciprocal {c u : ℝ} (hc : -1 / 2 < c) (hu : 
           (u : ℂ) ^ (-((c : ℂ) + Complex.I * t))) := by
   have hcp : 0 < c + 1 / 2 := by linarith only [hc]
   have hi :=
-    AnalyticNumberTheory.General.verticalIntegrable_mellinReciprocalKernel hcp.ne'
+    Analysis.verticalIntegrable_mellinReciprocalKernel hcp.ne'
       (show c + 1 / 2 ≠ -1 by linarith only [hcp])
   apply integrable_inverseMellin_of_line hu
   apply hi.congr

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.VerticalResolventBounds
 public import PseudoPrime.Analysis.IntegralSeries
 
@@ -55,9 +56,9 @@ theorem norm_centeredResolventKernel_le {α : ℂ} (hα : α.re < 0) {τ x : ℝ
         rw [h, Complex.zero_re] at hα
         exact lt_irrefl _ hα)
   have hu : 0 < ‖(τ : ℂ) + y * Complex.I‖ :=
-    norm_pos_iff.mpr (ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y)
+    norm_pos_iff.mpr (Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y)
   have hw : 0 < ‖(τ : ℂ) + ((y - α.im : ℝ) : ℂ) * Complex.I‖ :=
-    norm_pos_iff.mpr (ne_zero_add_mul_I_of_re_ne_zero hτ.ne' _)
+    norm_pos_iff.mpr (Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' _)
   have hd := norm_vertical_sub_ge hα.le hτ y
   have hv : 0 < ‖(τ : ℂ) + y * Complex.I - α‖ := hw.trans_le hd
   have ht : ‖α‖ ≤ ‖(τ : ℂ) + y * Complex.I‖ + ‖(τ : ℂ) + y * Complex.I - α‖ := by
@@ -90,7 +91,8 @@ theorem integrable_centeredResolventKernel {α : ℂ} (hα : α.re < 0) {τ x : 
   have ha : α ≠ 0 := fun h ↦ by
     rw [h, Complex.zero_re] at hα
     exact lt_irrefl _ hα
-  have hz : ∀ y : ℝ, (τ : ℂ) + y * Complex.I ≠ 0 := fun y ↦ ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
+  have hz : ∀ y : ℝ, (τ : ℂ) + y * Complex.I ≠ 0 :=
+    fun y ↦ Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
   have hd : ∀ y : ℝ, (τ : ℂ) + y * Complex.I - α ≠ 0 := by
     intro y h
     have he := congrArg Complex.re h

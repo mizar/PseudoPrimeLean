@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianStarClassification
 public import PseudoPrime.Analysis.GaussianMR35000Numerics
 
@@ -125,7 +126,7 @@ theorem gaussian35000_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -221,7 +222,7 @@ theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarg
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩

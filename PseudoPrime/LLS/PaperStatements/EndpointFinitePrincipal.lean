@@ -114,7 +114,7 @@ theorem primitive_finitePrincipal_ne_one {q : ℕ} [NeZero q] (χ : DirichletCha
   have hRecId := reciprocalSum_re_eq_of_full_prime_trivial χ (sq_nonneg y) ht
   have hRecLower := hR
   rw [← hRecId] at hRecLower
-  have hError := Analysis.evenReciprocalError_le_exact (by linarith only [hy])
+  have hError := evenReciprocalError_le_exact (by linarith only [hy])
   have hRaw :=
     PseudoPrime.LLS.primitiveReciprocalRaw_even_le_of_mainError hq hGRH hp hne hinv heven
       (by linarith only [hx]) hError

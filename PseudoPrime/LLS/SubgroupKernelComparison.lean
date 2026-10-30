@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.MellinKernelBounds
 public import Mathlib.NumberTheory.DirichletCharacter.Orthogonality
 
@@ -23,104 +24,13 @@ namespace PseudoPrime.LLS.PaperStatements
 
 variable {q : ℕ} [NeZero q]
 
-omit [NeZero q] in
-/-- For a unit natural residue, subgroup membership is membership of its canonical unit.
-Injectivity of the coercion from units identifies any witness with that unit.
-This converts the paper's residue predicate to the orthogonality hypotheses. -/
-theorem residueInSubgroup_iff_unit_mem (H : Subgroup (ZMod q)ˣ) {n : ℕ} (hn : IsUnit (n : ZMod q)) :
-    residueInSubgroup q H n ↔ hn.unit ∈ H := by
-  constructor
-  · rintro ⟨u, hu, he⟩
-    have hunit : u = hn.unit := Units.val_injective (he.trans hn.unit_spec.symm)
-    exact hunit ▸ hu
-  · intro hu
-    exact ⟨hn.unit, hu, hn.unit_spec⟩
-
-omit [NeZero q] in
-/-- A nonunit natural residue cannot belong to the image of `H`.
-A witness would express it as the value of a unit. This handles primes dividing
-the modulus when the character average is written as a subgroup indicator. -/
-theorem not_residueInSubgroup_of_not_isUnit (H : Subgroup (ZMod q)ˣ) {n : ℕ}
-    (hn : ¬IsUnit (n : ZMod q)) : ¬residueInSubgroup q H n := by
-  rintro ⟨u, _, he⟩
-  apply hn
-  rw [← he]
-  exact u.isUnit
-
-/-- The annihilator sum vanishes at every nonunit natural residue.
-Every Dirichlet character vanishes there. This removes nonunits from the
-smoothed sum, independently of subgroup membership or GRH. -/
-theorem sum_subgroupAnnihilator_eq_zero_of_not_isUnit (H : Subgroup (ZMod q)ˣ) {n : ℕ}
-    (hn : ¬IsUnit (n : ZMod q)) :
-    ∑ χ : NumberTheory.subgroupAnnihilator H, χ.val (n : ZMod q) = 0 := by
-  exact Finset.sum_eq_zero (fun χ _ ↦ χ.val.map_nonunit hn)
-
-/-- At a natural residue in `H`, the annihilator sum equals the subgroup index.
-Use its witness unit and the unit orthogonality formula. This is the selected
-part of the arithmetic sum in Proposition 6.1. -/
-theorem sum_subgroupAnnihilator_eq_index_of_residue (H : Subgroup (ZMod q)ˣ) {n : ℕ}
-    (hn : residueInSubgroup q H n) :
-    ∑ χ : NumberTheory.subgroupAnnihilator H, χ.val (n : ZMod q) = (H.index : ℂ) := by
-  obtain ⟨u, hu, he⟩ := hn
-  rw [← he]
-  exact NumberTheory.sum_subgroupAnnihilator_eq_index H hu
-
-/-- At a natural residue outside the image of `H`, the annihilator sum is zero.
-For a unit, use character cancellation; for a nonunit, every character vanishes.
-This excludes all other arithmetic terms from the averaged sum. -/
-theorem sum_subgroupAnnihilator_eq_zero_of_not_residue (H : Subgroup (ZMod q)ˣ) {n : ℕ}
-    (hm : ¬residueInSubgroup q H n) :
-    ∑ χ : NumberTheory.subgroupAnnihilator H, χ.val (n : ZMod q) = 0 := by
-  by_cases hn : IsUnit (n : ZMod q)
-  · rw [← hn.unit_spec]
-    exact
-      NumberTheory.sum_subgroupAnnihilator_eq_zero H
-        (fun hu ↦ hm ((residueInSubgroup_iff_unit_mem H hn).mpr hu))
-  · exact sum_subgroupAnnihilator_eq_zero_of_not_isUnit H hn
-
-/-- The complete subgroup orthogonality relation at every natural index: the
-annihilator sum is the index times the subgroup indicator. Combine the membership
-and cancellation clauses. This identity is valid without GRH. -/
-theorem sum_subgroupAnnihilator_eq_indicator (H : Subgroup (ZMod q)ˣ) (n : ℕ) :
-    ∑ χ : NumberTheory.subgroupAnnihilator H, χ.val (n : ZMod q) =
-      {m : ℕ | residueInSubgroup q H m}.indicator (fun _ ↦ (H.index : ℂ)) n := by
-  classical
-  by_cases hm : residueInSubgroup q H n
-  · rw [Set.indicator_of_mem (s := {m : ℕ | residueInSubgroup q H m}) hm]
-    exact sum_subgroupAnnihilator_eq_index_of_residue H hm
-  · rw [Set.indicator_of_notMem (s := {m : ℕ | residueInSubgroup q H m}) hm]
-    exact sum_subgroupAnnihilator_eq_zero_of_not_residue H hm
-
-omit [NeZero q] in
-/-- Subgroup membership of a natural residue is preserved by taking any natural power.
-Raise its witness unit to the same power and use subgroup closure. This extends
-prime membership to every prime-power term in the Mangoldt support. -/
-theorem residueInSubgroup_pow (H : Subgroup (ZMod q)ˣ) {n : ℕ} (hn : residueInSubgroup q H n)
-    (k : ℕ) : residueInSubgroup q H (n ^ k) := by
-  obtain ⟨u, hu, he⟩ := hn
-  refine ⟨u ^ k, H.pow_mem hu k, ?_⟩
-  rw [Units.val_pow_eq_pow_val, he, Nat.cast_pow]
-
-omit [NeZero q] in
-/-- If all eligible primes up to `X` lie in `H`, every prime power up to `X`
-coprime to the modulus also lies in `H`. Its prime base is no larger and remains
-coprime to the modulus; subgroup closure then handles the exponent. This identifies
-all nonzero principal-character Mangoldt terms below the cutoff. -/
-theorem residueInSubgroup_of_primePow_of_noSmallPrimes (H : Subgroup (ZMod q)ˣ) {X : ℝ}
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) {n : ℕ}
-    (hn : IsPrimePow n) (hc : n.Coprime q) (hbound : (n : ℝ) ≤ X) : residueInSubgroup q H n := by
-  obtain ⟨p, k, hp, hk, he⟩ := (isPrimePow_nat_iff n).mp hn
-  have hpc : p.Coprime q := Nat.Coprime.of_dvd_left (he ▸ dvd_pow_self p (Nat.ne_of_gt hk)) hc
-  have hple : (p : ℝ) ≤ X := (Nat.cast_le.mpr ((Nat.le_pow hk).trans_eq he)).trans hbound
-  exact he ▸ residueInSubgroup_pow H (hsmall p hp (hp.coprime_iff_not_dvd.mp hpc) hple) k
-
 namespace MellinKernel
 
 /-- At a residue in `H`, averaging the smoothed summand over its annihilator gives
 the index times the principal-character summand. All relevant character values
 are one, so the finite sum is constant. This selects the arithmetic main terms. -/
 theorem sum_summand_of_residue (K : MellinKernel) (H : Subgroup (ZMod q)ˣ) (x : ℝ) {n : ℕ}
-    (hm : residueInSubgroup q H n) :
+    (hm : NumberTheory.residueInSubgroup q H n) :
     ∑ χ : NumberTheory.subgroupAnnihilator H, K.summand χ.val x n =
       (H.index : ℂ) * K.summand (1 : DirichletCharacter ℂ q) x n := by
   obtain ⟨u, hu, he⟩ := hm
@@ -134,13 +44,13 @@ theorem sum_summand_of_residue (K : MellinKernel) (H : Subgroup (ZMod q)ˣ) (x :
 Separate the zero index, then factor the common weight out of the character sum
 and apply orthogonality. This excludes the other terms from the kernel average. -/
 theorem sum_summand_of_not_residue (K : MellinKernel) (H : Subgroup (ZMod q)ˣ) (x : ℝ) {n : ℕ}
-    (hm : ¬residueInSubgroup q H n) :
+    (hm : ¬NumberTheory.residueInSubgroup q H n) :
     ∑ χ : NumberTheory.subgroupAnnihilator H, K.summand χ.val x n = 0 := by
   by_cases hn : n = 0
   · subst n
     simp only [summand, ite_true, Finset.sum_const_zero]
   · simp only [summand, ite_eq_right hn, ← Finset.sum_mul, ← Finset.mul_sum,
-      sum_subgroupAnnihilator_eq_zero_of_not_residue H hm, mul_zero, zero_mul]
+      NumberTheory.sum_subgroupAnnihilator_eq_zero_of_not_residue H hm, mul_zero, zero_mul]
 
 /-- The character average of each smoothed Mangoldt term is the subgroup indicator
 times the index and principal-character term. Combine the selected and cancelled
@@ -148,13 +58,14 @@ cases. This pointwise identity is the basis for finite and infinite sum comparis
 theorem sum_summand_eq_indicator (K : MellinKernel) (H : Subgroup (ZMod q)ˣ) (x : ℝ) (n : ℕ) :
     ∑ χ : NumberTheory.subgroupAnnihilator H, K.summand χ.val x n =
       (H.index : ℂ) *
-        {m : ℕ | residueInSubgroup q H m}.indicator (K.summand (1 : DirichletCharacter ℂ q) x)
+        {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator (K.summand (1 : DirichletCharacter
+          ℂ q) x)
           n := by
   classical
-  by_cases hm : residueInSubgroup q H n
-  · rw [Set.indicator_of_mem (s := {m : ℕ | residueInSubgroup q H m}) hm]
+  by_cases hm : NumberTheory.residueInSubgroup q H n
+  · rw [Set.indicator_of_mem (s := {m : ℕ | NumberTheory.residueInSubgroup q H m}) hm]
     exact sum_summand_of_residue K H x hm
-  · rw [Set.indicator_of_notMem (s := {m : ℕ | residueInSubgroup q H m}) hm, mul_zero]
+  · rw [Set.indicator_of_notMem (s := {m : ℕ | NumberTheory.residueInSubgroup q H m}) hm, mul_zero]
     exact sum_summand_of_not_residue K H x hm
 
 /-- For a positive cutoff, the sum of the actual smoothed series over the annihilator
@@ -166,7 +77,8 @@ theorem sum_tsum_eq_subgroup_indicator (K : MellinKernel) (H : Subgroup (ZMod q)
     ∑ χ : NumberTheory.subgroupAnnihilator H, ∑' n : ℕ, K.summand χ.val x n =
       (H.index : ℂ) *
         ∑' n : ℕ,
-          {m : ℕ | residueInSubgroup q H m}.indicator (K.summand (1 : DirichletCharacter ℂ q) x)
+          {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator (K.summand (1 :
+            DirichletCharacter ℂ q) x)
             n := by
   have he :=
     Summable.tsum_finsetSum (s := Finset.univ) (f :=
@@ -202,10 +114,11 @@ theorem sum_re_tsum_eq_subgroup_indicator (K : MellinKernel) (H : Subgroup (ZMod
     ∑ χ : NumberTheory.subgroupAnnihilator H, (∑' n : ℕ, K.summand χ.val x n).re =
       (H.index : ℝ) *
         ∑' n : ℕ,
-          {m : ℕ | residueInSubgroup q H m}.indicator
+          {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator
             (fun n ↦ (K.summand (1 : DirichletCharacter ℂ q) x n).re) n := by
   have hs :=
-    (summable_summand K (1 : DirichletCharacter ℂ q) hx).indicator {m : ℕ | residueInSubgroup q H m}
+    (summable_summand K (1 : DirichletCharacter ℂ q) hx).indicator {m : ℕ |
+      NumberTheory.residueInSubgroup q H m}
   rw [← Complex.re_sum, sum_tsum_eq_subgroup_indicator K H hx, Complex.mul_re, Complex.natCast_re,
     Complex.natCast_im, zero_mul, sub_zero, Complex.re_tsum hs]
   apply congrArg (fun z : ℝ ↦ (H.index : ℝ) * z)
@@ -213,7 +126,7 @@ theorem sum_re_tsum_eq_subgroup_indicator (K : MellinKernel) (H : Subgroup (ZMod
   intro n
   exact
     congrFun
-      (Set.indicator_comp_of_zero (s := {m : ℕ | residueInSubgroup q H m}) (f :=
+      (Set.indicator_comp_of_zero (s := {m : ℕ | NumberTheory.residueInSubgroup q H m}) (f :=
           K.summand (1 : DirichletCharacter ℂ q) x) (g := Complex.re) rfl).symm
       n
 
@@ -225,7 +138,7 @@ theorem subgroup_indicator_sum_le_average (K : MellinKernel) (H : Subgroup (ZMod
     (hx : 0 < x) (s : Finset ℕ) :
     (H.index : ℝ) *
         ∑ n ∈ s,
-          {m : ℕ | residueInSubgroup q H m}.indicator
+          {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator
             (fun n ↦ (K.summand (1 : DirichletCharacter ℂ q) x n).re) n ≤
       ∑ χ : NumberTheory.subgroupAnnihilator H, (∑' n : ℕ, K.summand χ.val x n).re := by
   rw [sum_re_tsum_eq_subgroup_indicator K H hx]
@@ -258,15 +171,16 @@ outside the subgroup image is zero. Nonzero terms would be coprime prime powers,
 whose prime bases and powers already lie in `H`. This removes the indicator below `X`. -/
 theorem principal_summand_eq_zero_of_not_residue_of_noSmallPrimes (K : MellinKernel)
     (H : Subgroup (ZMod q)ˣ) (x : ℝ) {X : ℝ}
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) {n : ℕ}
-    (hbound : (n : ℝ) ≤ X) (hm : ¬residueInSubgroup q H n) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) {n :
+      ℕ}
+    (hbound : (n : ℝ) ≤ X) (hm : ¬NumberTheory.residueInSubgroup q H n) :
     K.summand (1 : DirichletCharacter ℂ q) x n = 0 := by
   by_cases hp : IsPrimePow n
   · by_cases hu : IsUnit (n : ZMod q)
     · exact
         False.elim
           (hm
-            (residueInSubgroup_of_primePow_of_noSmallPrimes H hsmall hp
+            (NumberTheory.residueInSubgroup_of_primePow_of_noSmallPrimes H hsmall hp
               ((ZMod.isUnit_iff_coprime n q).mp hu) hbound))
     · exact principal_summand_eq_zero_of_not_isUnit K x hu
   · exact summand_eq_zero_of_not_primePow K _ x hp
@@ -276,14 +190,15 @@ omit [NeZero q] in
 any real principal term below `X`. Inside `H` it acts as the identity; outside,
 the principal term is zero. This identifies the entire finite Mangoldt sum. -/
 theorem subgroup_indicator_eq_principal_of_noSmallPrimes (K : MellinKernel) (H : Subgroup (ZMod q)ˣ)
-    (x : ℝ) {X : ℝ} (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p)
+    (x : ℝ) {X : ℝ} (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X →
+      NumberTheory.residueInSubgroup q H p)
     {n : ℕ} (hbound : (n : ℝ) ≤ X) :
-    {m : ℕ | residueInSubgroup q H m}.indicator
+    {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator
         (fun n ↦ (K.summand (1 : DirichletCharacter ℂ q) x n).re) n =
       (K.summand (1 : DirichletCharacter ℂ q) x n).re := by
-  by_cases hm : residueInSubgroup q H n
-  · exact Set.indicator_of_mem (s := {m : ℕ | residueInSubgroup q H m}) hm _
-  · rw [Set.indicator_of_notMem (s := {m : ℕ | residueInSubgroup q H m}) hm,
+  by_cases hm : NumberTheory.residueInSubgroup q H n
+  · exact Set.indicator_of_mem (s := {m : ℕ | NumberTheory.residueInSubgroup q H m}) hm _
+  · rw [Set.indicator_of_notMem (s := {m : ℕ | NumberTheory.residueInSubgroup q H m}) hm,
       principal_summand_eq_zero_of_not_residue_of_noSmallPrimes K H x hsmall hbound hm,
       Complex.zero_re]
 
@@ -293,12 +208,12 @@ The prime-power support removes the indicator below `X`; positivity discards
 the remaining tail. This supplies the arithmetic side of Proposition 6.1. -/
 theorem principal_sum_le_average_of_noSmallPrimes (K : MellinKernel) (H : Subgroup (ZMod q)ˣ)
     {x X : ℝ} (hx : 0 < x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) * ∑ n ∈ Finset.Icc 1 ⌊X⌋₊, (K.summand (1 : DirichletCharacter ℂ q) x n).re ≤
       ∑ χ : NumberTheory.subgroupAnnihilator H, (∑' n : ℕ, K.summand χ.val x n).re := by
   have he :
     ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
-        {m : ℕ | residueInSubgroup q H m}.indicator
+        {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator
           (fun n ↦ (K.summand (1 : DirichletCharacter ℂ q) x n).re) n =
       ∑ n ∈ Finset.Icc 1 ⌊X⌋₊, (K.summand (1 : DirichletCharacter ℂ q) x n).re := by
     apply Finset.sum_congr rfl

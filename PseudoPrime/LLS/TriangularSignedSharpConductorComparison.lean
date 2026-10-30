@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.TriangularSignedAverage
 public import PseudoPrime.LLS.TriangularSignedGammaBounds
 public import PseudoPrime.LLS.TriangularSignedComparison
@@ -25,7 +26,7 @@ positivity. This eliminates the old absolute zero-mass constant from averaging. 
 theorem triangular18_principal_sum_le_signed_sharp_conductor_explicit {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x X : ℝ} (hx : 1 ≤ x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     (H.index : ℝ) * (∑ n ∈ Finset.Icc 1 ⌊X⌋₊, (K.summand (1 : DirichletCharacter ℂ q) x n).re) ≤
       (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) x n).re +
@@ -109,7 +110,7 @@ remainder retained. This is the numerical entry point for the improved gap. -/
 theorem triangular18_principal_sum_le_signed_sharp_conductor_numeric {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x X : ℝ} (hx : 1 ≤ x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         (∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
           ((triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand

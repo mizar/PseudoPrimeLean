@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.TriangularSignedGammaBounds
 
 /-! # Signed dual-scale triangular explicit formula
@@ -201,7 +202,7 @@ theorem triangular18_left_scaledKernelIntegral {x : ℝ} (hx : 0 < x) :
   have h :=
     inverseMellin_triangular (a := 18) (c := -9 / 16) (u := x⁻¹) (by norm_num only)
       (by norm_num only [abs_neg]) (inv_pos.mpr hx)
-  unfold inverseMellin at h
+  unfold Analysis.inverseMellin at h
   simp only [Complex.ofReal_inv, Complex.cpow_neg, Complex.inv_cpow_ofReal_nonneg hx.le,
     inv_inv] at h
   rw [h]

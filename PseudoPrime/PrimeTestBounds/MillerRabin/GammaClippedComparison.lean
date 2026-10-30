@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSignedPrefixBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSeedPairedBounds
 public import PseudoPrime.LLS.ClippedLogShiftPrincipalBounds
@@ -528,7 +529,7 @@ theorem exists_prime_witness_of_gamma_index100_gap {n : ℕ} [NeZero n] (hn : 1 
     exact hnone ⟨p, hp, hpbound, hreject⟩
   have hsmall :
     ∀ p : ℕ,
-      p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * r ^ 2 → LLS.PaperStatements.residueInSubgroup n H p :=
+      p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * r ^ 2 → NumberTheory.residueInSubgroup n H p :=
     fun p hp hpb ↦ hHpass (p : ZMod n) (hpass p hp hpb)
   have hu :=
     LLS.PaperStatements.gamma_primitive_average_re_le_even_prime_prefix hQ le_rfl H hGRH

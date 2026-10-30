@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.CenteredResolventIntegration
 public import PseudoPrime.AnalyticNumberTheory.General.LogarithmicMellinInversion
 
@@ -33,10 +34,11 @@ theorem integral_centeredResolventKernel_eq {α : ℂ} (hα : α.re < 0) {τ x :
   have hig := logarithmicMellinTerm_integral a hx0 hτ Nat.one_ne_zero
   simp only [logarithmicMellinTerm, a, ite_eq_left rfl, Nat.cast_one, Complex.one_cpow,
     one_mul] at hg hig
-  have hm : mellinWeightTwo ((1 : ℝ) / x) = (Real.log x : ℂ) := by
+  have hm : Analysis.mellinWeightTwo ((1 : ℝ) / x) = (Real.log x : ℂ) := by
     have hi : (1 : ℝ) / x ∈ Set.Ioc (0 : ℝ) 1 :=
       ⟨div_pos zero_lt_one hx0, (div_lt_one hx0).mpr hx |>.le⟩
-    rw [mellinWeightTwo, Set.indicator_of_mem hi, one_div, Real.log_inv, Complex.ofReal_neg,
+    rw [Analysis.mellinWeightTwo, Set.indicator_of_mem hi, one_div, Real.log_inv,
+      Complex.ofReal_neg,
       neg_neg]
   rw [hm] at hig
   let H := fun y : ℝ ↦
@@ -48,7 +50,7 @@ theorem integral_centeredResolventKernel_eq {α : ℂ} (hα : α.re < 0) {τ x :
     have hnα : α ≠ 0 := fun h ↦ by
       rw [h, Complex.zero_re] at hα
       exact lt_irrefl _ hα
-    have hnz := ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
+    have hnz := Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
     have hnd : (τ : ℂ) + y * Complex.I - α ≠ 0 := by
       intro h
       have hh := congrArg Complex.re h
@@ -151,7 +153,7 @@ theorem centeredResolventKernel_eq_difference {α : ℂ} (hα : α.re < 0) {τ x
   have ha : α ≠ 0 := fun h ↦ by
     rw [h, Complex.zero_re] at hα
     exact lt_irrefl _ hα
-  have hz := ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
+  have hz := Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
   have hd : (τ : ℂ) + y * Complex.I - α ≠ 0 := by
     intro h
     have he := congrArg Complex.re h

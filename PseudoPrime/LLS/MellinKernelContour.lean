@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.MellinKernelBounds
 public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.Boundary
@@ -311,8 +312,8 @@ left of `-1/2` adds `K.regularized(-1/2) u^(1/2)`. Divide the vertical residue
 identity by `2πi`. This gives the small-argument decay estimate for the transform. -/
 theorem inverse_mellin_left_of_pole (K : MellinKernel) {c u : ℝ} (hc : -1 / 2 - K.delta < c)
     (hc' : c < -1 / 2) (hu : 0 < u) :
-    inverseMellin K.function 0 u =
-      inverseMellin K.function c u + K.regularized (-1 / 2) * (u : ℂ) ^ (1 / 2 : ℂ) := by
+    Analysis.inverseMellin K.function 0 u =
+      Analysis.inverseMellin K.function c u + K.regularized (-1 / 2) * (u : ℂ) ^ (1 / 2 : ℂ) := by
   have h := inverse_line_residue K hc hc' hu
   have hd :
     (∫ t : ℝ, K.function ((0 : ℂ) + t * Complex.I) * (u : ℂ) ^ (-((0 : ℂ) + t * Complex.I))) -
@@ -327,7 +328,7 @@ theorem inverse_mellin_left_of_pole (K : MellinKernel) {c u : ℝ} (hc : -1 / 2 
   have hn : (2 * Real.pi : ℂ) ≠ 0 :=
     mul_ne_zero (by norm_num only) (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero)
   rw [← mul_assoc, inv_mul_cancel₀ hn, one_mul] at hs
-  unfold inverseMellin
+  unfold Analysis.inverseMellin
   simpa only [one_div, Complex.ofReal_inv, Complex.ofReal_mul, Complex.ofReal_ofNat,
     Complex.ofReal_zero, mul_comm, add_comm, sub_eq_iff_eq_add] using hs
 
@@ -335,9 +336,9 @@ theorem inverse_mellin_left_of_pole (K : MellinKernel) {c u : ℝ} (hc : -1 / 2 
 is bounded by its kernel norm integral times `u^(-c)/(2π)`. Use the integral
 triangle inequality and the constant norm of the power factor on that line. -/
 theorem norm_inverse_mellin_le_line (K : MellinKernel) {c u : ℝ} (hu : 0 < u) :
-    ‖inverseMellin K.function c u‖ ≤
+    ‖Analysis.inverseMellin K.function c u‖ ≤
       (1 / (2 * Real.pi)) * (∫ t : ℝ, ‖K.function ((c : ℂ) + Complex.I * t)‖) * u ^ (-c) := by
-  rw [inverseMellin, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+  rw [Analysis.inverseMellin, norm_mul, Complex.norm_real, Real.norm_eq_abs,
     abs_of_nonneg (by positivity : 0 ≤ 1 / (2 * Real.pi))]
   calc
     _ ≤
@@ -372,7 +373,8 @@ theorem exists_norm_transform_le_sqrt (K : MellinKernel) :
     rw [Complex.norm_cpow_eq_rpow_re_of_pos hu, Real.sqrt_eq_rpow]
     simp only [Complex.div_ofNat_re, Complex.one_re]
   calc
-    _ ≤ ‖inverseMellin K.function c u‖ + ‖K.regularized (-1 / 2) * (u : ℂ) ^ (1 / 2 : ℂ)‖ :=
+    _ ≤ ‖Analysis.inverseMellin K.function c u‖ +
+      ‖K.regularized (-1 / 2) * (u : ℂ) ^ (1 / 2 : ℂ)‖ :=
       norm_add_le _ _
     _ ≤ A * Real.sqrt u + ‖K.regularized (-1 / 2)‖ * Real.sqrt u := by
       rw [norm_mul, hr]

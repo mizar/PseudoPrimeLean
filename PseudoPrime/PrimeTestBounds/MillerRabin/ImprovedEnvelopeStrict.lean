@@ -62,7 +62,7 @@ theorem improved_strict_gamma {n : ℕ} (hn : 1 < n) (hL : 120 ≤ Real.log n)
 clipped Gaussian bound is strictly below the compatible envelope. Compare both Gaussian regimes. -/
 theorem gaussianSelected_lt_old {n : ℕ} (hn : 1 < n) (hL : 240 < Real.log n)
     (hNold : n < 10 ^ 9565217391305) :
-    Analysis.gaussianFloorSelected (Real.log n) < selectedWitnessEnvelope n := by
+    gaussianFloorSelected (Real.log n) < selectedWitnessEnvelope n := by
   have hN := midscale_large_of_log (Nat.zero_lt_of_lt hn) (by linarith only [hL])
   have h3 : ¬n < 3000 := not_lt.mpr hN
   have h2 : ¬n < 2047 := not_lt.mpr ((by norm_num only : 2047 ≤ 3000).trans hN)
@@ -75,15 +75,15 @@ theorem gaussianSelected_lt_old {n : ℕ} (hn : 1 < n) (hL : 240 < Real.log n)
     gaussianMRWitnessEnvelope, ite_eq_right (not_le.mpr hNold)]
   by_cases h300 : 300 ≤ Real.log n
   · rw [ite_eq_left h300, gaussianMRRefinedEnvelope_eq h300]
-    have hs := Analysis.gaussianFloor50_lt_refined h300
+    have hs := gaussianFloor50_lt_refined h300
     have hmin :
-      Analysis.gaussianFloorSelected (Real.log n) ≤
-        Analysis.gaussianFloorBound true (Real.log n) := by
-      rw [← Analysis.gaussianFloor_min_eq_selected (by linarith only [hL])]
+      gaussianFloorSelected (Real.log n) ≤
+        gaussianFloorBound true (Real.log n) := by
+      rw [← gaussianFloor_min_eq_selected (by linarith only [hL])]
       exact min_le_right _ _
     exact hmin.trans_lt hs
   · rw [ite_eq_right h300, gaussianMRPrefixEnvelope_eq hL.le]
-    exact Analysis.floorSelected_lt_six hL.le
+    exact floorSelected_lt_six hL.le
 
 /-- For n>1, log n>240 and n below the original decimal threshold, the improved
 envelope is strictly smaller. Project the clipped Gaussian candidate and its continuous

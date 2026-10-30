@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.CosetRadiusNumerics
 
 /-! # The final explicit coset-radius comparison
@@ -284,7 +285,7 @@ theorem theorem14_of_coarse_bounds
                 ∀ a : (ZMod q)ˣ,
                   ∀ x : ℝ,
                     1000000000 ≤ x →
-                      (∀ p : ℕ, p ∈ primesInCoset q H a → ¬(p : ℝ) ≤ x) →
+                      (∀ p : ℕ, p ∈ NumberTheory.primesInCoset q H a → ¬(p : ℝ) ≤ x) →
                       Real.sqrt x ≤
                         ((H.index : ℝ) - 1) * Real.log q + (5 / 4 : ℝ) * ((H.index : ℝ) + 1) +
                           (7 / 2 : ℝ) * Real.log x +
@@ -299,7 +300,7 @@ theorem theorem14_of_coarse_bounds
     exact hn
   let x := max (1000000000 : ℝ) ((cosetBoundRadius q H.index) ^ 2)
   have hpX : x < (p : ℝ) := lt_of_not_ge (fun hpx ↦ hn' (le_max_iff.mp hpx))
-  have hno (r : ℕ) (hr : r ∈ primesInCoset q H a) (hrx : (r : ℝ) ≤ x) : False :=
+  have hno (r : ℕ) (hr : r ∈ NumberTheory.primesInCoset q H a) (hrx : (r : ℝ) ≤ x) : False :=
     (not_le_of_gt hpX) ((Nat.cast_le.mpr (hp.2 hr)).trans hrx)
   have hx : (1000000000 : ℝ) ≤ x := le_max_left _ _
   have hc := hcoarse hGRH q hq H hh a x hx hno

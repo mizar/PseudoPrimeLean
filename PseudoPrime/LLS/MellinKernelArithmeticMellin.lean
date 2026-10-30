@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.MellinKernelContour
-public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.Analysis.IntegralSeries
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
 
@@ -61,7 +62,7 @@ theorem arithmeticMellinTerm_integral (K : MellinKernel) {q : ℕ} (χ : Dirichl
     simp only [summand, arithmeticMellinTerm, ite_true, MeasureTheory.integral_zero, mul_zero]
   · rw [summand, ite_eq_right hn, transform, ←
       K.mellin_eq c ((n : ℝ) / x) hc hc' (div_pos (Nat.cast_pos.mpr (Nat.pos_of_ne_zero hn)) hx),
-      inverseMellin]
+      Analysis.inverseMellin]
     simp only [arithmeticMellinTerm, ite_eq_right hn, MeasureTheory.integral_const_mul]
     ring
 
@@ -136,7 +137,7 @@ theorem arithmeticMellinTerm_eq_LSeries_term (K : MellinKernel) {q : ℕ} (χ : 
   · have hnpos : (0 : ℝ) < n := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hn)
     have hnz : (n : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hn
     rw [arithmeticMellinTerm, ite_eq_right hn, LSeries.term, ite_eq_right hn]
-    rw [AnalyticNumberTheory.General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg]
+    rw [Analysis.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg]
     rw [Complex.ofReal_div, Real.sqrt_eq_rpow, Complex.ofReal_cpow hnpos.le, Complex.ofReal_div,
       Complex.ofReal_one, Complex.ofReal_ofNat, Complex.ofReal_natCast, Complex.cpow_add _ _ hnz,
       Complex.cpow_neg]

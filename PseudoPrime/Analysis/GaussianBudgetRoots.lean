@@ -6,7 +6,11 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GaussianMRClippedNumerics
+public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
 
 /-! # Quadratic roots for Gaussian budgets -/
 

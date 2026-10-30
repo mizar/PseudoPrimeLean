@@ -238,26 +238,26 @@ theorem gammaRecovered_affine_upper {L : ℝ} (hL : 108 ≤ L) :
 /-- The old combined Gaussian radius is at least its index-four affine budget
 anchor. Its root is at least ten; insert that floor in the exact four-budget inequality. -/
 theorem gaussian1000_radius_affine_lower {L : ℝ} (hL : 0 ≤ L) :
-    (20115621 / 37554500 : ℝ) * L + 2918336 / 75109 ≤ Analysis.gaussian1000Radius L := by
-  have hb := Analysis.gaussian1000_four_budget hL
-  have ht := Analysis.gaussian1000_root_ten L
-  norm_num only [Analysis.gaussian1000FourD, Analysis.gaussian1000FourBeta,
-    Analysis.gaussianMRRefinedConductor, Analysis.gaussianMRRefinedMass,
-    Analysis.gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint] at hb
+    (20115621 / 37554500 : ℝ) * L + 2918336 / 75109 ≤ gaussian1000Radius L := by
+  have hb := gaussian1000_four_budget hL
+  have ht := gaussian1000_root_ten L
+  norm_num only [gaussian1000FourD, gaussian1000FourBeta,
+    gaussianMRRefinedConductor, gaussianMRRefinedMass,
+    gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint] at hb
   linarith only [hb, ht]
 
 /-- On the real interval [108,126], the recovered Gamma cutoff is strictly
 below the old two-root Gaussian cutoff. The rational quadratic difference is positive
 throughout the interval, including its smaller value at the right endpoint. -/
 theorem gammaRecovered_lt_gaussian1000 {L : ℝ} (hL : 108 ≤ L) (hU : L ≤ 126) :
-    gammaRecoveredBound L < Analysis.gaussian1000Bound L := by
+    gammaRecoveredBound L < gaussian1000Bound L := by
   have hnew := gammaRecovered_affine_upper hL
   have hold := gaussian1000_radius_affine_lower (by linarith only [hL] : (0 : ℝ) ≤ L)
   have hpos : (0 : ℝ) ≤ (20115621 / 37554500 : ℝ) * L + 2918336 / 75109 := by linarith only [hL]
   have hs :=
     (sq_le_sq₀ hpos
-          (by linarith only [Analysis.gaussian1000_radius_hundred L] :
-            (0 : ℝ) ≤ Analysis.gaussian1000Radius L)).mpr
+          (by linarith only [gaussian1000_radius_hundred L] :
+            (0 : ℝ) ≤ gaussian1000Radius L)).mpr
       hold
   have hp := mul_nonneg (sub_nonneg.mpr hL) (sub_nonneg.mpr hU)
   have hquad :

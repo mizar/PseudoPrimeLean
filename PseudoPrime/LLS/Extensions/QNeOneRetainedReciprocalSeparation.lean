@@ -196,7 +196,7 @@ theorem not_oddPrimeTrivial_of_retained_reciprocal_entrance {q : ℕ} [NeZero q]
       χ.primitiveCharacter 2 = 0 ∨ χ.primitiveCharacter 2 = 1 ∨ χ.primitiveCharacter 2 = -1) :
     ¬OddPrimeTrivial χ (y ^ 2) := by
   have hx := Analysis.sq_ge_64_of_ge_8 hy
-  have hE := Analysis.primitiveReciprocalEvenMainError_le_neg_179_div_200 hx
+  have hE := primitiveReciprocalEvenMainError_le_neg_179_div_200 hx
   have he : (789 / 500 : ℝ) + -(179 / 200) + 4 / 5 = 1483 / 1000 := by norm_num only
   apply
     not_oddPrimeTrivial_of_reciprocal_loss_and_mainError χ hne heven hGRH hy hE hlog4 hlogOdd hcases

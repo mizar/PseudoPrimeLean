@@ -9,8 +9,8 @@ module
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SharpNormalForm
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointFinitePointwise
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianNormalAbsorption
-public import PseudoPrime.Analysis.GaussianSeededSharpMonotone
-public import PseudoPrime.Analysis.GaussianLowSwitches
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededSharpMonotone
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianLowSwitches
 
 /-! # Monotonicity of the public sharp envelopes in the plotting range -/
 
@@ -28,7 +28,7 @@ theorem sharpSelected_floor23 {n : ℕ} (hN : 3000 ≤ n) (hU : Real.log n < 300
   apply le_min
   · have h := gaussianLowFamily_floor (Real.log n)
     linarith only [h]
-  · have h := Analysis.gaussianSeededSharp_floor (Real.log n)
+  · have h := gaussianSeededSharp_floor (Real.log n)
     linarith only [h]
 
 /-- The logarithm of 3000 is below the first strengthened finite-principal
@@ -88,8 +88,8 @@ theorem sharpSelected_mono_normal {m n : ℕ} (hm : 9 ≤ m) (hmn : m ≤ n)
       rw [sharpSelected_eq_regular hmlarge (hlog.trans_lt hU), sharpSelected_eq_regular hnlarge hU]
       exact
         min_le_min (lowFinitePointwise_mono hlog)
-          (min_le_min (Analysis.gaussianLowFamily_mono hlog)
-            (Analysis.gaussianSeededSharp_mono hlog))
+          (min_le_min (gaussianLowFamily_mono hlog)
+            (gaussianSeededSharp_mono hlog))
 
 /-- Prime rounding preserves the public selection's monotonicity on the
 same natural-input range. Rewrite the analytic cutoff to its selection and

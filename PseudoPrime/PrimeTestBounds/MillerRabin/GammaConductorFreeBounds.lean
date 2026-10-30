@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaConductorFreeSubgroupBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaComparison
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.GammaConductorFreeBounds
@@ -63,7 +64,7 @@ theorem exists_prime_witness_le_conductor_free_gamma_log_30000 {n : ℕ} (hnOdd 
     ∀ p : ℕ,
       p.Prime →
         ¬p ∣ n →
-        (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 → LLS.PaperStatements.residueInSubgroup n H p := by
+        (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 → NumberTheory.residueInSubgroup n H p := by
     intro p hp _ hb
     exact hHpass (p : ZMod n) (hpass p hp hb)
   have hc :=

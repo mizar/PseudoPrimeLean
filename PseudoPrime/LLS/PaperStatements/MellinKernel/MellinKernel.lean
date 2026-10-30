@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.MellinKernelForwardTransform
 public import PseudoPrime.LLS.MethodBarrier.IndexSixFourier
 
@@ -120,7 +121,7 @@ open PseudoPrime.LLS.IndexSixBarrier in
 /-- Exact Fourier transform of the modulated Mellin kernel. -/
 theorem fourier_fourierWitness (K : MellinKernel) {lambda : ℝ} (hlambda : 0 < lambda) (t : ℝ) :
     𝓕 (fourierWitness K lambda) t = K.transform (expScale lambda t) := by
-  rw [Real.fourier_eq', transform, inverseMellin]
+  rw [Real.fourier_eq', transform, Analysis.inverseMellin]
   simp only [fourierWitness, Complex.ofReal_zero, zero_add, Complex.real_smul, smul_eq_mul,
     Real.inner_apply]
   rw [← integral_const_mul]

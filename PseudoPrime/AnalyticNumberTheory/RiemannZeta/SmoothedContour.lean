@@ -20,7 +20,7 @@ public import PseudoPrime.AnalyticNumberTheory.General.PoleResidueCalculus
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCounting
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroContribution
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.SingularityGeometry
-public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.Boundary
 public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.GridCutConstruction
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
@@ -2285,12 +2285,12 @@ of the logarithmic zeta contour kernel. Apply Mellin inversion to each weight,
 exchange the summation and integration by a summable majorant, and identify
 the von Mangoldt Dirichlet series with `-ζ'/ζ`. -/
 theorem mellinWeightTwo_vonMangoldt_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
-    ∑' n : ℕ, (ArithmeticFunction.vonMangoldt n : ℂ) * General.mellinWeightTwo ((n : ℝ) / x) =
+    ∑' n : ℕ, (ArithmeticFunction.vonMangoldt n : ℂ) * Analysis.mellinWeightTwo ((n : ℝ) / x) =
       (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, riemannZetaLogContourKernel x ((τ : ℂ) + y * Complex.I) := by
   have hτ0 : (0 : ℝ) < τ := lt_trans one_pos hτ
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ ((τ : ℂ) + y * Complex.I)⁻¹ ^ 2 with hK_def
-  have hK_int : MeasureTheory.Integrable K := General.verticalIntegrable_mellinLogKernel hτ0.ne'
+  have hK_int : MeasureTheory.Integrable K := Analysis.verticalIntegrable_mellinLogKernel hτ0.ne'
   set H : ℕ → ℝ → ℂ := fun n y ↦
     (ArithmeticFunction.vonMangoldt n : ℂ) * (n : ℂ) ^ (-((τ : ℂ) + y * Complex.I)) *
       (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) with
@@ -2320,7 +2320,7 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (h
   have hterm_raw :
     ∀ n : ℕ,
       n ≠ 0 →
-        General.mellinWeightTwo ((n : ℝ) / x) =
+        Analysis.mellinWeightTwo ((n : ℝ) / x) =
           (2 * Real.pi : ℝ)⁻¹ •
             ∫ y : ℝ,
               (((n : ℝ) / x : ℝ) : ℂ) ^ (-((τ : ℂ) + y * Complex.I)) *
@@ -2328,13 +2328,13 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (h
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
     have hnx : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-    have hmellin := General.mellinInv_mellinWeightTwo_eq (σ := τ) (x := (n : ℝ) / x) hτ0 hnx
+    have hmellin := Analysis.mellinInv_mellinWeightTwo_eq (σ := τ) (x := (n : ℝ) / x) hτ0 hnx
     rw [← hmellin]
     simp only [mellinInv, smul_eq_mul, one_div]
   have hterm :
     ∀ n : ℕ,
       n ≠ 0 →
-        (ArithmeticFunction.vonMangoldt n : ℂ) * General.mellinWeightTwo ((n : ℝ) / x) =
+        (ArithmeticFunction.vonMangoldt n : ℂ) * Analysis.mellinWeightTwo ((n : ℝ) / x) =
           (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
@@ -2344,7 +2344,7 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (h
     apply MeasureTheory.integral_congr_ae
     filter_upwards with y
     simp only [hG_def, hH_def, hK_def]
-    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div, inv_pow,
+    rw [Analysis.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div, inv_pow,
       Complex.ofReal_natCast]
     ring
   -- (2) each `G n` is integrable, dominated by a constant multiple of `K`
@@ -2456,7 +2456,7 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (h
         ring
   -- assemble
   have hLHS :
-    ∑' n : ℕ, (ArithmeticFunction.vonMangoldt n : ℂ) * General.mellinWeightTwo ((n : ℝ) / x) =
+    ∑' n : ℕ, (ArithmeticFunction.vonMangoldt n : ℂ) * Analysis.mellinWeightTwo ((n : ℝ) / x) =
       ∑' n : ℕ, (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     refine tsum_congr fun n ↦ ?_
     rcases eq_or_ne n 0 with rfl | hn
@@ -2475,7 +2475,7 @@ factor becomes `x^(u-1)/(u*(u-1))`. Mellin inversion and a summable majorant
 justify summing under the integral. -/
 theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     ∑' n : ℕ,
-        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * General.mellinWeightOne ((n : ℝ) / x) =
+        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * Analysis.mellinWeightOne ((n : ℝ) / x) =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ, riemannZetaReciprocalContourKernel x ((τ : ℂ) + y * Complex.I) := by
   set σ : ℝ := τ - 1 with hσ_def
@@ -2489,7 +2489,7 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ (((τ : ℂ) + y * Complex.I) * ((τ : ℂ) + y * Complex.I - 1))⁻¹ with hK_def
   have hK_int : MeasureTheory.Integrable K := by
-    have hVI := General.verticalIntegrable_mellinReciprocalKernel hσ0.ne' hσ1
+    have hVI := Analysis.verticalIntegrable_mellinReciprocalKernel hσ0.ne' hσ1
     unfold Complex.VerticalIntegrable at hVI
     have heq : (fun y : ℝ ↦ (((σ : ℂ) + y * Complex.I) * ((σ : ℂ) + y * Complex.I + 1))⁻¹) = K := by
       funext y
@@ -2527,7 +2527,7 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
   have hterm_raw :
     ∀ n : ℕ,
       n ≠ 0 →
-        General.mellinWeightOne ((n : ℝ) / x) =
+        Analysis.mellinWeightOne ((n : ℝ) / x) =
           (2 * Real.pi : ℝ)⁻¹ •
             ∫ y : ℝ,
               (((n : ℝ) / x : ℝ) : ℂ) ^ (-((σ : ℂ) + y * Complex.I)) *
@@ -2535,13 +2535,13 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
     have hnx : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-    have hmellin := General.mellinInv_mellinWeightOne_eq (σ := σ) (x := (n : ℝ) / x) hσ0 hnx
+    have hmellin := Analysis.mellinInv_mellinWeightOne_eq (σ := σ) (x := (n : ℝ) / x) hσ0 hnx
     rw [← hmellin]
     simp only [mellinInv, smul_eq_mul, one_div]
   have hterm :
     ∀ n : ℕ,
       n ≠ 0 →
-        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * General.mellinWeightOne ((n : ℝ) / x) =
+        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * Analysis.mellinWeightOne ((n : ℝ) / x) =
           (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
@@ -2552,7 +2552,8 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
     apply MeasureTheory.integral_congr_ae
     filter_upwards with y
     simp only [hG_def, hH_def, hK_def]
-    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div, Complex.ofReal_natCast]
+    rw [Analysis.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div,
+      Complex.ofReal_natCast]
     have hshift : ((τ : ℂ) + y * Complex.I - 1) = (σ : ℂ) + y * Complex.I := by
       rw [hσ_def]
       push_cast
@@ -2679,7 +2680,7 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq {x : ℝ} (hx : 0 < x) {τ : ℝ
   -- assemble
   have hLHS :
     ∑' n : ℕ,
-        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * General.mellinWeightOne ((n : ℝ) / x) =
+        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * Analysis.mellinWeightOne ((n : ℝ) / x) =
       ∑' n : ℕ, (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     refine tsum_congr fun n ↦ ?_
     rcases eq_or_ne n 0 with rfl | hn

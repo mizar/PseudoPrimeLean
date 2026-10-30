@@ -6,9 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GaussianMRClippedComparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRClippedComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ImprovedEnvelopeOrder
-public import PseudoPrime.Analysis.ImprovedEnvelopeGlobalOrder
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianClippedGlobalOrder
 
 /-! # Global comparisons for the clipped Gaussian envelope -/
 
@@ -42,19 +42,19 @@ theorem sharp_quadratic_lower {L : ℝ} (hL : 100 ≤ L) :
 /-- For L>=240, the selected clipped Gaussian bound is strictly below G1.
 Compare the constant-six quadratic cap with the sharper Gamma quadratic lower bound. -/
 theorem gaussianSelected_lt_sharp {L : ℝ} (hL : 240 ≤ L) :
-    Analysis.gaussianFloorSelected L < gammaSharpBound L := by
-  have hu := Analysis.six_quadratic_upper hL
+    gaussianFloorSelected L < gammaSharpBound L := by
+  have hu := six_quadratic_upper hL
   have hl := sharp_quadratic_lower (by linarith only [hL] : (100 : ℝ) ≤ L)
-  have hg := Analysis.floorSelected_lt_six hL
+  have hg := floorSelected_lt_six hL
   nlinarith only [hu, hl, hg, sq_nonneg L]
 
 /-- For L>=240, the selected clipped Gaussian bound is strictly below C4.
 Compare the constant-six quadratic cap with the global fourth-radius lower bound. -/
 theorem gaussianSelected_lt_fourStep {L : ℝ} (hL : 240 ≤ L) :
-    Analysis.gaussianFloorSelected L < LLS.PaperStatements.endpointFourStepCutoff L := by
-  have hu := Analysis.six_quadratic_upper hL
+    gaussianFloorSelected L < LLS.PaperStatements.endpointFourStepCutoff L := by
+  have hu := six_quadratic_upper hL
   have hl := LLS.PaperStatements.fourStep_quadratic_lower hL
-  have hg := Analysis.floorSelected_lt_six hL
+  have hg := floorSelected_lt_six hL
   nlinarith only [hu, hl, hg, sq_nonneg L]
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

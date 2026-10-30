@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR1000WitnessBounds
-public import PseudoPrime.Analysis.GaussianRelativeHighNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeHighNumerics
 public import PseudoPrime.LLS.GaussianSeededPrefix
 
 /-! # Relative Gaussian witnesses at an arbitrary cutoff -/
@@ -37,7 +38,7 @@ theorem gaussianRelative_witness {n N : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
                   (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
               Real.exp (1 / 16 : ℝ)) *
             Real.sqrt x ≤
-          Analysis.gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+          gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
             (H.index : ℝ) *
               (1 / (10 * h) +
                 ((21 / (10 * h) + 1839 / 1000) / Real.sqrt x) * Real.exp (1 / 16 : ℝ)) +
@@ -59,7 +60,7 @@ theorem gaussianRelative_witness {n N : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
     exact PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn1 hnOdd hp hpdvd (hpass p hp hb)
   have hsmall :
     ∀ p : ℕ,
-      p.Prime → ¬p ∣ n → (p : ℝ) ≤ lambda * x → LLS.PaperStatements.residueInSubgroup n H p := by
+      p.Prime → ¬p ∣ n → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp _ hb
     exact hHpass _ (hpass p hp hb)
   exact
@@ -82,11 +83,11 @@ theorem gaussianRefined_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
         (p : ℝ) ≤ (28237 / 100000 : ℝ) * Real.log n ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   let L := Real.log n
-  let x := Analysis.gaussianRefinedTripleScale L
+  let x := gaussianRefinedTripleScale L
   let r := Real.sqrt x
   let s := Real.sqrt r
   let h := (2 / 5 : ℝ) / s
-  have hroots := Analysis.gaussianRefinedTriple_roots hL
+  have hroots := gaussianRefinedTriple_roots hL
   change
     (36669 / 100000 : ℝ) * L ≤ r ∧ 100 ≤ r ∧ 10 ≤ s ∧ s ≤ (61 / 100 : ℝ) * L / 1400000 at hroots
   have hrpos : 0 < r := by linarith only [hroots.2.1]
@@ -102,7 +103,7 @@ theorem gaussianRefined_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
   have hx : 4 ≤ x := by nlinarith only [hr2, hr500]
   have hX : (50000 : ℝ) ≤ (21 / 10 : ℝ) * x := by nlinarith only [hr2, hr500]
   have hcut : (21 / 10 : ℝ) * x ≤ (28237 / 100000 : ℝ) * Real.log n ^ 2 := by
-    dsimp only [x, L, Analysis.gaussianRefinedTripleScale]
+    dsimp only [x, L, gaussianRefinedTripleScale]
     exact le_of_eq (by ring)
   have hprefix :
     (489311 / 100000 : ℝ) ≤
@@ -121,20 +122,20 @@ theorem gaussianRefined_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         (1 * r) ≤
-      Analysis.gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
         4 * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / (1 * r)) * Real.exp (1 / 16 : ℝ)) +
         13 +
         3 * LLS.PaperStatements.gaussianPrefixError (489311 / 100000) n (r ^ 2) := by
     simpa only [hindex, hi, Nat.reduceSub, Nat.cast_ofNat, one_mul] using hcmp
   have hscalar :=
-    Analysis.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 1)
+    LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 1)
       (by norm_num only : (0 : ℝ) < 2 / 5) (show h = (2 / 5 : ℝ) / s from rfl) hh1
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
-      (by norm_num only [Analysis.gaussianMRRefinedConductor]) hcmp'
-  have hA := Analysis.gaussianRefinedTriple_error hL (le_refl (Real.log n))
+      (by norm_num only [gaussianMRRefinedConductor]) hcmp'
+  have hA := gaussianRefinedTriple_error hL (le_refl (Real.log n))
   apply
-    Analysis.gaussianRefinedTriple_contradiction hL hroots.1 hroots.2.1 hroots.2.2.1 hroots.2.2.2 hA
-  norm_num only [one_mul, Analysis.gaussianMRRefinedConductor] at hscalar ⊢
+    gaussianRefinedTriple_contradiction hL hroots.1 hroots.2.1 hroots.2.2.1 hroots.2.2.2 hA
+  norm_num only [one_mul, gaussianMRRefinedConductor] at hscalar ⊢
   exact hscalar
 
 /-- For an odd uniform three-prime Korselt product, GRH and log n>=2e12

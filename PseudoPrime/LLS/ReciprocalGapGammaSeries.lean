@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.ReciprocalGapUntwistedBounds
 public import PseudoPrime.LLS.QuadraticDigammaIntegralExchange
 public import PseudoPrime.LLS.TriangularGammaIntegralSeries
@@ -76,7 +77,7 @@ theorem reciprocalGap_central_weight_integral_eq_profile {h x : ℝ} (hh : 0 < h
     ((1 / (2 * Real.pi) : ℝ) : ℂ) * (∫ t : ℝ, reciprocalGapCentralWeight h x t) =
       AnalyticNumberTheory.General.twoPoleMellinWeight (1 / 2) h x⁻¹ := by
   have hm := inverseMellin_reciprocalGap hh (c := 0) (u := x⁻¹) (by norm_num only) (inv_pos.mpr hx)
-  unfold inverseMellin at hm
+  unfold Analysis.inverseMellin at hm
   simp only [Complex.ofReal_zero, zero_add, Complex.ofReal_inv, Complex.cpow_neg,
     Complex.inv_cpow_ofReal_nonneg hx.le, inv_inv] at hm
   exact hm

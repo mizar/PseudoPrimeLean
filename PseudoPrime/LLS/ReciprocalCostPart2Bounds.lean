@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.SharperTheorem11S2
-public import PseudoPrime.Analysis.Below64MainErrorBounds
+public import PseudoPrime.LLS.Below64MainErrorBounds
 public import PseudoPrime.Analysis.ReciprocalCostPart2Bounds
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ParameterizedReciprocalLowerBound
 public import PseudoPrime.LLS.ParameterizedWeightedComparisonGRH
@@ -50,10 +50,10 @@ theorem not_characterTrivialBelow_of_reciprocalCostCoupledRoot {q : ℕ} [NeZero
   have hx := hcutoff
   have hcore :=
     weightedComparisonCore_of_trivialBelow_of_mainErrors χ hne hGRH
-      (lt_of_lt_of_le (by norm_num only) hx) (Analysis.primitiveLogOddMainError_le_fixed_of_ge59 hx)
-      (Analysis.primitiveLogEvenMainError_le_fixed_of_ge59 hx)
-      (Analysis.primitiveReciprocalOddMainError_le_fixed_of_ge59 hx)
-      (Analysis.primitiveReciprocalEvenMainError_le_fixed_of_ge59 hx) ht
+      (lt_of_lt_of_le (by norm_num only) hx) (primitiveLogOddMainError_le_fixed_of_ge59 hx)
+      (primitiveLogEvenMainError_le_fixed_of_ge59 hx)
+      (primitiveReciprocalOddMainError_le_fixed_of_ge59 hx)
+      (primitiveReciprocalEvenMainError_le_fixed_of_ge59 hx) ht
   have hS :=
     re_characterLogWeightedSum_ge_of_defect_le
       (llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann) χ.primitiveCharacter
@@ -84,7 +84,7 @@ theorem not_characterTrivialBelow_of_reciprocalCostCoupledRoot {q : ℕ} [NeZero
   have hP := Analysis.log_pi_ge_2096_div_1831
   exact
     Analysis.refinedPart2_bounds_incompatible_of_reciprocal_cost htRoot hz hrcost hlevel
-      (Analysis.log_le_third_of_ge_six (by linarith only [htRoot]))
+      (log_le_third_of_ge_six (by linarith only [htRoot]))
       (log_conductor_div_pi_le_of_lower χ hP) hR hb (by linarith only [hu]) hl
 
 /-- Under the arbitrary coupled-root assumptions, a nonprincipal character

@@ -9,7 +9,7 @@ module
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR1000WitnessBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ImprovedIntervalSelection
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaReflectedComparison
-public import PseudoPrime.Analysis.GaussianMR1000Comparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Gaussian1000ScalarOrder
 
 /-! # Continuous comparisons for the sharp 1000-prefix Gaussian bound -/
 
@@ -47,8 +47,8 @@ theorem gammaSharpRoot_lower_affine {L : ℝ} (hL : 100 ≤ L) :
 Compare its affine radius cap with the certified affine Gamma-root lower bound;
 the cutoff difference is positive throughout the real half-line. -/
 theorem gaussian1000_lt_gammaSharp {L : ℝ} (hL : 132 ≤ L) :
-    Analysis.gaussian1000Bound L < gammaSharpBound L := by
-  have hu := Analysis.gaussian1000_cutoff_upper hL
+    gaussian1000Bound L < gammaSharpBound L := by
+  have hu := gaussian1000_cutoff_upper hL
   have hr := gammaSharpRoot_lower_affine (by linarith only [hL] : (100 : ℝ) ≤ L)
   have hp : (0 : ℝ) ≤ (67 / 125) * L + 13 / 2 := by linarith only [hL]
   have hs := (sq_lt_sq₀ hp (gammaSharpRoot_pos (by linarith only [hL])).le).mpr hr
@@ -64,13 +64,13 @@ is strictly below the existing public envelope. Use its exact Gamma/fixed
 selection and the continuous comparisons, without sampled crossings. -/
 theorem gaussian1000_lt_improved {n : ℕ} (hn : 1 < n) (hL : 132 ≤ Real.log n)
     (hU : Real.log n ≤ 235) :
-    Analysis.gaussian1000Bound (Real.log n) < improvedSelectedEnvelope n := by
+    gaussian1000Bound (Real.log n) < improvedSelectedEnvelope n := by
   rw [← improved_eq_selected hn]
   by_cases hS : Real.log n ≤ gammaSharpFixedSwitch
   · rw [improved_eq_sharp hn (by linarith only [hL]) hS]
     exact gaussian1000_lt_gammaSharp hL
   · rw [improved_eq_fixed35000 hn (le_of_not_ge hS) (by linarith only [hU])]
-    exact Analysis.gaussian1000_lt_fixed (by linarith only [hL]) hU
+    exact gaussian1000_lt_fixed (by linarith only [hL]) hU
 
 /-- For L>=100, the reflected Gamma root exceeds 67L/125+63/10. Complete
 the square in its negative test polynomial. This is an independent lower
@@ -102,8 +102,8 @@ theorem gammaReflectedRoot_lower_affine {L : ℝ} (hL : 100 ≤ L) :
 Compare the Gaussian affine radius cap with the independent reflected-root
 lower bound; the rational cutoff difference is positive on the full half-line. -/
 theorem gaussian1000_lt_gammaReflected {L : ℝ} (hL : 132 ≤ L) :
-    Analysis.gaussian1000Bound L < gammaReflectedBound L := by
-  have hu := Analysis.gaussian1000_cutoff_upper hL
+    gaussian1000Bound L < gammaReflectedBound L := by
+  have hu := gaussian1000_cutoff_upper hL
   have hr := gammaReflectedRoot_lower_affine (by linarith only [hL] : (100 : ℝ) ≤ L)
   have hp : (0 : ℝ) ≤ (67 / 125) * L + 63 / 10 := by linarith only [hL]
   have hs := (sq_lt_sq₀ hp (gammaReflectedRoot_pos (by linarith only [hL])).le).mpr hr

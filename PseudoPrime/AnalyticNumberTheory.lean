@@ -215,7 +215,7 @@ public import PseudoPrime.AnalyticNumberTheory.General.CanonicalDecomposition
 public import PseudoPrime.AnalyticNumberTheory.General.GeometricDecay
 public import PseudoPrime.AnalyticNumberTheory.General.LogPolynomialDecay
 public import PseudoPrime.AnalyticNumberTheory.General.LogQuadraticEnvelope
-public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.TwoPoleMellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.TwoPoleMellinInversion
 public import PseudoPrime.AnalyticNumberTheory.General.TwoPoleMiddleMellin
@@ -369,6 +369,7 @@ public import PseudoPrime.AnalyticNumberTheory.Gamma.NumericalDigammaBounds
 public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.VerticalLimits
 public import PseudoPrime.AnalyticNumberTheory.NumberField.DedekindLFunction
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeSumBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedAbel
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MangoldtDirichletBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.TruncatedMangoldtBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.TruncatedEulerCertificates
@@ -395,6 +396,21 @@ public import PseudoPrime.AnalyticNumberTheory.General.MellinZeroIntegral
 public import PseudoPrime.AnalyticNumberTheory.General.MellinTestInversion
 public import PseudoPrime.AnalyticNumberTheory.General.MellinLSeriesIntegration
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.SquarefreeReciprocalSums
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MangoldtConstant
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MangoldtDirichletError
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MangoldtLogZeta
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MangoldtMertens
+public import PseudoPrime.AnalyticNumberTheory.PrimeSums.PsiError
+public import PseudoPrime.AnalyticNumberTheory.PrimeSums.WeightedMangoldt
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.InversePowerZeroMass
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LocalZeroComparison
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.TrigonometricComparison
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.UnconditionalWeightedBounds
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.UnconditionalZeroSumBounds
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.WeightedExplicitBounds
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroFreeAllHeights
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroFreeLogSquared
+public import PseudoPrime.AnalyticNumberTheory.PrimeSums.Mertens
 
 /-!
 # Analytic number theory umbrella

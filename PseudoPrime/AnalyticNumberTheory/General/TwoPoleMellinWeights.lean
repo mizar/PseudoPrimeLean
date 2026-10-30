@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.Analysis.TwoPoleResolventBounds
 
 /-! # Nonnegative compact Mellin profiles with an adjustable pole gap -/

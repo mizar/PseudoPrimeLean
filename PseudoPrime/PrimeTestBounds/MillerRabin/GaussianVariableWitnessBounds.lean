@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.Analysis.GaussianMRVariableRelativeNumerics
 public import PseudoPrime.Analysis.GaussianMR6FifthsNumerics
 public import PseudoPrime.LLS.RelativeGaussianSubgroupComparison
@@ -258,7 +259,7 @@ theorem exists_prime_witness_le_gaussian_star_of_index_four {n : ℕ} [NeZero n]
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (21 / 10 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (21 / 10 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -321,7 +322,7 @@ theorem exists_prime_witness_le_gaussian_star_of_index_ge_billion {n : ℕ} [NeZ
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (21 / 10 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (21 / 10 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -657,7 +658,7 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_four {n : ℕ} [NeZero n] (
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -829,7 +830,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_index_four {n : ℕ} [NeZero 
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -892,7 +893,7 @@ theorem exists_prime_witness_le_gaussianMR18_of_index_four {n : ℕ} [NeZero n] 
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -984,7 +985,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_index_ge_billion {n : ℕ} [N
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -1109,7 +1110,7 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_ge_billion {n : ℕ} [NeZer
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
@@ -1553,7 +1554,7 @@ theorem exists_prime_witness_le_gaussian_variable_of_index_ge_four {n : ℕ} [Ne
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (21 / 10 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (21 / 10 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hbound)
     exact ⟨u, huH, hu⟩

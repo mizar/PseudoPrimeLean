@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.SmallStartFinerPart2Bounds
-public import PseudoPrime.Analysis.SmallReciprocalMainErrorBounds
+public import PseudoPrime.LLS.SmallReciprocalMainErrorBounds
 public import PseudoPrime.LLS.ReciprocalCostPart2Bounds
 public import PseudoPrime.AnalyticNumberTheory.RiemannXi.FinerLLSConstants
 
@@ -43,8 +43,8 @@ theorem not_characterTrivialBelow_finerPart2Root_small_analytic {q : ℕ} [NeZer
   have hx1 : (1 : ℝ) < (Analysis.finerPart2CutoffRoot (Real.log q)) ^ 2 := by linarith only [hx]
   have hraw :=
     primitiveReciprocalRaw_of_mainErrors hf hGRH hp hnp (inv_ne_one.mpr hnp) hx1
-      (Analysis.primitiveReciprocalOddMainError_le_fixed_of_ge_twenty_six_half hx)
-      (Analysis.primitiveReciprocalEvenMainError_le_fixed_of_ge_twenty_six_half hx)
+      (primitiveReciprocalOddMainError_le_fixed_of_ge_twenty_six_half hx)
+      (primitiveReciprocalEvenMainError_le_fixed_of_ge_twenty_six_half hx)
   have hd :=
     weightedReciprocalDefect_eq_zero_of_trivialBelow (zero_lt_one.trans hx1)
       (characterTrivialBelow_primitiveCharacter ht)

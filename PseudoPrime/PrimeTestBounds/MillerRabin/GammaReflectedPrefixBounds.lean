@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaReflectedResolventComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSignedPrefixBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSeedPairedBounds
@@ -55,7 +56,7 @@ theorem exists_prime_reflected_gap_four {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd
     by_contra hfail
     exact hnone ⟨p, hp, hbound, hfail⟩
   have hsmall :
-    ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p :=
+    ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.residueInSubgroup n H p :=
     fun p hp hpb ↦ hHpass (p : ZMod n) (hpass p hp hpb)
   have hu :=
     LLS.PaperStatements.gamma_even_reflected_average hQ le_rfl H hGRH

@@ -24,16 +24,16 @@ Every candidate retains its certified guard and uses the base when inactive. -/
 noncomputable def sharpWitnessEnvelope (n : ℕ) : ℝ :=
   if n < 3000 then smallIntervalBound n
   else
-    sharpGuardMin (Real.log n) (lowFiniteWitness n) (Analysis.gaussianLowFamily (Real.log n))
-      (Analysis.gaussianSeededSharp (Real.log n)) (sharpHighMin (Real.log n) (lowFiniteWitness n))
+    sharpGuardMin (Real.log n) (lowFiniteWitness n) (gaussianLowFamily (Real.log n))
+      (gaussianSeededSharp (Real.log n)) (sharpHighMin (Real.log n) (lowFiniteWitness n))
 
 /-- The exact interval form of the same guarded sharp cutoff.
 It uses the thirteen finite intervals and the selected analytic guard assembly. -/
 noncomputable def sharpSelectedEnvelope (n : ℕ) : ℝ :=
   if n < 3000 then smallIntervalBound n
   else
-    sharpGuardSelected (Real.log n) (lowFiniteSelected n) (Analysis.gaussianLowFamily (Real.log n))
-      (Analysis.gaussianSeededSharp (Real.log n)) (sharpHighMin (Real.log n) (lowFiniteSelected n))
+    sharpGuardSelected (Real.log n) (lowFiniteSelected n) (gaussianLowFamily (Real.log n))
+      (gaussianSeededSharp (Real.log n)) (sharpHighMin (Real.log n) (lowFiniteSelected n))
 
 /-- The total prime rounding of the unrounded sharp cutoff.
 It preserves actual rejecting primes and never enlarges the cutoff. -/
@@ -94,12 +94,12 @@ theorem sharpPrime_le_selected {n : ℕ} (hn : 1 < n) :
 valid Gaussian, seeded and triangular candidate bounds the complete sharp cutoff.
 This interface transfers one actual least prime to the guarded minimum. -/
 theorem sharp_lower_of_candidates {n : ℕ} (hN : 3000 ≤ n) {C : ℝ} (hB : C ≤ lowFiniteWitness n)
-    (hG : 63 ≤ Real.log n → C ≤ Analysis.gaussianLowFamily (Real.log n))
-    (hS : 63 ≤ Real.log n → C ≤ Analysis.gaussianSeededSharp (Real.log n))
+    (hG : 63 ≤ Real.log n → C ≤ gaussianLowFamily (Real.log n))
+    (hS : 63 ≤ Real.log n → C ≤ gaussianSeededSharp (Real.log n))
     (hH :
       ∀ i : Fin 8,
-        (Analysis.triangularProfile i).T ≤ Real.log n →
-          C ≤ (Analysis.triangularProfile i).C * Real.log n ^ 2) :
+        (triangularProfile i).T ≤ Real.log n →
+          C ≤ (triangularProfile i).C * Real.log n ^ 2) :
     C ≤ sharpWitnessEnvelope n := by
   rw [sharpWitnessEnvelope, ite_eq_right (not_lt.mpr hN)]
   exact sharpGuard_lower hB hG hS (sharpHigh_lower hB hH)
@@ -113,35 +113,35 @@ theorem large_of_log63 {n : ℕ} (hL : 63 ≤ Real.log n) : 3000 ≤ n := by
 /-- On its certified scale domain, the sharp cutoff is below the fine Gaussian family.
 The logarithmic entrance also deactivates the explicit small-input branch. -/
 theorem sharp_le_gaussian {n : ℕ} (hL : 63 ≤ Real.log n) :
-    sharpWitnessEnvelope n ≤ Analysis.gaussianLowFamily (Real.log n) := by
+    sharpWitnessEnvelope n ≤ gaussianLowFamily (Real.log n) := by
   rw [sharpWitnessEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 hL))]
   have h :
-    sharpGuardMin (Real.log n) (lowFiniteWitness n) (Analysis.gaussianLowFamily (Real.log n))
-        (Analysis.gaussianSeededSharp (Real.log n))
+    sharpGuardMin (Real.log n) (lowFiniteWitness n) (gaussianLowFamily (Real.log n))
+        (gaussianSeededSharp (Real.log n))
         (sharpHighMin (Real.log n) (lowFiniteWitness n)) ≤
-      if 63 ≤ Real.log n then Analysis.gaussianLowFamily (Real.log n) else lowFiniteWitness n :=
+      if 63 ≤ Real.log n then gaussianLowFamily (Real.log n) else lowFiniteWitness n :=
     (min_le_right _ _).trans (min_le_left _ _)
   simpa only [ite_eq_left hL] using h
 
 /-- On its certified scale domain, the sharp cutoff is below the fine seeded family.
 Project its active analytic guard in the unrounded minimum. -/
 theorem sharp_le_seeded {n : ℕ} (hL : 63 ≤ Real.log n) :
-    sharpWitnessEnvelope n ≤ Analysis.gaussianSeededSharp (Real.log n) := by
+    sharpWitnessEnvelope n ≤ gaussianSeededSharp (Real.log n) := by
   rw [sharpWitnessEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 hL))]
   have h :
-    sharpGuardMin (Real.log n) (lowFiniteWitness n) (Analysis.gaussianLowFamily (Real.log n))
-        (Analysis.gaussianSeededSharp (Real.log n))
+    sharpGuardMin (Real.log n) (lowFiniteWitness n) (gaussianLowFamily (Real.log n))
+        (gaussianSeededSharp (Real.log n))
         (sharpHighMin (Real.log n) (lowFiniteWitness n)) ≤
-      if 63 ≤ Real.log n then Analysis.gaussianSeededSharp (Real.log n) else lowFiniteWitness n :=
+      if 63 ≤ Real.log n then gaussianSeededSharp (Real.log n) else lowFiniteWitness n :=
     (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_left _ _))
   simpa only [ite_eq_left hL] using h
 
 /-- Above a triangular profile entrance, the sharp cutoff is below that profile.
 Project the active high minimum after excluding the small-input branch. -/
 theorem sharp_le_triangular {n : ℕ} (i : Fin 8)
-    (hL : (Analysis.triangularProfile i).T ≤ Real.log n) :
-    sharpWitnessEnvelope n ≤ (Analysis.triangularProfile i).C * Real.log n ^ 2 := by
-  have h63 : (63 : ℝ) ≤ Real.log n := by linarith only [(Analysis.triangularProfile i).entry, hL]
+    (hL : (triangularProfile i).T ≤ Real.log n) :
+    sharpWitnessEnvelope n ≤ (triangularProfile i).C * Real.log n ^ 2 := by
+  have h63 : (63 : ℝ) ≤ Real.log n := by linarith only [(triangularProfile i).entry, hL]
   rw [sharpWitnessEnvelope, ite_eq_right (not_lt.mpr (large_of_log63 h63))]
   exact
     (min_le_right _ _).trans

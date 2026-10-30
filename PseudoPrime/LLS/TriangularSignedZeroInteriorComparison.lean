@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.TriangularDualScaleInteriorComparison
 public import PseudoPrime.LLS.TriangularSignedSharpConductorComparison
 public import PseudoPrime.LLS.TriangularLargeFactorComparison
@@ -42,7 +43,7 @@ the principal character and evaluate the Gamma terms without replacing zeros by 
 theorem triangular18_finite_principal_add_zero_le_dual_interior {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x X : ℝ} (hx : 1 ≤ x) (hlog : Real.log x ≤ 36)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable
     letI : ∀ i : NumberTheory.subgroupAnnihilator H, NeZero i.val.conductor := fun i ↦
       ⟨i.val.conductor_ne_zero⟩
@@ -125,7 +126,7 @@ profile. This is the numerical interface for a sharper signed zero lower bound. 
 theorem triangular18_principal_add_zero_le_dual_interior_conductor_numeric {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x X : ℝ} (hx : 1 ≤ x) (hlog : Real.log x ≤ 36)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable
     letI : ∀ i : NumberTheory.subgroupAnnihilator H, NeZero i.val.conductor := fun i ↦
       ⟨i.val.conductor_ne_zero⟩
@@ -185,7 +186,7 @@ the extra mass-times-logarithm cost introduced by an absolute zero estimate. -/
 theorem triangular18_zero_retained_comparison_of_large_prime_factors {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
     (hx : 1 < x) (hlog : Real.log x ≤ 36) (hlarge : ∀ p ∈ q.primeFactors, x ≤ (p : ℝ))
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
           (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
             36 * Real.log q / (Real.sqrt x - 1)) +
@@ -220,7 +221,7 @@ theorem exists_prime_factor_or_outside_of_triangular18_zero_retained_gap {q : �
             (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
               36 * Real.log q / (Real.sqrt x - 1)) +
           triangular18_annihilator_zeroRealSum H x) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ (p ∣ q ∨ ¬residueInSubgroup q H p) := by
+    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ (p ∣ q ∨ ¬NumberTheory.residueInSubgroup q H p) := by
   classical
   by_contra hnone
   have hlarge (p : ℕ) (hp : p ∈ q.primeFactors) : x ≤ (p : ℝ) := by
@@ -230,7 +231,7 @@ theorem exists_prime_factor_or_outside_of_triangular18_zero_retained_gap {q : �
         ⟨p, Nat.prime_of_mem_primeFactors hp, (lt_of_not_ge hlt).le,
           Or.inl (Nat.dvd_of_mem_primeFactors hp)⟩
   have hsmall (p : ℕ) (hp : p.Prime) (_ : ¬p ∣ q) (hle : (p : ℝ) ≤ x) :
-    residueInSubgroup q H p := by
+    NumberTheory.residueInSubgroup q H p := by
     by_contra hout
     exact hnone ⟨p, hp, hle, Or.inr hout⟩
   exact

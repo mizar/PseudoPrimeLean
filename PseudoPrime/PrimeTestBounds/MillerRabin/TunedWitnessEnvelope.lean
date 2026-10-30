@@ -9,7 +9,7 @@ module
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TunedGuards
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointTunedEnvelope
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianTunedBounds
-public import PseudoPrime.Analysis.GaussianSeededTuned
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededTuned
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededTunedBounds
 
 /-! # Tuned public witness envelope preserving the sharp baseline -/
@@ -23,9 +23,9 @@ Each analytic or triangular candidate retains its own proved entrance. -/
 noncomputable def tunedWitnessEnvelope (n : ℕ) : ℝ :=
   if n < 3000 then smallIntervalBound n
   else
-    sharpGuardMin (Real.log n) (tunedFiniteWitness n) (Analysis.gaussianTunedFamily (Real.log n))
-      (min (Analysis.gaussianSeededTunedBound false (Real.log n))
-        (Analysis.gaussianSeededTunedBound true (Real.log n)))
+    sharpGuardMin (Real.log n) (tunedFiniteWitness n) (gaussianTunedFamily (Real.log n))
+      (min (gaussianSeededTunedBound false (Real.log n))
+        (gaussianSeededTunedBound true (Real.log n)))
       (tunedHighMin (Real.log n) (tunedFiniteWitness n))
 
 /-- Use the fourteen exact finite intervals and the selected analytic guard assembly.
@@ -34,9 +34,9 @@ noncomputable def tunedSelectedEnvelope (n : ℕ) : ℝ :=
   if n < 3000 then smallIntervalBound n
   else
     sharpGuardSelected (Real.log n) (tunedFiniteSelected n)
-      (Analysis.gaussianTunedFamily (Real.log n))
-      (min (Analysis.gaussianSeededTunedBound false (Real.log n))
-        (Analysis.gaussianSeededTunedBound true (Real.log n)))
+      (gaussianTunedFamily (Real.log n))
+      (min (gaussianSeededTunedBound false (Real.log n))
+        (gaussianSeededTunedBound true (Real.log n)))
       (tunedHighMin (Real.log n) (tunedFiniteSelected n))
 
 /-- Round the tuned witness cutoff down to the greatest allowed prime. -/
@@ -85,12 +85,12 @@ theorem tunedPrime_le_sharpPrime {n : ℕ} (hn : 1 < n) :
 /-- A common lower bound of the finite base and every active new candidate bounds the public min.
 This is the interface for transferring the same least prime across all candidates. -/
 theorem tuned_lower_of_candidates {n : ℕ} (hN : 3000 ≤ n) {C : ℝ} (hB : C ≤ tunedFiniteWitness n)
-    (hG : 63 ≤ Real.log n → C ≤ Analysis.gaussianTunedFamily (Real.log n))
-    (hS : ∀ f : Bool, 63 ≤ Real.log n → C ≤ Analysis.gaussianSeededTunedBound f (Real.log n))
+    (hG : 63 ≤ Real.log n → C ≤ gaussianTunedFamily (Real.log n))
+    (hS : ∀ f : Bool, 63 ≤ Real.log n → C ≤ gaussianSeededTunedBound f (Real.log n))
     (hH :
       ∀ i : Fin 7,
-        (Analysis.triangularTunedProfile i).T ≤ Real.log n →
-          C ≤ (Analysis.triangularTunedProfile i).C * Real.log n ^ 2) :
+        (triangularTunedProfile i).T ≤ Real.log n →
+          C ≤ (triangularTunedProfile i).C * Real.log n ^ 2) :
     C ≤ tunedWitnessEnvelope n := by
   rw [tunedWitnessEnvelope, ite_eq_right (not_lt.mpr hN)]
   exact sharpGuard_lower hB hG (fun h ↦ le_min (hS false h) (hS true h)) (tunedHigh_lower hB hH)

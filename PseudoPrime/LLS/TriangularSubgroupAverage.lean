@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.TriangularPrimitiveRemainderBounds
 public import PseudoPrime.LLS.MellinKernelPrimitiveAverage
 public import PseudoPrime.NumberTheory.DirichletCharacterSmallLevels
@@ -23,7 +24,7 @@ positivity removes absolute level-change corrections before applying the analyti
 theorem triangular18_principal_sum_le_primitive_budgets_of_noSmallPrimes {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x X : ℝ} (hx : 1 ≤ x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable;
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
@@ -93,7 +94,7 @@ comparison interface for subsequent conductor aggregation and numerical refineme
 theorem triangular18_principal_sum_le_conductor_budgets_of_noSmallPrimes {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x X : ℝ} (hx : 1 ≤ x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable;
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,

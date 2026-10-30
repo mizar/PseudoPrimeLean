@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.NextWitnessEnvelope
 public import PseudoPrime.LLS.EndpointPointwiseGrowth
-public import PseudoPrime.Analysis.GaussianSeededGrowth
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededGrowth
 
 /-! # Exact interval selection for the next all-input envelope -/
 
@@ -19,9 +19,9 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- Transfer a common lower bound through every guarded next candidate. -/
 theorem next_lower_of_candidates {n : ℕ} {C : ℝ} (hB : C ≤ lowPrimeEnvelope n)
     (hP : C ≤ LLS.PaperStatements.pointwiseCutoff (Real.log n))
-    (hA : 63 ≤ Real.log n → C ≤ Analysis.gaussian1000Bound (Real.log n))
+    (hA : 63 ≤ Real.log n → C ≤ gaussian1000Bound (Real.log n))
     (hG : 100 ≤ Real.log n → C ≤ gammaReflectedBound (Real.log n))
-    (hS : 63 ≤ Real.log n → C ≤ Analysis.gaussianSeededSelected (Real.log n))
+    (hS : 63 ≤ Real.log n → C ≤ gaussianSeededSelected (Real.log n))
     (h61 : Real.log n ≤ 11509 / 1000 → C ≤ 61) (h67 : Real.log n ≤ 1179 / 100 → C ≤ 67)
     (h71 : Real.log n ≤ 1193 / 100 → C ≤ 71) (h73 : Real.log n ≤ 12337 / 1000 → C ≤ 73)
     (hE : 1500000000000 ≤ Real.log n → C ≤ (282924 / 1000000) * Real.log n ^ 2)
@@ -119,11 +119,11 @@ theorem next_eq_fixed61 {n : ℕ} (hn : 1 < n) (hN : 3000 ≤ n) (hL : 553 / 50 
 
 /-- The seeded selected cutoff retains its 35000 prefix floor in its certified domain. -/
 theorem seededSelected_floor {L : ℝ} (hL : 63 ≤ L) :
-    (35000 : ℝ) ≤ Analysis.gaussianSeededSelected L := by
-  rw [← Analysis.gaussianSeeded_min_eq_selected hL]
-  have h35 := Analysis.gaussianSeeded_cutoff_le false L
-  have h50 := Analysis.gaussianSeeded_cutoff_le true L
-  norm_num only [Analysis.gaussianSeededCutoff, Bool.false_eq_true, ite_false, ite_true,
+    (35000 : ℝ) ≤ gaussianSeededSelected L := by
+  rw [← gaussianSeeded_min_eq_selected hL]
+  have h35 := gaussianSeeded_cutoff_le false L
+  have h50 := gaussianSeeded_cutoff_le true L
+  norm_num only [gaussianSeededCutoff, Bool.false_eq_true, ite_false, ite_true,
     Nat.cast_ofNat] at h35 h50
   exact le_min h35 ((by norm_num only : (35000 : ℝ) ≤ 50000).trans h50)
 
@@ -218,7 +218,7 @@ theorem next_eq_pointwise {n : ℕ} (hn : 1 < n) (hL : 12337 / 1000 < Real.log n
     exact
       hp.le.trans
         (hsq.le.trans
-          ((by norm_num only : (10000 : ℝ) ≤ 12000).trans (Analysis.gaussian1000_cutoff_floor _)))
+          ((by norm_num only : (10000 : ℝ) ≤ 12000).trans (gaussian1000_cutoff_floor _)))
   · intro h; exfalso; linarith only [hU, h]
   · intro h
     exact
@@ -245,28 +245,28 @@ theorem reflected_linear_lower {L : ℝ} (hL : 132 ≤ L) :
 its previous base on the whole range beginning at L=240. -/
 theorem seeded_le_improved {n : ℕ} (hn : 1 < n) (hL : 240 ≤ Real.log n)
     (hU : Real.log n < 2000000000000) :
-    Analysis.gaussianSeededSelected (Real.log n) ≤ improvedWitnessEnvelope n := by
+    gaussianSeededSelected (Real.log n) ≤ improvedWitnessEnvelope n := by
   by_cases h : 240 < Real.log n
   · rw [improved_eq_gaussian hn h hU]
-    exact Analysis.gaussianSeeded_selected_le_old (by linarith only [hL])
+    exact gaussianSeeded_selected_le_old (by linarith only [hL])
   · have h240 : Real.log n ≤ 240 := le_of_not_gt h
     rw [improved_eq_fixed35000 hn (by linarith only [hL, gammaSharpFixedSwitch_bounds.2]) h240]
-    rw [Analysis.gaussianSeededSelected_eq_fixed
-        (h240.trans Analysis.gaussianSeeded_switch35_bounds.1.le)]
+    rw [gaussianSeededSelected_eq_fixed
+        (h240.trans gaussianSeeded_switch35_bounds.1.le)]
 
 /-- From L=240 to the triangular entrance, the seeded Gaussian interval formula is selected. -/
 theorem next_eq_seeded {n : ℕ} (hn : 1 < n) (hL : 240 ≤ Real.log n)
     (hU : Real.log n < 1500000000000) :
-    nextWitnessEnvelope n = Analysis.gaussianSeededSelected (Real.log n) := by
+    nextWitnessEnvelope n = gaussianSeededSelected (Real.log n) := by
   have h100 : (100 : ℝ) ≤ Real.log n := by linarith only [hL]
   have h63 : (63 : ℝ) ≤ Real.log n := by linarith only [hL]
-  have hc := Analysis.gaussianSeededSelected_linear hL
+  have hc := gaussianSeededSelected_linear hL
   apply le_antisymm (next_le_seeded h63)
   apply next_lower_of_candidates
   · rw [lowPrime_eq_improved_of_log (by linarith only [hL])]
     exact seeded_le_improved hn hL (by linarith only [hU])
   · exact hc.le.trans (LLS.PaperStatements.pointwiseCutoff_linear_lower h100)
-  · intro _; exact (Analysis.gaussianSeeded_lt_1000 hL).le
+  · intro _; exact (gaussianSeeded_lt_1000 hL).le
   · intro _; exact hc.le.trans (reflected_linear_lower (by linarith only [hL])).le
   · intro _; exact le_rfl
   · intro h; exfalso; linarith only [hL, h]
@@ -290,11 +290,11 @@ theorem next_eq_early {n : ℕ} (hn : 1 < n) (hL : 1500000000000 ≤ Real.log n)
   apply next_lower_of_candidates
   · rw [lowPrime_eq_improved_of_log (by linarith only [hL])]
     rw [improved_eq_gaussian hn (by linarith only [hL]) hU]
-    exact hcoef.trans (Analysis.gaussianFloorSelected_lower h63).le
+    exact hcoef.trans (gaussianFloorSelected_lower h63).le
   · exact hcoefP.trans (LLS.PaperStatements.pointwiseCutoff_linear_lower (by linarith only [hL]))
-  · intro _; exact hcoef.trans (Analysis.gaussian1000_bound_lower h63).le
+  · intro _; exact hcoef.trans (gaussian1000_bound_lower h63).le
   · intro _; exact hcoefP.trans (reflected_linear_lower h132).le
-  · intro _; exact hcoef.trans (Analysis.gaussianSeededSelected_lower h63).le
+  · intro _; exact hcoef.trans (gaussianSeededSelected_lower h63).le
   · intro h; exfalso; linarith only [hL, h]
   · intro h; exfalso; linarith only [hL, h]
   · intro h; exfalso; linarith only [hL, h]
@@ -317,9 +317,9 @@ theorem next_eq_triangular {n : ℕ} (hn : 1 < n) (hL : 2000000000000 ≤ Real.l
     rw [improved_eq_triangular hn hL]
     exact mul_le_mul_of_nonneg_right (by norm_num only) (sq_nonneg _)
   · exact hcoefP.trans (LLS.PaperStatements.pointwiseCutoff_linear_lower (by linarith only [hL]))
-  · intro _; exact hcoef.trans (Analysis.gaussian1000_bound_lower h63).le
+  · intro _; exact hcoef.trans (gaussian1000_bound_lower h63).le
   · intro _; exact hcoefP.trans (reflected_linear_lower h132).le
-  · intro _; exact hcoef.trans (Analysis.gaussianSeededSelected_lower h63).le
+  · intro _; exact hcoef.trans (gaussianSeededSelected_lower h63).le
   · intro h; exfalso; linarith only [hL, h]
   · intro h; exfalso; linarith only [hL, h]
   · intro h; exfalso; linarith only [hL, h]
@@ -332,13 +332,13 @@ and the two-root Gaussian bound. The individual crossing order is not assumed. -
 theorem next_eq_middle_three {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n) (hU : Real.log n < 132) :
     nextWitnessEnvelope n =
       min (LLS.PaperStatements.pointwiseCutoff (Real.log n))
-        (min (gammaReflectedBound (Real.log n)) (Analysis.gaussian1000Bound (Real.log n))) := by
+        (min (gammaReflectedBound (Real.log n)) (gaussian1000Bound (Real.log n))) := by
   let C :=
     min (LLS.PaperStatements.pointwiseCutoff (Real.log n))
-      (min (gammaReflectedBound (Real.log n)) (Analysis.gaussian1000Bound (Real.log n)))
+      (min (gammaReflectedBound (Real.log n)) (gaussian1000Bound (Real.log n)))
   have hp : C ≤ LLS.PaperStatements.pointwiseCutoff (Real.log n) := min_le_left _ _
   have hg : C ≤ gammaReflectedBound (Real.log n) := (min_le_right _ _).trans (min_le_left _ _)
-  have ha : C ≤ Analysis.gaussian1000Bound (Real.log n) :=
+  have ha : C ≤ gaussian1000Bound (Real.log n) :=
     (min_le_right _ _).trans (min_le_right _ _)
   have h63 : (63 : ℝ) ≤ Real.log n := by linarith only [hL]
   apply
@@ -376,11 +376,11 @@ theorem next_eq_middle_three {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n) (h
 theorem next_eq_middle_two {n : ℕ} (hn : 1 < n) (hL : 132 ≤ Real.log n) (hU : Real.log n ≤ 235) :
     nextWitnessEnvelope n =
       min (LLS.PaperStatements.pointwiseCutoff (Real.log n))
-        (Analysis.gaussian1000Bound (Real.log n)) := by
+        (gaussian1000Bound (Real.log n)) := by
   let C :=
-    min (LLS.PaperStatements.pointwiseCutoff (Real.log n)) (Analysis.gaussian1000Bound (Real.log n))
+    min (LLS.PaperStatements.pointwiseCutoff (Real.log n)) (gaussian1000Bound (Real.log n))
   have hp : C ≤ LLS.PaperStatements.pointwiseCutoff (Real.log n) := min_le_left _ _
-  have ha : C ≤ Analysis.gaussian1000Bound (Real.log n) := min_le_right _ _
+  have ha : C ≤ gaussian1000Bound (Real.log n) := min_le_right _ _
   have h63 : (63 : ℝ) ≤ Real.log n := by linarith only [hL]
   apply le_antisymm (le_min next_le_pointwise (next_le_gaussian1000 h63))
   apply next_lower_of_candidates
@@ -392,7 +392,7 @@ theorem next_eq_middle_two {n : ℕ} (hn : 1 < n) (hL : 132 ≤ Real.log n) (hU 
   · intro h
     exact
       ha.trans
-        ((Analysis.gaussian1000_lt_fixed (by linarith only [hL]) hU).le.trans
+        ((gaussian1000_lt_fixed (by linarith only [hL]) hU).le.trans
           (seededSelected_floor h))
   · intro h; exfalso; linarith only [hL, h]
   · intro h; exfalso; linarith only [hL, h]
@@ -404,10 +404,10 @@ theorem next_eq_middle_two {n : ℕ} (hn : 1 < n) (hL : 132 ≤ Real.log n) (hU 
 /-- Between L=235 and L=240 the only varying comparison is Gaussian1000 versus 35000. -/
 theorem next_eq_fixed_gaussian {n : ℕ} (hn : 1 < n) (hL : 235 < Real.log n)
     (hU : Real.log n < 240) :
-    nextWitnessEnvelope n = min 35000 (Analysis.gaussian1000Bound (Real.log n)) := by
-  let C := min (35000 : ℝ) (Analysis.gaussian1000Bound (Real.log n))
+    nextWitnessEnvelope n = min 35000 (gaussian1000Bound (Real.log n)) := by
+  let C := min (35000 : ℝ) (gaussian1000Bound (Real.log n))
   have hf : C ≤ (35000 : ℝ) := min_le_left _ _
-  have ha : C ≤ Analysis.gaussian1000Bound (Real.log n) := min_le_right _ _
+  have ha : C ≤ gaussian1000Bound (Real.log n) := min_le_right _ _
   have hbase :=
     improved_eq_fixed35000 hn (by linarith only [hL, gammaSharpFixedSwitch_bounds.2]) hU.le
   have hfixed : nextWitnessEnvelope n ≤ (35000 : ℝ) := by
@@ -437,7 +437,7 @@ The seeded function expands into its four exact floor/root pieces. -/
 noncomputable def nextSelectedEnvelope (n : ℕ) : ℝ :=
   let L := Real.log n
   let P := LLS.PaperStatements.pointwiseCutoff L
-  let A := Analysis.gaussian1000Bound L
+  let A := gaussian1000Bound L
   if n < 3000 then smallIntervalBound n
   else
     if L ≤ 553 / 50 then lowPrimeSelected n
@@ -458,7 +458,7 @@ noncomputable def nextSelectedEnvelope (n : ℕ) : ℝ :=
                   else
                     if L < 240 then min 35000 A
                     else
-                      if L < 1500000000000 then Analysis.gaussianSeededSelected L
+                      if L < 1500000000000 then gaussianSeededSelected L
                       else
                         if L < 2000000000000 then (282924 / 1000000) * L ^ 2
                         else (2827 / 10000) * L ^ 2

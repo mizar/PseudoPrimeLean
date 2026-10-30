@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.GammaKernelIdentities
 public import PseudoPrime.Analysis.GaussianGammaKernel
 public import PseudoPrime.Analysis.GaussianGammaProfile
@@ -121,14 +122,14 @@ theorem integral_gaussianInverseJoint_right {c u : ℝ} (hc : -(1 : ℝ) / 2 < c
     ring
   rw [he, MeasureTheory.integral_const_mul]
   have h := inverseMellin_gamma hc (mul_pos hu (Real.exp_pos (-v)))
-  unfold inverseMellin at h
+  unfold Analysis.inverseMellin at h
   rw [← mul_assoc, mul_comm ((1 / (2 * Real.pi) : ℝ) : ℂ), mul_assoc, h]
 
 /-- For every c>-1/2 and u>0 Gaussian Gamma inversion is a real positive mixture.
 The joint integrand is absolutely integrable, so Fubini exchanges the Gaussian
 moment with Gamma inversion. This establishes inversion without an added assumption. -/
 theorem inverseMellin_gaussianGamma_average {c u : ℝ} (hc : -(1 : ℝ) / 2 < c) (hu : 0 < u) :
-    inverseMellin Analysis.gaussianGammaFunction c u =
+    Analysis.inverseMellin Analysis.gaussianGammaFunction c u =
       ∫ v : ℝ,
         (Analysis.normalizedGaussianWeight v : ℂ) *
           (Real.sqrt (u * Real.exp (-v)) * Real.exp (-(u * Real.exp (-v))) : ℝ) := by
@@ -141,7 +142,7 @@ theorem inverseMellin_gaussianGamma_average {c u : ℝ} (hc : -(1 : ℝ) / 2 < c
       (fun t : ℝ ↦ ∫ v : ℝ, gaussianInverseJoint c u v t) := by
     funext t
     exact (integral_gaussianInverseJoint_left c u t).symm
-  unfold inverseMellin
+  unfold Analysis.inverseMellin
   rw [he, ← MeasureTheory.integral_integral_swap hi, ← MeasureTheory.integral_const_mul]
   apply MeasureTheory.integral_congr_ae
   exact Filter.Eventually.of_forall (integral_gaussianInverseJoint_right hc hu)
@@ -177,7 +178,8 @@ theorem gaussian_density_average_eq_profile {u : ℝ} (hu : 0 < u) :
 positive real profile. Combine the absolutely convergent mixture identity
 with its real normalization. This supplies line independence and positivity. -/
 theorem inverseMellin_gaussianGamma {c u : ℝ} (hc : -(1 : ℝ) / 2 < c) (hu : 0 < u) :
-    inverseMellin Analysis.gaussianGammaFunction c u = (Analysis.gaussianGammaProfile u : ℂ) :=
+    Analysis.inverseMellin Analysis.gaussianGammaFunction c u =
+      (Analysis.gaussianGammaProfile u : ℂ) :=
   (inverseMellin_gaussianGamma_average hc hu).trans (gaussian_density_average_eq_profile hu)
 
 /-- The Gaussian inverse Mellin integrand is absolutely integrable for c>-1/2,

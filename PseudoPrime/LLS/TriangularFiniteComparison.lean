@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.TriangularQuotientCorrection
 public import PseudoPrime.LLS.TriangularConductorComparison
 
@@ -81,7 +82,7 @@ the explicit finite-principal lower budget is at most the numerical primitive
 average upper budget. Combine both proved finite-sum inequalities. -/
 theorem triangular18_finite_principal_comparison {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
           (∑ p ∈ q.primeFactors, 36 * (Real.log p / (Real.sqrt p - 1)))) ≤
@@ -109,11 +110,11 @@ theorem exists_prime_outside_subgroup_of_triangular18_gap {q : ℕ} [NeZero q]
         (H.index : ℝ) *
           (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
             (∑ p ∈ q.primeFactors, 36 * (Real.log p / (Real.sqrt p - 1))))) :
-    ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ (p : ℝ) ≤ x ∧ ¬residueInSubgroup q H p := by
+    ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ (p : ℝ) ≤ x ∧ ¬NumberTheory.residueInSubgroup q H p := by
   classical
   by_contra hnone
   have hsmall (p : ℕ) (hp : p.Prime) (hd : ¬p ∣ q) (hle : (p : ℝ) ≤ x) :
-    residueInSubgroup q H p := by
+    NumberTheory.residueInSubgroup q H p := by
     by_contra hout
     exact hnone ⟨p, hp, hd, hle, hout⟩
   exact (not_le_of_gt hgap) (triangular18_finite_principal_comparison H hGRH hx hsmall)

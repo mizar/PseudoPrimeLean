@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.MellinResolvent
 public import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
 
@@ -67,7 +68,7 @@ one-plus-norm power bound. This permits integration of the resolvent majorant. -
 theorem integrable_verticalResolventMajorant {τ : ℝ} (hτ : 0 < τ) :
     MeasureTheory.Integrable (verticalResolventMajorant τ) := by
   have hn : ∀ y : ℝ, 0 < ‖(τ : ℂ) + y * Complex.I‖ := fun y ↦
-    norm_pos_iff.mpr (ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y)
+    norm_pos_iff.mpr (Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y)
   have hc : Continuous (verticalResolventMajorant τ) :=
     continuous_const.div
       ((continuous_const.add (Complex.continuous_ofReal.mul_const Complex.I)).norm.mul

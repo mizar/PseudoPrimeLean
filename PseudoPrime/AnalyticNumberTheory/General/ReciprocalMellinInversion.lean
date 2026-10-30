@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.ReciprocalResolventMellin
 
 /-!
@@ -131,12 +132,12 @@ normalized reciprocal Mellin integral. Invert the Mellin weight and split the po
 complex power, then pull out the coefficient. This evaluates each term of the series. -/
 theorem reciprocalMellinTerm_integral (a : ℕ → ℂ) {x τ : ℝ} (hx : 0 < x) (hτ : 0 < τ) {n : ℕ}
     (hn : n ≠ 0) :
-    a n * mellinWeightOne ((n : ℝ) / x) =
+    a n * Analysis.mellinWeightOne ((n : ℝ) / x) =
       (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, reciprocalMellinTerm a x τ n y := by
   have hnpos : 0 < (n : ℝ) := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hn)
-  have hm := mellinInv_mellinWeightOne_eq (σ := τ) hτ (div_pos hnpos hx)
+  have hm := Analysis.mellinInv_mellinWeightOne_eq (σ := τ) hτ (div_pos hnpos hx)
   have hw :
-    mellinWeightOne ((n : ℝ) / x) =
+    Analysis.mellinWeightOne ((n : ℝ) / x) =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ,
           (((n : ℝ) / x : ℝ) : ℂ) ^ (-((τ : ℂ) + y * Complex.I)) *
@@ -148,7 +149,7 @@ theorem reciprocalMellinTerm_integral (a : ℕ → ℂ) {x τ : ℝ} (hx : 0 < x
   rw [← MeasureTheory.integral_const_mul]
   apply MeasureTheory.integral_congr_ae
   filter_upwards with y
-  rw [cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, Complex.ofReal_natCast]
+  rw [Analysis.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, Complex.ofReal_natCast]
   unfold reciprocalMellinTerm
   ring
 
@@ -158,14 +159,14 @@ Termwise inversion and summable integral norms justify interchange. This is reci
 inversion for arbitrary coefficient sequences. -/
 theorem mellinWeightOne_tsum_eq_integral_LSeries (a : ℕ → ℂ) (ha : a 0 = 0) {x τ : ℝ} (hx : 0 < x)
     (hτ : 0 < τ) (hsum : LSeriesSummable a (τ : ℂ)) :
-    (∑' n : ℕ, a n * mellinWeightOne ((n : ℝ) / x)) =
+    (∑' n : ℕ, a n * Analysis.mellinWeightOne ((n : ℝ) / x)) =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ,
           LSeries a ((τ : ℂ) + y * Complex.I) * (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) /
             (((τ : ℂ) + y * Complex.I) * ((τ : ℂ) + y * Complex.I + 1)) := by
   have hterm :
     ∀ n : ℕ,
-      a n * mellinWeightOne ((n : ℝ) / x) =
+      a n * Analysis.mellinWeightOne ((n : ℝ) / x) =
         (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, reciprocalMellinTerm a x τ n y := by
     intro n
     rcases eq_or_ne n 0 with rfl | hn
@@ -187,7 +188,7 @@ by `n^(-σ) w₁(n/x)` shifts the L-series argument in the reciprocal Mellin int
 series. This supports the ordinary logarithmic derivative on its right half-plane. -/
 theorem mellinWeightOne_shifted_tsum_eq_integral_LSeries (a : ℕ → ℂ) (ha : a 0 = 0) (σ : ℝ)
     {x τ : ℝ} (hx : 0 < x) (hτ : 0 < τ) (hsum : LSeriesSummable a ((σ + τ : ℝ) : ℂ)) :
-    (∑' n : ℕ, a n * (n : ℂ) ^ (-(σ : ℂ)) * mellinWeightOne ((n : ℝ) / x)) =
+    (∑' n : ℕ, a n * (n : ℂ) ^ (-(σ : ℂ)) * Analysis.mellinWeightOne ((n : ℝ) / x)) =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ,
           LSeries a (((σ + τ : ℝ) : ℂ) + y * Complex.I) * (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) /
@@ -200,8 +201,8 @@ theorem mellinWeightOne_shifted_tsum_eq_integral_LSeries (a : ℕ → ℂ) (ha :
         simpa only [Complex.ofReal_add] using hsum
         )
   rw [show
-      (fun n ↦ a n * (n : ℂ) ^ (-(σ : ℂ)) * mellinWeightOne ((n : ℝ) / x)) =
-        (fun n ↦ shiftedLSeriesCoefficient a σ n * mellinWeightOne ((n : ℝ) / x))
+      (fun n ↦ a n * (n : ℂ) ^ (-(σ : ℂ)) * Analysis.mellinWeightOne ((n : ℝ) / x)) =
+        (fun n ↦ shiftedLSeriesCoefficient a σ n * Analysis.mellinWeightOne ((n : ℝ) / x))
       from rfl,
     mellinWeightOne_tsum_eq_integral_LSeries _ ha0 hx hτ hs]
   congr 1
@@ -219,22 +220,23 @@ noncomputable def reciprocalWeightedSum (a : ℕ → ℂ) (x : ℝ) : ℂ :=
 smoothed sum. Outside the cutoff the Mellin weight vanishes; within it the weight is `1 - n/x`.
 Collapse the finitely supported series. No analytic convergence assumption is needed. -/
 theorem mellinWeightOne_tsum_eq_reciprocalWeightedSum (a : ℕ → ℂ) (ha : a 0 = 0) {x : ℝ}
-    (hx : 0 < x) : (∑' n : ℕ, a n * mellinWeightOne ((n : ℝ) / x)) = reciprocalWeightedSum a x := by
-  have hvanish : ∀ n ∉ Finset.Ioc 0 ⌊x⌋₊, a n * mellinWeightOne ((n : ℝ) / x) = 0 := by
+    (hx : 0 < x) :
+    (∑' n : ℕ, a n * Analysis.mellinWeightOne ((n : ℝ) / x)) = reciprocalWeightedSum a x := by
+  have hvanish : ∀ n ∉ Finset.Ioc 0 ⌊x⌋₊, a n * Analysis.mellinWeightOne ((n : ℝ) / x) = 0 := by
     intro n hn
     simp only [Finset.mem_Ioc, not_and, not_le] at hn
     rcases Nat.eq_zero_or_pos n with hn0 | hn0
     · rw [hn0, ha, zero_mul]
     · have hnxlt : x < n := (Nat.floor_lt hx.le).mp (hn hn0)
       have ht : 0 < (n : ℝ) / x := div_pos (Nat.cast_pos.mpr hn0) hx
-      rw [mellinWeightOne_eq_ofReal_max ht,
+      rw [Analysis.mellinWeightOne_eq_ofReal_max ht,
         max_eq_right (sub_nonpos.mpr ((one_le_div hx).mpr hnxlt.le)), Complex.ofReal_zero, mul_zero]
   rw [tsum_eq_sum hvanish, reciprocalWeightedSum]
   apply Finset.sum_congr rfl
   intro n hn
   obtain ⟨hn0, hnx⟩ := Finset.mem_Ioc.mp hn
   have ht : 0 < (n : ℝ) / x := div_pos (Nat.cast_pos.mpr hn0) hx
-  rw [mellinWeightOne_eq_ofReal_max ht,
+  rw [Analysis.mellinWeightOne_eq_ofReal_max ht,
     max_eq_left (sub_nonneg.mpr ((div_le_one hx).mpr ((Nat.le_floor_iff hx.le).mp hnx)))]
 
 /-- For `a 0 = 0`, `x,τ > 0` and absolute convergence at `σ + τ`, the finite sum with

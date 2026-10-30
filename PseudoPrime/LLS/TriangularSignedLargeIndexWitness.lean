@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.Analysis.TriangularSignedLargeIndexNumerics
 public import PseudoPrime.LLS.TriangularSignedLargeFactorComparison
 
@@ -26,7 +27,7 @@ theorem exists_prime_factor_or_outside_triangular18_signed_large_index {q : ℕ}
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (282924 / 1000000 : ℝ) * (Real.log q) ^ 2 ∧
-        (p ∣ q ∨ ¬residueInSubgroup q H p) := by
+        (p ∣ q ∨ ¬NumberTheory.residueInSubgroup q H p) := by
   have hx := (Analysis.triangular18_signed_large_scale_bounds hlog).1
   have hh : (1000000000 : ℝ) ≤ (H.index : ℝ) := by exact_mod_cast hi
   exact

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+public import PseudoPrime.Analysis.MellinWeights
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
@@ -53,12 +53,12 @@ Pull the coefficient through the integral and split the positive ratio's complex
 This is the termwise input to the series-integral interchange. -/
 theorem logarithmicMellinTerm_integral (a : ℕ → ℂ) {x τ : ℝ} (hx : 0 < x) (hτ : 0 < τ) {n : ℕ}
     (hn : n ≠ 0) :
-    a n * mellinWeightTwo ((n : ℝ) / x) =
+    a n * Analysis.mellinWeightTwo ((n : ℝ) / x) =
       (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, logarithmicMellinTerm a x τ n y := by
   have hnpos : 0 < (n : ℝ) := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hn)
-  have hm := mellinInv_mellinWeightTwo_eq (σ := τ) hτ (div_pos hnpos hx)
+  have hm := Analysis.mellinInv_mellinWeightTwo_eq (σ := τ) hτ (div_pos hnpos hx)
   have hw :
-    mellinWeightTwo ((n : ℝ) / x) =
+    Analysis.mellinWeightTwo ((n : ℝ) / x) =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ,
           (((n : ℝ) / x : ℝ) : ℂ) ^ (-((τ : ℂ) + y * Complex.I)) *
@@ -70,7 +70,7 @@ theorem logarithmicMellinTerm_integral (a : ℕ → ℂ) {x τ : ℝ} (hx : 0 < 
   rw [← MeasureTheory.integral_const_mul]
   apply MeasureTheory.integral_congr_ae
   filter_upwards with y
-  rw [cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, Complex.ofReal_natCast]
+  rw [Analysis.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, Complex.ofReal_natCast]
   unfold logarithmicMellinTerm
   ring
 
@@ -79,7 +79,7 @@ Rewrite the established Mellin-kernel integrability using inverse powers.
 This supplies the integrable factor for coefficient terms. -/
 private theorem integrable_vertical_inverse_sq {τ : ℝ} (hτ : 0 < τ) :
     MeasureTheory.Integrable (fun y : ℝ ↦ (((τ : ℂ) + y * Complex.I) ^ 2)⁻¹) := by
-  have h := verticalIntegrable_mellinLogKernel hτ.ne'
+  have h := Analysis.verticalIntegrable_mellinLogKernel hτ.ne'
   unfold Complex.VerticalIntegrable at h
   simpa only [inv_pow] using h
 
@@ -185,14 +185,14 @@ The coefficient at zero vanishes. Termwise inversion and the summable integral-n
 justify interchange. This supports real shifts without a character-specific hypothesis. -/
 theorem mellinWeightTwo_tsum_eq_integral_LSeries (a : ℕ → ℂ) (ha : a 0 = 0) {x τ : ℝ} (hx : 0 < x)
     (hτ : 0 < τ) (hsum : LSeriesSummable a (τ : ℂ)) :
-    (∑' n : ℕ, a n * mellinWeightTwo ((n : ℝ) / x)) =
+    (∑' n : ℕ, a n * Analysis.mellinWeightTwo ((n : ℝ) / x)) =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ,
           LSeries a ((τ : ℂ) + y * Complex.I) * (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) /
             ((τ : ℂ) + y * Complex.I) ^ 2 := by
   have hterm :
     ∀ n : ℕ,
-      a n * mellinWeightTwo ((n : ℝ) / x) =
+      a n * Analysis.mellinWeightTwo ((n : ℝ) / x) =
         (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, logarithmicMellinTerm a x τ n y := by
     intro n
     rcases eq_or_ne n 0 with rfl | hn
@@ -244,7 +244,7 @@ vertical integral with the original L-series at sigma+tau+iy.
 Apply unshifted inversion to shifted coefficients and translate the series argument. -/
 theorem mellinWeightTwo_shifted_tsum_eq_integral_LSeries (a : ℕ → ℂ) (ha : a 0 = 0) (σ : ℝ)
     {x τ : ℝ} (hx : 0 < x) (hτ : 0 < τ) (hsum : LSeriesSummable a ((σ + τ : ℝ) : ℂ)) :
-    (∑' n : ℕ, a n * (n : ℂ) ^ (-(σ : ℂ)) * mellinWeightTwo ((n : ℝ) / x)) =
+    (∑' n : ℕ, a n * (n : ℂ) ^ (-(σ : ℂ)) * Analysis.mellinWeightTwo ((n : ℝ) / x)) =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ,
           LSeries a (((σ + τ : ℝ) : ℂ) + y * Complex.I) * (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) /
@@ -254,8 +254,8 @@ theorem mellinWeightTwo_shifted_tsum_eq_integral_LSeries (a : ℕ → ℂ) (ha :
     (LSeriesSummable_shiftedLSeriesCoefficient a σ (τ : ℂ)).mpr
       (by simpa only [Complex.ofReal_add] using hsum)
   rw [show
-      (fun n ↦ a n * (n : ℂ) ^ (-(σ : ℂ)) * mellinWeightTwo ((n : ℝ) / x)) =
-        (fun n ↦ shiftedLSeriesCoefficient a σ n * mellinWeightTwo ((n : ℝ) / x))
+      (fun n ↦ a n * (n : ℂ) ^ (-(σ : ℂ)) * Analysis.mellinWeightTwo ((n : ℝ) / x)) =
+        (fun n ↦ shiftedLSeriesCoefficient a σ n * Analysis.mellinWeightTwo ((n : ℝ) / x))
       from rfl,
     mellinWeightTwo_tsum_eq_integral_LSeries _ ha0 hx hτ hs]
   congr 1
@@ -273,15 +273,16 @@ finite logarithmic sum. The weight vanishes beyond x and becomes log(x/n) within
 This collapse needs no analytic convergence hypothesis. -/
 theorem mellinWeightTwo_tsum_eq_logarithmicWeightedSum (a : ℕ → ℂ) (ha : a 0 = 0) {x : ℝ}
     (hx : 0 < x) :
-    (∑' n : ℕ, a n * mellinWeightTwo ((n : ℝ) / x)) = logarithmicWeightedSum a x := by
-  have hvanish : ∀ n ∉ Finset.Ioc 0 ⌊x⌋₊, a n * mellinWeightTwo ((n : ℝ) / x) = 0 := by
+    (∑' n : ℕ, a n * Analysis.mellinWeightTwo ((n : ℝ) / x)) = logarithmicWeightedSum a x := by
+  have hvanish : ∀ n ∉ Finset.Ioc 0 ⌊x⌋₊, a n * Analysis.mellinWeightTwo ((n : ℝ) / x) = 0 := by
     intro n hn
     simp only [Finset.mem_Ioc, not_and, not_le] at hn
     rcases Nat.eq_zero_or_pos n with hn0 | hn0
     · rw [hn0, ha, zero_mul]
     · have hnxlt : x < n := (Nat.floor_lt hx.le).mp (hn hn0)
       have ht : 0 < (n : ℝ) / x := div_pos (by exact_mod_cast hn0) hx
-      rw [mellinWeightTwo_eq_ofReal_neg_log_min ht, min_eq_right ((one_le_div hx).mpr hnxlt.le),
+      rw [Analysis.mellinWeightTwo_eq_ofReal_neg_log_min ht,
+        min_eq_right ((one_le_div hx).mpr hnxlt.le),
         Real.log_one, neg_zero, Complex.ofReal_zero, mul_zero]
   rw [tsum_eq_sum hvanish, logarithmicWeightedSum]
   apply Finset.sum_congr rfl
@@ -291,7 +292,7 @@ theorem mellinWeightTwo_tsum_eq_logarithmicWeightedSum (a : ℕ → ℂ) (ha : a
   have ht : 0 < (n : ℝ) / x := div_pos hnpos hx
   have hlog : Real.log ((n : ℝ) / x) = -Real.log (x / (n : ℝ)) := by
     rw [← inv_div x (n : ℝ), Real.log_inv]
-  rw [mellinWeightTwo_eq_ofReal_neg_log_min ht,
+  rw [Analysis.mellinWeightTwo_eq_ofReal_neg_log_min ht,
     min_eq_left ((div_le_one hx).mpr ((Nat.le_floor_iff hx.le).mp hnx)), hlog, neg_neg]
 
 /-- Under convergence at sigma+tau, positive x and tau, and a vanishing coefficient at zero,
@@ -327,10 +328,11 @@ theorem logarithmicMellin_integrable_and_integral {τ x : ℝ} (hτ : 0 < τ) (h
   have hi := logarithmicMellinTerm_integral a hx0 hτ Nat.one_ne_zero
   simp only [logarithmicMellinTerm, a, ite_eq_left rfl, Nat.cast_one, Complex.one_cpow,
     one_mul] at hg hi
-  have hm : mellinWeightTwo ((1 : ℝ) / x) = (Real.log x : ℂ) := by
+  have hm : Analysis.mellinWeightTwo ((1 : ℝ) / x) = (Real.log x : ℂ) := by
     have ht : (1 : ℝ) / x ∈ Set.Ioc (0 : ℝ) 1 :=
       ⟨div_pos zero_lt_one hx0, (div_lt_one hx0).mpr hx |>.le⟩
-    rw [mellinWeightTwo, Set.indicator_of_mem ht, one_div, Real.log_inv, Complex.ofReal_neg,
+    rw [Analysis.mellinWeightTwo, Set.indicator_of_mem ht, one_div, Real.log_inv,
+      Complex.ofReal_neg,
       neg_neg]
   rw [hm] at hi
   exact ⟨hg, hi.symm⟩

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformSignedWitnessBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
 
@@ -34,7 +35,7 @@ theorem exists_prime_witness_of_uniform_unit_subgroup_cutoff {n : ℕ} {B : ℝ}
     (hbound :
       ∀ H : Subgroup (ZMod n)ˣ,
         H ≠ ⊤ →
-          ∃ p : ℕ, p.Prime ∧ ¬p ∣ n ∧ ¬LLS.PaperStatements.residueInSubgroup n H p ∧ (p : ℝ) ≤ B) :
+          ∃ p : ℕ, p.Prime ∧ ¬p ∣ n ∧ ¬NumberTheory.residueInSubgroup n H p ∧ (p : ℝ) ≤ B) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ B ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   obtain ⟨H, hH, hpass⟩ :=
     PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite

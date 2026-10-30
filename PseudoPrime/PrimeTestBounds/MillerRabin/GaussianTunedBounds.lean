@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GaussianTunedProfiles
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianTunedProfiles
 public import PseudoPrime.LLS.GammaSeedLogMoment
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianBudgetBranches
 
@@ -17,7 +17,7 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianBudgetBranches
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- Every profile cutoff exceeds the common floor needed to cover the 1000 prefix. -/
-theorem gaussianTuned_cutoff_floor (f : Analysis.GaussianTunedProfile) (L : ℝ) :
+theorem gaussianTuned_cutoff_floor (f : GaussianTunedProfile) (L : ℝ) :
     (6 / 5 : ℝ) * ((91 / 10) ^ 2) ^ 2 ≤ f.bound L := by
   have hr := f.radius_floor L
   have hs := (sq_le_sq₀ (by norm_num only : (0 : ℝ) ≤ (91 / 10) ^ 2) (sq_nonneg (f.root L))).mpr hr
@@ -25,7 +25,7 @@ theorem gaussianTuned_cutoff_floor (f : Analysis.GaussianTunedProfile) (L : ℝ)
 
 /-- Above logarithmic scale 63, each cutoff exceeds 15 L squared/32.
 The linear radius bound covers all local subgroup witness bounds. -/
-theorem gaussianTuned_bound_lower (f : Analysis.GaussianTunedProfile) {L : ℝ} (hL : 63 ≤ L) :
+theorem gaussianTuned_bound_lower (f : GaussianTunedProfile) {L : ℝ} (hL : 63 ≤ L) :
     (15 / 32 : ℝ) * L ^ 2 < f.bound L := by
   have hr := f.radius_linear hL
   have hpos : (0 : ℝ) ≤ (5 / 8) * L := by linarith only [hL]
@@ -35,22 +35,22 @@ theorem gaussianTuned_bound_lower (f : Analysis.GaussianTunedProfile) {L : ℝ} 
 
 /-- The old prefix supports low and bridge; the actual moment prefix supports
 middle and upper. Each bound applies to the original finite resolvent sum. -/
-theorem gaussianTuned_prefix (f : Analysis.GaussianTunedProfile)
+theorem gaussianTuned_prefix (f : GaussianTunedProfile)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     f.prefixValue ≤ ∑ j ∈ Finset.Ioc 0 1000, Analysis.gaussianResolventMangoldtWeight j := by
   cases f
-  · simpa only [Analysis.GaussianTunedProfile.prefixValue, Nat.floor_ofNat] using
+  · simpa only [GaussianTunedProfile.prefixValue, Nat.floor_ofNat] using
       LLS.gaussian_prefix1000_recovered hGRH.riemann (le_refl (1000 : ℝ))
-  · simpa only [Analysis.GaussianTunedProfile.prefixValue, Nat.floor_ofNat] using
+  · simpa only [GaussianTunedProfile.prefixValue, Nat.floor_ofNat] using
       LLS.gaussian_prefix1000_recovered hGRH.riemann (le_refl (1000 : ℝ))
-  · simpa only [Analysis.GaussianTunedProfile.prefixValue, Nat.floor_ofNat] using
+  · simpa only [GaussianTunedProfile.prefixValue, Nat.floor_ofNat] using
       LLS.gaussian_prefix1000_moment hGRH.riemann (le_refl (1000 : ℝ))
-  · simpa only [Analysis.GaussianTunedProfile.prefixValue, Nat.floor_ofNat] using
+  · simpa only [GaussianTunedProfile.prefixValue, Nat.floor_ofNat] using
       LLS.gaussian_prefix1000_moment hGRH.riemann (le_refl (1000 : ℝ))
 
 /-- The generic large-index consumer, actual prefix and new profile budget
 yield a rejecting prime under the tuned cutoff for every sufficiently large index. -/
-theorem gaussianTuned_witness_large (f : Analysis.GaussianTunedProfile) {n : ℕ} [NeZero n]
+theorem gaussianTuned_witness_large (f : GaussianTunedProfile) {n : ℕ} [NeZero n]
     (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
     (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
@@ -68,14 +68,14 @@ theorem gaussianTuned_witness_large (f : Analysis.GaussianTunedProfile) {n : ℕ
       _ hnOdd hnlarge H hi hHpass hGRH
   intro m hm
   exact
-    Analysis.gaussianLow_index_error (f.root_pos _) (sq_pos_of_pos (f.root_pos _)) hm
+    gaussianLow_index_error (f.root_pos _) (sq_pos_of_pos (f.root_pos _)) hm
       (f.large_cap (f.root_floor _) (f.budget h0) (le_refl (Real.log n)))
 
 /-- Under GRH, an index-four pass-containing subgroup with conductor at most
 2 log n has an actual rejecting prime below the tuned single-root cutoff. Scale the comparison
 radius by 7559/10000 while retaining width k/s. Both the strict residual and the main-term
 budgets use 204/5. -/
-theorem gaussianTuned_witness_four (f : Analysis.GaussianTunedProfile) {n : ℕ} [NeZero n]
+theorem gaussianTuned_witness_four (f : GaussianTunedProfile) {n : ℕ} [NeZero n]
     (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -122,7 +122,7 @@ theorem gaussianTuned_witness_four (f : Analysis.GaussianTunedProfile) {n : ℕ}
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         ((7559 / 10000 : ℝ) * r) ≤
-      Analysis.gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
         4 *
           (1 / (10 * h) +
             ((21 / (10 * h) + 1839 / 1000) / ((7559 / 10000 : ℝ) * r)) * Real.exp (1 / 16 : ℝ)) +
@@ -132,23 +132,23 @@ theorem gaussianTuned_witness_four (f : Analysis.GaussianTunedProfile) {n : ℕ}
             (((7559 / 10000 : ℝ) * r) ^ 2) := by
     simpa only [hindex, hi, Nat.reduceSub, Nat.cast_ofNat] using hcmp
   have hscalar :=
-    Analysis.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 7559 / 10000)
+    LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 7559 / 10000)
       (by norm_num only : (0 : ℝ) < 2 / 5) (show h = (2 / 5 : ℝ) / s from rfl) hh1
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
-      (by norm_num only [Analysis.gaussianMRRefinedConductor]) hcmp'
+      (by norm_num only [gaussianMRRefinedConductor]) hcmp'
   have hG := f.budget (show 0 ≤ L by linarith only [hL])
   have herror := f.four_error (f.root_floor L) hG (le_refl (Real.log n))
   have hmargin := f.four_margin (f.root_floor L)
-  norm_num only [Analysis.gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsEndpoint,
-    Analysis.gaussianMRRefinedWidth] at hscalar hG herror hmargin
+  norm_num only [gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsEndpoint,
+    gaussianMRRefinedWidth] at hscalar hG herror hmargin
   rw [hs2] at hscalar
-  dsimp only [s, r, L, Analysis.GaussianTunedProfile.radius] at hscalar hG herror hmargin
+  dsimp only [s, r, L, GaussianTunedProfile.radius] at hscalar hG herror hmargin
   nlinarith only [hscalar, hG, herror, hmargin]
 
 /-- For log n>=63 and q squared<=10^9*n, the local subgroup cutoff fits
 the recovered-prefix single-root bound. Combine log q<=2 log n/3, the common profile floor and
 the quadratic lower bound; keep the ambient passing-residue containment upstream. -/
-theorem gaussianTuned_local (f : Analysis.GaussianTunedProfile) {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
+theorem gaussianTuned_local (f : GaussianTunedProfile) {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
     (hsize : q ^ 2 ≤ 10 ^ 9 * n) (hL : 63 ≤ Real.log n) :
     max (3000 : ℝ) (Real.log q ^ 2) ≤ f.bound (Real.log n) := by
   have hlog := Analysis.mr_local_log_le_of_square_le hn hq hsize
@@ -162,7 +162,7 @@ theorem gaussianTuned_local (f : Analysis.GaussianTunedProfile) {n q : ℕ} (hn 
 
 /-- Under GRH and log n at least 63, every odd composite has a rejecting prime
 under the profile cutoff. Reuse the shared large/local/uniform-triple classification. -/
-theorem exists_prime_gaussianTuned (f : Analysis.GaussianTunedProfile) {n : ℕ} (ho : Odd n)
+theorem exists_prime_gaussianTuned (f : GaussianTunedProfile) {n : ℕ} (ho : Odd n)
     (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
@@ -181,7 +181,7 @@ theorem exists_prime_gaussianTuned (f : Analysis.GaussianTunedProfile) {n : ℕ}
 
 /-- Extract the least rejecting prime from the all-input actual witness and
 preserve the tuned profile cutoff without factorization assumptions. -/
-theorem exists_least_gaussianTuned (f : Analysis.GaussianTunedProfile) {n : ℕ} (ho : Odd n)
+theorem exists_least_gaussianTuned (f : GaussianTunedProfile) {n : ℕ} (ho : Odd n)
     (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
@@ -199,18 +199,18 @@ theorem exists_least_gaussianTunedFamily {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianTunedFamily (Real.log n) ∧
+        (p : ℝ) ≤ gaussianTunedFamily (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   obtain ⟨p, hp, hb, hr, hl⟩ := exists_least_gaussianTuned .low ho hc hGRH hL
   obtain ⟨q0, hq0, hqb0, hqr0⟩ := exists_prime_gaussianTuned .bridge ho hc hGRH hL
-  have h0 : (p : ℝ) ≤ Analysis.GaussianTunedProfile.bridge.bound (Real.log n) :=
+  have h0 : (p : ℝ) ≤ GaussianTunedProfile.bridge.bound (Real.log n) :=
     (Nat.cast_le.mpr (hl q0 hq0 hqr0)).trans hqb0
   obtain ⟨q1, hq1, hqb1, hqr1⟩ := exists_prime_gaussianTuned .middle ho hc hGRH hL
-  have h1 : (p : ℝ) ≤ Analysis.GaussianTunedProfile.middle.bound (Real.log n) :=
+  have h1 : (p : ℝ) ≤ GaussianTunedProfile.middle.bound (Real.log n) :=
     (Nat.cast_le.mpr (hl q1 hq1 hqr1)).trans hqb1
   obtain ⟨q2, hq2, hqb2, hqr2⟩ := exists_prime_gaussianTuned .upper ho hc hGRH hL
-  have h2 : (p : ℝ) ≤ Analysis.GaussianTunedProfile.upper.bound (Real.log n) :=
+  have h2 : (p : ℝ) ≤ GaussianTunedProfile.upper.bound (Real.log n) :=
     (Nat.cast_le.mpr (hl q2 hq2 hqr2)).trans hqb2
   exact ⟨p, hp, le_min hb (le_min h0 (le_min h1 h2)), hr, hl⟩
 
@@ -220,7 +220,7 @@ theorem exists_prime_gaussianTunedFamily {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianTunedFamily (Real.log n) ∧
+        (p : ℝ) ≤ gaussianTunedFamily (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
   (exists_least_gaussianTunedFamily ho hc hGRH hL).imp fun _ h => ⟨h.1, h.2.1, h.2.2.1⟩
 
@@ -230,12 +230,12 @@ theorem exists_least_gaussianTunedEarlyFamily {n : ℕ} (ho : Odd n) (hc : ¬n.P
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianTunedEarlyFamily (Real.log n) ∧
+        (p : ℝ) ≤ gaussianTunedEarlyFamily (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   obtain ⟨p, hp, hb, hr, hl⟩ := exists_least_gaussianTuned .low ho hc hGRH hL
   obtain ⟨q0, hq0, hqb0, hqr0⟩ := exists_prime_gaussianTuned .bridge ho hc hGRH hL
-  have h0 : (p : ℝ) ≤ Analysis.GaussianTunedProfile.bridge.bound (Real.log n) :=
+  have h0 : (p : ℝ) ≤ GaussianTunedProfile.bridge.bound (Real.log n) :=
     (Nat.cast_le.mpr (hl q0 hq0 hqr0)).trans hqb0
   exact ⟨p, hp, le_min hb h0, hr, hl⟩
 
@@ -245,7 +245,7 @@ theorem exists_prime_gaussianTunedEarlyFamily {n : ℕ} (ho : Odd n) (hc : ¬n.P
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianTunedEarlyFamily (Real.log n) ∧
+        (p : ℝ) ≤ gaussianTunedEarlyFamily (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
   (exists_least_gaussianTunedEarlyFamily ho hc hGRH hL).imp fun _ h => ⟨h.1, h.2.1, h.2.2.1⟩
 

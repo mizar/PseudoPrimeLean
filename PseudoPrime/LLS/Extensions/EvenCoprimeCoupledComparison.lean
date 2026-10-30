@@ -202,7 +202,7 @@ theorem exists_prime_coprime_ne_one_of_retainedEvenCoprimeGap {q : ℕ} [NeZero 
     ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ χ p ≠ 1 ∧ (p : ℝ) ≤ y ^ 2 := by
   exact
     exists_prime_coprime_ne_one_of_evenCoprimeGap χ hne heven hGRH hy
-      (Analysis.primitiveReciprocalEvenMainError_le_neg_179_div_200 (Analysis.sq_ge_64_of_ge_8 hy))
+      (primitiveReciprocalEvenMainError_le_neg_179_div_200 (Analysis.sq_ge_64_of_ge_8 hy))
       hgap
 
 /-- For roots at least eight, the reciprocal cost multiplier is positive.

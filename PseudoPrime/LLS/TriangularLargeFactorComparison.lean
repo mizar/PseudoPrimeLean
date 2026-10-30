@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.TriangularFiniteComparison
 
 /-! # Large-factor alpha-18 comparison without a prime-list certificate -/
@@ -48,7 +49,7 @@ as arithmetic costs. Bound the conductor sum and prime geometric correction. -/
 theorem triangular18_comparison_of_large_prime_factors {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 < x)
     (hlarge : ∀ p ∈ q.primeFactors, x ≤ (p : ℝ))
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
           36 * Real.log q / (Real.sqrt x - 1)) ≤
@@ -83,7 +84,7 @@ theorem exists_prime_factor_or_outside_of_triangular18_gap {q : ℕ} [NeZero q]
         (H.index : ℝ) *
           (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
             36 * Real.log q / (Real.sqrt x - 1))) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ (p ∣ q ∨ ¬residueInSubgroup q H p) := by
+    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ (p ∣ q ∨ ¬NumberTheory.residueInSubgroup q H p) := by
   classical
   by_contra hnone
   have hlarge (p : ℕ) (hp : p ∈ q.primeFactors) : x ≤ (p : ℝ) := by
@@ -93,7 +94,7 @@ theorem exists_prime_factor_or_outside_of_triangular18_gap {q : ℕ} [NeZero q]
         ⟨p, Nat.prime_of_mem_primeFactors hp, (lt_of_not_ge hlt).le,
           Or.inl (Nat.dvd_of_mem_primeFactors hp)⟩
   have hsmall (p : ℕ) (hp : p.Prime) (_ : ¬p ∣ q) (hle : (p : ℝ) ≤ x) :
-    residueInSubgroup q H p := by
+    NumberTheory.residueInSubgroup q H p := by
     by_contra hout
     exact hnone ⟨p, hp, hle, Or.inr hout⟩
   exact (not_le_of_gt hgap) (triangular18_comparison_of_large_prime_factors H hGRH hx hlarge hsmall)

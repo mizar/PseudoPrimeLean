@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaKernelMass
 public import PseudoPrime.LLS.TheoreticalKernelSpecialization
 public import PseudoPrime.LLS.TheoreticalKernelNumerics
@@ -34,7 +35,7 @@ theorem triangular_large_index_prime_bound (h : ℕ) (hh : 28 ≤ h)
           ∀ H : Subgroup (ZMod q)ˣ,
             H.index = h →
               ∃ p : ℕ,
-                IsLeast (primesOutside q H) p ∧
+                IsLeast (NumberTheory.primesOutside q H) p ∧
                   (p : ℝ) ≤
                     (((1 + ε) * Real.log (2 * (h : ℝ)) * ((h : ℝ) - 1) * Real.log q) /
                         (2 * (h : ℝ) * (Real.log (2 * (h : ℝ)) - 4))) ^
@@ -93,7 +94,7 @@ theorem triangular_large_index_asymptotic_prime_bound
           ∀ H : Subgroup (ZMod q)ˣ,
             H.index = h →
               ∃ p : ℕ,
-                IsLeast (primesOutside q H) p ∧
+                IsLeast (NumberTheory.primesOutside q H) p ∧
                   (p : ℝ) <
                     (1 / 4 + ε) * (1 - 1 / (h : ℝ)) ^ 2 *
                       (Real.log (2 * (h : ℝ)) / (Real.log (2 * (h : ℝ)) - 4)) ^ 2 *
@@ -158,7 +159,8 @@ theorem gamma_cutoff_bound_of_coefficient
               H.index = h →
                 ∀ X : ℝ,
                   0 < X →
-                    (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) →
+                    (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H
+                      p) →
                     X < c * (Real.log q) ^ 2 := by
   obtain ⟨Q, hQ⟩ :=
     gamma_kernel_inequality MellinKernel.proposition61 hg h hh l hl (1 / 10000) (by norm_num only)
@@ -188,7 +190,8 @@ theorem gamma_prime_bound_of_certificate
           Q ≤ q →
             ∀ H : Subgroup (ZMod q)ˣ,
               H.index = h →
-                ∃ p : ℕ, IsLeast (primesOutside q H) p ∧ (p : ℝ) ≤ c * (Real.log q) ^ 2 := by
+                ∃ p : ℕ, IsLeast (NumberTheory.primesOutside q H) p ∧ (p : ℝ) ≤ c * (Real.log q) ^
+                  2 := by
   obtain ⟨Q, hQ2, hQ⟩ :=
     gamma_cutoff_bound_of_coefficient hg h hh hl hd
       (gamma_mass_coefficient_of_certificate h hh hl hc)
@@ -213,7 +216,8 @@ theorem gamma_prime_bound_659 (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannH
             ∀ H : Subgroup (ZMod q)ˣ,
               H.index = h →
                 ∃ p : ℕ,
-                  IsLeast (primesOutside q H) p ∧ (p : ℝ) ≤ (659 / 1000) * (Real.log q) ^ 2 := by
+                  IsLeast (NumberTheory.primesOutside q H) p ∧ (p : ℝ) ≤ (659 / 1000) * (Real.log
+                    q) ^ 2 := by
   have hhR : (4 : ℝ) ≤ h := Nat.cast_le.mpr hh
   have he := gamma_four_exp_bound
   have hd : 0 < (h : ℝ) - 1 - h * Real.exp (-(73 / 40 : ℝ)) := by
@@ -237,7 +241,7 @@ theorem gamma_prime_bound_659_with_finite_remainder
         ∀ H : Subgroup (ZMod m)ˣ,
           H.index = h →
             ∃ r : ℕ,
-              IsLeast (primesOutside m H) r ∧
+              IsLeast (NumberTheory.primesOutside m H) r ∧
                 (r : ℝ) ≤ max (B : ℝ) ((659 / 1000) * (Real.log m) ^ 2) := by
   obtain ⟨Q, _, hQ⟩ := gamma_prime_bound_659 hg h hh
   obtain ⟨B, hB⟩ := exists_uniform_least_prime_bound_of_modulus_le Q
@@ -283,7 +287,7 @@ theorem triangular_small_index_asymptotic_prime_bound
           ∀ H : Subgroup (ZMod q)ˣ,
             H.index = h →
               ∃ p : ℕ,
-                IsLeast (primesOutside q H) p ∧
+                IsLeast (NumberTheory.primesOutside q H) p ∧
                   (p : ℝ) <
                     (1 / 4 + ε) * (1 - 1 / (h : ℝ)) ^ 2 *
                       (Real.log (2 * (h : ℝ)) / (Real.log (2 * (h : ℝ)) - 4)) ^ 2 *
@@ -331,7 +335,7 @@ theorem triangular_asymptotic_prime_bound_of_index_ge_seven
           ∀ H : Subgroup (ZMod q)ˣ,
             H.index = h →
               ∃ p : ℕ,
-                IsLeast (primesOutside q H) p ∧
+                IsLeast (NumberTheory.primesOutside q H) p ∧
                   (p : ℝ) <
                     (1 / 4 + ε) * (1 - 1 / (h : ℝ)) ^ 2 *
                       (Real.log (2 * (h : ℝ)) / (Real.log (2 * (h : ℝ)) - 4)) ^ 2 *

@@ -123,8 +123,8 @@ candidates together with the low-prime base. Resolve the ordered interval guards
 theorem refinedSelected_eq_before101 {n : ℕ} (hL : 63 ≤ Real.log n) (hU : Real.log n < 101) :
     refinedSelectedEnvelope n =
       min (lowPrimeTightSelected n)
-        (min (Analysis.gaussianRecoveredBound (Real.log n))
-          (Analysis.gaussianRecoveredSeeded (Real.log n))) := by
+        (min (gaussianRecoveredBound (Real.log n))
+          (gaussianRecoveredSeeded (Real.log n))) := by
   simp only [refinedSelectedEnvelope, refinedGuardSelected, ite_eq_right (not_lt.mpr hL),
     ite_eq_left hU]
 
@@ -134,9 +134,9 @@ theorem refinedSelected_eq_analytic {n : ℕ} (hL : 101 ≤ Real.log n)
     (hU : Real.log n < 1100000000000) :
     refinedSelectedEnvelope n =
       min (lowPrimeTightSelected n)
-        (min (Analysis.gaussianRecoveredBound (Real.log n))
+        (min (gaussianRecoveredBound (Real.log n))
           (min (gammaRecoveredBound (Real.log n))
-            (Analysis.gaussianRecoveredSeeded (Real.log n)))) := by
+            (gaussianRecoveredSeeded (Real.log n)))) := by
   have h63 : ¬Real.log n < 63 := by linarith only [hL]
   simp only [refinedSelectedEnvelope, refinedGuardSelected, ite_eq_right h63,
     ite_eq_right (not_lt.mpr hL), ite_eq_left hU]
@@ -147,9 +147,9 @@ theorem refinedSelected_eq_earlier {n : ℕ} (hL : 1100000000000 ≤ Real.log n)
     (hU : Real.log n < 2000000000000) :
     refinedSelectedEnvelope n =
       min (lowPrimeTightSelected n)
-        (min (Analysis.gaussianRecoveredBound (Real.log n))
+        (min (gaussianRecoveredBound (Real.log n))
           (min (gammaRecoveredBound (Real.log n))
-            (min (Analysis.gaussianRecoveredSeeded (Real.log n))
+            (min (gaussianRecoveredSeeded (Real.log n))
               ((71 / 250) * Real.log n ^ 2)))) := by
   have h63 : ¬Real.log n < 63 := by linarith only [hL]
   have h101 : ¬Real.log n < 101 := by linarith only [hL]
@@ -162,9 +162,9 @@ logarithm is nonnegative, so the coefficient comparison is valid throughout the 
 theorem refinedSelected_eq_high {n : ℕ} (hL : 2000000000000 ≤ Real.log n) :
     refinedSelectedEnvelope n =
       min (lowPrimeTightSelected n)
-        (min (Analysis.gaussianRecoveredBound (Real.log n))
+        (min (gaussianRecoveredBound (Real.log n))
           (min (gammaRecoveredBound (Real.log n))
-            (min (Analysis.gaussianRecoveredSeeded (Real.log n))
+            (min (gaussianRecoveredSeeded (Real.log n))
               ((28237 / 100000) * Real.log n ^ 2)))) := by
   have h63 : ¬Real.log n < 63 := by linarith only [hL]
   have h101 : ¬Real.log n < 101 := by linarith only [hL]
@@ -205,14 +205,14 @@ strictly improve under the refined selection. The exact switch hypotheses exclud
 plateaus, and imply the certified seeded entrance. -/
 theorem refinedSelected_seeded_strict {n : ℕ} (hn : 1 < n) (hU : Real.log n < 1500000000000)
     (hstrict :
-      (Analysis.gaussianSeededSwitch false 35000 < Real.log n ∧
-          Real.log n < Analysis.gaussianSeededSwitch false 50000) ∨
-        Analysis.gaussianSeededSwitch true 50000 < Real.log n) :
+      (gaussianSeededSwitch false 35000 < Real.log n ∧
+          Real.log n < gaussianSeededSwitch false 50000) ∨
+        gaussianSeededSwitch true 50000 < Real.log n) :
     refinedSelectedEnvelope n < nextSelectedEnvelope n := by
   have h63 : (63 : ℝ) ≤ Real.log n := by
     rcases hstrict with h | h
-    · linarith only [h.1, Analysis.gaussianSeeded_switch35_bounds.1]
-    · linarith only [h, (Analysis.gaussianSeeded_switch50_bounds true).1]
+    · linarith only [h.1, gaussianSeeded_switch35_bounds.1]
+    · linarith only [h, (gaussianSeeded_switch50_bounds true).1]
   rw [← refined_eq_selected hn]
   exact (refined_le_seeded h63).trans_lt (recoveredSeeded_lt_nextSelected hn hU hstrict)
 

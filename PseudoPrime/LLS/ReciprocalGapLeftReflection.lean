@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.ReciprocalGapSignedGammaBounds
 public import PseudoPrime.AnalyticNumberTheory.General.TwoPoleMiddleMellin
 
@@ -20,14 +21,14 @@ project inverse Mellin integral equals the negative middle-strip profile.
 Translate the general Mellin inversion convention. This evaluates the actual left contour. -/
 theorem inverseMellin_reciprocalGap_middle {h c u : ℝ} (hh : 0 < h) (hcl : -1 / 2 - h < c)
     (hcu : c < -1 / 2) (hu : 0 < u) :
-    inverseMellin (Analysis.reciprocalGapFunction h) c u =
+    Analysis.inverseMellin (Analysis.reciprocalGapFunction h) c u =
       AnalyticNumberTheory.General.twoPoleMiddleWeight (1 / 2) h u := by
-  change inverseMellin (Analysis.twoPoleFunction (1 / 2) (1 / 2 + h)) c u = _
+  change Analysis.inverseMellin (Analysis.twoPoleFunction (1 / 2) (1 / 2 + h)) c u = _
   rw [←
     AnalyticNumberTheory.General.mellinInv_twoPoleMiddleWeight hh
       (show c + 1 / 2 < 0 by linarith only [hcu]) (show 0 < c + 1 / 2 + h by linarith only [hcl])
       hu]
-  unfold inverseMellin mellinInv
+  unfold Analysis.inverseMellin mellinInv
   rw [Complex.real_smul]
   congr 1
   apply MeasureTheory.integral_congr_ae
@@ -49,7 +50,7 @@ theorem reciprocalGap_left_kernel_integral {h c x : ℝ} (hh : 0 < h) (hcl : -1 
     have hdiv : (1 : ℝ) / x ≤ 1 := (div_le_one hx0).mpr hx
     simpa only [one_div] using hdiv
   have hm := inverseMellin_reciprocalGap_middle hh hcl hcu (inv_pos.mpr hx0)
-  unfold inverseMellin at hm
+  unfold Analysis.inverseMellin at hm
   simp only [Complex.ofReal_inv, Complex.cpow_neg, Complex.inv_cpow_ofReal_nonneg hx0.le,
     inv_inv] at hm
   rw [AnalyticNumberTheory.General.twoPoleMiddleWeight_small hh (inv_pos.mpr hx0) hi,

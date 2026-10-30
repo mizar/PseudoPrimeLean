@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.CosetRadiusComparison
 
 /-!
@@ -138,7 +139,7 @@ private theorem coset_reciprocal_endpoint_small {x : ℝ} (hx : 1000000000 ≤ x
 theorem coset_coarse_bound_of_no_prime
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} [NeZero q]
     (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ) (hh : 1 < H.index) (a : (ZMod q)ˣ) {x : ℝ}
-    (hx : 1000000000 ≤ x) (hno : ∀ p : ℕ, p ∈ primesInCoset q H a → ¬(p : ℝ) ≤ x) :
+    (hx : 1000000000 ≤ x) (hno : ∀ p : ℕ, p ∈ NumberTheory.primesInCoset q H a → ¬(p : ℝ) ≤ x) :
     Real.sqrt x ≤
       ((H.index : ℝ) - 1) * Real.log q + (5 / 4 : ℝ) * ((H.index : ℝ) + 1) +
         (7 / 2 : ℝ) * Real.log x +

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.TriangularDualScaleArithmeticBounds
 
 /-! # Finite principal comparison from the signed dual-scale formula -/
@@ -21,7 +22,7 @@ the primitive average and apply the arithmetic-only dual bound. Gamma terms at b
 scales and scale-one arithmetic deductions are retained for later numerical evaluation. -/
 theorem triangular18_finite_principal_le_dual_signed {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable
     letI : ∀ i : NumberTheory.subgroupAnnihilator H, NeZero i.val.conductor := fun i ↦
       ⟨i.val.conductor_ne_zero⟩

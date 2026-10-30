@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.TheoreticalKernelProfiles
 public import PseudoPrime.LLS.TriangularKernelIdentities
 public import PseudoPrime.LLS.TriangularKernel
@@ -36,7 +37,7 @@ theorem triangular_kernel_inequality (hp : lls_proposition61) (α : ℝ) (hα : 
             H.index = h →
               ∀ X : ℝ,
                 0 < X →
-                  (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) →
+                  (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) →
                   triangularKernelCoefficient h α * Real.sqrt X ≤
                     (1 + ε) * (2 * α * ((h : ℝ) - 1)) * Real.log q := by
   let K := triangularMellinKernel hα
@@ -73,7 +74,7 @@ theorem gamma_kernel_inequality (hp : lls_proposition61)
             H.index = h →
               ∀ X : ℝ,
                 0 < X →
-                  (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) →
+                  (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) →
                   ((h : ℝ) - 1 - h * Real.exp (-lambda)) * Real.sqrt X ≤
                     (1 + ε) * Real.sqrt lambda * ((h : ℝ) - 1) * Real.log q *
                       gammaMellinKernel.mass := by
@@ -108,7 +109,7 @@ theorem triangular_large_index_cutoff_bound (hp : lls_proposition61) (h : ℕ) (
             H.index = h →
               ∀ X : ℝ,
                 0 < X →
-                  (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) →
+                  (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) →
                   X ≤
                     (((1 + ε) * Real.log (2 * (h : ℝ)) * ((h : ℝ) - 1) * Real.log q) /
                         (2 * (h : ℝ) * (Real.log (2 * (h : ℝ)) - 4))) ^

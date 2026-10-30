@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaSubgroupComparison
 public import PseudoPrime.LLS.GammaTruncatedBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ExponentialCommonFactorCountBounds
@@ -74,7 +75,8 @@ principal bound with the signed annihilator comparison, keeping the local loss. 
 theorem gamma_subgroup_comparison_log_two_thirds {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x lambda : ℝ} (hx : 1 ≤ x) (hl : 0 ≤ lambda) (hcut : 1 ≤ lambda * x) (hL : 1 < Real.log q)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     (H.index : ℝ) *
         (Real.sqrt x * (1 - Real.exp (-lambda)) - 13 * x ^ (1 / 4 : ℝ) -
           ((Real.log q) ^ (2 / 3 : ℝ) + (3 / 2 : ℝ) * Real.log q / Real.log (Real.log q)) *
@@ -108,11 +110,11 @@ theorem exists_prime_outside_of_gamma_split_gap {q : ℕ} [NeZero q] (hq : 20000
             ((Real.log q) ^ (2 / 3 : ℝ) + (3 / 2 : ℝ) * Real.log q / Real.log (Real.log q)) *
                 Real.log (lambda * x) /
               Real.sqrt x)) :
-    ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ (p : ℝ) ≤ lambda * x ∧ ¬residueInSubgroup q H p := by
+    ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ (p : ℝ) ≤ lambda * x ∧ ¬NumberTheory.residueInSubgroup q H p := by
   classical
   by_contra hnone
   have hsmall (p : ℕ) (hp : p.Prime) (hd : ¬p ∣ q) (hle : (p : ℝ) ≤ lambda * x) :
-    residueInSubgroup q H p := by
+    NumberTheory.residueInSubgroup q H p := by
     by_contra hout
     exact hnone ⟨p, hp, hd, hle, hout⟩
   exact

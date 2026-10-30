@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.TriangularGammaInteriorBounds
 public import PseudoPrime.LLS.TriangularDualScalePrincipalComparison
 
@@ -28,7 +29,7 @@ The conductor profile and scale-one arithmetic deductions remain in the comparis
 theorem triangular18_finite_principal_le_dual_interior {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
     (hlog : Real.log x ≤ 36)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable
     letI : ∀ i : NumberTheory.subgroupAnnihilator H, NeZero i.val.conductor := fun i ↦
       ⟨i.val.conductor_ne_zero⟩

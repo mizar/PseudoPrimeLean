@@ -6,9 +6,12 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.TriangularArithmeticCorrection
-public import PseudoPrime.LLS.MellinKernelPrimitiveSupport
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CommonFactorPrimePowerReindex
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
 
 /-! # Explicit logarithmic alpha-18 level corrections -/
 

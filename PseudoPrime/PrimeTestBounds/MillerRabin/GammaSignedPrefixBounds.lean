@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaSignedPrefixCharacterBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaConductorFreeBounds
 public import PseudoPrime.PrimeTest.MillerRabin.SignSubgroupIndex
@@ -75,7 +76,7 @@ theorem exists_prime_witness_of_signed_prefix_gap {n Q : ℕ} (hn : 1 < n) (hnOd
   obtain ⟨H, hH, hHpass⟩ :=
     PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
   have hsmall :
-    ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p :=
+    ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.residueInSubgroup n H p :=
     fun p hp hpb ↦ hHpass (p : ZMod n) (hpass p hp hpb)
   have hu :=
     LLS.PaperStatements.gamma_primitive_average_re_le_even_prime_prefix hQ hnQ H hGRH
@@ -120,7 +121,7 @@ theorem exists_prime_witness_of_signed_prefix_gap_index_four {n : ℕ} [NeZero n
     by_contra hfail
     exact hnone ⟨p, hp, hbound, hfail⟩
   have hsmall :
-    ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p :=
+    ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.residueInSubgroup n H p :=
     fun p hp hpb ↦ hHpass (p : ZMod n) (hpass p hp hpb)
   have hu :=
     LLS.PaperStatements.gamma_primitive_average_re_le_even_prime_prefix hQ le_rfl H hGRH

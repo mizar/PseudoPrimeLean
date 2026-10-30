@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.MellinResolvent
 
 /-! # Resolvent inversion at every positive argument -/
@@ -20,7 +21,8 @@ This handles inverse scales below one. -/
 theorem mellinResolventWeight_eq_zero_of_one_lt (α : ℂ) {t : ℝ} (ht : 1 < t) :
     mellinResolventWeight α t = 0 := by
   have hn : t ∉ Set.Ioc (0 : ℝ) 1 := fun h ↦ (not_le_of_gt ht) h.2
-  simp only [mellinResolventWeight, mellinWeightZero, mellinWeightTwo, Set.indicator_of_notMem hn,
+  simp only [mellinResolventWeight, Analysis.mellinWeightZero, Analysis.mellinWeightTwo,
+    Set.indicator_of_notMem hn,
     mul_zero, sub_zero]
 
 /-- For an argument greater than one, the resolvent weight is continuous.
@@ -65,7 +67,8 @@ theorem continuousAt_mellinResolventWeight_one (α : ℂ) :
   by_cases hu1 : u ≤ 1
   · have hi : u ∈ Set.Ioc (0 : ℝ) 1 := ⟨hu, hu1⟩
     rw [Set.piecewise_eq_of_mem (Set.Iic (1 : ℝ)) f (fun _ ↦ (0 : ℂ)) hu1]
-    simp only [mellinResolventWeight, mellinWeightZero, mellinWeightTwo, Set.indicator_of_mem hi, f]
+    simp only [mellinResolventWeight, Analysis.mellinWeightZero, Analysis.mellinWeightTwo,
+      Set.indicator_of_mem hi, f]
   · rw [Set.piecewise_eq_of_notMem (Set.Iic (1 : ℝ)) f (fun _ ↦ (0 : ℂ)) hu1]
     exact mellinResolventWeight_eq_zero_of_one_lt α (lt_of_not_ge hu1)
 

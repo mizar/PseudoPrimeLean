@@ -32,7 +32,7 @@ noncomputable def improvedWitnessEnvelope (n : ℕ) : ℝ :=
         (min (if L ≤ 47 / 4 then 67 else B)
           (min (if 45 / 4 ≤ L then LLS.PaperStatements.endpointFourStepCutoff L else B)
             (min (if 100 ≤ L then gammaSharpBound L else B)
-              (min (if 63 ≤ L then Analysis.gaussianFloorSelected L else B)
+              (min (if 63 ≤ L then gaussianFloorSelected L else B)
                 (if 2000000000000 ≤ L then (282924 / 1000000 : ℝ) * L ^ 2 else B)))))))
 
 /-- For every natural n, the improved envelope is at most the compatible envelope.
@@ -95,11 +95,11 @@ theorem exists_least_improvedWitness {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : �
       exact hb
   have hgauss :
     (p : ℝ) ≤
-      (if 63 ≤ Real.log n then Analysis.gaussianFloorSelected (Real.log n)
+      (if 63 ≤ Real.log n then gaussianFloorSelected (Real.log n)
       else selectedWitnessEnvelope n) := by
     by_cases h : 63 ≤ Real.log n
     · rw [ite_eq_left h]
-      rw [← Analysis.gaussianFloor_min_eq_selected h]
+      rw [← gaussianFloor_min_eq_selected h]
       exact transfer (exists_prime_gaussianClippedEnvelope ho hc hGRH h)
     · rw [ite_eq_right h]
       exact hb
@@ -194,10 +194,10 @@ theorem improved_le_sharp {n : ℕ} (h : 100 ≤ Real.log n) :
 /-- On its proved guard, this candidate bounds the improved envelope from above.
 Project the corresponding minimum entry. This supports interval comparisons and strict gains. -/
 theorem improved_le_gaussian {n : ℕ} (h : 63 ≤ Real.log n) :
-    improvedWitnessEnvelope n ≤ Analysis.gaussianFloorSelected (Real.log n) := by
+    improvedWitnessEnvelope n ≤ gaussianFloorSelected (Real.log n) := by
   have hm :
     improvedWitnessEnvelope n ≤
-      (if 63 ≤ Real.log n then Analysis.gaussianFloorSelected (Real.log n)
+      (if 63 ≤ Real.log n then gaussianFloorSelected (Real.log n)
       else selectedWitnessEnvelope n) := by
     dsimp only [improvedWitnessEnvelope]
     exact

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.PaperDefinitions
 
 /-!
@@ -52,7 +53,7 @@ def lls_theorem12 : Prop :=
                   ∀ H : Subgroup (ZMod q)ˣ,
                     H.index = h →
                       ∃ p : ℕ,
-                        IsLeast (primesOutside q H) p ∧
+                        IsLeast (NumberTheory.primesOutside q H) p ∧
                           (p : ℝ) < (theoreticalCoefficient h + ε) * (Real.log q) ^ 2
 
 /-- Theorem 1.3 (`thmtheoretical2`): the refined fixed-index asymptotic bound
@@ -70,7 +71,7 @@ def lls_theorem13 : Prop :=
                   ∀ H : Subgroup (ZMod q)ˣ,
                     H.index = h →
                       ∃ p : ℕ,
-                        IsLeast (primesOutside q H) p ∧
+                        IsLeast (NumberTheory.primesOutside q H) p ∧
                           (p : ℝ) <
                             (1 / 4 + ε) * (1 - 1 / (h : ℝ)) ^ 2 *
                               (Real.log (2 * (h : ℝ)) / (Real.log (2 * (h : ℝ)) - 4)) ^ 2 *
@@ -91,7 +92,7 @@ def lls_theorem13_of_index_ge_seven : Prop :=
                   ∀ H : Subgroup (ZMod q)ˣ,
                     H.index = h →
                       ∃ p : ℕ,
-                        IsLeast (primesOutside q H) p ∧
+                        IsLeast (NumberTheory.primesOutside q H) p ∧
                           (p : ℝ) <
                             (1 / 4 + ε) * (1 - 1 / (h : ℝ)) ^ 2 *
                               (Real.log (2 * (h : ℝ)) / (Real.log (2 * (h : ℝ)) - 4)) ^ 2 *
@@ -108,7 +109,7 @@ def lls_theorem14 : Prop :=
           1 < H.index →
             ∀ a : (ZMod q)ˣ,
               ∃ p : ℕ,
-                IsLeast (primesInCoset q H a) p ∧
+                IsLeast (NumberTheory.primesInCoset q H a) p ∧
                   ((p : ℝ) ≤ 10 ^ 9 ∨
                     (p : ℝ) ≤
                       (((H.index : ℝ) - 1) * Real.log q + 3 * ((H.index : ℝ) + 1) +
@@ -364,7 +365,8 @@ def lls_proposition61 : Prop :=
                             ∀ X : ℝ,
                               0 < X →
                                 (∀ p : ℕ,
-                                  p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) →
+                                  p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q
+                                    H p) →
                                 ((h : ℝ) *
                                         intervalIntegral
                                           (fun u : ℝ ↦ (K.transform u).re / Real.sqrt u) 0 lambda

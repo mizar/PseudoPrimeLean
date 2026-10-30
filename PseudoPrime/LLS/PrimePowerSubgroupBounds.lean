@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.SubgroupModulusReduction
 public import PseudoPrime.Analysis.LogPowerAsymptotics
 
@@ -36,7 +37,8 @@ subgroup modulo the prime. The cyclic index criterion gives kernel inclusion,
 and positive powers preserve prime support. Least primes therefore agree. -/
 theorem prime_pow_primesOutside_reduction {p k : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) (hk : 0 < k)
     [NeZero p] [NeZero (p ^ k)] (H : Subgroup (ZMod (p ^ k))ˣ) (hc : Nat.Coprime H.index p) :
-    primesOutside (p ^ k) H = primesOutside p (H.map (ZMod.unitsMap (dvd_pow_self p hk.ne'))) := by
+    NumberTheory.primesOutside (p ^ k) H = NumberTheory.primesOutside p (H.map (ZMod.unitsMap
+      (dvd_pow_self p hk.ne'))) := by
   let : IsCyclic (ZMod (p ^ k))ˣ := ZMod.isCyclic_units_of_prime_pow p hp hp2 k
   apply primesOutside_reduction (dvd_pow_self p hk.ne') H
   · apply reduction_kernel_le_subgroup_of_cyclic
@@ -56,7 +58,7 @@ theorem gamma_prime_pow_bound_659_with_finite_remainder
             H.index = h →
               Nat.Coprime h p →
               ∃ r : ℕ,
-                IsLeast (primesOutside (p ^ k) H) r ∧
+                IsLeast (NumberTheory.primesOutside (p ^ k) H) r ∧
                   (r : ℝ) ≤ max (B : ℝ) ((659 / 1000) * (Real.log p) ^ 2) := by
   obtain ⟨B, hB⟩ := gamma_prime_bound_659_with_finite_remainder hg h hh
   refine ⟨B, ?_⟩
@@ -97,7 +99,7 @@ theorem gamma_proper_prime_pow_bound_659
             H.index = h →
               Nat.Coprime h p →
               ∃ r : ℕ,
-                IsLeast (primesOutside (p ^ k) H) r ∧
+                IsLeast (NumberTheory.primesOutside (p ^ k) H) r ∧
                   (r : ℝ) ≤ max (B : ℝ) ((659 / 4000) * (Real.log (p ^ k : ℕ)) ^ 2) := by
   obtain ⟨B, hB⟩ := gamma_prime_pow_bound_659_with_finite_remainder hg h hh
   refine ⟨B, ?_⟩
@@ -123,7 +125,7 @@ theorem gamma_proper_prime_pow_asymptotic_bound
             H.index = h →
               Nat.Coprime h p →
               ∃ r : ℕ,
-                IsLeast (primesOutside (p ^ k) H) r ∧
+                IsLeast (NumberTheory.primesOutside (p ^ k) H) r ∧
                   (r : ℝ) < (659 / 4000 + ε) * (Real.log (p ^ k : ℕ)) ^ 2 := by
   obtain ⟨B, hB⟩ := gamma_proper_prime_pow_bound_659 hg h hh
   have hc : (0 : ℝ) < 659 / 4000 + ε := by linarith only [hε]
@@ -150,7 +152,7 @@ theorem gamma_index_four_proper_prime_pow_asymptotic_bound
           ∀ [NeZero p] [NeZero (p ^ k)] (H : Subgroup (ZMod (p ^ k))ˣ),
             H.index = 4 →
               ∃ r : ℕ,
-                IsLeast (primesOutside (p ^ k) H) r ∧
+                IsLeast (NumberTheory.primesOutside (p ^ k) H) r ∧
                   (r : ℝ) < (659 / 4000 + ε) * (Real.log (p ^ k : ℕ)) ^ 2 := by
   obtain ⟨Q, hQ⟩ := gamma_proper_prime_pow_asymptotic_bound hg 4 le_rfl ε hε
   refine ⟨Q, ?_⟩
@@ -201,7 +203,7 @@ theorem exists_uniform_prime_pow_bound_of_fixed_reduction {p a h : ℕ} (hp : p.
       ∀ k : ℕ,
         a ≤ k →
           ∀ [NeZero (p ^ k)] (H : Subgroup (ZMod (p ^ k))ˣ),
-            H.index = h → ∃ r : ℕ, IsLeast (primesOutside (p ^ k) H) r ∧ r ≤ B := by
+            H.index = h → ∃ r : ℕ, IsLeast (NumberTheory.primesOutside (p ^ k) H) r ∧ r ≤ B := by
   obtain ⟨B, hB⟩ := exists_uniform_least_prime_bound_of_modulus_le (p ^ a)
   refine ⟨B, ?_⟩
   intro k hak _ H hH
@@ -237,7 +239,7 @@ theorem gamma_proper_prime_pow_asymptotic_bound_of_exceptional_prime
           ∀ [NeZero p] [NeZero (p ^ k)] (H : Subgroup (ZMod (p ^ k))ˣ),
             H.index = h →
               ∃ r : ℕ,
-                IsLeast (primesOutside (p ^ k) H) r ∧
+                IsLeast (NumberTheory.primesOutside (p ^ k) H) r ∧
                   (r : ℝ) < (659 / 4000 + ε) * (Real.log (p ^ k : ℕ)) ^ 2 := by
   obtain ⟨B, hB⟩ :=
     exists_uniform_prime_pow_bound_of_fixed_reduction ht ht2 (by norm_num only : 0 < 2)
@@ -269,7 +271,7 @@ theorem gamma_index_five_proper_prime_pow_asymptotic_bound
           ∀ [NeZero p] [NeZero (p ^ k)] (H : Subgroup (ZMod (p ^ k))ˣ),
             H.index = 5 →
               ∃ r : ℕ,
-                IsLeast (primesOutside (p ^ k) H) r ∧
+                IsLeast (NumberTheory.primesOutside (p ^ k) H) r ∧
                   (r : ℝ) < (659 / 4000 + ε) * (Real.log (p ^ k : ℕ)) ^ 2 := by
   have hd : 5 ∣ Nat.totient (5 ^ 2) := by
     rw [Nat.totient_prime_pow Nat.prime_five (by norm_num only : 0 < 2)]
@@ -298,7 +300,7 @@ theorem gamma_index_six_proper_prime_pow_asymptotic_bound
           ∀ [NeZero p] [NeZero (p ^ k)] (H : Subgroup (ZMod (p ^ k))ˣ),
             H.index = 6 →
               ∃ r : ℕ,
-                IsLeast (primesOutside (p ^ k) H) r ∧
+                IsLeast (NumberTheory.primesOutside (p ^ k) H) r ∧
                   (r : ℝ) < (659 / 4000 + ε) * (Real.log (p ^ k : ℕ)) ^ 2 := by
   have hd : 6 ∣ Nat.totient (3 ^ 2) := by
     rw [Nat.totient_prime_pow Nat.prime_three (by norm_num only : 0 < 2)]
@@ -331,7 +333,7 @@ theorem gamma_small_index_proper_prime_pow_asymptotic_bound
           ∀ [NeZero p] [NeZero (p ^ k)] (H : Subgroup (ZMod (p ^ k))ˣ),
             H.index = h →
               ∃ r : ℕ,
-                IsLeast (primesOutside (p ^ k) H) r ∧
+                IsLeast (NumberTheory.primesOutside (p ^ k) H) r ∧
                   (r : ℝ) < (659 / 4000 + ε) * (Real.log (p ^ k : ℕ)) ^ 2 := by
   rcases Nat.eq_or_lt_of_le hh4 with he | he
   · subst h
@@ -415,7 +417,7 @@ theorem theorem13_small_index_of_odd_proper_prime_power
           ∀ [NeZero p] [NeZero (p ^ k)] (H : Subgroup (ZMod (p ^ k))ˣ),
             H.index = h →
               ∃ r : ℕ,
-                IsLeast (primesOutside (p ^ k) H) r ∧
+                IsLeast (NumberTheory.primesOutside (p ^ k) H) r ∧
                   (r : ℝ) <
                     (1 / 4) * (1 - 1 / (h : ℝ)) ^ 2 *
                       (Real.log (2 * (h : ℝ)) / (Real.log (2 * (h : ℝ)) - 4)) ^ 2 *

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.SevenPart2Bounds
+public import PseudoPrime.LLS.SevenPart2Bounds
 public import PseudoPrime.LLS.SmallAnalyticFinerPart2
 
 /-! # Entirely analytic finer Part 2 witnesses from level five -/
@@ -34,11 +34,11 @@ theorem not_characterTrivialBelow_of_sevenRoot {q : ℕ} [NeZero q] (χ : Dirich
   have hcore :=
     weightedComparisonCore_of_trivialBelow_of_mainErrors χ hne hGRH
       (lt_of_lt_of_le (by norm_num only) hx)
-      (Analysis.primitiveLogOddMainError_le_five_halves_of_ge_fifty hx)
-      (Analysis.primitiveLogEvenMainError_le_five_halves_of_ge_fifty hx)
-      (Analysis.primitiveReciprocalOddMainError_le_fixed_of_ge_twenty_six_half
+      (primitiveLogOddMainError_le_five_halves_of_ge_fifty hx)
+      (primitiveLogEvenMainError_le_five_halves_of_ge_fifty hx)
+      (primitiveReciprocalOddMainError_le_fixed_of_ge_twenty_six_half
         (le_trans (by norm_num only) hx))
-      (Analysis.primitiveReciprocalEvenMainError_le_fixed_of_ge_twenty_six_half
+      (primitiveReciprocalEvenMainError_le_fixed_of_ge_twenty_six_half
         (le_trans (by norm_num only) hx))
       ht
   have hS :=
@@ -70,8 +70,8 @@ theorem not_characterTrivialBelow_of_sevenRoot {q : ℕ} [NeZero q] (χ : Dirich
     nlinarith only [hS, hT, hmass, ht0]
   have hP := Analysis.log_pi_ge_2096_div_1831
   exact
-    Analysis.refinedPart2_bounds_incompatible_of_root_ge_seven htRoot hz hrcost hlevel
-      (Analysis.log_le_third_of_ge_six (by linarith only [htRoot]))
+    refinedPart2_bounds_incompatible_of_root_ge_seven htRoot hz hrcost hlevel
+      (log_le_third_of_ge_six (by linarith only [htRoot]))
       (log_conductor_div_pi_le_of_lower χ hP) hR hb (by linarith only [hu]) hl
 
 /-- Input: GRH, a nonprincipal character, and a level at least 501.
@@ -82,8 +82,8 @@ theorem not_characterTrivialBelow_finerPart2Root_from_501_analytic {q : ℕ} [Ne
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (hq : 501 ≤ q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ¬LLSCharacterTrivialBelow χ ((Analysis.finerPart2CutoffRoot (Real.log q)) ^ 2) := by
-  have hL := Analysis.log_level_ge_seven_root_entrance hq
-  obtain ⟨hheight, hcutoff⟩ := Analysis.finerPart2Root_height_and_cutoff_of_ge_621_div_100 hL
+  have hL := log_level_ge_seven_root_entrance hq
+  obtain ⟨hheight, hcutoff⟩ := finerPart2Root_height_and_cutoff_of_ge_621_div_100 hL
   apply
     not_characterTrivialBelow_of_sevenRoot χ hne hGRH hheight hcutoff
       (by norm_num only : (3 / 2 : ℝ) ≤ 31551 / 20000)

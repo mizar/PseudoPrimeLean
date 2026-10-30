@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.TriangularGammaIntegralSeries
 public import PseudoPrime.AnalyticNumberTheory.General.TriangularResolventContour
 
@@ -24,7 +25,7 @@ theorem triangular_central_kernelIntegral_eq_profile {a x : ℝ} (ha : 0 < a) (h
       (triangularKernelProfile a x : ℂ) := by
   have h :=
     inverseMellin_triangular ha (c := 0) (u := x⁻¹) (by norm_num only [abs_zero]) (inv_pos.mpr hx)
-  unfold inverseMellin at h
+  unfold Analysis.inverseMellin at h
   simp only [Complex.ofReal_zero, zero_add, Complex.ofReal_inv, Complex.cpow_neg,
     Complex.inv_cpow_ofReal_nonneg hx.le, inv_inv] at h
   unfold triangularKernelProfile at h ⊢

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GaussianPrincipalBounds
 public import PseudoPrime.LLS.GaussianPrimitiveRemainderBounds
 public import PseudoPrime.LLS.ConductorSumComparison
@@ -306,7 +307,7 @@ cardinality, retaining the exact conductor-log cost and precise remainder. -/
 theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes {q : ℕ} [NeZero q]
     (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 4 ≤ x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
           (gaussianGammaMellinKernel.summand (1 : DirichletCharacter ℂ q) x n).re ≤
@@ -335,7 +336,7 @@ theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix_gain {
     (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 4 ≤ x)
     (hX : 50000 ≤ X) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊X⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
           (gaussianGammaMellinKernel.summand (1 : DirichletCharacter ℂ q) x n).re ≤
@@ -380,7 +381,7 @@ theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix_gain_s
     [NeZero q] (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 4 ≤ x)
     (hX : 50000 ≤ X) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊X⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
           (gaussianGammaMellinKernel.summand (1 : DirichletCharacter ℂ q) x n).re ≤
@@ -425,7 +426,7 @@ theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix1000_ga
     [NeZero q] (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 4 ≤ x)
     (hX : 1000 ≤ X) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊X⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
           (gaussianGammaMellinKernel.summand (1 : DirichletCharacter ℂ q) x n).re ≤
@@ -473,7 +474,8 @@ theorem gaussian_noSmallPrimes_explicit_inequality_of_no_small_divisor {q : ℕ}
     (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 4 ≤ x)
     (hl : 0 ≤ lambda) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) *
             (∫ u in (0 : ℝ)..lambda, (gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
@@ -502,7 +504,8 @@ theorem gaussian_noSmallPrimes_explicit_inequality_prefix_gain {q : ℕ} [NeZero
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x lambda : ℝ} (hx : 4 ≤ x) (hX : 50000 ≤ lambda * x)
     (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) *
             (∫ u in (0 : ℝ)..lambda, (gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
@@ -536,7 +539,8 @@ theorem gaussian_noSmallPrimes_explicit_inequality_prefix_gain_signed {q : ℕ} 
     (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 4 ≤ x)
     (hX : 50000 ≤ lambda * x) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) *
             (∫ u in (0 : ℝ)..lambda, (gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
@@ -571,7 +575,8 @@ theorem gaussian_noSmallPrimes_explicit_inequality_prefix1000_gain {q : ℕ} [Ne
     (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 4 ≤ x)
     (hX : 1000 ≤ lambda * x) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) *
             (∫ u in (0 : ℝ)..lambda, (gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactorCountBounds
 public import PseudoPrime.LLS.CosetCompositeBounds
 
@@ -56,7 +57,7 @@ theorem exists_least_prime_in_coset_le_of_scaled_gap {q : ℕ} [NeZero q] (H : S
       (H.index : ℝ) * ((11 / 5 : ℝ) * Real.sqrt x) + cosetNonprincipalUpper q H x <
         x - Real.log (2 * Real.pi) * Real.log x - 1 - (Real.sqrt x + 1) / 20 -
           Real.sqrt x / (3 * ((H.index : ℝ) - 1)) * (Real.log x) ^ 2) :
-    ∃ p : ℕ, IsLeast (primesInCoset q H a) p ∧ (p : ℝ) ≤ x := by
+    ∃ p : ℕ, IsLeast (NumberTheory.primesInCoset q H a) p ∧ (p : ℝ) ≤ x := by
   classical
   have hx1 : 1 < x := lt_of_lt_of_le (by norm_num only) hx
   have hhR : (1 : ℝ) < H.index := by exact_mod_cast hh

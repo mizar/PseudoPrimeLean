@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.RelativeGaussianPrincipalBounds
 public import PseudoPrime.LLS.GaussianConstantSubgroupComparison
 
@@ -24,7 +25,8 @@ theorem gaussian_noSmallPrimes_inequality_relative {q : ℕ} [NeZero q] (hq : 20
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {h x lambda : ℝ} (hh : 0 < h) (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda)
     (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) * (1 - h) *
             (∫ u in (0 : ℝ)..lambda, (gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
@@ -56,7 +58,8 @@ theorem gaussian_noSmallPrimes_inequality_relative_prefix_gain {q : ℕ} [NeZero
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {h x lambda : ℝ} (hh : 0 < h) (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda)
     (hX : 50000 ≤ lambda * x) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) * (1 - h) *
             (∫ u in (0 : ℝ)..lambda, (gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
@@ -88,7 +91,8 @@ theorem gaussian_noSmallPrimes_inequality_relative_prefix_gain_signed {q : ℕ} 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x lambda : ℝ} (hh : 0 < h)
     (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda) (hX : 50000 ≤ lambda * x)
     (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) * (1 - h) *
             (∫ u in (0 : ℝ)..lambda, (gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
@@ -119,7 +123,8 @@ theorem gaussian_noSmallPrimes_inequality_relative_prefix1000_gain {q : ℕ} [Ne
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x lambda : ℝ} (hh : 0 < h)
     (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda) (hX : 1000 ≤ lambda * x)
     (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) * (1 - h) *
             (∫ u in (0 : ℝ)..lambda, (gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *

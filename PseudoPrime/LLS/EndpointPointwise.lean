@@ -131,7 +131,7 @@ theorem primitive_pointwise_ne_one {q : ℕ} [NeZero q] (χ : DirichletCharacter
   rw [← hRecId] at hRecLower
   rw [Real.log_pow] at hRecLower
   norm_num only [Nat.cast_ofNat] at hRecLower
-  have hError := Analysis.evenReciprocalError_le_exact (by linarith only [hy])
+  have hError := evenReciprocalError_le_exact (by linarith only [hy])
   have hRaw :=
     PseudoPrime.LLS.primitiveReciprocalRaw_even_le_of_mainError hq hGRH hp hne hinv heven
       (by linarith only [hx]) hError

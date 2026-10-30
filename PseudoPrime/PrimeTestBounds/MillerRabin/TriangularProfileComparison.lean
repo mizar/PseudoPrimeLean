@@ -18,11 +18,11 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- The current recovered seeded minimum is strictly above (15/32)L².
 Both certified component roots have the same strict quadratic lower bound. -/
 theorem currentSeeded_quadratic_lower {L : ℝ} (hL : 63 ≤ L) :
-    (15 / 32 : ℝ) * L ^ 2 < Analysis.gaussianRecoveredSeeded L := by
-  rw [Analysis.gaussianRecoveredSeeded_eq_min hL]
+    (15 / 32 : ℝ) * L ^ 2 < gaussianRecoveredSeeded L := by
+  rw [gaussianRecoveredSeeded_eq_min hL]
   exact
-    lt_min (Analysis.gaussianRecoveredSeeded_bound_lower hL)
-      (Analysis.gaussianRecoveredSeeded_bound_lower hL)
+    lt_min (gaussianRecoveredSeeded_bound_lower hL)
+      (gaussianRecoveredSeeded_bound_lower hL)
 
 /-- Between 1.1 and two trillion the current refined envelope is bounded
 below by coefficient 0.282924. Compare every active candidate, splitting
@@ -40,10 +40,10 @@ theorem refined_mid_quadratic_lower {n : ℕ} (hn : 1 < n) (hL : (1100000000000 
   · rw [lowPrimeTight_eq_next_of_log (by linarith only [hL])]
     by_cases hb : Real.log n < 1500000000000
     · rw [next_eq_seeded hn h240 hb]
-      exact hcoef.trans (Analysis.gaussianSeededSelected_lower h63).le
+      exact hcoef.trans (gaussianSeededSelected_lower h63).le
     · rw [next_eq_early hn (le_of_not_gt hb) hU]
   · intro _
-    exact hcoef.trans (Analysis.gaussianRecovered_bound_lower h63).le
+    exact hcoef.trans (gaussianRecovered_bound_lower h63).le
   · intro _
     exact hS.trans (currentSeeded_le_gamma h240)
   · intro _
@@ -68,7 +68,7 @@ theorem refined_high_quadratic_lower {n : ℕ} (hn : 1 < n) (hL : (2000000000000
   · rw [lowPrimeTight_eq_next_of_log (by linarith only [hL]), next_eq_triangular hn hL]
     exact mul_le_mul_of_nonneg_right (by norm_num only) (sq_nonneg _)
   · intro _
-    exact hcoef.trans (Analysis.gaussianRecovered_bound_lower h63).le
+    exact hcoef.trans (gaussianRecovered_bound_lower h63).le
   · intro _
     exact hS.trans (currentSeeded_le_gamma h240)
   · intro _
@@ -84,8 +84,8 @@ candidate, whose coefficient is strictly above 15/32>7/15. -/
 theorem triangularProfile_strict_early {n : ℕ} (hn : 1 < n) (hL : (30000000000 : ℝ) ≤ Real.log n)
     (hU : Real.log n < 1100000000000) :
     ∃ i : Fin 8,
-      (Analysis.triangularProfile i).T ≤ Real.log n ∧
-        (Analysis.triangularProfile i).C * Real.log n ^ 2 < refinedSelectedEnvelope n := by
+      (triangularProfile i).T ≤ Real.log n ∧
+        (triangularProfile i).C * Real.log n ^ 2 < refinedSelectedEnvelope n := by
   refine ⟨0, hL, ?_⟩
   change (7 / 15 : ℝ) * Real.log n ^ 2 < refinedSelectedEnvelope n
   rw [refinedSelected_eq_currentSeeded hn (by linarith only [hL]) hU]
@@ -98,8 +98,8 @@ current refined envelope. Use coefficient 0.2829 before 1.82 trillion, then
 0.2823622; the current active quadratic lower bounds suffice on both bands. -/
 theorem triangularProfile_strict_high {n : ℕ} (hn : 1 < n) (hL : (1480000000000 : ℝ) ≤ Real.log n) :
     ∃ i : Fin 8,
-      (Analysis.triangularProfile i).T ≤ Real.log n ∧
-        (Analysis.triangularProfile i).C * Real.log n ^ 2 < refinedSelectedEnvelope n := by
+      (triangularProfile i).T ≤ Real.log n ∧
+        (triangularProfile i).C * Real.log n ^ 2 < refinedSelectedEnvelope n := by
   have hp := sq_pos_of_pos (show (0 : ℝ) < Real.log n by linarith only [hL])
   by_cases h182 : Real.log n < 1820000000000
   · refine ⟨6, hL, ?_⟩

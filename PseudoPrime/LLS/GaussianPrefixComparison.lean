@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.RelativeGaussianSubgroupComparison
 public import PseudoPrime.LLS.GammaCheckpoint35000
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GaussianPrefixComparison
@@ -169,7 +170,7 @@ theorem gaussian_principal_prefix_le
     [NeZero q] (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 4 ≤ x)
     (hX : N ≤ X) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊X⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
           (gaussianGammaMellinKernel.summand (1 : DirichletCharacter ℂ q) x n).re ≤
@@ -216,7 +217,8 @@ theorem gaussian_relative_prefix_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x lambda : ℝ} (hh : 0 < h)
     (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda) (hX : N ≤ lambda * x)
     (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) * (1 - h) *
             (∫ u in (0 : ℝ)..lambda, (gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
@@ -249,7 +251,8 @@ theorem gaussian_relative_prefix_le_coarse
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x lambda : ℝ} (hh : 0 < h)
     (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda) (hX : N ≤ lambda * x)
     (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H
+      p) :
     ((H.index : ℝ) * (1 - h) *
             (∫ u in (0 : ℝ)..lambda, (gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaSubgroupComparison
 public import PseudoPrime.NumberTheory.QuadraticCharacterKernel
 
@@ -32,7 +33,8 @@ theorem gamma_inequality_of_quadratic_prime_trivial {q : ℕ} [NeZero q] (χ : D
         2 * (Real.log q * Real.log (lambda * x) / (Real.log 2 * Real.sqrt x)) := by
   let H := χ.toUnitHom.ker
   have hi : H.index = 2 := NumberTheory.index_ker_toUnitHom_of_quadratic_ne_one χ hquad hne
-  have ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → residueInSubgroup q H p := by
+  have ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H p
+    := by
     intro p hp hd hb
     have hu : IsUnit (p : ZMod q) :=
       (ZMod.isUnit_iff_coprime p q).mpr (hp.coprime_iff_not_dvd.mpr hd)

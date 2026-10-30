@@ -9,7 +9,7 @@ module
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SharpIntervalSelection
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointFinitePointwise
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianNormalAbsorption
-public import PseudoPrime.Analysis.GaussianSeededSharpMonotone
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededSharpMonotone
 
 /-! # The regular-range normal form of the sharp selected envelope -/
 
@@ -51,15 +51,15 @@ theorem refined_eq_pointwise_mix {n : ℕ} (hn : 1 < n) (hL : 63 ≤ Real.log n)
     (hU : Real.log n < 100) :
     refinedSelectedEnvelope n =
       min (LLS.PaperStatements.pointwiseCutoff (Real.log n))
-        (min (Analysis.gaussianRecoveredBound (Real.log n))
-          (Analysis.gaussianRecoveredSeeded (Real.log n))) := by
+        (min (gaussianRecoveredBound (Real.log n))
+          (gaussianRecoveredSeeded (Real.log n))) := by
   rw [refinedSelected_eq_before101 hL (by linarith only [hU]), ← lowPrimeTight_eq_selected hn,
     lowPrimeTight_eq_next_of_log (by linarith only [hL]),
     next_eq_pointwise hn (by linarith only [hL]) hU]
 
 /-- The fine Gaussian family is at least 8000 on the whole real scale.
 Weaken its exact rational fourth-power floor for the low-domain guard comparison. -/
-theorem gaussianLowFamily_floor8000 (L : ℝ) : (8000 : ℝ) ≤ Analysis.gaussianLowFamily L := by
+theorem gaussianLowFamily_floor8000 (L : ℝ) : (8000 : ℝ) ≤ gaussianLowFamily L := by
   have h := gaussianLowFamily_floor L
   norm_num only at h
   linarith only [h]
@@ -70,12 +70,12 @@ Use the thirteen exact low intervals, then remove the scale-63 guard by certifie
 theorem sharpSelected_eq_regular_low {n : ℕ} (hN : 3000 ≤ n) (hU : Real.log n < 100) :
     sharpSelectedEnvelope n =
       min (lowFinitePointwise (Real.log n))
-        (min (Analysis.gaussianLowFamily (Real.log n))
-          (Analysis.gaussianSeededSharp (Real.log n))) := by
+        (min (gaussianLowFamily (Real.log n))
+          (gaussianSeededSharp (Real.log n))) := by
   have hn : 1 < n := (by norm_num only : 1 < 3000).trans_le hN
   have h8 : (8 : ℝ) < Real.log n := Analysis.eight_lt_log_level hN
   have hG := gaussianLowFamily_floor8000 (Real.log n)
-  have hS := Analysis.gaussianSeededSharp_floor (Real.log n)
+  have hS := gaussianSeededSharp_floor (Real.log n)
   by_cases hcap : Real.log n ≤ 12373 / 1000
   · have h63 : Real.log n < (63 : ℝ) := by linarith only [hcap]
     have h73 := lowFiniteSelected_le73 hn hN hcap
@@ -95,7 +95,7 @@ theorem sharpSelected_eq_regular_low {n : ℕ} (hN : 3000 ≤ n) (hU : Real.log 
       exact
         min_absorb_gaussianSeeded _ _ _ _ _
           (gaussianLowFamily_lt_recovered (by linarith only [he])).le
-          (Analysis.gaussianSeededSharp_le_seeded he)
+          (gaussianSeededSharp_le_seeded he)
 
 /-- For inputs at least 3000 below scale thirty billion, the sharp selection equals
 the minimum of the monotone finite-pointwise function and both analytic families.
@@ -103,8 +103,8 @@ Join the low-domain formula with the independent high-domain absorption theorem.
 theorem sharpSelected_eq_regular {n : ℕ} (hN : 3000 ≤ n) (hU : Real.log n < 30000000000) :
     sharpSelectedEnvelope n =
       min (lowFinitePointwise (Real.log n))
-        (min (Analysis.gaussianLowFamily (Real.log n))
-          (Analysis.gaussianSeededSharp (Real.log n))) := by
+        (min (gaussianLowFamily (Real.log n))
+          (gaussianSeededSharp (Real.log n))) := by
   by_cases h100 : Real.log n < 100
   · exact sharpSelected_eq_regular_low hN h100
   · have hn : 1 < n := (by norm_num only : 1 < 3000).trans_le hN

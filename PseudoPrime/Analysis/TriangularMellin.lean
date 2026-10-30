@@ -124,4 +124,18 @@ theorem norm_triangularMellinFunction_imaginary {a : ℝ} (ha : a ≠ 0) (t : �
   rw [triangularMellinFunction_imaginary ha, Complex.norm_real, Real.norm_eq_abs,
     abs_of_nonneg (sq_nonneg _)]
 
+/-- For a nonzero real parameter the entire triangular transform is even.
+Expand the exponential quotient away from zero and treat zero separately.
+This identifies reflected vertical integrals without taking norms. -/
+theorem triangularMellinFunction_neg {a : ℝ} (ha : a ≠ 0) (s : ℂ) :
+    triangularMellinFunction a (-s) = triangularMellinFunction a s := by
+  by_cases hs : s = 0
+  · subst s
+    rw [neg_zero]
+  · rw [triangularMellinFunction_of_ne_zero ha (neg_ne_zero.mpr hs),
+      triangularMellinFunction_of_ne_zero ha hs]
+    simp only [mul_neg, neg_neg, div_neg]
+    congr 1
+    ring
+
 end PseudoPrime.Analysis

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformSignedProfiles
 public import PseudoPrime.LLS.GammaUniformTightStart
 public import PseudoPrime.Analysis.LogarithmicShiftBounds
@@ -31,7 +32,8 @@ theorem exists_prime_outside_le_gamma_four_fifths_plus_twentyNine_15188 {q : ℕ
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 15188 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
-        ¬p ∣ q ∧ ¬residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q + 29) ^ 2 := by
+        ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q + 29)
+          ^ 2 := by
   have hq0 : q ≠ 0 :=
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 15188).trans_le hq)
   let : NeZero q := ⟨hq0⟩
@@ -48,7 +50,8 @@ theorem exists_prime_outside_le_gamma_four_fifths_minus_two_20121 {q : ℕ} (H :
     (hq : 10 ^ 20121 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
-        ¬p ∣ q ∧ ¬residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q - 2) ^ 2 := by
+        ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q - 2) ^
+          2 := by
   have hq0 : q ≠ 0 :=
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 20121).trans_le hq)
   let : NeZero q := ⟨hq0⟩
@@ -66,7 +69,7 @@ theorem exists_prime_outside_le_gamma_four_fifths_minus_loglog_22097 {q : ℕ}
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
-        ¬residueInSubgroup q H p ∧
+        ¬NumberTheory.residueInSubgroup q H p ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q - Real.log (Real.log q)) ^ 2 := by
   have hq0 : q ≠ 0 :=
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 22097).trans_le hq)

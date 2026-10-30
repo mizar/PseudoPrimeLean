@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.MellinKernelAmbientZeroMass
 public import PseudoPrime.LLS.MellinKernelPrincipalBounds
 public import PseudoPrime.LLS.SmoothedSubgroupBounds
@@ -85,7 +86,8 @@ theorem exists_principal_sum_le (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiem
                         ∀ x : ℝ,
                           2 ≤ x →
                             ∀ X : ℝ,
-                              (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) →
+                              (∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X →
+                                NumberTheory.residueInSubgroup q H p) →
                                 (H.index : ℝ) *
                                     ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
                                       (K.summand (1 : DirichletCharacter ℂ q) x n).re ≤

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianLowFloorBounds
 
 /-! # Generic Gaussian witness branches -/
@@ -21,8 +22,8 @@ assumption is imposed at this cutoff before the relative comparison is applied. 
 theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 : ℝ) ≤ s0) {n : ℕ}
     [NeZero n]
     (hbudget :
-      Analysis.gaussianMRRefinedConductor * Real.log n + Analysis.gaussianMRRefinedBeta * s0 + D ≤
-        Analysis.gaussianMRRefinedD * s0 ^ 2)
+      gaussianMRRefinedConductor * Real.log n + gaussianMRRefinedBeta * s0 + D ≤
+        gaussianMRRefinedD * s0 ^ 2)
     (hprefix : P ≤ ∑ j ∈ Finset.Ioc 0 N, Analysis.gaussianResolventMangoldtWeight j)
     (hN : (N : ℝ) ≤ (6 / 5 : ℝ) * (s0 ^ 2) ^ 2)
     (herror :
@@ -30,7 +31,7 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
         Analysis.gaussianMR6FifthsIndex ≤ m →
           (m / (m - 1)) *
                 (21 * Analysis.gaussianMR6FifthsEndpoint /
-                    (10 * Analysis.gaussianMRRefinedWidth * s0) +
+                    (10 * gaussianMRRefinedWidth * s0) +
                   1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * s0 ^ 2)) +
               13 / (m - 1) +
               LLS.PaperStatements.gaussianPrefixError P n ((s0 ^ 2) ^ 2) <
@@ -48,7 +49,7 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
   let r := s0 ^ 2
   let s := s0
   let x := r ^ 2
-  let h := Analysis.gaussianMRRefinedWidth / s
+  let h := gaussianMRRefinedWidth / s
   let m : ℝ := H.index
   let t : ℝ := m - 1
   let I : ℝ :=
@@ -65,10 +66,10 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
     dsimp only [s, L]
     linarith only [hs91]
   have hs14 : (91 / 10 : ℝ) ≤ s := hs91
-  have hh : h = Analysis.gaussianMRRefinedWidth / s := by rfl
+  have hh : h = gaussianMRRefinedWidth / s := by rfl
   have hh1 : h ≤ 1 / 2 := by
     rw [hh, div_le_iff₀ hspos]
-    norm_num only [Analysis.gaussianMRRefinedWidth]
+    norm_num only [gaussianMRRefinedWidth]
     linarith only [hs14]
   have hrpos : 0 < r := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < (91 / 10 : ℝ) ^ 2) hrbound
   have hsqrtx : Real.sqrt x = r := by
@@ -95,11 +96,11 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
-  have hwidth : 0 < h := div_pos (by norm_num only [Analysis.gaussianMRRefinedWidth]) hspos
+  have hwidth : 0 < h := div_pos (by norm_num only [gaussianMRRefinedWidth]) hspos
   have hcmp :=
     LLS.PaperStatements.gaussian_relative_prefix_le hprefix hnlarge H hGRH hwidth hh1 hx
       (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
@@ -111,9 +112,9 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
     have hidxNat : 1 ≤ H.index := by exact_mod_cast hidxReal
     rw [Nat.cast_sub hidxNat, Nat.cast_one]
   rw [hsqrtx, hcastIndex] at hcmp
-  have hI : Analysis.gaussianMRRefinedMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMRRefinedMass]
-    exact Analysis.gaussianMRRefined_mass.le
+  have hI : gaussianMRRefinedMass ≤ I := by
+    dsimp only [I, gaussianMRRefinedMass]
+    exact gaussianMRRefined_mass.le
   have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
     dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
@@ -128,33 +129,33 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
       exact LLS.PaperStatements.subgroupConductorLogSum_le H
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
-    Analysis.gaussianMRRefinedD * r ≥
-      Analysis.gaussianMRRefinedConductor * L + Analysis.gaussianMRRefinedBeta * s + (D) := by
+    gaussianMRRefinedD * r ≥
+      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + (D) := by
     dsimp only [r, s, L]
     exact hbudget
   have hcmp' :
     (m * (1 - h) * I - E) * r ≤
-      Analysis.gaussianMRRefinedConductor * C +
+      gaussianMRRefinedConductor * C +
         m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 +
         t * A := by
-    simpa only [m, t, I, E, C, A, Analysis.gaussianMRRefinedConductor] using hcmp
-  have hcoeff := Analysis.gaussianMRRefined_index_coeffs hi
+    simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
+  have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD :
-    Analysis.gaussianMRRefinedD ≤
-      (m * Analysis.gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+    gaussianMRRefinedD ≤
+      (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
     (m / t) *
-        (Analysis.gaussianMRRefinedMass * Analysis.gaussianMRRefinedWidth +
-          1 / (10 * Analysis.gaussianMRRefinedWidth)) ≤
-      Analysis.gaussianMRRefinedBeta := by
+        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
+          1 / (10 * gaussianMRRefinedWidth)) ≤
+      gaussianMRRefinedBeta := by
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
-    Analysis.gaussianMRRefinedD * r ≤
-        Analysis.gaussianMRRefinedConductor * L + Analysis.gaussianMRRefinedBeta * s +
+    gaussianMRRefinedD * r ≤
+        gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
           (m / t) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * Analysis.gaussianMRRefinedWidth * s) +
+            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
               1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
           13 / t +
           A →
@@ -165,7 +166,7 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
     have herr := herror m hi
     change
       (m / (m - 1)) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * Analysis.gaussianMRRefinedWidth * s) +
+            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
               1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
           13 / (m - 1) +
           A <
@@ -174,15 +175,15 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
     linarith only [hbudget, hroot, herr]
   exact
     Analysis.gaussianMR_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I)
-      (E := E) (C := C) (h := h) (M := Analysis.gaussianMRRefinedMass) (Ecap :=
-      Analysis.gaussianMR6FifthsEndpoint) (conductor := Analysis.gaussianMRRefinedConductor) (D :=
-      Analysis.gaussianMRRefinedD) (beta := Analysis.gaussianMRRefinedBeta)
-      (by norm_num only [Analysis.gaussianMRRefinedWidth])
+      (E := E) (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap :=
+      Analysis.gaussianMR6FifthsEndpoint) (conductor := gaussianMRRefinedConductor) (D :=
+      gaussianMRRefinedD) (beta := gaussianMRRefinedBeta)
+      (by norm_num only [gaussianMRRefinedWidth])
       (by
         have hi' : (1000000000 : ℝ) ≤ m := by
           simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [Analysis.gaussianMRRefinedConductor]) hD
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD
       hbeta hcmp' hfinish
 
 /-- A uniform squarefree Korselt triple is handled by any actual index-four

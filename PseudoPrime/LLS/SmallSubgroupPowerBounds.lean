@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.NumberTheory.ExcludedPrimeCountLower
 public import PseudoPrime.NumberTheory.PrimeProductSubgroupCounting
 public import PseudoPrime.Analysis.SmallSubgroupLogarithmicBudget
@@ -29,7 +30,7 @@ theorem eventually_exists_prime_outside_le_log_power_of_card_rpow {beta A : ℝ}
           (Nat.card H : ℝ) ≤ (q : ℝ) ^ beta →
             ∃ r : ℕ,
               r.Prime ∧
-                ¬r ∣ q ∧ (r : ℝ) ≤ (Real.log q) ^ A ∧ ¬PaperStatements.residueInSubgroup q H r)
+                ¬r ∣ q ∧ (r : ℝ) ≤ (Real.log q) ^ A ∧ ¬NumberTheory.residueInSubgroup q H r)
       Filter.atTop := by
   obtain ⟨b, c, hb, hbA, hc, hcA, hcb⟩ := Analysis.choose_subgroup_count_parameters hbeta hb1 hA
   have hAp : 0 < A := (zero_lt_one.trans hb).trans hbA
@@ -92,7 +93,7 @@ theorem eventually_exists_prime_outside_le_log_power_of_small_card {eta A : ℝ}
           (Nat.card H : ℝ) ≤ (q : ℝ) ^ (1 - eta) →
             ∃ r : ℕ,
               r.Prime ∧
-                ¬r ∣ q ∧ (r : ℝ) ≤ (Real.log q) ^ A ∧ ¬PaperStatements.residueInSubgroup q H r)
+                ¬r ∣ q ∧ (r : ℝ) ≤ (Real.log q) ^ A ∧ ¬NumberTheory.residueInSubgroup q H r)
       Filter.atTop := by
   have hb0 : 0 < 1 - eta := sub_pos.mpr he1
   have hb1 : 1 - eta < 1 := by linarith only [he0]
@@ -103,21 +104,21 @@ theorem eventually_exists_prime_outside_le_log_power_of_small_card {eta A : ℝ}
 
 /-- Under the small-subgroup cardinality conditions, the least eligible prime
 outside H is at most log(q)^A for all sufficiently large q, uniformly in H.
-Minimize the primesOutside predicate after constructing one bounded prime. -/
+Minimize the NumberTheory.primesOutside predicate after constructing one bounded prime. -/
 theorem eventually_exists_least_prime_outside_le_log_power_of_small_card {eta A : ℝ} (he0 : 0 < eta)
     (he1 : eta < 1) (hA : 1 / eta < A) :
     Filter.Eventually
       (fun q : ℕ ↦
         ∀ H : Subgroup (ZMod q)ˣ,
           (Nat.card H : ℝ) ≤ (q : ℝ) ^ (1 - eta) →
-            ∃ r ∈ PaperStatements.primesOutside q H,
-              (r : ℝ) ≤ (Real.log q) ^ A ∧ ∀ s ∈ PaperStatements.primesOutside q H, r ≤ s)
+            ∃ r ∈ NumberTheory.primesOutside q H,
+              (r : ℝ) ≤ (Real.log q) ^ A ∧ ∀ s ∈ NumberTheory.primesOutside q H, r ≤ s)
       Filter.atTop := by
   classical
   apply (eventually_exists_prime_outside_le_log_power_of_small_card he0 he1 hA).mono
   intro q hq H hH
   obtain ⟨r, hr, hd, hb, ho⟩ := hq H hH
-  have hex : ∃ s : ℕ, s ∈ PaperStatements.primesOutside q H := ⟨r, hr, hd, ho⟩
+  have hex : ∃ s : ℕ, s ∈ NumberTheory.primesOutside q H := ⟨r, hr, hd, ho⟩
   exact
     ⟨Nat.find hex, Nat.find_spec hex, (Nat.cast_le.mpr (Nat.find_min' hex ⟨hr, hd, ho⟩)).trans hb,
       fun s hs ↦ Nat.find_min' hex hs⟩

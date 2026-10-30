@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformSmallScaleNumerics
 public import PseudoPrime.LLS.GammaUniformScaleBounds
 
@@ -121,7 +122,8 @@ theorem gamma_ramp_subgroup_comparison_small_scale {q : ℕ} [NeZero q] (hq : 20
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {T : ℝ} (hT : 224 ≤ T)
     (hambient : Real.log q ≤ T)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (4 / 5 : ℝ) * T ^ 2 → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (4 / 5 : ℝ) * T ^ 2 →
+      NumberTheory.residueInSubgroup q H p) :
     let x := (32 / 99 : ℝ) * T ^ 2;
     (2 * (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) - 1) * Real.sqrt x ≤
       (11783423 / 25000000 : ℝ) * Real.log q + 75169 / 900 +
@@ -133,7 +135,8 @@ theorem gamma_ramp_subgroup_comparison_small_scale {q : ℕ} [NeZero q] (hq : 20
   have hxlarge := (Analysis.gamma_small_scale_bounds hT).1
   have hx : 1 ≤ x := (by norm_num only : (1 : ℝ) ≤ (9 / 5) ^ 16).trans hxlarge
   have hs0 := Real.sqrt_pos.mpr (zero_lt_one.trans_le hx)
-  have hs : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → residueInSubgroup q H p := by
+  have hs : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x →
+    NumberTheory.residueInSubgroup q H p := by
     intro p hp hd hc
     apply hsmall p hp hd
     convert hc using 1
@@ -197,11 +200,12 @@ theorem exists_prime_outside_le_gamma_four_fifths_small_scale {q : ℕ} [NeZero 
                 ((4 / 5 : ℝ) * T ^ 2) q /
               Real.sqrt ((32 / 99 : ℝ) * T ^ 2)) <
         (11783423 / 25000000 + 1 / 795 : ℝ) * T) :
-    ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ ¬residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * T ^ 2 := by
+    ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * T ^
+      2 := by
   classical
   by_contra hn
   have hsmall (p : ℕ) (hp : p.Prime) (hd : ¬p ∣ q) (hb : (p : ℝ) ≤ (4 / 5 : ℝ) * T ^ 2) :
-    residueInSubgroup q H p := by
+    NumberTheory.residueInSubgroup q H p := by
     by_contra hout
     exact hn ⟨p, hp, hd, hout, hb⟩
   have hc := gamma_ramp_subgroup_comparison_small_scale hq H hH hGRH hT hambient hsmall

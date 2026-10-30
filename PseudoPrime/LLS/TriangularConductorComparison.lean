@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.TriangularSubgroupAverage
 public import PseudoPrime.LLS.ConductorSumComparison
 public import PseudoPrime.LLS.TriangularPrincipalUpperBounds
@@ -23,7 +24,7 @@ Aggregate the scale-decaying primitive budgets without discarding conductor savi
 theorem triangular18_principal_sum_le_conductor_sum_explicit {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x X : ℝ} (hx : 1 ≤ x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
           ((triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand
@@ -87,7 +88,7 @@ retain the exact conductor cost and the scale-decaying primitive remainder. -/
 theorem triangular18_principal_sum_le_conductor_sum_numeric {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x X : ℝ} (hx : 1 ≤ x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
           ((triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand

@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.Analysis.AffineLogarithmicTailBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianWitnessBounds
-public import PseudoPrime.Analysis.PrimeTestBoundsMillerRabinAffineLogarithmicWitnessBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.AffineLogarithmicFitBounds
 
 /-! # Analytic tails of two squared affine-logarithmic Miller--Rabin fits -/
 
@@ -32,7 +32,7 @@ theorem exists_prime_witness_le_mrFit_nineTenths {n : ℕ} (hnOdd : Odd n) (hnCo
   obtain ⟨p, hp, hb, hf⟩ := exists_prime_witness_le_gaussian hnOdd hnComposite hGRH hn
   have hL : 1000 ≤ Real.log n :=
     (by norm_num only : (1000 : ℝ) ≤ 225000000).trans (Analysis.gaussianMR_log_cutoff hn)
-  exact ⟨p, hp, hb.trans (Analysis.gaussian_square_le_mrFit_nineTenths hL), hf⟩
+  exact ⟨p, hp, hb.trans (gaussian_square_le_mrFit_nineTenths hL), hf⟩
 
 /-- Under GRH, an odd composite n ≥ 10^97826087 has a prime strong Miller--Rabin
 witness through the a = 1 squared affine-logarithmic fit. Use the same Gaussian
@@ -47,6 +47,6 @@ theorem exists_prime_witness_le_mrFit_one {n : ℕ} (hnOdd : Odd n) (hnComposite
   obtain ⟨p, hp, hb, hf⟩ := exists_prime_witness_le_gaussian hnOdd hnComposite hGRH hn
   have hL : 1000 ≤ Real.log n :=
     (by norm_num only : (1000 : ℝ) ≤ 225000000).trans (Analysis.gaussianMR_log_cutoff hn)
-  exact ⟨p, hp, hb.trans (Analysis.gaussian_square_le_mrFit_one hL), hf⟩
+  exact ⟨p, hp, hb.trans (gaussian_square_le_mrFit_one hL), hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

@@ -67,21 +67,21 @@ theorem next_lt_pointwise {n : ℕ} (hn : 1 < n) (hL : 47 / 4 < Real.log n) (hU 
 /-- On the stated continuous range, the next envelope strictly improves its base. -/
 theorem next_lt_seeded {n : ℕ} (hn : 1 < n) (hU : Real.log n < 2000000000000)
     (hs :
-      (Analysis.gaussianFloorSwitch false 35000 < Real.log n ∧
-          Real.log n < Analysis.gaussianSeededSwitch false 50000) ∨
-        Analysis.gaussianFloorSwitch true 50000 < Real.log n) :
+      (gaussianFloorSwitch false 35000 < Real.log n ∧
+          Real.log n < gaussianSeededSwitch false 50000) ∨
+        gaussianFloorSwitch true 50000 < Real.log n) :
     nextWitnessEnvelope n < improvedWitnessEnvelope n := by
   have h63 : (63 : ℝ) ≤ Real.log n := by
     rcases hs with h | h
-    · linarith only [h.1, Analysis.gaussianFloor_switch35_bounds.1]
-    · linarith only [h, (Analysis.gaussianFloor_switch50_bounds true).1]
+    · linarith only [h.1, gaussianFloor_switch35_bounds.1]
+    · linarith only [h, (gaussianFloor_switch50_bounds true).1]
   exact (next_le_seeded h63).trans_lt (gaussianSeeded_lt_improved hn hU hs)
 
 /-- On the stated continuous range, the next envelope strictly improves its base. -/
 theorem next_lt_early {n : ℕ} (hn : 1 < n) (hL : 1500000000000 ≤ Real.log n)
     (hU : Real.log n < 2000000000000) : nextWitnessEnvelope n < improvedWitnessEnvelope n := by
   rw [improved_eq_gaussian hn (by linarith only [hL]) hU]
-  have hs := Analysis.gaussianFloorSelected_lower (by linarith only [hL] : 63 ≤ Real.log n)
+  have hs := gaussianFloorSelected_lower (by linarith only [hL] : 63 ≤ Real.log n)
   have hp : 0 < Real.log n ^ 2 := sq_pos_of_pos (by linarith only [hL])
   have hc : (282924 / 1000000 : ℝ) * Real.log n ^ 2 < (15 / 32 : ℝ) * Real.log n ^ 2 :=
     mul_lt_mul_of_pos_right (by norm_num only) hp

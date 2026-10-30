@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GaussianNextTripleNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianNextTripleNumerics
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularThresholdBounds
 
 /-! # Actual Gaussian triple comparison at coefficient 0.2827 -/
@@ -127,13 +127,13 @@ theorem exists_prime_gaussianNextConductor {n : ℕ} [NeZero n] (hnlarge : 20000
   have hsmall : (225000000 : ℝ) ≤ Real.log n := by linarith only [hL]
   have hx :=
     (by norm_num only : (4 : ℝ) ≤ 3 ^ 16).trans
-      (Analysis.gaussianNextTripleScale_ge_three_pow_sixteen hsmall)
-  have hE := Analysis.gaussianNextTriple_error_budget hL (le_refl (Real.log n))
+      (gaussianNextTripleScale_ge_three_pow_sixteen hsmall)
+  have hE := gaussianNextTriple_error_budget hL (le_refl (Real.log n))
   apply exists_prime_gaussianNextIndexFour hnlarge ho H hi hpass hGRH hC
-  · dsimp only [Analysis.gaussianNextTripleScale] at hx
+  · dsimp only [gaussianNextTripleScale] at hx
     norm_num only at hx ⊢
     exact hx
-  · dsimp only [Analysis.gaussianNextTripleScale] at hE
+  · dsimp only [gaussianNextTripleScale] at hE
     norm_num only at hE ⊢
     exact hE
 

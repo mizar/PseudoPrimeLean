@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+public import PseudoPrime.Analysis.MellinWeights
 
 /-!
 # Mellin inversion for regularized complex resolvents
@@ -25,8 +25,8 @@ outside (0,1]. For Re α < 0 its Mellin transform is `1/(s²(s-α))` on Re s > 0
 This isolates the regularized scalar residue used before summing zero and gamma poles. -/
 noncomputable def mellinResolventWeight (α : ℂ) (t : ℝ) : ℂ :=
   (α ^ 2)⁻¹ *
-    ((Set.Ioc (0 : ℝ) 1).indicator (fun u ↦ (u : ℂ) ^ (-α)) t - mellinWeightZero t -
-      α * mellinWeightTwo t)
+    ((Set.Ioc (0 : ℝ) 1).indicator (fun u ↦ (u : ℂ) ^ (-α)) t - Analysis.mellinWeightZero t -
+      α * Analysis.mellinWeightTwo t)
 
 /-- For Re α < 0 and Re s > 0, the resolvent weight has transform 1/(s²(s-α)).
 Combine the power, constant and logarithmic transforms; all three converge absolutely.
@@ -38,7 +38,7 @@ theorem hasMellin_resolventWeight {α s : ℂ} (hα : α.re < 0) (hs : 0 < s.re)
       (by
         rw [Complex.neg_re]; linarith only [hα, hs])
   have hz := hasMellin_one_Ioc hs
-  have ht := hasMellin_mellinWeightTwo hs
+  have ht := Analysis.hasMellin_mellinWeightTwo hs
   have hfirst := hasMellin_sub hp.1 hz.1
   rw [hp.2, hz.2] at hfirst
   have hscaled := hasMellin_const_smul ht.1 α
@@ -68,7 +68,8 @@ is integrable. This verifies the vertical-integrability hypothesis of Mellin inv
 theorem verticalIntegrable_resolventKernel {α : ℂ} (hα : α.re < 0) {τ : ℝ} (hτ : 0 < τ) :
     Complex.VerticalIntegrable (fun z : ℂ ↦ 1 / (z ^ 2 * (z - α))) τ := by
   have hδ : 0 < τ - α.re := sub_pos.mpr (hα.trans hτ)
-  have hz : ∀ y : ℝ, (τ : ℂ) + y * Complex.I ≠ 0 := fun y ↦ ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
+  have hz : ∀ y : ℝ, (τ : ℂ) + y * Complex.I ≠ 0 :=
+    fun y ↦ Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
   have hd : ∀ y : ℝ, τ - α.re ≤ ‖(τ : ℂ) + y * Complex.I - α‖ := by
     intro y
     have h := Complex.re_le_norm ((τ : ℂ) + y * Complex.I - α)
@@ -83,7 +84,7 @@ theorem verticalIntegrable_resolventKernel {α : ℂ} (hα : α.re < 0) {τ : �
         ((continuous_const.add (Complex.continuous_ofReal.mul_const Complex.I)).sub
           continuous_const))
       (fun y ↦ mul_ne_zero (pow_ne_zero _ (hz y)) (hdne y))
-  have hb := (verticalIntegrable_mellinLogKernel hτ.ne').norm.div_const (τ - α.re)
+  have hb := (Analysis.verticalIntegrable_mellinLogKernel hτ.ne').norm.div_const (τ - α.re)
   apply hb.mono' hc.aestronglyMeasurable
   filter_upwards with y
   rw [norm_div, norm_one, norm_mul, norm_pow, norm_pow, norm_inv]
@@ -101,15 +102,17 @@ theorem continuousAt_mellinResolventWeight {α : ℂ} {t : ℝ} (ht : 0 < t) (ht
     ContinuousAt (mellinResolventWeight α) t := by
   have he : ∀ᶠ u in nhds t, u ∈ Set.Ioc (0 : ℝ) 1 :=
     Filter.Eventually.mono (isOpen_Ioo.mem_nhds ⟨ht, ht1⟩) (fun u hu ↦ ⟨hu.1, hu.2.le⟩)
-  have hc : ContinuousAt (fun u : ℝ ↦ (α ^ 2)⁻¹ * ((u : ℂ) ^ (-α) - 1 - α * mellinWeightTwo u)) t :=
+  have hc : ContinuousAt
+      (fun u : ℝ ↦ (α ^ 2)⁻¹ * ((u : ℂ) ^ (-α) - 1 - α * Analysis.mellinWeightTwo u)) t :=
     continuousAt_const.mul
       (((Complex.continuous_ofReal.continuousAt.cpow continuousAt_const
                 (Complex.ofReal_mem_slitPlane.mpr ht)).sub
             continuousAt_const).sub
-        (continuousAt_const.mul (continuousAt_mellinWeightTwo ht)))
+        (continuousAt_const.mul (Analysis.continuousAt_mellinWeightTwo ht)))
   apply hc.congr_of_eventuallyEq
   filter_upwards [he] with u hu
-  rw [mellinResolventWeight, mellinWeightZero, Set.indicator_of_mem hu, Set.indicator_of_mem hu]
+  rw [mellinResolventWeight, Analysis.mellinWeightZero, Set.indicator_of_mem hu,
+    Set.indicator_of_mem hu]
 
 /-- For Re α < 0, τ > 0 and 0 < t < 1, inverse Mellin transformation recovers the
 resolvent weight. Apply Mellin inversion using the computed transform, convergence,
@@ -148,7 +151,8 @@ theorem mellinResolventWeight_inv {α : ℂ} {x : ℝ} (hx : 1 < x) :
     mellinResolventWeight α x⁻¹ = ((x : ℂ) ^ α - 1 - α * (Real.log x : ℂ)) / α ^ 2 := by
   have hx0 : 0 < x := zero_lt_one.trans hx
   have hi : x⁻¹ ∈ Set.Ioc (0 : ℝ) 1 := ⟨inv_pos.mpr hx0, (inv_lt_one₀ hx0).mpr hx |>.le⟩
-  rw [mellinResolventWeight, mellinWeightZero, mellinWeightTwo, Set.indicator_of_mem hi,
+  rw [mellinResolventWeight, Analysis.mellinWeightZero, Analysis.mellinWeightTwo,
+    Set.indicator_of_mem hi,
     Set.indicator_of_mem hi, Set.indicator_of_mem hi, Complex.ofReal_inv,
     Complex.inv_cpow_ofReal_nonneg hx0.le, Complex.cpow_neg, inv_inv, Real.log_inv,
     Complex.ofReal_neg, neg_neg, div_eq_mul_inv]

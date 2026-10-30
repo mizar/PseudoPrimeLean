@@ -34,7 +34,7 @@ theorem gaussianMRPrefixEnvelope_eq {L : ℝ} (hL : 240 ≤ L) :
 The new candidate is valid only from scale 300. Below that range this definition
 has no witness claim. -/
 noncomputable def gaussianMRRefinedEnvelope (L : ℝ) : ℝ :=
-  min (gaussianMRPrefixEnvelope L) (Analysis.gaussianMRRefinedBound L)
+  min (gaussianMRPrefixEnvelope L) (gaussianMRRefinedBound L)
 
 /-- Add the existing 0.282924 L^2 candidate to the refined envelope.
 Its witness theorem retains the original decimal input threshold. -/
@@ -75,8 +75,8 @@ theorem exists_least_witness_gaussianMRRefinedEnvelope {n : ℕ} (hnOdd : Odd n)
 Combine its strict improvement over B6 with the previously proved Gamma comparisons.
 This justifies simplifying the refined minimum on its whole applicable half-line. -/
 theorem gaussianMRRefined_lt_prefixEnvelope {L : ℝ} (hL : 300 ≤ L) :
-    Analysis.gaussianMRRefinedBound L < gaussianMRPrefixEnvelope L := by
-  have hnew := Analysis.gaussianMRRefined_lt_gaussianMR6 hL
+    gaussianMRRefinedBound L < gaussianMRPrefixEnvelope L := by
+  have hnew := gaussianMRRefined_lt_gaussianMR6 hL
   have hold := gaussianMR6Bound_lt_min_prefixUpper_gaussianMR18Bound hL
   have hGamma :=
     (lt_of_lt_of_le hold (min_le_right _ _)).trans (gaussianMR18Bound_lt_gammaClippedUpper hL)
@@ -86,7 +86,7 @@ theorem gaussianMRRefined_lt_prefixEnvelope {L : ℝ} (hL : 300 ≤ L) :
 /-- For L>=300 the refined envelope is exactly the new refined Gaussian formula.
 Use the strict half-line comparison with every retained candidate. -/
 theorem gaussianMRRefinedEnvelope_eq {L : ℝ} (hL : 300 ≤ L) :
-    gaussianMRRefinedEnvelope L = Analysis.gaussianMRRefinedBound L := by
+    gaussianMRRefinedEnvelope L = gaussianMRRefinedBound L := by
   exact min_eq_right (gaussianMRRefined_lt_prefixEnvelope hL).le
 
 /-- For L>=300 the large-scale candidate minimum equals its coefficient branch.
@@ -98,7 +98,7 @@ theorem gaussianMRLargeEnvelope_eq {L : ℝ} (hL : 300 ≤ L) :
     mul_lt_mul_of_pos_right (by norm_num only : (282924 / 1000000 : ℝ) < 3 / 10)
       (sq_pos_of_pos (by linarith only [hL] : 0 < L))
   rw [gaussianMRLargeEnvelope, gaussianMRRefinedEnvelope_eq hL]
-  exact min_eq_right (hc.trans (Analysis.gaussianMRRefined_local hL)).le
+  exact min_eq_right (hc.trans (gaussianMRRefined_local hL)).le
 
 /-- Above the unchanged decimal threshold, the least rejecting prime obeys the full minimum.
 Use the old coefficient witness theorem and the proved envelope equality. -/

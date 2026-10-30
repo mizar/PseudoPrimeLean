@@ -6,10 +6,11 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GaussianLowProfiles
+public import PseudoPrime.NumberTheory.ResidueSubgroup
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianLowProfiles
 public import PseudoPrime.LLS.GammaPrefixFine
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR1000WitnessBounds
-public import PseudoPrime.Analysis.GaussianSingleFourNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSingleFourNumerics
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeTripleBounds
 
 /-! # Actual Gaussian witnesses with low profile floors -/
@@ -19,7 +20,7 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeTripleBoun
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- Every profile cutoff exceeds the common floor needed to cover the 1000 prefix. -/
-theorem gaussianLow_cutoff_floor (f : Analysis.GaussianLowProfile) (L : ℝ) :
+theorem gaussianLow_cutoff_floor (f : GaussianLowProfile) (L : ℝ) :
     (6 / 5 : ℝ) * ((91 / 10) ^ 2) ^ 2 ≤ f.bound L := by
   have hr := f.radius_floor L
   have hs := (sq_le_sq₀ (by norm_num only : (0 : ℝ) ≤ (91 / 10) ^ 2) (sq_nonneg (f.root L))).mpr hr
@@ -27,7 +28,7 @@ theorem gaussianLow_cutoff_floor (f : Analysis.GaussianLowProfile) (L : ℝ) :
 
 /-- Above logarithmic scale 63, each cutoff exceeds 15 L squared/32.
 The linear radius bound covers all local subgroup witness bounds. -/
-theorem gaussianLow_bound_lower (f : Analysis.GaussianLowProfile) {L : ℝ} (hL : 63 ≤ L) :
+theorem gaussianLow_bound_lower (f : GaussianLowProfile) {L : ℝ} (hL : 63 ≤ L) :
     (15 / 32 : ℝ) * L ^ 2 < f.bound L := by
   have hr := f.radius_linear hL
   have hpos : (0 : ℝ) ≤ (5 / 8) * L := by linarith only [hL]
@@ -38,19 +39,19 @@ theorem gaussianLow_bound_lower (f : Analysis.GaussianLowProfile) {L : ℝ} (hL 
 /-- Each profile prefix is a lower bound for the actual finite resolvent sum.
 The three old-prefix profiles use the existing certificate; the two fine profiles
 use the refined seed logarithm certificate. -/
-theorem gaussianLow_prefix (f : Analysis.GaussianLowProfile)
+theorem gaussianLow_prefix (f : GaussianLowProfile)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     f.prefixValue ≤ ∑ j ∈ Finset.Ioc 0 1000, Analysis.gaussianResolventMangoldtWeight j := by
   cases f
-  · simpa only [Analysis.GaussianLowProfile.prefixValue, Nat.floor_ofNat] using
+  · simpa only [GaussianLowProfile.prefixValue, Nat.floor_ofNat] using
       LLS.gaussian_prefix1000_recovered hGRH.riemann (le_refl (1000 : ℝ))
-  · simpa only [Analysis.GaussianLowProfile.prefixValue, Nat.floor_ofNat] using
+  · simpa only [GaussianLowProfile.prefixValue, Nat.floor_ofNat] using
       LLS.gaussian_prefix1000_recovered hGRH.riemann (le_refl (1000 : ℝ))
-  · simpa only [Analysis.GaussianLowProfile.prefixValue, Nat.floor_ofNat] using
+  · simpa only [GaussianLowProfile.prefixValue, Nat.floor_ofNat] using
       LLS.gaussian_prefix1000_recovered hGRH.riemann (le_refl (1000 : ℝ))
-  · simpa only [Analysis.GaussianLowProfile.prefixValue, Nat.floor_ofNat] using
+  · simpa only [GaussianLowProfile.prefixValue, Nat.floor_ofNat] using
       LLS.gaussian_prefix1000_fine hGRH.riemann (le_refl (1000 : ℝ))
-  · simpa only [Analysis.GaussianLowProfile.prefixValue, Nat.floor_ofNat] using
+  · simpa only [GaussianLowProfile.prefixValue, Nat.floor_ofNat] using
       LLS.gaussian_prefix1000_fine hGRH.riemann (le_refl (1000 : ℝ))
 
 /--
@@ -61,7 +62,7 @@ Proof: apply the actual relative-prefix comparison and the recovered-prefix
 single-root large-index budget.
 Role: supplies the large-index branch of the all-input recovered-prefix single-root witness theorem.
 -/
-theorem gaussianLow_witness_large (f : Analysis.GaussianLowProfile) {n : ℕ} [NeZero n]
+theorem gaussianLow_witness_large (f : GaussianLowProfile) {n : ℕ} [NeZero n]
     (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
     (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
@@ -75,7 +76,7 @@ theorem gaussianLow_witness_large (f : Analysis.GaussianLowProfile) {n : ℕ} [N
   let r := f.radius L
   let s := f.root L
   let x := r ^ 2
-  let h := Analysis.gaussianMRRefinedWidth / s
+  let h := gaussianMRRefinedWidth / s
   let m : ℝ := H.index
   let t : ℝ := m - 1
   let I : ℝ :=
@@ -85,16 +86,16 @@ theorem gaussianLow_witness_large (f : Analysis.GaussianLowProfile) {n : ℕ} [N
   let C : ℝ := LLS.PaperStatements.subgroupConductorLogSum H
   let A : ℝ := LLS.PaperStatements.gaussianPrefixError (f.prefixValue) n x
   have hn1 : 1 < n := lt_of_lt_of_le (by decide : 1 < 20000) hnlarge
-  have hrootSq : s ^ 2 = r := by dsimp only [s, r, Analysis.GaussianLowProfile.radius]
+  have hrootSq : s ^ 2 = r := by dsimp only [s, r, GaussianLowProfile.radius]
   have hrbound : ((91 / 10 : ℝ) ^ 2) ≤ r := f.radius_floor (Real.log n)
   have hspos : 0 < s := by
     dsimp only [s, L]
     exact f.root_pos _
   have hs14 : (91 / 10 : ℝ) ≤ s := f.signs.1.trans (f.root_floor (Real.log n))
-  have hh : h = Analysis.gaussianMRRefinedWidth / s := by rfl
+  have hh : h = gaussianMRRefinedWidth / s := by rfl
   have hh1 : h ≤ 1 / 2 := by
     rw [hh, div_le_iff₀ hspos]
-    norm_num only [Analysis.gaussianMRRefinedWidth]
+    norm_num only [gaussianMRRefinedWidth]
     linarith only [hs14]
   have hrpos : 0 < r := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < (91 / 10 : ℝ) ^ 2) hrbound
   have hsqrtx : Real.sqrt x = r := by
@@ -104,7 +105,7 @@ theorem gaussianLow_witness_large (f : Analysis.GaussianLowProfile) {n : ℕ} [N
     dsimp only [x]
     nlinarith only [hrbound]
   have hcut : (6 / 5 : ℝ) * x = f.bound (Real.log n) := by
-    dsimp only [Analysis.GaussianLowProfile.bound, Analysis.GaussianLowProfile.radius, r, L, x]
+    dsimp only [GaussianLowProfile.bound, GaussianLowProfile.radius, r, L, x]
   have hX : ((1000 : ℕ) : ℝ) ≤ (6 / 5 : ℝ) * x := by
     rw [hcut]
     exact
@@ -126,11 +127,11 @@ theorem gaussianLow_witness_large (f : Analysis.GaussianLowProfile) {n : ℕ} [N
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
-  have hwidth : 0 < h := div_pos (by norm_num only [Analysis.gaussianMRRefinedWidth]) hspos
+  have hwidth : 0 < h := div_pos (by norm_num only [gaussianMRRefinedWidth]) hspos
   have prefixActual :
     f.prefixValue ≤ ∑ j ∈ Finset.Ioc 0 1000, Analysis.gaussianResolventMangoldtWeight j :=
     gaussianLow_prefix f hGRH
@@ -145,9 +146,9 @@ theorem gaussianLow_witness_large (f : Analysis.GaussianLowProfile) {n : ℕ} [N
     have hidxNat : 1 ≤ H.index := by exact_mod_cast hidxReal
     rw [Nat.cast_sub hidxNat, Nat.cast_one]
   rw [hsqrtx, hcastIndex] at hcmp
-  have hI : Analysis.gaussianMRRefinedMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMRRefinedMass]
-    exact Analysis.gaussianMRRefined_mass.le
+  have hI : gaussianMRRefinedMass ≤ I := by
+    dsimp only [I, gaussianMRRefinedMass]
+    exact gaussianMRRefined_mass.le
   have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
     dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
@@ -162,34 +163,34 @@ theorem gaussianLow_witness_large (f : Analysis.GaussianLowProfile) {n : ℕ} [N
       exact LLS.PaperStatements.subgroupConductorLogSum_le H
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
-    Analysis.gaussianMRRefinedD * r ≥
-      Analysis.gaussianMRRefinedConductor * L + Analysis.gaussianMRRefinedBeta * s +
+    gaussianMRRefinedD * r ≥
+      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
         (f.residual) := by
     dsimp only [r, s, L]
     exact f.budget (by linarith only [hL] : 0 ≤ Real.log n)
   have hcmp' :
     (m * (1 - h) * I - E) * r ≤
-      Analysis.gaussianMRRefinedConductor * C +
+      gaussianMRRefinedConductor * C +
         m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 +
         t * A := by
-    simpa only [m, t, I, E, C, A, Analysis.gaussianMRRefinedConductor] using hcmp
-  have hcoeff := Analysis.gaussianMRRefined_index_coeffs hi
+    simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
+  have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD :
-    Analysis.gaussianMRRefinedD ≤
-      (m * Analysis.gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+    gaussianMRRefinedD ≤
+      (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
     (m / t) *
-        (Analysis.gaussianMRRefinedMass * Analysis.gaussianMRRefinedWidth +
-          1 / (10 * Analysis.gaussianMRRefinedWidth)) ≤
-      Analysis.gaussianMRRefinedBeta := by
+        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
+          1 / (10 * gaussianMRRefinedWidth)) ≤
+      gaussianMRRefinedBeta := by
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
-    Analysis.gaussianMRRefinedD * r ≤
-        Analysis.gaussianMRRefinedConductor * L + Analysis.gaussianMRRefinedBeta * s +
+    gaussianMRRefinedD * r ≤
+        gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
           (m / t) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * Analysis.gaussianMRRefinedWidth * s) +
+            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
               1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
           13 / t +
           A →
@@ -198,11 +199,11 @@ theorem gaussianLow_witness_large (f : Analysis.GaussianLowProfile) {n : ℕ} [N
     have ht : t = m - 1 := by rfl
     have hgamma := hcoeff.2.1
     have herr :=
-      Analysis.gaussianLow_index_error hspos hrpos hi
+      gaussianLow_index_error hspos hrpos hi
         (f.large_cap (f.root_floor L) (f.budget (by linarith only [hL])) (le_refl (Real.log n)))
     change
       (m / (m - 1)) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * Analysis.gaussianMRRefinedWidth * s) +
+            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
               1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
           13 / (m - 1) +
           A <
@@ -211,22 +212,22 @@ theorem gaussianLow_witness_large (f : Analysis.GaussianLowProfile) {n : ℕ} [N
     linarith only [hbudget, hroot, herr]
   exact
     Analysis.gaussianMR_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I)
-      (E := E) (C := C) (h := h) (M := Analysis.gaussianMRRefinedMass) (Ecap :=
-      Analysis.gaussianMR6FifthsEndpoint) (conductor := Analysis.gaussianMRRefinedConductor) (D :=
-      Analysis.gaussianMRRefinedD) (beta := Analysis.gaussianMRRefinedBeta)
-      (by norm_num only [Analysis.gaussianMRRefinedWidth])
+      (E := E) (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap :=
+      Analysis.gaussianMR6FifthsEndpoint) (conductor := gaussianMRRefinedConductor) (D :=
+      gaussianMRRefinedD) (beta := gaussianMRRefinedBeta)
+      (by norm_num only [gaussianMRRefinedWidth])
       (by
         have hi' : (1000000000 : ℝ) ≤ m := by
           simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [Analysis.gaussianMRRefinedConductor]) hD
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD
       hbeta hcmp' hfinish
 
 /-- Under GRH, an index-four pass-containing subgroup with conductor at most
 2 log n has an actual rejecting prime below the recovered one-root cutoff. Scale the comparison
 radius by 7559/10000 while retaining width k/s. Both the strict residual and the main-term
 budgets use 204/5. -/
-theorem gaussianLow_witness_four (f : Analysis.GaussianLowProfile) {n : ℕ} [NeZero n]
+theorem gaussianLow_witness_four (f : GaussianLowProfile) {n : ℕ} [NeZero n]
     (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -273,7 +274,7 @@ theorem gaussianLow_witness_four (f : Analysis.GaussianLowProfile) {n : ℕ} [Ne
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         ((7559 / 10000 : ℝ) * r) ≤
-      Analysis.gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
         4 *
           (1 / (10 * h) +
             ((21 / (10 * h) + 1839 / 1000) / ((7559 / 10000 : ℝ) * r)) * Real.exp (1 / 16 : ℝ)) +
@@ -283,23 +284,23 @@ theorem gaussianLow_witness_four (f : Analysis.GaussianLowProfile) {n : ℕ} [Ne
             (((7559 / 10000 : ℝ) * r) ^ 2) := by
     simpa only [hindex, hi, Nat.reduceSub, Nat.cast_ofNat] using hcmp
   have hscalar :=
-    Analysis.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 7559 / 10000)
+    LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 7559 / 10000)
       (by norm_num only : (0 : ℝ) < 2 / 5) (show h = (2 / 5 : ℝ) / s from rfl) hh1
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
-      (by norm_num only [Analysis.gaussianMRRefinedConductor]) hcmp'
+      (by norm_num only [gaussianMRRefinedConductor]) hcmp'
   have hG := f.budget (show 0 ≤ L by linarith only [hL])
   have herror := f.four_error (f.root_floor L) hG (le_refl (Real.log n))
   have hmargin := f.four_margin (f.root_floor L)
-  norm_num only [Analysis.gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsEndpoint,
-    Analysis.gaussianMRRefinedWidth] at hscalar hG herror hmargin
+  norm_num only [gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsEndpoint,
+    gaussianMRRefinedWidth] at hscalar hG herror hmargin
   rw [hs2] at hscalar
-  dsimp only [s, r, L, Analysis.GaussianLowProfile.radius] at hscalar hG herror hmargin
+  dsimp only [s, r, L, GaussianLowProfile.radius] at hscalar hG herror hmargin
   nlinarith only [hscalar, hG, herror, hmargin]
 
 /-- For an odd uniform three-prime Korselt product, GRH and log n>=63
 yield an actual rejecting prime within the recovered-prefix single-root cutoff. Construct the
 index-four subgroup and retain its conductor-sum saving. -/
-theorem gaussianLow_witness_triple (f : Analysis.GaussianLowProfile) {n p q r : ℕ} (hp : p.Prime)
+theorem gaussianLow_witness_triple (f : GaussianLowProfile) {n p q r : ℕ} (hp : p.Prime)
     (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q)
     (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
     (hrdiv : r - 1 ∣ n - 1) (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
@@ -322,7 +323,7 @@ theorem gaussianLow_witness_triple (f : Analysis.GaussianLowProfile) {n p q r : 
 /-- For a squarefree uniform Korselt triple specified by its factor set,
 extract the three primes and apply the scaled relative index-four comparison.
 This restricted interface is internal to the all-input classification. -/
-theorem gaussianLow_witness_card (f : Analysis.GaussianLowProfile) {n : ℕ} (hnOdd : Odd n)
+theorem gaussianLow_witness_card (f : GaussianLowProfile) {n : ℕ} (hnOdd : Odd n)
     (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
     (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
@@ -357,7 +358,7 @@ theorem gaussianLow_witness_card (f : Analysis.GaussianLowProfile) {n : ℕ} (hn
 /-- For log n>=63 and q squared<=10^9*n, the local subgroup cutoff fits
 the recovered-prefix single-root bound. Combine log q<=2 log n/3, the common profile floor and
 the quadratic lower bound; keep the ambient passing-residue containment upstream. -/
-theorem gaussianLow_local (f : Analysis.GaussianLowProfile) {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
+theorem gaussianLow_local (f : GaussianLowProfile) {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
     (hsize : q ^ 2 ≤ 10 ^ 9 * n) (hL : 63 ≤ Real.log n) :
     max (3000 : ℝ) (Real.log q ^ 2) ≤ f.bound (Real.log n) := by
   have hlog := Analysis.mr_local_log_le_of_square_le hn hq hsize
@@ -372,7 +373,7 @@ theorem gaussianLow_local (f : Analysis.GaussianLowProfile) {n q : ℕ} (hn : 0 
 /-- Under GRH, every odd composite with log n>=63 has an actual prime
 rejecting strong MR within the recovered-prefix single-root bound. Combine the large-index,
 local and uniform-triple branches without public factorization restrictions. -/
-theorem exists_prime_gaussianLow (f : Analysis.GaussianLowProfile) {n : ℕ} (ho : Odd n)
+theorem exists_prime_gaussianLow (f : GaussianLowProfile) {n : ℕ} (ho : Odd n)
     (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
@@ -413,7 +414,7 @@ theorem exists_prime_gaussianLow (f : Analysis.GaussianLowProfile) {n : ℕ} (ho
 /-- Under the all-input recovered-prefix single-root assumptions, the least rejecting prime
 satisfies the same cutoff. Extract it from the actual rejecting-prime theorem;
 no squarefreeness, index or prime-factor count condition remains. -/
-theorem exists_least_gaussianLow (f : Analysis.GaussianLowProfile) {n : ℕ} (ho : Odd n)
+theorem exists_least_gaussianLow (f : GaussianLowProfile) {n : ℕ} (ho : Odd n)
     (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
@@ -430,7 +431,7 @@ theorem exists_least_gaussianLowFamily {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianLowFamily (Real.log n) ∧
+        (p : ℝ) ≤ gaussianLowFamily (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   obtain ⟨p, hp, hb, hr, hleast⟩ := exists_least_gaussianLow .low ho hc hGRH hL
@@ -446,7 +447,7 @@ theorem exists_least_gaussianLowOldFamily {n : ℕ} (ho : Odd n) (hc : ¬n.Prime
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianLowOldFamily (Real.log n) ∧
+        (p : ℝ) ≤ gaussianLowOldFamily (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   obtain ⟨p, hp, hb, hr, hleast⟩ := exists_least_gaussianLow .low ho hc hGRH hL
@@ -462,7 +463,7 @@ theorem exists_prime_gaussianLowFamily {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianLowFamily (Real.log n) ∧
+        (p : ℝ) ≤ gaussianLowFamily (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
   (exists_least_gaussianLowFamily ho hc hGRH hL).imp fun _ h => ⟨h.1, h.2.1, h.2.2.1⟩
 
@@ -472,7 +473,7 @@ theorem exists_prime_gaussianLowOldFamily {n : ℕ} (ho : Odd n) (hc : ¬n.Prime
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianLowOldFamily (Real.log n) ∧
+        (p : ℝ) ≤ gaussianLowOldFamily (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
   (exists_least_gaussianLowOldFamily ho hc hGRH hL).imp fun _ h => ⟨h.1, h.2.1, h.2.2.1⟩
 

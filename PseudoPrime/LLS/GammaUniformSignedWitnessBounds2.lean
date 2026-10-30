@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformSignedProfiles
 public import PseudoPrime.LLS.GammaUniformTightStart
 public import PseudoPrime.Analysis.LogarithmicShiftBounds
@@ -32,7 +33,7 @@ theorem exists_prime_character_ne_one_of_uniform_subgroup_cutoff {q : ℕ} {B : 
     (hbound :
       ∀ H : Subgroup (ZMod q)ˣ,
         H ≠ ⊤ →
-          ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ ¬PaperStatements.residueInSubgroup q H p ∧ (p : ℝ) ≤ B) :
+          ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ B) :
     ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ χ p ≠ 1 ∧ (p : ℝ) ≤ B := by
   obtain ⟨p, hp, hd, hout, hb⟩ :=
     hbound χ.toUnitHom.ker (NumberTheory.ker_toUnitHom_ne_top_of_ne_one χ hne)
@@ -50,7 +51,7 @@ the same bound B, with minimality among all eligible primes.
 Construct the project predicate and minimize it on the natural numbers.
 This preserves the pointwise cutoff in the least-prime interface. -/
 theorem exists_least_prime_outside_of_subgroup_cutoff {q : ℕ} {B : ℝ} (H : Subgroup (ZMod q)ˣ)
-    (hbound : ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ ¬PaperStatements.residueInSubgroup q H p ∧ (p : ℝ) ≤ B) :
+    (hbound : ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ B) :
     ∃ p : ℕ,
       PrimeOutsideSubgroup q H p ∧ (p : ℝ) ≤ B ∧ ∀ r, PrimeOutsideSubgroup q H r → p ≤ r := by
   classical

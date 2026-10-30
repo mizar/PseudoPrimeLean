@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.TriangularProfiles
+public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularProfiles
 
 /-! # Guarded numerical assembly of the sharp witness candidates -/
 
@@ -17,7 +17,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- A triangular candidate is active only above its certified entrance.
 The supplied base is the fallback for every inactive profile. -/
 noncomputable def sharpHighGuard (L B : ℝ) (i : Fin 8) : ℝ :=
-  if (Analysis.triangularProfile i).T ≤ L then (Analysis.triangularProfile i).C * L ^ 2 else B
+  if (triangularProfile i).T ≤ L then (triangularProfile i).C * L ^ 2 else B
 
 /-- The minimum of the base and the eight guarded triangular candidates.
 Every profile retains its own exact certified entrance. -/
@@ -35,10 +35,10 @@ bounds their guarded minimum. Resolve each guard before combining the inequaliti
 theorem sharpHigh_lower {L B C : ℝ} (hB : C ≤ B)
     (hH :
       ∀ i : Fin 8,
-        (Analysis.triangularProfile i).T ≤ L → C ≤ (Analysis.triangularProfile i).C * L ^ 2) :
+        (triangularProfile i).T ≤ L → C ≤ (triangularProfile i).C * L ^ 2) :
     C ≤ sharpHighMin L B := by
   have hg (i : Fin 8) : C ≤ sharpHighGuard L B i := by
-    by_cases hi : (Analysis.triangularProfile i).T ≤ L
+    by_cases hi : (triangularProfile i).T ≤ L
     · simpa only [sharpHighGuard, ite_eq_left hi] using hH i hi
     · simpa only [sharpHighGuard, ite_eq_right hi] using hB
   exact
@@ -53,8 +53,8 @@ theorem sharpHigh_le_base (L B : ℝ) : sharpHighMin L B ≤ B :=
 
 /-- At a certified entrance, the guarded triangular minimum is below that profile.
 Project the corresponding one of the eight finite minimum branches. -/
-theorem sharpHigh_le_profile (L B : ℝ) (i : Fin 8) (hi : (Analysis.triangularProfile i).T ≤ L) :
-    sharpHighMin L B ≤ (Analysis.triangularProfile i).C * L ^ 2 := by
+theorem sharpHigh_le_profile (L B : ℝ) (i : Fin 8) (hi : (triangularProfile i).T ≤ L) :
+    sharpHighMin L B ≤ (triangularProfile i).C * L ^ 2 := by
   have hg : sharpHighMin L B ≤ sharpHighGuard L B i := by
     fin_cases i
     · exact (min_le_right _ _).trans (min_le_left _ _)
@@ -96,8 +96,8 @@ theorem sharpHigh_le_profile (L B : ℝ) (i : Fin 8) (hi : (Analysis.triangularP
 /-- Below thirty billion all eight triangular guards are inactive.
 Their common certified entrance lower bound reduces the minimum to its base. -/
 theorem sharpHigh_eq_base {L B : ℝ} (hL : L < 30000000000) : sharpHighMin L B = B := by
-  have hi (i : Fin 8) : ¬(Analysis.triangularProfile i).T ≤ L := by
-    linarith only [(Analysis.triangularProfile i).entry, hL]
+  have hi (i : Fin 8) : ¬(triangularProfile i).T ≤ L := by
+    linarith only [(triangularProfile i).entry, hL]
   simp only [sharpHighMin, sharpHighGuard, ite_eq_right (hi _), min_self]
 
 /-- Combine a base, two analytic candidates guarded at scale 63, and the high minimum.
@@ -131,12 +131,12 @@ theorem sharpGuard_lower {L B G S H C : ℝ} (hB : C ≤ B) (hG : 63 ≤ L → C
 
 /-- If an active profile has the smallest valid coefficient, the high minimum is exactly
 its cutoff intersected with the base. The proof compares every active branch directly. -/
-theorem sharpHigh_eq_active {L B : ℝ} (i : Fin 8) (hi : (Analysis.triangularProfile i).T ≤ L)
+theorem sharpHigh_eq_active {L B : ℝ} (i : Fin 8) (hi : (triangularProfile i).T ≤ L)
     (hbest :
       ∀ j : Fin 8,
-        (Analysis.triangularProfile j).T ≤ L →
-          (Analysis.triangularProfile i).C ≤ (Analysis.triangularProfile j).C) :
-    sharpHighMin L B = min B ((Analysis.triangularProfile i).C * L ^ 2) := by
+        (triangularProfile j).T ≤ L →
+          (triangularProfile i).C ≤ (triangularProfile j).C) :
+    sharpHighMin L B = min B ((triangularProfile i).C * L ^ 2) := by
   apply le_antisymm
   · exact le_min (sharpHigh_le_base L B) (sharpHigh_le_profile L B i hi)
   · apply sharpHigh_lower (min_le_left _ _)

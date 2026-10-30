@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MellinWeightedSums
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
@@ -33,13 +34,13 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
     {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     ∑' n : ℕ,
         (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
-          General.mellinWeightTwo ((n : ℝ) / x) =
+          Analysis.mellinWeightTwo ((n : ℝ) / x) =
       (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
   have hτ0 : (0 : ℝ) < τ := lt_trans zero_lt_one hτ
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ (((τ : ℂ) + y * Complex.I) ^ 2)⁻¹ with hK_def
   have hK_int : MeasureTheory.Integrable K := by
-    have hVI := General.verticalIntegrable_mellinLogKernel hτ0.ne'
+    have hVI := Analysis.verticalIntegrable_mellinLogKernel hτ0.ne'
     unfold Complex.VerticalIntegrable at hVI
     have heq : (fun y : ℝ ↦ (((τ : ℂ) + y * Complex.I)⁻¹) ^ 2) = K := by
       funext y
@@ -89,7 +90,7 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
   have hterm_raw :
     ∀ n : ℕ,
       n ≠ 0 →
-        General.mellinWeightTwo ((n : ℝ) / x) =
+        Analysis.mellinWeightTwo ((n : ℝ) / x) =
           (2 * Real.pi : ℝ)⁻¹ •
             ∫ y : ℝ,
               (((n : ℝ) / x : ℝ) : ℂ) ^ (-((τ : ℂ) + y * Complex.I)) *
@@ -97,14 +98,14 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
     have hnx : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-    have hmellin := General.mellinInv_mellinWeightTwo_eq (σ := τ) (x := (n : ℝ) / x) hτ0 hnx
+    have hmellin := Analysis.mellinInv_mellinWeightTwo_eq (σ := τ) (x := (n : ℝ) / x) hτ0 hnx
     rw [← hmellin]
     simp only [mellinInv, smul_eq_mul, one_div]
   have hterm :
     ∀ n : ℕ,
       n ≠ 0 →
         (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
-            General.mellinWeightTwo ((n : ℝ) / x) =
+            Analysis.mellinWeightTwo ((n : ℝ) / x) =
           (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
@@ -115,7 +116,8 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
     apply MeasureTheory.integral_congr_ae
     filter_upwards with y
     simp only [hG_def, hH_def, hK_def]
-    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div, Complex.ofReal_natCast]
+    rw [Analysis.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div,
+      Complex.ofReal_natCast]
     ac_rfl
   -- (2) each `G n` is integrable, dominated by a constant multiple of `K`
   have hGint : ∀ n : ℕ, MeasureTheory.Integrable (G n) := by
@@ -251,7 +253,7 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
   have hLHS :
     ∑' n : ℕ,
         (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
-          General.mellinWeightTwo ((n : ℝ) / x) =
+          Analysis.mellinWeightTwo ((n : ℝ) / x) =
       ∑' n : ℕ, (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     refine tsum_congr fun n ↦ ?_
     rcases eq_or_ne n 0 with rfl | hn

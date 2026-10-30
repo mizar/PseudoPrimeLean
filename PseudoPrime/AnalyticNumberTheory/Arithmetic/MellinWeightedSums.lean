@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
-public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+public import PseudoPrime.Analysis.MellinWeights
 
 /-! General finite-sum identities for Mellin-weighted von Mangoldt sums. -/
 
@@ -23,11 +23,11 @@ Finite support reduces the `tsum` to the defining finite sum. This identifies th
 side of the logarithmic Mellin inversion formula without a character twist.
 -/
 theorem mellinWeightTwo_vonMangoldt_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
-    ∑' n : ℕ, (ArithmeticFunction.vonMangoldt n : ℂ) * General.mellinWeightTwo ((n : ℝ) / x) =
+    ∑' n : ℕ, (ArithmeticFunction.vonMangoldt n : ℂ) * Analysis.mellinWeightTwo ((n : ℝ) / x) =
       (logWeightedMangoldtSum x : ℂ) := by
   have hvanish :
     ∀ n ∉ Finset.Ioc 0 ⌊x⌋₊,
-      (ArithmeticFunction.vonMangoldt n : ℂ) * General.mellinWeightTwo ((n : ℝ) / x) = 0 := by
+      (ArithmeticFunction.vonMangoldt n : ℂ) * Analysis.mellinWeightTwo ((n : ℝ) / x) = 0 := by
     intro n hn
     simp only [Finset.mem_Ioc, not_and, not_le] at hn
     rcases Nat.eq_zero_or_pos n with hn0 | hn0
@@ -36,7 +36,7 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
     · have hnxlt : x < n := (Nat.floor_lt hx.le).mp (hn hn0)
       have ht : (0 : ℝ) < (n : ℝ) / x := div_pos (by exact_mod_cast hn0) hx
       have hdivge : (1 : ℝ) ≤ (n : ℝ) / x := (one_le_div hx).mpr hnxlt.le
-      rw [General.mellinWeightTwo_eq_ofReal_neg_log_min ht, min_eq_right hdivge, Real.log_one]
+      rw [Analysis.mellinWeightTwo_eq_ofReal_neg_log_min ht, min_eq_right hdivge, Real.log_one]
       simp only [neg_zero, Complex.ofReal_zero, mul_zero]
   rw [tsum_eq_sum hvanish, logWeightedMangoldtSum]
   push_cast
@@ -49,7 +49,8 @@ theorem mellinWeightTwo_vonMangoldt_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
   have ht : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
   have hlog : Real.log ((n : ℝ) / x) = -Real.log (x / (n : ℝ)) := by
     rw [← inv_div x (n : ℝ), Real.log_inv]
-  rw [General.mellinWeightTwo_eq_ofReal_neg_log_min ht, min_eq_left hnxdiv, logWeightedMangoldtTerm,
+  rw [Analysis.mellinWeightTwo_eq_ofReal_neg_log_min ht, min_eq_left hnxdiv,
+    logWeightedMangoldtTerm,
     hlog]
   push_cast
   ring
@@ -63,11 +64,11 @@ inversion without a character twist.
 -/
 theorem mellinWeightOne_vonMangoldt_div_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
     ∑' n : ℕ,
-        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * General.mellinWeightOne ((n : ℝ) / x) =
+        (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * Analysis.mellinWeightOne ((n : ℝ) / x) =
       (reciprocalWeightedMangoldtSum x : ℂ) := by
   have hvanish :
     ∀ n ∉ Finset.Ioc 0 ⌊x⌋₊,
-      (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * General.mellinWeightOne ((n : ℝ) / x) =
+      (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * Analysis.mellinWeightOne ((n : ℝ) / x) =
         0 := by
     intro n hn
     simp only [Finset.mem_Ioc, not_and, not_le] at hn
@@ -77,7 +78,7 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
     · have hnxlt : x < n := (Nat.floor_lt hx.le).mp (hn hn0)
       have ht : (0 : ℝ) < (n : ℝ) / x := div_pos (by exact_mod_cast hn0) hx
       have hdivgt : (1 : ℝ) < (n : ℝ) / x := (one_lt_div hx).mpr hnxlt
-      rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_right (sub_nonpos.mpr hdivgt.le)]
+      rw [Analysis.mellinWeightOne_eq_ofReal_max ht, max_eq_right (sub_nonpos.mpr hdivgt.le)]
       simp only [Complex.ofReal_zero, mul_zero]
   rw [tsum_eq_sum hvanish, reciprocalWeightedMangoldtSum]
   push_cast
@@ -88,7 +89,7 @@ theorem mellinWeightOne_vonMangoldt_div_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
   have hnxle : (n : ℝ) ≤ x := (Nat.le_floor_iff hx.le).mp hnx
   have hnxdiv : (n : ℝ) / x ≤ 1 := (div_le_one hx).mpr hnxle
   have ht : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-  rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_left (sub_nonneg.mpr hnxdiv),
+  rw [Analysis.mellinWeightOne_eq_ofReal_max ht, max_eq_left (sub_nonneg.mpr hnxdiv),
     reciprocalWeightedMangoldtTerm]
   push_cast
   ring
@@ -108,12 +109,12 @@ theorem characterReciprocalWeightedTerm_tsum_eq {N : ℕ} [NeZero N] (χ : Diric
     {x : ℝ} (hx : 0 < x) :
     ∑' n : ℕ,
         (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * χ (n : ZMod N) *
-          General.mellinWeightOne ((n : ℝ) / x) =
+          Analysis.mellinWeightOne ((n : ℝ) / x) =
       characterReciprocalWeightedSum x χ := by
   have hvanish :
     ∀ n ∉ Finset.Ioc 0 ⌊x⌋₊,
       (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * χ (n : ZMod N) *
-          General.mellinWeightOne ((n : ℝ) / x) =
+          Analysis.mellinWeightOne ((n : ℝ) / x) =
         0 := by
     intro n hn
     simp only [Finset.mem_Ioc, not_and, not_le] at hn
@@ -123,7 +124,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq {N : ℕ} [NeZero N] (χ : Diric
     · have hnxlt : x < n := (Nat.floor_lt hx.le).mp (hn hn0)
       have ht : (0 : ℝ) < (n : ℝ) / x := div_pos (by exact_mod_cast hn0) hx
       have hdivgt : (1 : ℝ) < (n : ℝ) / x := (one_lt_div hx).mpr hnxlt
-      rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_right (sub_nonpos.mpr hdivgt.le)]
+      rw [Analysis.mellinWeightOne_eq_ofReal_max ht, max_eq_right (sub_nonpos.mpr hdivgt.le)]
       simp only [Complex.ofReal_zero, mul_zero]
   rw [tsum_eq_sum hvanish, characterReciprocalWeightedSum]
   apply Finset.sum_congr rfl
@@ -133,7 +134,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq {N : ℕ} [NeZero N] (χ : Diric
   have hnxle : (n : ℝ) ≤ x := (Nat.le_floor_iff hx.le).mp hnx
   have hnxdiv : (n : ℝ) / x ≤ 1 := (div_le_one hx).mpr hnxle
   have ht : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-  rw [General.mellinWeightOne_eq_ofReal_max ht, max_eq_left (sub_nonneg.mpr hnxdiv),
+  rw [Analysis.mellinWeightOne_eq_ofReal_max ht, max_eq_left (sub_nonneg.mpr hnxdiv),
     characterReciprocalWeightedTerm, reciprocalWeightedMangoldtTerm]
   push_cast
   ring
@@ -153,12 +154,12 @@ theorem characterLogWeightedTerm_tsum_eq {N : ℕ} [NeZero N] (χ : DirichletCha
     (hx : 0 < x) :
     ∑' n : ℕ,
         (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
-          General.mellinWeightTwo ((n : ℝ) / x) =
+          Analysis.mellinWeightTwo ((n : ℝ) / x) =
       characterLogWeightedSum x χ := by
   have hvanish :
     ∀ n ∉ Finset.Ioc 0 ⌊x⌋₊,
       (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
-          General.mellinWeightTwo ((n : ℝ) / x) =
+          Analysis.mellinWeightTwo ((n : ℝ) / x) =
         0 := by
     intro n hn
     simp only [Finset.mem_Ioc, not_and, not_le] at hn
@@ -168,7 +169,7 @@ theorem characterLogWeightedTerm_tsum_eq {N : ℕ} [NeZero N] (χ : DirichletCha
     · have hnxlt : x < n := (Nat.floor_lt hx.le).mp (hn hn0)
       have ht : (0 : ℝ) < (n : ℝ) / x := div_pos (by exact_mod_cast hn0) hx
       have hdivge : (1 : ℝ) ≤ (n : ℝ) / x := (one_le_div hx).mpr hnxlt.le
-      rw [General.mellinWeightTwo_eq_ofReal_neg_log_min ht, min_eq_right hdivge, Real.log_one]
+      rw [Analysis.mellinWeightTwo_eq_ofReal_neg_log_min ht, min_eq_right hdivge, Real.log_one]
       simp only [neg_zero, Complex.ofReal_zero, mul_zero]
   rw [tsum_eq_sum hvanish, characterLogWeightedSum]
   apply Finset.sum_congr rfl
@@ -180,7 +181,7 @@ theorem characterLogWeightedTerm_tsum_eq {N : ℕ} [NeZero N] (χ : DirichletCha
   have ht : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
   have hlog : Real.log ((n : ℝ) / x) = -Real.log (x / (n : ℝ)) := by
     rw [← inv_div x (n : ℝ), Real.log_inv]
-  rw [General.mellinWeightTwo_eq_ofReal_neg_log_min ht, min_eq_left hnxdiv,
+  rw [Analysis.mellinWeightTwo_eq_ofReal_neg_log_min ht, min_eq_left hnxdiv,
     characterLogWeightedTerm, logWeightedMangoldtTerm, hlog]
   push_cast
   ring

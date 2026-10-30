@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.CosetPrimeBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
 
@@ -51,7 +52,7 @@ bounded by the unrestricted sum on nonprime indices. Vanishing Mangoldt coeffici
 remove indices that are not prime powers; the remaining indices are composite prime powers.
 This is the first upper-bound reduction in the proof of Theorem 1.4. -/
 theorem cosetLogWeightedSum_le_nonprime_sum {q : ℕ} (H : Subgroup (ZMod q)ˣ) (a : (ZMod q)ˣ) {x : ℝ}
-    (hx : 0 < x) (hno : ∀ p : ℕ, p ∈ primesInCoset q H a → ¬(p : ℝ) ≤ x) :
+    (hx : 0 < x) (hno : ∀ p : ℕ, p ∈ NumberTheory.primesInCoset q H a → ¬(p : ℝ) ≤ x) :
     cosetLogWeightedSum q H a x ≤
       ∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter (fun n ↦ ¬n.Prime),
         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm x n := by
@@ -75,7 +76,7 @@ theorem exists_prime_in_coset_le_of_weighted_gap {q : ℕ} (H : Subgroup (ZMod q
       (∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter (fun n ↦ ¬n.Prime),
           AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm x n) <
         cosetLogWeightedSum q H a x) :
-    ∃ p : ℕ, p ∈ primesInCoset q H a ∧ (p : ℝ) ≤ x := by
+    ∃ p : ℕ, p ∈ NumberTheory.primesInCoset q H a ∧ (p : ℝ) ≤ x := by
   classical
   by_contra h
   exact
@@ -90,7 +91,7 @@ theorem exists_least_prime_in_coset_le_of_weighted_gap {q : ℕ} [NeZero q] (H :
       (∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter (fun n ↦ ¬n.Prime),
           AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm x n) <
         cosetLogWeightedSum q H a x) :
-    ∃ p : ℕ, IsLeast (primesInCoset q H a) p ∧ (p : ℝ) ≤ x := by
+    ∃ p : ℕ, IsLeast (NumberTheory.primesInCoset q H a) p ∧ (p : ℝ) ≤ x := by
   obtain ⟨p, hp, hpx⟩ := exists_prime_in_coset_le_of_weighted_gap H a hx hgap
   obtain ⟨r, hr, hb⟩ := exists_least_prime_in_coset_le_or H a (A := x) (B := x) ⟨p, hp, Or.inl hpx⟩
   exact ⟨r, hr, hb.elim id id⟩

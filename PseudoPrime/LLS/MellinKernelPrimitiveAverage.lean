@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.NumberTheory.UnramifiedCharacterReduction
 public import PseudoPrime.LLS.MellinKernelPrimitiveSupport
 
@@ -121,7 +122,7 @@ primitive comparison. This supplies the primitive analytic side directly,
 without an absolute level-change error. -/
 theorem principal_sum_le_primitive_average_of_noSmallPrimes (K : MellinKernel) {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) {x X : ℝ} (hx : 0 < x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) * ∑ n ∈ Finset.Icc 1 ⌊X⌋₊, (K.summand (1 : DirichletCharacter ℂ q) x n).re ≤
       ∑ χ : NumberTheory.subgroupAnnihilator H,
         (∑' n : ℕ, K.summand χ.val.primitiveCharacter x n).re := by

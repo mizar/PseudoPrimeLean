@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformSignedProfiles
 public import PseudoPrime.LLS.GammaUniformTightStart
 public import PseudoPrime.Analysis.LogarithmicShiftBounds
@@ -43,7 +44,7 @@ theorem exists_prime_outside_le_rational_logarithmic_shift {q : ℕ} [NeZero q] 
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
-        ¬residueInSubgroup q H p ∧
+        ¬NumberTheory.residueInSubgroup q H p ∧
         (p : ℝ) ≤ Analysis.logarithmicShiftCutoff (Real.log q) a b c := by
   let T := Real.sqrt ((5 / 4 : ℝ) * (a : ℝ)) * Analysis.logarithmicShiftRoot (Real.log q) b c
   have haR : (0 : ℝ) ≤ (5 / 4 : ℝ) * (a : ℝ) :=

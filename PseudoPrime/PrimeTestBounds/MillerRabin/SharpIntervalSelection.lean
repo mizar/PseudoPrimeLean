@@ -51,20 +51,20 @@ theorem sharpSelected_le_low {n : ℕ} (hn : 1 < n) :
 
 /-- On its certified domain, the sharp selection is below the fine Gaussian family. -/
 theorem sharpSelected_le_gaussian {n : ℕ} (hn : 1 < n) (hL : 63 ≤ Real.log n) :
-    sharpSelectedEnvelope n ≤ Analysis.gaussianLowFamily (Real.log n) := by
+    sharpSelectedEnvelope n ≤ gaussianLowFamily (Real.log n) := by
   rw [← sharp_eq_selected hn]
   exact sharp_le_gaussian hL
 
 /-- On its certified domain, the sharp selection is below the fine seeded family. -/
 theorem sharpSelected_le_seeded {n : ℕ} (hn : 1 < n) (hL : 63 ≤ Real.log n) :
-    sharpSelectedEnvelope n ≤ Analysis.gaussianSeededSharp (Real.log n) := by
+    sharpSelectedEnvelope n ≤ gaussianSeededSharp (Real.log n) := by
   rw [← sharp_eq_selected hn]
   exact sharp_le_seeded hL
 
 /-- On a triangular entrance, the sharp selection is below that active high profile. -/
 theorem sharpSelected_le_triangular {n : ℕ} (hn : 1 < n) (i : Fin 8)
-    (hL : (Analysis.triangularProfile i).T ≤ Real.log n) :
-    sharpSelectedEnvelope n ≤ (Analysis.triangularProfile i).C * Real.log n ^ 2 := by
+    (hL : (triangularProfile i).T ≤ Real.log n) :
+    sharpSelectedEnvelope n ≤ (triangularProfile i).C * Real.log n ^ 2 := by
   rw [← sharp_eq_selected hn]
   exact sharp_le_triangular i hL
 
@@ -88,13 +88,13 @@ theorem sharpSelected_eq_analytic {n : ℕ} (hN : 3000 ≤ n) (hL : 63 ≤ Real.
     (hU : Real.log n < 30000000000) :
     sharpSelectedEnvelope n =
       min (lowFiniteSelected n)
-        (min (Analysis.gaussianLowFamily (Real.log n))
-          (Analysis.gaussianSeededSharp (Real.log n))) := by
+        (min (gaussianLowFamily (Real.log n))
+          (gaussianSeededSharp (Real.log n))) := by
   rw [sharpSelectedEnvelope, ite_eq_right (not_lt.mpr hN), sharpGuardSelected,
     ite_eq_right (not_lt.mpr hL), sharpHigh_eq_base hU]
-  rw [min_comm (Analysis.gaussianSeededSharp (Real.log n)) (lowFiniteSelected n),
-    min_left_comm (Analysis.gaussianLowFamily (Real.log n)) (lowFiniteSelected n)
-      (Analysis.gaussianSeededSharp (Real.log n)),
+  rw [min_comm (gaussianSeededSharp (Real.log n)) (lowFiniteSelected n),
+    min_left_comm (gaussianLowFamily (Real.log n)) (lowFiniteSelected n)
+      (gaussianSeededSharp (Real.log n)),
     ← min_assoc, min_self]
 
 /-- A strict current-baseline comparison for the finite base transfers to the sharp selection. -/
@@ -105,7 +105,7 @@ theorem sharpSelected_lt_of_low {n : ℕ} (hn : 1 < n)
 
 /-- A strict comparison for the valid fine Gaussian family transfers to the sharp selection. -/
 theorem sharpSelected_lt_of_gaussian {n : ℕ} (hn : 1 < n) (hL : 63 ≤ Real.log n)
-    (h : Analysis.gaussianLowFamily (Real.log n) < refinedSelectedEnvelope n) :
+    (h : gaussianLowFamily (Real.log n) < refinedSelectedEnvelope n) :
     sharpSelectedEnvelope n < refinedSelectedEnvelope n :=
   (sharpSelected_le_gaussian hn hL).trans_lt h
 
@@ -114,16 +114,16 @@ strictly improve the sharp selection against the current refined selection.
 The first band includes the initial part of the current 50000 plateau. -/
 theorem sharpSelected_lt_refined_seeded {n : ℕ} (hn : 1 < n) (hU : Real.log n < 1100000000000)
     (hstrict :
-      (Analysis.gaussianRecoveredSeededSwitch false 35000 < Real.log n ∧
+      (gaussianRecoveredSeededSwitch false 35000 < Real.log n ∧
           Real.log n <
-            Analysis.gaussianRecoveredSeededSwitch false 50000 +
-              Analysis.gaussianSeededSharpShift) ∨
-        Analysis.gaussianRecoveredSeededSwitch true 50000 < Real.log n) :
+            gaussianRecoveredSeededSwitch false 50000 +
+              gaussianSeededSharpShift) ∨
+        gaussianRecoveredSeededSwitch true 50000 < Real.log n) :
     sharpSelectedEnvelope n < refinedSelectedEnvelope n := by
   have h63 : (63 : ℝ) ≤ Real.log n := by
     rcases hstrict with h | h
-    · linarith only [h.1, Analysis.gaussianRecoveredSeeded_switch35_bounds.1]
-    · linarith only [h, (Analysis.gaussianRecoveredSeeded_switch50_bounds true).1]
+    · linarith only [h.1, gaussianRecoveredSeeded_switch35_bounds.1]
+    · linarith only [h, (gaussianRecoveredSeeded_switch50_bounds true).1]
   exact (sharpSelected_le_seeded hn h63).trans_lt (seededSharp_lt_refinedSelected hn hU hstrict)
 
 /-- From thirty billion to the current triangular entrance, the sharp selection

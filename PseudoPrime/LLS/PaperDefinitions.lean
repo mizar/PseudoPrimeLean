@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.Statement
 public import PseudoPrime.NumberTheory.SubgroupAnnihilator
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
@@ -20,21 +22,6 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 @[expose] public section
 
 namespace PseudoPrime.LLS.PaperStatements
-
-/-- Membership of a natural residue in the image of a subgroup of units.
-Nonunits are outside this image. Used for the subgroup prime bounds. -/
-def residueInSubgroup (q : ℕ) (H : Subgroup (ZMod q)ˣ) (n : ℕ) : Prop :=
-  ∃ u : (ZMod q)ˣ, u ∈ H ∧ (u : ZMod q) = (n : ZMod q)
-
-/-- The eligible primes outside `H`: prime divisors of the modulus are excluded.
-Its least element is the prime appearing in Theorems 1.1--1.3. -/
-def primesOutside (q : ℕ) (H : Subgroup (ZMod q)ˣ) : Set ℕ :=
-  {p | p.Prime ∧ ¬p ∣ q ∧ ¬residueInSubgroup q H p}
-
-/-- Prime residues in the coset `aH`, described by the quotient of units.
-Used to express the least prime in Theorem 1.4. -/
-def primesInCoset (q : ℕ) (H : Subgroup (ZMod q)ˣ) (a : (ZMod q)ˣ) : Set ℕ :=
-  {p | p.Prime ∧ ∃ u : (ZMod q)ˣ, a⁻¹ * u ∈ H ∧ (u : ZMod q) = (p : ZMod q)}
 
 /-- The coefficient in Theorem 1.2: `0.8`, `0.7`, and `0.66` for indices
 two, three, and greater than three. Only indices greater than one are used. -/
@@ -113,14 +100,6 @@ noncomputable def alternatingPrimePowerSum (x : ℝ) : ℝ :=
       ArithmeticFunction.vonMangoldt (p ^ k) * (-1 : ℝ) ^ k *
         (1 / ((p : ℝ) ^ k * Real.log ((p : ℝ) ^ k)) - 1 / (x * Real.log x))
 
-/-- Inverse Mellin integral of `K` on the vertical line of real part `c`.
-The parameterization `s = c + it` cancels the `i` in `ds/(2πi)`.
-For an admissible kernel it agrees on all the allowed vertical lines. -/
-noncomputable def inverseMellin (K : ℂ → ℂ) (c u : ℝ) : ℂ :=
-  ((1 / (2 * Real.pi) : ℝ) : ℂ) *
-    MeasureTheory.integral MeasureTheory.volume
-      (fun t : ℝ ↦ K ((c : ℂ) + Complex.I * t) * (u : ℂ) ^ (-((c : ℂ) + Complex.I * t)))
-
 /-- The kernel assumptions preceding Lemma 6.1.
 `region` is an open region containing the stated strip; `regularized` removes the
 possible simple pole at `-1/2`. The decay bound is uniform away from that pole.
@@ -165,18 +144,19 @@ structure MellinKernel where
   mellin_eq :
     ∀ c u : ℝ,
       -1 / 2 < c →
-        c ≤ 1 / 2 + delta → 0 < u → inverseMellin function c u = inverseMellin function 0 u
+        c ≤ 1 / 2 + delta → 0 < u → Analysis.inverseMellin function c u =
+      Analysis.inverseMellin function 0 u
   /-- Nonnegativity of the real inverse Mellin transform on positive arguments. -/
-  mellin_nonneg : ∀ u : ℝ, 0 < u → 0 ≤ (inverseMellin function 0 u).re
+  mellin_nonneg : ∀ u : ℝ, 0 < u → 0 ≤ (Analysis.inverseMellin function 0 u).re
   /-- The real transform is nonzero at some positive argument. Together with
   nonnegativity, this ensures positive mass and admits compactly supported transforms. -/
-  mellin_nonzero : ∃ u : ℝ, 0 < u ∧ (inverseMellin function 0 u).re ≠ 0
+  mellin_nonzero : ∃ u : ℝ, 0 < u ∧ (Analysis.inverseMellin function 0 u).re ≠ 0
   /-- The transform is real-valued, as required by the positivity assumption. -/
-  mellin_real : ∀ u : ℝ, 0 < u → (inverseMellin function 0 u).im = 0
+  mellin_real : ∀ u : ℝ, 0 < u → (Analysis.inverseMellin function 0 u).im = 0
 
 /-- The transform `K̃(u)`, evaluated on the line of real part zero. -/
 noncomputable def MellinKernel.transform (K : MellinKernel) (u : ℝ) : ℂ :=
-  inverseMellin K.function 0 u
+  Analysis.inverseMellin K.function 0 u
 
 /-- The factor `(2π)⁻¹ ∫ |K(it)| dt` in Lemma 6.1 and Proposition 6.1. -/
 noncomputable def MellinKernel.mass (K : MellinKernel) : ℝ :=

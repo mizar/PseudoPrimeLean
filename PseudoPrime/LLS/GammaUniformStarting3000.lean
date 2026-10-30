@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformSmallScaleBounds
 public import PseudoPrime.LLS.GammaUniformRationalProfileBounds
 public import PseudoPrime.LLS.RefinedTheorem11S1Subgroup
@@ -25,7 +26,8 @@ theorem gamma_profile_199_div_250_plus_216_middle {q : ℕ} [NeZero q] (H : Subg
     (hupper : Real.log q ≤ 34971) :
     ∃ p : ℕ,
       p.Prime ∧
-        ¬p ∣ q ∧ ¬residueInSubgroup q H p ∧ (p : ℝ) ≤ (199 / 250 : ℝ) * (Real.log q + 216) ^ 2 := by
+        ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (199 / 250 : ℝ) * (Real.log q +
+          216) ^ 2 := by
   let L := Real.log q
   let T := Real.sqrt (199 / 200 : ℝ) * (L + 216)
   let x := (32 / 99 : ℝ) * T ^ 2
@@ -139,7 +141,8 @@ theorem gamma_profile_199_div_250_plus_216_small {q : ℕ} [NeZero q] (H : Subgr
     (hsmall : q < 20000) :
     ∃ p : ℕ,
       p.Prime ∧
-        ¬p ∣ q ∧ ¬residueInSubgroup q H p ∧ (p : ℝ) ≤ (199 / 250 : ℝ) * (Real.log q + 216) ^ 2 := by
+        ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (199 / 250 : ℝ) * (Real.log q +
+          216) ^ 2 := by
   obtain ⟨p, hp, hb⟩ := LLS.exists_prime_outside_subgroup_le_refinedRadius hq H hH hGRH
   have hroot := LLS.refinedRadiusRoot_le_seventy_of_lt_20000 hq hsmall
   have hL := Analysis.eight_lt_log_level hq
@@ -167,7 +170,8 @@ theorem exists_prime_outside_le_gamma_199_div_250_plus_216_3000 {q : ℕ} (H : S
     (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 3000 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
-        ¬p ∣ q ∧ ¬residueInSubgroup q H p ∧ (p : ℝ) ≤ (199 / 250 : ℝ) * (Real.log q + 216) ^ 2 := by
+        ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (199 / 250 : ℝ) * (Real.log q +
+          216) ^ 2 := by
   have hq0 : q ≠ 0 := Nat.ne_zero_of_lt ((by decide : (0 : ℕ) < 3000).trans_le hq)
   let : NeZero q := ⟨hq0⟩
   by_cases hsmall : q < 20000

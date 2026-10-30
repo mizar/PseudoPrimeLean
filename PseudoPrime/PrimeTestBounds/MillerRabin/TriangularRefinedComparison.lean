@@ -22,7 +22,7 @@ theorem triangularEarlier_lt_nextSelected {n : ℕ} (hn : 1 < n)
     (hL : (1100000000000 : ℝ) ≤ Real.log n) (hU : Real.log n < 1500000000000) :
     (71 / 250 : ℝ) * Real.log n ^ 2 < nextSelectedEnvelope n := by
   rw [← next_eq_selected hn, next_eq_seeded hn (by linarith only [hL]) hU]
-  have h := Analysis.gaussianSeededSelected_lower (by linarith only [hL] : (63 : ℝ) ≤ Real.log n)
+  have h := gaussianSeededSelected_lower (by linarith only [hL] : (63 : ℝ) ≤ Real.log n)
   have hp := sq_pos_of_pos (show (0 : ℝ) < Real.log n by linarith only [hL])
   nlinarith only [h, hp]
 

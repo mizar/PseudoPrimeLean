@@ -257,7 +257,7 @@ theorem fixedShiftPrincipal_ge_mass133 (x : ℝ) :
         (fixedShiftPrincipalError x + Real.log (2 * Real.pi) * Real.exp (-(1 / x))) / Real.sqrt x ≤
       fixedShiftPrincipalLower x := by
   have hm :=
-    mul_le_mul_of_nonneg_right Analysis.ramp_mass_coefficient_ge_133_160 (Real.sqrt_nonneg x)
+    mul_le_mul_of_nonneg_right ramp_mass_coefficient_ge_133_160 (Real.sqrt_nonneg x)
   dsimp only [fixedShiftPrincipalLower]
   linarith only [hm]
 

@@ -22,7 +22,7 @@ theorem improved_lower_of_candidates {n : ℕ} {C : ℝ} (hB : C ≤ selectedWit
     (h67 : Real.log n ≤ 47 / 4 → C ≤ 67)
     (hfour : 45 / 4 ≤ Real.log n → C ≤ LLS.PaperStatements.endpointFourStepCutoff (Real.log n))
     (hgamma : 100 ≤ Real.log n → C ≤ gammaSharpBound (Real.log n))
-    (hgauss : 63 ≤ Real.log n → C ≤ Analysis.gaussianFloorSelected (Real.log n))
+    (hgauss : 63 ≤ Real.log n → C ≤ gaussianFloorSelected (Real.log n))
     (htri : 2000000000000 ≤ Real.log n → C ≤ (282924 / 1000000 : ℝ) * Real.log n ^ 2) :
     C ≤ improvedWitnessEnvelope n := by
   have cond {P : Prop} [Decidable P] {v : ℝ} (h : P → C ≤ v) :
@@ -58,7 +58,7 @@ theorem old_high_ge_triangular {n : ℕ} (hn : 1 < n) (hL : 2000000000000 ≤ Re
   · rw [ite_eq_left h, gaussianMRLargeEnvelope_eq (by linarith only [hL])]
   · have h300 : (300 : ℝ) ≤ Real.log n := by linarith only [hL]
     rw [ite_eq_right h, ite_eq_left h300, gaussianMRRefinedEnvelope_eq h300]
-    have hlocal := Analysis.gaussianMRRefined_local h300
+    have hlocal := gaussianMRRefined_local h300
     nlinarith only [hlocal, sq_nonneg (Real.log n)]
 
 /-- For n>1 and log n>=2 trillion, the improved minimum equals 0.282924 log(n)
@@ -84,7 +84,7 @@ theorem improved_eq_triangular {n : ℕ} (hn : 1 < n) (hL : 2000000000000 ≤ Re
     have hl := sharp_quadratic_lower (by linarith only [hL] : (100 : ℝ) ≤ Real.log n)
     nlinarith only [hl, sq_nonneg (Real.log n)]
   · intro _
-    have hl := Analysis.gaussianFloorSelected_lower (by linarith only [hL])
+    have hl := gaussianFloorSelected_lower (by linarith only [hL])
     nlinarith only [hl, sq_nonneg (Real.log n)]
   · intro _
     exact le_refl _
@@ -94,7 +94,7 @@ clipped Gaussian envelope. Global comparisons remove C4 and G1, and the decimal 
 excludes the compatible coefficient branch. -/
 theorem improved_eq_gaussian {n : ℕ} (hn : 1 < n) (hL : 240 < Real.log n)
     (hU : Real.log n < 2000000000000) :
-    improvedWitnessEnvelope n = Analysis.gaussianFloorSelected (Real.log n) := by
+    improvedWitnessEnvelope n = gaussianFloorSelected (Real.log n) := by
   have hNold : n < 10 ^ 9565217391305 := by
     by_contra h
     have hl := log_ge_triangular_large_index_of_decimal (le_of_not_gt h)
@@ -164,8 +164,8 @@ theorem improved_eq_fourStep {n : ℕ} (hn : 1 < n) (hL : 47 / 4 < Real.log n)
     exfalso
     linarith only [hU, h]
   · intro _
-    rw [Analysis.gaussianFloorSelected_eq_fixed
-        (by linarith only [hU, Analysis.gaussianFloor_switch35_bounds.1])]
+    rw [gaussianFloorSelected_eq_fixed
+        (by linarith only [hU, gaussianFloor_switch35_bounds.1])]
     exact (fourStep_lt_fixed_low (by linarith only [hL]) (by linarith only [hU])).le
   · intro h
     exfalso
@@ -199,8 +199,8 @@ theorem improved_eq_middle_min {n : ℕ} (hn : 1 < n) (hL : 100 ≤ Real.log n)
   · intro _
     exact min_le_right _ _
   · intro _
-    rw [Analysis.gaussianFloorSelected_eq_fixed
-        (by linarith only [hU, Analysis.gaussianFloor_switch35_bounds.1])]
+    rw [gaussianFloorSelected_eq_fixed
+        (by linarith only [hU, gaussianFloor_switch35_bounds.1])]
     exact
       (min_le_left _ _).trans
         (fourStep_lt_fixed_low (by linarith only [hL]) (by linarith only [hU])).le
@@ -262,8 +262,8 @@ theorem improved_eq_sharp {n : ℕ} (hn : 1 < n) (hL : 112 ≤ Real.log n)
   · intro _
     exact le_refl _
   · intro _
-    rw [Analysis.gaussianFloorSelected_eq_fixed
-        (h240.trans Analysis.gaussianFloor_switch35_bounds.1.le)]
+    rw [gaussianFloorSelected_eq_fixed
+        (h240.trans gaussianFloor_switch35_bounds.1.le)]
     exact gammaSharp_le_fixed (by linarith only [hL]) hS
   · intro h
     exfalso
@@ -274,8 +274,8 @@ Both G1 and C4 are above the floor, and the Gaussian envelope attains it. -/
 theorem improved_eq_fixed35000 {n : ℕ} (hn : 1 < n) (hS : gammaSharpFixedSwitch ≤ Real.log n)
     (hU : Real.log n ≤ 240) : improvedWitnessEnvelope n = 35000 := by
   have hL : (120 : ℝ) ≤ Real.log n := by linarith only [hS, gammaSharpFixedSwitch_bounds.1]
-  have hf : Analysis.gaussianFloorSelected (Real.log n) = 35000 :=
-    Analysis.gaussianFloorSelected_eq_fixed (hU.trans Analysis.gaussianFloor_switch35_bounds.1.le)
+  have hf : gaussianFloorSelected (Real.log n) = 35000 :=
+    gaussianFloorSelected_eq_fixed (hU.trans gaussianFloor_switch35_bounds.1.le)
   have hg : (35000 : ℝ) ≤ gammaSharpBound (Real.log n) :=
     fixed_le_gammaSharp (by linarith only [hL]) hS
   apply le_antisymm (hf ▸ improved_le_gaussian (by linarith only [hL]))
@@ -442,7 +442,7 @@ noncomputable def improvedSelectedEnvelope (n : ℕ) : ℝ :=
             else
               if L ≤ 240 then 35000
               else
-                if L < 2000000000000 then Analysis.gaussianFloorSelected L
+                if L < 2000000000000 then gaussianFloorSelected L
                 else (282924 / 1000000 : ℝ) * L ^ 2
 
 /-- For every n>1, the guarded candidate minimum equals its explicit interval

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaNonOneCommonNumerics
 public import PseudoPrime.LLS.GammaVariablePrefixCharacterBounds
 public import PseudoPrime.LLS.GammaVariablePrincipalBounds
@@ -131,7 +132,8 @@ plus the index multiple of the exact nonunit loss. Compare ramp and exponential
 weights, then use the signed primitive-average comparison. -/
 theorem gamma_ramp_subgroup_comparison {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ) {x : ℝ}
     (hx : 0 < x)
-    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → residueInSubgroup q H p) :
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x →
+      NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) ≤
       ∑ χ : NumberTheory.subgroupAnnihilator H,
           (∑' n : ℕ, gammaMellinKernel.summand χ.val.primitiveCharacter x n).re +
@@ -171,7 +173,8 @@ theorem gamma_ramp_subgroup_comparison_uniform {q : ℕ} [NeZero q] (hq : 20000 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 35000 ≤ Real.log q)
     (hsmall :
       ∀ p : ℕ,
-        p.Prime → ¬p ∣ q → (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q) ^ 2 → residueInSubgroup q H p) :
+        p.Prime → ¬p ∣ q → (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q) ^ 2 →
+          NumberTheory.residueInSubgroup q H p) :
     let x := (32 / 99 : ℝ) * (Real.log q) ^ 2;
     (2 * (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) - 1) * Real.sqrt x ≤
       (11783423 / 25000000 : ℝ) * Real.log q + 40159 / 900 +
@@ -183,7 +186,8 @@ theorem gamma_ramp_subgroup_comparison_uniform {q : ℕ} [NeZero q] (hq : 20000 
   have hxlarge := Analysis.common_nonOne_ramp_scale_large hL
   have hx : 1 ≤ x := (by norm_num only : (1 : ℝ) ≤ (17 / 5) ^ 16).trans hxlarge
   have hs0 := Real.sqrt_pos.mpr (zero_lt_one.trans_le hx)
-  have hs : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → residueInSubgroup q H p := by
+  have hs : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x →
+    NumberTheory.residueInSubgroup q H p := by
     intro p hp hd hc
     apply hsmall p hp hd
     convert hc using 1

@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.TriangularFiniteZeroMass
 public import PseudoPrime.LLS.TriangularArchimedeanBounds
-public import PseudoPrime.Analysis.TriangularSignedZeroMass
+public import PseudoPrime.Analysis.TriangularMellin
 
 /-! # Signed arithmetic formula for triangular absolute zero mass
 

@@ -6,9 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GaussianSingleRoot
+public import PseudoPrime.NumberTheory.ResidueSubgroup
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSingleRoot
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR1000WitnessBounds
-public import PseudoPrime.Analysis.GaussianSingleFourNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSingleFourNumerics
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeTripleBounds
 
 /-! # Actual Gaussian witnesses with one budget root -/
@@ -31,14 +32,14 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianSingleBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussianSingleBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
   let L := Real.log n
-  let r := Analysis.gaussianSingleRadius L
-  let s := Analysis.gaussianSingleRoot L
+  let r := gaussianSingleRadius L
+  let s := gaussianSingleRoot L
   let x := r ^ 2
-  let h := Analysis.gaussianMRRefinedWidth / s
+  let h := gaussianMRRefinedWidth / s
   let m : ℝ := H.index
   let t : ℝ := m - 1
   let I : ℝ :=
@@ -48,16 +49,16 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
   let C : ℝ := LLS.PaperStatements.subgroupConductorLogSum H
   let A : ℝ := LLS.PaperStatements.gaussianPrefixError ((7191 / 2000)) n x
   have hn1 : 1 < n := lt_of_lt_of_le (by decide : 1 < 20000) hnlarge
-  have hrootSq : s ^ 2 = r := by dsimp only [s, r, Analysis.gaussianSingleRadius]
-  have hrbound : (100 : ℝ) ≤ r := Analysis.gaussianSingle_radius_hundred (Real.log n)
+  have hrootSq : s ^ 2 = r := by dsimp only [s, r, gaussianSingleRadius]
+  have hrbound : (100 : ℝ) ≤ r := gaussianSingle_radius_hundred (Real.log n)
   have hspos : 0 < s := by
     dsimp only [s, L]
-    exact Analysis.gaussianSingle_root_pos _
-  have hs14 : (10 : ℝ) ≤ s := Analysis.gaussianSingle_root_ten (Real.log n)
-  have hh : h = Analysis.gaussianMRRefinedWidth / s := by rfl
+    exact gaussianSingle_root_pos _
+  have hs14 : (10 : ℝ) ≤ s := gaussianSingle_root_ten (Real.log n)
+  have hh : h = gaussianMRRefinedWidth / s := by rfl
   have hh1 : h ≤ 1 / 2 := by
     rw [hh, div_le_iff₀ hspos]
-    norm_num only [Analysis.gaussianMRRefinedWidth]
+    norm_num only [gaussianMRRefinedWidth]
     linarith only [hs14]
   have hrpos : 0 < r := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 100) hrbound
   have hsqrtx : Real.sqrt x = r := by
@@ -66,13 +67,13 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
   have hx : 4 ≤ x := by
     dsimp only [x]
     nlinarith only [hrbound]
-  have hcut : (6 / 5 : ℝ) * x = Analysis.gaussianSingleBound (Real.log n) := by
-    dsimp only [Analysis.gaussianSingleBound, Analysis.gaussianSingleRadius, r, L, x]
+  have hcut : (6 / 5 : ℝ) * x = gaussianSingleBound (Real.log n) := by
+    dsimp only [gaussianSingleBound, gaussianSingleRadius, r, L, x]
   have hX : ((1000 : ℕ) : ℝ) ≤ (6 / 5 : ℝ) * x := by
     rw [hcut]
     exact
       (by norm_num only : (1000 : ℝ) ≤ 12000).trans
-        (Analysis.gaussianSingle_cutoff_floor (Real.log n))
+        (gaussianSingle_cutoff_floor (Real.log n))
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -89,11 +90,11 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
-        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → LLS.PaperStatements.residueInSubgroup n H p := by
+        ¬p ∣ n → (p : ℝ) ≤ (6 / 5 : ℝ) * x → NumberTheory.residueInSubgroup n H p := by
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
-  have hwidth : 0 < h := div_pos (by norm_num only [Analysis.gaussianMRRefinedWidth]) hspos
+  have hwidth : 0 < h := div_pos (by norm_num only [gaussianMRRefinedWidth]) hspos
   have hprefix :
     (7191 / 2000 : ℝ) ≤ ∑ n ∈ Finset.Ioc 0 1000, Analysis.gaussianResolventMangoldtWeight n := by
     simpa only [Nat.floor_ofNat] using
@@ -109,9 +110,9 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
     have hidxNat : 1 ≤ H.index := by exact_mod_cast hidxReal
     rw [Nat.cast_sub hidxNat, Nat.cast_one]
   rw [hsqrtx, hcastIndex] at hcmp
-  have hI : Analysis.gaussianMRRefinedMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMRRefinedMass]
-    exact Analysis.gaussianMRRefined_mass.le
+  have hI : gaussianMRRefinedMass ≤ I := by
+    dsimp only [I, gaussianMRRefinedMass]
+    exact gaussianMRRefined_mass.le
   have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
     dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
@@ -126,34 +127,34 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
       exact LLS.PaperStatements.subgroupConductorLogSum_le H
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
-    Analysis.gaussianMRRefinedD * r ≥
-      Analysis.gaussianMRRefinedConductor * L + Analysis.gaussianMRRefinedBeta * s +
+    gaussianMRRefinedD * r ≥
+      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
         (163 / 20) := by
     dsimp only [r, s, L]
-    exact Analysis.gaussianSingle_large_budget (by linarith only [hL] : 0 ≤ Real.log n)
+    exact gaussianSingle_large_budget (by linarith only [hL] : 0 ≤ Real.log n)
   have hcmp' :
     (m * (1 - h) * I - E) * r ≤
-      Analysis.gaussianMRRefinedConductor * C +
+      gaussianMRRefinedConductor * C +
         m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 +
         t * A := by
-    simpa only [m, t, I, E, C, A, Analysis.gaussianMRRefinedConductor] using hcmp
-  have hcoeff := Analysis.gaussianMRRefined_index_coeffs hi
+    simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
+  have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD :
-    Analysis.gaussianMRRefinedD ≤
-      (m * Analysis.gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+    gaussianMRRefinedD ≤
+      (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
     (m / t) *
-        (Analysis.gaussianMRRefinedMass * Analysis.gaussianMRRefinedWidth +
-          1 / (10 * Analysis.gaussianMRRefinedWidth)) ≤
-      Analysis.gaussianMRRefinedBeta := by
+        (gaussianMRRefinedMass * gaussianMRRefinedWidth +
+          1 / (10 * gaussianMRRefinedWidth)) ≤
+      gaussianMRRefinedBeta := by
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
-    Analysis.gaussianMRRefinedD * r ≤
-        Analysis.gaussianMRRefinedConductor * L + Analysis.gaussianMRRefinedBeta * s +
+    gaussianMRRefinedD * r ≤
+        gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
           (m / t) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * Analysis.gaussianMRRefinedWidth * s) +
+            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
               1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
           13 / t +
           A →
@@ -161,10 +162,10 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
     intro hbudget
     have ht : t = m - 1 := by rfl
     have hgamma := hcoeff.2.1
-    have herr := Analysis.gaussianSingle_large_error (q := n) (by linarith only [hL]) hi le_rfl
+    have herr := gaussianSingle_large_error (q := n) (by linarith only [hL]) hi le_rfl
     change
       (m / (m - 1)) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * Analysis.gaussianMRRefinedWidth * s) +
+            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
               1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
           13 / (m - 1) +
           A <
@@ -173,15 +174,15 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
     linarith only [hbudget, hroot, herr]
   exact
     Analysis.gaussianMR_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I)
-      (E := E) (C := C) (h := h) (M := Analysis.gaussianMRRefinedMass) (Ecap :=
-      Analysis.gaussianMR6FifthsEndpoint) (conductor := Analysis.gaussianMRRefinedConductor) (D :=
-      Analysis.gaussianMRRefinedD) (beta := Analysis.gaussianMRRefinedBeta)
-      (by norm_num only [Analysis.gaussianMRRefinedWidth])
+      (E := E) (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap :=
+      Analysis.gaussianMR6FifthsEndpoint) (conductor := gaussianMRRefinedConductor) (D :=
+      gaussianMRRefinedD) (beta := gaussianMRRefinedBeta)
+      (by norm_num only [gaussianMRRefinedWidth])
       (by
         have hi' : (1000000000 : ℝ) ≤ m := by
           simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [Analysis.gaussianMRRefinedConductor]) hD
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD
       hbeta hcmp' hfinish
 
 /-- Under GRH, an index-four pass-containing subgroup with conductor at most
@@ -195,15 +196,15 @@ theorem gaussianSingle_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarg
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianSingleBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussianSingleBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   let L := Real.log n
-  let r := Analysis.gaussianSingleRadius L
-  let s := Analysis.gaussianSingleRoot L
+  let r := gaussianSingleRadius L
+  let s := gaussianSingleRoot L
   let x := ((3 / 4 : ℝ) * r) ^ 2
   let h := (2 / 5 : ℝ) / s
-  have hr100 : 100 ≤ r := Analysis.gaussianSingle_radius_hundred L
-  have hs10 : 10 ≤ s := Analysis.gaussianSingle_root_ten L
+  have hr100 : 100 ≤ r := gaussianSingle_radius_hundred L
+  have hs10 : 10 ≤ s := gaussianSingle_root_ten L
   have hrpos : 0 < r := by linarith only [hr100]
   have hspos : 0 < s := by linarith only [hs10]
   have hs2 : r = s ^ 2 := rfl
@@ -217,7 +218,7 @@ theorem gaussianSingle_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarg
   have hX : (1000 : ℝ) ≤ (21 / 10 : ℝ) * x := by
     dsimp only [x]
     nlinarith only [hr100]
-  have hcut : (21 / 10 : ℝ) * x ≤ Analysis.gaussianSingleBound (Real.log n) := by
+  have hcut : (21 / 10 : ℝ) * x ≤ gaussianSingleBound (Real.log n) := by
     change (21 / 10 : ℝ) * (((3 / 4 : ℝ) * r) ^ 2) ≤ (6 / 5 : ℝ) * r ^ 2
     nlinarith only [sq_nonneg r]
   have hprefix :
@@ -236,7 +237,7 @@ theorem gaussianSingle_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarg
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         ((3 / 4 : ℝ) * r) ≤
-      Analysis.gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
         4 *
           (1 / (10 * h) +
             ((21 / (10 * h) + 1839 / 1000) / ((3 / 4 : ℝ) * r)) * Real.exp (1 / 16 : ℝ)) +
@@ -244,20 +245,20 @@ theorem gaussianSingle_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarg
         3 * LLS.PaperStatements.gaussianPrefixError (7191 / 2000) n (((3 / 4 : ℝ) * r) ^ 2) := by
     simpa only [hindex, hi, Nat.reduceSub, Nat.cast_ofNat] using hcmp
   have hscalar :=
-    Analysis.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 3 / 4)
+    LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 3 / 4)
       (by norm_num only : (0 : ℝ) < 2 / 5) (show h = (2 / 5 : ℝ) / s from rfl) hh1
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
-      (by norm_num only [Analysis.gaussianMRRefinedConductor]) hcmp'
-  have hG := Analysis.gaussianSingle_large_budget (show 0 ≤ L by linarith only [hL])
-  have hchecks := Analysis.gaussianSingle_four_checks
+      (by norm_num only [gaussianMRRefinedConductor]) hcmp'
+  have hG := gaussianSingle_large_budget (show 0 ≤ L by linarith only [hL])
+  have hchecks := gaussianSingle_four_checks
   have herror :=
-    Analysis.gaussianSingle_four_error hs10 hG hchecks.1 hchecks.2.1 hchecks.2.2
+    gaussianSingle_four_error hs10 hG hchecks.1 hchecks.2.1 hchecks.2.2
       (le_refl (Real.log n))
   apply
-    Analysis.gaussianSingle_four_contradiction hs10 (by norm_num only : (407 / 50 : ℝ) ≤ 163 / 20)
+    gaussianSingle_four_contradiction hs10 (by norm_num only : (407 / 50 : ℝ) ≤ 163 / 20)
       hG herror
-  norm_num only [Analysis.gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsEndpoint,
-    Analysis.gaussianMRRefinedWidth] at hscalar ⊢
+  norm_num only [gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsEndpoint,
+    gaussianMRRefinedWidth] at hscalar ⊢
   simpa only [hs2, L, add_assoc] using hscalar
 
 /-- For an odd uniform three-prime Korselt product, GRH and log n>=63
@@ -271,7 +272,7 @@ theorem gaussianSingle_witness_triple {n p q r : ℕ} (hp : p.Prime) (hq : q.Pri
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianSingleBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianSingleBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hnOdd : Odd n := hn ▸ (hpOdd.mul hqOdd).mul hrOdd
   have hn1 : 1 < n :=
@@ -295,7 +296,7 @@ theorem gaussianSingle_witness_card {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree 
     (hL : 63 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianSingleBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianSingleBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   obtain ⟨p, q, r, hpq, hpr, hqr, hset⟩ := Finset.card_eq_three.mp hc
   have hpMem : p ∈ n.primeFactors := hset ▸ Finset.mem_insert_self p _
@@ -324,14 +325,14 @@ the single-root bound. Combine log q<=2 log n/3, the floor 12000 and
 the quadratic lower bound; keep the ambient passing-residue containment upstream. -/
 theorem gaussianSingle_local {n q : ℕ} (hn : 0 < n) (hq : 0 < q) (hsize : q ^ 2 ≤ 10 ^ 9 * n)
     (hL : 63 ≤ Real.log n) :
-    max (3000 : ℝ) (Real.log q ^ 2) ≤ Analysis.gaussianSingleBound (Real.log n) := by
+    max (3000 : ℝ) (Real.log q ^ 2) ≤ gaussianSingleBound (Real.log n) := by
   have hlog := Analysis.mr_local_log_le_of_square_le hn hq hsize
   have hcap : Real.log q ≤ (2 / 3 : ℝ) * Real.log n := by
     linarith only [hlog, hL, Analysis.log_ten_lt_seven_thirds]
   have hpos : (0 : ℝ) ≤ (2 / 3) * Real.log n := by linarith only [hL]
   have hs := (sq_le_sq₀ (Real.log_natCast_nonneg q) hpos).mpr hcap
-  have hwide := Analysis.gaussianSingle_bound_lower hL
-  have hcut := Analysis.gaussianSingle_cutoff_floor (Real.log n)
+  have hwide := gaussianSingle_bound_lower hL
+  have hcut := gaussianSingle_cutoff_floor (Real.log n)
   exact max_le (by linarith only [hcut]) (by nlinarith only [hs, hwide, sq_nonneg (Real.log n)])
 
 /-- Under GRH, every odd composite with log n>=63 has an actual prime
@@ -341,7 +342,7 @@ theorem exists_prime_gaussianSingle {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianSingleBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussianSingleBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hnpos : 0 < n := ho.pos
   have hN := gaussian35000_size hnpos hL
@@ -382,7 +383,7 @@ theorem exists_least_gaussianSingle {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianSingleBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussianSingleBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   let : NeZero n := ⟨ho.pos.ne'⟩

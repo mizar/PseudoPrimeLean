@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.CenteredResolventInversion
 public import PseudoPrime.AnalyticNumberTheory.General.LogarithmicMellinInversion
 
@@ -133,7 +134,7 @@ theorem reciprocalResolventKernel_eq {α : ℂ} (hα : α.re < 0) {τ x : ℝ} (
     reciprocalResolventKernel α x τ y =
       (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) /
         (α * ((τ : ℂ) + y * Complex.I + 1) * ((τ : ℂ) + y * Complex.I - α)) := by
-  have hz := ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
+  have hz := Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
   have ha : α ≠ 0 := fun h ↦ by
     rw [h, Complex.zero_re] at hα; exact lt_irrefl _ hα
   have h1 : (τ : ℂ) + y * Complex.I + 1 ≠ 0 := by
@@ -356,7 +357,7 @@ theorem reciprocalMellin_integrable_and_integral {τ x : ℝ} (hτ : 0 < τ) (hx
       continuous_const.cpow (continuous_const.add (Complex.continuous_ofReal.mul_const Complex.I))
         (fun _ ↦ Complex.ofReal_mem_slitPlane.mpr hx0)
     have hh :=
-      (verticalIntegrable_mellinReciprocalKernel hτ.ne' h1).bdd_mul hc.aestronglyMeasurable
+      (Analysis.verticalIntegrable_mellinReciprocalKernel hτ.ne' h1).bdd_mul hc.aestronglyMeasurable
         (Filter.Eventually.of_forall
           (fun y ↦ by
             rw [Complex.norm_cpow_eq_rpow_re_of_pos hx0]
@@ -364,9 +365,9 @@ theorem reciprocalMellin_integrable_and_integral {τ x : ℝ} (hτ : 0 < τ) (hx
               Complex.I_im, Complex.ofReal_im, mul_zero, zero_mul, sub_zero, add_zero]
             exact le_refl (x ^ τ)))
     simpa only [div_eq_mul_inv] using hh
-  have hm := mellinInv_mellinWeightOne_eq hτ (inv_pos.mpr hx0)
+  have hm := Analysis.mellinInv_mellinWeightOne_eq hτ (inv_pos.mpr hx0)
   have hmem : x⁻¹ ∈ Set.Ioc (0 : ℝ) 1 := ⟨inv_pos.mpr hx0, ((inv_lt_one₀ hx0).mpr hx).le⟩
-  rw [mellinWeightOne, Set.indicator_of_mem hmem, Complex.ofReal_inv] at hm
+  rw [Analysis.mellinWeightOne, Set.indicator_of_mem hmem, Complex.ofReal_inv] at hm
   refine ⟨hi, ?_⟩
   rw [← hm]
   unfold mellinInv

@@ -23,7 +23,7 @@ theorem jointRampPrincipalLower_ge_133_160 (x : ℝ) :
     (133 / 160 : ℝ) * Real.sqrt x - jointRampPrincipalErrorNumerator x / Real.sqrt x ≤
       jointRampPrincipalLower x := by
   have hm :=
-    mul_le_mul_of_nonneg_right Analysis.ramp_mass_coefficient_ge_133_160 (Real.sqrt_nonneg x)
+    mul_le_mul_of_nonneg_right ramp_mass_coefficient_ge_133_160 (Real.sqrt_nonneg x)
   dsimp only [jointRampPrincipalLower]
   linarith only [hm]
 

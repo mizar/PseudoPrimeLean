@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.CosetCharacterAverage
 public import PseudoPrime.LLS.CosetLogWeightedBounds
 public import PseudoPrime.NumberTheory.DirichletCharacterSmallLevels
@@ -213,7 +214,7 @@ theorem exists_least_prime_in_coset_le_of_explicit_root_gap {q : ℕ} [NeZero q]
               (k : ℝ) * (x ^ ((1 : ℝ) / k) + Real.sqrt (x ^ ((1 : ℝ) / k)) / 20)) +
           cosetNonprincipalUpper q H x <
         cosetPrincipalLower q x) :
-    ∃ p : ℕ, IsLeast (primesInCoset q H a) p ∧ (p : ℝ) ≤ x := by
+    ∃ p : ℕ, IsLeast (NumberTheory.primesInCoset q H a) p ∧ (p : ℝ) ≤ x := by
   classical
   have hx1 : 1 < x := lt_of_lt_of_le (by norm_num only) hx
   have hn := nonprincipal_logWeightedNorm_sum_le_explicit H hq hGRH hx

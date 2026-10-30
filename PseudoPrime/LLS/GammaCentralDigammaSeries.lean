@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.GammaKernel
 public import PseudoPrime.LLS.GammaDigammaIntegralExchange
 public import PseudoPrime.Analysis.GammaCentralFirstMoment
@@ -103,7 +104,7 @@ theorem gamma_central_kernel_integral_eq_density {x : ℝ} (hx : 0 < x) :
     ((1 / (2 * Real.pi) : ℝ) : ℂ) * (∫ t : ℝ, gammaCentralMellinWeight x t) =
       ((Real.sqrt (x⁻¹) * Real.exp (-x⁻¹) : ℝ) : ℂ) := by
   have hm := inverseMellin_gamma (c := 0) (u := x⁻¹) (by norm_num only) (inv_pos.mpr hx)
-  unfold inverseMellin at hm
+  unfold Analysis.inverseMellin at hm
   simp only [Complex.ofReal_zero, zero_add, Complex.ofReal_inv, Complex.cpow_neg,
     Complex.inv_cpow_ofReal_nonneg hx.le, inv_inv] at hm
   exact hm

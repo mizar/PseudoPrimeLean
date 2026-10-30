@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.Analysis.GammaMellin
 public import PseudoPrime.LLS.PaperDefinitions
 
@@ -25,10 +26,10 @@ is the real density `sqrt(u) exp(-u)` for positive `u`. Convert the paper's
 integral convention to Mathlib's and use pointwise Mellin inversion.
 This proves the gamma kernel's transform identity and line independence. -/
 theorem inverseMellin_gamma {c u : ℝ} (hc : -1 / 2 < c) (hu : 0 < u) :
-    inverseMellin (fun s : ℂ ↦ Complex.Gamma (s + 1 / 2)) c u =
+    Analysis.inverseMellin (fun s : ℂ ↦ Complex.Gamma (s + 1 / 2)) c u =
       (Real.sqrt u * Real.exp (-u) : ℝ) := by
   rw [← Analysis.mellinInv_gamma_half_of_pos (by linarith only [hc] : 0 < c + 1 / 2) hu]
-  unfold inverseMellin mellinInv
+  unfold Analysis.inverseMellin mellinInv
   rw [Complex.real_smul]
   congr 1
   apply MeasureTheory.integral_congr_ae

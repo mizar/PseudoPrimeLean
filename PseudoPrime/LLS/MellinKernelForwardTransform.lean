@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.MellinKernelTransformRegularity
 public import Mathlib.Analysis.MellinInversion
 public import Mathlib.MeasureTheory.Integral.Prod
@@ -61,7 +62,7 @@ open scoped Topology FourierTransform in
 theorem mellinInv_eq_transform (K : MellinKernel) {c u : ℝ} (hc : -1 / 2 < c)
     (hc' : c ≤ 1 / 2 + K.delta) (hu : 0 < u) : mellinInv c K.function u = K.transform u := by
   rw [transform, ← K.mellin_eq c u hc hc' hu]
-  unfold mellinInv inverseMellin
+  unfold mellinInv Analysis.inverseMellin
   rw [Complex.real_smul]
   congr 1
   apply integral_congr_ae

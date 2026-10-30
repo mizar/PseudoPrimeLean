@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.ReciprocalResolventMellin
 public import PseudoPrime.LLS.Extensions.ShiftedMellinFormula
 public import PseudoPrime.LLS.Extensions.CompletedEndpoint
@@ -182,7 +183,7 @@ theorem completedReciprocalMellinIntegrand_eq (f : GeneralLFunction) (hf : f.IsA
     simp only [AnalyticNumberTheory.General.reciprocalResolventKernel, ← mul_assoc, tsum_mul_right,
       zeroResolventMellinIntegrand, Complex.ofReal_one]
   have he := zeroResolventMellinIntegrand_eq f hf hRH (σ := 1) (x := x) le_rfl hτ y
-  have hz := AnalyticNumberTheory.General.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
+  have hz := Analysis.ne_zero_add_mul_I_of_re_ne_zero hτ.ne' y
   have h1 : (τ : ℂ) + y * Complex.I + 1 ≠ 0 := by
     intro h
     have hh := congrArg Complex.re h

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.TheoreticalPrimeBounds
 public import Mathlib.RingTheory.ZMod.UnitsCyclic
 
@@ -52,7 +53,8 @@ Coercions commute with reduction, and the preimage of the image is `H`.
 This transports subgroup membership without choosing new prime witnesses. -/
 theorem residueInSubgroup_reduction_iff {q m n : ℕ} (hm : m ∣ q) (H : Subgroup (ZMod q)ˣ)
     (hk : (ZMod.unitsMap hm).ker ≤ H) (hn : IsUnit (n : ZMod q)) :
-    residueInSubgroup q H n ↔ residueInSubgroup m (H.map (ZMod.unitsMap hm)) n := by
+    NumberTheory.residueInSubgroup q H n ↔ NumberTheory.residueInSubgroup m (H.map (ZMod.unitsMap
+      hm)) n := by
   constructor
   · rintro ⟨u, hu, he⟩
     refine ⟨ZMod.unitsMap hm u, Subgroup.mem_map.mpr ⟨u, hu, rfl⟩, ?_⟩
@@ -72,7 +74,7 @@ Prime support preserves the excluded divisors, and unit membership descends.
 Consequently the least outside prime is unchanged under this reduction. -/
 theorem primesOutside_reduction {q m : ℕ} (hm : m ∣ q) (H : Subgroup (ZMod q)ˣ)
     (hk : (ZMod.unitsMap hm).ker ≤ H) (hs : ∀ p : ℕ, p.Prime → (p ∣ q ↔ p ∣ m)) :
-    primesOutside q H = primesOutside m (H.map (ZMod.unitsMap hm)) := by
+    NumberTheory.primesOutside q H = NumberTheory.primesOutside m (H.map (ZMod.unitsMap hm)) := by
   ext p
   constructor
   · rintro ⟨hp, hq, hH⟩
@@ -105,7 +107,8 @@ theorem gamma_prime_bound_659_of_reduction
                   (ZMod.unitsMap hm).ker ≤ H →
                   (∀ p : ℕ, p.Prime → (p ∣ q ↔ p ∣ m)) →
                   ∃ p : ℕ,
-                    IsLeast (primesOutside q H) p ∧ (p : ℝ) ≤ (659 / 1000) * (Real.log m) ^ 2 := by
+                    IsLeast (NumberTheory.primesOutside q H) p ∧ (p : ℝ) ≤ (659 / 1000) * (Real.log
+                      m) ^ 2 := by
   obtain ⟨Q, hQ2, hQ⟩ := gamma_prime_bound_659 hg h hh
   refine ⟨Q, hQ2, ?_⟩
   intro q m _ _ hmQ hm H hH hk hs
@@ -132,7 +135,8 @@ theorem gamma_prime_bound_659_of_cyclic_reduction
                 h ∣ Nat.totient m →
                 (∀ p : ℕ, p.Prime → (p ∣ q ↔ p ∣ m)) →
                 ∃ p : ℕ,
-                  IsLeast (primesOutside q H) p ∧ (p : ℝ) ≤ (659 / 1000) * (Real.log m) ^ 2 := by
+                  IsLeast (NumberTheory.primesOutside q H) p ∧ (p : ℝ) ≤ (659 / 1000) * (Real.log
+                    m) ^ 2 := by
   obtain ⟨Q, hQ2, hQ⟩ := gamma_prime_bound_659_of_reduction hg h hh
   refine ⟨Q, hQ2, ?_⟩
   intro q m _ _ _ hmQ hm H hH hdiv hs

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ShiftedLogMellinInversion
 public import PseudoPrime.AnalyticNumberTheory.General.ShiftedLogarithmicBoundary
 public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
@@ -77,7 +78,7 @@ theorem integrable_shiftedLogContourKernel_vertical {N : ℕ} [NeZero N] (χ : D
     MeasureTheory.Integrable
       (fun y : ℝ ↦ shiftedLogContourKernel χ x σ ((τ : ℂ) + y * Complex.I)) := by
   let C : ℝ := ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (σ + τ)
-  have hi := (General.verticalIntegrable_mellinLogKernel hτ.ne').norm.const_mul (C * x ^ τ)
+  have hi := (Analysis.verticalIntegrable_mellinLogKernel hτ.ne').norm.const_mul (C * x ^ τ)
   apply hi.mono' (continuous_shiftedLogContourKernel_vertical χ hx hσ hτ).aestronglyMeasurable
   filter_upwards with y
   have hbound :=

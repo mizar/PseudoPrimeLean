@@ -57,6 +57,7 @@ public import PseudoPrime.LLS.Extensions.QNeOneLogShiftSeparation
 public import PseudoPrime.LLS.Extensions.EvenCoprimeCoupledComparison
 public import PseudoPrime.LLS.Extensions.EvenCoprimeSingleSupport
 public import PseudoPrime.LLS.Extensions.EvenCoprimePrimeBudget
+public import PseudoPrime.LLS.Extensions.GeneralValueVariants
 
 /-! Public umbrella for LLS-specific extensions and quadratic refinements. -/
 

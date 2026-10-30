@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.ReciprocalKernel
 public import PseudoPrime.AnalyticNumberTheory.General.TwoPoleMellinInversion
 
@@ -82,13 +83,13 @@ theorem reciprocalGap_strip_bound {h η : ℝ} (hh : 0 < h) (hη : 0 < η) {s : 
 profile with a=1/2. Translate the proved general Mellin inversion convention.
 This supplies line independence, positivity and exact support for the kernel. -/
 theorem inverseMellin_reciprocalGap {h c u : ℝ} (hh : 0 < h) (hc : (-1 / 2 : ℝ) < c) (hu : 0 < u) :
-    inverseMellin (Analysis.reciprocalGapFunction h) c u =
+    Analysis.inverseMellin (Analysis.reciprocalGapFunction h) c u =
       AnalyticNumberTheory.General.twoPoleMellinWeight (1 / 2) h u := by
-  change inverseMellin (Analysis.twoPoleFunction (1 / 2) (1 / 2 + h)) c u = _
+  change Analysis.inverseMellin (Analysis.twoPoleFunction (1 / 2) (1 / 2 + h)) c u = _
   rw [←
     AnalyticNumberTheory.General.mellinInv_twoPoleMellinWeight hh
       (show 0 < c + 1 / 2 by linarith only [hc]) hu]
-  unfold inverseMellin mellinInv
+  unfold Analysis.inverseMellin mellinInv
   rw [Complex.real_smul]
   congr 1
   apply MeasureTheory.integral_congr_ae

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.CosetWeightedComparison
 public import PseudoPrime.LLS.SubgroupKernelComparison
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CompositePrimePowers
@@ -148,7 +149,7 @@ theorem exists_least_prime_in_coset_le_of_principal_gap {q : ℕ} [NeZero q] (H 
             ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ.val‖ <
         (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x
             (1 : DirichletCharacter ℂ q)).re) :
-    ∃ p : ℕ, IsLeast (primesInCoset q H a) p ∧ (p : ℝ) ≤ x := by
+    ∃ p : ℕ, IsLeast (NumberTheory.primesInCoset q H a) p ∧ (p : ℝ) ≤ x := by
   have h := principal_logWeightedSum_le_coset_add_nonprincipal_norms H a x
   have hg :
     AnalyticNumberTheory.Arithmetic.compositePrimePowerLogWeightedSum x <
@@ -172,16 +173,16 @@ theorem subgroup_reciprocal_average_nonneg {q : ℕ} [NeZero q] (H : Subgroup (Z
   apply Finset.sum_nonneg
   intro n hn
   unfold AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedTerm
-  rw [← Finset.mul_sum, sum_subgroupAnnihilator_eq_indicator]
+  rw [← Finset.mul_sum, NumberTheory.sum_subgroupAnnihilator_eq_indicator]
   have hw :=
     AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm_nonneg hx
       (Finset.mem_Ioc.mp hn).1 (Finset.mem_Ioc.mp hn).2
-  by_cases hm : residueInSubgroup q H n
-  · rw [Set.indicator_of_mem (s := {m : ℕ | residueInSubgroup q H m}) hm]
+  by_cases hm : NumberTheory.residueInSubgroup q H n
+  · rw [Set.indicator_of_mem (s := {m : ℕ | NumberTheory.residueInSubgroup q H m}) hm]
     simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, Complex.natCast_re,
       Complex.natCast_im, mul_zero, sub_zero]
     exact mul_nonneg hw (Nat.cast_nonneg H.index)
-  · rw [Set.indicator_of_notMem (s := {m : ℕ | residueInSubgroup q H m}) hm, mul_zero,
+  · rw [Set.indicator_of_notMem (s := {m : ℕ | NumberTheory.residueInSubgroup q H m}) hm, mul_zero,
       Complex.zero_re]
 
 end PseudoPrime.LLS.PaperStatements

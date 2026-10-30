@@ -37,6 +37,8 @@ public import PseudoPrime.NumberTheory.JacobiCharacter
 public import PseudoPrime.NumberTheory.JacobiCharacterPrimeEvaluation
 public import PseudoPrime.NumberTheory.PrimitiveJacobiCharacter
 public import PseudoPrime.NumberTheory.PrimitiveSquarefreeCharacter
+public import PseudoPrime.NumberTheory.PrimitiveQuadraticTwo
+public import PseudoPrime.NumberTheory.CharacterWeights
 public import PseudoPrime.NumberTheory.Kronecker.Properties
 public import PseudoPrime.NumberTheory.Kronecker.Computation
 public import PseudoPrime.NumberTheory.Kronecker.Fast
@@ -78,6 +80,10 @@ public import PseudoPrime.NumberTheory.QuadraticDiscriminantSplitting
 public import PseudoPrime.NumberTheory.IdealNormCount
 public import PseudoPrime.NumberTheory.PrimePowerIdealNormCount
 public import PseudoPrime.NumberTheory.SubgroupAnnihilator
+public import PseudoPrime.NumberTheory.ResidueSubgroup
+public import PseudoPrime.NumberTheory.CharacterKernelOrder
+public import PseudoPrime.NumberTheory.CrtCharacters
+public import PseudoPrime.NumberTheory.QuadraticCrtKernels
 public import PseudoPrime.NumberTheory.UnramifiedCharacterReduction
 public import PseudoPrime.NumberTheory.PrimeResidueCoverage
 public import PseudoPrime.NumberTheory.PrimeBitmapCoverage

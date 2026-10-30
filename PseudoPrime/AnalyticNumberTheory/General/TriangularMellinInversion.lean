@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.TriangularMellin
-public import PseudoPrime.AnalyticNumberTheory.General.MellinWeights
+public import PseudoPrime.Analysis.MellinWeights
 
 /-! # Inversion of the triangular Mellin kernel
 
@@ -24,7 +24,7 @@ complex power by the corresponding complex exponential. The positive-real
 quotient power rule and logarithm of exp prove the identity used in Mellin integrands. -/
 private theorem cpow_exp_scale {u : ℝ} (hu : 0 < u) (b : ℝ) (s : ℂ) :
     (((u / Real.exp b : ℝ) : ℂ) ^ (-s)) = Complex.exp ((b : ℂ) * s) * (u : ℂ) ^ (-s) := by
-  rw [cpow_div_eq_cpow_mul_cpow_neg hu.le (Real.exp_pos b), neg_neg,
+  rw [Analysis.cpow_div_eq_cpow_mul_cpow_neg hu.le (Real.exp_pos b), neg_neg,
     Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr (Real.exp_pos b).ne'), ←
     Complex.ofReal_log (Real.exp_pos b).le, Real.log_exp, mul_comm]
 
@@ -37,7 +37,7 @@ private theorem integrable_log_inverse {c u : ℝ} (hc : c ≠ 0) (hu : 0 < u) :
       (fun t : ℝ ↦ (u : ℂ) ^ (-((c : ℂ) + t * Complex.I)) / ((c : ℂ) + t * Complex.I) ^ 2) := by
   have hb : MeasureTheory.Integrable (fun t : ℝ ↦ 1 / ((c : ℂ) + t * Complex.I) ^ 2) := by
     simpa only [Complex.VerticalIntegrable, one_div, inv_pow] using
-      verticalIntegrable_mellinLogKernel hc
+      Analysis.verticalIntegrable_mellinLogKernel hc
   have hm :
     MeasureTheory.AEStronglyMeasurable (fun t : ℝ ↦ (u : ℂ) ^ (-((c : ℂ) + t * Complex.I)))
       MeasureTheory.volume := by
@@ -131,8 +131,9 @@ the integrands, absolute integrability permits splitting, and the known
 inverse-square Mellin transform computes each summand. -/
 theorem mellinInv_triangular_weight_combination {a c u : ℝ} (ha : a ≠ 0) (hc : 0 < c) (hu : 0 < u) :
     mellinInv c (Analysis.triangularMellinFunction a) u =
-      mellinWeightTwo (u / Real.exp (2 * a)) + mellinWeightTwo (u / Real.exp (-2 * a)) -
-        2 * mellinWeightTwo u := by
+      Analysis.mellinWeightTwo (u / Real.exp (2 * a)) +
+        Analysis.mellinWeightTwo (u / Real.exp (-2 * a)) -
+        2 * Analysis.mellinWeightTwo u := by
   let f := fun (v t : ℝ) ↦ (v : ℂ) ^ (-((c : ℂ) + t * Complex.I)) / ((c : ℂ) + t * Complex.I) ^ 2
   have hf {v : ℝ} (hv : 0 < v) : MeasureTheory.Integrable (f v) := integrable_log_inverse hc.ne' hv
   have hp :
@@ -142,9 +143,9 @@ theorem mellinInv_triangular_weight_combination {a c u : ℝ} (ha : a ≠ 0) (hc
       fun t ↦ f (u / Real.exp (2 * a)) t + f (u / Real.exp (-2 * a)) t - 2 * f u t := by
     funext t
     exact triangular_inverse_integrand_eq ha hc.ne' hu t
-  have h1 := mellinInv_mellinWeightTwo_eq hc (div_pos hu (Real.exp_pos (2 * a)))
-  have h2 := mellinInv_mellinWeightTwo_eq hc (div_pos hu (Real.exp_pos (-2 * a)))
-  have h0 := mellinInv_mellinWeightTwo_eq hc hu
+  have h1 := Analysis.mellinInv_mellinWeightTwo_eq hc (div_pos hu (Real.exp_pos (2 * a)))
+  have h2 := Analysis.mellinInv_mellinWeightTwo_eq hc (div_pos hu (Real.exp_pos (-2 * a)))
+  have h0 := Analysis.mellinInv_mellinWeightTwo_eq hc hu
   rw [← h1, ← h2, ← h0]
   simp only [mellinInv, smul_eq_mul]
   rw [hp]
@@ -171,15 +172,15 @@ theorem mellinInv_triangular_weight_combination {a c u : ℝ} (ha : a ≠ 0) (hc
 positive part of minus its logarithm. Split at one and use the sign of
 the logarithm. This expresses the triangular inverse transform using maxima. -/
 private theorem mellinWeightTwo_eq_max {u : ℝ} (hu : 0 < u) :
-    mellinWeightTwo u = ((max 0 (-Real.log u) : ℝ) : ℂ) := by
+    Analysis.mellinWeightTwo u = ((max 0 (-Real.log u) : ℝ) : ℂ) := by
   by_cases hle : u ≤ 1
   · have hm : u ∈ Set.Ioc (0 : ℝ) 1 := ⟨hu, hle⟩
     have hn : 0 ≤ -Real.log u := neg_nonneg.mpr (Real.log_nonpos hu.le hle)
-    rw [mellinWeightTwo, Set.indicator_of_mem hm, max_eq_right hn, Complex.ofReal_neg]
+    rw [Analysis.mellinWeightTwo, Set.indicator_of_mem hm, max_eq_right hn, Complex.ofReal_neg]
   · have hgt : 1 < u := lt_of_not_ge hle
     have hm : u ∉ Set.Ioc (0 : ℝ) 1 := fun he ↦ hle he.2
     have hn : -Real.log u ≤ 0 := neg_nonpos.mpr (Real.log_pos hgt).le
-    rw [mellinWeightTwo, Set.indicator_of_notMem hm, max_eq_left hn, Complex.ofReal_zero]
+    rw [Analysis.mellinWeightTwo, Set.indicator_of_notMem hm, max_eq_left hn, Complex.ofReal_zero]
 
 /-- For a nonnegative width, three positive-part linear functions
 combine to the triangular profile. Split by the sign of the argument

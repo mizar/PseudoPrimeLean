@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.MellinResolventPositive
 public import PseudoPrime.AnalyticNumberTheory.General.TriangularMellinInversion
 
@@ -19,7 +20,7 @@ namespace PseudoPrime.AnalyticNumberTheory.General
 exponential factor. Apply the positive-real quotient power rule. This supports translated terms. -/
 theorem triangular_resolvent_cpow_exp_scale {u : ℝ} (hu : 0 < u) (b : ℝ) (s : ℂ) :
     (((u / Real.exp b : ℝ) : ℂ) ^ (-s)) = Complex.exp ((b : ℂ) * s) * (u : ℂ) ^ (-s) := by
-  rw [cpow_div_eq_cpow_mul_cpow_neg hu.le (Real.exp_pos b), neg_neg,
+  rw [Analysis.cpow_div_eq_cpow_mul_cpow_neg hu.le (Real.exp_pos b), neg_neg,
     Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr (Real.exp_pos b).ne'), ←
     Complex.ofReal_log (Real.exp_pos b).le, Real.log_exp, mul_comm]
 

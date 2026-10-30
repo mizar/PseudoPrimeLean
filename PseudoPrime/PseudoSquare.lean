@@ -45,6 +45,9 @@ public import PseudoPrime.PseudoSquare.Bounds.TruncatedCubicJacobiBounds
 public import PseudoPrime.PseudoSquare.Bounds.FixedSquarefreeCubicBounds
 public import PseudoPrime.PseudoSquare.Bounds.FixedSquarefreeCubicWitnesses
 public import PseudoPrime.PseudoSquare.Bounds.RationalCubicNegativeSupportBounds
+public import PseudoPrime.PseudoSquare.Bounds.Cubic2434JacobiBounds
+public import PseudoPrime.PseudoSquare.Bounds.ExactQuadraticExclusion
+public import PseudoPrime.PseudoSquare.Bounds.ExactCubicJacobiBounds
 public import PseudoPrime.PseudoSquare.Bounds.CubicNegativeSupportBounds
 public import PseudoPrime.PseudoSquare.Bounds.CubicLinearJacobiBounds
 public import PseudoPrime.PseudoSquare.Bounds.RefinedConductorRadicalWitnessBounds
@@ -130,6 +133,8 @@ public import PseudoPrime.PseudoSquare.Computation.SmallN
 public import PseudoPrime.PseudoSquare.Computation.QThresholds
 public import PseudoPrime.PseudoSquare.Computation.QNeOneFiniteLogSq
 public import PseudoPrime.PseudoSquare.Computation.SmallNegOne.Below399
+public import PseudoPrime.PseudoSquare.Bounds.CommonEndpointBounds
+public import PseudoPrime.PseudoSquare.Bounds.FourPoleFiniteBounds
 
 /-!
 # PseudoSquare umbrella module

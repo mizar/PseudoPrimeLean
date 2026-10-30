@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaConductorBounds
 public import PseudoPrime.LLS.PrimePowerSubgroupBounds
 
@@ -35,7 +36,7 @@ theorem gamma_small_index_conductor_bound
             ∀ (H : Subgroup (ZMod q)ˣ),
               H.index = h →
                 ∃ p : ℕ,
-                  IsLeast (primesOutside q H) p ∧
+                  IsLeast (NumberTheory.primesOutside q H) p ∧
                     (p : ℝ) ≤
                       (Real.sqrt (6571 / 10000) / ((h : ℝ) - 1) * subgroupConductorLogSum H +
                           ε * Real.log q) ^
@@ -82,7 +83,7 @@ theorem theorem13_small_index_of_conductor_sum_le_half
               H.index = h →
                 subgroupConductorLogSum H ≤ (((h : ℝ) - 1) / 2) * Real.log q →
                 ∃ p : ℕ,
-                  IsLeast (primesOutside q H) p ∧
+                  IsLeast (NumberTheory.primesOutside q H) p ∧
                     (p : ℝ) <
                       (1 / 4) * (1 - 1 / (h : ℝ)) ^ 2 *
                         (Real.log (2 * (h : ℝ)) / (Real.log (2 * (h : ℝ)) - 4)) ^ 2 *

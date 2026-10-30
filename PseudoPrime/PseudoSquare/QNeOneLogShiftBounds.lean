@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.PseudoSquare.QNeOneHalfShiftBounds
 public import PseudoPrime.LLS.Extensions.QNeOneLogShiftSeparation
-public import PseudoPrime.Analysis.QNeOneLogShiftBounds
+public import PseudoPrime.LLS.QNeOneLogShiftRadius
 
 /-! # Non-one witnesses with a negative logarithmic root correction -/
 
@@ -27,7 +27,7 @@ theorem exists_prime_ne_one_witness_le_log_shift_endpoint {n : ℕ} (hn : Odd n)
   let : NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor :=
     ⟨NumberTheory.complexQuadraticCharacter_conductor_ne_zero n hn⟩
   obtain ⟨bridge⟩ := NumberTheory.exists_jacobiCharacterArithmeticData (Odd.pos hn) hn hns
-  have hroot := Analysis.qNeOneLogShiftRadius_properties hL
+  have hroot := LLS.qNeOneLogShiftRadius_properties hL
   have h8 : (8 : ℝ) ≤ L - Real.log L + 3 := by linarith only [hroot.1]
   have hlev := ((qNeOne_bridge_y_le_log_input bridge).trans hlogn).trans hroot.2
   have hsep := LLS.Extensions.qNeOneLogShiftUpper_lt_lower hroot.1 hlev
@@ -69,7 +69,7 @@ Use the positive radius and log L>3. This distinguishes applicability from
 strict improvement over the uncorrected square. -/
 theorem log_shift_sq_lt_log_sq {L : ℝ} (hL : (32 : ℝ) ≤ L) : (L - Real.log L + 3) ^ 2 < L ^ 2 := by
   have h16 : (16 : ℝ) ≤ L := by linarith only [hL]
-  have hy := (Analysis.qNeOneLogShiftRadius_properties h16).1
+  have hy := (LLS.qNeOneLogShiftRadius_properties h16).1
   have hlog : (3 : ℝ) < Real.log L := by
     have h32 : (3 : ℝ) < Real.log 32 := by
       rw [show (32 : ℝ) = 2 ^ 5 by norm_num only, Real.log_pow]

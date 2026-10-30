@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MellinWeightedSums
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.SmoothedContour
@@ -34,7 +35,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     ∑' n : ℕ,
         (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * χ (n : ZMod N) *
-          General.mellinWeightOne ((n : ℝ) / x) =
+          Analysis.mellinWeightOne ((n : ℝ) / x) =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ, dirichletReciprocalContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
   set σ : ℝ := τ - 1 with hσ_def
@@ -48,7 +49,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   set K : ℝ → ℂ := fun y ↦ (((τ : ℂ) + y * Complex.I) * ((τ : ℂ) + y * Complex.I - 1))⁻¹ with hK_def
   have hK_int : MeasureTheory.Integrable K := by
-    have hVI := General.verticalIntegrable_mellinReciprocalKernel hσ0.ne' hσ1
+    have hVI := Analysis.verticalIntegrable_mellinReciprocalKernel hσ0.ne' hσ1
     unfold Complex.VerticalIntegrable at hVI
     have heq : (fun y : ℝ ↦ (((σ : ℂ) + y * Complex.I) * ((σ : ℂ) + y * Complex.I + 1))⁻¹) = K := by
       funext y
@@ -101,7 +102,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
   have hterm_raw :
     ∀ n : ℕ,
       n ≠ 0 →
-        General.mellinWeightOne ((n : ℝ) / x) =
+        Analysis.mellinWeightOne ((n : ℝ) / x) =
           (2 * Real.pi : ℝ)⁻¹ •
             ∫ y : ℝ,
               (((n : ℝ) / x : ℝ) : ℂ) ^ (-((σ : ℂ) + y * Complex.I)) *
@@ -109,14 +110,14 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
     have hnx : (0 : ℝ) < (n : ℝ) / x := div_pos hnpos hx
-    have hmellin := General.mellinInv_mellinWeightOne_eq (σ := σ) (x := (n : ℝ) / x) hσ0 hnx
+    have hmellin := Analysis.mellinInv_mellinWeightOne_eq (σ := σ) (x := (n : ℝ) / x) hσ0 hnx
     rw [← hmellin]
     simp only [mellinInv, smul_eq_mul, one_div]
   have hterm :
     ∀ n : ℕ,
       n ≠ 0 →
         (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * χ (n : ZMod N) *
-            General.mellinWeightOne ((n : ℝ) / x) =
+            Analysis.mellinWeightOne ((n : ℝ) / x) =
           (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     intro n hn
     have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
@@ -127,7 +128,8 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
     apply MeasureTheory.integral_congr_ae
     filter_upwards with y
     simp only [hG_def, hH_def, hK_def]
-    rw [General.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div, Complex.ofReal_natCast]
+    rw [Analysis.cpow_div_eq_cpow_mul_cpow_neg hnpos.le hx, neg_neg, one_div,
+      Complex.ofReal_natCast]
     have hshift : ((τ : ℂ) + y * Complex.I - 1) = (σ : ℂ) + y * Complex.I := by
       rw [hσ_def]
       push_cast
@@ -299,7 +301,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
   have hLHS :
     ∑' n : ℕ,
         (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * χ (n : ZMod N) *
-          General.mellinWeightOne ((n : ℝ) / x) =
+          Analysis.mellinWeightOne ((n : ℝ) / x) =
       ∑' n : ℕ, (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, G n y := by
     refine tsum_congr fun n ↦ ?_
     rcases eq_or_ne n 0 with rfl | hn

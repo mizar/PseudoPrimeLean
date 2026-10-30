@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.CosetRootTail
 public import PseudoPrime.LLS.CosetNormAverage
 
@@ -90,7 +91,7 @@ theorem exists_least_prime_in_coset_le_of_explicit_gap {q : ℕ} [NeZero q] (H :
     (hgap :
       (H.index : ℝ) * ((11 / 5 : ℝ) * Real.sqrt x) + cosetNonprincipalUpper q H x <
         cosetPrincipalLower q x) :
-    ∃ p : ℕ, IsLeast (primesInCoset q H a) p ∧ (p : ℝ) ≤ x := by
+    ∃ p : ℕ, IsLeast (NumberTheory.primesInCoset q H a) p ∧ (p : ℝ) ≤ x := by
   have hc :=
     mul_le_mul_of_nonneg_left (compositeRootSum_le hx) (Nat.cast_nonneg H.index : (0 : ℝ) ≤ H.index)
   apply

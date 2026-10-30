@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeTripleBounds
-public import PseudoPrime.Analysis.GaussianRelativeProfiles
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeProfiles
 
 /-! # Generic relative Gaussian witnesses -/
 
@@ -18,7 +18,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- Under GRH, an index-four pass-containing subgroup with conductor at most
 2 log n yields an actual rejecting prime below C(log n) squared when log n>=T.
 Apply the 21/10 relative comparison, the actual 50000 prefix and its scalar contradiction. -/
-theorem gaussianProfile_witness_four (f : Analysis.GaussianRelativeProfile) {n : ℕ} [NeZero n]
+theorem gaussianProfile_witness_four (f : GaussianRelativeProfile) {n : ℕ} [NeZero n]
     (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -32,7 +32,7 @@ theorem gaussianProfile_witness_four (f : Analysis.GaussianRelativeProfile) {n :
   let r := Real.sqrt x
   let s := Real.sqrt r
   let h := (2 / 5 : ℝ) / s
-  have hroots := Analysis.gaussianRelativeProfile_roots f hL
+  have hroots := gaussianRelativeProfile_roots f hL
   change f.a * L ≤ r ∧ 500 ≤ r ∧ 10 ≤ s ∧ s ≤ (61 / 100 : ℝ) * L / f.v at hroots
   have hrpos : 0 < r := by linarith only [hroots.2.1]
   have hspos : 0 < s := by linarith only [hroots.2.2.1]
@@ -66,25 +66,25 @@ theorem gaussianProfile_witness_four (f : Analysis.GaussianRelativeProfile) {n :
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         (1 * r) ≤
-      Analysis.gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
         4 * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / (1 * r)) * Real.exp (1 / 16 : ℝ)) +
         13 +
         3 * LLS.PaperStatements.gaussianPrefixError (489311 / 100000) n (r ^ 2) := by
     simpa only [hindex, hi, Nat.reduceSub, Nat.cast_ofNat, one_mul] using hcmp
   have hscalar :=
-    Analysis.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 1)
+    LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 1)
       (by norm_num only : (0 : ℝ) < 2 / 5) (show h = (2 / 5 : ℝ) / s from rfl) hh1
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
-      (by norm_num only [Analysis.gaussianMRRefinedConductor]) hcmp'
-  have hA := Analysis.gaussianRelativeProfile_error f hL (le_refl (Real.log n))
-  apply Analysis.gaussianRelativeProfile_false f hL hroots.1 hroots.2.1 hroots.2.2.1 hroots.2.2.2 hA
-  norm_num only [one_mul, Analysis.gaussianMRRefinedConductor] at hscalar ⊢
+      (by norm_num only [gaussianMRRefinedConductor]) hcmp'
+  have hA := gaussianRelativeProfile_error f hL (le_refl (Real.log n))
+  apply gaussianRelativeProfile_false f hL hroots.1 hroots.2.1 hroots.2.2.1 hroots.2.2.2 hA
+  norm_num only [one_mul, gaussianMRRefinedConductor] at hscalar ⊢
   exact hscalar
 
 /-- For an odd uniform three-prime Korselt product, GRH and log n>=T
 yield an actual rejecting prime within the coefficient-C cutoff. Construct the
 index-four subgroup and retain its conductor-sum saving. -/
-theorem gaussianProfile_witness_triple (f : Analysis.GaussianRelativeProfile) {n p q r : ℕ}
+theorem gaussianProfile_witness_triple (f : GaussianRelativeProfile) {n p q r : ℕ}
     (hp : p.Prime) (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r)
     (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1)
     (hqdiv : q - 1 ∣ n - 1) (hrdiv : r - 1 ∣ n - 1)
@@ -108,7 +108,7 @@ theorem gaussianProfile_witness_triple (f : Analysis.GaussianRelativeProfile) {n
 /-- For a squarefree uniform Korselt triple specified by its factor set,
 extract the three primes and apply the exact-conductor relative Gaussian comparison.
 This restricted interface is internal to the all-input classification. -/
-theorem gaussianProfile_witness_card (f : Analysis.GaussianRelativeProfile) {n : ℕ} (hnOdd : Odd n)
+theorem gaussianProfile_witness_card (f : GaussianRelativeProfile) {n : ℕ} (hnOdd : Odd n)
     (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
     (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
