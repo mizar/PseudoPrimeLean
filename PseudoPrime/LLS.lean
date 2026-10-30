@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.LLS.QNeOneLogShiftRadius
 public import PseudoPrime.LLS.Below64MainErrorBounds
+public import PseudoPrime.LLS.IndexSixBarrier.ParameterizedFourier
 public import PseudoPrime.LLS.RetainedEvenReciprocalError
 public import PseudoPrime.LLS.SevenPart2Bounds
 public import PseudoPrime.LLS.SmallReciprocalMainErrorBounds
