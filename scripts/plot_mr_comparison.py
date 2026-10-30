@@ -623,6 +623,113 @@ def upper(L: np.ndarray) -> np.ndarray:
          for C, T in TUNED_TRIANGULAR_PROFILES])
     return np.where(L < math.log(3000), baseline, triangular)
 
+def endpoint79_upper(L: np.ndarray) -> np.ndarray:
+    """Independent fixed-79 guard from Endpoint79TunedEnvelope.lean."""
+    baseline = upper(L)
+    return np.where((L >= math.log(3000)) & (L <= 12659 / 1000),
+                    np.minimum(baseline, 79), baseline)
+
+
+def plot_endpoint79_guard(output_dir: Path) -> None:
+    """Show the certified local improvement without changing the tuned baseline."""
+    L = np.unique(np.concatenate([np.linspace(12.64, 12.665, 1800), [12.65, 12.659]]))
+    proof_interval = np.linspace(12.65, 12.659, 100)
+    assert np.all(upper(proof_interval) > 83)
+    assert np.all(endpoint79_upper(proof_interval) == 79)
+    fig, ax = plt.subplots(figsize=(9, 4.5))
+    ax.plot(L, upper(L), label="Tuned selected cutoff", color="#667788", linewidth=1.8)
+    ax.plot(L, endpoint79_upper(L), label="Guarded fixed-79 cutoff", color="#d55e00",
+            linewidth=1.8)
+    ax.axvspan(12.65, 12.659, color="#009e73", alpha=.12,
+               label="Lean-certified strict improvement interval")
+    ax.set_xlabel(r"$L=\ln n$")
+    ax.set_ylabel("Selected witness cutoff")
+    ax.set_title("Fixed-79 guard: local comparison")
+    ax.grid(color="#dddddd", linewidth=.5)
+    ax.legend(fontsize=9)
+    fig.tight_layout()
+    stem = output_dir / "mr_endpoint79_guard_comparison"
+    fig.savefig(stem.with_suffix(".svg"), metadata={"Date": None})
+    svg = stem.with_suffix(".svg")
+    svg.write_text("\n".join(line.rstrip() for line in svg.read_text(encoding="utf-8").splitlines())
+                   + "\n", encoding="utf-8")
+    fig.savefig(stem.with_suffix(".png"), dpi=180)
+    plt.close(fig)
+
+
+def gaussian_surplus_family(L: np.ndarray) -> np.ndarray:
+    """MR GaussianSeededSurplus.lean with its actual two certified prefix floors."""
+    return np.minimum(np.maximum(35000, gaussian_raw_bound(L, 4.185)),
+                      np.maximum(50000, gaussian_raw_bound(L, 3.934)))
+
+
+def next_tuned_upper(L: np.ndarray) -> np.ndarray:
+    """Full NextTunedSelectedEnvelope with its original small-input guard."""
+    baseline = endpoint79_upper(L)
+    return np.where(L >= 63, np.minimum(baseline, gaussian_surplus_family(L)), baseline)
+
+
+def plot_next_tuned(output_dir: Path) -> None:
+    """Compare the full adopted candidates with the preserved tuned baseline."""
+    for lo, hi in [(12.65, 12.659), (245, 255), (300, 310)]:
+        probe = np.linspace(lo, hi, 101)
+        assert np.all(next_tuned_upper(probe) < upper(probe))
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4.3))
+    for ax, (lo, hi, title, proof_lo, proof_hi) in zip(axes, [
+            (12.64, 12.665, "Fixed-79", 12.65, 12.659),
+            (240, 260, "35000 prefix surplus", 245, 255),
+            (295, 350, "50000 prefix surplus", 300, 350)]):
+        L = np.linspace(lo, hi, 2500)
+        ax.plot(L, upper(L), label="Tuned baseline", color="#667788", linewidth=1.8)
+        ax.plot(L, next_tuned_upper(L), label="Next tuned", color="#d55e00", linewidth=1.8)
+        ax.axvspan(proof_lo, proof_hi, color="#009e73", alpha=.12,
+                   label="Certified strict interval")
+        ax.set_title(title)
+        ax.set_xlabel(r"$L=\ln n$")
+        ax.set_ylabel("Selected witness cutoff")
+        ax.grid(color="#dddddd", linewidth=.5)
+        ax.legend(fontsize=8)
+    fig.tight_layout()
+    stem = output_dir / "mr_next_tuned_comparison"
+    fig.savefig(stem.with_suffix(".svg"), metadata={"Date": None})
+    svg = stem.with_suffix(".svg")
+    svg.write_text("\n".join(line.rstrip() for line in svg.read_text(encoding="utf-8").splitlines())
+                   + "\n", encoding="utf-8")
+    fig.savefig(stem.with_suffix(".png"), dpi=170)
+    plt.close(fig)
+
+
+def plot_mr_cumulative(output_dir: Path) -> None:
+    """Draw CumulativeHighBounds.lean with each profile's earlier-input history."""
+    entrances = np.array([T for _, T in TUNED_TRIANGULAR_PROFILES])
+    recoveries = np.array([T / math.sqrt(C) for C, T in TUNED_TRIANGULAR_PROFILES])
+    L = np.unique(np.concatenate([np.geomspace(1e10, 1e14, 3000),
+                                  entrances, recoveries]))
+    cumulative = np.minimum.reduce([np.ones_like(L)] +
+        [np.maximum((T / L)**2, C) for C, T in TUNED_TRIANGULAR_PROFILES])
+    pointwise = np.minimum.reduce([np.ones_like(L)] +
+        [np.where(L >= T, C, np.inf) for C, T in TUNED_TRIANGULAR_PROFILES])
+    assert np.all(cumulative >= pointwise - 1e-14)
+    assert np.all(cumulative <= 1)
+    fig, ax = plt.subplots(figsize=(10, 5.5))
+    ax.semilogx(L, cumulative, color="#d55e00", linewidth=2.5,
+                label="Cumulative bound retaining entrance history")
+    ax.semilogx(L, pointwise, color="#3977a8", linestyle="--",
+                label="Pointwise seven-profile bound")
+    ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
+           title="MR least rejecting prime: cumulative and pointwise bounds")
+    ax.grid(color="#e1e5e9", linewidth=0.6)
+    ax.legend(loc="upper right", fontsize=9)
+    fig.tight_layout()
+    stem = output_dir / "mr_cumulative_high_comparison"
+    fig.savefig(stem.with_suffix(".svg"), metadata={"Date": None})
+    svg = stem.with_suffix(".svg")
+    svg.write_text("\n".join(line.rstrip() for line in svg.read_text(encoding="utf-8").splitlines())
+                   + "\n", encoding="utf-8")
+    fig.savefig(stem.with_suffix(".png"), dpi=180)
+    plt.close(fig)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path,
@@ -801,6 +908,8 @@ def main() -> None:
         assert primes[-1] == p and not passes(p)
         assert all(passes(a) for a in primes[:-1])
 
+    U = next_tuned_upper(L)
+    assert np.all(np.array(ps) <= next_tuned_upper(record_L))
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
     ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
@@ -873,6 +982,9 @@ def main() -> None:
         comparison_svg.read_text(encoding="utf-8").splitlines()) + "\n", encoding="utf-8")
     fig.savefig(comparison.with_suffix(".png"), dpi=160)
     plt.close(fig)
+    plot_mr_cumulative(args.output_dir)
+    plot_endpoint79_guard(args.output_dir)
+    plot_next_tuned(args.output_dir)
     report = {"small_interval_switch": 2047,
               "small_three_interval": [2047, 3000],
               "low_prime_steps": TUNED_FINITE_STEPS,
@@ -893,7 +1005,8 @@ def main() -> None:
               "lean_selection_equality": "tuned_eq_selected",
               "comparison_baseline": "sharpSelectedEnvelope",
               "sampled_selection_equality_checked": True,
-              "sampled_plot_monotonicity_checked": True,
+              "baseline_sampled_monotonicity_checked": True,
+              "plotted_envelope": "nextTunedSelectedEnvelope",
               "gaussian_strict_sample_interval": [100, 235.73],
               "candidates_checked": len(candidates(L)),
               "plot_scale_points_checked": len(L), "high_scale_probe_count": len(probe),

@@ -70,7 +70,7 @@ $$
 $$
 \left(\frac nb\right)=0
 \quad\Longleftrightarrow\quad
-\gcd(n,b)>1.
+\gcd(n,b) > 1.
 $$
 
 合成数 $b$ では、Jacobi記号が $1$ でも $n$ が法 $b$ の平方剰余とは限らない。例えば $\left(\frac2{15}\right)=1$ だが、 $x^2\equiv2\pmod{15}$ を満たす整数 $x$ は存在しない。
@@ -174,56 +174,6 @@ $$
 `primeNeOneWitness_cast_le_log_sq_of_11_le` は $n\in\mathcal A$、 $n\ge11$ の最小証人を直接 $(\ln n)^2$ 以下に評価する。
 非1証人は値 $0$ も許すため、法を割る素数も証人となる。
 
-#### 平方自由部分への正確な還元と指数改善の拡張
-
-この項では $P^-(n)$ を $n$ の最小素因数とする。
-
-$$
-\begin{gathered}
-n > 0,\quad n\text{ は奇数かつ非平方},\quad
-n=ds^2,\quad d > 1,\quad d\text{ は平方自由}
-\\
-\Longrightarrow\quad
-q_{\ne1}(n)=\min\bigl(P^-(n),q_{\ne1}(d)\bigr).
-\end{gathered}
-$$
-
-[SquarefreeReduction.lean](../PseudoPrime/NumberTheory/JacobiWitness/SquarefreeReduction.lean) の
-`primeNeOneWitness_eq_min_minFac_squarefree` が対応する。
-$p\mid n$ なら値0の非1証人となり、$p\nmid n$ なら平方因子が記号の値に影響しない。
-これは証人集合から導いた無条件の等式であり、複数の評価式を最小値で結合したものではない。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n > 0,\quad n\text{ は奇数かつ非平方},\quad
-n=ds^2,\quad d\text{ は平方自由}
-\\
-\Longrightarrow\quad q_{\ne1}(n)\le\max\bigl(5,(\ln d)^2\bigr).
-\end{gathered}
-$$
-
-[SquarefreeNeOneWitnessBounds.lean](../PseudoPrime/PseudoSquare/Bounds/SquarefreeNeOneWitnessBounds.lean) の
-`primeNeOneWitness_le_squarefree_log_square` が最小証人版、
-`exists_odd_prime_ne_one_le_squarefree_log_square` が素数証人の存在版である。
-$d=3,5,7$ の既存証人と $d\ge11$ の対数二乗定理を再利用する。
-平方因子側の素因数を割る候補も値0の証人として使えるため、負値証人のような除外費用は生じない。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n > 0,\quad n\text{ は奇数かつ非平方},\quad
-n=ds^2,\quad d\text{ は平方自由},\quad L=\ln n,
-\\
-0 < \varepsilon < 2,\quad5\le L^{2-\varepsilon},\quad
-\ln d\le L^{1-\varepsilon/2}
-\\
-\Longrightarrow\quad q_{\ne1}(n)\le L^{2-\varepsilon}.
-\end{gathered}
-$$
-
-`primeNeOneWitness_le_log_power_of_squarefree_log` がこの帰結を証明する。
-平方自由部分に条件を課した指数改善であり、全入力一様の主張ではない。
-この上界は $d$ にも依存するため、$n$ だけで比較する後節の区間表には含めていない。
-
 #### 根から1/1000を引く非1証人上界
 
 $$
@@ -277,7 +227,7 @@ n\equiv1\pmod2,\qquad\neg\mathrm{IsSquare}(n)
 \end{gathered}
 \quad\Longrightarrow\quad
 \exists q\in\mathbb P_{\mathrm{odd}},\quad
-\left(\frac nq\right)\ne1,\quad q\le F_{1/10}(n)<(\ln n)^2.
+\left(\frac nq\right)\ne1,\quad q\le F_{1/10}(n) < (\ln n)^2.
 $$
 
 $$
@@ -289,10 +239,10 @@ $$
 `exists_prime_ne_one_witness_le_deci_shift_and_lt_log_sq_of_ge_3295` と
 `QNeOne_le_deci_shift_of_ge_3295` が対応する。最小証人も同じ端点で評価する。
 
-$t\ge3295$ では $F_{1/10}(t)<F(t)$ であり、補正 $1/1000$ の上界をさらに小さくする。
+$t\ge3295$ では $F_{1/10}(t) < F(t)$ であり、補正 $1/1000$ の上界をさらに小さくする。
 解析的な三分岐比較で根と導手上界の差を $1/10$ まで許すことで得た。
 小さい平方自由部分の処理は既存のGRH定理を再利用し、入力別の有限証明書は追加していない。
-補正 $1/1000$ の定理は $2984\le n<3295$ の範囲も扱うため、そのまま残している。
+補正 $1/1000$ の定理は $2984\le n < 3295$ の範囲も扱うため、そのまま残している。
 負値証人の上界からも、 $q_{\ne1}(n)\le q_{-1}(n)$ と $Q_{\ne1}(B)\le Q_{-1}(B)$ により非1証人の上界が得られる。係数 $99/100$ と $9999/10000$ の結果は、次の負値証人の節にまとめる。
 
 #### 根から1/2を引く非1証人上界
@@ -421,7 +371,7 @@ T(L)^2 < \left(L-\ln L+\frac{11}{4}\right)^2.
 $$
 
 開始尺度96での比較は [ShiftedOddEndpointDoubleLogBounds.lean](../PseudoPrime/PseudoSquare/Bounds/ShiftedOddEndpointDoubleLogBounds.lean) の `shiftedDoubleLogRoot_sq_lt_elevenFourths` が証明する。
-同じ適用範囲で旧補正定数149/20の式より狭義に小さいことも、 `shiftedDoubleLogRoot_sq_lt_sharp` で証明した。素数2での原始指標値が0の枝では $(\ln X-\ln2/2)^2/2$、非零の枝では $(\ln X)^2/2$ の費用を用いた。半対数シフトを保持した改善である。
+素数2での原始指標値が0の枝では $(\ln X-\ln2/2)^2/2$、非零の枝では $(\ln X)^2/2$ の費用を用いた。半対数シフトを保持した改善である。
 
 $$
 L\ge50,\quad\ln L > \frac{22}{5}
@@ -727,22 +677,6 @@ $$
 同じ適用域 $L\ge500$ で、従来の対数係数 $33/20$・加法定数 $6$ の式より厳密に小さい。
 適用開始尺度は500であり、尺度550から $L^2$ 未満が続く。尺度600以上では $(99/100)L^2$ 未満となる。
 
-導手節約の配分は [ParameterizedConductorPrefixBounds.lean](../PseudoPrime/LLS/ParameterizedConductorPrefixBounds.lean) で一般化した。
-非負実数 $a,d$ を用い、素数ごとの費用を $a\ln p$ と素数2での追加費用 $d$ で抑えれば、
-局所補正に配分する係数は $1/2-a$ となり、 $(1/2-a)\sqrt{x}\ge1$ が吸収条件となる。
-今回の明示式は $a=3/10$、 $d=(1/5)\ln2$ の特殊化である。
-
-正整数 $d,A$ に対し、 $\omega(d)$ を異なる素因数の個数とすると、
-
-$$
-0 < d\le A\quad\Longrightarrow\quad
-\omega(d)\le\frac{13}{2}+\frac14\ln A.
-$$
-
-[QuarterLogPrimeFactorBounds.lean](../PseudoPrime/AnalyticNumberTheory/Arithmetic/QuarterLogPrimeFactorBounds.lean) では、64未満の18素数の対数欠損を有理数で抑える。 $\ln A > 32$ では従来の $5/2+(3/8)\ln A$ より小さく、負値証人の素因数除外費用を減らせる。固定の18素数に関する検査を使うが、入力整数の有限列挙は使わない。
-
-任意の主指標下界とアンカーの節約を受け取る汎用定理を経由して、実際の負値素数を抽出する。この節の閉じた上界には、別途検証する数値分離条件を残していない。
-
 #### 係数4/5と開始値 $10^{19978}$
 
 $$
@@ -764,472 +698,96 @@ $$
 $\ln n\ge46000$ の評価へ十進開始値から接続する。
 係数99/100より小さいため、この開始値以降は掲載式の中で最小となる。
 
-#### 平方自由部分と平方因子の素因数費用による上界の拡張
+#### 係数777/1000の有限入口と全域累積候補
 
-この項では $E(s)$ を平方因子側の異なる素因数の対数和とする。
+[RationalPoleSharpEntrance.lean](../PseudoPrime/LLS/RationalPoleSharpEntrance.lean) は、GRH下で、奇数・非平方の全入力 $n$ に対し、 $\ln n\ge10^{18}$ なら実際の負値Jacobi奇素数証人とその最小値が $(777/1000)(\ln n)^2$ 以下となることを証明する。平方自由性や、利用者が与える算術的な橋は前提にしていない。
 
-$$
-E(s)=\sum_{\substack{\ell\mid s\\\ell\text{ は素数}}}\ln\ell
-=\ln\mathrm{rad}(s).
-$$
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad d,s\in\mathbb N,
-\\
-n=ds^2,\quad d > 1,\quad d\text{ は平方自由},\quad L=\ln n
-\\
-\Longrightarrow\quad
-q_{-1}(n)\le4\left(\frac{2429}{720}\ln(4d)+\frac{18339}{400}\right)^2+\frac{28}{5}E(s).
-\end{gathered}
-$$
-
-[DirectHadamardJacobiBounds.lean](../PseudoPrime/PseudoSquare/Bounds/DirectHadamardJacobiBounds.lean) の
-`exists_prime_neg_one_le_direct_hadamard_squarefree_budget` が実際の負値奇素数証人を構成し、
-`primeNegOneWitness_le_direct_hadamard_squarefree_budget` が最小証人の上界を証明する。
-正の入力から作る二次指標とその原始指標の偶性を保持し、偶指標用のHadamard定数の直接評価を使う。
-原始導手を $4d$ 以下に抑え、除外素数の費用を平方因子側の $E(s)$ と分けて残す。
-非1最小証人にも同じ上界を移す定理があるが、この項の構成対象は負値証人である。
-さらに、 $G,E\ge0$ の全域で
-
-$$
-4\left(\frac{2429}{720}G+\frac{18339}{400}\right)^2+\frac{28}{5}E
-\le4\left(\frac{287}{80}G+\frac{4407}{80}\right)^2+\frac{28}{5}E
-$$
-
-をLeanで証明した。導手対数の係数を $287/80$ から $2429/720$ へ、加法定数を $4407/80$ から $18339/400$ へ下げた。
-解析的比較の適用下限を尺度200へ下げたため、定数枝との最大値は不要となった。新しい有限証明書は使っていない。
-
-$$
-\begin{gathered}
-0 < \varepsilon < 2,\quad
-\frac{2429}{720}\ln(4d)+\frac{18339}{400}\le\frac14L^{1-\varepsilon/2},\quad
-E(s)\le\frac18L^{2-\varepsilon}
-\\
-\Longrightarrow\quad q_{-1}(n)\le L^{2-\varepsilon}.
-\end{gathered}
-$$
-
-上のGRH・入力分解の前提の下で、
-`exists_prime_neg_one_le_log_power_of_direct_hadamard_squarefree_budget` がこの帰結を証明する。
-全入力一様の指数改善ではない。
-
-また、同じGRH・入力分解の前提から
-
-$$
-E(s)\le\ln s\le\frac12\ln n
-\quad\Longrightarrow\quad
-q_{-1}(n)\le4\left(\frac{2429}{720}\ln(4d)+\frac{18339}{400}\right)^2+\frac{14}{5}\ln n
-$$
-
-を得る。`primeNegOneWitness_le_direct_hadamard_squarefree_log_budget` が対応する。
-平方自由部分 $d$ を固定した入力族では、 $\ln n$ に一次の明示上界となる。
-この上界は $d,s$ にも依存するため、 $n$ だけで比較する次節の区間表には含めていない。
-
-#### 逆数公式の可変切断点による上界の拡張
-
-$f(n)$ を正の奇数 $n$ の二次指標の原始導手とし、
-$W_{\eta,c}(f,m,x)$ は [LLSの可変切断点上界](LLS.md#逆数公式の切断点を保持した拡張) で定義した関数とする。
-$m$ は除外整数、$x$ は逆数公式の切断点であり、証人探索上限とは異なる。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad x\ge64
-\\
-\Longrightarrow\quad
-q_{\ne1}(n)\le q_{-1}(n)\le W_{179/200,21/10}(f(n),2n,x).
-\end{gathered}
-$$
-
-[VariableReciprocalJacobiBounds.lean](../PseudoPrime/PseudoSquare/Bounds/VariableReciprocalJacobiBounds.lean)
-で、実際の負値奇素数と二つの最小証人へ接続した。
-偶性を原始指標まで保持し、素数2と入力の素因数を除外する。
-この上界は同じ導手・除外費用の固定尺度の根上界以下である。
-導手と因数分解に依存するため、全入力一様の最良区間表とは分けて扱う。
-
-#### 導手対数の係数を下げた上界の拡張
-
-$A_{\mathrm{ad}}$ は [LLSの導手依存の明示上界](LLS.md#導手依存の切断点による明示上界) で定義した関数とする。
-$n=ds^2$ は、平方自由な正整数 $d$ と正整数 $s$ による標準分解である。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad n=ds^2,\quad G=\ln(4d)
-\\
-\Longrightarrow\quad
-q_{\ne1}(n)\le q_{-1}(n)\le
-4\left(A_{\mathrm{ad}}(G)+1\right)^2+\frac{28}{5}E(s).
-\end{gathered}
-$$
-
-ここで $E(s)$ は平方因子の相異なる素因数の対数和である。
-[AdaptiveReciprocalJacobiBounds.lean](../PseudoPrime/PseudoSquare/Bounds/AdaptiveReciprocalJacobiBounds.lean)
-で、実際の負値奇素数と二つの最小証人へ接続した。
-$E(s)\le\frac12\ln n$ を使う固定 $d$ の対数一次上界も証明した。
-
-$G\ge100$ では、この式が同じ平方因子費用を持つ従来の
-$4((2429/720)G+18339/400)^2+(28/5)E(s)$ 以下となることをLeanで証明した。
-二重対数項を残すことで導手対数の係数を下げた結果であり、全入力一様な固定指数改善ではない。
-平方自由部分に依存するため、全入力一様の最良区間表には含めない。
-
-#### 推奨切断点による平方自由部分別上界の改良
-
-$A_{\mathrm{cut}}$ は [LLSの推奨切断点の上界](LLS.md#推奨切断点による明示上界の改良) で定義した関数とする。
-$n=ds^2$ を平方自由な正整数 $d$ と正整数 $s$ による標準分解とし、
-$E(s)$ は平方因子の相異なる素因数の対数和とする。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad n=ds^2,\quad G=\ln(4d),\quad G\ge16
-\\
-\Longrightarrow\quad
-q_{\ne1}(n)\le q_{-1}(n)\le
-4\left(A_{\mathrm{cut}}(G)+1\right)^2+\frac{28}{5}E(s).
-\end{gathered}
-$$
-
-[SelectedReciprocalJacobiBounds.lean](../PseudoPrime/PseudoSquare/Bounds/SelectedReciprocalJacobiBounds.lean)
-で、実際の負値奇素数と二つの最小証人へ接続した。
-実導手の対数が16未満でも、 $G\ge16$ なら使える。
-固定 $d$ での対数一次包絡も証明した。
-
-$G\ge16$ では前段の $A_{\mathrm{ad}}$ を使う多項式上界以下となり、
-$G\ge57$ では $4((2429/720)G+18339/400)^2+(28/5)E(s)$ 以下ともなる。
-二つの比較をLeanで証明した。いずれも同じ平方因子費用を使う比較である。
-
-すべての入力では、推奨切断点を既存の可変定理へ渡して固定偶指標上界との最小値を保持する版も使える。
-導手や因数分解に依存するため、全入力一様の最良区間表には含めない。
-
-#### 三次核による導手別上界の拡張
-
-$\theta_n$ を $n$ の原始二次指標とし、その導手を $f(n)$ とする。
-正整数 $m$ に対して
-
-$$
-E_{\theta_n}(m)=\sum_{p\mid m,\ p\text{ は素数}}(1-\Re\theta_n(p))\ln p
-$$
-
-と定め、
-
-$$
-\begin{aligned}
-A_3(G)&=\frac{10}{13}G+\frac{63}{2},\\
-\rho_3(G,E)&=A_3(G)+\sqrt{A_3(G)^2+\frac85G+28+\frac43E}
-\end{aligned}
-$$
-
-と置く。前提と主張は次のとおりである。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad
-G\ge\ln f(n),\quad E\ge E_{\theta_n}(2n)
-\\
-\Longrightarrow\quad q_{-1}(n)\le\rho_3(G,E)^2.
-\end{gathered}
-$$
-
-[TightCubicNegativeSupportBounds.lean](../PseudoPrime/PseudoSquare/Bounds/TightCubicNegativeSupportBounds.lean)
-の `exists_prime_neg_one_le_tight_cubic_sensitive_radius` から最小証人の定義により従う。
-実際に得る素数は奇数で $n$ と互いに素であり、Jacobi記号が $-1$ となる。
-除外素数で $\theta_n(p)=1$ なら、その素数の費用は0になる。
-
-一律の除外費用による上界を [LLSの三次核上界](LLS.md#三次核による導手別上界の改良) の
-$R_3(G,m)$ とすると、
-
-$$
-G\ge0\quad\Longrightarrow\quad
-\rho_3(G,E_{\theta_n}(2n))^2\le R_3(G,2n).
-$$
-
-この比較は `tightCubicExclusionRadius_sq_le_uniform` でLean証明した。導手と指標値に依存するため、全入力一様の最良区間表には含めない。
-平方因子側の負値素数だけの費用へ置き換えた式は、この定理には含めていない。
-
-#### 三次核による平方自由部分別上界の拡張
-
-$n=ds^2$ を平方自由な正整数 $d > 1$ と正整数 $s$ による標準分解とし、
-
-$$
-G=\ln(4d),\qquad E(s)=\sum_{p\mid s,\ p\text{ は素数}}\ln p,
-\qquad B_d=\frac{10}{13}G+35
-$$
-
-と置く。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad n=ds^2
-\\
-\Longrightarrow\quad q_{\ne1}(n)\le q_{-1}(n)\le
-\left(B_d+\sqrt{B_d^2+\frac83E(s)}\right)^2.
-\end{gathered}
-$$
-
-[CubicSquareFactorJacobiBounds.lean](../PseudoPrime/PseudoSquare/Bounds/CubicSquareFactorJacobiBounds.lean)
-の `primeNegOneWitness_le_cubic_square_factor` と
-`primeNeOneWitness_le_cubic_square_factor` が対応する。
-平方自由部分の素因数では原始指標が0となるため、その除外費用を $\ln(4d)$ に含められる。
-残る平方因子の費用を根の中に保持した上界である。
-
-同じ $d,s$ に対し、従来の推奨切断点の式と次の関係が成立する。
-
-$$
-G\ge16\quad\Longrightarrow\quad
-\left(B_d+\sqrt{B_d^2+\frac83E(s)}\right)^2
-\le4\left(A_{\mathrm{cut}}(G)+1\right)^2+\frac{28}{5}E(s).
-$$
-
-この比較は [CubicSquareFactorBounds.lean](../PseudoPrime/LLS/CubicSquareFactorBounds.lean) で
-Lean証明した。新しい存在定理自体には $G\ge16$ の条件はない。
-導手と平方因子に依存するため、全入力一様の最良区間表には含めない。
-
-任意の正の目標上界 $X$ について、次の汎用的な十分条件も証明した。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad n=ds^2,\quad X > 0,
-\quad2B_d\sqrt X+\frac83E(s)\le X
-\\
-\Longrightarrow\quad q_{-1}(n)\le X.
-\end{gathered}
-$$
-
-`primeNegOneWitness_le_of_cubic_square_factor_target` が対応する。
-導手と平方因子の費用を一つの二次不等式で扱う。
-
-#### 負値素数だけを数える平方自由部分別上界の拡張
-
-同じ標準分解 $n=ds^2$ と $B_d=(10/13)\ln(4d)+35$ を用い、
-
-$$
-E_-(s)=\sum_{\substack{p\mid s\\p\text{ は素数}\\(d/p)=-1}}\ln p
-$$
-
-と定める。 $s$ は奇数なので、分母の素数も全て奇数である。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad n=ds^2
-\\
-\Longrightarrow\quad q_{\ne1}(n)\le q_{-1}(n)\le
-\left(B_d+\sqrt{B_d^2+\frac83E_-(s)}\right)^2.
-\end{gathered}
-$$
-
-[CubicNegativeSupportBounds.lean](../PseudoPrime/PseudoSquare/Bounds/CubicNegativeSupportBounds.lean)
-の `primeNegOneWitness_le_cubic_negative_support` と
-`primeNeOneWitness_le_cubic_negative_support` が対応する。
-原始二次指標の値を任意の整数で平方自由部分へ移し、
-$p\nmid d$ となる奇素数では、その値がJacobi記号 $(d/p)$ と一致することを用いる。
-平方因子の素数でも $(d/p)=1$ なら費用を課さない。 $p\mid d$ の費用は平方自由部分側で数える。
-
-$$
-0\le E_-(s)\le E(s)
-\quad\Longrightarrow\quad
-\left(B_d+\sqrt{B_d^2+\frac83E_-(s)}\right)^2
-\le\left(B_d+\sqrt{B_d^2+\frac83E(s)}\right)^2.
-$$
-
-この比較は `cubicNegativeSupportRadius_sq_le_full` でLean証明した。
-同じ $d,s$ に対し、前項の三次核上界以下となる。
-指標値と因数分解に依存するため、全入力一様の最良区間表には含めない。
-
-任意の $X > 0$ に対し、負値素数の費用だけを用いる十分条件も得る。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad n=ds^2,\quad X > 0,
-\quad2B_d\sqrt X+\frac83E_-(s)\le X
-\\
-\Longrightarrow\quad q_{-1}(n)\le X.
-\end{gathered}
-$$
-
-`primeNegOneWitness_le_of_cubic_negative_support_target` が対応する。
-$L=\ln n$ とすると、対数の実数冪への接続は次のとおりである。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad n=ds^2,\quad0 < \varepsilon < 2,
-\quad2B_dL^{1-\varepsilon/2}+\frac83E_-(s)\le L^{2-\varepsilon}
-\\
-\Longrightarrow\quad q_{-1}(n)\le L^{2-\varepsilon}.
-\end{gathered}
-$$
-
-`primeNegOneWitness_le_log_rpow_of_cubic_negative_support` が対応する。
-この不等式を満たす入力についての結果であり、全入力に一様な固定指数の改善は主張しない。
-
-#### 定数2434/75による負値素数費用の上界の改良
-
-上の標準分解 $n=ds^2$ と負値素数費用 $E_-(s)$ を用い、
-
-$$
-\widetilde B_d=\frac{10}{13}\ln(4d)+\frac{2434}{75}
-$$
-
-と置く。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad n=ds^2
-\\
-\Longrightarrow\quad q_{\ne1}(n)\le q_{-1}(n)\le
-\left(\widetilde B_d+
-\sqrt{\widetilde B_d^2+\frac83E_-(s)}\right)^2.
-\end{gathered}
-$$
-
-[RationalCubicNegativeSupportBounds.lean](../PseudoPrime/PseudoSquare/Bounds/RationalCubicNegativeSupportBounds.lean) の
-`primeNegOneWitness_le_cubic2434_negative_support` と
-`primeNeOneWitness_le_cubic2434_negative_support` が対応する。
-三次核の定数を $63/2$ と $28$ に改善し、原始指標の除外費用を
-$\ln(4d)+2E_-(s)$ 以下に抑えて導手項を半径へ吸収した。
-定数を引数に取る汎用的な吸収定理を用い、 $63/2$ からの差 $143/150$ で導手費用を吸収した。定数 $65/2$ の半径より全ての非負予算で狭義に小さくなる比較は `cubicSquareFactorRadius2434_lt_tight` で証明した。
-導手と因数分解に依存するため、全入力一様の最良区間表には含めない。
-
-古典的Selfridge Method AとWheel30方式の負値停止値も、同じ上界を満たす。
-対応する定理は `classicalSelfridgeD_cubic2434_negative_support_bound` である。
-
-#### 切断点以下の素因数費用による負値証人上界の改良
-
-$n\in\mathcal A$ に対応する原始二次指標を $\theta_n$ とする。
-$G$ をその導手対数の上界とし、
-
-$$
-\begin{aligned}
-E_n(X)&=\sum_{\substack{p\mid2n,\ p\le X\\p\text{ は素数}}}
-(1-\Re\theta_n(p))\ln p,\\
-A_3(G)&=\frac{10}{13}G+\frac{63}{2},\\
-U_n(G;X)&=\left(A_3(G)+\sqrt{A_3(G)^2+
-\frac85G+28+\frac43E_n(X)}\right)^2
-\end{aligned}
-$$
+累積最大値には入口未満の入力も含まれる。[FourPoleFiniteBounds.lean](../PseudoPrime/PseudoSquare/Bounds/FourPoleFiniteBounds.lean) は、この履歴を残す候補
 
-と定義する。
-
 $$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad
-\ln\mathrm{cond}(\theta_n)\le G,\quad U_n(G;X)\le X
-\\
-\Longrightarrow\quad q_{\ne1}(n)\le q_{-1}(n)\le X.
-\end{gathered}
+U_4(B)=\max\left(\frac{9999}{10000}(10^{18})^2,\frac{777}{1000}(\ln B)^2\right)
 $$
-
-[TruncatedCubicJacobiBounds.lean](../PseudoPrime/PseudoSquare/Bounds/TruncatedCubicJacobiBounds.lean)
-の `primeNegOneWitness_le_of_truncated_cubic_radius` と
-`primeNeOneWitness_le_of_truncated_cubic_radius` が対応する。
-抽出される素数は $2n$ を割らず、奇素数かつ指標値 $-1$ の証人となる。
-$X$ より大きい素因数を費用から除く点で、全支持を数える三次核上界を改善する。
 
-全支持費用による三次核上界を $X_0$ とし、 $X_{j+1}=U_n(G;X_j)$ と反復すると、
-各 $X_j$ は有効な上界であり、増加しない。
-`primeNegOneWitness_le_truncatedCubicIterate` が最小負値証人への接続を与える。
-反復の有限段での安定性は [LLSの切断費用](LLS.md#切断点以下の除外費用による三次上界の改良)
-を参照する。入力の素因数に依存するため、全入力一様の最良区間表には含めない。
+を `fourPoleCumulativeBound` と定義し、負値・非1値の両証人の累積最大値を全ての自然数上端 $B$ で抑える。空の対象範囲も含む。
 
-#### 大きい平方因子を持つ入力族への一定上界の拡張
+![入口未満の定数項を残した第四極核の累積上界](figures/q_four_pole_high_comparison.png)
 
-$$
-\begin{aligned}
-G_d&=\ln(4d),\\
-X_d&=\left(A_3(G_d)+\sqrt{A_3(G_d)^2+\frac{44}{15}G_d+28}\right)^2.
-\end{aligned}
-$$
+図は $L=\ln B$ とし、累積候補と係数 $4/5$ の上界との最小値を $L^2$ で割って示す。 $L=10^{18}$ で点ごとの入口を満たしても、累積候補には小入力の定数項が残るため、直ちに係数777/1000へ切り替わるわけではない。中低域の図では、共通端点255の候補と、適用域内の4093の定数候補を含める。いずれも列挙した証明済み候補内での比較である。
 
-ここで $A_3(G)=10G/13+63/2$ は前項の関数である。
+## Selfridgeと共有する前提と累積最大値
 
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad n=ds^2,\quad
- d,s\in\mathbb N,\quad d > 1,\quad d\text{ は平方自由},\\
-\forall\ell\in\mathbb P_{\mathrm{odd}},\quad
-\bigl(\ell\mid s\land\left(\frac d\ell\right)=-1
-\Longrightarrow X_d < \ell\bigr)
-\\
-\Longrightarrow\quad q_{-1}(n)\le X_d.
-\end{gathered}
-$$
+上端 $B$ は任意の自然数とし、最大値の対象は $0 < n\le B$ の奇数・非平方入力にそろえる。上端 $B$ 自身に奇数・非平方条件は課さない。上端0を含む全域関数では、Leanの $\mathrm{Real.log}(0)=0$ と空の最大値0の規約を使う。点ごとの最小素数証人 $q_{\ne1}(n),q_{-1}(n)$ と、その累積最大値 $Q_{\ne1}(B),Q_{-1}(B)$ を区別する。
 
-$n\in\mathcal A$ とこの分解から、 $d,s$ も正の奇数である。
-$(d/\ell)=-1$ を満たす平方因子 $s$ の素因数 $\ell$ がすべて $X_d$ より大きければ、
-切断費用は $E_n(X_d)\le G_d$ となる。したがって上界 $X_d$ は $s$ の大きさに依存しない。
+Selfridgeの対応する停止値絶対値の累積最大を $M_{\ne1}(B),M_{-1}(B)$、Wheel30版を $M^{(30)}_{\ne1}(B),M^{(30)}_{-1}(B)$ とする。[MaximumBridge.lean](../PseudoPrime/PrimeTestBounds/Selfridge/MaximumBridge.lean) は次をGRHなしで証明する。
 
-[FixedSquarefreeCubicWitnesses.lean](../PseudoPrime/PseudoSquare/Bounds/FixedSquarefreeCubicWitnesses.lean)
-の `primeNegOneWitness_le_fixed_squarefree_family` が対応する。
-費用の算術評価は `primitiveQuadratic_truncated_cost_le_log_squarefree`、
-上界の定義は `fixedSquarefreeCubicBound` にある。
+| 条件 | 対応する累積最大値の関係 |
+|---|---|
+| 全ての $B\in\mathbb N$ | $M^{(30)}_{\ne1}=M_{\ne1}$、 $Q_{\ne1}\le M_{\ne1}\le\max\lbrace15,Q_{\ne1}\rbrace$ |
+| 全ての $B\in\mathbb N$ | $M^{(30)}_{-1}=M_{-1}$、 $Q_{-1}\le M_{-1}\le\max\lbrace27,Q_{-1}\rbrace$ |
+| $B\ge751$ | $M^{(30)}_{\ne1}(B)=M_{\ne1}(B)=Q_{\ne1}(B)$ |
+| $B\ge399$ | $M^{(30)}_{-1}(B)=M_{-1}(B)=Q_{-1}(B)$ |
+| $B < 3$ | 対象が空なので全て0 |
 
-##### 非1証人への帰結
+表の最初の2行では引数 $B$ を省略した。一致は対応する同じ系列どうしの関係であり、非1値系列と負値系列を同一視するものではない。点ごとの最小証人と停止値の一致も、この累積最大値の一致からは仮定しない。
 
-同じ前提の下で、別の最小証人について
+以下の解析的上界にはGRHを加える。一致範囲では、PseudoSquareの累積上界と図を、そのまま古典Selfridge・Wheel30の停止最大値にも使える。[Selfridgeのまとめ](SelfridgeBoundGrh.md#累積上界の適用区間と図) に停止値・試行回数への対応を示す。
 
-$$
-q_{\ne1}(n)\le X_d
-$$
+## LLS の役割
 
-も成立する。対応する定理は `primeNeOneWitness_le_fixed_squarefree_family` である。
-この入力族の上界は素因数の指標値と大きさに依存するため、全入力一様の最良区間表には含めない。
+[LLS/Statement.lean](../PseudoPrime/LLS/Statement.lean) の `llsTheorem11S1Character` は、法 $q \ge 3000$ の非主 Dirichlet 指標について、法を割らず指標値が $1$ でない素数を明示的な上界以下に求める仕様である。部分群についての主張を指標の核に特殊化した形を採用する。
 
-#### 固定した平方自由部分に対する対数一次上界の拡張
+[LLS/Theorem11S1GRH.lean](../PseudoPrime/LLS/Theorem11S1GRH.lean) は一般指標の解析結果を組み立てる。Jacobi 値が $-1$ の評価は、この一般 S1 を法 $4n$ の指標に適用して得る。[JacobiCharacterArithmetic.lean](../PseudoPrime/NumberTheory/JacobiCharacterArithmetic.lean) の算術と中間の重み付き評価を用いて `QNeOne` の上界を導く経路と、有限区間の数値証明はそれぞれ異なる役割を持つ。 `QNeOne` と `QNegOne` の二分だけを、そのまま原論文の part (1) と part (2) の対応と読むことはできない。
 
-標準分解 $n=ds^2$ に対し、 $L=\ln n$、 $G=\ln(4d)$ と置き、
+Jacobi 記号が $-1$ となる証人について、大きい入力 $n \ge 750$ での存在は一般 S1 から、小さい入力での存在は有限証明書から得る。明示的半径への変換には無条件の素因数個数評価を使い、Robin 評価は仮定しない。 Jacobi 記号が $1$ でない証人については、原始指標の $2$ での値が $0$・ $1$・ $-1$ となる三分岐を扱い、有限範囲と接続する。両存在定理は公開 API であり、Selfridge 側はその手前の最小証人・最大値評価も直接利用する。
 
-$$
-B_d=\frac{10}{13}G+35,\qquad
-F_d(L)=\frac43L+4B_d^2+2B_d\sqrt{\frac43L}
-$$
+### 累積上界の構成
 
-と定める。
+$L=\ln B$ とし、共通端点候補を
 
 $$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad n=ds^2
-\\
-\Longrightarrow\quad q_{\ne1}(n)\le q_{-1}(n)\le F_d(\ln n).
-\end{gathered}
+J(B)=\frac{9999}{10000}\max\lbrace255,L\rbrace^2
 $$
 
-[CubicLinearJacobiBounds.lean](../PseudoPrime/PseudoSquare/Bounds/CubicLinearJacobiBounds.lean)
-の `primeNegOneWitness_le_cubic_linear_envelope` と
-`primeNeOneWitness_le_cubic_linear_envelope` が対応する。
-前項の根上界に $E_-(s)\le E(s)\le L/2$ を代入し、
-平方根を含む交差項を残して評価した。
-固定した $d$ では、主項は $(4/3)L$、残りは定数項と $\sqrt L$ の項である。
+と書く。第四極核の累積候補 $U_4(B)$ は前節の `fourPoleCumulativeBound` である。
 
-開始条件も次の不等式で明示できる。
+| 上界式 | 適用条件 | 累積上界への適用 |
+|---|---|---|
+| $J(B)$ | 全ての自然数上端 | 小入力を尺度255で覆う。他の有効な式との最小値をとる |
+| $4093$ | $L\le1609/25$ | 両系列に有効な定数候補。適用域の外へは延長しない |
+| $U_4(B)$ | 全ての自然数上端 | 入口未満の定数項を保持して最小化 |
+| $\frac{777}{1000}L^2$ | 下表の $L_{\mathrm{recover}}$ 以上で $U_4(B)$ から回復 | 高域の二次上界 |
 
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathcal A,\quad n=ds^2,\quad \delta > 0,
-\\
-8B_d^2\le\delta L,\quad64B_d^2\le\delta^2L
-\\
-\Longrightarrow\quad q_{\ne1}(n)\le q_{-1}(n)\le
-\left(\frac43+\delta\right)L.
-\end{gathered}
-$$
+[Jと4093の接続](../PseudoPrime/PseudoSquare/Bounds/CommonEndpointBounds.lean) と [U4の接続](../PseudoPrime/PseudoSquare/Bounds/FourPoleFiniteBounds.lean) は、どちらも非1値・負値の両累積最大を扱う。点ごとの係数777/1000は $\ln n\ge10^{18}$ から有効だが、累積候補にはそれ以前の入力の履歴が残る。入口直後から累積値も同じ係数になるとはしない。
 
-`primeNegOneWitness_le_cubic_linear_coefficient` が対応する。
-従来の推奨切断点による対数一次上界との比較は、同じ $G,L$ に対して
-
-$$
-G\ge16,\quad L\ge0
-\quad\Longrightarrow\quad
-F_d(L)\le4\bigl(A_{\mathrm{cut}}(G)+1\bigr)^2+\frac{14}{5}L
-$$
+各図の $U_{\ne1}(B),U_{-1}(B)$ は、詳細表とこの表の有効な式の最小値である。以下の中低域の図に加え、[高域の比較図](figures/q_four_pole_high_comparison.svg) が入口未満の入力を含む累積上界を示す。[図と生成スクリプトの対応](figures/README.md) も参照する。
 
-である。この比較は `cubicSquareFactorLinearEnvelope_le_selected` でLean証明した。
-ここで $A_{\mathrm{cut}}$ は前述の推奨切断点による半径である。
-旧式の適用域全体でこの包絡以下となるが、 $d$ に依存するため、
-全入力一様の最良区間表には含めない。
 
 ## 証人別の上界式の適用区間と比較
 
+累積上界は、各行の式と $J(B)$、 $U_4(B)$ の最小値とする。 $\ln B\le1609/25$ では4093も最小値に含める。点ごとの上界には累積用の定数項を代入しない。
+
 参考となる実測値は [3種類の最小素数証人の数表](WitnessRecords.md) にまとめた。負値証人は $n < 2^{64}$、非1証人は $n < 2^{80}$ の累積最大値の更新点を掲載している。
 
-以下はGRHを仮定し、この文書に掲載した実数の上界式に $t=n$ または $t=B$ を直接代入して、各式の適用範囲内で比較したものである。別の端点で得た上界の流用、素数への丸め、個別の有限検証は比較に含めない。点ごとの最小証人と、全対象の有限最大値を別の行に示す。
+以下はGRHを仮定する。上界は、以下の範囲条件で有効になる式の最小値をとる。共通端点255・有効域内の4093・第四極核の累積上界も含める。点ごとの最小証人と累積最大値は別の行に示し、点ごとの入口をそのまま累積全域へ外挿しない。
+
+### 高域の累積上界
+
+高域では $E=10^{18}$、 $L=\ln B$ とし、
+
+$$
+L_{\mathrm{cross}}=E\sqrt{\frac{9999}{8000}},\qquad
+L_{\mathrm{recover}}=E\sqrt{\frac{9999}{7770}}
+$$
+
+と置く。係数4/5の候補と $U_4$ の最小値は次のとおりである。両証人の累積最大に使え、Selfridgeとの一致開始点も十分に超えている。
+
+| 対数上端の区間 | $\min\lbrace(4/5)L^2,U_4(B)\rbrace$ |
+|---|---|
+| $E\le L\le L_{\mathrm{cross}}$ | $(4/5)L^2$ |
+| $L_{\mathrm{cross}} < L < L_{\mathrm{recover}}$ | $(9999/10000)E^2$ |
+| $L_{\mathrm{recover}}\le L$ | $(777/1000)L^2$ |
+
+切替は $U_4(B)=\max\lbrace(9999/10000)E^2,(777/1000)L^2\rbrace$ と係数4/5の代数比較から得たもので、浮動小数の交点を定理の条件にしていない。証人・累積最大のLean上界へ代入する式の比較であり、新たな証人定理や適用条件を追加したものではない。
 
 ### 非1証人の比較：Legendre記号が $0$ または $-1$
 
@@ -1237,7 +795,7 @@ $$
 
 以下の比較で $S(L)=L-\ln L+11/4$、 $T(L)=L-2\ln L+37/5$、 $\kappa=1-\sqrt{99/100}$ と置く。
 
-| 対象 | 条件 | 適用可能な掲載式のうち最も小さい上界 | 対応するLean定理 |
+| 対象 | 条件 | 範囲別の上界式 | 対応するLean定理 |
 |---|---|---|---|
 | $q_{\ne1}(n)$ | $n\in\mathcal A$、 $n < 11$ | $5$ | [`exists_prime_ne_one_witness_of_grh`](../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) |
 | $q_{\ne1}(n)$ | $n\in\mathcal A$、 $11\le n < 2984$ | $(\ln n)^2$ | [`primeNeOneWitness_cast_le_log_sq_of_11_le`](../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) |
@@ -1262,8 +820,9 @@ $$
 | $q_{\ne1}(n)$ | $n\in\mathcal A$、 $500\le\ln n < 22221$、 $V_{\ne1}(\ln n) < T(\ln n)^2$ | $V_{\ne1}(\ln n)$ | [`primeNeOneWitness_cast_le_eulerPrefixTwoPole`](../PseudoPrime/PseudoSquare/Bounds/TwoPolePrefixBounds.lean) |
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $500\le\ln B < 22221$、 $T(\ln B)^2\le V_{\ne1}(\ln B)$ | $T(\ln B)^2$ | [`QNeOne_le_shiftedDoubleLog`](../PseudoPrime/PseudoSquare/Bounds/ShiftedOddEndpointDoubleLogBounds.lean) |
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $500\le\ln B < 22221$、 $V_{\ne1}(\ln B) < T(\ln B)^2$ | $V_{\ne1}(\ln B)$ | [`QNeOne_le_eulerPrefixTwoPole`](../PseudoPrime/PseudoSquare/Bounds/TwoPolePrefixBounds.lean) |
-| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $\ln n\ge22221$ | $(4/5)(\ln n)^2$ | [`exists_prime_ne_one_witness_le_gamma_log_22221`](../PseudoPrime/PseudoSquare/Bounds/GammaPrincipalEulerNonOneBounds.lean) |
-| $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $\ln B\ge22221$ | $(4/5)(\ln B)^2$ | [`QNeOne_le_gamma_log_22221`](../PseudoPrime/PseudoSquare/Bounds/GammaPrincipalEulerNonOneBounds.lean) |
+| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $22221\le\ln n < 10^{18}$ | $(4/5)(\ln n)^2$ | [`exists_prime_ne_one_witness_le_gamma_log_22221`](../PseudoPrime/PseudoSquare/Bounds/GammaPrincipalEulerNonOneBounds.lean) |
+| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $\ln n\ge10^{18}$ | $(777/1000)(\ln n)^2$ | [負値証人の有限入口](../PseudoPrime/LLS/RationalPoleSharpEntrance.lean) と $q_{\ne1}\le q_{-1}$ |
+| $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $\ln B\ge22221$ | $\min\lbrace(4/5)(\ln B)^2,U_4(B)\rbrace$ | [`QNeOne_le_gamma_log_22221`](../PseudoPrime/PseudoSquare/Bounds/GammaPrincipalEulerNonOneBounds.lean)・[第四極核の累積候補](../PseudoPrime/PseudoSquare/Bounds/FourPoleFiniteBounds.lean) |
 
 
 $n\in\mathcal A$、 $n < 11$ では $n=3,5,7$ なので、掲載式 $\max\lbrace5,(\ln n)^2\rbrace$ は5になる。有限最大値の表は対数二乗上界が成立する $B\ge10$ を対象とする。 $3\le B < 10$ では同じ存在定理から $Q_{\ne1}(B)\le5$ が従い、 $B < 3$ では対象集合が空なので $Q_{\ne1}(B)=Q_{-1}(B)=0$ である。
@@ -1289,15 +848,15 @@ $L\ge800$ では、二極上界の根が $(6291/10000)L$ 以下なので、
 
 $$
 \frac{V_{\ne1}(L)}{L^2}
-\le\frac{99}{40}\left(\frac{6291}{10000}\right)^2<\frac{99}{100}.
+\le\frac{99}{40}\left(\frac{6291}{10000}\right)^2 < \frac{99}{100}.
 $$
 
 また、800での対数の接線評価と $\ln800 < 67/10$ から $T(L)/L > 99/100$ が従い、
 
 $$
 \frac{V_{\ne1}(L)}{L^2}
-<\left(1-\frac8{800}\right)^2
-<\frac{T(L)^2}{L^2}.
+ < \left(1-\frac8{800}\right)^2
+ < \frac{T(L)^2}{L^2}.
 $$
 
 $290\le L\le500$ では $\ln L > 11/2$ と $\kappa L < 51/20$ から $S(L)^2 < (99/100)L^2$ となる。
@@ -1307,19 +866,19 @@ $L\ge600$ では二極上界の根が $(631/1000)L$ 以下なので、 $V_{\ne1}
 $500\le L < 800$ では表の大小条件で比較し、切り替わる尺度の近似値は $L\approx557.1916$ である。
 
 したがって $800\le L < 22221$ では $V_{\ne1}(L)$ が掲載式のうち最小になる。
-$L\ge22221$ では、 $V_{\ne1}(L)/L^2>(99/40)(500/821)^2>4/5$ であり、既存の係数4/5の式の方が小さい。 また $T(L) > (9/10)L$ なので、 $T(L)^2 > (81/100)L^2 > (4/5)L^2$ である。
+$L\ge22221$ では、 $V_{\ne1}(L)/L^2 > (99/40)(500/821)^2 > 4/5$ であり、既存の係数4/5の式の方が小さい。 また $T(L) > (9/10)L$ なので、 $T(L)^2 > (81/100)L^2 > (4/5)L^2$ である。
 
 ![非1証人の有限最大値とGRHによる上界の比較](figures/qne1_upper_bound_comparison.svg)
 
-横軸は $\ln(\ln B)$ に線形なスケールとし、目盛りには $B$ を10の累乗で表示した。縦軸は対数軸である。橙の実線は表の区間ごとの上界 $U(B)$、黒の点線は $(\ln B)^2$、青緑の階段線は $2^{80}$ までの記録に基づく $Q_{\ne1}(B)$ を示す。実測値の線は探索上限で止めている。
+横軸は $\ln(\ln B)$ に線形なスケールとし、目盛りには $B$ を10の累乗で表示した。縦軸は対数軸である。橙の実線は表の候補と共通端点・定数候補の最小値 $U(B)$、黒の点線は $(\ln B)^2$、青緑の階段線は $2^{80}$ までの記録に基づく $Q_{\ne1}(B)$ を示す。実測値の線は探索上限で止めている。
 
-上界同士の差は主図では小さいため、挿入図に比 $U(B)/(\ln B)^2$ を対数軸で示した。描画範囲は $3\le B\le10^{16384}$ とし、負の対数補正と二極上界が切り替わる $\log_{10}B\approx 241.9852$ と二極上界の適用開始尺度500と、係数4/5の開始尺度22221も含めた。この近似値は描画用であり、表の厳密な適用条件を置き換えない。$130.36\le\ln B\le162.77$ では奇素数専用の一次半径の二乗を使い、両端で従来式との切り替えによる小さな段差が生じる。 $\exp(22/5) < \ln B < 96$ では定数37/5の式が従来の対数補正式を改善する。開始尺度96では定数11/4の式へ切り替わり、 $\ln\ln B=93/20$ で係数2の負の対数補正式へ切り替わる。上界はGRHを仮定し、整数間の曲線は表示のために補間している。
+上界同士の差は主図では小さいため、挿入図に比 $U(B)/(\ln B)^2$ を対数軸で示した。描画範囲は $3\le B\le10^{16384}$ とし、負の対数補正と二極上界が切り替わる $\log_{10}B\approx 241.9852$ と二極上界の適用開始尺度500と、係数4/5の開始尺度22221も含めた。この近似値は描画用であり、表の厳密な適用条件を置き換えない。 $130.36\le\ln B\le162.77$ では奇素数専用の一次半径の二乗を使い、両端で従来式との切り替えによる小さな段差が生じる。 $\exp(22/5) < \ln B < 96$ では定数37/5の式が従来の対数補正式を改善する。開始尺度96では定数11/4の式へ切り替わり、 $\ln\ln B=93/20$ で係数2の負の対数補正式へ切り替わる。上界はGRHを仮定し、整数間の曲線は表示のために補間している。
 
 ### 負値証人の比較：Legendre記号が $-1$
 
 対象は $q_{-1}(n)$ と $Q_{-1}(B)$ である。非1証人の補正 $1/1000$、 $1/10$、 $1/2$ と負の対数補正の定理は、値 $0$ の証人を許すため、この表には適用できない。
 
-| 対象 | 条件 | 適用可能な掲載式のうち最も小さい上界 | 対応するLean定理 |
+| 対象 | 条件 | 範囲別の上界式 | 対応するLean定理 |
 |---|---|---|---|
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $\ln n < 10$ | $R(n)$ | [`exists_prime_neg_one_witness_of_grh`](../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) |
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $10\le\ln n\le1609/25$、 $R(n)\le4093$ | $R(n)$ | [`exists_prime_neg_one_witness_of_grh`](../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) |
@@ -1334,11 +893,14 @@ $L\ge22221$ では、 $V_{\ne1}(L)/L^2>(99/40)(500/821)^2>4/5$ であり、既�
 | $Q_{-1}(B)$ | $B\in\mathbb N$、 $500\le\ln B < 600$、 $(99/100)(\ln B)^2\le V_{-1}(\ln B)$ | $(99/100)(\ln B)^2$ | [`QNegOne_bound_mixed_log_290`](../PseudoPrime/PseudoSquare/Bounds/GammaMixedLog290Bounds.lean) |
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $\ln n\ge500$、 $n < 10^{19978}$、 $V_{-1}(\ln n) < (99/100)(\ln n)^2$ | $V_{-1}(\ln n)$ | [`primeNegOneWitness_cast_le_quarterClippedTwoPole_logarithmic`](../PseudoPrime/PseudoSquare/Bounds/QuarterLogClippedNegOneBounds.lean) |
 | $Q_{-1}(B)$ | $B\in\mathbb N$、 $\ln B\ge500$、 $B < 10^{19978}$、 $V_{-1}(\ln B) < (99/100)(\ln B)^2$ | $V_{-1}(\ln B)$ | [`QNegOne_le_quarterClippedTwoPole_logarithmic`](../PseudoPrime/PseudoSquare/Bounds/QuarterLogClippedNegOneBounds.lean) |
-| $q_{-1}(n)$ | $n\in\mathcal A$、 $n\ge10^{19978}$ | $(4/5)(\ln n)^2$ | [`primeNegOneWitness_cast_le_gamma_19978`](../PseudoPrime/PseudoSquare/Bounds/GammaWitnessBounds.lean) |
-| $Q_{-1}(B)$ | $B\in\mathbb N$、 $B\ge10^{19978}$ | $(4/5)(\ln B)^2$ | [`gamma_formula_explicit_19978`](../PseudoPrime/PseudoSquare/Bounds/GammaMaximumBounds.lean) |
+| $q_{-1}(n)$ | $n\in\mathcal A$、 $n\ge10^{19978}$、 $\ln n < 10^{18}$ | $(4/5)(\ln n)^2$ | [`primeNegOneWitness_cast_le_gamma_19978`](../PseudoPrime/PseudoSquare/Bounds/GammaWitnessBounds.lean) |
+| $q_{-1}(n)$ | $n\in\mathcal A$、 $\ln n\ge10^{18}$ | $(777/1000)(\ln n)^2$ | `fourPole_sharp_jacobi_finite_least`：[RationalPoleSharpEntrance.lean](../PseudoPrime/LLS/RationalPoleSharpEntrance.lean) |
+| $Q_{-1}(B)$ | $B\in\mathbb N$、 $B\ge10^{19978}$ | $\min\lbrace(4/5)(\ln B)^2,U_4(B)\rbrace$ | [`gamma_formula_explicit_19978`](../PseudoPrime/PseudoSquare/Bounds/GammaMaximumBounds.lean)・[第四極核の累積候補](../PseudoPrime/PseudoSquare/Bounds/FourPoleFiniteBounds.lean) |
 
 
-$t\ge3$ では $R(t)>(\ln t)^2$ なので、係数1未満の式が適用できる範囲では、その式が $R(t)$ より小さい。
+上の高域の点ごとの行は係数777/1000を採用し、累積の行は小入力の履歴を残す $U_4$ と係数4/5の最小値を採用する。
+
+$t\ge3$ では $R(t) > (\ln t)^2$ なので、係数1未満の式が適用できる範囲では、その式が $R(t)$ より小さい。
 係数 $9999/10000$ の式は開始尺度を下げ、係数 $99/100$ の式は尺度290以上でより小さい上界を与える。
 $500\le L < 600$ では表の式同士の大小で比較する。切替尺度の近似値は $L\approx591.9690$ であり、表の境界には使わない。
 尺度600以上では $V_{-1}(L) < (99/100)L^2$ となり、
@@ -1348,24 +910,9 @@ $\ln(10^{19978})$ で既存の係数4/5の式へ切り替わる。
 
 ![負値証人の有限最大値とGRHによる上界の比較](figures/qneg1_upper_bound_comparison.svg)
 
-非1証人の図と同じく、横軸は $\ln(\ln B)$ に線形なスケール、目盛りは10の累乗表示、縦軸は対数軸である。 $2^{64}$、 $2^{80}$、 $2^{128}$ の縦グリッドも示した。橙の実線は表の区間ごとの上界 $U_{-1}(B)$、黒の点線は比較用の $(\ln B)^2$、青緑の階段線は $2^{64}$ 未満の完了記録に、更新点349と新たに確認された383を加えた $Q_{-1}(B)$ を示す。入力 $1736820352691539357719$ で383が最小負値証人となることを剰余計算で確認した。素数別初出表では、353、359、367、373、379の初出はいずれも $1900000000000000000000$ より大きい。点線は全域で負値証人の上界になるわけではない。
+非1証人の図と同じく、横軸は $\ln(\ln B)$ に線形なスケール、目盛りは10の累乗表示、縦軸は対数軸である。 $2^{64}$、 $2^{80}$、 $2^{128}$ の縦グリッドも示した。橙の実線は表の候補と共通端点・定数候補の最小値 $U_{-1}(B)$、黒の点線は比較用の $(\ln B)^2$、青緑の階段線は $2^{64}$ 未満の完了記録に、更新点349と新たに確認された383を加えた $Q_{-1}(B)$ を示す。入力 $1736820352691539357719$ で383が最小負値証人となることを剰余計算で確認した。素数別初出表では、353、359、367、373、379の初出はいずれも $1900000000000000000000$ より大きい。点線は全域で負値証人の上界になるわけではない。
 
 挿入図には $\ln B\ge200$ での比 $U_{-1}(B)/(\ln B)^2$ を対数軸で示し、 $\ln B=255$ と $\ln B=290$、 $\ln B\approx591.9690$ で二極式へ連続的に切り替わる様子を描いた。二極式自体は $\ln B\ge500$ で適用できる。主図の描画範囲は $3\le B\le10^{32768}$ とし、記録値の線は $1736820352691539357719$ まで示す。開始値 $B=10^{19978}$ では係数4/5の式へ切り替わる。上界はGRHを仮定し、整数間の曲線は表示のために補間している。
-
-## LLS の役割
-
-[LLS/Statement.lean](../PseudoPrime/LLS/Statement.lean) の `llsTheorem11S1Character` は、法 $q \ge 3000$ の非主 Dirichlet 指標について、法を割らず指標値が $1$ でない素数を明示的な上界以下に求める仕様である。部分群についての主張を指標の核に特殊化した形を採用する。
-
-[LLS/Theorem11S1GRH.lean](../PseudoPrime/LLS/Theorem11S1GRH.lean) は一般指標の解析結果を組み立てる。Jacobi 値が $-1$ の評価は、この一般 S1 を法 $4n$ の指標に適用して得る。[JacobiCharacterArithmetic.lean](../PseudoPrime/NumberTheory/JacobiCharacterArithmetic.lean) の算術と中間の重み付き評価を用いて `QNeOne` の上界を導く経路と、有限区間の数値証明はそれぞれ異なる役割を持つ。 `QNeOne` と `QNegOne` の二分だけを、そのまま原論文の part (1) と part (2) の対応と読むことはできない。
-
-Jacobi 記号が $-1$ となる証人について、大きい入力 $n \ge 750$ での存在は一般 S1 から、小さい入力での存在は有限証明書から得る。明示的半径への変換には無条件の素因数個数評価を使い、Robin 評価は仮定しない。 Jacobi 記号が $1$ でない証人については、原始指標の $2$ での値が $0$・ $1$・ $-1$ となる三分岐を扱い、有限範囲と接続する。両存在定理は公開 API であり、Selfridge 側はその手前の最小証人・最大値評価も直接利用する。
-
-## 局所費用を保持する汎用多項式条件
-
-[GammaPolynomialBounds.lean](../PseudoPrime/PseudoSquare/Bounds/GammaPolynomialBounds.lean) は、実効prefix下界と局所双対費用の上界を受け取る。`GammaPairedPolynomialCondition` が成立すれば、同じ尺度で両証人の存在・最小値・有限最大値を評価できる。
-条件の定義と代数的な移送は [GammaQuadraticPolynomialSeparation.lean](../PseudoPrime/LLS/GammaQuadraticPolynomialSeparation.lean) にある。実効prefixと局所費用を引数に取り、具体的な開始尺度から独立して利用できる。
-区間上の局所双対費用には [GammaWindowDualBudget.lean](../PseudoPrime/LLS/GammaWindowDualBudget.lean) を利用できる。既存の行検査で認証したEuler費用と符号付きランプprefixを、連続区間全体の費用上界へ移す。
-既存セルの左端を下げる際の解析的補正は [GammaLowerWindowBounds.lean](../PseudoPrime/LLS/GammaLowerWindowBounds.lean) にある。
 
 ## 利用方法
 

@@ -11,7 +11,6 @@
 | [WitnessBridge.lean](../PseudoPrime/PrimeTest/Selfridge/WitnessBridge.lean) | 共通数論の素数証人と Selfridge 停止値の比較 |
 | [MaximumBridge.lean](../PseudoPrime/PrimeTestBounds/Selfridge/MaximumBridge.lean) | 古典候補・Wheel30 の停止値最大と `QNeOne`／ `QNegOne` の接続 |
 | [ElementaryRadius.lean](../PseudoPrime/PrimeTestBounds/Selfridge/ElementaryRadius.lean) | 因子検出停止、純粋 $-1$ 停止、明示的半径の点ごとの比較 |
-| [CubicConductorBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/CubicConductorBounds.lean) | 平方自由部分別の根上界と対数一次上界、古典候補・Wheel30への接続 |
 | [WitnessTransfer.lean](../PseudoPrime/PrimeTestBounds/Selfridge/WitnessTransfer.lean) | 任意の素数証人上界を古典候補・Wheel30の停止値へ移す汎用補題 |
 | [AnalyticWitnessBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/AnalyticWitnessBounds.lean) | 負値停止の3係数上界と因子検出停止の対数補正式 |
 | [LogSqMaximum.lean](../PseudoPrime/PrimeTestBounds/Selfridge/LogSqMaximum.lean) | 停止値の有限最大に対する対数二乗上界 |
@@ -33,6 +32,19 @@
 Wheel30候補による対応する符号付き停止値を $g^{(30)}_{-1}(n)$、 $g^{(30)}_{\ne1}(n)$ と書く。
 奇数かつ非平方数の入力では、各停止値は対応する古典候補の停止値と等しい。
 以下の解析的な上界は、両候補についてLeanで接続している。
+
+## 累積最大値の一致条件
+
+PseudoSquareと同じ、 $0 < n\le B$ の奇数・非平方入力で累積最大値を取る。上端 $B$ 自身は任意の自然数である。上端0を含む式は、Leanの $\mathrm{Real.log}(0)=0$ と空の最大値0の規約で読む。古典停止最大を $M_{\ne1}(B),M_{-1}(B)$、Wheel30版を $M^{(30)}_{\ne1}(B),M^{(30)}_{-1}(B)$ と書く。
+
+| 系列 | 一致を証明した範囲 | GRHなしで成り立つ等式 |
+|---|---|---|
+| 非1値・因子検出 | $B\ge751$ | $M^{(30)}_{\ne1}(B)=M_{\ne1}(B)=Q_{\ne1}(B)$ |
+| 純粋負値 | $B\ge399$ | $M^{(30)}_{-1}(B)=M_{-1}(B)=Q_{-1}(B)$ |
+
+[MaximumBridge.lean](../PseudoPrime/PrimeTestBounds/Selfridge/MaximumBridge.lean) の `classicalNeOneMaximum_eq_QNeOne_of_751_le`、`wheel30NeOneMaximum_eq_QNeOne_of_751_le`、`classicalNegOneMaximum_eq_QNegOne_of_399_le`、`wheel30NegOneMaximum_eq_QNegOne_of_399_le` が対応する。
+
+小さい上端も含む全域では $Q_{\ne1}\le M_{\ne1}=M^{(30)}_{\ne1}\le\max\lbrace15,Q_{\ne1}\rbrace$、 $Q_{-1}\le M_{-1}=M^{(30)}_{-1}\le\max\lbrace27,Q_{-1}\rbrace$ を使う。 $B < 3$ の空の対象範囲では全て0である。[共通前提と小入力の扱い](PseudoSquare.md#selfridgeと共有する前提と累積最大値) を参照する。以下の解析的上界を代入する段階でGRHを加える。
 
 ## 主要な公開結果
 
@@ -75,9 +87,10 @@ $$
 | $L\ge255$ | $(9999/10000)L^2$ | `selfridgeNegOneMagnitudes_le_joint_entrance` |
 | $L\ge290$ | $(99/100)L^2$ | `selfridgeNegOneMagnitudes_le_mixed_log_290` |
 | $L\ge46000$ | $(4/5)L^2$ | `selfridgeNegOneMagnitudes_le_four_fifths` |
+| $L\ge10^{18}$ | $(777/1000)L^2$ | `selfridgeNegOne_fourPole_sharp` |
 
 いずれも非平方の正奇数全体を対象とし、入力の因数分解に追加条件を課さない。
-表は新たに接続した3つの係数上界の適用条件を示す。
+表は各係数上界の適用条件を示す。条件が重なる範囲では、その最小値を使う。
 
 ### 因子検出停止の専用上界
 
@@ -85,6 +98,7 @@ $$
 |---|---|---|
 | $L\ge50$ | $(L-2\ln L+37/5)^2$ | `selfridgeNeOneMagnitudes_le_shifted_double_log_from_fifty` |
 | $L\ge22221$ | $(4/5)L^2$ | `selfridgeNeOneMagnitudes_le_four_fifths` |
+| $L\ge10^{18}$ | $(777/1000)L^2$ | `selfridgeNeOne_fourPole_sharp` |
 
 各定理は独立した上界を述べる。非1証人では値0も利用できるため、
 係数 $4/5$ の開始尺度は純粋負値停止の46000から22221へ下がる。
@@ -183,153 +197,53 @@ $$
 試行回数はJacobi記号の評価回数であり、ビット演算の計算量ではない。
 [FiniteScaleShiftedDoubleLogBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/FiniteScaleShiftedDoubleLogBounds.lean) で証明した。
 
-### 任意の上界を受け取る汎用の接続
+### 係数777/1000の点ごと・累積上界
 
-最小奇素数証人を
+[FourPoleSharpFiniteBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/FourPoleSharpFiniteBounds.lean) は、GRH下で、対数が $10^{18}$ 以上の奇数・非平方入力について、古典SelfridgeとWheel30の負値停止・非1値停止の判別式の絶対値を $(777/1000)(\ln n)^2$ 以下に抑える。実際の最小Jacobi証人から既存の移送定理を使い、停止集合に含まれる条件を保持している。
 
-$$
-q_{-1}(n)=\min\left\lbrace p\in\mathbb P:p\text{ は奇数},\quad
-\left(\frac np\right)=-1\right\rbrace,
-$$
-
-$$
-q_{\ne1}(n)=\min\left\lbrace p\in\mathbb P:p\text{ は奇数},\quad
-\left(\frac np\right)\ne1\right\rbrace
-$$
-
-とする。 $\mathbb P$ は正の素数全体、 $(n/p)$ は奇素数 $p$ を分母とするLegendre記号である。
-この記号と証人の詳細は [PseudoSquare](PseudoSquare.md) を参照する。
-停止値への移送自体はGRHを必要としない。上の奇数・非平方条件のもとで
-
-$$
-\begin{gathered}
-X\in\mathbb R,\quad X\ge27,\quad q_{-1}(n)\le X
-\\
-\Longrightarrow\quad
-\lvert g_{-1}(n)\rvert\le X,\quad\lvert g^{(30)}_{-1}(n)\rvert\le X,
-\end{gathered}
-$$
-
-$$
-\begin{gathered}
-X\in\mathbb R,\quad X\ge15,\quad q_{\ne1}(n)\le X
-\\
-\Longrightarrow\quad
-\lvert g_{\ne1}(n)\rvert\le X,\quad\lvert g^{(30)}_{\ne1}(n)\rvert\le X.
-\end{gathered}
-$$
-
-`selfridgeNegOneMagnitudes_le_of_prime_witness_bound` と
-`selfridgeNeOneMagnitudes_le_of_prime_witness_bound` が対応する。
-これらの汎用移送は `WitnessTransfer.lean` にあり、三次核と係数上界の両方から利用する。
-任意の解析評価を同じ入口へ渡せる。
-
-## 平方自由部分別の上界の拡張
-
-$$
-\begin{gathered}
-n=ds^2,\quad d > 1,\quad d,s\in\mathbb N,\quad
-d,s\text{ は奇数},\quad d\text{ は平方自由},
-\\
-L=\ln n,\quad G=\ln(4d),\quad B_d=\frac{10}{13}G+35,\quad\widetilde B_d=\frac{10}{13}G+\frac{2434}{75},
-\\
-E_-(s)=\sum_{\substack{p\mid s\\p\text{ は奇素数}\\(d/p)=-1}}\ln p,
-\quad F_d(L)=\frac43L+4B_d^2+2B_d\sqrt{\frac43L}.
-\end{gathered}
-$$
-
-ここで $(d/p)$ はLegendre記号である。この分解のもとで次が成立する。
-
-$$
-\mathrm{GRH}\quad\Longrightarrow\quad
-\lvert g_{\ne1}(n)\rvert\le\lvert g_{-1}(n)\rvert
-\le\left(\widetilde B_d+\sqrt{\widetilde B_d^2+\frac83E_-(s)}\right)^2.
-$$
-
-$$
-\mathrm{GRH}\quad\Longrightarrow\quad
-\lvert g_{\ne1}(n)\rvert\le\lvert g_{-1}(n)\rvert\le F_d(L).
-$$
-
-`classicalSelfridgeD_cubic2434_negative_support_bound` と
-`classicalSelfridgeD_cubic_linear_bound` が対応する。
-負値奇素数証人から停止値へ移す際の例外定数27は、根上界と $F_d(L)$ が
-いずれも27以上であることから吸収する。入力の有限検証は用いない。
-Wheel30候補による対応する停止値にも同じ二つの式が成立し、
-`wheel30SelfridgeD_cubic2434_negative_support_bound` と
-`wheel30SelfridgeD_cubic_linear_bound` が対応する。
-
-さらに、同じ分解のもとで
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad\delta > 0,\quad
-8B_d^2\le\delta L,\quad64B_d^2\le\delta^2L
-\\
-\Longrightarrow\quad
-\lvert g_{\ne1}(n)\rvert\le\lvert g_{-1}(n)\rvert
-\le\left(\frac43+\delta\right)L.
-\end{gathered}
-$$
-
-`classicalSelfridgeD_cubic_linear_coefficient` が対応する。
-固定した $d$ では、二つの開始条件を満たす全ての $L$ で対数一次の評価となる。
-これらは平方自由部分に依存する結果であり、全入力一様の係数改善とは区別する。
-
-### 切断点以下の除外費用による停止上界の改良
-
-[PseudoSquareの切断費用](PseudoSquare.md#切断点以下の素因数費用による負値証人上界の改良)
-で定義した $\theta_n,G,U_n(G;X)$ を用いる。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n > 0,\quad n\text{ は奇数かつ非平方},\quad
-\ln\mathrm{cond}(\theta_n)\le G,\\
-X\ge27,\quad U_n(G;X)\le X
-\\
-\Longrightarrow\quad
-\lvert g_{-1}(n)\rvert\le X,\quad
-\lvert g^{(30)}_{-1}(n)\rvert\le X.
-\end{gathered}
-$$
-
-[TruncatedCubicBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/TruncatedCubicBounds.lean)
-の `selfridgeNegOneMagnitudes_le_of_truncated_cubic_radius` が対応する。
-最小負値奇素数証人の上界を、両候補列の純粋負値停止へ移す。
-除外費用は $X$ 以下の素因数だけを数え、値 $0$ の証人は用いない。
-
-### 大きい平方因子を持つ入力族への一定停止上界の拡張
-
-$G_d,X_d$ は [固定平方自由部分の証人上界](PseudoSquare.md#大きい平方因子を持つ入力族への一定上界の拡張) で定義した値とする。
-奇素数の集合を $\mathbb P_{\mathrm{odd}}$ とする。
-
-$$
-\begin{gathered}
-\mathrm{GRH},\quad n\in\mathbb N,\quad n > 0,\quad n\text{ は奇数かつ非平方},\\
-n=ds^2,\quad d,s\in\mathbb N,\quad d > 1,\quad d\text{ は平方自由},\\
-\forall\ell\in\mathbb P_{\mathrm{odd}},\quad
-\bigl(\ell\mid s\land\left(\frac d\ell\right)=-1
-\Longrightarrow X_d < \ell\bigr)
-\\
-\Longrightarrow\quad
-\lvert g_{-1}(n)\rvert\le X_d,\quad
-\lvert g^{(30)}_{-1}(n)\rvert\le X_d,\\
-\lvert g_{\ne1}(n)\rvert\le X_d,\quad
-\lvert g^{(30)}_{\ne1}(n)\rvert\le X_d.
-\end{gathered}
-$$
-
-[FixedSquarefreeCubicBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/FixedSquarefreeCubicBounds.lean)
-の `selfridgeNegOneMagnitudes_le_fixed_squarefree_family` が純粋負値停止、
-`selfridgeNeOneMagnitudes_le_fixed_squarefree_family` が因子検出停止に対応する。
-$X_d\ge27$ もLeanで証明しており、素数3に由来する停止値の例外を含めて同じ上界で抑える。
-固定した $d$ では、条件を満たす平方因子 $s$ を大きくしても四つの上界は変わらない。
+累積最大値には [FourPoleFiniteBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/FourPoleFiniteBounds.lean) の `selfridgeMaxima_le_fourPole` を使う。入口未満を覆う定数項を残した `PseudoSquare.fourPoleCumulativeBound` が、4種類の停止最大値を全ての自然数上端で抑える。`classicalTrials_le_fourPole` は、古典方式の負値停止・非1値停止の両試行回数の累積最大値を、その候補の半分に1を加えた量で抑える。これらは数学的な停止値・回数の評価であり、実行用の探索アルゴリズムや偶数入力の規約を変更するものではない。
 
 ## 証人評価との接続
 
 因子検出停止の大きさは、Jacobi 記号が $1$ でない最小の素数証人との比較を経て、PseudoSquare の対数二乗評価へ接続する。純粋 $-1$ 停止の大きさは、定数 $27$ と Jacobi 記号が $-1$ となる最小素数証人の最大値以下という比較を経て、一般 S1 由来の $R(n)$ へ接続する。この接続が [ElementaryRadius.lean](../PseudoPrime/PrimeTestBounds/Selfridge/ElementaryRadius.lean) の点ごとの明示的上界を供給する。
 
 有限最大では、 $B \ge 399$ で古典的な純粋 $-1$ 停止最大と $\mathrm{QNegOne}(B)$ が等しく、 $B \ge 751$ で因子検出停止最大と $\mathrm{QNeOne}(B)$ が等しい。対応する定理は `classicalNegOneMaximum_eq_QNegOne_of_399_le` と `classicalNeOneMaximum_eq_QNeOne_of_751_le`。Wheel30 版の等式もある。これらの比較・等式自体には GRH を必要とせず、GRH は解析的な上界を代入する段階で使う。
+
+## 累積上界の適用区間と図
+
+この節ではGRHを仮定する。 $U_{\ne1}(B),U_{-1}(B)$ は [PseudoSquareの区間別まとめ](PseudoSquare.md#証人別の上界式の適用区間と比較) にある、証明済み候補の最小値である。共通端点255、適用域内の定数4093、入口の履歴を保持する第四極核候補も含む。
+
+| 対象 | 上端の条件 | 共通の累積上界 |
+|---|---|---|
+| 古典・Wheel30の非1値停止最大 | $B\ge751$ | $U_{\ne1}(B)$。 $Q_{\ne1}(B)$ と同じ図を使える |
+| 古典・Wheel30の純粋負値停止最大 | $B\ge399$ | $U_{-1}(B)$。 $Q_{-1}(B)$ と同じ図を使える |
+| 上記4種類の停止最大 | 全ての $B\in\mathbb N$ | $U_4(B)=\max\lbrace(9999/10000)(10^{18})^2,(777/1000)(\ln B)^2\rbrace$ |
+| 上記4種類の停止最大 | $\ln B\ge L_{\mathrm{recover}}$ | $U_4(B)=(777/1000)(\ln B)^2$ |
+| 古典方式の2種類の試行回数最大 | 全ての $B\in\mathbb N$ | $U_4(B)/2+1$ |
+
+ここで $E=10^{18}$、 $L=\ln B$、 $L_{\mathrm{cross}}=E\sqrt{9999/8000}$、 $L_{\mathrm{recover}}=E\sqrt{9999/7770}$ とする。係数4/5と第四極核候補を選ぶ高域の区間は、PseudoSquareと同じである。
+
+| 対数上端の区間 | 4種類の停止最大に共通の上界 |
+|---|---|
+| $E\le L\le L_{\mathrm{cross}}$ | $(4/5)L^2$ |
+| $L_{\mathrm{cross}} < L < L_{\mathrm{recover}}$ | $(9999/10000)E^2$ |
+| $L_{\mathrm{recover}}\le L$ | $(777/1000)L^2$ |
+
+切替は候補の定義式の代数比較であり、[PseudoSquareの高域区間表](PseudoSquare.md#高域の累積上界) と同じものを使う。図の浮動小数の交点を証人定理の適用条件にしない。
+
+小さい上端でPseudoSquareの図を停止最大の上界に使う場合は、非1値側に $\max\lbrace15,U_{\ne1}(B)\rbrace$、負値側に $\max\lbrace27,U_{-1}(B)\rbrace$ を使う。一致範囲で等しいのは実際の累積最大値どうしであり、上界曲線と実際値の等号を意味しない。小さい上端では、PseudoSquareの記録線をSelfridgeの記録と同一視しない。
+
+点ごとの777/1000は $\ln n\ge10^{18}$ から使えるが、累積値にはそれ未満の入力も入る。したがって累積候補は $U_4$ の定数項を残し、既存候補より小さくなった範囲で採用する。
+
+![非1値証人と、751以上で一致するSelfridge停止最大の共通上界](figures/qne1_upper_bound_comparison.svg)
+
+![負値証人と、399以上で一致するSelfridge停止最大の共通上界](figures/qneg1_upper_bound_comparison.svg)
+
+この2図はPseudoSquareと共有する。上端751以上の非1値系列、399以上の負値系列では、記録線は古典・Wheel30の対応する停止最大値の記録としても読め、上界曲線も共通に使える。それ未満の記録線はPseudoSquareの証人最大値として読む。
+
+![入口の履歴を残した第四極核の共通累積上界](figures/q_four_pole_high_comparison.svg)
+
+高域図は $U_4$ と係数4/5の候補の最小値を $(\ln B)^2$ で割ったもの。一致範囲では同じ曲線がSelfridgeの停止最大も抑える。図の補間はLeanの証明を代替しない。[図・適用条件・生成スクリプトの一覧](figures/README.md) を参照する。
 
 ## 試行回数と計算量
 

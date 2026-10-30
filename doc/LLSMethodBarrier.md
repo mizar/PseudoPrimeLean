@@ -29,6 +29,12 @@ $$
 
 本プロジェクトでは $h \ge 28$ を三角形型核で、 $7 \le h \le 27$ を第6.3節のガンマ核と係数比較で証明する。対応する証明は `triangular_kernel_bound_of_large_index`、 `triangularCoefficient_gt_gamma_of_small_index`（[`PseudoPrime/LLS/TheoreticalKernelProfiles.lean`](../PseudoPrime/LLS/TheoreticalKernelProfiles.lean)）と、それらから最小素数の上界を導く [`PseudoPrime/LLS/TheoreticalPrimeBounds.lean`](../PseudoPrime/LLS/TheoreticalPrimeBounds.lean) にある。指数4〜6の一般の場合は、原文のこの計算から証明済みとは扱わない。
 
+## 導手を保持した条件付き分岐
+
+この障壁は、全ての非主指標の零点費用を法の対数で一律に評価する比較に対するものである。原始導手の対数和を保持すると、異なる十分条件の下で指数4〜6の目標を証明できる。[RationalPoleConductorRatios.lean](../PseudoPrime/LLS/RationalPoleConductorRatios.lean) は、導手対数和が $(h-1)\ln q$ の $51/100$・$5/7$・$23/25$ 倍以下となる場合を、それぞれ指数4・5・6で扱う。
+
+[CrtConductorBounds.lean](../PseudoPrime/LLS/CrtConductorBounds.lean) は、互いに素な成分の法と位数2・3の指標から構成した指数6の核について、実際の最小素数へ接続する。原始成分の法がともに1より大きい場合には、導手対数和が従来の半分条件を超えることも証明している。この分岐は、素数法の任意の部分群を扱う一般の指数4〜6の解決とは区別する。
+
 ## 共通核による比較と正規化
 
 ここでいう許容核は、[`PseudoPrime/LLS/PaperDefinitions.lean`](../PseudoPrime/LLS/PaperDefinitions.lean) の `MellinKernel` を指す。解析性・減衰・Mellin積分の可積分性と積分路の独立性に加え、正の引数で逆Mellin変換が実数値・非負であり、少なくとも一つの正の引数で非零であることを要求する。
@@ -156,6 +162,29 @@ c_6(K,\lambda)\ge\frac{60}{121}
 $$
 
 が従う。符号を変える $R(t)$ に対しても、上記の罰則項を含むFourier汎関数についてこの下限が成立する。非負性を取り除いたMellin核に同じ係数式をそのまま適用するという意味ではない。
+
+## 一般の罰則係数への拡張
+
+正の半直線での罰則係数を $A$ とし、
+
+$$
+J_A(F)=\int_{-\infty}^0\mathrm{Re}(\mathcal F F)(t)e^{\pi t}dt
+-\int_0^\infty\left(\max\lbrace-\mathrm{Re}(\mathcal F F)(t),0\rbrace
++A\max\lbrace\mathrm{Re}(\mathcal F F)(t),0\rbrace\right)e^{\pi t}dt
+$$
+
+と置く。Leanでは、この被積分関数を実数直線全体の一つの関数として積分する。
+$A\le B$ なら被積分関数は点ごとに減少するため、両方の被積分関数が可積分なら $J_B(F)\le J_A(F)$ となる。特に $A\ge1/5$ では $J_A(F)\le J_{1/5}(F)$ である。
+
+さらに、 $F$ と $J_A$ の被積分関数が可積分で $J_A(F) > 0$ なら、同じ双対評価から
+
+$$
+\left(\frac{\lVert F\rVert_1}{2\pi J_A(F)}\right)^2\ge\frac{60}{121}
+$$
+
+が従う。この下限には $J_{1/5}$ の被積分関数の可積分性を別途仮定する必要はない。指数4・5に対応する $A=1/3,1/4$ も対象になる。符号付きFourier変換を許す関数クラス全体の方法障壁であり、新しい素数上界を述べるものではない。
+
+[ParameterizedFourier.lean](../PseudoPrime/LLS/IndexSixBarrier/ParameterizedFourier.lean) の `penaltyNumerator_antitone`、 `penaltyNumerator_le_ep1`、 `penaltyCoefficient_ge` が対応する。係数 $1/5$ では既存の定義と一致する。有理数による上界証明書と、指数6の目標を全ての正の誤差余裕で満たす証明書族の不可能性にも接続している。
 
 ## 指数4〜6への拡張と目標係数との差
 

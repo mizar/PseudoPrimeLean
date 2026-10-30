@@ -4,6 +4,8 @@
 Run with matplotlib installed. Horizontal positions are ln(ln B), labelled
 as powers of ten; vertical values use a logarithmic axis. Calculations use
 L = ln B so the enormous endpoints never need to be constructed.
+The shared fourth-pole cumulative branch uses coefficient 777/1000 and retains
+the low-input cap below its certified logarithmic entrance 10**18.
 """
 
 from __future__ import annotations
@@ -14,7 +16,7 @@ import json
 import math
 from pathlib import Path
 
-from plot_qne1_comparison import DATA_DIR, ROOT, power_ticks
+from plot_qne1_comparison import DATA_DIR, ROOT, common_endpoint_candidates, power_ticks
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import FixedLocator, FuncFormatter, NullLocator
@@ -30,15 +32,16 @@ def elementary_radius(L: np.ndarray) -> np.ndarray:
 
 
 def upper(L: np.ndarray) -> np.ndarray:
-    """The five regimes of the published QNegOne comparison table."""
+    """Certified cumulative candidates, including common endpoints and the fixed cap."""
     baseline = np.select([L < ENTRANCE, L < 290, L < 600, L < 19978 * math.log(10)],
                      [elementary_radius(L), 0.9999 * L**2, 0.99 * L**2,
                       (99 / 40) * ((500 / 821) * (L + 7 / 5) +
                                   (11 / 10) * np.log(L + 7 / 5) + 6)**2],
                      default=0.8 * L**2)
-    return np.minimum(baseline,np.where(L >= 500,
+    old = np.minimum(baseline,np.where(L >= 500,
         (99 / 40) * ((500 / 821) * (L + 7 / 5) +
                       (11 / 10) * np.log(L + 7 / 5) + 6)**2,np.inf))
+    return np.minimum(old, np.min(common_endpoint_candidates(L), axis=0))
 
 
 def main() -> None:
@@ -58,7 +61,8 @@ def main() -> None:
                          "axes.spines.top": False, "axes.spines.right": False})
 
     Lmax = args.max_power * math.log(10)
-    entrances = np.array([ENTRANCE, 290.0, 500.0, 550.0, 600.0, 19978 * math.log(10)])
+    entrances = np.array([1609 / 25, ENTRANCE, 290.0, 500.0, 550.0, 600.0,
+                          19978 * math.log(10)])
     L = np.unique(np.concatenate([
         np.exp(np.linspace(math.log(math.log(3)), math.log(Lmax), 7000)),
         [math.log(3), 200.0, Lmax], entrances,
@@ -66,7 +70,8 @@ def main() -> None:
     ]))
     U = upper(L)
     assert np.all(U > 0)
-    assert np.all(U[L < ENTRANCE] > L[L < ENTRANCE]**2)
+    assert np.isclose(upper(np.array([64.0]))[0], 4093.0)
+    assert upper(np.array([64.0]))[0] < 64**2
     assert np.all(U[L >= ENTRANCE] < L[L >= ENTRANCE]**2)
     assert np.isclose(upper(np.array([ENTRANCE]))[0], 0.9999 * ENTRANCE**2)
     assert np.isclose(upper(np.array([290.0]))[0], 0.99 * 290**2)
@@ -79,6 +84,7 @@ def main() -> None:
                                   (11 / 10) * np.log(L + 7 / 5) + 6)**2, np.inf),
         np.where(L >= 19978 * math.log(10), 0.8 * L**2, np.inf),
     ])
+    candidates = np.concatenate([candidates, common_endpoint_candidates(L)])
     assert np.allclose(U, np.min(candidates, axis=0), rtol=1e-12, atol=0)
     assert upper(np.array([600.0]))[0] < .99 * 600**2
 
@@ -132,7 +138,7 @@ def main() -> None:
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.subplots_adjust(left=0.115, right=0.97, top=0.87, bottom=0.19)
     ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
-            label=r"GRH upper bound $U_{-1}(n)$ (comparison table)", zorder=3)
+            label=r"GRH cumulative upper bound $U_{-1}(N)$", zorder=3)
     ax.plot(np.log(L), L**2, color="#333333", linewidth=1.7, linestyle=":",
             label=r"$(\ln n)^2$", zorder=4)
     ax.step(actual_x, actual_y, where="post", color="#007f80", linewidth=2,
@@ -170,7 +176,7 @@ def main() -> None:
     inset.yaxis.set_minor_locator(NullLocator())
     power_ticks(inset, [128, 512, 2048, 8192, 32768])
     inset.tick_params(labelsize=9)
-    inset.set_title(r"Detail: $U_{-1}(n)/(\ln n)^2$", fontsize=10)
+    inset.set_title(r"Detail: $U_{-1}(N)/(\ln N)^2$", fontsize=10)
     inset.grid(color="#e1e5e9", linewidth=0.6)
     inset.set_facecolor("#fafbfd")
     stem = args.output_dir / "qneg1_upper_bound_comparison"
@@ -181,7 +187,7 @@ def main() -> None:
     fig.savefig(stem.with_suffix(".png"), dpi=180)
     plt.close(fig)
     print(f"Wrote {stem}.svg and .png")
-    print(f"Checked {len(L)} samples against five candidates, 32 recorded maxima, "
+    print(f"Checked {len(L)} samples against {len(candidates)} candidates, 32 recorded maxima, "
           "and all entrance endpoints.")
     print(f"Verified {len(minima)} prime-wise negative minima and extracted only {len(derived)} record points "
           f"from {args.negative_minima}.")

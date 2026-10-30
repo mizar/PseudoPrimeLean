@@ -6,6 +6,8 @@ Lamzouri–Li–Soundararajan の Theorem 1.1 に対応する S1・S2 を扱う�
 
 原論文の前提・主張と対応するLean定義は [LLSPaperStatements.md](LLSPaperStatements.md) を参照する。一般L関数と二次指標向けの拡張命題は [LLSExtensionStatements.md](LLSExtensionStatements.md) にまとめている。以下では、原式に対応する仕様と、開始点・補正項・損失評価を改良した定理を分けて示す。
 
+有理極核による導手比率の分岐と二次・三次CRTの最小素数評価は [LLSPaperStatements.md](LLSPaperStatements.md) に追記した。指数4〜6の任意の法・部分群について原定理1.3を証明したものではない。Jacobi証人の有限入口と累積上界は [PseudoSquare.md](PseudoSquare.md)、Selfridgeへの移送は [SelfridgeBoundGrh.md](SelfridgeBoundGrh.md)、MRの全域累積上界は [MillerRabinBoundGrh.md](MillerRabinBoundGrh.md) を参照する。
+
 ## 共通の記号
 
 $$

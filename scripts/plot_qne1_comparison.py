@@ -24,6 +24,44 @@ from matplotlib.ticker import FixedLocator, FuncFormatter, NullLocator
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = Path(__file__).resolve().parent / "data"
 KAPPA = 0.01 / (1 + math.sqrt(0.99))
+FOUR_POLE_ENTRANCE = 1e18
+FOUR_POLE_COEFFICIENT = 777 / 1000
+
+
+def four_pole_cumulative(L: np.ndarray) -> np.ndarray:
+    """Certified all-input maximum; retain the old cap below the finite entrance."""
+    return np.maximum((9999 / 10000) * FOUR_POLE_ENTRANCE**2,
+                      FOUR_POLE_COEFFICIENT * L**2)
+
+
+def plot_four_pole_cumulative(output_dir: Path) -> None:
+    """Show the high-domain switch shared by both witness maxima."""
+    ratio = np.linspace(0.9, 1.4, 2401)
+    L = ratio * FOUR_POLE_ENTRANCE
+    candidate = four_pole_cumulative(L) / L**2
+    combined = np.minimum(0.8, candidate)
+    assert np.all(combined <= 0.8)
+    assert np.isclose(combined[-1], 777 / 1000)
+    assert combined[-1] < 39 / 50
+    fig, ax = plt.subplots(figsize=(10, 5.5))
+    ax.plot(ratio, candidate, label="Fourth-pole candidate (777/1000)", color="#3977a8")
+    ax.axhline(0.8, color="#666666", linestyle="--", label="Quadratic bound (4/5)")
+    ax.plot(ratio, combined, color="#d55e00", linewidth=2.5, label="Current cumulative bound")
+    ax.axvline(1, color="#8a99a8", linestyle=":", label="Pointwise finite entrance")
+    ax.set(xlabel=r"$L/10^{18}$, where $L=\ln N$",
+           ylabel=r"Upper bound divided by $L^2$", ylim=(0.775, 1.02),
+           title="Fourth-pole bound for both cumulative witness maxima")
+    ax.grid(color="#e1e5e9", linewidth=0.6)
+    ax.set_yticks([0.777, 0.8, 0.85, 0.9, 0.95, 1.0])
+    ax.legend(loc="upper right", fontsize=10)
+    fig.tight_layout()
+    stem = output_dir / "q_four_pole_high_comparison"
+    fig.savefig(stem.with_suffix(".svg"), metadata={"Date": None})
+    svg = stem.with_suffix(".svg")
+    svg.write_text("\n".join(line.rstrip() for line in svg.read_text(encoding="utf-8").splitlines())
+                   + "\n", encoding="utf-8")
+    fig.savefig(stem.with_suffix(".png"), dpi=180)
+    plt.close(fig)
 
 
 def crossing() -> float:
@@ -38,6 +76,15 @@ def crossing() -> float:
         else:
             hi = mid
     return (lo + hi) / 2
+
+
+def common_endpoint_candidates(L: np.ndarray) -> np.ndarray:
+    """Cumulative bounds from CommonEndpointBounds.lean, including earlier inputs."""
+    return np.stack([
+        (9999 / 10000) * np.maximum(255, L)**2,
+        np.where(L <= 1609 / 25, 4093.0, np.inf),
+        four_pole_cumulative(L),
+    ])
 
 
 def upper(L: np.ndarray) -> np.ndarray:
@@ -55,9 +102,10 @@ def upper(L: np.ndarray) -> np.ndarray:
     previous = np.minimum(np.minimum(baseline, np.where(L >= 50,
         (L - 2 * np.log(L) + 37 / 5)**2, np.inf)), np.where(L >= 500,
         (99 / 40) * ((500 / 821) * (L + 7 / 5) + 213 / 20)**2, np.inf))
-    return np.minimum(previous, np.where(
+    old = np.minimum(previous, np.where(
         (L >= 3259 / 25) & (L <= 16277 / 100),
         ((3200 / 3241) * (L - 18 / 25))**2, np.inf))
+    return np.minimum(old, np.min(common_endpoint_candidates(L), axis=0))
 
 
 def power_ticks(ax: plt.Axes, powers: list[int]) -> None:
@@ -85,7 +133,7 @@ def main() -> None:
     boundaries = [math.log(3), math.log(10), math.log(2984), math.log(3295),
                   12.5, math.exp(3.5), 50, math.exp(22/5), 96, math.exp(93/20),
                   3259 / 25, 16277 / 100,
-                  290, root, 500, 800, 22221, Lmax]
+                  1609 / 25, 255, 290, root, 500, 800, 22221, Lmax]
     # Include both sides of each entrance so that jumps are drawn vertically.
     L = np.unique(np.concatenate([
         np.exp(np.linspace(math.log(math.log(3)), math.log(Lmax), 7000)),
@@ -109,6 +157,7 @@ def main() -> None:
         np.where((L >= 3259 / 25) & (L <= 16277 / 100),
                  ((3200 / 3241) * (L - 18 / 25))**2, np.inf),
     ])
+    direct = np.concatenate([direct, common_endpoint_candidates(L)])
     np.testing.assert_allclose(U, np.min(direct, axis=0), rtol=2e-15)
     assert np.all(U > 0)
     assert np.all(U[L >= math.log(10)] <= L[L >= math.log(10)]**2 * (1 + 1e-14))
@@ -132,7 +181,7 @@ def main() -> None:
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.subplots_adjust(left=0.09, right=0.98, top=0.87, bottom=0.13)
     ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
-            label=r"GRH upper bound $U(n)$ (comparison table)", zorder=3)
+            label=r"GRH cumulative upper bound $U(N)$", zorder=3)
     ax.plot(np.log(L), L**2, color="#333333", linewidth=1.7, linestyle=":",
             label=r"$(\ln n)^2$", zorder=4)
     ax.step(actual_x, actual_y, where="post", color="#007f80", linewidth=2,
@@ -171,7 +220,7 @@ def main() -> None:
     inset.yaxis.set_minor_locator(NullLocator())
     power_ticks(inset, [1, 4, 16, 64, 256, 1024, 4096, 16384])
     inset.tick_params(labelsize=9)
-    inset.set_title(r"Detail: $U(n)/(\ln n)^2$", fontsize=10)
+    inset.set_title(r"Detail: $U(N)/(\ln N)^2$", fontsize=10)
     inset.grid(color="#e1e5e9", linewidth=0.6)
     for x in bit_positions:
         inset.axvline(x, color="#7e91ac", linestyle="--", linewidth=0.8, zorder=1)
@@ -186,7 +235,8 @@ def main() -> None:
     print(f"Wrote {stem}.svg and .png")
     print(f"Double-logarithm / two-pole crossing: ln B = {root:.12f}; "
           f"log10 B = {root / math.log(10):.12f}")
-    print(f"Checked {len(L)} curve samples against 12 candidates, 49 recorded maxima, "
+    plot_four_pole_cumulative(args.output_dir)
+    print(f"Checked {len(L)} curve samples against {len(direct)} candidates, 49 recorded maxima, "
           "and the crossover residual.")
 
 
