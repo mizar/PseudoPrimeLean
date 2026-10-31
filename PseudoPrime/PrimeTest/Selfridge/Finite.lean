@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PseudoSquare.Computation.SmallN
-public import PseudoPrime.PrimeTest.Selfridge.Nonempty
+public import Mathlib.Tactic.IntervalCases
+public import Mathlib.Tactic.NormNum.LegendreSymbol
+public import PseudoPrime.PrimeTest.Nonempty
 
 /-!
 # Finite pure `-1` Selfridge certificate
@@ -630,7 +631,7 @@ theorem classicalFirstStopNegOne_le_31_of_lt_750 {n : ℕ} (hn : Odd n) (hns : �
   have hex : ∃ i : ℕ, i ≤ 31 ∧ i ∈ FirstStopNegOneSet isClassicalCandidate n := by
     rcases
       (of_decide_eq_true hdec) (Nat.odd_iff.mp hn)
-        (PseudoSquare.SmallN.fin28_ne_sq_of_not_isSquare hns) with
+        (fun k hk ↦ hns ⟨k.val, hk.trans (pow_two k.val)⟩) with
       h5 | h7 | h11 | h13 | h15 | h17 | h19 | h21 | h23 | h27 | h29 | h31
     all_goals
       first
