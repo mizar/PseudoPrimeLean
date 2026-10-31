@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GaussianResolventZeroMass
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GaussianPrincipalEulerBudget
-public import PseudoPrime.LLS.GaussianPrincipalEulerBudgetExtensions
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GaussianPrincipalEulerBudgetExtensions
 public import PseudoPrime.LLS.GaussianKernel
 public import PseudoPrime.LLS.MellinKernelPrimitiveAverage
 public import PseudoPrime.LLS.MellinKernelZeros

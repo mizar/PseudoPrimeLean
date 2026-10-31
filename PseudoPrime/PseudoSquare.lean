@@ -77,9 +77,9 @@ public import PseudoPrime.PseudoSquare.Bounds.TwoPoleEvenGammaNeOneBounds
 public import PseudoPrime.PseudoSquare.Bounds.TwoPoleRetainedScaleNeOneBounds
 public import PseudoPrime.PseudoSquare.Bounds.TwoPolePrefixBounds
 public import PseudoPrime.PseudoSquare.Bounds.TwoPoleRetainedScaleNegOneBounds
-public import PseudoPrime.PseudoSquare.Bounds.TwoPoleConductorPrefixNegOneBounds
+public import PseudoPrime.PseudoSquare.TwoPoleConductorPrefixNegOneBounds
 public import PseudoPrime.PseudoSquare.Bounds.ReflectedSplitAnchor128Bounds
-public import PseudoPrime.PseudoSquare.Bounds.FixedRampAnchor128NegOneBounds
+public import PseudoPrime.PseudoSquare.FixedRampAnchor128NegOneBounds
 public import PseudoPrime.PseudoSquare.Bounds.LogShiftRampBounds
 public import PseudoPrime.PseudoSquare.Bounds.PrincipalLowerBounds
 public import PseudoPrime.PseudoSquare.Bounds.QuarterLogPrincipalBounds

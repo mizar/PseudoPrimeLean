@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ExcludedCharacterDefect
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSExcludedCharacterDefect
 
 /-! # Coprime and negative witnesses from exact excluded-support endpoint costs -/
 

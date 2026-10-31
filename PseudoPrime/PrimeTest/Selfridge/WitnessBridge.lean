@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTest.Selfridge.Composite
-public import PseudoPrime.PrimeTest.Selfridge.Nonempty
+public import PseudoPrime.PrimeTest.Composite
+public import PseudoPrime.PrimeTest.Nonempty
 
 /-!
 # Unconditional prime Selfridge witness comparison

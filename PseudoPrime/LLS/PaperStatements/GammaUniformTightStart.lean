@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformReducedStart
-public import PseudoPrime.LLS.GammaUniformLocalBudgetParameters
+public import PseudoPrime.Analysis.GammaUniformLocalBudgetParameters
 public import PseudoPrime.Analysis.GammaUniformTightStart
 
 /-! # Tighter uniform coefficient-four-fifths starting value

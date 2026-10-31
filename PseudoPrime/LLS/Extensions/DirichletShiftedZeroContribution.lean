@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.Extensions.DirichletSpecialization
+public import PseudoPrime.LLS.PaperStatements.ExtensionsDirichletSpecialization
 public import PseudoPrime.LLS.Extensions.ShiftedZeroContribution
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFunctionalEquation
 

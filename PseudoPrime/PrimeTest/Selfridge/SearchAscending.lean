@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.PrimeTest.Selfridge.FirstStop
 public import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
-public import PseudoPrime.PrimeTest.Selfridge.Nonempty
+public import PseudoPrime.PrimeTest.Nonempty
 public import PseudoPrime.PrimeTest.Selfridge.Candidates
 public import PseudoPrime.PrimeTest.Selfridge.MethodAStar
 public import PseudoPrime.PrimeTest.Selfridge.Params

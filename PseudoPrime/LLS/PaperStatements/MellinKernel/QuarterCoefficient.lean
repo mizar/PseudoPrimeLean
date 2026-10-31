@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.MethodBarrier.SmallIndex
+public import PseudoPrime.LLS.PaperStatements.MellinKernel.SmallIndex
 
 /-! # A uniform quarter barrier for the ambient common-kernel coefficient -/
 

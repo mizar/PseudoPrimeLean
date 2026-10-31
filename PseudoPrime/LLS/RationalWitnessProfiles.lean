@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.RationalTheorem11S1Subgroup
-public import PseudoPrime.LLS.ParityRationalWitnessProfiles
+public import PseudoPrime.Analysis.LLSParityRationalWitnessProfiles
 public import PseudoPrime.Analysis.LogarithmicShiftBounds
 
 /-! # Prepared rational Part 1 coefficient-and-start profile -/

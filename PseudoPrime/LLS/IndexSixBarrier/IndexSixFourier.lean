@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.MethodBarrier.IndexSixDualIntegral
+public import PseudoPrime.LLS.IndexSixBarrier.IndexSixDualIntegral
 
 /-! # A uniform obstruction for the index-six Fourier certificate method
 

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.QuarterLogClippedNegativeBounds
-public import PseudoPrime.PseudoSquare.Bounds.FixedRampAnchor128NegOneBounds
+public import PseudoPrime.PseudoSquare.FixedRampAnchor128NegOneBounds
 
 /-! # Negative Jacobi bounds with the quarter-logarithm clipped radius -/
 

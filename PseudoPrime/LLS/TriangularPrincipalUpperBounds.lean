@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.TriangularPrincipalCutoff
 public import PseudoPrime.LLS.TriangularExplicitNumerics
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.TriangularUpperMangoldtBounds
+public import PseudoPrime.Analysis.TriangularUpperMangoldtBounds
 
 /-! # Explicit full alpha-18 principal-series upper bounds -/
 

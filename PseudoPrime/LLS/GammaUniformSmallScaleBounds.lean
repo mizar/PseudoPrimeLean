@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
-public import PseudoPrime.LLS.GammaUniformSmallScaleNumerics
+public import PseudoPrime.Analysis.LLSGammaUniformSmallScaleNumerics
 public import PseudoPrime.LLS.GammaUniformScaleBounds
 
 /-! # Uniform Gamma subgroup comparison from scale 224 -/

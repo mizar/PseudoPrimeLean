@@ -22,8 +22,8 @@ public import PseudoPrime.LLS.Extensions.DegreeOneValueCorrection
 public import PseudoPrime.LLS.Extensions.DegreeOneCutoffOptimization
 public import PseudoPrime.LLS.Extensions.GeneralValueCriteria
 public import PseudoPrime.LLS.Extensions.DegreeOneSignedCriteria
-public import PseudoPrime.LLS.Extensions.DirichletSpecialization
-public import PseudoPrime.LLS.Extensions.DirichletAdmissibility
+public import PseudoPrime.LLS.PaperStatements.ExtensionsDirichletSpecialization
+public import PseudoPrime.LLS.PaperStatements.DirichletAdmissibility
 public import PseudoPrime.LLS.Extensions.ShiftedZeroContribution
 public import PseudoPrime.LLS.Extensions.ShiftedGammaContribution
 public import PseudoPrime.LLS.Extensions.DirichletShiftedGammaContribution

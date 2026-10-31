@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.TriangularCutoffMangoldt
+public import PseudoPrime.Analysis.TriangularCutoffMangoldt
 
 /-! # Explicit alpha-18 cutoff main term -/
 

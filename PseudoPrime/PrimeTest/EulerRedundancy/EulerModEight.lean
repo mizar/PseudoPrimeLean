@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTest.BPSW.EulerRedundancy
+public import PseudoPrime.PrimeTest.EulerRedundancy.EulerRedundancy
 
 /-! # Euler redundancy for the five-modulo-eight MR branch
 

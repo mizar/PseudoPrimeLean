@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.ReflectedSplitConductorBounds
-public import PseudoPrime.PseudoSquare.Bounds.TwoPoleConductorPrefixNegOneBounds
+public import PseudoPrime.PseudoSquare.TwoPoleConductorPrefixNegOneBounds
 
 /-! # Uniform negative Jacobi witnesses from the certified reflected conductor gap -/
 

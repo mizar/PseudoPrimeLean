@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.GammaNonOneCommonNumerics
 public import PseudoPrime.LLS.GammaUniformLocalBounds
-public import PseudoPrime.LLS.GammaUniformLocalBudgetParameters
+public import PseudoPrime.Analysis.GammaUniformLocalBudgetParameters
 
 /-! # Uniform scalar and local-loss budgets for the Gamma subgroup bound
 

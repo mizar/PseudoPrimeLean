@@ -183,7 +183,7 @@ public import PseudoPrime.LLS.GammaCheckpointBounds
 public import PseudoPrime.LLS.GammaCheckpoint50000
 public import PseudoPrime.LLS.RiemannOneSidedCheckpoint
 public import PseudoPrime.LLS.GaussianGammaPrefixTransfer
-public import PseudoPrime.LLS.GaussianPrincipalEulerBudgetExtensions
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GaussianPrincipalEulerBudgetExtensions
 public import PseudoPrime.LLS.GammaPrefixCellCertificate
 public import PseudoPrime.LLS.GammaSmallCheckpointBounds
 public import PseudoPrime.LLS.RiemannOneSidedLogCap
@@ -331,7 +331,7 @@ public import PseudoPrime.LLS.OddEndpointTwoCostWitness
 public import PseudoPrime.LLS.OddEndpointCostMonotonicity
 public import PseudoPrime.LLS.TaperedTwoReciprocalCost
 public import PseudoPrime.LLS.TaperedTwoEndpointWitness
-public import PseudoPrime.LLS.QuadraticBudgetLinear
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticBudgetLinear
 public import PseudoPrime.LLS.FiniteExcludedTaperSavings
 public import PseudoPrime.LLS.ConductorSquareFactorCost
 public import PseudoPrime.LLS.UntaperedPrimeCostBounds
@@ -353,9 +353,9 @@ public import PseudoPrime.LLS.OddMidscaleEndpointCertificate
 public import PseudoPrime.LLS.OddMidscaleEndpointRadius
 public import PseudoPrime.LLS.OddEndpointLogShiftSeparation
 public import PseudoPrime.LLS.OddEndpointLowerLogShiftSeparation
-public import PseudoPrime.LLS.ExcludedCharacterDefect
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSExcludedCharacterDefect
 public import PseudoPrime.LLS.ExcludedEndpointWitness
-public import PseudoPrime.LLS.QuadraticExcludedBudget
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticExcludedBudget
 public import PseudoPrime.LLS.QuadraticExcludedEndpoint
 public import PseudoPrime.LLS.QuadraticExcludedPrimeBudget
 public import PseudoPrime.LLS.GammaRefinedLeftMomentBounds
@@ -559,8 +559,8 @@ public import PseudoPrime.LLS.RationalPoleFiniteJacobi
 public import PseudoPrime.LLS.RationalPoleScalarBudget
 public import PseudoPrime.LLS.RationalPoleFiniteEntrance
 public import PseudoPrime.LLS.RationalPoleSharpEntrance
-public import PseudoPrime.LLS.MethodBarrier.SmallIndex
-public import PseudoPrime.LLS.MethodBarrier.QuarterCoefficient
+public import PseudoPrime.LLS.PaperStatements.MellinKernel.SmallIndex
+public import PseudoPrime.LLS.PaperStatements.MellinKernel.QuarterCoefficient
 public import PseudoPrime.LLS.FiniteSignedEulerMassBounds
 public import PseudoPrime.LLS.Phase64EulerMass500
 public import PseudoPrime.LLS.Phase64NumericalJacobiBudget

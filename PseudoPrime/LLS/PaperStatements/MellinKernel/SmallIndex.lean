@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.MethodBarrier.MellinKernel
+public import PseudoPrime.LLS.PaperStatements.MellinKernel.MellinKernel
 
 /-! Coefficient obstruction for the ambient-conductor common-kernel method
 at indices four through six. -/

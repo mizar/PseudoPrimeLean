@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.Extensions.QNeOneCorrections
-public import PseudoPrime.AnalyticNumberTheory.RiemannXi.FinerLLSConstants
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FinerLLSConstants
 
 /-! # Refined reciprocal input retaining the quadratic value at two -/
 

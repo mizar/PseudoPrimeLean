@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.Extensions.ShiftedGammaContribution
-public import PseudoPrime.LLS.Extensions.DirichletSpecialization
+public import PseudoPrime.LLS.PaperStatements.ExtensionsDirichletSpecialization
 
 /-!
 # Degree-one gamma error coefficient

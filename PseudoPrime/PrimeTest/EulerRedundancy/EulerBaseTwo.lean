@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTest.BPSW.EulerModEight
+public import PseudoPrime.PrimeTest.EulerRedundancy.EulerModEight
 public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroup
 
 /-! # Base-two Strong MR implies Euler-Jacobi for every odd modulus greater than one

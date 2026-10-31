@@ -10,7 +10,7 @@ public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HadamardLimit
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveCharacterInv
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.CompletedLFunctionConj
-public import PseudoPrime.AnalyticNumberTheory.General.DerivativeNorm
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.DerivativeNorm
 
 /-!
 # Functional equations and zero-mass estimates for primitive characters

@@ -9,7 +9,7 @@ module
 public import PseudoPrime.Analysis.SmallStartFinerPart2Bounds
 public import PseudoPrime.LLS.SmallReciprocalMainErrorBounds
 public import PseudoPrime.LLS.ReciprocalCostPart2Bounds
-public import PseudoPrime.AnalyticNumberTheory.RiemannXi.FinerLLSConstants
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FinerLLSConstants
 
 /-! # Reciprocal-only analytic Part 2 witnesses on the low modulus range -/
 

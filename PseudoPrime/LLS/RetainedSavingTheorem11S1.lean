@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.RationalTheorem11S1Subgroup
 public import PseudoPrime.Analysis.RetainedSavingPart1Separation
-public import PseudoPrime.AnalyticNumberTheory.RiemannXi.FinerLLSConstants
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FinerLLSConstants
 
 /-! # Shared Part 1 root estimates and the reference retained-saving radius -/
 

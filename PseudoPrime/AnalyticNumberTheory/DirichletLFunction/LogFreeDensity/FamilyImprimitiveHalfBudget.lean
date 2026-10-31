@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity.FamilyHalfScaleBudget
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.FamilyHalfScaleBudget
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveHalfScaleTransfer
 
 /-! # General character families outside exceptional primitive conductors -/

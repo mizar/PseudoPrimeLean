@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.TriangularCutoffMangoldt
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.TriangularCutoffMainTerm
+public import PseudoPrime.Analysis.TriangularCutoffMangoldt
+public import PseudoPrime.Analysis.TriangularCutoffMainTerm
 public import PseudoPrime.LLS.RiemannChebyshevNumericalBounds
 
 /-! # RH error for the alpha-18 finite cutoff sum -/

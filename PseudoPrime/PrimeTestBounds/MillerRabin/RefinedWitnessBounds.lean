@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.RefinedTheorem11S2
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
-public import PseudoPrime.PrimeTestBounds.MillerRabin.LogarithmicCutoffApplications
+public import PseudoPrime.Analysis.LogarithmicCutoffApplications
 
 /-! # Miller–Rabin witnesses below the refined logarithmic cutoff -/
 

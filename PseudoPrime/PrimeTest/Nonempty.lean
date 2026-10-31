@@ -10,7 +10,7 @@ public import PseudoPrime.NumberTheory.JacobiWitness.Existence
 public import PseudoPrime.PrimeTest.Selfridge.Coincidence
 public import PseudoPrime.PrimeTest.Selfridge.Witness
 public import PseudoPrime.PrimeTest.Selfridge.Wheel30
-public import PseudoPrime.PrimeTest.Selfridge.Composite
+public import PseudoPrime.PrimeTest.Composite
 
 /-!
 # Nonemptiness of concrete PrimeTest Selfridge stopping sets

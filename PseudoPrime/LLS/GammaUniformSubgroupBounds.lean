@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformSubgroupComparison
-public import PseudoPrime.LLS.GammaUniformSubgroupNumerics
+public import PseudoPrime.Analysis.GammaUniformSubgroupNumerics
 
 /-! # Uniform coefficient four-fifths for primes outside proper subgroups
 

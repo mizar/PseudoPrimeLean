@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.QuadraticExcludedBudget
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticExcludedBudget
 public import PseudoPrime.LLS.ExcludedEndpointWitness
 
 /-! # A single quadratic exclusion budget for equal endpoint cutoffs -/

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.MethodBarrier.IndexSixNumerics
+public import PseudoPrime.LLS.IndexSixBarrier.IndexSixNumerics
 public import Mathlib.Analysis.Fourier.FourierTransform
 public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap

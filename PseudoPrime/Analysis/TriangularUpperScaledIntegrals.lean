@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.TriangularUpperMangoldt
+public import PseudoPrime.Analysis.TriangularUpperMangoldt
 
 /-! # Scaled alpha-18 upper-support main and error integrals -/
 

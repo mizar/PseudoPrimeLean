@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.Analysis.InverseMellin
 public import PseudoPrime.LLS.MellinKernelForwardTransform
-public import PseudoPrime.LLS.MethodBarrier.IndexSixFourier
+public import PseudoPrime.LLS.IndexSixBarrier.IndexSixFourier
 
 /-!
 # The sextic barrier for every admissible Mellin kernel

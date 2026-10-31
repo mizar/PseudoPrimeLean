@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity.FamilyWeightedReindex
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.FamilyWeightedReindex
 
 /-! # Gap-weighted actual zero sums for finite character families -/
 

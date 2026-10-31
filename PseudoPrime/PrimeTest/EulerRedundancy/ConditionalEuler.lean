@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTest.BPSW.EulerBaseTwo
+public import PseudoPrime.PrimeTest.EulerRedundancy.EulerBaseTwo
 
 /-! # Certified conditional Euler omission in Wheel30 BPSW
 

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTest.Selfridge.Candidates
-public import PseudoPrime.PrimeTest.Selfridge.Composite
+public import PseudoPrime.PrimeTest.Composite
 public import Mathlib.Tactic
 
 /-!

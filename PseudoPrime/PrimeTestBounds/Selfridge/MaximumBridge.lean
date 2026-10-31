@@ -9,7 +9,7 @@ module
 public import Mathlib.Data.Finset.Lattice.Fold
 public import PseudoPrime.PseudoSquare.Bounds.WitnessMaximum
 public import PseudoPrime.PseudoSquare.Computation.QThresholds
-public import PseudoPrime.PrimeTest.Selfridge.Nonempty
+public import PseudoPrime.PrimeTest.Nonempty
 public import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
 public import PseudoPrime.PrimeTest.Selfridge.Wheel30
 

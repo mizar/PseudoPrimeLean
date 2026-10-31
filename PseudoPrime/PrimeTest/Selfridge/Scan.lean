@@ -15,7 +15,7 @@ public import PseudoPrime.PrimeTest.StrongLucas.NoGcd
 public import PseudoPrime.PrimeTest.Decision
 public import PseudoPrime.PrimeTest.BPSW.Exec
 public import Mathlib.Data.List.Find
-public import PseudoPrime.PrimeTest.Selfridge.Nonempty
+public import PseudoPrime.PrimeTest.Nonempty
 public import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
 
 /-! # Certified finite factor-detecting Selfridge scan

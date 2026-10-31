@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity.FamilyHalfScaleBudget
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.FamilyHalfScaleBudget
 
 /-! # Positivity and modulus monotonicity of explicit half-scale budgets -/
 

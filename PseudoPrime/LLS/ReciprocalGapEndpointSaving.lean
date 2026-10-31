@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.ReciprocalGapEndpointWitness
 public import PseudoPrime.LLS.ParameterizedPart1Saving
-public import PseudoPrime.AnalyticNumberTheory.RiemannXi.FinerLLSConstants
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FinerLLSConstants
 
 /-! # Endpoint-mass witnesses with reciprocal saving inferred from nonexistence -/
 

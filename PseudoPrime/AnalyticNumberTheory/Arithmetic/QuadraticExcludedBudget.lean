@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ExcludedCharacterDefect
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSExcludedCharacterDefect
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticAmbientSquares
 
 /-! # Combined quadratic exclusion budgets with exact square cancellation -/

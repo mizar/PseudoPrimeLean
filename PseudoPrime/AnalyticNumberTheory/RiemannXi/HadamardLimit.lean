@@ -18,7 +18,7 @@ public import Mathlib.Analysis.Meromorphic.RCLike
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.Harmonic.ZetaAsymp
 public import PseudoPrime.AnalyticNumberTheory.General.CanonicalDecomposition
-public import PseudoPrime.AnalyticNumberTheory.General.DerivativeNorm
+public import PseudoPrime.AnalyticNumberTheory.RiemannXi.DerivativeNorm
 public import PseudoPrime.AnalyticNumberTheory.RiemannXi.OrderOneBound
 public import PseudoPrime.AnalyticNumberTheory.RiemannXi.ZeroFiniteness
 public import PseudoPrime.AnalyticNumberTheory.Gamma.TrigammaSpecialValues

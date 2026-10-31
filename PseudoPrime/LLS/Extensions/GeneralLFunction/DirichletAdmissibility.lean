@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.Extensions.DirichletSpecialization
+public import PseudoPrime.LLS.PaperStatements.ExtensionsDirichletSpecialization
 public import Mathlib.NumberTheory.EulerProduct.DirichletLSeries
 public import Mathlib.NumberTheory.EulerProduct.ExpLog
 public import PseudoPrime.AnalyticNumberTheory.General.EntireOrder

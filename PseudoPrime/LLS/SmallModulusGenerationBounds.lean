@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.UnitGenerationBalanced
-public import PseudoPrime.LLS.ParityRationalWitnessProfiles
+public import PseudoPrime.Analysis.LLSParityRationalWitnessProfiles
 public import PseudoPrime.Analysis.LLSSmallModulusGenerationBounds
 
 /-! # Transferring finite generation certificates to the parity profile

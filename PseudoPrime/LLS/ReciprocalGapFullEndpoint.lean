@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CharacterFullTriviality
 public import PseudoPrime.LLS.ReciprocalGapEndpointAnalyticWitness
-public import PseudoPrime.AnalyticNumberTheory.RiemannXi.FinerLLSConstants
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FinerLLSConstants
 
 /-! # Full-prime endpoint separation with no arithmetic exclusion losses -/
 

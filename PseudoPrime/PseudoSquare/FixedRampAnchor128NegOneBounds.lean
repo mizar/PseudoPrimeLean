@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.FixedRampAnchor128Bounds
-public import PseudoPrime.PseudoSquare.Bounds.TwoPoleConductorPrefixNegOneBounds
+public import PseudoPrime.PseudoSquare.TwoPoleConductorPrefixNegOneBounds
 public import PseudoPrime.LLS.FixedRampAnchor128NegOneBounds
 
 /-! # Negative Jacobi witnesses from the fixed-width certified anchor -/

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.TwoPoleGammaCharacterBounds
-public import PseudoPrime.LLS.QuadraticExcludedBudget
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticExcludedBudget
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSPairedEulerExcludedBounds
 
 /-! # Paired Euler savings with a combined quadratic exclusion budget -/

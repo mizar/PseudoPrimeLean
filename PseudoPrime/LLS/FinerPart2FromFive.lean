@@ -9,7 +9,7 @@ module
 public import PseudoPrime.Analysis.FinerPart2CutoffBounds
 public import PseudoPrime.LLS.ReciprocalCostPart2Bounds
 public import PseudoPrime.LLS.AnalyticFinerPart2FromFive
-public import PseudoPrime.AnalyticNumberTheory.RiemannXi.FinerLLSConstants
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FinerLLSConstants
 
 /-! # LLS Part 2 with correction 4.5571 from modulus five -/
 

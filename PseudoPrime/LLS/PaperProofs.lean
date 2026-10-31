@@ -26,7 +26,7 @@ public import PseudoPrime.LLS.DirichletExplicitFormula
 public import PseudoPrime.LLS.RiemannExplicitFormula
 public import PseudoPrime.LLS.Theorem11S1GRH
 public import PseudoPrime.LLS.Theorem11S2
-public import PseudoPrime.LLS.Extensions.DirichletAdmissibility
+public import PseudoPrime.LLS.PaperStatements.DirichletAdmissibility
 public import PseudoPrime.LLS.Extensions.PaperProofs
 
 /-!

@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.PrimeTest.Decision
 public import PseudoPrime.PrimeTest.BPSW.Wheel30
-public import PseudoPrime.PrimeTest.BPSW.ConditionalEuler
+public import PseudoPrime.PrimeTest.ConditionalEuler
 public import PseudoPrime.PrimeTest.BLS.Decision
 public import PseudoPrime.PrimeTest.APRCL.Decision
 public import PseudoPrime.PrimeTest.FactorWitness

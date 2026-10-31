@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformScaleBounds
-public import PseudoPrime.LLS.GammaUniformLocalBudgetParameters
+public import PseudoPrime.Analysis.GammaUniformLocalBudgetParameters
 public import PseudoPrime.Analysis.GammaUniformSignedShiftBounds
 
 /-! # Smaller Gamma cutoffs with a negative constant correction

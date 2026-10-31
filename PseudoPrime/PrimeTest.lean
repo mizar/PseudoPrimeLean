@@ -67,10 +67,10 @@ public import PseudoPrime.PrimeTest.BPSW.Exec
 public import PseudoPrime.PrimeTest.StrongLucas.NoGcd
 public import PseudoPrime.PrimeTest.BPSW.Wheel30
 public import PseudoPrime.PrimeTest.BPSW.BFWSpec
-public import PseudoPrime.PrimeTest.BPSW.EulerRedundancy
-public import PseudoPrime.PrimeTest.BPSW.EulerModEight
-public import PseudoPrime.PrimeTest.BPSW.EulerBaseTwo
-public import PseudoPrime.PrimeTest.BPSW.ConditionalEuler
+public import PseudoPrime.PrimeTest.EulerRedundancy.EulerRedundancy
+public import PseudoPrime.PrimeTest.EulerRedundancy.EulerModEight
+public import PseudoPrime.PrimeTest.EulerRedundancy.EulerBaseTwo
+public import PseudoPrime.PrimeTest.ConditionalEuler
 public import PseudoPrime.PrimeTest.Lucas.ReferenceProcedure
 public import PseudoPrime.PrimeTest.ReferenceArithmetic
 public import PseudoPrime.PrimeTest.JacobiFuel
@@ -86,7 +86,7 @@ public import PseudoPrime.PrimeTest.Selfridge.FirstStop
 public import PseudoPrime.PrimeTest.Selfridge.Coincidence
 public import PseudoPrime.PrimeTest.Selfridge.Reciprocity
 public import PseudoPrime.PrimeTest.Selfridge.Witness
-public import PseudoPrime.PrimeTest.Selfridge.Nonempty
+public import PseudoPrime.PrimeTest.Nonempty
 public import PseudoPrime.PrimeTest.Selfridge.Finite
 public import PseudoPrime.PrimeTest.Selfridge.Wheel30
 public import PseudoPrime.PrimeTest.Selfridge.Scan

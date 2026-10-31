@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.HalfScaleBudgetScaleSelection
-public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity.FamilyScalarHalfScaleBudget
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.FamilyScalarHalfScaleBudget
 
 /-! # Uniform nonprincipal half-scale bounds away from exceptional conductors -/
 

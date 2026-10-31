@@ -9,7 +9,7 @@ module
 public import PseudoPrime.PrimeTest.Selfridge.WitnessBridge
 public import PseudoPrime.PseudoSquare.Computation.QNeOneFiniteLogSq
 public import PseudoPrime.PseudoSquare.Computation.ResidueWheel
-public import PseudoPrime.PrimeTest.Selfridge.Nonempty
+public import PseudoPrime.PrimeTest.Nonempty
 public import PseudoPrime.PrimeTest.Selfridge.WitnessBounds
 
 /-!

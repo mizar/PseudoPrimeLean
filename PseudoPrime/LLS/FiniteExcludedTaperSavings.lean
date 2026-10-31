@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.QuadraticBudgetLinear
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticBudgetLinear
 
 /-! # Finite reciprocal taper savings in negative-prime exclusion budgets -/
 

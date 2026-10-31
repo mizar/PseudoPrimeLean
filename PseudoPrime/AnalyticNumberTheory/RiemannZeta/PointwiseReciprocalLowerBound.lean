@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannXi.FinerLLSConstants
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FinerLLSConstants
 public import PseudoPrime.Analysis.PointwiseReciprocalLowerBound
 
 /-! # Pointwise reciprocal losses retaining the scale-dependent terms -/

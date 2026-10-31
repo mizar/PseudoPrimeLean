@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.TriangularUpperScaledIntegrals
+public import PseudoPrime.Analysis.TriangularUpperScaledIntegrals
 
 /-! # Finite alpha-18 upper-support Mangoldt bounds -/
 
