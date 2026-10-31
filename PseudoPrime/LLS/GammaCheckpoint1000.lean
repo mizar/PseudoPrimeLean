@@ -20,7 +20,7 @@ Output: a rational interval for 1000 to the negative node exponent.
 Role: separate endpoint discovery from the subsequent kernel certificate. -/
 def checkpoint1000Ratios (a : ℚ) : ℚ × ℚ :=
   let rs : List ℕ := [707945784, 354813389, 125892541, 31622776, 3981071, 251188, 3981, 7, 0, 0]
-  let r := rs[(Analysis.gammaResolventCoefficients.map Prod.fst).idxOf a]?.getD 0
+  let r := rs[(AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map Prod.fst).idxOf a]?.getD 0
   ((r : ℚ) / 1000000000000, ((r + 1 : ℕ) : ℚ) / 1000000000000)
 
 /-- Claim: all ten power intervals at cutoff 1000 pass the common ratio checker.

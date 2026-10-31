@@ -100,7 +100,7 @@ theorem midscale_eq_fixed {n : ℕ} (hn : 1 < n) (hS : gammaFixedSwitch ≤ Real
   · have heq : Real.log n = 240 := le_antisymm hU (le_of_not_gt h240)
     simp only [ite_eq_right h240,
       gaussianMRWitnessEnvelope_eq240 (by linarith only [heq]) (by linarith only [heq])]
-    exact (Analysis.gaussianMR6_prefix35000 (by linarith only [heq])).le
+    exact (gaussian6_prefix35000 (by linarith only [heq])).le
 
 /-- The explicit interval envelope for the least prime rejecting strong MR.
 Integer guards select two and three; logarithmic guards select 61, the shifted

@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.TaperedTwoEndpointWitness
-public import PseudoPrime.LLS.OddEndpointCostMonotonicity
+public import PseudoPrime.LLS.PaperStatements.TaperedTwoEndpointWitness
+public import PseudoPrime.LLS.PaperStatements.OddEndpointCostMonotonicity
 public import PseudoPrime.NumberTheory.JacobiWitness.PrimitiveTransfer
 public import PseudoPrime.PseudoSquare.QNeOneHalfShiftBounds
 

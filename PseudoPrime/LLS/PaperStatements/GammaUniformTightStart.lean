@@ -8,8 +8,8 @@ module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformReducedStart
-public import PseudoPrime.Analysis.GammaUniformLocalBudgetParameters
-public import PseudoPrime.Analysis.GammaUniformTightStart
+public import PseudoPrime.LLS.GammaUniformLocalBudgetScalars
+public import PseudoPrime.LLS.GammaUniformTightStartScalars
 
 /-! # Tighter uniform coefficient-four-fifths starting value
 
@@ -72,9 +72,8 @@ theorem exists_prime_outside_le_gamma_four_fifths_log_45561 {q : ℕ} [NeZero q]
     exists_prime_outside_of_uniform_gamma_local_budget H hH hGRH
       ((by norm_num only : (35000 : ℝ) ≤ 45561).trans hL)
   have hD :=
-    Analysis.gamma_commonFactor_budget_of_log_ge_44739
-      ((by norm_num only : (44739 : ℝ) ≤ 45561).trans hL)
-  have hE := Analysis.gamma_uniform_error_budget_of_ge_45561 hL
+    gamma_commonFactor_budget_of_log_ge_44739 ((by norm_num only : (44739 : ℝ) ≤ 45561).trans hL)
+  have hE := gamma_uniform_error_budget_of_ge_45561 hL
   have he :
     (99 / 40 : ℝ) * ((32 / 99 : ℝ) * (Real.log q) ^ 2) = (4 / 5 : ℝ) * (Real.log q) ^ 2 := by ring
   dsimp only at hD
@@ -97,6 +96,6 @@ theorem exists_prime_outside_le_gamma_four_fifths_19787 {q : ℕ} (H : Subgroup 
   let : NeZero q := ⟨hq0⟩
   exact
     exists_prime_outside_le_gamma_four_fifths_log_45561 H hH hGRH
-      (Analysis.log_nat_gt_45561_of_decimal_19787 hq).le
+      (log_nat_gt_45561_of_decimal_19787 hq).le
 
 end PseudoPrime.LLS.PaperStatements

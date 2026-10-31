@@ -6,6 +6,10 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.GammaSquareConductorGap
+
+public import PseudoPrime.Analysis.GammaRampPrimeCosts
+
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaPrimeIndexedPrefix
 public import PseudoPrime.AnalyticNumberTheory.Gamma.EvenResolventCertificate
 
@@ -68,7 +72,7 @@ theorem gammaResolvent_zeroMass_le_capped_even_prefix {q : ℕ} [NeZero q] (hq :
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (he : χ.Even) (B : Finset ℕ) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) ≤
+          Gamma.gammaResolventMajorant ρ.im) ≤
       (11783423 / 25000000 : ℝ) * Real.log q + (-159 / 100 : ℝ) +
             (∑' m : ℕ, Analysis.gammaResolventMangoldtWeight m) -
           (∑ m ∈ B, Analysis.gammaResolventMangoldtWeight m) +
@@ -93,7 +97,7 @@ theorem gammaResolvent_zeroMass_le_capped_even_prefix_of_units_one {q : ℕ} [Ne
     (hB : ∀ m ∈ B, Nat.Coprime m q → χ m = 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) ≤
+          Gamma.gammaResolventMajorant ρ.im) ≤
       (11783423 / 25000000 : ℝ) * Real.log q + (-159 / 100 : ℝ) +
           (∑' m : ℕ, Analysis.gammaResolventMangoldtWeight m) -
         (∑ m ∈ B, Analysis.gammaResolventMangoldtWeight m) := by

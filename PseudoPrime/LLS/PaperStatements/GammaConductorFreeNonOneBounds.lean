@@ -6,11 +6,11 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaConductorFreeAdaptiveBounds
+public import PseudoPrime.LLS.PaperStatements.GammaConductorFreeAdaptiveBounds
 public import PseudoPrime.LLS.GammaNonOneAdaptiveWitnessBounds
 public import PseudoPrime.LLS.GammaNonOneProfileWitnessBounds
-public import PseudoPrime.LLS.GammaRefinedTailErrorBounds
-public import PseudoPrime.Analysis.GammaConductorFreeNonOneBounds
+public import PseudoPrime.LLS.PaperStatements.GammaRefinedTailErrorBounds
+public import PseudoPrime.LLS.GammaLogScaleBounds
 
 /-! # Non-one quadratic Gamma witnesses from logarithmic scale 30000 -/
 

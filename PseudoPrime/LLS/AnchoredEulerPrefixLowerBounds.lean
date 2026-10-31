@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogBoundarySummation
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ExponentialLogWeightedSummation
-public import PseudoPrime.LLS.PairedEulerExcludedBounds
+public import PseudoPrime.LLS.PaperStatements.PairedEulerExcludedBounds
 public import PseudoPrime.LLS.RiemannWeightedErrorBounds
 public import PseudoPrime.LLS.ReflectedSplitWitnessBounds
 public import PseudoPrime.LLS.VariableRampPrincipalBounds

@@ -24,13 +24,12 @@ theorem gaussianTunedUpper_lt35000 {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 23573 / 
     linarith only [hL]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * (130683 / 10000) := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have hbudget :
     gaussianMRRefinedConductor * L + 65 / 8 + gaussianMRRefinedBeta * (130683 / 10000) <
       gaussianMRRefinedD * (130683 / 10000 : ℝ) ^ 2 := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
-      gaussianMRRefinedBeta, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedBeta, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
     linarith only [hU]
   have hraw :=
     lowGaussian_root_lt gaussianMRRefined_coefficients.1 gaussianMRRefined_coefficients.2 hC hcoef
@@ -71,12 +70,12 @@ theorem gaussianTunedBridge_lt_floor {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 110) :
     linarith only [hL]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * (19 / 2) := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have hbudget :
     gaussianMRRefinedConductor * L + 87 / 10 + gaussianMRRefinedBeta * (19 / 2) <
       gaussianMRRefinedD * (19 / 2 : ℝ) ^ 2 := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint,
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
       gaussianMRRefinedConductor]
     linarith only [hU]
   have hraw :=
@@ -99,8 +98,8 @@ theorem gaussianTunedEarly_lt_lowFamily {L : ℝ} (hL : 100 ≤ L) (hU : L ≤ 1
   have hsecond : L ≤ gaussianLowSwitch (49 / 5) (163 / 20) := by
     have hsw : (110 : ℝ) ≤ gaussianLowSwitch (49 / 5) (163 / 20) := by
       norm_num only [gaussianLowSwitch, gaussianMRRefinedD, gaussianMRRefinedMass,
-        gaussianMRRefinedBeta, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-        Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
+        gaussianMRRefinedBeta, gaussianMRRefinedWidth, gaussian6FifthsIndex,
+        gaussian6FifthsEndpoint, gaussianMRRefinedConductor]
     exact hU.trans hsw
   rw [gaussianLowFamily_selection h0]
   by_cases hfirst : L ≤ gaussianLowSwitch (19 / 2) (93 / 10)

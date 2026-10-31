@@ -24,15 +24,15 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
  and dyadic denominator certificate. The proof applies to any natural prefix length. -/
 theorem completed_poissonSum_centered_le_resolvent_with_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ab : ℚ × ℚ) (hab : ab ∈ Analysis.gammaResolventCoefficients)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ab : ℚ × ℚ) (hab : ab ∈ Gamma.gammaResolventCoefficients)
     (m : ℕ) :
     |(∑' ρ : ℂ,
             (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
               ((ab.1 : ℝ) / Complex.normSq ((((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ) - ρ))) -
           Real.log q / 2| ≤
       Analysis.gammaResolventEulerErrorWithPrefix m ab.1 := by
-  have hal := List.forall_iff_forall_mem.mp Analysis.gammaResolvent_scales_gt_half ab hab
-  have hau := (List.forall_iff_forall_mem.mp Analysis.gammaResolvent_gamma_arguments ab hab).2.2
+  have hal := List.forall_iff_forall_mem.mp Gamma.gammaResolvent_scales_gt_half ab hab
+  have hau := (List.forall_iff_forall_mem.mp Gamma.gammaResolvent_gamma_arguments ab hab).2.2
   have halR := (Rat.cast_lt (K := ℝ)).mpr hal
   norm_num only [Rat.cast_div, Rat.cast_one, Rat.cast_ofNat] at halR
   have hauR := (Rat.cast_le (K := ℝ)).mpr hau
@@ -75,7 +75,7 @@ theorem gammaResolvent_zeroMass_lt_of_prefix_error {q : ℕ} [NeZero q] (hq : 2 
     (hC : Analysis.gammaResolventPrefixErrorSum m < C) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) <
+          Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + C := by
   rw [gammaResolvent_zeroMass_eq_poissonSum hq hRH hp hne hinv]
   apply
@@ -106,7 +106,7 @@ theorem gamma_zeroMass_lt_of_prefix_error {q : ℕ} [NeZero q] (hq : 2 ≤ q)
   have hb (ρ : ℂ) :
     (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖Complex.Gamma ρ‖ ≤
       (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-        Analysis.gammaResolventMajorant ρ.im := by
+        Gamma.gammaResolventMajorant ρ.im := by
     by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
     · simp only [hD, Int.cast_zero, zero_mul, le_refl]
     · have hr :=

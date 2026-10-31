@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.OddEndpointTwoCostWitness
+public import PseudoPrime.LLS.PaperStatements.OddEndpointTwoCostWitness
 public import PseudoPrime.NumberTheory.JacobiWitness.PrimitiveTransfer
 public import PseudoPrime.PseudoSquare.QNeOneHalfShiftBounds
 

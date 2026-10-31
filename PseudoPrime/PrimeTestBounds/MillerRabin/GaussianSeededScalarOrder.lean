@@ -56,7 +56,7 @@ theorem gaussianSeeded_raw_root_compare {f : Bool} {L N : ℝ} (hL : 0 ≤ L) (h
   have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
   have hb : gaussianMRRefinedBeta < 13 * gaussianMRRefinedD := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have hdy := mul_le_mul_of_nonneg_left hy hd.le
   have hdt := mul_pos hd ht
   have hfac : 0 < gaussianMRRefinedD * (y + t) - gaussianMRRefinedBeta := by
@@ -192,15 +192,13 @@ theorem gaussianSeeded_switch35_bounds :
   constructor
   · apply (lt_div_iff₀ hc).mpr
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
-      Analysis.gaussianMR6FifthsIndex, gaussianSeededConstant, Bool.false_eq_true, ite_false,
-      ite_true] at hRlo hRhi hSlo hShi ⊢
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
+      gaussianSeededConstant, Bool.false_eq_true, ite_false, ite_true] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRlo, hShi]
   · apply (div_lt_iff₀ hc).mpr
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
-      Analysis.gaussianMR6FifthsIndex, gaussianSeededConstant, Bool.false_eq_true, ite_false,
-      ite_true] at hRlo hRhi hSlo hShi ⊢
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
+      gaussianSeededConstant, Bool.false_eq_true, ite_false, ite_true] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRhi, hSlo]
 
 /-- Both switches at floor 50000 lie strictly between 293 and 295.
@@ -227,13 +225,13 @@ theorem gaussianSeeded_switch50_bounds (f : Bool) :
   constructor
   · apply (lt_div_iff₀ hc).mpr
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
-      Analysis.gaussianMR6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint,
+      gaussian6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRlo, hShi, hDhi]
   · apply (div_lt_iff₀ hc).mpr
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
-      Analysis.gaussianMR6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint,
+      gaussian6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRhi, hSlo, hDlo]
 
 /-- The three switching scales are strictly ordered.
@@ -325,14 +323,14 @@ theorem gaussianSeeded_min_eq_selected {L : ℝ} (hL : 63 ≤ L) :
 Compare their positive-root equations using the improved mass, conductor, width
 and allowance, then square twice. This is a continuous half-line comparison. -/
 theorem gaussianSeeded35_raw_lt_six {L : ℝ} (hL : 240 ≤ L) :
-    gaussianSeededRawBound false L < Analysis.gaussianMR6Bound L := by
+    gaussianSeededRawBound false L < gaussian6Bound L := by
   let s := gaussianSeededRawRoot false L
-  let t := Analysis.gaussianMR6Root L
+  let t := gaussian6Root L
   have hs : 0 < s := gaussianSeeded_raw_pos false L
-  have ht : (13 : ℝ) ≤ t := by linarith only [Analysis.gaussianMR6_root_lower hL]
+  have ht : (13 : ℝ) ≤ t := by linarith only [gaussian6_root_lower hL]
   have he := gaussianSeeded_raw_equation false (by linarith only [hL] : (0 : ℝ) ≤ L)
-  have hf := Analysis.gaussianMR6_equation (by linarith only [hL] : (0 : ℝ) ≤ L)
-  dsimp only [Analysis.gaussianMR6Radius] at hf
+  have hf := gaussian6_equation (by linarith only [hL] : (0 : ℝ) ≤ L)
+  dsimp only [gaussian6Radius] at hf
   have hst : s < t := by
     by_contra h
     have hts : t ≤ s := le_of_not_gt h
@@ -342,14 +340,11 @@ theorem gaussianSeeded35_raw_lt_six {L : ℝ} (hL : 240 ≤ L) :
         gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
           gaussianSeededConstant false at he
     change
-      Analysis.gaussianMR6FifthsD * t ^ 2 =
-        Analysis.gaussianMR6FifthsConductor * L + Analysis.gaussianMR6FifthsBeta * t + 6 at hf
+      gaussian6FifthsD * t ^ 2 = gaussian6FifthsConductor * L + gaussian6FifthsBeta * t + 6 at hf
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsD,
-      Analysis.gaussianMR6FifthsBeta, Analysis.gaussianMR6FifthsConductor,
-      Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsMass,
-      Analysis.gaussianMR6FifthsEndpoint, gaussianSeededConstant, Bool.false_eq_true,
-      ite_false] at he hf
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsD, gaussian6FifthsBeta,
+      gaussian6FifthsConductor, gaussian6FifthsIndex, gaussian6FifthsMass, gaussian6FifthsEndpoint,
+      gaussianSeededConstant, Bool.false_eq_true, ite_false] at he hf
     nlinarith only [he, hf, hp, hts, hL, hs, ht, sq_nonneg t]
   have h2 := (sq_lt_sq₀ hs.le (by linarith only [ht] : (0 : ℝ) ≤ t)).mpr hst
   have h4 := (sq_lt_sq₀ (sq_nonneg _) (sq_nonneg _)).mpr h2
@@ -378,8 +373,8 @@ theorem gaussianSeeded50_raw_lt_refined {L : ℝ} (hL : 300 ≤ L) :
       gaussianMRRefinedD * t ^ 2 =
         gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * t + 28 / 5 at hf
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint, gaussianSeededConstant, ite_true] at he hf
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
+      gaussianSeededConstant, ite_true] at he hf
     nlinarith only [he, hf, hp, hts, hL, hs, ht]
   have h2 := (sq_lt_sq₀ hs.le (by linarith only [ht] : (0 : ℝ) ≤ t)).mpr hst
   have h4 := (sq_lt_sq₀ (sq_nonneg _) (sq_nonneg _)).mpr h2
@@ -388,10 +383,10 @@ theorem gaussianSeeded50_raw_lt_refined {L : ℝ} (hL : 300 ≤ L) :
 /-- For L>=240, the clipped 35000 profile is below B6.
 Both its floor and raw cutoff are strictly below B6, so their maximum is too. -/
 theorem gaussianSeeded35_lt_six {L : ℝ} (hL : 240 ≤ L) :
-    gaussianSeededBound false L < Analysis.gaussianMR6Bound L := by
+    gaussianSeededBound false L < gaussian6Bound L := by
   rw [gaussianSeeded_eq_max]
   norm_num only [gaussianSeededCutoff, Bool.false_eq_true, ite_false, Nat.cast_ofNat]
-  exact max_lt (Analysis.gaussianMR6_prefix35000 hL) (gaussianSeeded35_raw_lt_six hL)
+  exact max_lt (gaussian6_prefix35000 hL) (gaussianSeeded35_raw_lt_six hL)
 
 /-- For L>=300, the clipped 50000 profile is below the existing refined cutoff.
 Both its floor and raw cutoff are strictly below that cutoff. -/

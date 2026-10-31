@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ExcludedEndpointWitness
+public import PseudoPrime.LLS.PaperStatements.ExcludedEndpointWitness
 public import PseudoPrime.PseudoSquare.Bounds.ReciprocalGapEndpointJacobi
 public import PseudoPrime.PseudoSquare.QNeOneHalfShiftBounds
 

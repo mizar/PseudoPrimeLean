@@ -51,8 +51,7 @@ theorem gaussianTuned_prefix (f : GaussianTunedProfile)
 /-- The generic large-index consumer, actual prefix and new profile budget
 yield a rejecting prime under the tuned cutoff for every sufficiently large index. -/
 theorem gaussianTuned_witness_large (f : GaussianTunedProfile) {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
-    (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
+    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
@@ -139,7 +138,7 @@ theorem gaussianTuned_witness_four (f : GaussianTunedProfile) {n : ℕ} [NeZero 
   have hG := f.budget (show 0 ≤ L by linarith only [hL])
   have herror := f.four_error (f.root_floor L) hG (le_refl (Real.log n))
   have hmargin := f.four_margin (f.root_floor L)
-  norm_num only [gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsEndpoint,
+  norm_num only [gaussianMRRefinedConductor, gaussian6FifthsEndpoint,
     gaussianMRRefinedWidth] at hscalar hG herror hmargin
   rw [hs2] at hscalar
   dsimp only [s, r, L, GaussianTunedProfile.radius] at hscalar hG herror hmargin
@@ -151,9 +150,9 @@ the quadratic lower bound; keep the ambient passing-residue containment upstream
 theorem gaussianTuned_local (f : GaussianTunedProfile) {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
     (hsize : q ^ 2 ≤ 10 ^ 9 * n) (hL : 63 ≤ Real.log n) :
     max (3000 : ℝ) (Real.log q ^ 2) ≤ f.bound (Real.log n) := by
-  have hlog := Analysis.mr_local_log_le_of_square_le hn hq hsize
+  have hlog := local_log_le_of_square_le hn hq hsize
   have hcap : Real.log q ≤ (2 / 3 : ℝ) * Real.log n := by
-    linarith only [hlog, hL, Analysis.log_ten_lt_seven_thirds]
+    linarith only [hlog, hL, log_ten_lt_seven_thirds]
   have hpos : (0 : ℝ) ≤ (2 / 3) * Real.log n := by linarith only [hL]
   have hs := (sq_le_sq₀ (Real.log_natCast_nonneg q) hpos).mpr hcap
   have hwide := gaussianTuned_bound_lower f hL

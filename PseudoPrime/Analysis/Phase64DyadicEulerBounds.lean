@@ -8,7 +8,8 @@ module
 
 public import PseudoPrime.Analysis.FiniteSignedCharacterLocalCosts
 public import PseudoPrime.Analysis.PhaseResolventCandidate64
-public import PseudoPrime.Analysis.GammaDyadicEulerCertificate
+public import PseudoPrime.Analysis.GammaSmallPrimeCosts
+public import PseudoPrime.Analysis.GeometricRatioBounds
 
 /-! # Signed dyadic Euler certificates for the first phase candidate -/
 

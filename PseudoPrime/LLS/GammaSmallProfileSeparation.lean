@@ -27,7 +27,7 @@ def gammaSmallProfileGapAt (a R P D : ℚ) : ℚ :=
 Definition: checked cell, logarithm enclosures, elementary error caps and gap at least 7/60.
 Output: executable Boolean. Role: share the numerical check for all small-profile cells. -/
 def gammaSmallProfileCheck (a b ellX ellE R P D : ℚ) (jX jE : ℕ) : Bool :=
-  let c := Analysis.gammaProfileEnvelopeCell a b
+  let c := gammaProfileEnvelopeCell a b
   decide
     (c.check = true ∧
       Analysis.rationalLogIntervalCheck c.hi jX 20 0 ellX = true ∧

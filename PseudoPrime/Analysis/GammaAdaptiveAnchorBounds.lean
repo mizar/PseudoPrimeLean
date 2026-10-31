@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaAnchoredReciprocalBounds
+public import PseudoPrime.Analysis.GammaEulerAnchoredBounds
 
 /-! # Checked reciprocal Euler coefficients at arbitrary anchors -/
 
@@ -19,10 +19,13 @@ Claim: the real anchored coefficient is at most the cap. Proof: shift node power
 nonnegative coefficient bounds. Role: certify arbitrary anchors without repeating their proofs. -/
 theorem gamma_anchored_coefficient_le_of_check {a C : ℚ} {r : ℚ → ℚ × ℚ} (ha : 0 < a)
     (hc : gammaFiniteEulerRatioCheck a r = true)
-    (hC : (gammaResolventCoefficients.map (fun ab ↦ max ab.2 0 * (a * (r ab.1).2))).sum ≤ C) :
+    (hC :
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
+            (fun ab ↦ max ab.2 0 * (a * (r ab.1).2))).sum ≤
+        C) :
     gammaAnchoredReciprocalCoefficient (a : ℝ) ≤ (C : ℝ) := by
   have haR : (0 : ℝ) < a := Rat.cast_pos.mpr ha
-  have hn (ab : ℚ × ℚ) (hab : ab ∈ gammaResolventCoefficients) :
+  have hn (ab : ℚ × ℚ) (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :
     (a : ℝ) ^ (1 - (1 / 2 + (ab.1 : ℝ))) ≤ (a : ℝ) * ((r ab.1).2 : ℝ) := by
     have h := (gamma_finite_ratio_check_sound hc ab hab).2
     rw [show (1 : ℝ) - (1 / 2 + (ab.1 : ℝ)) = -(1 / 2 + (ab.1 : ℝ)) + 1 by ring,
@@ -60,7 +63,8 @@ theorem gamma_anchored_coefficient_antitone {a b : ℝ} (ha : 0 < a) (hab : a �
   have hσ : (1 : ℝ) ≤ 1 / 2 + (ab.1 : ℝ) := by
     have h :=
       Rat.cast_lt (K := ℝ).mpr
-        (List.forall_iff_forall_mem.mp gammaResolvent_scales_gt_half ab habmem)
+        (List.forall_iff_forall_mem.mp AnalyticNumberTheory.Gamma.gammaResolvent_scales_gt_half ab
+          habmem)
     norm_num only [Rat.cast_div, Rat.cast_ofNat] at h
     linarith only [h]
   exact

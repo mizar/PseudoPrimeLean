@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaVariablePrefixCharacterBounds
+public import PseudoPrime.LLS.PaperStatements.GammaVariablePrefixCharacterBounds
 public import PseudoPrime.LLS.GammaNonOneComparison
 
 /-! # Variable-prefix non-one witness interface

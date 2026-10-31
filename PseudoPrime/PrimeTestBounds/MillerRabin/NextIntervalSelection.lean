@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.NextWitnessEnvelope
-public import PseudoPrime.LLS.EndpointPointwiseGrowth
+public import PseudoPrime.LLS.PaperStatements.EndpointPointwiseGrowth
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededGrowth
 
 /-! # Exact interval selection for the next all-input envelope -/

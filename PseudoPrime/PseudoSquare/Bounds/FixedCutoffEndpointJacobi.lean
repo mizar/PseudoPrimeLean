@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointCutoffMonotonicity
+public import PseudoPrime.LLS.PaperStatements.EndpointCutoffMonotonicity
 public import PseudoPrime.PseudoSquare.Bounds.ExcludedEndpointJacobi
 
 /-! # Negative Jacobi witnesses after eliminating a fixed-cost cutoff search -/

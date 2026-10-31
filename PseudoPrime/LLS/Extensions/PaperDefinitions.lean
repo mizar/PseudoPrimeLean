@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.PaperDefinitions
+public import PseudoPrime.LLS.PaperStatements.PaperDefinitions
 public import Mathlib.Analysis.Analytic.Order
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.NumberTheory.LSeries.Basic

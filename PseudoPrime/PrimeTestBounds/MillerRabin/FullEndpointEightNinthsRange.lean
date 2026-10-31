@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.FullEndpointEightNinthsRange
+public import PseudoPrime.LLS.PaperStatements.FullEndpointEightNinthsRange
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FullEndpointEightyOneRange
 
 /-! # Prime MR rejecting witnesses from the eight-ninths endpoint radius -/

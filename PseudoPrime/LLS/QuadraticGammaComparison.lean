@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
-public import PseudoPrime.LLS.GammaSubgroupComparison
+public import PseudoPrime.LLS.PaperStatements.GammaSubgroupComparison
 public import PseudoPrime.NumberTheory.QuadraticCharacterKernel
 
 /-! # Gamma comparisons for nonprincipal quadratic characters at the original level -/

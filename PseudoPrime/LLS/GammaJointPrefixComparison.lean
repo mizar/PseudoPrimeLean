@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaSignedPrefixCharacterBounds
+public import PseudoPrime.LLS.PaperStatements.GammaSignedPrefixCharacterBounds
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaPrimeIndexedPrefix
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaPrincipalEulerBudget
 public import PseudoPrime.LLS.GammaQuadraticLocalCorrection

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.Extensions.PrimePowerComparison
-public import PseudoPrime.LLS.LogLValueComparison
+public import PseudoPrime.LLS.PaperStatements.LogLValueComparison
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MangoldtLogSquareSeries
 
 /-! Square correction and zeta-at-two factors in general L-value lower bounds. -/

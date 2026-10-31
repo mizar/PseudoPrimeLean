@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
-public import PseudoPrime.LLS.GammaSignedPrefixCharacterBounds
+public import PseudoPrime.LLS.PaperStatements.GammaSignedPrefixCharacterBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaConductorFreeBounds
 public import PseudoPrime.PrimeTest.MillerRabin.SignSubgroupIndex
 

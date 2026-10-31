@@ -9,7 +9,7 @@ module
 public import PseudoPrime.LLS.GammaSignedPrincipalEntranceCertificates
 public import PseudoPrime.LLS.GammaQuadraticPolynomialSeparation
 public import PseudoPrime.LLS.GammaLowerWindowBounds
-public import PseudoPrime.Analysis.GammaWindowRationalCaps
+public import PseudoPrime.LLS.GammaWindowRationalCaps
 
 /-! # Reusing the log-260 rows below their old left endpoint -/
 
@@ -19,7 +19,7 @@ namespace PseudoPrime.LLS
 
 /-- Definition: the already certified local cell for log levels 260 to 261.
 Role: reuse every local logarithm and Euler/ramp certificate unchanged. -/
-def gammaTransportedOldCell : Analysis.GammaLocalCellData :=
+def gammaTransportedOldCell : GammaLocalCellData :=
   (gammaSignedPrincipalEntranceCertificate 0).cell
 
 /-- Definition: the new left scale (101/250)(2591/10)^2. Role: extend the old cell downward. -/
@@ -38,8 +38,8 @@ def gammaTransportedDelta (p : ℕ) : ℚ :=
 
 /-- Input: a prime candidate. Definition: the unchanged old adaptive row.
 Role: avoid storing any new prime-specific numerical data. -/
-def gammaTransportedRow (p : ℕ) : Analysis.GammaLocalPrimeRow :=
-  Analysis.gammaAdaptiveProfileRow gammaTransportedOldCell p
+def gammaTransportedRow (p : ℕ) : GammaLocalPrimeRow :=
+  gammaAdaptiveProfileRow gammaTransportedOldCell p
 
 /-- Input: a prime candidate. Definition: its rational weighted window allowance.
 Role: sum only the old row data with its base-sensitive analytic correction. -/

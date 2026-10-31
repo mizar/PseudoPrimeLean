@@ -30,12 +30,11 @@ theorem gaussianTuned_root_gt131 (f : GaussianTunedProfile) {L : ℝ} (hL : 240 
   have hfac : 0 ≤ gaussianMRRefinedD * (131 / 10 + f.root L) - gaussianMRRefinedBeta := by
     have hd := mul_nonneg gaussianMRRefined_coefficients.1.le hp.le
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint] at hd ⊢
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint] at hd ⊢
     linarith only [hd]
   have hm := mul_nonneg (sub_nonneg.mpr hr) hfac
   norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-    gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint,
+    gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
     gaussianMRRefinedConductor] at hm hG
   nlinarith only [hm, hG, hL, hD]
 

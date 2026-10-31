@@ -6,24 +6,17 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.TwoPoleRetainedScaleBounds
-public import PseudoPrime.LLS.PairedEulerExcludedBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerComparisonCertificates
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSPairedEulerExcludedBounds
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-! # Rational small-prime Euler savings and the resulting affine gap -/
 
 @[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
-
-/-- For nonnegative a and b, the rational power bound a^(5/4) at most b follows from a^5 at most
-b^4. Raise both sides to the positive fourth power and use real-power multiplication. This gives
-kernel-checked rational envelopes for small Euler terms. -/
-theorem rpow_five_fourths_le_of_pow_four {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (h : a ^ 5 ≤ b ^ 4) :
-    a ^ (5 / 4 : ℝ) ≤ b := by
-  apply (Real.rpow_le_rpow_iff (Real.rpow_nonneg ha _) hb (by norm_num only : (0 : ℝ) < 4)).mp
-  rw [← Real.rpow_mul ha]
-  norm_num only [show (5 / 4 : ℝ) * 4 = 5 by norm_num only, Real.rpow_ofNat]
-  exact h
 
 /-- For a prime p, a positive denominator cap b and logarithmic lower bound t, the displayed
 rational number bounds the paired Euler weight below. Use the fourth-power envelope and discard

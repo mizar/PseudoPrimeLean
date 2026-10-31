@@ -1,0 +1,48 @@
+/-
+Copyright (c) 2026 Mizar. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Mizar
+-/
+
+module
+
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
+public import PseudoPrime.LLS.PaperStatements.GammaAdaptiveCharacterBounds
+public import PseudoPrime.Analysis.GammaNonOneAdaptiveNumerics
+
+/-! # Scalar budgets for the adaptive Gamma zero mass
+
+The improved zero constant allows the non-one comparison at logarithmic scale 37150.
+All scalar gates hold throughout the full range above this endpoint.
+-/
+
+@[expose] public section
+
+namespace PseudoPrime.LLS.PaperStatements
+
+/-- For L≥37150, Q≤L+2 and sqrt(x)≥9L/16, the pole term is at most 21/10.
+ Compare rational coefficients after clearing the denominator. Use in the adaptive comparison. -/
+theorem adaptive_nonOne_pole_budget {L x Q : ℝ} (hL : 37150 ≤ L)
+    (hroot : (9 / 16 : ℝ) * L ≤ Real.sqrt x) (hQ : Q ≤ L + 2) :
+    ((7 / 6 : ℝ) * Q + 4) / Real.sqrt x ≤ 21 / 10 := by
+  have hs : 0 < Real.sqrt x := by linarith only [hL, hroot]
+  rw [div_le_iff₀ hs]
+  nlinarith only [hL, hroot, hQ]
+
+/-- For L≥37150, x≥(17/5)^16, Q≤L+2 and sqrt(x)≥9L/16,
+ the left moment is at most 17/10. Use the variable decay anchor and its rational budget.
+ This closes the contour error in the adaptive witness formula. -/
+theorem adaptive_nonOne_left_budget {L x Q : ℝ} (hL : 37150 ≤ L) (hx : (17 / 5 : ℝ) ^ 16 ≤ x)
+    (hroot : (9 / 16 : ℝ) * L ≤ Real.sqrt x) (hQ0 : 0 ≤ Q) (hQ : Q ≤ L + 2) :
+    x ^ (-9 / 16 : ℝ) * ((16 / 5) * (Q + 283) + 5 / 3) ≤ 17 / 10 := by
+  have hs : 0 < Real.sqrt x := by linarith only [hroot, hL]
+  have hC : 0 ≤ (16 / 5 : ℝ) * (Q + 283) + 5 / 3 := by linarith only [hQ0]
+  have hm :=
+    mul_le_mul_of_nonneg_right
+      (rpow_neg_nine_sixteenths_le_div_scale_sqrt (by norm_num only : (0 : ℝ) < 17 / 5) hx) hC
+  apply hm.trans
+  rw [one_div, mul_comm, ← div_eq_mul_inv,
+    div_le_iff₀ (mul_pos (by norm_num only : (0 : ℝ) < 17 / 5) hs)]
+  nlinarith only [hroot, hL, hQ]
+
+end PseudoPrime.LLS.PaperStatements

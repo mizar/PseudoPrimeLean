@@ -87,35 +87,35 @@ Claim: the signed xi derivative combination is exactly the Gamma resolvent zero 
 Proof: interchange the finite signed list and convergent Poisson series.
 Role: retain coefficient cancellation before applying positivity. -/
 theorem gammaResolvent_zeroMass_eq_real_logDeriv (hRH : RiemannHypothesis) :
-    (∑' ρ : ℂ, (analyticOrderNatAt riemannXi ρ : ℝ) * Analysis.gammaResolventMajorant ρ.im) =
-      (Analysis.gammaResolventCoefficients.map
+    (∑' ρ : ℂ, (analyticOrderNatAt riemannXi ρ : ℝ) * Gamma.gammaResolventMajorant ρ.im) =
+      (Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) * (logDeriv riemannXi (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum := by
-  have hn (ab : ℚ × ℚ) (hab : ab ∈ Analysis.gammaResolventCoefficients) :
+  have hn (ab : ℚ × ℚ) (hab : ab ∈ Gamma.gammaResolventCoefficients) :
     HasSum
       (fun ρ : ℂ ↦
         (analyticOrderNatAt riemannXi ρ : ℝ) * ((ab.1 : ℝ) / ((ab.1 : ℝ) ^ 2 + ρ.im ^ 2)))
       (logDeriv riemannXi (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re := by
     have ha :=
       Rat.cast_lt (K := ℝ) |>.mpr
-        (List.forall_iff_forall_mem.mp Analysis.gammaResolvent_scales_gt_half ab hab)
+        (List.forall_iff_forall_mem.mp Gamma.gammaResolvent_scales_gt_half ab hab)
     norm_num only [Rat.cast_div, Rat.cast_one, Rat.cast_ofNat] at ha
     have hh := hasSum_real_poisson hRH (show (1 / 2 : ℝ) < 1 / 2 + (ab.1 : ℝ) by linarith only [ha])
     simpa only [add_sub_cancel_left, Complex.ofReal_add] using hh
   have he (ρ : ℂ) :
-    (analyticOrderNatAt riemannXi ρ : ℝ) * Analysis.gammaResolventMajorant ρ.im =
-      (Analysis.gammaResolventCoefficients.map
+    (analyticOrderNatAt riemannXi ρ : ℝ) * Gamma.gammaResolventMajorant ρ.im =
+      (Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) *
               ((analyticOrderNatAt riemannXi ρ : ℝ) *
                 ((ab.1 : ℝ) / ((ab.1 : ℝ) ^ 2 + ρ.im ^ 2))))).sum := by
-    rw [Analysis.gammaResolventMajorant, ← List.sum_map_mul_left]
+    rw [Gamma.gammaResolventMajorant, ← List.sum_map_mul_left]
     apply congrArg List.sum
     apply List.map_congr_left
     intro ab _
     ring
   rw [tsum_congr he,
-    Analysis.tsum_list_sum Analysis.gammaResolventCoefficients _
+    Analysis.tsum_list_sum Gamma.gammaResolventCoefficients _
       (fun ab hab ↦ (hn ab hab).summable.mul_left (ab.2 : ℝ))]
   apply congrArg List.sum
   apply List.map_congr_left
@@ -128,7 +128,7 @@ Proof: identify its zero mass and use the certified nonnegative Gamma majorant.
 Role: bound the common Euler mass without a finite prime prefix certificate. -/
 theorem gammaResolvent_real_logDeriv_nonneg (hRH : RiemannHypothesis) :
     0 ≤
-      (Analysis.gammaResolventCoefficients.map
+      (Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) * (logDeriv riemannXi (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum := by
   rw [← gammaResolvent_zeroMass_eq_real_logDeriv hRH]
@@ -143,7 +143,7 @@ Claim: the signed real zeta derivative combination is minus the common Euler mas
 Proof: specialize the exact character Euler identity to modulus one.
 Role: connect xi positivity to the nonnegative prime-power sum. -/
 theorem gammaResolvent_signed_zeta_eq_neg_euler :
-    (Analysis.gammaResolventCoefficients.map
+    (Gamma.gammaResolventCoefficients.map
           (fun ab ↦ (ab.2 : ℝ) * (logDeriv riemannZeta (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum =
       -(∑' n : ℕ, Analysis.gammaResolventMangoldtWeight n) := by
   have h := DirichletLFunction.gammaResolvent_signed_ordinary_eq_euler (1 : DirichletCharacter ℂ 1)
@@ -158,18 +158,18 @@ Proof: separate xi into poles, Gamma and zeta, retaining coefficient signs.
 Role: replace absolute-node Euler allowances by a principal-character bound. -/
 theorem gammaResolvent_euler_le_poles_gamma (hRH : RiemannHypothesis) :
     (∑' n : ℕ, Analysis.gammaResolventMangoldtWeight n) ≤
-      (Analysis.gammaResolventCoefficients.map
+      (Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) * (1 / ((1 / 2 : ℝ) + (ab.1 : ℝ)) + 1 / ((ab.1 : ℝ) - 1 / 2)))).sum +
-        (Analysis.gammaResolventCoefficients.map
+        (Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) *
                 (logDeriv (1 : DirichletCharacter ℂ 1).gammaFactor
                     (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum := by
   have he :
-    (Analysis.gammaResolventCoefficients.map
+    (Gamma.gammaResolventCoefficients.map
           (fun ab ↦ (ab.2 : ℝ) * (logDeriv riemannXi (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum =
-      (Analysis.gammaResolventCoefficients.map
+      (Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) *
               ((1 / ((1 / 2 : ℝ) + (ab.1 : ℝ)) + 1 / ((ab.1 : ℝ) - 1 / 2)) +
@@ -181,7 +181,7 @@ theorem gammaResolvent_euler_le_poles_gamma (hRH : RiemannHypothesis) :
     intro ab hab
     have ha :=
       Rat.cast_lt (K := ℝ) |>.mpr
-        (List.forall_iff_forall_mem.mp Analysis.gammaResolvent_scales_gt_half ab hab)
+        (List.forall_iff_forall_mem.mp Gamma.gammaResolvent_scales_gt_half ab hab)
     norm_num only [Rat.cast_div, Rat.cast_one, Rat.cast_ofNat] at ha
     have hs : 1 < ((((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re := by
       simp only [Complex.add_re, Complex.ofReal_re]
@@ -204,10 +204,10 @@ Claim: the signed elementary pole sum is strictly below fourteen.
 Proof: exact rational arithmetic.
 Role: give a short scalar bound with no input enumeration. -/
 theorem gammaResolvent_pole_sum_lt_fourteen :
-    (Analysis.gammaResolventCoefficients.map
+    (Gamma.gammaResolventCoefficients.map
           (fun ab ↦ (ab.2 : ℝ) * (1 / ((1 / 2 : ℝ) + (ab.1 : ℝ)) + 1 / ((ab.1 : ℝ) - 1 / 2)))).sum <
       14 := by
-  norm_num only [Analysis.gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
+  norm_num only [Gamma.gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg]
 
 /-- Input: RH.
@@ -217,7 +217,7 @@ Role: isolate the remaining signed archimedean numerical estimate. -/
 theorem gammaResolvent_euler_lt_fourteen_add_gamma (hRH : RiemannHypothesis) :
     (∑' n : ℕ, Analysis.gammaResolventMangoldtWeight n) <
       14 +
-        (Analysis.gammaResolventCoefficients.map
+        (Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) *
                 (logDeriv (1 : DirichletCharacter ℂ 1).gammaFactor

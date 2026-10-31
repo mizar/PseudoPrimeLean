@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.AffineConductorWitnessBounds
+public import PseudoPrime.LLS.PaperStatements.AffineConductorWitnessBounds
 public import PseudoPrime.PseudoSquare.Bounds.RefinedConductorRadicalWitnessBounds
 
 /-! # Quadratic witnesses with smaller affine conductor and exclusion costs -/

@@ -62,10 +62,10 @@ theorem GammaScaledCellCertificate.separation_of_prefix (c : GammaScaledCellCert
     (hc : c.prefixScalarCheck C = true)
     (hrows :
       ∀ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true)
+        (gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true)
     (hsum :
       (∑ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow c.cell p).allowance) ≤
+          (gammaAdaptiveProfileRow c.cell p).allowance) ≤
         c.excess)
     {L : ℝ} (hlo : (c.left : ℝ) ≤ L) (hhi : L ≤ (c.right : ℝ)) :
     let x := (c.scale : ℝ) * L ^ 2;
@@ -141,10 +141,10 @@ theorem GammaScaledCellCertificate.separation_asymmetric (c : GammaScaledCellCer
     (hRH : RiemannHypothesis) (hc : c.prefixScalarCheck (28493 / 5000) = true)
     (hrows :
       ∀ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true)
+        (gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true)
     (hsum :
       (∑ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow c.cell p).allowance) ≤
+          (gammaAdaptiveProfileRow c.cell p).allowance) ≤
         c.excess)
     {L : ℝ} (hlo : (c.left : ℝ) ≤ L) (hhi : L ≤ (c.right : ℝ)) :
     let x := (c.scale : ℝ) * L ^ 2;

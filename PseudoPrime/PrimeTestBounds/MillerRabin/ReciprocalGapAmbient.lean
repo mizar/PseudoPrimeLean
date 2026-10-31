@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ReciprocalGapOriginalLevel
+public import PseudoPrime.LLS.PaperStatements.ReciprocalGapOriginalLevel
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.LLS.Theorem11S1Subgroup
 public import PseudoPrime.PrimeTest.MillerRabin.WitnessBound

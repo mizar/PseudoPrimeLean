@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.Phase64Ramified1700Bounds
+public import PseudoPrime.LLS.Phase64Ramified1700Bounds
 public import PseudoPrime.LLS.Phase64TransportedNumericalBudget
 
 /-! # Existing Jacobi numerical budgets on scales through 1700 -/
@@ -20,7 +20,7 @@ scalar budget as before. Insert the certified 13/5 cap. Role: enlarge the scale
 range without changing any global Euler or principal-sum certificate. -/
 theorem phase64_finite_budget_le_scalar_1700 (n q : ℕ) {x : ℝ} (hlo : 1600 ≤ x) (hhi : x ≤ 1700)
     (b : ℝ) : phase64FiniteJacobiBudget n q x b ≤ phase64ScalarJacobiBudget n q x b := by
-  have he := Analysis.phase64_ramified_excess_le_thirteen_fifths_1700 hlo hhi
+  have he := phase64_ramified_excess_le_thirteen_fifths_1700 hlo hhi
   dsimp only [phase64FiniteJacobiBudget, phase64ScalarJacobiBudget]
   linarith only [he]
 

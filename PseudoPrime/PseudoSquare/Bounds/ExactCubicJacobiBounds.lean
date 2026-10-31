@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PseudoSquare.Bounds.ExactQuadraticExclusion
-public import PseudoPrime.LLS.TightCubicRadiusOrder
+public import PseudoPrime.LLS.PaperStatements.TightCubicRadiusOrder
 
 /-! # Cubic Jacobi bounds with exact conductors and exact exclusion costs -/
 

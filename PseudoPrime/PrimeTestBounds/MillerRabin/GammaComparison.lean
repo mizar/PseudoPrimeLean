@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaSubgroupComparison
+public import PseudoPrime.LLS.PaperStatements.GammaSubgroupComparison
 public import PseudoPrime.PrimeTest.MillerRabin.Composite
 public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroupCardinality
 public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroupTwoPrimes

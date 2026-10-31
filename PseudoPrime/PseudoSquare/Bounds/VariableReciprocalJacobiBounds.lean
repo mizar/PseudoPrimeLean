@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.VariableReciprocalConductorBounds
+public import PseudoPrime.LLS.PaperStatements.VariableReciprocalConductorBounds
 public import PseudoPrime.PseudoSquare.Bounds.DirectHadamardJacobiBounds
 
 /-! # Quadratic witnesses with a variable reciprocal cutoff -/

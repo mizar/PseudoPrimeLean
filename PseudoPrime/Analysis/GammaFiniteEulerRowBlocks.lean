@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.FiniteEulerRowData
+
 public import PseudoPrime.Analysis.GammaFiniteEulerIntervals
 
 /-! # Certified finite-row blocks for one-sided Euler prefix bounds -/
@@ -13,25 +15,6 @@ public import PseudoPrime.Analysis.GammaFiniteEulerIntervals
 @[expose] public section
 
 namespace PseudoPrime.Analysis
-
-/-- One finite prime-power row and its rational interval certificate data.
-The fields give a prime base, exponent minus one, logarithm Taylor scale
-and term count, logarithm endpoints and node-power intervals. A valid row
-requires prime primality and a true check; block support is verified separately. -/
-structure GammaFiniteEulerRow where
-  prime : ℕ
-  exponent : ℕ
-  logScale : ℕ
-  logTerms : ℕ
-  logLower : ℚ
-  logUpper : ℚ
-  ratios : ℚ → ℚ × ℚ
-
-/-- The natural prime-power input represented by a row.
-Exponent plus one ensures a positive power. Block certificates verify
-its interval membership and exclude repeated indices. -/
-def GammaFiniteEulerRow.index (r : GammaFiniteEulerRow) : ℕ :=
-  r.prime ^ (r.exponent + 1)
 
 /-- The rational Mangoldt-weight lower allowance for one row.
 Multiply the logarithm lower endpoint by the signed Euler-weight lower

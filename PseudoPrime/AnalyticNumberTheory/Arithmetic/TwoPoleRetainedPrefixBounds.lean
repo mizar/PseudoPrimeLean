@@ -6,9 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.TwoPoleRetainedScaleBounds
-public import PseudoPrime.LLS.PairedEulerExcludedBounds
-public import PseudoPrime.LLS.TwoPoleSmallPrefixSavings
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSPairedEulerExcludedBounds
 
 /-! # Retained real-axis Euler prefixes in signed two-pole witness comparisons -/
 

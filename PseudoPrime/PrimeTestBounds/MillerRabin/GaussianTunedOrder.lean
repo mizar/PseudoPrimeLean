@@ -57,8 +57,8 @@ theorem gaussianTunedLow_lt_low {L : ℝ} (hL : 100 ≤ L) :
   have h0 : (0 : ℝ) ≤ L := by linarith only [hL]
   have hswitch : gaussianLowSwitch (91 / 10) (93 / 10) < (100 : ℝ) := by
     norm_num only [gaussianLowSwitch, gaussianMRRefinedD, gaussianMRRefinedBeta,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
+      gaussianMRRefinedConductor]
   have hraw :
     (91 / 10 : ℝ) <
       Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta

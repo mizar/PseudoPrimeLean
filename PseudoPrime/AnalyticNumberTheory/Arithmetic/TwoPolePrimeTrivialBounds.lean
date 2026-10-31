@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GeneralTwoPoleGammaWitness
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSExcludedCharacterDefect
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CharacterAmbientTriviality
 
 /-! # Character-free two-pole bounds under full prime triviality -/
 

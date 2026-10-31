@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.TriangularFiniteZeroMass
-public import PseudoPrime.LLS.TriangularArchimedeanBounds
+public import PseudoPrime.LLS.PaperStatements.TriangularFiniteZeroMass
+public import PseudoPrime.LLS.PaperStatements.TriangularArchimedeanBounds
 public import PseudoPrime.LLS.PaperStatements.TriangularSignedZeroMass3
 
 /-! # Signed arithmetic formula for triangular absolute zero mass

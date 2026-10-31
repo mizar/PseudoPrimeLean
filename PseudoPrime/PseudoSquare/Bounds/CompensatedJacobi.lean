@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.CompensatedPrimeRates
+public import PseudoPrime.LLS.PaperStatements.CompensatedPrimeRates
 public import PseudoPrime.PseudoSquare.Bounds.ConductorSquareFactorJacobi
 
 /-! # Negative Jacobi witnesses using exact conductor compensation -/

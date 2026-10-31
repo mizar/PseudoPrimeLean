@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaResolventCertificate
+public import PseudoPrime.AnalyticNumberTheory.Gamma.RationalResolventApproximation
+public import PseudoPrime.Analysis.SignedFiniteErrorBounds
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
 public import PseudoPrime.Analysis.GammaCriticalLine
 public import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.Analysis.Complex.ExponentialBounds
@@ -47,9 +50,11 @@ private noncomputable def gammaResolventTailPolynomial (v : ℝ) : ℝ :=
 explicit degree-eight polynomial. Rational normalization and a ring identity verify every
 coefficient; no numerical approximation or external certificate is trusted. -/
 private theorem gammaResolvent_tail_identity (t : ℝ) (v : ℝ) (ht : t ^ 2 = 256 + v) (hv : 0 ≤ v) :
-    gammaResolventTailDenominator v * ((1 + t ^ 2) * gammaResolventMajorant t - 1 / 40000) =
+    gammaResolventTailDenominator v *
+        ((1 + t ^ 2) * AnalyticNumberTheory.Gamma.gammaResolventMajorant t - 1 / 40000) =
       gammaResolventTailPolynomial v := by
-  simp only [gammaResolventMajorant, gammaResolventCoefficients, List.map_cons, List.map_nil,
+  simp only [AnalyticNumberTheory.Gamma.gammaResolventMajorant,
+    AnalyticNumberTheory.Gamma.gammaResolventCoefficients, List.map_cons, List.map_nil,
     List.sum_cons, List.sum_nil]
   rw [ht]
   norm_num only
@@ -100,12 +105,12 @@ private theorem gammaResolvent_tail_polynomial_pos {v : ℝ} (hv : 0 ≤ v) :
 Use the shifted polynomial identity and positivity of its denominator and numerator.
 This lower bound supplies the rational side of Gamma domination on the tail. -/
 theorem gammaResolvent_scaled_gt_of_sq_ge_256 {t : ℝ} (ht : 256 ≤ t ^ 2) :
-    (1 / 40000 : ℝ) < (1 + t ^ 2) * gammaResolventMajorant t := by
+    (1 / 40000 : ℝ) < (1 + t ^ 2) * AnalyticNumberTheory.Gamma.gammaResolventMajorant t := by
   have hv : 0 ≤ t ^ 2 - 256 := sub_nonneg.mpr ht
   have he := gammaResolvent_tail_identity t (t ^ 2 - 256) (by ring) hv
   have hd := gammaResolvent_tail_denominator_pos hv
   have hp := gammaResolvent_tail_polynomial_pos hv
-  have hm : 0 < (1 + t ^ 2) * gammaResolventMajorant t - 1 / 40000 :=
+  have hm : 0 < (1 + t ^ 2) * AnalyticNumberTheory.Gamma.gammaResolventMajorant t - 1 / 40000 :=
     (mul_pos_iff_of_pos_left hd).mp (he.symm ▸ hp)
   exact sub_pos.mp hm
 
@@ -176,7 +181,8 @@ theorem scaled_Gamma_half_add_I_lt_of_abs_ge_sixteen {t : ℝ} (ht : 16 ≤ |t|)
 on the line Re s=1/2. Compare their scaled bounds and cancel the positive factor 1+t².
 Only the compact interval remains for the global Gamma majorant certificate. -/
 theorem norm_Gamma_half_add_I_lt_gammaResolvent_of_abs_ge_sixteen {t : ℝ} (ht : 16 ≤ |t|) :
-    ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ < gammaResolventMajorant t := by
+    ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ <
+      AnalyticNumberTheory.Gamma.gammaResolventMajorant t := by
   have hs : (256 : ℝ) ≤ t ^ 2 := by nlinarith only [ht, sq_abs t]
   have h :=
     (scaled_Gamma_half_add_I_lt_of_abs_ge_sixteen ht).trans
@@ -188,8 +194,13 @@ The rational and exponential tail estimates supply the complementary interval,
 so the zero-mass comparison only needs the compact certificate as input. -/
 theorem norm_Gamma_half_add_I_le_gammaResolvent_of_compact
     (h :
-      ∀ t : ℝ, |t| ≤ 16 → ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤ gammaResolventMajorant t)
-    (t : ℝ) : ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤ gammaResolventMajorant t := by
+      ∀ t : ℝ,
+        |t| ≤ 16 →
+          ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤
+            AnalyticNumberTheory.Gamma.gammaResolventMajorant t)
+    (t : ℝ) :
+    ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤
+      AnalyticNumberTheory.Gamma.gammaResolventMajorant t := by
   by_cases ht : |t| ≤ 16
   · exact h t ht
   · exact (norm_Gamma_half_add_I_lt_gammaResolvent_of_abs_ge_sixteen (le_of_not_ge ht)).le

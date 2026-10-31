@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ReciprocalGapSecantEndpoint
+public import PseudoPrime.LLS.PaperStatements.ReciprocalGapSecantEndpoint
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapFullEndpoint
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapAmbient
 

@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.RationalPoleFiniteEntrance
-public import PseudoPrime.LLS.RationalPoleSharpEntrance
+public import PseudoPrime.LLS.PaperStatements.RationalPoleFiniteEntrance
+public import PseudoPrime.LLS.PaperStatements.RationalPoleSharpEntrance
 public import PseudoPrime.PseudoSquare.Bounds.CommonEndpointBounds
 
 /-! # Full-domain cumulative fourth-pole witness bounds -/

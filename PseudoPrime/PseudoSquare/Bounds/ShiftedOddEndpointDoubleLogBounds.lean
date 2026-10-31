@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ShiftedOddEndpointDoubleLogRoot
-public import PseudoPrime.LLS.SharpOddEndpointWitness
+public import PseudoPrime.LLS.PaperStatements.ShiftedOddEndpointDoubleLogRoot
+public import PseudoPrime.LLS.PaperStatements.SharpOddEndpointWitness
 public import PseudoPrime.PseudoSquare.Bounds.OddEndpointConductorBranches
 public import PseudoPrime.PseudoSquare.Bounds.SharpOddEndpointDoubleLogBounds
 

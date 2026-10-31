@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GaussianMRPrincipalNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRPrincipalNumerics
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianWitnessBounds
 
 /-! # Gaussian MR witnesses from constant principal upper error -/
@@ -21,7 +21,7 @@ error is at most log(n)/800. Retain the conductor sum until bounding it by
 (index-1)log(n), and use the certified actual denominator and strict rational margin. -/
 private theorem gaussian_constant_principal_inequality_contradiction {n : ℕ} [NeZero n]
     (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index) (hL : 0 < Real.log n) :
-    let x := Analysis.gaussianMRScale (Real.log n)
+    let x := gaussianScale (Real.log n)
     let R := (56 / 3 : ℝ) * x ^ (1 / 4 : ℝ) + 13 / 3 + LLS.PaperStatements.gaussianAmbientError n x
     R ≤ Real.log n / 800 →
       ¬(((H.index : ℝ) *
@@ -42,7 +42,7 @@ private theorem gaussian_constant_principal_inequality_contradiction {n : ℕ} [
   have hC := LLS.PaperStatements.subgroupConductorLogSum_le H
   have hCM := mul_le_mul_of_nonneg_left hC (by norm_num only : (0 : ℝ) ≤ 161 / 400)
   have hs := Real.sqrt_nonneg x
-  have hr : 0 ≤ x ^ (1 / 4 : ℝ) := Real.rpow_nonneg (Analysis.gaussianMRScale_nonneg (Real.log n)) _
+  have hr : 0 ≤ x ^ (1 / 4 : ℝ) := Real.rpow_nonneg (gaussianScale_nonneg (Real.log n)) _
   have hd := LLS.gaussian_kernel_normalized_denominator_le_of_four_le_index hiR
   have he :
     (LLS.PaperStatements.gaussianGammaMellinKernel.function (1 / 2)).re = Real.exp (1 / 16 : ℝ) :=
@@ -70,7 +70,7 @@ private theorem gaussian_constant_principal_inequality_contradiction {n : ℕ} [
     dsimp only [R]
     have hc : 0 ≤ (13 / 3 : ℝ) * ((H.index : ℝ) - 1) - 13 := by linarith only [hiR]
     nlinarith only [hCM, hd, hc]
-  have hstrict := mul_lt_mul_of_pos_left (Analysis.gaussianMR_main_term_lt hL hR) hm
+  have hstrict := mul_lt_mul_of_pos_left (gaussian_main_term_lt hL hR) hm
   rw [← mul_assoc] at hstrict
   exact (not_lt_of_ge (hleft.trans (hcmp.trans hright))) hstrict
 
@@ -95,12 +95,11 @@ theorem exists_prime_witness_le_gaussian_principal_of_index_ge_four {n : ℕ} [N
     norm_num only [Nat.cast_ofNat]
     linarith only [hL, hlog]
   by_contra hnone
-  let x := Analysis.gaussianMRScale (Real.log n)
+  let x := gaussianScale (Real.log n)
   have hx : 4 ≤ x :=
-    (by norm_num only : (4 : ℝ) ≤ 3 ^ 16).trans
-      (Analysis.gaussianMRScale_ge_three_pow_sixteen_principal hL)
+    (by norm_num only : (4 : ℝ) ≤ 3 ^ 16).trans (gaussianScale_ge_three_pow_sixteen_principal hL)
   have hcut : (21 / 10 : ℝ) * x = (16 / 25 : ℝ) * (Real.log n) ^ 2 := by
-    dsimp only [x, Analysis.gaussianMRScale]
+    dsimp only [x, gaussianScale]
     ring
   have hpass :
     ∀ r : ℕ,
@@ -112,7 +111,7 @@ theorem exists_prime_witness_le_gaussian_principal_of_index_ge_four {n : ℕ} [N
   have hcmp :=
     gaussian_inequality_of_prime_passes_constant_principal hnlarge hnOdd H hHpass hGRH hx
       (by norm_num only : (0 : ℝ) ≤ 21 / 10) hpass
-  have hR := Analysis.gaussianMR_error_budget_principal hL (le_refl (Real.log n))
+  have hR := gaussian_error_budget_principal hL (le_refl (Real.log n))
   exact gaussian_constant_principal_inequality_contradiction H hi hpos hR hcmp
 
 /-- Under GRH, every odd composite log n≥130000000 has a prime strong

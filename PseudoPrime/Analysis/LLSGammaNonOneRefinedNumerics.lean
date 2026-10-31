@@ -6,7 +6,13 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaNonOneNumerics
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+public import PseudoPrime.Analysis.QuadraticGammaSmoothedNumerics
+
 public import PseudoPrime.Analysis.GammaNonOneRefinedNumerics
 
 /-! # Sharper non-one Gamma error budgets

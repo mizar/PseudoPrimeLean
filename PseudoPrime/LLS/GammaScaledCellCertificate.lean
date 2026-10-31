@@ -41,9 +41,8 @@ structure GammaScaledCellCertificate where
 
 /-- Input: rational certificate data. Definition: the corresponding scale-parametric cell.
 Output: local scale/root data. Role: share the row and elementary-error checks. -/
-def GammaScaledCellCertificate.cell (c : GammaScaledCellCertificate) :
-    Analysis.GammaLocalCellData :=
-  Analysis.gammaScaledEnvelopeCell c.scale c.rootLoRatio c.rootHiRatio c.left c.right
+def GammaScaledCellCertificate.cell (c : GammaScaledCellCertificate) : GammaLocalCellData :=
+  gammaScaledEnvelopeCell c.scale c.rootLoRatio c.rootHiRatio c.left c.right
 
 /-- Input: certificate data. Definition: all sign, root, support, logarithm, error,
 price and scalar-gap comparisons; row checks and their sum remain separate.
@@ -87,10 +86,10 @@ theorem GammaScaledCellCertificate.separation (c : GammaScaledCellCertificate)
     (hRH : RiemannHypothesis) (hc : c.scalarCheck = true)
     (hrows :
       ∀ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true)
+        (gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true)
     (hsum :
       (∑ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow c.cell p).allowance) ≤
+          (gammaAdaptiveProfileRow c.cell p).allowance) ≤
         c.excess)
     {L : ℝ} (hlo : (c.left : ℝ) ≤ L) (hhi : L ≤ (c.right : ℝ)) :
     let x := (c.scale : ℝ) * L ^ 2;

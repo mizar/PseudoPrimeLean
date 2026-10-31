@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.OddEndpointCostMonotonicity
+public import PseudoPrime.LLS.PaperStatements.OddEndpointCostMonotonicity
 public import PseudoPrime.NumberTheory.JacobiWitness.ConductorTwo
 public import PseudoPrime.PseudoSquare.Bounds.OddEndpointTwoCostNonOneJacobi
 

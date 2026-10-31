@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.SignedHalfPowerWitnessBounds
+public import PseudoPrime.LLS.PaperStatements.SignedHalfPowerWitnessBounds
 public import PseudoPrime.PseudoSquare.Bounds.RefinedConductorRadicalWitnessBounds
 
 /-! # Conditional quadratic witness bounds from signed half-scale estimates -/

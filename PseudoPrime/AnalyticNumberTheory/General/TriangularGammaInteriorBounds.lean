@@ -7,8 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.MellinWeights
-public import PseudoPrime.LLS.TriangularGammaPositiveScale
-public import PseudoPrime.LLS.TriangularSignedGammaBounds
+public import PseudoPrime.AnalyticNumberTheory.General.MellinResolventPositive
+public import Mathlib.Tactic.Ring
 
 /-!
 # Signed Gamma bounds inside the triangular logarithmic support

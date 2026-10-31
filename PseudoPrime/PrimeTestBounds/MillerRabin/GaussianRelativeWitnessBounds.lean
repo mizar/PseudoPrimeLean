@@ -6,9 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GaussianMRRelativeNumerics
-public import PseudoPrime.Analysis.GaussianMRVariableRelativeNumerics
-public import PseudoPrime.LLS.RelativeGaussianSubgroupComparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRRelativeNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRVariableRelativeNumerics
+public import PseudoPrime.LLS.PaperStatements.RelativeGaussianSubgroupComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianPrincipalWitnessBounds
 
 /-! # Gaussian MR witnesses from relative-loss principal lower bounds -/
@@ -23,7 +23,7 @@ is at least 1827/2500, while lower, principal, and ambient errors total at most
 300. Retain the conductor sum until its final bound by (index-1)log(n). -/
 theorem gaussian_relative_inequality_contradiction {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
     (hi : 4 ≤ H.index) (hL : 350000 ≤ Real.log n) :
-    let x := Analysis.gaussianMRScale (Real.log n)
+    let x := gaussianScale (Real.log n)
     ¬(((H.index : ℝ) * (1 - (1 / 2000 : ℝ)) *
               (∫ u in (0 : ℝ)..(21 / 10 : ℝ),
                 (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
@@ -58,11 +58,9 @@ theorem gaussian_relative_inequality_contradiction {n : ℕ} [NeZero n] (H : Sub
     mul_le_mul_of_nonneg_left (LLS.PaperStatements.subgroupConductorLogSum_le H)
       (by norm_num only : (0 : ℝ) ≤ 161 / 400)
   have hB :=
-    mul_le_mul_of_nonneg_left (Analysis.gaussianMR_relative_lower_error_le hL)
-      (Nat.cast_nonneg H.index)
+    mul_le_mul_of_nonneg_left (gaussian_relative_lower_error_le hL) (Nat.cast_nonneg H.index)
   have hA :=
-    mul_le_mul_of_nonneg_left
-      (Analysis.gaussianMR_ambient_error_le_relative hL (le_refl (Real.log n))) hm.le
+    mul_le_mul_of_nonneg_left (gaussian_ambient_error_le_relative hL (le_refl (Real.log n))) hm.le
   have hright :
     (161 / 400 : ℝ) * LLS.PaperStatements.subgroupConductorLogSum H +
         (H.index : ℝ) *
@@ -72,7 +70,7 @@ theorem gaussian_relative_inequality_contradiction {n : ℕ} [NeZero n] (H : Sub
         ((H.index : ℝ) - 1) * LLS.PaperStatements.gaussianAmbientError n x ≤
       ((H.index : ℝ) - 1) * ((161 / 400 : ℝ) * Real.log n + 300) := by
     nlinarith only [hC, hB, hA, hiR]
-  have hstrict := mul_lt_mul_of_pos_left (Analysis.gaussianMR_relative_main_term_lt hL) hm
+  have hstrict := mul_lt_mul_of_pos_left (gaussian_relative_main_term_lt hL) hm
   rw [← mul_assoc] at hstrict
   exact (not_lt_of_ge (hleft.trans (hcmp.trans hright))) hstrict
 
@@ -93,12 +91,11 @@ theorem exists_prime_witness_le_gaussian_relative_of_index_ge_four {n : ℕ} [Ne
     norm_num only [Nat.cast_ofNat]
     linarith only [hL, hlog]
   by_contra hnone
-  let x := Analysis.gaussianMRScale (Real.log n)
+  let x := gaussianScale (Real.log n)
   have hx : 4 ≤ x :=
-    (by norm_num only : (4 : ℝ) ≤ 3 ^ 16).trans
-      (Analysis.gaussianMRScale_ge_three_pow_sixteen_relative hL)
+    (by norm_num only : (4 : ℝ) ≤ 3 ^ 16).trans (gaussianScale_ge_three_pow_sixteen_relative hL)
   have hcut : (21 / 10 : ℝ) * x = (16 / 25 : ℝ) * (Real.log n) ^ 2 := by
-    dsimp only [x, Analysis.gaussianMRScale]
+    dsimp only [x, gaussianScale]
     ring
   have hpass :
     ∀ r : ℕ,
@@ -127,7 +124,7 @@ ambient-error and coefficient comparison from the analytic estimate. -/
 theorem gaussianMRVariable_inequality_contradiction {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
     (hi : 4 ≤ H.index) {L : ℝ} (hL : 4000 ≤ L) (hlog : Real.log n ≤ L)
     (hcmp :
-      let r := Analysis.gaussianMRVariableRadius L
+      let r := gaussianVariableRadius L
       let s := Real.sqrt r
       let h := 1 / (3 * s)
       let I :=
@@ -141,7 +138,7 @@ theorem gaussianMRVariable_inequality_contradiction {n : ℕ} [NeZero n] (H : Su
           ((H.index - 1 : ℕ) : ℝ) * LLS.PaperStatements.gaussianAmbientError n (r ^ 2)) :
     False := by
   dsimp only at hcmp
-  let r := Analysis.gaussianMRVariableRadius L
+  let r := gaussianVariableRadius L
   let s := Real.sqrt r
   let h := 1 / (3 * s)
   let I :=
@@ -150,11 +147,11 @@ theorem gaussianMRVariable_inequality_contradiction {n : ℕ} [NeZero n] (H : Su
   let E := Real.exp (1 / 16 : ℝ)
   let k := (H.index : ℝ)
   let d := k - 1
-  have hrL : L / 2 ≤ r := Analysis.gaussianMRVariableRadius_half hL
+  have hrL : L / 2 ≤ r := gaussianVariableRadius_half hL
   have hLpos : 0 < L := by linarith only [hL]
   have hrpos : 0 < r := lt_of_lt_of_le (div_pos hLpos (by norm_num only)) hrL
   have hspos : 0 < s := Real.sqrt_pos.2 hrpos
-  have hs20 : 20 ≤ s := by simpa only [r, s] using Analysis.gaussianMRVariableRadius_sqrt_lower hL
+  have hs20 : 20 ≤ s := by simpa only [r, s] using gaussianVariableRadius_sqrt_lower hL
   have hRsq : s ^ 2 = r := by
     dsimp only [s]
     exact Real.sq_sqrt hrpos.le
@@ -187,8 +184,8 @@ theorem gaussianMRVariable_inequality_contradiction {n : ℕ} [NeZero n] (H : Su
   have hEpos : 0 < E := by
     dsimp only [E]; exact Real.exp_pos _
   have hnorm :=
-    Analysis.gaussianMRVariable_normalized_main_lower (u := k / d) (v := 1 / d) (s := s) (I := I)
-      (E := E) (h := h) huEq hv0 hv3 hspos hh hh1 hI hE
+    gaussianVariable_normalized_main_lower (u := k / d) (v := 1 / d) (s := s) (I := I) (E := E)
+      (h := h) huEq hv0 hv3 hspos hh hh1 hI hE
   have hmul := mul_le_mul_of_nonneg_right hnorm (mul_nonneg hd.le hrpos.le)
   have hleftEq :
     (21943 / 30000 - (4 / 9 * (8147 / 10000)) / s) * (d * r) =
@@ -213,10 +210,9 @@ theorem gaussianMRVariable_inequality_contradiction {n : ℕ} [NeZero n] (H : Su
       _ = d * L := by rw [hcastIndex]
   have hconductorScaled :=
     mul_le_mul_of_nonneg_left hconductorL (by norm_num only : (0 : ℝ) ≤ 161 / 400)
-  have hambient := Analysis.gaussianMRVariable_ambient_error_le hL hlog
+  have hambient := gaussianVariable_ambient_error_le hL hlog
   have herror :=
-    Analysis.gaussianMRVariable_error_bracket_upper (s := s) (r := r) (h := h) (E := E) hspos
-      hRsq.symm hh hE
+    gaussianVariable_error_bracket_upper (s := s) (r := r) (h := h) (E := E) hspos hRsq.symm hh hE
   let B := 1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E
   have hB0 : 0 ≤ B := by
     dsimp only [B]
@@ -255,7 +251,7 @@ theorem gaussianMRVariable_inequality_contradiction {n : ℕ} [NeZero n] (H : Su
     have hright := hcmp.trans (by simpa only [B] using hRhs)
     exact hmul.trans (by simpa only [B] using hright)
   have hcancel := le_of_mul_le_mul_left hscaled hd
-  have hbudget := Analysis.gaussianMRVariable_comparison_impossible_of_ambient hL hlog
+  have hbudget := gaussianVariable_impossible_of_ambient hL hlog
   apply hbudget
   have hineq :
     21943 / 30000 * r ≤

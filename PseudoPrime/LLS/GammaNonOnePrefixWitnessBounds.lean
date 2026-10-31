@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaNonOnePrefixNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaNonOnePrefixNumerics
 
 /-! # Non-one witnesses from per-node Gamma prefix estimates
 

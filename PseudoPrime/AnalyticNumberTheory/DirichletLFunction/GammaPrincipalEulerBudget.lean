@@ -54,15 +54,15 @@ Claim: its signed Gamma contribution is at most -3/2.
 Proof: identify each node with the certified even digamma combination.
 Role: improve the fixed zero-mass cost for quadratic even characters. -/
 theorem gammaResolvent_gammaFactor_0_le {q : ℕ} {χ : DirichletCharacter ℂ q} (he : χ.Even) :
-    (Analysis.gammaResolventCoefficients.map
+    (Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum ≤
       -3 / 2 := by
   have ht := Gamma.signed_digamma_0_le
   have hm :
-    (Analysis.gammaResolventCoefficients.map
+    (Gamma.gammaResolventCoefficients.map
         (fun ab ↦ (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)) =
-      (Analysis.gammaResolventCoefficients.map
+      (Gamma.gammaResolventCoefficients.map
         (fun ab ↦
           (ab.2 : ℝ) *
             (((Complex.digamma ((((1 / 2 : ℝ) + (ab.1 : ℝ) + 0) / 2) : ℂ)).re - Real.log Real.pi) /
@@ -71,7 +71,7 @@ theorem gammaResolvent_gammaFactor_0_le {q : ℕ} {χ : DirichletCharacter ℂ q
     intro ab hab
     have ha :=
       Rat.cast_lt (K := ℝ) |>.mpr
-        (List.forall_iff_forall_mem.mp Analysis.gammaResolvent_scales_gt_half ab hab)
+        (List.forall_iff_forall_mem.mp Gamma.gammaResolvent_scales_gt_half ab hab)
     norm_num only [Rat.cast_div, Rat.cast_one, Rat.cast_ofNat] at ha
     have hh := re_gammaFactor_even he (show (0 : ℝ) < 1 / 2 + (ab.1 : ℝ) by linarith only [ha])
     simpa only [Complex.ofReal_add, Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat,
@@ -84,15 +84,15 @@ Claim: its signed Gamma contribution is at most -4/5.
 Proof: identify each node with the certified odd digamma combination.
 Role: retain a negative archimedean gain for odd characters. -/
 theorem gammaResolvent_gammaFactor_1_le {q : ℕ} {χ : DirichletCharacter ℂ q} (he : χ.Odd) :
-    (Analysis.gammaResolventCoefficients.map
+    (Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum ≤
       -4 / 5 := by
   have ht := Gamma.signed_digamma_1_le
   have hm :
-    (Analysis.gammaResolventCoefficients.map
+    (Gamma.gammaResolventCoefficients.map
         (fun ab ↦ (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)) =
-      (Analysis.gammaResolventCoefficients.map
+      (Gamma.gammaResolventCoefficients.map
         (fun ab ↦
           (ab.2 : ℝ) *
             (((Complex.digamma ((((1 / 2 : ℝ) + (ab.1 : ℝ) + 1) / 2) : ℂ)).re - Real.log Real.pi) /
@@ -101,7 +101,7 @@ theorem gammaResolvent_gammaFactor_1_le {q : ℕ} {χ : DirichletCharacter ℂ q
     intro ab hab
     have ha :=
       Rat.cast_lt (K := ℝ) |>.mpr
-        (List.forall_iff_forall_mem.mp Analysis.gammaResolvent_scales_gt_half ab hab)
+        (List.forall_iff_forall_mem.mp Gamma.gammaResolvent_scales_gt_half ab hab)
     norm_num only [Rat.cast_div, Rat.cast_one, Rat.cast_ofNat] at ha
     have hh := re_gammaFactor_odd he (show (0 : ℝ) < 1 / 2 + (ab.1 : ℝ) by linarith only [ha])
     simpa only [Complex.ofReal_add, Complex.ofReal_div, Complex.ofReal_one,
@@ -114,7 +114,7 @@ Claim: its signed Gamma contribution is at most -4/5.
 Proof: split by parity and apply the two signed bounds.
 Role: supply a parity-uniform primitive zero-mass estimate. -/
 theorem gammaResolvent_gammaFactor_le {q : ℕ} (χ : DirichletCharacter ℂ q) :
-    (Analysis.gammaResolventCoefficients.map
+    (Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum ≤
       -4 / 5 := by
@@ -140,13 +140,13 @@ theorem gammaResolvent_zeroMass_lt_principal_budget {q : ℕ} [NeZero q] (hq : 2
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ)
     (hRiemann : RiemannHypothesis) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {A : ℝ}
     (hA :
-      (Analysis.gammaResolventCoefficients.map
+      (Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum ≤
         A) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) <
+          Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + (25 / 2 + A) := by
   have hz := gammaResolvent_zeroMass_le_signed_prefix hq hRH hp hne hinv ∅
   simp only [Finset.sum_empty, mul_zero, sub_zero, add_zero] at hz
@@ -163,7 +163,7 @@ theorem gammaResolvent_zeroMass_lt_principal_even {q : ℕ} [NeZero q] (hq : 2 �
     (he : χ.Even) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) <
+          Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + 11 := by
   have h :=
     gammaResolvent_zeroMass_lt_principal_budget hq hRH hRiemann hp hne hinv
@@ -180,7 +180,7 @@ theorem gammaResolvent_zeroMass_lt_principal_uniform {q : ℕ} [NeZero q] (hq : 
     (hRiemann : RiemannHypothesis) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) <
+          Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + 117 / 10 := by
   have h :=
     gammaResolvent_zeroMass_lt_principal_budget hq hRH hRiemann hp hne hinv

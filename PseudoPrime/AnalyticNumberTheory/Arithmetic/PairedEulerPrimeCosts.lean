@@ -6,24 +6,17 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.TwoPoleSmallPrefixSavings
-public import PseudoPrime.LLS.PairedEulerConductorBudget
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerComparisonCertificates
+
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSPairedEulerExcludedBounds
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-! # Rational prime costs for the paired Euler conductor budget -/
 
 @[expose] public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
-
-/-- For nonnegative a and b, a lower bound b^4 at most a^m implies b at most a^(m/4).
-Raise both sides to the positive fourth power. This converts rational power comparisons into
-small exact integer inequalities without numerical real-power evaluation. -/
-theorem rpow_lower_of_fourth_power {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (m : ℕ) (h : b ^ 4 ≤ a ^ m) :
-    b ≤ a ^ ((m : ℝ) / 4) := by
-  apply (Real.rpow_le_rpow_iff hb (Real.rpow_nonneg ha _) (by norm_num only : (0 : ℝ) < 4)).mp
-  rw [← Real.rpow_mul ha, div_mul_cancel₀ _ (by norm_num only : (4 : ℝ) ≠ 0), Real.rpow_natCast,
-    Real.rpow_ofNat]
-  exact h
 
 /-- For every prime p, the paired Euler weight is at most (3/10) log p, with the additional
 allowance (1/5) log 2 only at two. Bound the denominators by rational fourth-power comparisons

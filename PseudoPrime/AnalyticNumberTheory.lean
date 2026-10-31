@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.AnalyticNumberTheory.Gamma.DyadicResolventIntervals
 public import PseudoPrime.AnalyticNumberTheory.GRH.TrivialZeroExistence
 public import PseudoPrime.AnalyticNumberTheory.GRH.ZeroClassification
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.TrivialZeros

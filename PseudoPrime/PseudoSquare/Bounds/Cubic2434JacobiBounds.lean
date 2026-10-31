@@ -9,7 +9,7 @@ module
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
 
 public import PseudoPrime.PseudoSquare.Bounds.RationalCubicNegativeSupportBounds
-public import PseudoPrime.LLS.Cubic2434LinearBounds
+public import PseudoPrime.LLS.PaperStatements.Cubic2434LinearBounds
 public import PseudoPrime.PseudoSquare.Bounds.RefinedConductorRadicalWitnessBounds
 
 /-! # Improved cubic bounds with the exact squarefree-part logarithm -/

@@ -20,7 +20,7 @@ Output: a rational interval for 35000 to the negative node exponent.
 Role: separate endpoint discovery from the subsequent kernel certificate. -/
 def checkpoint35000Ratios (a : ℚ) : ℚ × ℚ :=
   let rs : List ℕ := [16932791, 5947326, 1237974, 152720, 6617, 100, 0, 0, 0, 0]
-  let r := rs[(Analysis.gammaResolventCoefficients.map Prod.fst).idxOf a]?.getD 0
+  let r := rs[(AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map Prod.fst).idxOf a]?.getD 0
   ((r : ℚ) / 1000000000000, ((r + 1 : ℕ) : ℚ) / 1000000000000)
 
 /-- Claim: all ten power intervals at cutoff 35000 pass the common ratio checker.
@@ -125,7 +125,7 @@ theorem gamma_boundary35000_upper (hRH : RiemannHypothesis) :
 /-- Rational absolute error envelope at cutoff 35000, using the same ten node intervals.
 The root cap is 188 and log cap is 56/5. This certifies the transport error without enumeration. -/
 def checkpoint35000Error : ℚ :=
-  (Analysis.gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦
         let σ := (1 / 2 : ℚ) + ab.1
         let v := (checkpoint35000Ratios ab.1).2

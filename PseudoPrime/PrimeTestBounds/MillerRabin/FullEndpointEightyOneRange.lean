@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.FullEndpointEightyOneRange
+public import PseudoPrime.LLS.PaperStatements.FullEndpointEightyOneRange
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointPolynomial
 
 /-! # Analytic MR bounds through sixty-one and eighty-one percent -/

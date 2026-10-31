@@ -6,9 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaUniformSignedProfiles
-public import PseudoPrime.LLS.GammaUniformTightStart
 public import PseudoPrime.Analysis.LogarithmicShiftBounds
+public import PseudoPrime.Analysis.QuadraticGammaDecimalRefinement
 
 /-! # Decimal and character interfaces for rational signed Gamma profiles
 

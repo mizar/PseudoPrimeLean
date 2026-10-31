@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GaussianMRNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRNumerics
 public import PseudoPrime.LLS.GaussianKernelCoefficientBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaWitnessBounds
@@ -28,7 +28,7 @@ error is at most log(n)/800. Retain the conductor sum until bounding it by
 (index-1)log(n), and use the certified actual denominator and strict rational margin. -/
 private theorem gaussian_inequality_contradiction_of_index_ge_four {n : ℕ} [NeZero n]
     (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index) (hL : 0 < Real.log n) :
-    let x := Analysis.gaussianMRScale (Real.log n)
+    let x := gaussianScale (Real.log n)
     let R := (70 / 3 : ℝ) * x ^ (1 / 4 : ℝ) + LLS.PaperStatements.gaussianAmbientError n x
     R ≤ Real.log n / 800 →
       ¬(((H.index : ℝ) *
@@ -48,7 +48,7 @@ private theorem gaussian_inequality_contradiction_of_index_ge_four {n : ℕ} [Ne
   have hC := LLS.PaperStatements.subgroupConductorLogSum_le H
   have hCM := mul_le_mul_of_nonneg_left hC (by norm_num only : (0 : ℝ) ≤ 161 / 400)
   have hs := Real.sqrt_nonneg x
-  have hr : 0 ≤ x ^ (1 / 4 : ℝ) := Real.rpow_nonneg (Analysis.gaussianMRScale_nonneg (Real.log n)) _
+  have hr : 0 ≤ x ^ (1 / 4 : ℝ) := Real.rpow_nonneg (gaussianScale_nonneg (Real.log n)) _
   have hd := LLS.gaussian_kernel_normalized_denominator_le_of_four_le_index hiR
   have he :
     (LLS.PaperStatements.gaussianGammaMellinKernel.function (1 / 2)).re = Real.exp (1 / 16 : ℝ) :=
@@ -75,7 +75,7 @@ private theorem gaussian_inequality_contradiction_of_index_ge_four {n : ℕ} [Ne
           linarith only [hiR])
     dsimp only [R]
     nlinarith only [hCM, hd]
-  have hstrict := mul_lt_mul_of_pos_left (Analysis.gaussianMR_main_term_lt hL hR) hm
+  have hstrict := mul_lt_mul_of_pos_left (gaussian_main_term_lt hL hR) hm
   rw [← mul_assoc] at hstrict
   exact (not_lt_of_ge (hleft.trans (hcmp.trans hright))) hstrict
 
@@ -93,7 +93,7 @@ theorem exists_prime_witness_le_gaussian_of_index_ge_four {n : ℕ} [NeZero n] (
         (r : ℝ) ≤ (16 / 25 : ℝ) * (Real.log n) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   classical
-  have hL := Analysis.gaussianMR_log_cutoff hn
+  have hL := gaussian_log_cutoff hn
   have hpos : 0 < Real.log n := (by norm_num only : (0 : ℝ) < 225000000).trans_le hL
   have hlog := Real.log_le_sub_one_of_pos (Nat.cast_pos.mpr (NeZero.pos n) : (0 : ℝ) < n)
   have hnlarge : 20000 ≤ n := by
@@ -101,11 +101,11 @@ theorem exists_prime_witness_le_gaussian_of_index_ge_four {n : ℕ} [NeZero n] (
     norm_num only [Nat.cast_ofNat]
     linarith only [hL, hlog]
   by_contra hnone
-  let x := Analysis.gaussianMRScale (Real.log n)
+  let x := gaussianScale (Real.log n)
   have hx : 4 ≤ x :=
-    (by norm_num only : (4 : ℝ) ≤ 3 ^ 16).trans (Analysis.gaussianMRScale_ge_three_pow_sixteen hL)
+    (by norm_num only : (4 : ℝ) ≤ 3 ^ 16).trans (gaussianScale_ge_three_pow_sixteen hL)
   have hcut : (21 / 10 : ℝ) * x = (16 / 25 : ℝ) * (Real.log n) ^ 2 := by
-    dsimp only [x, Analysis.gaussianMRScale]
+    dsimp only [x, gaussianScale]
     ring
   have hpass :
     ∀ r : ℕ,
@@ -117,7 +117,7 @@ theorem exists_prime_witness_le_gaussian_of_index_ge_four {n : ℕ} [NeZero n] (
   have hcmp :=
     gaussian_inequality_of_prime_passes_in_subgroup hnlarge hnOdd H hHpass hGRH hx
       (by norm_num only : (0 : ℝ) ≤ 21 / 10) hpass
-  have hR := Analysis.gaussianMR_error_budget hL (le_refl (Real.log n))
+  have hR := gaussian_error_budget hL (le_refl (Real.log n))
   exact gaussian_inequality_contradiction_of_index_ge_four H hi hpos hR hcmp
 
 /-- A decimal exponent at least five gives a modulus cutoff at least 20000.

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.InverseMellin
-public import PseudoPrime.LLS.MellinKernelForwardTransform
+public import PseudoPrime.LLS.PaperStatements.MellinKernelForwardTransform
 public import PseudoPrime.LLS.IndexSixBarrier.IndexSixFourier
 
 /-!

@@ -6,9 +6,14 @@ Authors: Mizar
 
 module
 
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+
 public import PseudoPrime.NumberTheory.UnitGenerationBalanced
 public import PseudoPrime.Analysis.LLSParityRationalWitnessProfiles
-public import PseudoPrime.LLS.SmallModulusGenerationBounds2
 
 /-! # Transferring finite generation certificates to the parity profile
 

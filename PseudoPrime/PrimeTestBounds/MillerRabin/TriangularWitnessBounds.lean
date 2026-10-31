@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.TriangularSignedLargeIndexWitness
+public import PseudoPrime.LLS.PaperStatements.TriangularSignedLargeIndexWitness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexClassification
 public import PseudoPrime.Analysis.NumericalLogBounds
 

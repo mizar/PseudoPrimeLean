@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ExplicitUntaperedPrimeRates
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticExcludedPrimeBudget
 
 /-! # Local even-power cancellation and retained finite exception budgets -/
 

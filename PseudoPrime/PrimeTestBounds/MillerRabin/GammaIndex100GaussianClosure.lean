@@ -8,8 +8,8 @@ module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.Analysis.GaussianGammaKernel
-public import PseudoPrime.LLS.RelativeGaussianSubgroupComparison
-public import PseudoPrime.LLS.GammaNonOneRefinedNumerics
+public import PseudoPrime.LLS.PaperStatements.RelativeGaussianSubgroupComparison
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 public import PseudoPrime.PrimeTest.MillerRabin.SignSubgroupIndex
 
 /-! # Gamma index-100 cutoff and its index-four Gaussian closure -/

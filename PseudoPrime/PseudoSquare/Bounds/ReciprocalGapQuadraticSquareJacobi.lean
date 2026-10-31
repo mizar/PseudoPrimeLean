@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ReciprocalGapQuadraticSquareWitness
+public import PseudoPrime.LLS.PaperStatements.ReciprocalGapQuadraticSquareWitness
 public import PseudoPrime.NumberTheory.JacobiCharacterArithmetic
 public import PseudoPrime.NumberTheory.JacobiWitness.Existence
 

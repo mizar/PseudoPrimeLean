@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.Phase64RetainedExcessBounds
+public import PseudoPrime.LLS.Phase64RetainedExcessBounds
 public import PseudoPrime.LLS.Phase64LowerStartJacobiCell
 
 /-! # A wider fixed-scale witness cell retaining the ramified aggregate saving -/
@@ -22,7 +22,7 @@ Role: admit sharper rational local aggregates without defining a new budget. -/
 theorem phase64_local_budget_le_numerical_of_excess_cap {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) (hRH : RiemannHypothesis) (q : ℕ)
     {x b e : ℝ} (hlo : 1600 ≤ x) (hhi : x ≤ 1700) (hb : 500 ≤ b)
-    (he : Analysis.phase64RamifiedExcess x ≤ e) :
+    (he : phase64RamifiedExcess x ≤ e) :
     phase64JacobiLocalBudget bridge q x b ≤ phase64NumericalJacobiBudget n q x + (e - 13 / 5) := by
   have h1 := phase64_jacobi_local_budget_le_ramified bridge q hlo b
   have h2 := phase64_ramified_budget_le_finite bridge q hlo hhi b
@@ -73,7 +73,7 @@ theorem exists_odd_prime_negative_phase64_retained_fixed_cap
   have hB := phase64_retained_fixed_budget_lt_margin hn.pos hhi hqlog
   have hA := phase64_principalRamp_sharp_lower
   have he :=
-    Analysis.phase64_ramified_excess_le_2503 (by norm_num only : (1600 : ℝ) ≤ 163840 / 99)
+    phase64_ramified_excess_le_2503 (by norm_num only : (1600 : ℝ) ≤ 163840 / 99)
       (by norm_num only : (163840 / 99 : ℝ) ≤ 1660)
   have hb :=
     phase64_local_budget_le_numerical_of_excess_cap bridge hGRH.riemann (4 * n)

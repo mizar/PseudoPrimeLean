@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaPhaseFirstCellBounds
+public import PseudoPrime.LLS.PaperStatements.GammaPhaseFirstCellBounds
 public import PseudoPrime.LLS.GammaResolventCharacterComparison
+public import PseudoPrime.LLS.PaperStatements.GammaResolventCharacterComparison
 public import PseudoPrime.LLS.GammaNoNegativeRampSupport
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.FiniteSignedPrimeIndexedPrefix
 public import PseudoPrime.Analysis.Phase64FirstCellLocalBounds

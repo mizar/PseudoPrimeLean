@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.QuadraticExcludedPrimeBudget
+public import PseudoPrime.LLS.PaperStatements.QuadraticExcludedPrimeBudget
 public import PseudoPrime.PseudoSquare.Bounds.QuadraticExcludedEndpoint
 
 /-! # Jacobi witness bounds from retained prime-factor excess budgets -/

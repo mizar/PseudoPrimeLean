@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointFourStep
+public import PseudoPrime.LLS.PaperStatements.EndpointFourStep
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointEvenPolynomial
 
 /-! # Endpoint witnesses from two and four correction steps -/

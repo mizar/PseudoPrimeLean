@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.JacobiSquareFactorBudget
-public import PseudoPrime.LLS.FiniteExcludedTaperSavings
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticExcludedPrimeBudget
 
 /-! # Exclusion costs with coupled conductor and square-factor rates -/
 

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointPointwise
+public import PseudoPrime.LLS.PaperStatements.EndpointPointwise
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointFixed67
 
 /-! # Fixed prime witness 61 with the pointwise reciprocal loss -/

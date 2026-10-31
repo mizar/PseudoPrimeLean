@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaVariableScaleLocalBounds
+public import PseudoPrime.LLS.GammaVariableScaleLocalBounds
 public import PseudoPrime.LLS.GammaVariableJacobiComparison
+public import PseudoPrime.LLS.PaperStatements.GammaVariableJacobiComparison
 public import PseudoPrime.LLS.GammaSmallScaleLocalBridge
 public import PseudoPrime.LLS.GammaQuadraticPolynomialSeparation
 
@@ -28,8 +29,7 @@ theorem gamma_jacobi_square_dyadic_variable_scale {n : ℕ} {hn : Odd n} {hns : 
     (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
         (∑ p ∈ S, Analysis.gammaActualPrimeLocalCost bridge.character p (K p) x) +
         Analysis.gammaActualPrimeLocalCost bridge.character 2 K2 x ≤
-      Analysis.gammaVariableSquareMass x * Real.log (4 * (n : ℝ)) +
-        Analysis.gammaVariableDyadicAllowance x := by
+      gammaVariableSquareMass x * Real.log (4 * (n : ℝ)) + gammaVariableDyadicAllowance x := by
   have hd := gamma_jacobi_modulus_squarefree_data bridge
   have hf : 0 < (NumberTheory.complexQuadraticCharacter n hn).conductor :=
     (gamma_jacobi_modulus_eq_discriminant bridge).symm ▸ bridge.discriminant_pos
@@ -41,35 +41,35 @@ theorem gamma_jacobi_square_dyadic_variable_scale {n : ℕ} {hn : Odd n} {hns : 
       rw [hfd]
       exact hdecomp
     have hs :=
-      Analysis.gamma_actual_odd_square_absorbed_variable hnf hn hf bridge.squareFactor_odd.pos S hS
+      gamma_actual_odd_square_absorbed_variable hnf hn hf bridge.squareFactor_odd.pos S hS
         bridge.character hχ K hx
     have ht :
       Analysis.gammaActualPrimeLocalCost bridge.character 2 K2 x -
-          Analysis.gammaVariableSquareMass x * Real.log 4 ≤
-        Analysis.gammaVariableDyadicAllowance x := by
+          gammaVariableSquareMass x * Real.log 4 ≤
+        gammaVariableDyadicAllowance x := by
       rcases htwo with h2 | h2
       · have hc :=
-          Analysis.gamma_actual_one_prime_cost_nonpos bridge.character Nat.prime_two
+          gamma_actual_one_prime_cost_nonpos bridge.character Nat.prime_two
             (by simpa only [Nat.cast_ofNat] using h2) K2 (by linarith only [hx])
-        have hm := Analysis.gamma_variable_square_mass_ge x
-        have hl : 0 ≤ Analysis.gammaVariableSquareMass x * Real.log 4 :=
+        have hm := gamma_variable_square_mass_ge x
+        have hl : 0 ≤ gammaVariableSquareMass x * Real.log 4 :=
           mul_nonneg (by linarith only [hm]) (Real.log_nonneg (by norm_num only))
-        linarith only [hc, hl, Analysis.gamma_variable_dyadic_nonneg hx]
-      · have hc := Analysis.gamma_actual_dyadic_minus_one_cost_variable bridge.character h2 K2 hx
+        linarith only [hc, hl, gamma_variable_dyadic_nonneg hx]
+      · have hc := gamma_actual_dyadic_minus_one_cost_variable bridge.character h2 K2 hx
         have hm :=
-          mul_le_mul_of_nonneg_right (Analysis.gamma_variable_square_mass_ge x)
+          mul_le_mul_of_nonneg_right (gamma_variable_square_mass_ge x)
             (Real.log_nonneg (by norm_num only : (1 : ℝ) ≤ 4))
-        dsimp only [Analysis.gammaVariableDyadicAllowance]
+        dsimp only [gammaVariableDyadicAllowance]
         linarith only [hc, hm]
     have hn0 : (n : ℝ) ≠ 0 := (Nat.cast_pos.mpr hn.pos).ne'
     rw [Real.log_mul (by norm_num only : (4 : ℝ) ≠ 0) hn0]
     linarith only [hs, ht]
   · have hs :=
-      Analysis.gamma_actual_square_absorbed_variable hdecomp hn bridge.squarefreePart_pos
+      gamma_actual_square_absorbed_variable hdecomp hn bridge.squarefreePart_pos
         bridge.squareFactor_odd.pos hf hd.1 hd.2 S hS bridge.character hχ K hx
     have ht :=
-      Analysis.gamma_actual_dyadic_zero_cost_variable bridge.character
-        (Analysis.gamma_even_modulus_character_two_zero bridge.character heven) K2 hx
+      gamma_actual_dyadic_zero_cost_variable bridge.character
+        (gamma_even_modulus_character_two_zero bridge.character heven) K2 hx
     linarith only [hs, ht]
 
 /-- Input: the Jacobi bridge, selected minus-one and zero factors, and x>=1.
@@ -85,18 +85,14 @@ theorem gamma_jacobi_joint_local_variable_scale {n : ℕ} {hn : Odd n} {hns : ¬
         (∑ p ∈ S, Analysis.gammaActualPrimeLocalCost bridge.character p (K p) x) +
         Analysis.gammaActualPrimeLocalCost bridge.character 2 K2 x +
         (∑ p ∈ R, Analysis.gammaActualPrimeLocalCost bridge.character p (K p) x) ≤
-      Analysis.gammaVariableSquareMass x * Real.log (4 * (n : ℝ)) +
-        Analysis.gammaVariableDyadicAllowance x +
-        Analysis.gammaRamifiedDualParameter x * Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet x,
+      gammaVariableSquareMass x * Real.log (4 * (n : ℝ)) + gammaVariableDyadicAllowance x +
+        gammaRamifiedDualParameter x * Real.log n +
+        ∑ p ∈ gammaRamifiedDualPrimeSet x,
           Real.log p *
-            max
-              (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-              0 := by
+            max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0 := by
   have hs := gamma_jacobi_square_dyadic_variable_scale bridge S hS hSχ K K2 hx
   have hr :=
-    Analysis.gamma_actual_odd_ramified_signed_cost_le_finite_dual hn R hR bridge.character hRχ K
-      (by linarith only [hx])
+    gamma_odd_signed_cost_le_finite_dual hn R hR bridge.character hRχ K (by linarith only [hx])
   linarith only [hs, hr]
 
 /-- Input: an odd nonsquare Jacobi bridge, arbitrary power prefixes and x>=1.
@@ -109,14 +105,11 @@ theorem gamma_jacobi_all_local_variable_scale {n : ℕ} {hn : Odd n} {hns : ¬Is
     (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
         (∑ p ∈ (4 * n).primeFactors,
           Analysis.gammaActualPrimeLocalCost bridge.character p (K p) x) ≤
-      Analysis.gammaVariableSquareMass x * Real.log (4 * (n : ℝ)) +
-        Analysis.gammaVariableDyadicAllowance x +
-        Analysis.gammaRamifiedDualParameter x * Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet x,
+      gammaVariableSquareMass x * Real.log (4 * (n : ℝ)) + gammaVariableDyadicAllowance x +
+        gammaRamifiedDualParameter x * Real.log n +
+        ∑ p ∈ gammaRamifiedDualPrimeSet x,
           Real.log p *
-            max
-              (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-              0 := by
+            max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0 := by
   let S := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = -1)
   let R := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = 0)
   have hj :=
@@ -138,15 +131,11 @@ Definition: the variable local budget plus the signed Gamma, Euler and pole cost
 Output: an upper bound for ramp minus principal when the comparison premises hold.
 Role: expose a factorization-independent criterion valid from scale two. -/
 noncomputable def gammaVariableScaleArithmeticBudget (n q : ℕ) (x b : ℝ) : ℝ :=
-  Analysis.gammaVariableSquareMass x * Real.log (4 * (n : ℝ)) +
-        Analysis.gammaVariableDyadicAllowance x +
-        Analysis.gammaRamifiedDualParameter x * Real.log n +
-        (∑ p ∈ Analysis.gammaRamifiedDualPrimeSet x,
-          Real.log p *
-            max
-              (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-              0) +
-        (Analysis.gammaResolventCoefficients.map
+  gammaVariableSquareMass x * Real.log (4 * (n : ℝ)) + gammaVariableDyadicAllowance x +
+        gammaRamifiedDualParameter x * Real.log n +
+        (∑ p ∈ gammaRamifiedDualPrimeSet x,
+          Real.log p * max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0) +
+        (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv Complex.Gammaℝ (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
         (∑' k : ℕ, Analysis.gammaResolventMangoldtWeight k) -
@@ -213,8 +202,8 @@ and the dyadic allowance is smaller. Role: quantify the retained local gain. -/
 theorem gamma_variable_scale_budget_gain {n q : ℕ} {x b : ℝ} (hx : 4096 ≤ x) :
     gammaVariableScaleArithmeticBudget n q x b + 149 / 10000 ≤
       gammaSmallScaleArithmeticBudget n q x b := by
-  have he := Analysis.gamma_variable_square_mass_eq_of_large_scale hx
-  have hd := Analysis.gamma_variable_dyadic_allowance_gain hx
+  have he := gamma_variable_square_mass_eq_of_large_scale hx
+  have hd := gamma_variable_dyadic_allowance_gain hx
   dsimp only [gammaVariableScaleArithmeticBudget, gammaSmallScaleArithmeticBudget]
   rw [he]
   linarith only [hd]
@@ -228,10 +217,10 @@ theorem gamma_variable_scale_budget_mono {n N q : ℕ} (hn : 0 < n) (hnN : n ≤
   have h4 : Real.log (4 * (n : ℝ)) ≤ Real.log (4 * (N : ℝ)) :=
     Real.log_le_log (mul_pos (by norm_num only) (Nat.cast_pos.mpr hn))
       (mul_le_mul_of_nonneg_left (Nat.cast_le.mpr hnN) (by norm_num only))
-  have hm := Analysis.gamma_variable_square_mass_ge x
+  have hm := gamma_variable_square_mass_ge x
   have h4m :=
-    mul_le_mul_of_nonneg_left h4 (show 0 ≤ Analysis.gammaVariableSquareMass x by linarith only [hm])
-  have hdm := mul_le_mul_of_nonneg_left hl (Analysis.gamma_ramified_dual_parameter_nonneg x)
+    mul_le_mul_of_nonneg_left h4 (show 0 ≤ gammaVariableSquareMass x by linarith only [hm])
+  have hdm := mul_le_mul_of_nonneg_left hl (gamma_ramified_dual_parameter_nonneg x)
   dsimp only [gammaVariableScaleArithmeticBudget]
   linarith only [h4m, hdm]
 
@@ -242,7 +231,7 @@ Role: feed scale-dependent local costs to the shared polynomial criterion. -/
 theorem gamma_joint_prefix_le_variable_scale_budget {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     {L b x : ℝ} (hlog : Real.log n ≤ L) (hx : 1 ≤ x) :
     gammaJointPrefixLocalBudget (NumberTheory.complexQuadraticCharacter n hn) b x ≤
-      Analysis.gammaVariableSquareMass x * (L + 7 / 5) + Analysis.gammaVariableDyadicAllowance x +
+      gammaVariableSquareMass x * (L + 7 / 5) + gammaVariableDyadicAllowance x +
           gammaScaleSignedDualBudget L x -
         2 * (∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k) := by
   obtain ⟨bridge⟩ := NumberTheory.exists_jacobiCharacterArithmeticData hn.pos hn hns
@@ -250,14 +239,13 @@ theorem gamma_joint_prefix_le_variable_scale_budget {n : ℕ} (hn : Odd n) (hns 
   have hl := gamma_jacobi_all_local_variable_scale bridge K hx
   have he : bridge.character = (NumberTheory.complexQuadraticCharacter n hn).primitiveCharacter :=
     bridge.character_eq
-  have hm := mul_le_mul_of_nonneg_left hlog (Analysis.gamma_ramified_dual_parameter_nonneg x)
+  have hm := mul_le_mul_of_nonneg_left hlog (gamma_ramified_dual_parameter_nonneg x)
   have hlog4 : Real.log (4 * (n : ℝ)) ≤ L + 7 / 5 := by
     rw [Real.log_mul (by norm_num only : (4 : ℝ) ≠ 0) (Nat.cast_pos.mpr hn.pos).ne']
     linarith only [hlog, Analysis.log_four_le_seven_fifths]
-  have hmass := Analysis.gamma_variable_square_mass_ge x
+  have hmass := gamma_variable_square_mass_ge x
   have hlead :=
-    mul_le_mul_of_nonneg_left hlog4
-      (show 0 ≤ Analysis.gammaVariableSquareMass x by linarith only [hmass])
+    mul_le_mul_of_nonneg_left hlog4 (show 0 ≤ gammaVariableSquareMass x by linarith only [hmass])
   rw [gammaJointPrefixLocalBudget, ← he]
   dsimp only [gammaScaleSignedDualBudget]
   linarith only [hl, hm, hlead]
@@ -271,8 +259,8 @@ theorem gamma_joint_prefix_le_of_variable_scale_credit {n : ℕ} (hn : Odd n) (h
     {L b x C D : ℝ} (hlog : Real.log n ≤ L) (hx : 1 ≤ x)
     (hcredit :
       C +
-          ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
-              Analysis.gammaVariableDyadicAllowance x +
+          ((gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
+              gammaVariableDyadicAllowance x +
               D) /
             2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
@@ -292,8 +280,8 @@ theorem gamma_common_margin_pos_of_variable_scale_polynomial {n Q : ℕ} (hn : O
     (hlogQ : Real.log Q ≤ L + 7 / 5)
     (hcredit :
       C +
-          ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
-              Analysis.gammaVariableDyadicAllowance x +
+          ((gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
+              gammaVariableDyadicAllowance x +
               D) /
             2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
@@ -340,8 +328,8 @@ Role: show that a larger prefix alone cannot solve this low-scale comparison. -/
 theorem gamma_no_variable_scale_polynomial_45_800 (hRH : RiemannHypothesis) {b C D : ℝ}
     (hcredit :
       C +
-          ((Analysis.gammaVariableSquareMass 800 - 11783423 / 25000000) * (45 + 7 / 5) +
-              Analysis.gammaVariableDyadicAllowance 800 +
+          ((gammaVariableSquareMass 800 - 11783423 / 25000000) * (45 + 7 / 5) +
+              gammaVariableDyadicAllowance 800 +
               D) /
             2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
@@ -349,17 +337,16 @@ theorem gamma_no_variable_scale_polynomial_45_800 (hRH : RiemannHypothesis) {b C
     ¬GammaPairedPolynomialCondition (45 + 7 / 5) 800 C := by
   have hd0 : 0 ≤ gammaScaleSignedDualBudget 45 800 := by
     apply add_nonneg
-    · exact mul_nonneg (Analysis.gamma_ramified_dual_parameter_nonneg _) (by norm_num only)
+    · exact mul_nonneg (gamma_ramified_dual_parameter_nonneg _) (by norm_num only)
     · exact Finset.sum_nonneg (fun p _ ↦ mul_nonneg (Real.log_natCast_nonneg p) (le_max_right _ _))
   have hextra :
     0 ≤
-      (Analysis.gammaVariableSquareMass 800 - 11783423 / 25000000) * (45 + 7 / 5) +
-        Analysis.gammaVariableDyadicAllowance 800 +
+      (gammaVariableSquareMass 800 - 11783423 / 25000000) * (45 + 7 / 5) +
+        gammaVariableDyadicAllowance 800 +
         D :=
     add_nonneg
-      (add_nonneg
-        (mul_nonneg (sub_nonneg.mpr (Analysis.gamma_variable_square_mass_ge _)) (by norm_num only))
-        (Analysis.gamma_variable_dyadic_nonneg (by norm_num only)))
+      (add_nonneg (mul_nonneg (sub_nonneg.mpr (gamma_variable_square_mass_ge _)) (by norm_num only))
+        (gamma_variable_dyadic_nonneg (by norm_num only)))
       (hd0.trans hdual)
   have hP :=
     Summable.sum_le_tsum (Finset.Ioc 0 ⌊b⌋₊)

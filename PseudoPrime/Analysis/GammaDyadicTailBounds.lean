@@ -6,6 +6,9 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.GammaSquareConductorGap
+public import PseudoPrime.Analysis.RealLog
+
 public import PseudoPrime.Analysis.GammaExpRationalBounds
 
 /-! # Uniform large-scale ramified dyadic tail bounds -/

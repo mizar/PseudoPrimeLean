@@ -26,8 +26,8 @@ theorem gaussian1000_large_anchor {L : ℝ} (hL : 132 ≤ L) : (10 : ℝ) < gaus
   have hs : gaussian1000LargeRoot L ^ 2 ≤ 10 * gaussian1000LargeRoot L := by
     nlinarith only [mul_nonneg hp.le (sub_nonneg.mpr ht)]
   norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-    gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-    Analysis.gaussianMR6FifthsEndpoint] at he
+    gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex,
+    gaussian6FifthsEndpoint] at he
   nlinarith only [he, hs, ht, hL]
 
 /-- For L>=132, the raw index-four root exceeds 52/5. Its exact quadratic
@@ -41,7 +41,7 @@ theorem gaussian1000_four_anchor {L : ℝ} (hL : 132 ≤ L) :
   have hs : gaussian1000FourRoot L ^ 2 ≤ (52 / 5 : ℝ) * gaussian1000FourRoot L := by
     nlinarith only [mul_nonneg hp.le (sub_nonneg.mpr ht)]
   norm_num only [gaussian1000FourD, gaussian1000FourBeta, gaussianMRRefinedConductor,
-    gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint] at he
+    gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint] at he
   nlinarith only [he, hs, ht, hL]
 
 /-- For L>=132, the large-index radius is at most 69L/100+39/2.
@@ -53,8 +53,8 @@ theorem gaussian1000_large_square_upper {L : ℝ} (hL : 132 ≤ L) :
   have he := gaussian1000_large_equation (by linarith only [hL] : (0 : ℝ) ≤ L)
   have hprod := mul_nonneg (by linarith only [ht] : 0 ≤ gaussian1000LargeRoot L - 10) hp.le
   norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-    gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-    Analysis.gaussianMR6FifthsEndpoint] at he
+    gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex,
+    gaussian6FifthsEndpoint] at he
   nlinarith only [he, hprod, hL]
 
 /-- For L>=132, the index-four radius is at most 69L/100+39/2.
@@ -66,7 +66,7 @@ theorem gaussian1000_four_square_upper {L : ℝ} (hL : 132 ≤ L) :
   have he := gaussian1000_four_equation (by linarith only [hL] : (0 : ℝ) ≤ L)
   have hprod := mul_nonneg (by linarith only [ht] : 0 ≤ gaussian1000FourRoot L - 52 / 5) hp.le
   norm_num only [gaussian1000FourD, gaussian1000FourBeta, gaussianMRRefinedConductor,
-    gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint] at he
+    gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint] at he
   nlinarith only [he, hprod, hL]
 
 /-- For L>=132, the combined radius is at most 69L/100+39/2.
@@ -104,9 +104,9 @@ theorem gaussian1000_lt_fixed {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 235) :
         gaussianMRRefined_coefficients.2
         (add_nonneg (mul_nonneg hc hL) (by norm_num only : (0 : ℝ) ≤ 163 / 20))
     · norm_num only [gaussianMRRefinedBeta, gaussianMRRefinedD, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+        gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
     · norm_num only [gaussianMRRefinedBeta, gaussianMRRefinedD, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint,
+        gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
         gaussianMRRefinedConductor]
       linarith only [hU]
   have hfour : gaussian1000FourRoot L ≤ (653 / 50 : ℝ) := by
@@ -116,9 +116,9 @@ theorem gaussian1000_lt_fixed {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 235) :
         (add_nonneg (mul_nonneg (mul_nonneg (by norm_num only) hc) hL)
           (by norm_num only : (0 : ℝ) ≤ 127 / 10))
     · norm_num only [gaussian1000FourBeta, gaussian1000FourD, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint]
+        gaussianMRRefinedWidth, gaussian6FifthsEndpoint]
     · norm_num only [gaussian1000FourBeta, gaussian1000FourD, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
+        gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussianMRRefinedConductor]
       linarith only [hU]
   have hs : gaussian1000Root L ≤ (653 / 50 : ℝ) := max_le (by norm_num only) (max_le hlarge hfour)
   have hs2 := (sq_le_sq₀ (gaussian1000_root_pos L).le (by norm_num only)).mpr hs

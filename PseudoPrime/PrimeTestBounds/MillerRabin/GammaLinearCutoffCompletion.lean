@@ -220,20 +220,20 @@ theorem gammaIndex100Radius_ge_affine {L : ℝ} (hL : 330 ≤ L) :
 /-- The 6/5 Gaussian radius is below the `287/200` multiple of the affine
 lower bound for the index-100 Gamma radius from `L = 500` onward. -/
 theorem gaussianMR6FifthsRadius_lt_gammaIndex100Comparison {L : ℝ} (hL : 500 ≤ L) :
-    PseudoPrime.Analysis.gaussianMR6FifthsRadius L <
+    gaussian6FifthsRadius L <
       (287 / 200 : ℝ) * ((11783423 / 25000000 : ℝ) / (91 / 100) * L + 14 / 5) := by
   let R0 := (287 / 200 : ℝ) * ((11783423 / 25000000 : ℝ) / (91 / 100) * L + 14 / 5)
-  let s := PseudoPrime.Analysis.gaussianMR6FifthsRoot L
-  let r := PseudoPrime.Analysis.gaussianMR6FifthsRadius L
+  let s := gaussian6FifthsRoot L
+  let r := gaussian6FifthsRadius L
   let A :=
     (639999 / 1000000 : ℝ) * (287 / 200) * ((11783423 / 25000000 : ℝ) / (91 / 100)) -
       (161 / 400 : ℝ) -
       (257 / 500 : ℝ) * (39 / 1000)
   let B := (639999 / 1000000 : ℝ) * (287 / 200) * (14 / 5)
   have hLpos : 0 < L := by linarith only [hL]
-  have hspos : 0 < s := PseudoPrime.Analysis.gaussianMR6FifthsRoot_pos hL
-  have hsq : r = s ^ 2 := by dsimp only [r, PseudoPrime.Analysis.gaussianMR6FifthsRadius, s]
-  have hradius := PseudoPrime.Analysis.gaussianMR6FifthsRadius_lower hL
+  have hspos : 0 < s := gaussian6FifthsRoot_pos hL
+  have hsq : r = s ^ 2 := by dsimp only [r, gaussian6FifthsRadius, s]
+  have hradius := gaussian6FifthsRadius_lower hL
   have hroot17 : 17 ≤ s := by
     have h17 : (17 : ℝ) ≤ Real.sqrt r := by
       apply Real.le_sqrt_of_sq_le
@@ -249,13 +249,11 @@ theorem gaussianMR6FifthsRadius_lt_gammaIndex100Comparison {L : ℝ} (hL : 500 �
     · positivity
     · dsimp only [R0]
       nlinarith only [hL]
-  have hD : (639999 / 1000000 : ℝ) ≤ PseudoPrime.Analysis.gaussianMR6FifthsD := by
-    norm_num only [PseudoPrime.Analysis.gaussianMR6FifthsD,
-      PseudoPrime.Analysis.gaussianMR6FifthsIndex, PseudoPrime.Analysis.gaussianMR6FifthsMass,
-      PseudoPrime.Analysis.gaussianMR6FifthsEndpoint]
-  have hBeta : PseudoPrime.Analysis.gaussianMR6FifthsBeta ≤ (257 / 500 : ℝ) := by
-    norm_num only [PseudoPrime.Analysis.gaussianMR6FifthsBeta,
-      PseudoPrime.Analysis.gaussianMR6FifthsIndex, PseudoPrime.Analysis.gaussianMR6FifthsMass]
+  have hD : (639999 / 1000000 : ℝ) ≤ gaussian6FifthsD := by
+    norm_num only [gaussian6FifthsD, gaussian6FifthsIndex, gaussian6FifthsMass,
+      gaussian6FifthsEndpoint]
+  have hBeta : gaussian6FifthsBeta ≤ (257 / 500 : ℝ) := by
+    norm_num only [gaussian6FifthsBeta, gaussian6FifthsIndex, gaussian6FifthsMass]
   have hApos : 0 < A := by norm_num only [A]
   have hA500 : 0 < A * 500 + B - 29 := by norm_num only [A, B]
   have hlinear : 0 < A * L + B - 29 := by
@@ -265,37 +263,26 @@ theorem gaussianMR6FifthsRadius_lt_gammaIndex100Comparison {L : ℝ} (hL : 500 �
     nlinarith only [hstep, hA500]
   have hmargin :
     0 <
-      PseudoPrime.Analysis.gaussianMR6FifthsD * R0 -
-        PseudoPrime.Analysis.gaussianMR6FifthsConductor * L -
-        PseudoPrime.Analysis.gaussianMR6FifthsBeta * Real.sqrt R0 -
+      gaussian6FifthsD * R0 - gaussian6FifthsConductor * L - gaussian6FifthsBeta * Real.sqrt R0 -
         29 := by
     have hDscaled := mul_le_mul_of_nonneg_right hD (le_of_lt hRpos)
     have hbetascaled :=
       mul_le_mul hBeta hR0upper (Real.sqrt_nonneg R0) (by norm_num only : (0 : ℝ) ≤ 257 / 500)
-    have hDcon : (161 / 400 : ℝ) = PseudoPrime.Analysis.gaussianMR6FifthsConductor := by
-      norm_num only [PseudoPrime.Analysis.gaussianMR6FifthsConductor]
-    dsimp only [R0, A, B, PseudoPrime.Analysis.gaussianMR6FifthsConductor] at *
+    have hDcon : (161 / 400 : ℝ) = gaussian6FifthsConductor := by
+      norm_num only [gaussian6FifthsConductor]
+    dsimp only [R0, A, B, gaussian6FifthsConductor] at *
     nlinarith only [hDscaled, hbetascaled, hlinear, hDcon]
-  have hEq := PseudoPrime.Analysis.gaussianMR6FifthsRadius_equation hL
-  have hfactorpos :
-    0 <
-      PseudoPrime.Analysis.gaussianMR6FifthsD -
-        PseudoPrime.Analysis.gaussianMR6FifthsBeta / (Real.sqrt R0 + s) := by
+  have hEq := gaussian6FifthsRadius_equation hL
+  have hfactorpos : 0 < gaussian6FifthsD - gaussian6FifthsBeta / (Real.sqrt R0 + s) := by
     have hsum : 17 ≤ Real.sqrt R0 + s := by
       have hsqrt0 : 0 ≤ Real.sqrt R0 := Real.sqrt_nonneg _
       linarith only [hsqrt0, hroot17]
-    have hmul :
-      (639999 / 1000000 : ℝ) * 17 ≤
-        PseudoPrime.Analysis.gaussianMR6FifthsD * (Real.sqrt R0 + s) := by
+    have hmul : (639999 / 1000000 : ℝ) * 17 ≤ gaussian6FifthsD * (Real.sqrt R0 + s) := by
       calc
-        (639999 / 1000000 : ℝ) * 17 ≤ PseudoPrime.Analysis.gaussianMR6FifthsD * 17 := by
-          nlinarith only [hD]
-        _ ≤ PseudoPrime.Analysis.gaussianMR6FifthsD * (Real.sqrt R0 + s) :=
-          mul_le_mul_of_nonneg_left hsum
-            (PseudoPrime.Analysis.gaussianMR6Fifths_coefficients_pos.1.le)
-    have hquot :
-      PseudoPrime.Analysis.gaussianMR6FifthsBeta / (Real.sqrt R0 + s) <
-        PseudoPrime.Analysis.gaussianMR6FifthsD :=
+        (639999 / 1000000 : ℝ) * 17 ≤ gaussian6FifthsD * 17 := by nlinarith only [hD]
+        _ ≤ gaussian6FifthsD * (Real.sqrt R0 + s) :=
+          mul_le_mul_of_nonneg_left hsum (gaussian6Fifths_coefficients_pos.1.le)
+    have hquot : gaussian6FifthsBeta / (Real.sqrt R0 + s) < gaussian6FifthsD :=
       (div_lt_iff₀ (by linarith only [hsum])).2 (by nlinarith only [hmul, hBeta])
     exact sub_pos.mpr hquot
   have hsumpos : 0 < Real.sqrt R0 + s := add_pos (Real.sqrt_pos.2 hRpos) hspos
@@ -304,46 +291,23 @@ theorem gaussianMR6FifthsRadius_lt_gammaIndex100Comparison {L : ℝ} (hL : 500 �
     field_simp [hsumpos.ne']
     nlinarith only [hsqrtSq]
   have hidentity :
-    PseudoPrime.Analysis.gaussianMR6FifthsD * R0 -
-        PseudoPrime.Analysis.gaussianMR6FifthsConductor * L -
-        PseudoPrime.Analysis.gaussianMR6FifthsBeta * Real.sqrt R0 -
-        29 -
-        (PseudoPrime.Analysis.gaussianMR6FifthsD * r -
-          PseudoPrime.Analysis.gaussianMR6FifthsConductor * L -
-          PseudoPrime.Analysis.gaussianMR6FifthsBeta * s -
-          29) =
-      (R0 - r) *
-        (PseudoPrime.Analysis.gaussianMR6FifthsD -
-          PseudoPrime.Analysis.gaussianMR6FifthsBeta / (Real.sqrt R0 + s)) := by
+    gaussian6FifthsD * R0 - gaussian6FifthsConductor * L - gaussian6FifthsBeta * Real.sqrt R0 - 29 -
+        (gaussian6FifthsD * r - gaussian6FifthsConductor * L - gaussian6FifthsBeta * s - 29) =
+      (R0 - r) * (gaussian6FifthsD - gaussian6FifthsBeta / (Real.sqrt R0 + s)) := by
     rw [hsq]
     calc
-      _ =
-          PseudoPrime.Analysis.gaussianMR6FifthsD * (R0 - s ^ 2) -
-            PseudoPrime.Analysis.gaussianMR6FifthsBeta * (Real.sqrt R0 - s) :=
-        by ring
-      _ =
-          (R0 - s ^ 2) *
-            (PseudoPrime.Analysis.gaussianMR6FifthsD -
-              PseudoPrime.Analysis.gaussianMR6FifthsBeta / (Real.sqrt R0 + s)) :=
-        by
+      _ = gaussian6FifthsD * (R0 - s ^ 2) - gaussian6FifthsBeta * (Real.sqrt R0 - s) := by ring
+      _ = (R0 - s ^ 2) * (gaussian6FifthsD - gaussian6FifthsBeta / (Real.sqrt R0 + s)) := by
         rw [hsqrtDiff]
         ring
   have hactual :
-    PseudoPrime.Analysis.gaussianMR6FifthsD * r -
-        PseudoPrime.Analysis.gaussianMR6FifthsConductor * L -
-        PseudoPrime.Analysis.gaussianMR6FifthsBeta * s -
-        29 =
-      0 := by
+    gaussian6FifthsD * r - gaussian6FifthsConductor * L - gaussian6FifthsBeta * s - 29 = 0 := by
     dsimp only [r, s]
     linarith only [hEq]
   have hdiffpos : 0 < R0 - r := by
     by_contra hnot
     have hle : R0 - r ≤ 0 := le_of_not_gt hnot
-    have hprod :
-      (R0 - r) *
-          (PseudoPrime.Analysis.gaussianMR6FifthsD -
-            PseudoPrime.Analysis.gaussianMR6FifthsBeta / (Real.sqrt R0 + s)) ≤
-        0 :=
+    have hprod : (R0 - r) * (gaussian6FifthsD - gaussian6FifthsBeta / (Real.sqrt R0 + s)) ≤ 0 :=
       mul_nonpos_of_nonpos_of_nonneg hle hfactorpos.le
     have hId := hidentity
     rw [hactual, sub_zero] at hId
@@ -356,21 +320,21 @@ theorem gaussianMR6FifthsRadius_lt_gammaIndex100Comparison {L : ℝ} (hL : 500 �
 /-- The constant-18 Gaussian radius lies below the scaled index-100 Gamma
 comparison radius from logarithmic scale 330 onward. -/
 theorem gaussianMR18Radius_lt_gammaIndex100Comparison {L : ℝ} (hL : 330 ≤ L) :
-    PseudoPrime.Analysis.gaussianMR18Radius L <
+    gaussian18Radius L <
       (287 / 200 : ℝ) * ((11783423 / 25000000 : ℝ) / (91 / 100) * L + 14 / 5) := by
   let R0 := (287 / 200 : ℝ) * ((11783423 / 25000000 : ℝ) / (91 / 100) * L + 14 / 5)
-  let s := PseudoPrime.Analysis.gaussianMR18Root L
-  let r := PseudoPrime.Analysis.gaussianMR18Radius L
+  let s := gaussian18Root L
+  let r := gaussian18Radius L
   let A :=
     (639999 / 1000000 : ℝ) * (287 / 200) * ((11783423 / 25000000 : ℝ) / (91 / 100)) -
       (161 / 400 : ℝ) -
       (257 / 500) * (507 / 10000)
   let B := (639999 / 1000000 : ℝ) * (287 / 200) * (14 / 5)
   have hLpos : 0 < L := by linarith only [hL]
-  have hspos : 0 < s := PseudoPrime.Analysis.gaussianMR18Root_pos (by linarith only [hL])
-  have hsq : r = s ^ 2 := by dsimp only [r, PseudoPrime.Analysis.gaussianMR18Radius, s]
-  have hradius := PseudoPrime.Analysis.gaussianMR18Radius_lower (by linarith only [hL])
-  have hroot15 := PseudoPrime.Analysis.gaussianMR18Root_lower_15 (by linarith only [hL])
+  have hspos : 0 < s := gaussian18Root_pos (by linarith only [hL])
+  have hsq : r = s ^ 2 := by dsimp only [r, gaussian18Radius, s]
+  have hradius := gaussian18Radius_lower (by linarith only [hL])
+  have hroot15 := gaussian18Root_lower_15 (by linarith only [hL])
   have hRpos : 0 < R0 := by
     dsimp only [R0]; positivity
   have hR0upper : Real.sqrt R0 ≤ (507 / 10000 : ℝ) * L := by
@@ -379,13 +343,11 @@ theorem gaussianMR18Radius_lt_gammaIndex100Comparison {L : ℝ} (hL : 330 ≤ L)
     · positivity
     · dsimp only [R0]
       nlinarith only [hL]
-  have hD : (639999 / 1000000 : ℝ) ≤ PseudoPrime.Analysis.gaussianMR6FifthsD := by
-    norm_num only [PseudoPrime.Analysis.gaussianMR6FifthsD,
-      PseudoPrime.Analysis.gaussianMR6FifthsIndex, PseudoPrime.Analysis.gaussianMR6FifthsMass,
-      PseudoPrime.Analysis.gaussianMR6FifthsEndpoint]
-  have hBeta : PseudoPrime.Analysis.gaussianMR6FifthsBeta ≤ (257 / 500 : ℝ) := by
-    norm_num only [PseudoPrime.Analysis.gaussianMR6FifthsBeta,
-      PseudoPrime.Analysis.gaussianMR6FifthsIndex, PseudoPrime.Analysis.gaussianMR6FifthsMass]
+  have hD : (639999 / 1000000 : ℝ) ≤ gaussian6FifthsD := by
+    norm_num only [gaussian6FifthsD, gaussian6FifthsIndex, gaussian6FifthsMass,
+      gaussian6FifthsEndpoint]
+  have hBeta : gaussian6FifthsBeta ≤ (257 / 500 : ℝ) := by
+    norm_num only [gaussian6FifthsBeta, gaussian6FifthsIndex, gaussian6FifthsMass]
   have hApos : 0 < A := by norm_num only [A]
   have hA330 : 0 < A * 330 + B - 18 := by norm_num only [A, B]
   have hlinear : 0 < A * L + B - 18 := by
@@ -395,37 +357,26 @@ theorem gaussianMR18Radius_lt_gammaIndex100Comparison {L : ℝ} (hL : 330 ≤ L)
     nlinarith only [hstep, hA330]
   have hmargin :
     0 <
-      PseudoPrime.Analysis.gaussianMR6FifthsD * R0 -
-        PseudoPrime.Analysis.gaussianMR6FifthsConductor * L -
-        PseudoPrime.Analysis.gaussianMR6FifthsBeta * Real.sqrt R0 -
+      gaussian6FifthsD * R0 - gaussian6FifthsConductor * L - gaussian6FifthsBeta * Real.sqrt R0 -
         18 := by
     have hDscaled := mul_le_mul_of_nonneg_right hD (le_of_lt hRpos)
     have hbetascaled :=
       mul_le_mul hBeta hR0upper (Real.sqrt_nonneg R0) (by norm_num only : (0 : ℝ) ≤ 257 / 500)
-    have hDcon : (161 / 400 : ℝ) = PseudoPrime.Analysis.gaussianMR6FifthsConductor := by
-      norm_num only [PseudoPrime.Analysis.gaussianMR6FifthsConductor]
-    dsimp only [R0, A, B, PseudoPrime.Analysis.gaussianMR6FifthsConductor] at *
+    have hDcon : (161 / 400 : ℝ) = gaussian6FifthsConductor := by
+      norm_num only [gaussian6FifthsConductor]
+    dsimp only [R0, A, B, gaussian6FifthsConductor] at *
     nlinarith only [hDscaled, hbetascaled, hlinear, hDcon]
-  have hEq := PseudoPrime.Analysis.gaussianMR18Radius_equation (by linarith only [hL])
-  have hfactorpos :
-    0 <
-      PseudoPrime.Analysis.gaussianMR6FifthsD -
-        PseudoPrime.Analysis.gaussianMR6FifthsBeta / (Real.sqrt R0 + s) := by
+  have hEq := gaussian18Radius_equation (by linarith only [hL])
+  have hfactorpos : 0 < gaussian6FifthsD - gaussian6FifthsBeta / (Real.sqrt R0 + s) := by
     have hsum : 15 ≤ Real.sqrt R0 + s := by
       have hsqrt0 : 0 ≤ Real.sqrt R0 := Real.sqrt_nonneg _
       linarith only [hsqrt0, hroot15]
-    have hmul :
-      (639999 / 1000000 : ℝ) * 15 ≤
-        PseudoPrime.Analysis.gaussianMR6FifthsD * (Real.sqrt R0 + s) := by
+    have hmul : (639999 / 1000000 : ℝ) * 15 ≤ gaussian6FifthsD * (Real.sqrt R0 + s) := by
       calc
-        (639999 / 1000000 : ℝ) * 15 ≤ PseudoPrime.Analysis.gaussianMR6FifthsD * 15 := by
-          nlinarith only [hD]
-        _ ≤ PseudoPrime.Analysis.gaussianMR6FifthsD * (Real.sqrt R0 + s) :=
-          mul_le_mul_of_nonneg_left hsum
-            (PseudoPrime.Analysis.gaussianMR6Fifths_coefficients_pos.1.le)
-    have hquot :
-      PseudoPrime.Analysis.gaussianMR6FifthsBeta / (Real.sqrt R0 + s) <
-        PseudoPrime.Analysis.gaussianMR6FifthsD :=
+        (639999 / 1000000 : ℝ) * 15 ≤ gaussian6FifthsD * 15 := by nlinarith only [hD]
+        _ ≤ gaussian6FifthsD * (Real.sqrt R0 + s) :=
+          mul_le_mul_of_nonneg_left hsum (gaussian6Fifths_coefficients_pos.1.le)
+    have hquot : gaussian6FifthsBeta / (Real.sqrt R0 + s) < gaussian6FifthsD :=
       (div_lt_iff₀ (by linarith only [hsum])).2 (by nlinarith only [hmul, hBeta])
     exact sub_pos.mpr hquot
   have hsumpos : 0 < Real.sqrt R0 + s := add_pos (Real.sqrt_pos.2 hRpos) hspos
@@ -434,46 +385,23 @@ theorem gaussianMR18Radius_lt_gammaIndex100Comparison {L : ℝ} (hL : 330 ≤ L)
     field_simp [hsumpos.ne']
     nlinarith only [hsqrtSq]
   have hidentity :
-    PseudoPrime.Analysis.gaussianMR6FifthsD * R0 -
-        PseudoPrime.Analysis.gaussianMR6FifthsConductor * L -
-        PseudoPrime.Analysis.gaussianMR6FifthsBeta * Real.sqrt R0 -
-        18 -
-        (PseudoPrime.Analysis.gaussianMR6FifthsD * r -
-          PseudoPrime.Analysis.gaussianMR6FifthsConductor * L -
-          PseudoPrime.Analysis.gaussianMR6FifthsBeta * s -
-          18) =
-      (R0 - r) *
-        (PseudoPrime.Analysis.gaussianMR6FifthsD -
-          PseudoPrime.Analysis.gaussianMR6FifthsBeta / (Real.sqrt R0 + s)) := by
+    gaussian6FifthsD * R0 - gaussian6FifthsConductor * L - gaussian6FifthsBeta * Real.sqrt R0 - 18 -
+        (gaussian6FifthsD * r - gaussian6FifthsConductor * L - gaussian6FifthsBeta * s - 18) =
+      (R0 - r) * (gaussian6FifthsD - gaussian6FifthsBeta / (Real.sqrt R0 + s)) := by
     rw [hsq]
     calc
-      _ =
-          PseudoPrime.Analysis.gaussianMR6FifthsD * (R0 - s ^ 2) -
-            PseudoPrime.Analysis.gaussianMR6FifthsBeta * (Real.sqrt R0 - s) :=
-        by ring
-      _ =
-          (R0 - s ^ 2) *
-            (PseudoPrime.Analysis.gaussianMR6FifthsD -
-              PseudoPrime.Analysis.gaussianMR6FifthsBeta / (Real.sqrt R0 + s)) :=
-        by
+      _ = gaussian6FifthsD * (R0 - s ^ 2) - gaussian6FifthsBeta * (Real.sqrt R0 - s) := by ring
+      _ = (R0 - s ^ 2) * (gaussian6FifthsD - gaussian6FifthsBeta / (Real.sqrt R0 + s)) := by
         rw [hsqrtDiff]
         ring
   have hactual :
-    PseudoPrime.Analysis.gaussianMR6FifthsD * r -
-        PseudoPrime.Analysis.gaussianMR6FifthsConductor * L -
-        PseudoPrime.Analysis.gaussianMR6FifthsBeta * s -
-        18 =
-      0 := by
+    gaussian6FifthsD * r - gaussian6FifthsConductor * L - gaussian6FifthsBeta * s - 18 = 0 := by
     dsimp only [r, s]
     linarith only [hEq]
   have hdiffpos : 0 < R0 - r := by
     by_contra hnot
     have hle : R0 - r ≤ 0 := le_of_not_gt hnot
-    have hprod :
-      (R0 - r) *
-          (PseudoPrime.Analysis.gaussianMR6FifthsD -
-            PseudoPrime.Analysis.gaussianMR6FifthsBeta / (Real.sqrt R0 + s)) ≤
-        0 :=
+    have hprod : (R0 - r) * (gaussian6FifthsD - gaussian6FifthsBeta / (Real.sqrt R0 + s)) ≤ 0 :=
       mul_nonpos_of_nonpos_of_nonneg hle hfactorpos.le
     have hId := hidentity
     rw [hactual, sub_zero] at hId
@@ -486,60 +414,52 @@ theorem gaussianMR18Radius_lt_gammaIndex100Comparison {L : ℝ} (hL : 330 ≤ L)
 /-- From logarithmic scale 330 onward, the constant-18 Gaussian witness bound
 is strictly below the index-100 Gamma bound. -/
 theorem gaussianMR18Bound_lt_gammaIndex100Bound {L : ℝ} (hL : 330 ≤ L) :
-    PseudoPrime.Analysis.gaussianMR18Bound L < gammaIndex100Bound L := by
+    gaussian18Bound L < gammaIndex100Bound L := by
   have hrad18 := gaussianMR18Radius_lt_gammaIndex100Comparison hL
   have hgamma := gammaIndex100Radius_ge_affine hL
-  have hrad :
-    PseudoPrime.Analysis.gaussianMR18Radius L < (287 / 200 : ℝ) * gammaIndex100Radius L := by
+  have hrad : gaussian18Radius L < (287 / 200 : ℝ) * gammaIndex100Radius L := by
     have hmul := mul_le_mul_of_nonneg_left hgamma (by norm_num only : (0 : ℝ) ≤ 287 / 200)
     exact hrad18.trans_le hmul
   have hLpos : 0 < L := by linarith only [hL]
-  have hr18pos : 0 < PseudoPrime.Analysis.gaussianMR18Radius L := by
-    have hr18lower := PseudoPrime.Analysis.gaussianMR18Radius_lower (by linarith only [hL])
+  have hr18pos : 0 < gaussian18Radius L := by
+    have hr18lower := gaussian18Radius_lower (by linarith only [hL])
     nlinarith only [hr18lower, hL]
   have hGammaPos := (gammaIndex100Radius_properties hL).1
-  have hsq :
-    (PseudoPrime.Analysis.gaussianMR18Radius L) ^ 2 <
-      ((287 / 200 : ℝ) * gammaIndex100Radius L) ^ 2 :=
+  have hsq : (gaussian18Radius L) ^ 2 < ((287 / 200 : ℝ) * gammaIndex100Radius L) ^ 2 :=
     (sq_lt_sq₀ hr18pos.le (mul_nonneg (by norm_num only) hGammaPos.le)).2 hrad
   have hcoeff : (6 / 5 : ℝ) * (287 / 200) ^ 2 < 99 / 40 := by norm_num only
   have hscale :
-    (6 / 5 : ℝ) * (PseudoPrime.Analysis.gaussianMR18Radius L) ^ 2 <
-      (99 / 40 : ℝ) * (gammaIndex100Radius L) ^ 2 := by
+    (6 / 5 : ℝ) * (gaussian18Radius L) ^ 2 < (99 / 40 : ℝ) * (gammaIndex100Radius L) ^ 2 := by
     have hleft := mul_lt_mul_of_pos_left hsq (by norm_num only : (0 : ℝ) < 6 / 5)
     nlinarith only [hleft, hcoeff, sq_nonneg (gammaIndex100Radius L)]
-  simpa only [PseudoPrime.Analysis.gaussianMR18Bound, gammaIndex100Bound] using hscale
+  simpa only [gaussian18Bound, gammaIndex100Bound] using hscale
 
 /-- For `L ≥ 500`, the 6/5 Gaussian witness bound is strictly below the
 index-100 Gamma bound. The comparison uses the analysis12 rational scale
 `287/200` and its strict coefficient inequality. -/
 theorem gaussianMR6FifthsBound_lt_gammaIndex100Bound {L : ℝ} (hL : 500 ≤ L) :
-    PseudoPrime.Analysis.gaussianMR6FifthsBound L < gammaIndex100Bound L := by
+    gaussian6FifthsBound L < gammaIndex100Bound L := by
   have hrad6 := gaussianMR6FifthsRadius_lt_gammaIndex100Comparison hL
   have hgamma := gammaIndex100Radius_ge_affine (by linarith only [hL])
-  have hrad :
-    PseudoPrime.Analysis.gaussianMR6FifthsRadius L < (287 / 200 : ℝ) * gammaIndex100Radius L := by
+  have hrad : gaussian6FifthsRadius L < (287 / 200 : ℝ) * gammaIndex100Radius L := by
     have hmul := mul_le_mul_of_nonneg_left hgamma (by norm_num only : (0 : ℝ) ≤ 287 / 200)
     exact hrad6.trans_le hmul
   have hLpos : 0 < L := by linarith only [hL]
-  have hr6pos : 0 < PseudoPrime.Analysis.gaussianMR6FifthsRadius L := by
+  have hr6pos : 0 < gaussian6FifthsRadius L := by
     exact
       lt_of_lt_of_le (mul_pos (by norm_num only : (0 : ℝ) < 5 / 8) hLpos)
-        (PseudoPrime.Analysis.gaussianMR6FifthsRadius_lower hL)
+        (gaussian6FifthsRadius_lower hL)
   have hGammaPos := (gammaIndex100Radius_properties (by linarith only [hL])).1
-  have hsq :
-    (PseudoPrime.Analysis.gaussianMR6FifthsRadius L) ^ 2 <
-      ((287 / 200 : ℝ) * gammaIndex100Radius L) ^ 2 :=
+  have hsq : (gaussian6FifthsRadius L) ^ 2 < ((287 / 200 : ℝ) * gammaIndex100Radius L) ^ 2 :=
     (sq_lt_sq₀ hr6pos.le
           (mul_nonneg (by norm_num only)
             (gammaIndex100Radius_properties (by linarith only [hL])).1.le)).2
       hrad
   have hcoeff : (6 / 5 : ℝ) * (287 / 200) ^ 2 < 99 / 40 := by norm_num only
   have hscale :
-    (6 / 5 : ℝ) * (PseudoPrime.Analysis.gaussianMR6FifthsRadius L) ^ 2 <
-      (99 / 40 : ℝ) * (gammaIndex100Radius L) ^ 2 := by
+    (6 / 5 : ℝ) * (gaussian6FifthsRadius L) ^ 2 < (99 / 40 : ℝ) * (gammaIndex100Radius L) ^ 2 := by
     have hleft := mul_lt_mul_of_pos_left hsq (by norm_num only : (0 : ℝ) < 6 / 5)
     nlinarith only [hleft, hcoeff, sq_nonneg (gammaIndex100Radius L)]
-  simpa only [PseudoPrime.Analysis.gaussianMR6FifthsBound, gammaIndex100Bound] using hscale
+  simpa only [gaussian6FifthsBound, gammaIndex100Bound] using hscale
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

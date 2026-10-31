@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaResolventCertificate
+public import PseudoPrime.AnalyticNumberTheory.Gamma.RationalResolventApproximation
+public import PseudoPrime.Analysis.SignedFiniteErrorBounds
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
 public import PseudoPrime.Analysis.LogDirichletNumericalBounds
 
 /-! # Euler-ratio certificates for the Gamma resolvent
@@ -46,7 +49,7 @@ def gammaResolventDyadicExponent (a : ℚ) : ℕ :=
 integer exponent, and twentieth-power inequality d^20 2^m≤1. Verify the
 finite rational and integer data in the kernel. -/
 theorem gammaResolvent_dyadic_checks :
-    gammaResolventCoefficients.Forall
+    AnalyticNumberTheory.Gamma.gammaResolventCoefficients.Forall
       (fun ab ↦
         0 ≤ gammaResolventDyadicLower ab.1 ∧
           20 * ab.1 - 10 = (gammaResolventDyadicExponent ab.1 : ℚ) ∧
@@ -56,7 +59,8 @@ theorem gammaResolvent_dyadic_checks :
 /-- At every certified resolvent node, the supplied rational d is at most
 2^(-(a-1/2)). Cast the finite checks and compare twentieth powers. This
 makes the Euler denominator's numerical replacement sound. -/
-theorem gammaResolvent_dyadic_lower_valid (ab : ℚ × ℚ) (hab : ab ∈ gammaResolventCoefficients) :
+theorem gammaResolvent_dyadic_lower_valid (ab : ℚ × ℚ)
+    (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :
     (gammaResolventDyadicLower ab.1 : ℝ) ≤ (2 : ℝ) ^ (-((ab.1 : ℝ) - 1 / 2)) := by
   obtain ⟨hd, he, hc⟩ := List.forall_iff_forall_mem.mp gammaResolvent_dyadic_checks ab hab
   have hdR := (Rat.cast_le (K := ℝ)).mpr hd
@@ -80,28 +84,37 @@ noncomputable def gammaResolventEulerError (a : ℚ) : ℝ :=
 is strictly below 24. Evaluate the exact rational fractions in the reals.
 This is the additive constant of the signed zero-mass estimate. -/
 theorem gammaResolvent_euler_error_lt_twenty_four :
-    (gammaResolventCoefficients.map (fun ab ↦ |(ab.2 : ℝ)| * gammaResolventEulerError ab.1)).sum <
+    (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
+          (fun ab ↦ |(ab.2 : ℝ)| * gammaResolventEulerError ab.1)).sum <
       (24 : ℝ) := by
-  norm_num only [gammaResolventCoefficients, gammaResolventEulerError, gammaResolventDyadicLower,
-    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true, ite_false]
+  norm_num only [AnalyticNumberTheory.Gamma.gammaResolventCoefficients, gammaResolventEulerError,
+    gammaResolventDyadicLower, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, ite_true,
+    ite_false]
 
 /-- Given the certified centered errors for a finite family of Poisson values,
 the signed combination is less than 11783423/25000000 times L plus 24.
 Keep signs in the common main term and absolute weights only in the error sum.
 This connects the rational error certificate to the analytic Poisson values. -/
 theorem gammaResolvent_weighted_lt_of_euler_centered_bounds (P : ℚ → ℝ) (L : ℝ)
-    (h : ∀ ab ∈ gammaResolventCoefficients, |P ab.1 - L / 2| ≤ gammaResolventEulerError ab.1) :
-    (gammaResolventCoefficients.map (fun ab ↦ (ab.2 : ℝ) * P ab.1)).sum <
+    (h :
+      ∀ ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients,
+        |P ab.1 - L / 2| ≤ gammaResolventEulerError ab.1) :
+    (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map (fun ab ↦ (ab.2 : ℝ) * P ab.1)).sum <
       (11783423 / 25000000 : ℝ) * L + 24 := by
   have ht :=
-    sum_signed_centered_le gammaResolventCoefficients (fun ab ↦ (ab.2 : ℝ)) (fun ab ↦ P ab.1)
-      (fun ab ↦ gammaResolventEulerError ab.1) (L / 2) h
+    sum_signed_centered_le AnalyticNumberTheory.Gamma.gammaResolventCoefficients
+      (fun ab ↦ (ab.2 : ℝ)) (fun ab ↦ P ab.1) (fun ab ↦ gammaResolventEulerError ab.1) (L / 2) h
   have he :
-    (gammaResolventCoefficients.map (fun ab ↦ (ab.2 : ℝ))).sum * (L / 2) =
+    (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map (fun ab ↦ (ab.2 : ℝ))).sum *
+        (L / 2) =
       (11783423 / 25000000 : ℝ) * L := by
     calc
-      _ = ((gammaResolventCoefficients.map (fun ab ↦ (ab.2 : ℝ))).sum / 2) * L := by ring
-      _ = _ := by rw [gammaResolvent_mass_eq]
+      _ =
+          ((AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map (fun ab ↦ (ab.2 : ℝ))).sum /
+              2) *
+            L :=
+        by ring
+      _ = _ := by rw [AnalyticNumberTheory.Gamma.gammaResolvent_mass_eq]
   rw [he] at ht
   exact ht.trans_lt (add_lt_add_right gammaResolvent_euler_error_lt_twenty_four _)
 

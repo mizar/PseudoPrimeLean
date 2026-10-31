@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.PaperStatements
+public import PseudoPrime.LLS.PaperStatements.PaperStatements
 public import Mathlib.Tactic.NormNum.LegendreSymbol
 
 /-! Kernel-checkable bounded certificates for LLS Corollary 1.1. -/

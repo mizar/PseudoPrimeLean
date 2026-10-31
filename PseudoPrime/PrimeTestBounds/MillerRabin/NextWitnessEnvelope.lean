@@ -14,7 +14,7 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaReflectedEnvelope
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRSeededComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularEarlyBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularNextBounds
-public import PseudoPrime.LLS.EndpointStepComparison
+public import PseudoPrime.LLS.PaperStatements.EndpointStepComparison
 
 /-! # The next all-input GRH prime witness envelope -/
 

@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.QuadraticExcludedEndpoint
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticExcludedBudget
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
 public import PseudoPrime.Analysis.FiniteLinearBudget
 
 /-! # Prime-factor budgets for the combined quadratic endpoint weight -/

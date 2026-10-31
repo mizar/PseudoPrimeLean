@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.EndpointConductorBounds
+public import PseudoPrime.LLS.PaperStatements.EndpointConductorBounds
 public import PseudoPrime.PseudoSquare.Bounds.RefinedConductorRadicalWitnessBounds
 
 /-! # Quadratic witnesses from independent endpoint and zero-mass caps -/

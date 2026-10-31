@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ParameterizedCubicSquareFactorRadius
+public import PseudoPrime.LLS.PaperStatements.ParameterizedCubicSquareFactorRadius
 public import PseudoPrime.PseudoSquare.Bounds.TightCubicNegativeSupportBounds
 
 /-! # Negative-support cubic bounds with constant 2434/75 -/

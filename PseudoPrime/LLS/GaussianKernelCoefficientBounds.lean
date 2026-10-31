@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GaussianKernel
+public import PseudoPrime.LLS.PaperStatements.GaussianKernel
 public import PseudoPrime.LLS.ExplicitKernelCoefficientBounds
 
 /-! # P2 rational Gaussian main-term contracts

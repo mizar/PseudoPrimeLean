@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.DirectHadamardConductorBounds
+public import PseudoPrime.LLS.PaperStatements.DirectHadamardConductorBounds
 public import PseudoPrime.PseudoSquare.Bounds.RefinedConductorRadicalWitnessBounds
 
 /-! # Quadratic witnesses retaining the direct even Hadamard bound -/

@@ -6,10 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.FullEndpointEvenPolynomial
-public import PseudoPrime.LLS.FullEndpointEightNinthsRange
-public import PseudoPrime.LLS.FullEndpointEightyOneRange
-public import PseudoPrime.LLS.MidscaleEndpointRadius
+public import PseudoPrime.LLS.PaperStatements.FullEndpointEvenPolynomial
+public import PseudoPrime.LLS.PaperStatements.FullEndpointEightNinthsRange
+public import PseudoPrime.LLS.PaperStatements.FullEndpointEightyOneRange
+public import PseudoPrime.LLS.PaperStatements.MidscaleEndpointRadius
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapEvenAmbient
 
 /-! # Miller-Rabin witnesses from the parity-refined endpoint polynomial -/

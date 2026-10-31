@@ -6,9 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GaussianSubgroupComparison
-public import PseudoPrime.LLS.GaussianConstantSubgroupComparison
-public import PseudoPrime.LLS.RelativeGaussianSubgroupComparison
+public import PseudoPrime.LLS.PaperStatements.GaussianSubgroupComparison
+public import PseudoPrime.LLS.PaperStatements.GaussianConstantSubgroupComparison
+public import PseudoPrime.LLS.PaperStatements.RelativeGaussianSubgroupComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaComparison
 
 /-! # Gaussian comparison under universal strong prime-base passage

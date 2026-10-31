@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.OddEndpointTwoCostPolynomial
+public import PseudoPrime.LLS.PaperStatements.OddEndpointTwoCostPolynomial
 public import PseudoPrime.PseudoSquare.Bounds.OddEndpointConductorBranches
 
 /-! # Polynomial sufficient conditions for odd-prime non-one Jacobi bounds -/

@@ -6,9 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.PairedEulerExcludedBounds
-public import PseudoPrime.LLS.QuadraticExcludedPrimeBudget
-public import PseudoPrime.LLS.GammaQuadraticLocalCorrection
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSPairedEulerExcludedBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticExcludedPrimeBudget
 public import PseudoPrime.Analysis.AlternatingPrefixBounds
 
 /-! # Alternating prime-power cancellation and conductor-sensitive exclusion budgets -/

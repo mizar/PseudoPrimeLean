@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.PaperStatements
+public import PseudoPrime.LLS.PaperStatements.PaperStatements
 public import PseudoPrime.LLS.Theorem11S2
 public import PseudoPrime.LLS.Corollary11SmallBounds
 public import Mathlib.NumberTheory.LegendreSymbol.QuadraticChar.Basic

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GaussianMRNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRNumerics
 
 /-! # Explicit Gaussian three-character branch numerics
 

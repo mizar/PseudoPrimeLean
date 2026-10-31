@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaLocalScale1936
+public import PseudoPrime.LLS.GammaLocalScale1936
 public import PseudoPrime.LLS.GammaCertifiedLocalBridge
 public import PseudoPrime.PseudoSquare.Bounds.GammaCheckpoint1000Bounds
 
@@ -22,9 +22,8 @@ Proof: choose the common auxiliary pole level and transfer to actual separation.
 Role: replace the fixed scale gate by a complete actual local certificate. -/
 theorem exists_prime_neg_one_witness_of_local_certificate {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x δ : ℝ} (hL : 10 ≤ L)
-    (hlog : Real.log n ≤ L) (hx : 2 ≤ x) (cert : Analysis.GammaLocalBudgetCertificate x δ)
-    (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
-    (hgap : δ - 3 / 4 ≤ LLS.gammaFactorFreeSeparation L b x) :
+    (hlog : Real.log n ≤ L) (hx : 2 ≤ x) (cert : LLS.GammaLocalBudgetCertificate x δ) (hb : 1 ≤ b)
+    (hbx : b ≤ (99 / 40 : ℝ) * x) (hgap : δ - 3 / 4 ≤ LLS.gammaFactorFreeSeparation L b x) :
     ∃ q : ℕ, q.Prime ∧ Odd q ∧ (q : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n q = -1 := by
   let Q := max 20000 (4 * n)
   have hQ : 20000 ≤ Q := le_max_left _ _
@@ -45,8 +44,8 @@ Proof: apply the certified witness criterion to every admissible smaller input.
 Role: avoid a finite input search while retaining the exact delta-dependent gap. -/
 theorem QNegOne_le_of_local_certificate {B : ℕ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {b x δ : ℝ}
-    (hB : 10 ≤ Real.log B) (hx : 2 ≤ x) (cert : Analysis.GammaLocalBudgetCertificate x δ)
-    (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
+    (hB : 10 ≤ Real.log B) (hx : 2 ≤ x) (cert : LLS.GammaLocalBudgetCertificate x δ) (hb : 1 ≤ b)
+    (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap : δ - 3 / 4 ≤ LLS.gammaFactorFreeSeparation (Real.log B) b x) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
   apply
@@ -77,7 +76,7 @@ theorem exists_prime_neg_one_witness_of_checkpoint1000_scale1936 {n : ℕ} (hn :
   have hs := LLS.gamma_checkpoint1000_separation_le hGRH.riemann hb hD
   apply
     exists_prime_neg_one_witness_of_local_certificate hn hns hGRH hL hlog (by linarith only [hx])
-      (Analysis.gamma_local_certificate1936 hx) (by linarith only [hb]) hbx
+      (LLS.gamma_local_certificate1936 hx) (by linarith only [hb]) hbx
   norm_num only
   exact hgap.trans hs
 
@@ -94,7 +93,7 @@ theorem QNegOne_le_of_checkpoint1000_scale1936 {B : ℕ}
   have hs := LLS.gamma_checkpoint1000_separation_le hGRH.riemann hb hD
   apply
     QNegOne_le_of_local_certificate hGRH hB (by linarith only [hx])
-      (Analysis.gamma_local_certificate1936 hx) (by linarith only [hb]) hbx
+      (LLS.gamma_local_certificate1936 hx) (by linarith only [hb]) hbx
   norm_num only
   exact hgap.trans hs
 

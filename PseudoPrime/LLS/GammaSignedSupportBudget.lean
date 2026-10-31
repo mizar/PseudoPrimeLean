@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaSignedReciprocalBounds
+public import PseudoPrime.LLS.GammaSignedReciprocalBounds
 public import PseudoPrime.LLS.GammaScaleJointBudget
 
 /-! # Smaller exact support for the signed joint dual budget -/
@@ -24,7 +24,7 @@ noncomputable def gammaSignedSupportPrimeSet (x : ℝ) : Finset ℕ :=
 Proof: compare the cutoffs and use monotonicity of the natural floor.
 Role: restrict the existing scalar dual sum without changing its value. -/
 theorem gamma_signed_support_subset (x : ℝ) :
-    gammaSignedSupportPrimeSet x ⊆ Analysis.gammaRamifiedDualPrimeSet x := by
+    gammaSignedSupportPrimeSet x ⊆ gammaRamifiedDualPrimeSet x := by
   intro p hp
   obtain ⟨hi, hp⟩ := Finset.mem_filter.mp hp
   obtain ⟨h3, hbound⟩ := Finset.mem_Icc.mp hi
@@ -37,17 +37,13 @@ over primes through 1+6 sqrt x. Proof: all removed terms vanish by the signed ta
 Role: reduce the finite scalar computation needed by witness separation. -/
 theorem gamma_scale_signed_dual_budget_eq_small_support (L : ℝ) {x : ℝ} (hx : 1 ≤ x) :
     gammaScaleSignedDualBudget L x =
-      Analysis.gammaRamifiedDualParameter x * L +
+      gammaRamifiedDualParameter x * L +
         ∑ p ∈ gammaSignedSupportPrimeSet x,
           Real.log p *
-            max
-              (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-              0 := by
+            max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0 := by
   have he :=
     Finset.sum_subset (gamma_signed_support_subset x) (f := fun p : ℕ ↦
-      Real.log p *
-        max (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-          0)
+      Real.log p * max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0)
       (fun p hp hn ↦ by
         obtain ⟨hi, hp⟩ := Finset.mem_filter.mp hp
         have h3 := (Finset.mem_Icc.mp hi).1
@@ -58,8 +54,8 @@ theorem gamma_scale_signed_dual_budget_eq_small_support (L : ℝ) {x : ℝ} (hx 
         have hbig :=
           (Nat.floor_lt (by nlinarith only [Real.sqrt_nonneg x] : (0 : ℝ) ≤ 1 + 6 * Real.sqrt x)).mp
             hfloor
-        rw [Analysis.gamma_ramified_signed_excess_eq_zero_of_six_sqrt hp.one_lt hx hbig, mul_zero])
-  exact congrArg (fun z : ℝ ↦ Analysis.gammaRamifiedDualParameter x * L + z) he.symm
+        rw [gamma_ramified_signed_excess_eq_zero_of_six_sqrt hp.one_lt hx hbig, mul_zero])
+  exact congrArg (fun z : ℝ ↦ gammaRamifiedDualParameter x * L + z) he.symm
 
 /-- Input: odd nonsquare n, log n<=L, and x>=4096.
 Claim: the actual character budget is bounded by the smaller signed-support expression.
@@ -69,13 +65,10 @@ theorem gamma_joint_prefix_le_small_signed_support {n : ℕ} (hn : Odd n) (hns :
     {L b x : ℝ} (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) :
     gammaJointPrefixLocalBudget (NumberTheory.complexQuadraticCharacter n hn) b x ≤
       (11783423 / 25000000 : ℝ) * (L + 7 / 5) + 3 / 4 +
-            (Analysis.gammaRamifiedDualParameter x * L +
+            (gammaRamifiedDualParameter x * L +
               ∑ p ∈ gammaSignedSupportPrimeSet x,
                 Real.log p *
-                  max
-                    (Analysis.gammaRamifiedSignedCombinedCost p x -
-                      Analysis.gammaRamifiedDualParameter x)
-                    0) -
+                  max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0) -
           2 * (∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k) +
         7 / 60 := by
   have h := gamma_joint_prefix_le_factor_free_budget_small_scale (b := b) hn hns hlog hx

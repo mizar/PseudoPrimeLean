@@ -6,6 +6,6 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.LLSGammaUniformSmallScaleNumerics
+public import PseudoPrime.LLS.GammaUniformAmbientScaleBudgets
 
 /-! Compatibility import for declarations relocated to their namespace directories. -/

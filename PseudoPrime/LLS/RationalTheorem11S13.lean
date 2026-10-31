@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.RationalTheorem11S12
+
 public import PseudoPrime.LLS.RefinedTheorem11S1
 public import PseudoPrime.Analysis.RationalPart1Separation
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactorSplitBounds

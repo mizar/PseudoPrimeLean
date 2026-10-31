@@ -6,6 +6,9 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.Theorem11S1Subgroup
+public import PseudoPrime.LLS.SmallModulusGenerationBounds2
+
 public import PseudoPrime.NumberTheory.UnitGenerationBalanced
 public import PseudoPrime.Analysis.LLSParityRationalWitnessProfiles
 public import PseudoPrime.Analysis.LLSSmallModulusGenerationBounds

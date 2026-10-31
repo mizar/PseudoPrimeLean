@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaDyadicEulerCertificate
+public import PseudoPrime.Analysis.GammaSquareConductorGap
 public import PseudoPrime.Analysis.LogTaylorBounds
 public import PseudoPrime.Analysis.RealLog
 

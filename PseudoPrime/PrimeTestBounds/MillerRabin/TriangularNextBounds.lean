@@ -27,7 +27,7 @@ theorem triangularNext_local {n q : ℕ} (hn : 0 < n) (hq : 0 < q) (hsize : q ^ 
     Real.log_pow] at hl
   norm_num only [Nat.cast_ofNat] at hl
   have hcap : Real.log q ≤ (5316 / 10000 : ℝ) * Real.log n := by
-    linarith only [hl, hL, Analysis.log_ten_lt_seven_thirds]
+    linarith only [hl, hL, log_ten_lt_seven_thirds]
   have hp : (0 : ℝ) ≤ (5316 / 10000) * Real.log n := by linarith only [hL]
   have hs := (sq_le_sq₀ (Real.log_natCast_nonneg q) hp).mpr hcap
   apply max_le

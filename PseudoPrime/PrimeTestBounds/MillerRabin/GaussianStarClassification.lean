@@ -92,7 +92,7 @@ theorem gaussian_star_small_index_classification {n : ℕ} [NeZero n] (hnOdd : O
     (hn : 10 ^ 142 ≤ n) (hL : 600 ≤ Real.log n) :
     (∃ r : ℕ,
         r.Prime ∧
-          (r : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+          (r : ℝ) ≤ gaussianStarBound (Real.log n) ∧
           ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n)) ∨
       (Squarefree n ∧
         n.primeFactors.card = 3 ∧
@@ -102,7 +102,7 @@ theorem gaussian_star_small_index_classification {n : ℕ} [NeZero n] (hnOdd : O
   rcases coefficient_0283_witness_or_uniform_korselt_triple hnOdd hcomp H hH hi hGRH hn with
     hlocal | htriple
   · obtain ⟨r, hr, hbound, hfail⟩ := hlocal
-    have hcoef := Analysis.gaussianMRStarBound_gt_triangular_coefficient hL
+    have hcoef := gaussianStarBound_gt_triangular_coefficient hL
     exact Or.inl ⟨r, hr, hbound.trans (le_of_lt hcoef), hfail⟩
   · exact Or.inr htriple
 
@@ -117,7 +117,7 @@ theorem exists_prime_witness_le_gaussian_star_of_uniform_korselt_triple_card {n 
     (hL : 600 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianStarBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   obtain ⟨p, q, r, hpq, hpr, hqr, hset⟩ := Finset.card_eq_three.mp hc
   have hpMem : p ∈ n.primeFactors := hset ▸ Finset.mem_insert_self p _
@@ -250,7 +250,7 @@ theorem exists_prime_witness_le_gaussian_star_of_small_fermat_index {n : ℕ} [N
     (hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) (hL : 600 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianStarBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   rcases
     gaussian_star_small_index_classification hnOdd hcomp (PrimeTest.fermatSubgroup n) le_rfl hi hGRH
@@ -277,7 +277,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_uniform_korselt_triple_card {
     (hL : 500 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6FifthsBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   obtain ⟨p, q, r, hpq, hpr, hqr, hset⟩ := Finset.card_eq_three.mp hc
   have hpMem : p ∈ n.primeFactors := hset ▸ Finset.mem_insert_self p _
@@ -313,7 +313,7 @@ theorem exists_prime_witness_le_gaussianMR18_of_uniform_korselt_triple_card {n :
     (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR18Bound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian18Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   obtain ⟨p, q, r, hpq, hpr, hqr, hset⟩ := Finset.card_eq_three.mp hc
   have hpMem : p ∈ n.primeFactors := hset ▸ Finset.mem_insert_self p _
@@ -349,7 +349,7 @@ theorem exists_prime_witness_le_gaussianMR6_of_uniform_korselt_triple_card {n : 
     (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6Bound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   obtain ⟨p, q, r, hpq, hpr, hqr, hset⟩ := Finset.card_eq_three.mp hc
   have hpMem : p ∈ n.primeFactors := hset ▸ Finset.mem_insert_self p _
@@ -382,17 +382,17 @@ theorem exists_prime_witness_le_gaussianMR18_of_small_fermat_index {n : ℕ} [Ne
     (hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR18Bound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian18Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   rcases
     finite_index_witness_or_uniform_korselt_triple_log250 hnOdd hcomp (PrimeTest.fermatSubgroup n)
       le_rfl hi hGRH (by linarith only [hL]) with
     hlocal | htriple
   · obtain ⟨s, hs, hbound, hfail⟩ := hlocal
-    have hbound' := Analysis.gaussianMR18Bound_gt_local_three_tenths hL
+    have hbound' := gaussian18Bound_gt_local_three_tenths hL
     exact ⟨s, hs, hbound.trans (le_of_lt hbound'), hfail⟩
   · obtain ⟨hsf, hc, hK, hU⟩ := htriple
-    have hN27 := Analysis.ten_pow_twentyseven_le_of_log_ge_250 (by linarith only [hL])
+    have hN27 := ten_pow_twentyseven_le_of_log_ge_250 (by linarith only [hL])
     have hnlarge : 20000 ≤ n := by
       have h20000 : 20000 ≤ 10 ^ 27 := by norm_num only
       exact h20000.trans hN27
@@ -407,17 +407,17 @@ theorem exists_prime_witness_le_gaussianMR6_of_small_fermat_index {n : ℕ} [NeZ
     (hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6Bound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   rcases
     finite_index_witness_or_uniform_korselt_triple_log250 hnOdd hcomp (PrimeTest.fermatSubgroup n)
       le_rfl hi hGRH (by linarith only [hL]) with
     hlocal | htriple
   · obtain ⟨s, hs, hbound, hfail⟩ := hlocal
-    have hbound' := Analysis.gaussianMR6Bound_gt_local_three_tenths hL
+    have hbound' := gaussian6Bound_gt_local_three_tenths hL
     exact ⟨s, hs, hbound.trans (le_of_lt hbound'), hfail⟩
   · obtain ⟨hsf, hc, hK, hU⟩ := htriple
-    have hN27 := Analysis.ten_pow_twentyseven_le_of_log_ge_250 (by linarith only [hL])
+    have hN27 := ten_pow_twentyseven_le_of_log_ge_250 (by linarith only [hL])
     have hnlarge : 20000 ≤ n := by
       have h20000 : 20000 ≤ 10 ^ 27 := by norm_num only
       exact h20000.trans hN27
@@ -431,7 +431,7 @@ theorem exists_prime_witness_le_gaussianMR18 {n : ℕ} (hnOdd : Odd n) (hcomp : 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR18Bound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian18Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hn0 : 0 < n := by
     by_contra hnot
@@ -453,9 +453,9 @@ theorem exists_prime_witness_le_gaussianMR18 {n : ℕ} (hnOdd : Odd n) (hcomp : 
       exact h
     have hnlarge : 20000 ≤ n := by
       have h20000 : 20000 ≤ 10 ^ 27 := by norm_num only
-      exact h20000.trans (Analysis.ten_pow_twentyseven_le_of_log_ge_250 (by linarith only [hL]))
-    have hiR : Analysis.gaussianMR6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
-      norm_num only [Analysis.gaussianMR6FifthsIndex]
+      exact h20000.trans (ten_pow_twentyseven_le_of_log_ge_250 (by linarith only [hL]))
+    have hiR : gaussian6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
+      norm_num only [gaussian6FifthsIndex]
       exact_mod_cast hlarge
     have hHpass :
       ∀ z : ZMod n,
@@ -474,7 +474,7 @@ theorem exists_prime_witness_le_gaussianMR6 {n : ℕ} (hnOdd : Odd n) (hcomp : �
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6Bound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hn0 : 0 < n := by
     by_contra hnot
@@ -503,7 +503,7 @@ theorem exists_least_prime_witness_le_gaussianMR6 {n : ℕ} (hnOdd : Odd n) (hco
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        (p : ℝ) ≤ Analysis.gaussianMR6Bound (Real.log n) ∧
+        (p : ℝ) ≤ gaussian6Bound (Real.log n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   classical
   obtain ⟨p, hp, hbound, hreject⟩ := exists_prime_witness_le_gaussianMR6 hnOdd hcomp hGRH hL
@@ -520,7 +520,7 @@ theorem exists_least_prime_witness_le_gaussianMR18 {n : ℕ} (hnOdd : Odd n) (hc
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        (p : ℝ) ≤ Analysis.gaussianMR18Bound (Real.log n) ∧
+        (p : ℝ) ≤ gaussian18Bound (Real.log n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   classical
   obtain ⟨p, hp, hbound, hreject⟩ := exists_prime_witness_le_gaussianMR18 hnOdd hcomp hGRH hL
@@ -537,14 +537,14 @@ theorem exists_prime_witness_le_gaussian6fifths_of_small_fermat_index {n : ℕ} 
     (hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) (hL : 500 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6FifthsBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   rcases
     coefficient_0283_witness_or_uniform_korselt_triple hnOdd hcomp (PrimeTest.fermatSubgroup n)
       le_rfl hi hGRH hn with
     hlocal | htriple
   · obtain ⟨s, hs, hbound, hfail⟩ := hlocal
-    have hbound' := Analysis.gaussianMR6FifthsBound_lower hL
+    have hbound' := gaussian6FifthsBound_lower hL
     exact ⟨s, hs, hbound.trans (le_of_lt hbound'), hfail⟩
   · obtain ⟨hsf, hc, hK, hU⟩ := htriple
     have hnlarge : 20000 ≤ n := by
@@ -561,7 +561,7 @@ theorem exists_prime_witness_le_gaussian_star {n : ℕ} (hnOdd : Odd n) (hcomp :
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 600 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianStarBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hn0 : 0 < n := by
     by_contra hnot
@@ -591,7 +591,7 @@ theorem exists_prime_witness_le_gaussian6fifths {n : ℕ} (hnOdd : Odd n) (hcomp
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6FifthsBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hn0 : 0 < n := by
     by_contra hnot
@@ -624,7 +624,7 @@ theorem exists_least_prime_witness_le_gaussian6fifths {n : ℕ} (hnOdd : Odd n) 
     ∃ s : ℕ,
       s.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6FifthsBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → s ≤ r := by
   classical
   obtain ⟨s, hs, hbound, hfail⟩ := exists_prime_witness_le_gaussian6fifths hnOdd hcomp hGRH hL
@@ -637,8 +637,8 @@ theorem exists_least_prime_witness_le_gaussian6fifths {n : ℕ} (hnOdd : Odd n) 
 /-- For `L >= 600`, the classified Gaussian bound is strictly below the
 index-four Gamma expression, so it improves that branch wherever both apply. -/
 theorem gaussian_star_bound_lt_gamma_index_four {L : ℝ} (hL : 600 ≤ L) :
-    Analysis.gaussianMRStarBound L < (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by
-  have hstar := Analysis.gaussianMRStarBound_lt_seven_tenths hL
+    gaussianStarBound L < (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by
+  have hstar := gaussianStarBound_lt_seven_tenths hL
   have hindex : (7 / 10 : ℝ) * L ^ 2 ≤ (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by
     nlinarith only [hL]
   exact lt_of_lt_of_le hstar hindex
@@ -646,31 +646,30 @@ theorem gaussian_star_bound_lt_gamma_index_four {L : ℝ} (hL : 600 ≤ L) :
 /-- From $L=500$ onward the 6/5 Gaussian bound is below the two-prefix
 clipped-log Gamma envelope. -/
 theorem gaussian6fifths_bound_lt_gammaClippedUpper {L : ℝ} (hL : 500 ≤ L) :
-    Analysis.gaussianMR6FifthsBound L < gammaClippedUpper L := by
-  have h6 := Analysis.gaussianMR6FifthsBound_lt_sevenTenths_sq hL
+    gaussian6FifthsBound L < gammaClippedUpper L := by
+  have h6 := gaussian6FifthsBound_lt_sevenTenths_sq hL
   have hgamma := gammaClippedUpper_ge_sevenTenths_sq (L := L) (by linarith only [hL])
   exact lt_of_lt_of_le h6 hgamma
 
 /-- From $L=600$ onward the classified Gaussian bound is below the new
 two-prefix clipped-log Gamma envelope. -/
 theorem gaussian_star_bound_lt_gammaClippedUpper {L : ℝ} (hL : 600 ≤ L) :
-    Analysis.gaussianMRStarBound L < gammaClippedUpper L := by
-  have hstar := Analysis.gaussianMRStarBound_lt_seven_tenths hL
+    gaussianStarBound L < gammaClippedUpper L := by
+  have hstar := gaussianStarBound_lt_seven_tenths hL
   have hgamma := gammaClippedUpper_ge_sevenTenths_sq (L := L) (by linarith only [hL])
   exact lt_of_lt_of_le hstar hgamma
 
 /-- From scale 600 onward, the 6/5 Gaussian bound improves the classified
 star bound by a strict factor below `2601/2800`. -/
 theorem gaussian6fifths_bound_lt_gaussian_star {L : ℝ} (hL : 600 ≤ L) :
-    Analysis.gaussianMR6FifthsBound L < Analysis.gaussianMRStarBound L := by
-  have hratio := Analysis.gaussianMR6FifthsBound_lt_gaussianMRStarBound_ratio hL
-  have hstarpos : 0 < Analysis.gaussianMRStarBound L := by
-    have hroot := Analysis.gaussianMRStarRoot_pos hL
-    dsimp only [Analysis.gaussianMRStarBound, Analysis.gaussianMRStarRadius]
+    gaussian6FifthsBound L < gaussianStarBound L := by
+  have hratio := gaussian6FifthsBound_lt_gaussianStarBound_ratio hL
+  have hstarpos : 0 < gaussianStarBound L := by
+    have hroot := gaussianStarRoot_pos hL
+    dsimp only [gaussianStarBound, gaussianStarRadius]
     positivity
   have hcoef : (2601 / 2800 : ℝ) < 1 := by norm_num only
-  have hscaled :
-    (2601 / 2800 : ℝ) * Analysis.gaussianMRStarBound L < Analysis.gaussianMRStarBound L := by
+  have hscaled : (2601 / 2800 : ℝ) * gaussianStarBound L < gaussianStarBound L := by
     have hmul := mul_lt_mul_of_pos_right hcoef hstarpos
     simpa only [one_mul] using hmul
   exact hratio.trans hscaled
@@ -682,7 +681,7 @@ theorem exists_least_prime_witness_le_gaussian_star {n : ℕ} (hnOdd : Odd n) (h
     ∃ s : ℕ,
       s.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) ∧
-        (s : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianStarBound (Real.log n) ∧
         ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → s ≤ r := by
   classical
   obtain ⟨s, hs, hbound, hfail⟩ := exists_prime_witness_le_gaussian_star hnOdd hcomp hGRH hL

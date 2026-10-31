@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.GammaAdaptiveAnchorBounds
-public import PseudoPrime.Analysis.GammaMixedEulerCells
+public import PseudoPrime.Analysis.GammaMixedEulerBounds
 
 /-! # Five checked dyadic anchors and an adaptive prime-Euler envelope -/
 
@@ -48,7 +48,7 @@ Proof: kernel integer and rational arithmetic. Role: certify all five anchors in
 theorem gamma_dyadic_anchor_checks :
     ∀ a ∈ gammaDyadicAnchors,
       gammaFiniteEulerRatioCheck a (gammaDyadicAnchorRatios a) = true ∧
-        (gammaResolventCoefficients.map
+        (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
               (fun ab ↦ max ab.2 0 * ((a : ℚ) * (gammaDyadicAnchorRatios a ab.1).2))).sum ≤
           gammaDyadicAnchorCap a := by
   decide +kernel

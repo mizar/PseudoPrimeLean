@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.FiniteScaleShiftedDoubleLogRoot
+public import PseudoPrime.LLS.PaperStatements.FiniteScaleShiftedDoubleLogRoot
 public import PseudoPrime.PseudoSquare.Bounds.ShiftedOddEndpointDoubleLogBounds
 
 /-! # Odd-prime non-one Jacobi witnesses from log scale fifty -/

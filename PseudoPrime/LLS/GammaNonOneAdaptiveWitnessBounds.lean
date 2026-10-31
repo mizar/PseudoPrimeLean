@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaNonOneAdaptiveNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneAdaptiveNumerics
 
 /-! # Non-one Gamma witnesses with adaptive zero mass
 

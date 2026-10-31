@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointPointwiseGrowth
+public import PseudoPrime.LLS.PaperStatements.EndpointPointwiseGrowth
 
 /-! # Monotonicity of pointwise cutoffs and upper-cap fixed-prime guards -/
 

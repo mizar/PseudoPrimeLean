@@ -20,7 +20,8 @@ Claim: the signed combination dominates half its leading node. Use positive
 cumulative coefficients. Role: retain a quantitative part of Euler positivity. -/
 theorem gammaResolvent_weighted_ge_half_leading (w : ℚ → ℝ) (hw : Antitone w) (hzero : 0 ≤ w 7) :
     (1 / 2 : ℝ) * w (11 / 20) ≤
-      (gammaResolventCoefficients.map (fun ab ↦ (ab.2 : ℝ) * w ab.1)).sum := by
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
+          (fun ab ↦ (ab.2 : ℝ) * w ab.1)).sum := by
   have h1 := hw (by norm_num only : (11 / 20 : ℚ) ≤ 16 / 20)
   have h2 := hw (by norm_num only : (16 / 20 : ℚ) ≤ 20 / 20)
   have h3 := hw (by norm_num only : (20 / 20 : ℚ) ≤ 34 / 20)
@@ -28,8 +29,8 @@ theorem gammaResolvent_weighted_ge_half_leading (w : ℚ → ℝ) (hw : Antitone
   have h5 := hw (by norm_num only : (46 / 20 : ℚ) ≤ 64 / 20)
   have h6 := hw (by norm_num only : (64 / 20 : ℚ) ≤ 90 / 20)
   have h7 := hw (by norm_num only : (90 / 20 : ℚ) ≤ 140 / 20)
-  norm_num only [gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
-    List.sum_nil] at ⊢ h1 h2 h3 h4 h5 h6 h7
+  norm_num only [AnalyticNumberTheory.Gamma.gammaResolventCoefficients, List.map_cons, List.map_nil,
+    List.sum_cons, List.sum_nil] at ⊢ h1 h2 h3 h4 h5 h6 h7
   linarith only [h1, h2, h3, h4, h5, h6, h7, hzero]
 
 /-- Input: t>=1. Claim: the actual signed Euler weight is at least half t^(-21/20).

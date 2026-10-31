@@ -21,7 +21,8 @@ Role: strengthen positive Euler block growth without new prime data. -/
 theorem gammaResolvent_weighted_ge_leading (w : ℚ → ℝ) (hw : Antitone w) (hzero : 0 ≤ w 7)
     (hgap : 2 * w (46 / 20) ≤ w (34 / 20)) :
     (56157519 / 100000000 : ℝ) * w (11 / 20) ≤
-      (gammaResolventCoefficients.map (fun ab ↦ (ab.2 : ℝ) * w ab.1)).sum := by
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
+          (fun ab ↦ (ab.2 : ℝ) * w ab.1)).sum := by
   have h1 := hw (by norm_num only : (11 / 20 : ℚ) ≤ 16 / 20)
   have h2 := hw (by norm_num only : (16 / 20 : ℚ) ≤ 20 / 20)
   have h3 := hw (by norm_num only : (20 / 20 : ℚ) ≤ 34 / 20)
@@ -29,8 +30,8 @@ theorem gammaResolvent_weighted_ge_leading (w : ℚ → ℝ) (hw : Antitone w) (
   have h5 := hw (by norm_num only : (46 / 20 : ℚ) ≤ 64 / 20)
   have h6 := hw (by norm_num only : (64 / 20 : ℚ) ≤ 90 / 20)
   have h7 := hw (by norm_num only : (90 / 20 : ℚ) ≤ 140 / 20)
-  norm_num only [gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
-    List.sum_nil] at ⊢ h1 h2 h3 h4 h5 h6 h7 hgap hzero
+  norm_num only [AnalyticNumberTheory.Gamma.gammaResolventCoefficients, List.map_cons, List.map_nil,
+    List.sum_cons, List.sum_nil] at ⊢ h1 h2 h3 h4 h5 h6 h7 hgap hzero
   linarith only [h1, h2, h3, h4, h5, h6, h7, hgap, hzero]
 
 /-- Input: t>=4. Claim: the signed Euler weight retains its leading

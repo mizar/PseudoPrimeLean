@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.Euler16CertifiedBounds
-public import PseudoPrime.LLS.ReciprocalGapTwoShiftBounds
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.Basic
 
 /-! # Certified scalar Euler caps in a fixed two-shift witness criterion -/
 

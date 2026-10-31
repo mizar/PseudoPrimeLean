@@ -7,9 +7,10 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaConductorFreeNonOneBounds
-public import PseudoPrime.LLS.GammaPrincipalEulerCharacterBounds
+public import PseudoPrime.LLS.PaperStatements.GammaPrincipalEulerCharacterBounds
 public import PseudoPrime.LLS.GammaRetainedCommonCostBounds
-public import PseudoPrime.Analysis.LLSGammaPrincipalEulerNonOneBounds2
+public import PseudoPrime.LLS.PaperStatements.GammaPrincipalEulerNonOneBounds2
+public import PseudoPrime.LLS.GammaLogScaleBounds
 
 /-! # Non-one witnesses from retained real-axis Euler budgets -/
 
@@ -28,7 +29,7 @@ theorem exists_odd_prime_ne_one_of_even_gamma_log_22221 {q : ℕ} [NeZero q] (hq
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ χ p ≠ 1 := by
   apply
     exists_odd_prime_ne_one_of_log_ratio_character_budget χ hquad h2 hGRH (by linarith only [hL])
-      (Analysis.nonOne_log_ratio_of_ge_22221 hL) hlogq (C := 541 / 50)
+      (nonOne_log_ratio_of_ge_22221 hL) hlogq (C := 541 / 50)
   · exact
       (PaperStatements.gamma_primitiveCharacter_sum_re_lt_common_euler_cost hq χ hne hGRH
           (by nlinarith only [hL, sq_nonneg (L - 22221)])

@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.TwoPoleConstantBounds
+public import PseudoPrime.LLS.PaperStatements.TwoPoleConstantBounds
 
 /-! # Scale-dependent polynomial numerators for the two-pole witness gap -/
 

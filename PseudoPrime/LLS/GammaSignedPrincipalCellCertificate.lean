@@ -98,8 +98,8 @@ theorem gamma_signed_principal_error_le_cell_envelope {x rlo rhi ell : ℝ} (hlo
 /-- Input: a checked scale cell, root and log bounds, and rational ramp and
 principal allowances. Claim: both real errors obey these allowances throughout
 the cell. Role: share the analytic error transfer independently of cell constants. -/
-theorem gamma_cell_signed_principal_error_bounds (c : Analysis.GammaLocalCellData)
-    (ellX ellE R P : ℚ) (hc : c.check = true) (hX : Real.log (c.hi : ℝ) ≤ ellX)
+theorem gamma_cell_signed_principal_error_bounds (c : GammaLocalCellData) (ellX ellE R P : ℚ)
+    (hc : c.check = true) (hX : Real.log (c.hi : ℝ) ≤ ellX)
     (hE : Real.log ((101 / 40 : ℝ) * (c.hi : ℝ)) ≤ ellE) (hellX : 0 ≤ ellX) (hellE : 0 ≤ ellE)
     (hR : gammaRampCellRationalUpper c.rootLo c.rootHi ellE ≤ R)
     (hP : gammaSignedPrincipalCellRationalUpper c.rootLo c.rootHi ellX ≤ P) {x : ℝ}
@@ -174,10 +174,10 @@ theorem GammaScaledCellCertificate.separation_of_signed_principal_prefix
     (hc : c.signedPrincipalPrefixCheck C = true)
     (hrows :
       ∀ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true)
+        (gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true)
     (hsum :
       (∑ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow c.cell p).allowance) ≤
+          (gammaAdaptiveProfileRow c.cell p).allowance) ≤
         c.excess)
     {L : ℝ} (hlo : (c.left : ℝ) ≤ L) (hhi : L ≤ (c.right : ℝ)) :
     let x := (c.scale : ℝ) * L ^ 2;
@@ -254,10 +254,10 @@ theorem GammaScaledCellCertificate.separation_signed_principal_asymmetric
     (hc : c.signedPrincipalPrefixCheck (28493 / 5000) = true)
     (hrows :
       ∀ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true)
+        (gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true)
     (hsum :
       (∑ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow c.cell p).allowance) ≤
+          (gammaAdaptiveProfileRow c.cell p).allowance) ≤
         c.excess)
     {L : ℝ} (hlo : (c.left : ℝ) ≤ L) (hhi : L ≤ (c.right : ℝ)) :
     let x := (c.scale : ℝ) * L ^ 2;

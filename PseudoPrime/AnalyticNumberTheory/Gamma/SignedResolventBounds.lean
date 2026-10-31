@@ -9,7 +9,10 @@ module
 public import PseudoPrime.AnalyticNumberTheory.Gamma.DigammaRationalCertificate
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorPrefixBounds
 public import PseudoPrime.Analysis.PrecisePiLogBound
-public import PseudoPrime.Analysis.GammaResolventCertificate
+public import PseudoPrime.AnalyticNumberTheory.Gamma.RationalResolventApproximation
+public import PseudoPrime.Analysis.SignedFiniteErrorBounds
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
 
 /-! # Signed real Gamma contributions at the certified resolvent nodes -/
 
@@ -22,7 +25,7 @@ Claim: their real digamma-minus-log-pi combination is at most -15709/10000.
 Proof: eight short rational digamma intervals and the certified lower log-pi bound.
 Role: preserve cancellation when bounding the signed archimedean contribution. -/
 theorem signed_digamma_0_le_precise :
-    (Analysis.gammaResolventCoefficients.map
+    (gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) *
               (((Complex.digamma ((((1 / 2 : ℝ) + (ab.1 : ℝ) + 0) / 2) : ℂ)).re -
@@ -61,7 +64,7 @@ theorem signed_digamma_0_le_precise :
     rationalDigammaIntervalCheck_sound
       (show rationalDigammaIntervalCheck (15 / 4) 8 4 8 (1179 / 1000) (1191 / 1000) = true by
         decide +kernel)
-  norm_num only [Analysis.gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
+  norm_num only [gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Complex.ofReal_div,
     Complex.ofReal_add, Complex.ofReal_ofNat, Complex.ofReal_one, zero_mul,
     add_zero] at ⊢ h0 h1 h2 h3 h4 h5 h6 h7
@@ -71,7 +74,7 @@ theorem signed_digamma_0_le_precise :
 /-- For the fixed even nodes, the precise signed Gamma bound implies -3/2.
 Apply rational monotonicity. Role: preserve the existing coarse interface. -/
 theorem signed_digamma_0_le :
-    (Analysis.gammaResolventCoefficients.map
+    (gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) *
               (((Complex.digamma ((((1 / 2 : ℝ) + (ab.1 : ℝ) + 0) / 2) : ℂ)).re -
@@ -85,7 +88,7 @@ Claim: their real digamma-minus-log-pi combination is at most -4/5.
 Proof: eight short rational digamma intervals and the certified lower log-pi bound.
 Role: preserve cancellation when bounding the signed archimedean contribution. -/
 theorem signed_digamma_1_le :
-    (Analysis.gammaResolventCoefficients.map
+    (gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) *
               (((Complex.digamma ((((1 / 2 : ℝ) + (ab.1 : ℝ) + 1) / 2) : ℂ)).re -
@@ -124,7 +127,7 @@ theorem signed_digamma_1_le :
     rationalDigammaIntervalCheck_sound
       (show rationalDigammaIntervalCheck (17 / 4) 8 4 8 (1319 / 1000) (1331 / 1000) = true by
         decide +kernel)
-  norm_num only [Analysis.gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
+  norm_num only [gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Complex.ofReal_div,
     Complex.ofReal_add, Complex.ofReal_ofNat, Complex.ofReal_one, zero_mul,
     add_zero] at ⊢ h0 h1 h2 h3 h4 h5 h6 h7

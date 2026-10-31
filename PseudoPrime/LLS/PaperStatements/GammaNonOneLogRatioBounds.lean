@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaConductorFreeNonOneBounds
-public import PseudoPrime.Analysis.GammaNonOneLogRatioBounds
+public import PseudoPrime.LLS.GammaLogScaleBounds
 
 /-! # Non-one Gamma witnesses with explicit logarithmic and prefix budgets -/
 

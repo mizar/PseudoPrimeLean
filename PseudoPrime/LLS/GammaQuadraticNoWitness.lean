@@ -6,11 +6,12 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaQuadraticArithmetic
+public import PseudoPrime.LLS.PaperStatements.GammaQuadraticArithmetic
 public import PseudoPrime.LLS.GammaSmoothedPrincipalBounds
 public import PseudoPrime.LLS.GammaExponentialPrincipalBounds
-public import PseudoPrime.LLS.GammaSmoothedNonprincipalBounds
-public import PseudoPrime.LLS.MellinKernelBounds
+public import PseudoPrime.LLS.PaperStatements.GammaExponentialPrincipalBounds
+public import PseudoPrime.LLS.PaperStatements.GammaSmoothedNonprincipalBounds
+public import PseudoPrime.LLS.PaperStatements.MellinKernelBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LogWeightedSummationByParts
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
 

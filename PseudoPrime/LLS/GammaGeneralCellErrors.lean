@@ -44,7 +44,7 @@ theorem gamma_left_error_le_of_lower_endpoint {lo x Z : ℝ} (hlo : 0 < lo) (hlo
 /-- Input: any checked cell, logarithm and rational envelope caps and an actual scale inside it.
 Claim: the ramp and principal errors obey the stated caps. Proof: root bounds and logarithm
 monotonicity. Role: decouple error transfer from the particular kernel-scale multiplier. -/
-theorem gamma_cell_elementary_error_bounds (c : Analysis.GammaLocalCellData) (ellX ellE R P : ℚ)
+theorem gamma_cell_elementary_error_bounds (c : GammaLocalCellData) (ellX ellE R P : ℚ)
     (hc : c.check = true) (hX : Real.log (c.hi : ℝ) ≤ ellX)
     (hE : Real.log ((101 / 40 : ℝ) * (c.hi : ℝ)) ≤ ellE) (hellX : 0 ≤ ellX) (hellE : 0 ≤ ellE)
     (hR : gammaRampCellRationalUpper c.rootLo c.rootHi ellE ≤ R)

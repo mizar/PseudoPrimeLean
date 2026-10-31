@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GaussianMRCoefficientBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRCoefficientBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WitnessBoundEnvelopes
 
 /-! # Gaussian B6 comparison with both Gamma prefix bounds from scale 240 -/
@@ -79,14 +79,14 @@ private theorem clipped_lower {L : ℝ} (hL : 0 ≤ L) :
 Use the B6 upper coefficient and the Gamma lower coefficient. This removes
 the clipped candidate from the minimum once B6 applies. -/
 theorem gaussianMR6_lt_gammaClipped {L : ℝ} (hL : 240 ≤ L) :
-    Analysis.gaussianMR6Bound L < gammaClippedUpper L := by
-  exact (Analysis.gaussianMR6Bound_lt_063_sq hL).trans_le (clipped_lower (by linarith only [hL]))
+    gaussian6Bound L < gammaClippedUpper L := by
+  exact (gaussian6Bound_lt_063_sq hL).trans_le (clipped_lower (by linarith only [hL]))
 
 /-- For L>=240, B6 is strictly below the index-100 Gamma prefix bound.
 The same separating coefficient works for both prefix credits. This removes
 the index-100 candidate from the minimum throughout its applicable range. -/
 theorem gaussianMR6_lt_gammaIndex100 {L : ℝ} (hL : 240 ≤ L) :
-    Analysis.gaussianMR6Bound L < gammaIndex100PrefixUpper L := by
-  exact (Analysis.gaussianMR6Bound_lt_063_sq hL).trans_le (index_lower (by linarith only [hL]))
+    gaussian6Bound L < gammaIndex100PrefixUpper L := by
+  exact (gaussian6Bound_lt_063_sq hL).trans_le (index_lower (by linarith only [hL]))
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

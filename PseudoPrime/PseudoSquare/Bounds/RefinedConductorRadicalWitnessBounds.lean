@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.RefinedConductorPrimeExclusionBounds
+public import PseudoPrime.LLS.PaperStatements.RefinedConductorPrimeExclusionBounds
 public import PseudoPrime.PseudoSquare.Bounds.ConductorRadicalWitnessBounds
 
 /-! # Quadratic witnesses with refined conductor and radical costs -/

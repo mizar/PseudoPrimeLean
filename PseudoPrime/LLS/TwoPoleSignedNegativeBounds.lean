@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.TwoPoleSignedBounds
+public import PseudoPrime.LLS.PaperStatements.TwoPoleSignedBounds
 
 /-! # Negative logarithmic witnesses from the signed two-pole budget -/
 

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.QuadraticExcludedPrimeBudget
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticExcludedPrimeBudget
 
 /-! # Linear structural exclusion budgets and a retained prime contribution -/
 

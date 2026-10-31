@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ConductorSquareFactorCost
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ConductorSquareFactorCost
 
 /-! # Analytic prime-by-prime bounds for untapered endpoint costs -/
 

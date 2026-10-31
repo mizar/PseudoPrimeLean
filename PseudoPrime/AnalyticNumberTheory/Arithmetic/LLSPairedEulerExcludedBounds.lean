@@ -6,7 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.TwoPoleGammaCharacterBounds
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.RealPairedEulerTerm
+public import Mathlib.Tactic.Ring
+
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticExcludedBudget
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PairedEulerExcludedBounds
 

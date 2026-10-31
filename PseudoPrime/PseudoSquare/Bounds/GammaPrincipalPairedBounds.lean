@@ -7,7 +7,9 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaNearSquareNegativeBounds
+public import PseudoPrime.LLS.PaperStatements.GammaNearSquareNegativeBounds
 public import PseudoPrime.LLS.GammaPrincipalPairedNegativeBounds
+public import PseudoPrime.LLS.PaperStatements.GammaPrincipalPairedNegativeBounds
 public import PseudoPrime.PseudoSquare.Bounds.PointwiseWitness
 public import PseudoPrime.PseudoSquare.Bounds.QNeOneLogSq
 public import PseudoPrime.NumberTheory.JacobiCharacterPrimeEvaluation

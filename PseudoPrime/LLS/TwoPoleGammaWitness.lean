@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.PairedEulerExcludedBounds
+public import PseudoPrime.LLS.PaperStatements.PairedEulerExcludedBounds
 public import PseudoPrime.LLS.GammaJointPrefixComparison
 
 /-! # Witness extraction from the combined two-pole Gamma separation -/

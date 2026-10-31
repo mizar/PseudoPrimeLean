@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GeneralGammaRampComparison
+public import PseudoPrime.LLS.PaperStatements.GeneralGammaRampComparison
 public import PseudoPrime.LLS.TwoPoleGammaWitness
 
 /-! # General-character witnesses from paired Euler two-pole Gamma bounds -/

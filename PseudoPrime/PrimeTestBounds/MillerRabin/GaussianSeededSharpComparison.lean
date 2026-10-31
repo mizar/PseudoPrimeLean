@@ -64,7 +64,7 @@ theorem gaussianSeededSharp_raw_root_compare {f : Bool} {L N : ℝ} (hL : 0 ≤ 
   have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
   have hb : gaussianMRRefinedBeta < 13 * gaussianMRRefinedD := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have hdy := mul_le_mul_of_nonneg_left hy hd.le
   have hdt := mul_pos hd ht
   have hfac : 0 < gaussianMRRefinedD * (y + t) - gaussianMRRefinedBeta := by
@@ -204,15 +204,13 @@ theorem gaussianSeededSharp_switch35_bounds :
   constructor
   · apply (lt_div_iff₀ hc).mpr
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
-      Analysis.gaussianMR6FifthsIndex, gaussianSeededSharpConstant, Bool.false_eq_true, ite_false,
-      ite_true] at hRlo hRhi hSlo hShi ⊢
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
+      gaussianSeededSharpConstant, Bool.false_eq_true, ite_false, ite_true] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRlo, hShi]
   · apply (div_lt_iff₀ hc).mpr
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
-      Analysis.gaussianMR6FifthsIndex, gaussianSeededSharpConstant, Bool.false_eq_true, ite_false,
-      ite_true] at hRlo hRhi hSlo hShi ⊢
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
+      gaussianSeededSharpConstant, Bool.false_eq_true, ite_false, ite_true] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRhi, hSlo]
 
 /-- Both switches at floor 50000 lie strictly between 293 and 295.
@@ -239,13 +237,13 @@ theorem gaussianSeededSharp_switch50_bounds (f : Bool) :
   constructor
   · apply (lt_div_iff₀ hc).mpr
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
-      Analysis.gaussianMR6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint,
+      gaussian6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRlo, hShi, hDhi]
   · apply (div_lt_iff₀ hc).mpr
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
-      Analysis.gaussianMR6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint,
+      gaussian6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRhi, hSlo, hDlo]
 
 /-- The three switching scales are strictly ordered.

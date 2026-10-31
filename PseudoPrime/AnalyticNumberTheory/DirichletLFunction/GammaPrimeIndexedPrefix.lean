@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaPrimePowerPrefix
-public import PseudoPrime.Analysis.GammaActualPrimeCosts
+public import PseudoPrime.Analysis.GammaActualPrimeLocalCost
 public import Mathlib.Algebra.BigOperators.Intervals
 
 /-! # Prime-indexed finite Euler prefixes -/

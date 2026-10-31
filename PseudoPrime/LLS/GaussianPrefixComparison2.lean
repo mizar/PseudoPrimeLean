@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.RelativeGaussianSubgroupComparison
+public import PseudoPrime.LLS.PaperStatements.RelativeGaussianSubgroupComparison
 public import PseudoPrime.LLS.GammaCheckpoint35000
 
 /-! # Signed Gaussian prefix comparison with arbitrary certified cutoff mass -/

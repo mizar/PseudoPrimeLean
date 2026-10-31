@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.PairedEulerExcludedBounds
-public import PseudoPrime.LLS.QuadraticExcludedPrimeBudget
+public import PseudoPrime.LLS.PaperStatements.PairedEulerExcludedBounds
+public import PseudoPrime.LLS.PaperStatements.QuadraticExcludedPrimeBudget
 public import PseudoPrime.LLS.GammaQuadraticLocalCorrection
 public import PseudoPrime.Analysis.AlternatingPrefixBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PairedEulerConductorBudget

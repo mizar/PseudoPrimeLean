@@ -117,7 +117,7 @@ theorem gamma_jacobi_no_negative_zeroMass_add_ramp_le_prefix_cap {n : ℕ} {hn :
     (hlarge : 10 ^ 100 ≤ n) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor bridge.character.completedLFunction Set.univ ρ : ℝ) *
-            Analysis.gammaResolventMajorant ρ.im) +
+            AnalyticNumberTheory.Gamma.gammaResolventMajorant ρ.im) +
         (∑ p ∈ (4 * n).primeFactors,
           Real.log p *
             ((∑' k : ℕ,

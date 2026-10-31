@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.SignedRationalIntervals
+
 public import PseudoPrime.Analysis.GammaSmallPrimeCosts
 public import PseudoPrime.Analysis.GammaSignedEulerSeries
 public import PseudoPrime.Analysis.LogTaylorBounds
@@ -20,37 +22,22 @@ namespace PseudoPrime.Analysis
 Use the lower power endpoint for nonnegative coefficients and the upper
 endpoint for negative coefficients. Soundness requires certified power intervals. -/
 def gammaFiniteEulerLower (r : ℚ → ℚ × ℚ) : ℚ :=
-  (gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦ ab.2 * (if 0 ≤ ab.2 then (r ab.1).1 else (r ab.1).2))).sum
 
 /-- The rational upper endpoint for the fixed signed Euler weight.
 Choose the power endpoint according to the coefficient sign. This retains
 the cancellation needed by finite scalar mass certificates. -/
 def gammaFiniteEulerUpper (r : ℚ → ℚ × ℚ) : ℚ :=
-  (gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦ ab.2 * (if 0 ≤ ab.2 then (r ab.1).2 else (r ab.1).1))).sum
-
-/-- A real value in a rational interval gives both signed scalar
-bounds. Split by the rational coefficient sign and use order preservation
-or reversal under multiplication. This is the node interval interface. -/
-theorem signed_rational_node_bounds {b l u : ℚ} {v : ℝ} (hl : (l : ℝ) ≤ v) (hu : v ≤ (u : ℝ)) :
-    ((b * (if 0 ≤ b then l else u) : ℚ) : ℝ) ≤ (b : ℝ) * v ∧
-      (b : ℝ) * v ≤ ((b * (if 0 ≤ b then u else l) : ℚ) : ℝ) := by
-  by_cases hb : 0 ≤ b
-  · rw [ite_eq_left hb, ite_eq_left hb, Rat.cast_mul, Rat.cast_mul]
-    exact
-      ⟨mul_le_mul_of_nonneg_left hl ((Rat.cast_nonneg (K := ℝ)).mpr hb),
-        mul_le_mul_of_nonneg_left hu ((Rat.cast_nonneg (K := ℝ)).mpr hb)⟩
-  · rw [ite_eq_right hb, ite_eq_right hb, Rat.cast_mul, Rat.cast_mul]
-    have hbR : (b : ℝ) ≤ 0 := ((Rat.cast_nonpos (K := ℝ)).mpr (le_of_not_ge hb))
-    exact ⟨mul_le_mul_of_nonpos_left hu hbR, mul_le_mul_of_nonpos_left hl hbR⟩
 
 /-- At any real input, rational intervals containing each fixed
 node power enclose the actual signed Euler weight. Sum the signed node
 bounds and commute the rational cast with the finite list sum. -/
 theorem gamma_finite_euler_bounds {m : ℝ} (r : ℚ → ℚ × ℚ)
     (hr :
-      ∀ ab ∈ gammaResolventCoefficients,
+      ∀ ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients,
         ((r ab.1).1 : ℝ) ≤ m ^ (-(1 / 2 + (ab.1 : ℝ))) ∧
           m ^ (-(1 / 2 + (ab.1 : ℝ))) ≤ ((r ab.1).2 : ℝ)) :
     (gammaFiniteEulerLower r : ℝ) ≤ gammaResolventEulerWeight m ∧
@@ -130,7 +117,7 @@ endpoint nonnegativity. A true result certifies real-power intervals. -/
 def gammaFiniteEulerRatioCheck (m : ℚ) (r : ℚ → ℚ × ℚ) : Bool :=
   decide
     (0 < m ∧
-      gammaResolventCoefficients.Forall
+      AnalyticNumberTheory.Gamma.gammaResolventCoefficients.Forall
         (fun ab ↦
           0 ≤ (r ab.1).1 ∧
             0 ≤ (r ab.1).2 ∧
@@ -143,7 +130,7 @@ at every fixed Gamma node. Cast the exact rational checks and apply the
 proved twentieth-root interval theorem. No numerical oracle is used. -/
 theorem gamma_finite_ratio_check_sound {m : ℚ} {r : ℚ → ℚ × ℚ}
     (hc : gammaFiniteEulerRatioCheck m r = true) (ab : ℚ × ℚ)
-    (hab : ab ∈ gammaResolventCoefficients) :
+    (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :
     ((r ab.1).1 : ℝ) ≤ (m : ℝ) ^ (-(1 / 2 + (ab.1 : ℝ))) ∧
       (m : ℝ) ^ (-(1 / 2 + (ab.1 : ℝ))) ≤ ((r ab.1).2 : ℝ) := by
   have h := of_decide_eq_true hc

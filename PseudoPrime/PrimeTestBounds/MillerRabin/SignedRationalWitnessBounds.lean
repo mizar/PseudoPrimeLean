@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformStarting3000
+public import PseudoPrime.LLS.PaperStatements.GammaUniformStarting3000
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SignedLogarithmicWitnessBounds
 
 /-! # Rational coefficient-0.796 Miller–Rabin profiles

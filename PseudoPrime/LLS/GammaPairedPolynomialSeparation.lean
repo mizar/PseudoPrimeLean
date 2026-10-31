@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.GammaPrincipalCapComparison
 public import PseudoPrime.LLS.GammaSignedVariationPrincipalBounds
-public import PseudoPrime.LLS.GammaNonOneRefinedNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 public import PseudoPrime.Analysis.LogTaylorBounds
 
 /-! # Paired separation with retained logarithmic errors and an arbitrary prefix -/

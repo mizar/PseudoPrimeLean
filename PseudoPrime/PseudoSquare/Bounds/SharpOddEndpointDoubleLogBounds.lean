@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.SharpOddEndpointDoubleLogRoot
+public import PseudoPrime.LLS.PaperStatements.SharpOddEndpointDoubleLogRoot
 public import PseudoPrime.PseudoSquare.Bounds.OddEndpointBranchPolynomials
 
 /-! # Odd-prime Jacobi non-one bounds with a double-logarithm correction -/

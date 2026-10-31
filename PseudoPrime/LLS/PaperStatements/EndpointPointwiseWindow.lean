@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointPointwiseGrowth
+public import PseudoPrime.LLS.PaperStatements.EndpointPointwiseGrowth
 
 /-! # A continuous pointwise window between consecutive primes -/
 

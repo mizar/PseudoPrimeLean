@@ -320,9 +320,9 @@ theorem fixed35000_lt_gamma {L : ℝ} (hL : 209 ≤ L) (hU : L ≤ 240) :
 The fixed 35000 candidate is present, and the B6 lower comparison is strict.
 The old Gaussian envelope equality remains unchanged for its original definition. -/
 theorem midscaleWitnessEnvelope_lt_at240 {n : ℕ} (hL : Real.log n = 240) :
-    midscaleWitnessEnvelope n < Analysis.gaussianMR6Bound (Real.log n) := by
+    midscaleWitnessEnvelope n < gaussian6Bound (Real.log n) := by
   have hb := midscaleWitnessEnvelope_le_35000 (by linarith only [hL]) (by linarith only [hL])
-  exact hb.trans_lt (Analysis.gaussianMR6_prefix35000 (by linarith only [hL]))
+  exact hb.trans_lt (gaussian6_prefix35000 (by linarith only [hL]))
 
 /-- For n>1 and log n>240, the public midscale envelope equals the Gaussian envelope.
 Both low-region addition guards are inactive and the analytic base selects its
@@ -389,7 +389,6 @@ theorem midscaleWitnessEnvelope_eq_at240 {n : ℕ} (hn : 1 < n) (hL : Real.log n
     mrLowBase, ite_eq_right h2, ite_eq_right h3, mrAnalyticBase, ite_eq_right h61, ite_eq_right he,
     ite_eq_right h122, ite_eq_right h240,
     gaussianMRWitnessEnvelope_eq240 (by linarith only [hL]) (by linarith only [hL])]
-  rw [min_assoc, min_left_comm,
-    min_eq_right (Analysis.gaussianMR6_prefix35000 (by linarith only [hL])).le]
+  rw [min_assoc, min_left_comm, min_eq_right (gaussian6_prefix35000 (by linarith only [hL])).le]
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

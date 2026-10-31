@@ -19,9 +19,9 @@ Claim: the actual quadratic scale lies in the cell and has all stated root enclo
 Proof: compare squares and apply the checked endpoint root inequalities.
 Role: share profile geometry across all bridge certificates. -/
 theorem gamma_profile_geometry_of_checked_cell (a b : ℚ) (ha : (300 : ℝ) ≤ a)
-    (hc : (Analysis.gammaProfileEnvelopeCell a b).check = true) {L : ℝ} (hlo : (a : ℝ) ≤ L)
+    (hc : (gammaProfileEnvelopeCell a b).check = true) {L : ℝ} (hlo : (a : ℝ) ≤ L)
     (hhi : L ≤ (b : ℝ)) :
-    let c := Analysis.gammaProfileEnvelopeCell a b;
+    let c := gammaProfileEnvelopeCell a b;
     let x := (2 / 5 : ℝ) * L ^ 2;
     36000 ≤ x ∧
       (c.lo : ℝ) ≤ x ∧
@@ -29,7 +29,7 @@ theorem gamma_profile_geometry_of_checked_cell (a b : ℚ) (ha : (300 : ℝ) ≤
       (c.rootLo : ℝ) ≤ Real.sqrt x ∧
       Real.sqrt x ≤ (c.rootHi : ℝ) ∧ (79 / 125 : ℝ) * L ≤ Real.sqrt x := by
   dsimp only
-  let c := Analysis.gammaProfileEnvelopeCell a b
+  let c := gammaProfileEnvelopeCell a b
   let x := (2 / 5 : ℝ) * L ^ 2
   have hL : (300 : ℝ) ≤ L := ha.trans hlo
   have ha0 : 0 ≤ (a : ℝ) := by linarith only [ha]
@@ -38,12 +38,12 @@ theorem gamma_profile_geometry_of_checked_cell (a b : ℚ) (ha : (300 : ℝ) ≤
   have hlprod := mul_nonneg (sub_nonneg.mpr hlo) (add_nonneg hL0.le ha0)
   have hhprod := mul_nonneg (sub_nonneg.mpr hhi) (add_nonneg hL0.le hb0)
   have hlox : (c.lo : ℝ) ≤ x := by
-    norm_num only [c, Analysis.gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
+    norm_num only [c, gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
       Rat.cast_ofNat]
     dsimp only [x]
     nlinarith only [hlprod]
   have hxhic : x ≤ (c.hi : ℝ) := by
-    norm_num only [c, Analysis.gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
+    norm_num only [c, gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
       Rat.cast_ofNat]
     dsimp only [x]
     nlinarith only [hhprod]
@@ -65,17 +65,17 @@ Claim: all four actual non-Euler errors and the coupled root meet the stated bou
 Proof: combine endpoint geometry, logarithm monotonicity and the generic error envelopes.
 Role: turn a few rational scalar checks into uniform analytic error bounds. -/
 theorem gamma_profile_errors_of_checked_cell (a b ellX ellE R P : ℚ) (ha : (300 : ℝ) ≤ a)
-    (hc : (Analysis.gammaProfileEnvelopeCell a b).check = true)
-    (hX : Real.log ((Analysis.gammaProfileEnvelopeCell a b).hi : ℝ) ≤ ellX)
-    (hE : Real.log ((101 / 40 : ℝ) * ((Analysis.gammaProfileEnvelopeCell a b).hi : ℝ)) ≤ ellE)
+    (hc : (gammaProfileEnvelopeCell a b).check = true)
+    (hX : Real.log ((gammaProfileEnvelopeCell a b).hi : ℝ) ≤ ellX)
+    (hE : Real.log ((101 / 40 : ℝ) * ((gammaProfileEnvelopeCell a b).hi : ℝ)) ≤ ellE)
     (hellX : 0 ≤ ellX) (hellE : 0 ≤ ellE)
     (hR :
-      gammaRampCellRationalUpper (Analysis.gammaProfileEnvelopeCell a b).rootLo
-          (Analysis.gammaProfileEnvelopeCell a b).rootHi ellE ≤
+      gammaRampCellRationalUpper (gammaProfileEnvelopeCell a b).rootLo
+          (gammaProfileEnvelopeCell a b).rootHi ellE ≤
         R)
     (hP :
-      gammaPrincipalCellRationalUpper (Analysis.gammaProfileEnvelopeCell a b).rootLo
-          (Analysis.gammaProfileEnvelopeCell a b).rootHi ellX ≤
+      gammaPrincipalCellRationalUpper (gammaProfileEnvelopeCell a b).rootLo
+          (gammaProfileEnvelopeCell a b).rootHi ellX ≤
         P)
     {L : ℝ} (hlo : (a : ℝ) ≤ L) (hhi : L ≤ (b : ℝ)) :
     let x := (2 / 5 : ℝ) * L ^ 2;
@@ -84,7 +84,7 @@ theorem gamma_profile_errors_of_checked_cell (a b ellX ellE R P : ℚ) (ha : (30
       ((7 / 6 : ℝ) * (L + 7 / 5) + 4) / Real.sqrt x ≤ 19 / 10 ∧
       43 * x ^ (-9 / 16 : ℝ) ≤ 1 / 8 ∧ (79 / 125 : ℝ) * L ≤ Real.sqrt x := by
   dsimp only
-  let c := Analysis.gammaProfileEnvelopeCell a b
+  let c := gammaProfileEnvelopeCell a b
   let x := (2 / 5 : ℝ) * L ^ 2
   obtain ⟨hxlo, hlox, hxhi, hrlo, hrhi, hrL⟩ :=
     gamma_profile_geometry_of_checked_cell a b ha hc hlo hhi
@@ -128,7 +128,7 @@ def gammaProfileGapAt (a R P D : ℚ) : ℚ :=
 Definition: check the common cell, two logarithms, two envelopes and endpoint gap.
 Output: Bool with analytic soundness proved below. Role: compact uniform separation certificates. -/
 def gammaProfileSeparationCheck (a b ellX ellE R P D : ℚ) (jX jE : ℕ) : Bool :=
-  let c := Analysis.gammaProfileEnvelopeCell a b
+  let c := gammaProfileEnvelopeCell a b
   decide
     (c.check = true ∧
       Analysis.rationalLogIntervalCheck c.hi jX 20 0 ellX = true ∧

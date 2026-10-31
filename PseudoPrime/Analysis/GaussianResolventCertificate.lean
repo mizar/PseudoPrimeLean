@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaResolventCertificate
+public import PseudoPrime.AnalyticNumberTheory.Gamma.RationalResolventApproximation
+public import PseudoPrime.Analysis.SignedFiniteErrorBounds
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
 
 /-! # Finite arithmetic for a Gaussian resolvent zero-mass candidate -/
 

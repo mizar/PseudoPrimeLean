@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.FullEndpointShortRange
+public import PseudoPrime.LLS.PaperStatements.FullEndpointShortRange
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointPolynomial
 
 /-! # Analytic MR witness bound with correction twenty-two fifths on 8<=log N<=16 -/

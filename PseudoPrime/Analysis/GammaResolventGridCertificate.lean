@@ -37,7 +37,7 @@ private def coshTaylorQ (x : ℚ) : ℚ :=
 A nonnegative radius bounds the scaled Gamma norm when the squared cosh check succeeds. -/
 private def gammaResolventNodeRadius (j : ℕ) : ℚ :=
   (1 + ((j : ℚ) / 500) ^ 2) *
-      (gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
           (fun ab ↦ ab.2 * (ab.1 / (ab.1 ^ 2 + ((j : ℚ) / 500) ^ 2)))).sum -
     1 / 25000
 
@@ -62,9 +62,10 @@ private theorem coshTaylorQ_le_cosh {x : ℚ} (hx : 0 ≤ x) :
 minus 1/25000. Distribute the casts through the signed finite sum without approximation. -/
 private theorem radius_cast (j : ℕ) :
     (gammaResolventNodeRadius j : ℝ) = gammaResolventScaled ((j : ℝ) / 500) - 1 / 25000 := by
-  simp only [gammaResolventNodeRadius, gammaResolventScaled, gammaResolventMajorant, Rat.cast_sub,
-    Rat.cast_mul, Rat.cast_add, Rat.cast_one, Rat.cast_div, Rat.cast_natCast, Rat.cast_pow,
-    Rat.cast_ofNat, Rat.cast_list_sum, List.map_map]
+  simp only [gammaResolventNodeRadius, gammaResolventScaled,
+    AnalyticNumberTheory.Gamma.gammaResolventMajorant, Rat.cast_sub, Rat.cast_mul, Rat.cast_add,
+    Rat.cast_one, Rat.cast_div, Rat.cast_natCast, Rat.cast_pow, Rat.cast_ofNat, Rat.cast_list_sum,
+    List.map_map]
   congr 2
   apply congrArg List.sum
   apply List.map_congr_left
@@ -593,7 +594,8 @@ theorem gammaResolvent_grid_lower (j : ℕ) (hj : j ≤ 8000) :
 real height. All finite node checks, the actual curvature bounds, interpolation, evenness
 and the rational-exponential tail have been proved; there is no majorant hypothesis. -/
 theorem norm_Gamma_half_add_I_le_gammaResolvent (t : ℝ) :
-    ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤ gammaResolventMajorant t := by
+    ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤
+      AnalyticNumberTheory.Gamma.gammaResolventMajorant t := by
   exact norm_Gamma_half_add_I_le_gammaResolvent_of_grid gammaResolvent_grid_lower t
 
 end PseudoPrime.Analysis

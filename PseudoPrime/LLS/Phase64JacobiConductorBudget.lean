@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.Phase64SquareConductorBounds
+public import PseudoPrime.LLS.Phase64SquareConductorBounds
 public import PseudoPrime.LLS.Phase64JacobiLocalComparison
 
 /-! # First-phase actual Jacobi conductor absorption -/
@@ -58,7 +58,7 @@ theorem phase64_jacobi_square_dyadic_cost_le {n : ℕ} {hn : Odd n} {hns : ¬IsS
     (gamma_jacobi_modulus_eq_discriminant bridge).symm ▸ bridge.discriminant_pos
   have hd := gamma_jacobi_modulus_squarefree_data bridge
   exact
-    Analysis.phase64_actual_all_square_dyadic_cost_le
+    phase64_actual_all_square_dyadic_cost_le
       (by simpa only [Nat.mul_comm] using bridge.squarefreePart_sq_mul.symm) hn
       bridge.squarefreePart_pos bridge.squareFactor_odd.pos hf hd.1 hd.2 bridge.character
       (gamma_jacobi_actual_dyadic_branch bridge) S hS hχ K K2 hx

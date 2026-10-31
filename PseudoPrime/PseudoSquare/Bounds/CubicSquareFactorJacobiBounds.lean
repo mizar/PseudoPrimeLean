@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CharacterExclusionProducts
 public import PseudoPrime.PseudoSquare.Bounds.CubicSensitiveJacobiBounds
-public import PseudoPrime.LLS.CubicSquareFactorBounds
+public import PseudoPrime.LLS.PaperStatements.CubicSquareFactorBounds
 
 /-! # Cubic negative witnesses with squarefree and square-factor costs separated -/
 

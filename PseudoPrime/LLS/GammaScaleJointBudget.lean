@@ -6,10 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaScaleConductorBudget
+public import PseudoPrime.LLS.GammaScaleConductorBudget
 public import PseudoPrime.LLS.GammaIntegerPrefixConductorBounds
 public import PseudoPrime.LLS.GammaJointPrefixComparison
-public import PseudoPrime.LLS.GammaNonOneRefinedNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 public import PseudoPrime.LLS.GammaSmallScaleLocalBridge
 
 /-! # Factor-independent joint Gamma budgets at arbitrary scales -/
@@ -34,7 +34,7 @@ theorem gamma_jacobi_square_dyadic_cost_le_of_scale {n : ℕ} {hn : Odd n} {hns 
     (gamma_jacobi_modulus_eq_discriminant bridge).symm ▸ bridge.discriminant_pos
   have hd := gamma_jacobi_modulus_squarefree_data bridge
   exact
-    Analysis.gamma_actual_square_dyadic_cost_le_of_scale
+    gamma_actual_square_dyadic_cost_le_of_scale
       (by simpa only [Nat.mul_comm] using bridge.squarefreePart_sq_mul.symm) hn
       bridge.squarefreePart_pos bridge.squareFactor_odd.pos hf hd.1 hd.2 bridge.character
       (gamma_jacobi_actual_dyadic_branch bridge) S hS hχ K K2 hx
@@ -44,10 +44,9 @@ Definition: the variable dual price times L plus its finite signed odd-prime exc
 Output: a scalar local budget independent of the input prime factors.
 Role: retain the actual signed ramp terms in arbitrary-scale numerical comparisons. -/
 noncomputable def gammaScaleSignedDualBudget (L x : ℝ) : ℝ :=
-  Analysis.gammaRamifiedDualParameter x * L +
-    ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet x,
-      Real.log p *
-        max (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x) 0
+  gammaRamifiedDualParameter x * L +
+    ∑ p ∈ gammaRamifiedDualPrimeSet x,
+      Real.log p * max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0
 
 /-- Input: actual Jacobi arithmetic data, arbitrary positive-power prefixes and x >= 20000.
 Claim: all ambient local costs fit the conductor allowance and finite scale dual budget.
@@ -67,9 +66,8 @@ theorem gamma_jacobi_all_local_cost_le_scale_dual {n : ℕ} {hn : Odd n} {hns : 
     gamma_jacobi_square_dyadic_cost_le_of_scale bridge S (Finset.filter_subset _ _)
       (fun p hp ↦ (Finset.mem_filter.mp hp).2) K K2 hx
   have hr :=
-    Analysis.gamma_actual_odd_ramified_signed_cost_le_finite_dual hn R (Finset.filter_subset _ _)
-      bridge.character (fun p hp ↦ (Finset.mem_filter.mp hp).2) K
-      (show (1 : ℝ) ≤ x by linarith only [hx])
+    gamma_odd_signed_cost_le_finite_dual hn R (Finset.filter_subset _ _) bridge.character
+      (fun p hp ↦ (Finset.mem_filter.mp hp).2) K (show (1 : ℝ) ≤ x by linarith only [hx])
   have hc :=
     gamma_actual_quadratic_local_sum_le_classified hn bridge.character bridge.character_quadratic K
       (show (0 : ℝ) < x by linarith only [hx])
@@ -101,7 +99,7 @@ theorem gamma_joint_prefix_le_factor_free_budget {n : ℕ} (hn : Odd n) (hns : �
   have hl := gamma_jacobi_all_local_cost_le_scale_dual bridge K (K 2) hx
   have he : bridge.character = (NumberTheory.complexQuadraticCharacter n hn).primitiveCharacter :=
     bridge.character_eq
-  have hm := mul_le_mul_of_nonneg_left hlog (Analysis.gamma_ramified_dual_parameter_nonneg x)
+  have hm := mul_le_mul_of_nonneg_left hlog (gamma_ramified_dual_parameter_nonneg x)
   have hlog4 : Real.log (4 * (n : ℝ)) ≤ L + 7 / 5 := by
     rw [Real.log_mul (by norm_num only : (4 : ℝ) ≠ 0) (Nat.cast_pos.mpr hn.pos).ne']
     linarith only [hlog, Analysis.log_four_le_seven_fifths]
@@ -166,7 +164,7 @@ theorem gamma_joint_prefix_le_factor_free_budget_small_scale {n : ℕ} (hn : Odd
   have hl := gamma_jacobi_all_local_small_scale bridge K hx
   have he : bridge.character = (NumberTheory.complexQuadraticCharacter n hn).primitiveCharacter :=
     bridge.character_eq
-  have hm := mul_le_mul_of_nonneg_left hlog (Analysis.gamma_ramified_dual_parameter_nonneg x)
+  have hm := mul_le_mul_of_nonneg_left hlog (gamma_ramified_dual_parameter_nonneg x)
   have hlog4 : Real.log (4 * (n : ℝ)) ≤ L + 7 / 5 := by
     rw [Real.log_mul (by norm_num only : (4 : ℝ) ≠ 0) (Nat.cast_pos.mpr hn.pos).ne']
     linarith only [hlog, Analysis.log_four_le_seven_fifths]

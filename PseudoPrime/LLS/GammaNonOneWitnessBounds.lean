@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaNonOneNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneNumerics
 
 /-! # Coefficient-preserving non-one witnesses at logarithm 40000
 

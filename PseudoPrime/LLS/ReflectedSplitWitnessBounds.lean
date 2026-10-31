@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaReflectedArchimedeanBounds
+public import PseudoPrime.LLS.PaperStatements.GammaReflectedArchimedeanBounds
 public import PseudoPrime.LLS.JointRampPrincipalWitnessBounds
 
 /-! # Three witness criteria using the split reflected Euler remainder -/

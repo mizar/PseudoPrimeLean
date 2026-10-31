@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.FiniteExcludedTaperSavings
+public import PseudoPrime.LLS.PaperStatements.FiniteExcludedTaperSavings
 public import PseudoPrime.PseudoSquare.Bounds.ExcludedEndpointJacobi
 
 /-! # Negative Jacobi witnesses retaining the finite excluded-support taper -/

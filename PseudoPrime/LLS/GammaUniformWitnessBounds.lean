@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaUniformSubgroupBounds
+public import PseudoPrime.LLS.PaperStatements.GammaUniformSubgroupBounds
 public import PseudoPrime.LLS.Theorem11S1Subgroup
 public import PseudoPrime.NumberTheory.CharacterUnitKernel
 

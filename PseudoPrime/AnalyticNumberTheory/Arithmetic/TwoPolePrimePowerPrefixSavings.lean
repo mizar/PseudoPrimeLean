@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.TwoPoleConductorPrefixBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSPairedEulerExcludedBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerComparisonCertificates
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Tactic.Linarith
 
 /-! # Prime-power savings within the full Euler prefix through thirteen -/
 

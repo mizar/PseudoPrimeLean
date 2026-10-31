@@ -6,10 +6,14 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.RefinedTheorem11S1
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+
 public import PseudoPrime.Analysis.RationalPart1Separation
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactorSplitBounds
-public import PseudoPrime.LLS.RationalTheorem11S12
 
 /-! # Rational Part 1 radius and universal logarithmic profile -/
 

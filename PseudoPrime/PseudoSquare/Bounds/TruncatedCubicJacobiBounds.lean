@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.TruncatedCubicIteration
+public import PseudoPrime.LLS.PaperStatements.TruncatedCubicIteration
 public import PseudoPrime.PseudoSquare.Bounds.TightCubicNegativeSupportBounds
 
 /-! # Negative Jacobi witnesses with cutoff-localized cubic costs -/

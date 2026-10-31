@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.CubicSquareFactorLinearBounds
+public import PseudoPrime.LLS.PaperStatements.CubicSquareFactorLinearBounds
 public import PseudoPrime.PseudoSquare.Bounds.CubicNegativeSupportBounds
 public import PseudoPrime.PseudoSquare.Bounds.RefinedConductorRadicalWitnessBounds
 

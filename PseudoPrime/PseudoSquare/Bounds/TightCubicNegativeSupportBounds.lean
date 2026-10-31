@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.TightCubicConductorBounds
+public import PseudoPrime.LLS.PaperStatements.TightCubicConductorBounds
 public import PseudoPrime.PseudoSquare.Bounds.CubicNegativeSupportBounds
 
 /-! # Negative Jacobi witnesses with tight cubic conductor radii -/

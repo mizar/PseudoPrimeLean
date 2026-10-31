@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaMixedBridgeCertificates
+public import PseudoPrime.LLS.GammaMixedBridgeCertificates
 public import PseudoPrime.LLS.GammaMixedCellTransfer
 public import PseudoPrime.LLS.GammaMixedBridgeChecks
 
@@ -23,8 +23,8 @@ theorem gamma_profile_dual_le_bridge_310_350 {L : ℝ} (hlo : 310 ≤ L) (hhi : 
     gammaScaleSignedDualBudget L ((2 / 5 : ℝ) * L ^ 2) ≤ (7 : ℝ) := by
   have h :=
     gamma_profile_dual_le_of_certificate 310 350 5 631 (by norm_num only [Rat.cast_ofNat])
-      Analysis.bridge_cell_310_350_check (by decide +kernel) Analysis.bridge_rows_310_350_check
-      Analysis.bridge_sum_310_350_check
+      bridge_cell_310_350_check (by decide +kernel) bridge_rows_310_350_check
+      bridge_sum_310_350_check
       (by
         norm_num only [Rat.cast_ofNat]; exact hlo)
       (by
@@ -39,8 +39,8 @@ theorem gamma_profile_dual_le_bridge_350_450 {L : ℝ} (hlo : 350 ≤ L) (hhi : 
     gammaScaleSignedDualBudget L ((2 / 5 : ℝ) * L ^ 2) ≤ (8 : ℝ) := by
   have h :=
     gamma_profile_dual_le_of_certificate 350 450 6 810 (by norm_num only [Rat.cast_ofNat])
-      Analysis.bridge_cell_350_450_check (by decide +kernel) Analysis.bridge_rows_350_450_check
-      Analysis.bridge_sum_350_450_check
+      bridge_cell_350_450_check (by decide +kernel) bridge_rows_350_450_check
+      bridge_sum_350_450_check
       (by
         norm_num only [Rat.cast_ofNat]; exact hlo)
       (by
@@ -55,8 +55,8 @@ theorem gamma_profile_dual_le_bridge_450_550 {L : ℝ} (hlo : 450 ≤ L) (hhi : 
     gammaScaleSignedDualBudget L ((2 / 5 : ℝ) * L ^ 2) ≤ (8 : ℝ) := by
   have h :=
     gamma_profile_dual_le_of_certificate 450 550 6 990 (by norm_num only [Rat.cast_ofNat])
-      Analysis.bridge_cell_450_550_check (by decide +kernel) Analysis.bridge_rows_450_550_check
-      Analysis.bridge_sum_450_550_check
+      bridge_cell_450_550_check (by decide +kernel) bridge_rows_450_550_check
+      bridge_sum_450_550_check
       (by
         norm_num only [Rat.cast_ofNat]; exact hlo)
       (by

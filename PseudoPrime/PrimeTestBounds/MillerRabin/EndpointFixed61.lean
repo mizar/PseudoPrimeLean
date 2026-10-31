@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.FullEndpointFixed61
+public import PseudoPrime.LLS.PaperStatements.FullEndpointFixed61
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointEvenPolynomial
 
 /-! # Strong-MR prime witnesses at most 61 through log n=286/25 -/

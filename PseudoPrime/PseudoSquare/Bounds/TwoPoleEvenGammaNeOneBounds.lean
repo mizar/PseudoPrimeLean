@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.TwoPoleConstantBounds
+public import PseudoPrime.LLS.PaperStatements.TwoPoleConstantBounds
 public import PseudoPrime.PseudoSquare.Bounds.ExcludedEndpointJacobi
 
 /-! # Non-one Jacobi witnesses from direct signed errors -/

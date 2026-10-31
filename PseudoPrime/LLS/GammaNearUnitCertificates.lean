@@ -20,9 +20,9 @@ private theorem gamma_near_unit_cell_0_check :
     let c := gammaNearUnitCertificate 0;
     c.scalarCheck = true ∧
       (∀ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
+        (gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
       (∑ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow c.cell p).allowance) ≤
+          (gammaAdaptiveProfileRow c.cell p).allowance) ≤
         c.excess := by
   decide +kernel
 
@@ -32,9 +32,9 @@ private theorem gamma_near_unit_cell_1_check :
     let c := gammaNearUnitCertificate 1;
     c.scalarCheck = true ∧
       (∀ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
+        (gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
       (∑ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow c.cell p).allowance) ≤
+          (gammaAdaptiveProfileRow c.cell p).allowance) ≤
         c.excess := by
   decide +kernel
 
@@ -44,9 +44,9 @@ private theorem gamma_near_unit_cell_2_check :
     let c := gammaNearUnitCertificate 2;
     c.scalarCheck = true ∧
       (∀ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
+        (gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
       (∑ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow c.cell p).allowance) ≤
+          (gammaAdaptiveProfileRow c.cell p).allowance) ≤
         c.excess := by
   decide +kernel
 
@@ -56,9 +56,9 @@ private theorem gamma_near_unit_cell_3_check :
     let c := gammaNearUnitCertificate 3;
     c.scalarCheck = true ∧
       (∀ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
+        (gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
       (∑ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow c.cell p).allowance) ≤
+          (gammaAdaptiveProfileRow c.cell p).allowance) ≤
         c.excess := by
   decide +kernel
 
@@ -68,9 +68,9 @@ private theorem gamma_near_unit_cell_4_check :
     let c := gammaNearUnitCertificate 4;
     c.scalarCheck = true ∧
       (∀ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
+        (gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
       (∑ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow c.cell p).allowance) ≤
+          (gammaAdaptiveProfileRow c.cell p).allowance) ≤
         c.excess := by
   decide +kernel
 
@@ -81,9 +81,9 @@ theorem gamma_near_unit_certificates_check :
       let c := gammaNearUnitCertificate i;
       c.scalarCheck = true ∧
         (∀ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
+          (gammaAdaptiveProfileRow c.cell p).envelopeCheck c.cell = true) ∧
         (∑ p ∈ (Finset.Icc 3 c.support).filter Nat.Prime,
-            (Analysis.gammaAdaptiveProfileRow c.cell p).allowance) ≤
+            (gammaAdaptiveProfileRow c.cell p).allowance) ≤
           c.excess := by
   intro i
   fin_cases i

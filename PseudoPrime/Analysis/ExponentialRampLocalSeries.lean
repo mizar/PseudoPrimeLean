@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.ExponentialSeriesBounds
+
 public import PseudoPrime.Analysis.ExponentialRampLocalCorrection
 
 /-! # Signed prime-power local series for the exponential ramp
@@ -45,14 +47,6 @@ theorem norm_exponentialRampLocalCorrection_le_exp {c : ℂ} (hc : c = 0 ∨ c =
   constructor
   · linarith only [hm2, hW.1]
   · linarith only [hm0, hW.2]
-
-/-- The exponential at height (k+1)/x is a geometric power of exp(-1/x).
-The exponential multiple formula identifies a summable majorant at positive scale. -/
-theorem exp_neg_div_nat_eq_power (x : ℝ) (k : ℕ) :
-    Real.exp (-((k + 1 : ℕ) : ℝ) / x) = Real.exp (-1 / x) ^ (k + 1) := by
-  rw [← Real.exp_nat_mul]
-  congr 1
-  ring
 
 /-- For positive scale, quadratic local value and heights growing at least linearly,
 the signed local series is summable. Dominate its norm by a geometric exponential.

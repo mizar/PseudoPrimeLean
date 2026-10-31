@@ -9,9 +9,9 @@ module
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaComparison
 public import PseudoPrime.PrimeTest.MillerRabin.SignSubgroupIndex
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
-public import PseudoPrime.LLS.ConductorSumComparison
+public import PseudoPrime.LLS.PaperStatements.ConductorSumComparison
 public import PseudoPrime.LLS.ExplicitKernelCoefficientBounds
-public import PseudoPrime.LLS.SmallIndexGammaNumerics
+public import PseudoPrime.LLS.PaperStatements.SmallIndexGammaNumerics
 
 /-! # Gamma coefficient bounds for strong Miller–Rabin witnesses -/
 

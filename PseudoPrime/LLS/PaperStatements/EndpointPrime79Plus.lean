@@ -6,9 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointPrime79PlusData
+public import PseudoPrime.LLS.PaperStatements.EndpointPrime79PlusData
 public import PseudoPrime.LLS.PaperStatements.EndpointFiniteProfiles
-public import PseudoPrime.LLS.EndpointPointwiseGrowth
+public import PseudoPrime.LLS.PaperStatements.EndpointPointwiseGrowth
 
 /-! # Positive fixed-79 gap after adding the atoms 79 and 81 -/
 

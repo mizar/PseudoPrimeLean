@@ -27,7 +27,8 @@ def gaussianGammaDifferenceHead : ℚ × ℚ :=
 Derive both tails from their source coefficient lists so later edits stay synchronized. -/
 def gaussianGammaDifferenceTail : List (ℚ × ℚ) :=
   gaussianResolventCoefficients.tail ++
-    gammaResolventCoefficients.tail.map (fun ab ↦ (ab.1, -(17 / 20) * ab.2))
+    AnalyticNumberTheory.Gamma.gammaResolventCoefficients.tail.map
+      (fun ab ↦ (ab.1, -(17 / 20) * ab.2))
 
 /-- All nodes of the Gaussian-minus-17/20-Gamma resolvent combination. -/
 def gaussianGammaDifferenceCoefficients : List (ℚ × ℚ) :=
@@ -67,8 +68,8 @@ theorem gaussianGammaDifference_tail_range :
 theorem gaussianGammaDifference_anchor_dominates :
     (gaussianGammaDifferenceTail.map (fun ab ↦ max 0 (-(ab.2 : ℝ)) * (7 - (ab.1 : ℝ)) ^ 64)).sum ≤
       (gaussianGammaDifferenceHead.2 : ℝ) * (7 - (gaussianGammaDifferenceHead.1 : ℝ)) ^ 64 := by
-  simp only [gaussianGammaDifferenceTail, gaussianResolventCoefficients, gammaResolventCoefficients,
-    List.tail_cons]
+  simp only [gaussianGammaDifferenceTail, gaussianResolventCoefficients,
+    AnalyticNumberTheory.Gamma.gammaResolventCoefficients, List.tail_cons]
   norm_num only [gaussianGammaDifferenceHead, List.map_cons, List.map_nil, List.map_append,
     List.sum_cons, List.sum_nil, List.sum_append, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg,
     Rat.cast_mul, Rat.cast_sub, max_def, ite_true, ite_false]
@@ -121,10 +122,11 @@ theorem gaussianGammaDifferenceExpSum_eq_sub (t : ℝ) :
       (gaussianResolventCoefficients.map
             (fun ab ↦ (ab.2 : ℝ) * Real.exp ((7 - (ab.1 : ℝ)) * t))).sum -
         (17 / 20 : ℝ) *
-          (gammaResolventCoefficients.map
+          (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
               (fun ab ↦ (ab.2 : ℝ) * Real.exp ((7 - (ab.1 : ℝ)) * t))).sum := by
   simp only [gaussianGammaDifferenceCoefficients, gaussianGammaDifferenceHead,
-    gaussianGammaDifferenceTail, gaussianResolventCoefficients, gammaResolventCoefficients]
+    gaussianGammaDifferenceTail, gaussianResolventCoefficients,
+    AnalyticNumberTheory.Gamma.gammaResolventCoefficients]
   simp only [List.tail_cons]
   simp only [List.map_cons, List.sum_cons, List.map_append, List.sum_append, List.map_nil,
     List.sum_nil, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Rat.cast_mul]
@@ -135,7 +137,7 @@ exponential sum, matching the Gaussian factorization. -/
 theorem gammaResolventEulerWeight_eq_exp_moments {m : ℝ} (hm : 0 < m) :
     gammaResolventEulerWeight m =
       Real.exp (-(15 / 2 : ℝ) * Real.log m) *
-        (gammaResolventCoefficients.map
+        (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
             (fun ab ↦ (ab.2 : ℝ) * Real.exp ((7 - (ab.1 : ℝ)) * Real.log m))).sum := by
   unfold gammaResolventEulerWeight
   rw [← List.sum_map_mul_left]
@@ -160,7 +162,7 @@ theorem gaussianGamma_weight_difference_nonneg {m : ℝ} (hm : 1 ≤ m) :
     (gaussianResolventCoefficients.map
         (fun ab ↦ (ab.2 : ℝ) * Real.exp ((7 - (ab.1 : ℝ)) * Real.log m))).sum
   let gammaSum :=
-    (gammaResolventCoefficients.map
+    (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
         (fun ab ↦ (ab.2 : ℝ) * Real.exp ((7 - (ab.1 : ℝ)) * Real.log m))).sum
   have hfactor :
     Real.exp (-(15 / 2 : ℝ) * Real.log m) * gaussianSum -

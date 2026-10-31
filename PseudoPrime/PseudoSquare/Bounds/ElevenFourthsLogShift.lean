@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.ElevenFourthsLogShift
-public import PseudoPrime.LLS.OddEndpointLogShiftSeparation
+public import PseudoPrime.LLS.PaperStatements.OddEndpointLogShiftSeparation
 public import PseudoPrime.PseudoSquare.Bounds.OddEndpointBranchPolynomials
 
 /-! # Odd non-one Jacobi witnesses with logarithmic correction eleven fourths -/

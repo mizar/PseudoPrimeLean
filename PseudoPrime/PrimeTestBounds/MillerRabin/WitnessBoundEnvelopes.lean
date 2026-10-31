@@ -81,12 +81,11 @@ theorem gaussianMR6_coefficient_lt_gammaIndex100PrefixUpper {L : ℝ} (hL : 300 
 /-- From scale 300, the constant-6 Gaussian cutoff is strictly below both
 retained-prefix index-100 Gamma and constant-18 Gaussian candidates. -/
 theorem gaussianMR6Bound_lt_min_prefixUpper_gaussianMR18Bound {L : ℝ} (hL : 300 ≤ L) :
-    Analysis.gaussianMR6Bound L <
-      min (gammaIndex100PrefixUpper L) (Analysis.gaussianMR18Bound L) := by
-  have h6U : Analysis.gaussianMR6Bound L < gammaIndex100PrefixUpper L :=
-    lt_trans (Analysis.gaussianMR6Bound_lt_060492_sq hL)
+    gaussian6Bound L < min (gammaIndex100PrefixUpper L) (gaussian18Bound L) := by
+  have h6U : gaussian6Bound L < gammaIndex100PrefixUpper L :=
+    lt_trans (gaussian6Bound_lt_060492_sq hL)
       (gaussianMR6_coefficient_lt_gammaIndex100PrefixUpper hL)
-  exact lt_min h6U (Analysis.gaussianMR6Bound_lt_gaussianMR18Bound hL)
+  exact lt_min h6U (gaussian6Bound_lt_gaussian18Bound hL)
 
 /-- From scale 240, combine the existing clipped Gamma and the extended
 two-prefix index-100 candidates. -/
@@ -110,15 +109,14 @@ theorem exists_least_prime_witness_le_analysis13GammaPrefixEnvelope {n : ℕ} (h
 /-- From logarithmic scale 300, the constant-18 Gaussian candidate is strictly
 below the existing clipped Gamma bound. -/
 theorem gaussianMR18Bound_lt_gammaClippedUpper {L : ℝ} (hL : 300 ≤ L) :
-    Analysis.gaussianMR18Bound L < gammaClippedUpper L := by
+    gaussian18Bound L < gammaClippedUpper L := by
   exact
-    lt_of_lt_of_le (Analysis.gaussianMR18Bound_lt_sevenTenths_sq hL)
-      (gammaClippedUpper_ge_sevenTenths_sq hL)
+    lt_of_lt_of_le (gaussian18Bound_lt_sevenTenths_sq hL) (gammaClippedUpper_ge_sevenTenths_sq hL)
 
 /-- Pointwise minimum of the retained-prefix index-100 Gamma and constant-18
 Gaussian bounds, both of which apply from logarithmic scale 300. -/
 noncomputable def analysis13GammaGaussianEnvelope (L : ℝ) : ℝ :=
-  min (gammaIndex100PrefixUpper L) (Analysis.gaussianMR18Bound L)
+  min (gammaIndex100PrefixUpper L) (gaussian18Bound L)
 
 /-- From logarithmic scale 300, the least rejecting prime is bounded by the
 minimum of the two analysis13 candidates. Take the least witness from the
@@ -134,11 +132,11 @@ theorem exists_least_prime_witness_le_analysis13GammaGaussianEnvelope {n : ℕ} 
   obtain ⟨p₁, hp₁, hf₁, hb₁, hm₁⟩ :=
     exists_least_prime_witness_le_gammaIndex100PrefixUpper hnOdd hcomp hGRH (by linarith only [hL])
   obtain ⟨p₂, hp₂, hb₂, hf₂, hm₂⟩ := exists_least_prime_witness_le_gaussianMR18 hnOdd hcomp hGRH hL
-  by_cases hmin : gammaIndex100PrefixUpper (Real.log n) ≤ Analysis.gaussianMR18Bound (Real.log n)
+  by_cases hmin : gammaIndex100PrefixUpper (Real.log n) ≤ gaussian18Bound (Real.log n)
   · refine ⟨p₁, hp₁, hb₁, ?_, hm₁⟩
     rw [analysis13GammaGaussianEnvelope, min_eq_left hmin]
     exact hf₁
-  · have hmin' : Analysis.gaussianMR18Bound (Real.log n) ≤ gammaIndex100PrefixUpper (Real.log n) :=
+  · have hmin' : gaussian18Bound (Real.log n) ≤ gammaIndex100PrefixUpper (Real.log n) :=
       le_of_not_ge hmin
     refine ⟨p₂, hp₂, hb₂, ?_, hm₂⟩
     rw [analysis13GammaGaussianEnvelope, min_eq_right hmin']
@@ -155,7 +153,7 @@ theorem analysis13ClippedGammaEnvelope_eq_gammaGaussianEnvelope {L : ℝ} (hL : 
     analysis13ClippedGammaEnvelope L = analysis13GammaGaussianEnvelope L := by
   have h18Clip := gaussianMR18Bound_lt_gammaClippedUpper hL
   have hnewClip : analysis13GammaGaussianEnvelope L ≤ gammaClippedUpper L := by
-    change min (gammaIndex100PrefixUpper L) (Analysis.gaussianMR18Bound L) ≤ _
+    change min (gammaIndex100PrefixUpper L) (gaussian18Bound L) ≤ _
     exact (min_le_right _ _).trans h18Clip.le
   change min (gammaClippedUpper L) (analysis13GammaGaussianEnvelope L) = _
   exact min_eq_right hnewClip
@@ -189,7 +187,7 @@ theorem analysis13Index100Envelope_eq_gammaGaussianEnvelope {L : ℝ} (hL : 330 
     analysis13Index100Envelope L = analysis13GammaGaussianEnvelope L := by
   have h18Index := gaussianMR18Bound_lt_gammaIndex100Bound hL
   have hnewIndex : analysis13GammaGaussianEnvelope L ≤ gammaIndex100Bound L := by
-    change min (gammaIndex100PrefixUpper L) (Analysis.gaussianMR18Bound L) ≤ _
+    change min (gammaIndex100PrefixUpper L) (gaussian18Bound L) ≤ _
     exact (min_le_right _ _).trans h18Index.le
   change min (analysis13GammaGaussianEnvelope L) (gammaIndex100Bound L) = _
   exact min_eq_left hnewIndex
@@ -216,19 +214,19 @@ theorem exists_least_prime_witness_le_analysis13Index100Envelope {n : ℕ} (hnOd
 /-- Add the established 6/5 Gaussian branch from its logarithmic starting
 scale to the all-input candidate minimum. -/
 noncomputable def analysis13SixFifthsEnvelope (L : ℝ) : ℝ :=
-  min (analysis13Index100Envelope L) (Analysis.gaussianMR6FifthsBound L)
+  min (analysis13Index100Envelope L) (gaussian6FifthsBound L)
 
 /-- From scale 500 onward, all later legacy candidates are dominated by the
 constant-18 Gaussian, so the nested envelope reduces to the two new branches. -/
 theorem analysis13SixFifthsEnvelope_eq_gammaGaussianEnvelope {L : ℝ} (hL : 500 ≤ L) :
     analysis13SixFifthsEnvelope L = analysis13GammaGaussianEnvelope L := by
   have h18Index := gaussianMR18Bound_lt_gammaIndex100Bound (by linarith only [hL])
-  have h18Six := Analysis.gaussianMR18Bound_lt_gaussianMR6FifthsBound hL
+  have h18Six := gaussian18Bound_lt_gaussian6FifthsBound hL
   have hOldIndex : analysis13GammaGaussianEnvelope L ≤ gammaIndex100Bound L := by
-    change min (gammaIndex100PrefixUpper L) (Analysis.gaussianMR18Bound L) ≤ _
+    change min (gammaIndex100PrefixUpper L) (gaussian18Bound L) ≤ _
     exact (min_le_right _ _).trans h18Index.le
-  have hOldSix : analysis13GammaGaussianEnvelope L ≤ Analysis.gaussianMR6FifthsBound L := by
-    change min (gammaIndex100PrefixUpper L) (Analysis.gaussianMR18Bound L) ≤ _
+  have hOldSix : analysis13GammaGaussianEnvelope L ≤ gaussian6FifthsBound L := by
+    change min (gammaIndex100PrefixUpper L) (gaussian18Bound L) ≤ _
     exact (min_le_right _ _).trans h18Six.le
   dsimp only [analysis13SixFifthsEnvelope, analysis13Index100Envelope]
   rw [min_eq_left hOldIndex, min_eq_left hOldSix]
@@ -262,8 +260,8 @@ quadratic lower bound from scale 300 onward. -/
 theorem analysis13GammaGaussianEnvelope_lower_three_tenths {L : ℝ} (hL : 300 ≤ L) :
     (3 / 10 : ℝ) * L ^ 2 ≤ analysis13GammaGaussianEnvelope L := by
   have hPrefix := local_three_tenths_le_gammaIndex100PrefixUpper (by linarith only [hL])
-  have hGaussian := Analysis.gaussianMR18Bound_gt_local_three_tenths hL
-  change (3 / 10 : ℝ) * L ^ 2 ≤ min (gammaIndex100PrefixUpper L) (Analysis.gaussianMR18Bound L)
+  have hGaussian := gaussian18Bound_gt_local_three_tenths hL
+  change (3 / 10 : ℝ) * L ^ 2 ≤ min (gammaIndex100PrefixUpper L) (gaussian18Bound L)
   exact le_min hPrefix hGaussian.le
 
 /-- Beyond scale 500, the large-scale candidate minimum is exactly its

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointLowPrime
+public import PseudoPrime.LLS.PaperStatements.EndpointLowPrime
 
 /-! # Tighter rational certificates for low prime witness bounds -/
 

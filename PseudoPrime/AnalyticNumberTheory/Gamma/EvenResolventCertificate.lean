@@ -8,7 +8,10 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.Gamma.GammaNodeRationalCertificate
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorLogDeriv
-public import PseudoPrime.Analysis.GammaResolventCertificate
+public import PseudoPrime.AnalyticNumberTheory.Gamma.RationalResolventApproximation
+public import PseudoPrime.Analysis.SignedFiniteErrorBounds
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
 
 /-! # Certified signed even Gamma resolvent correction -/
 
@@ -37,7 +40,7 @@ Apply the eight digamma intervals with the appropriate sign and the log pi
 interval, then verify the final rational linear inequality. This removes
 the fixed Gamma-factor numerical obligation from the analytic budget. -/
 theorem gammaResolvent_even_correction_le :
-    (Analysis.gammaResolventCoefficients.map
+    (gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) * (logDeriv Complex.Gammaℝ (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum ≤
       (-159 / 100 : ℝ) := by
@@ -51,7 +54,7 @@ theorem gammaResolvent_even_correction_le :
   have h7 := gamma_digamma_node_7_bounds
   have hp := gamma_log_pi_bounds
   norm_num only [Rat.cast_div, Rat.cast_neg, Rat.cast_ofNat] at h0 h1 h2 h3 h4 h5 h6 h7 hp
-  norm_num only [Analysis.gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
+  norm_num only [gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, Rat.cast_div, Rat.cast_neg, Rat.cast_ofNat, Rat.cast_zero, zero_mul, zero_add,
     add_zero, ← Complex.ofReal_add]
   rw [re_logDeriv_Gammaℝ_of_pos (by norm_num only : (0 : ℝ) < 21 / 20),

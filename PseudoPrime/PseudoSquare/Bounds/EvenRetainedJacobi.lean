@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EvenRetainedPrimeRates
+public import PseudoPrime.LLS.PaperStatements.EvenRetainedPrimeRates
 public import PseudoPrime.PseudoSquare.Bounds.ConductorSquareFactorJacobi
 
 /-! # Negative Jacobi witnesses retaining local even-power cancellation -/

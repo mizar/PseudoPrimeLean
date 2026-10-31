@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.Analysis.EndpointFiniteData
 public import PseudoPrime.LLS.PaperStatements.EndpointFinitePrincipal
-public import PseudoPrime.LLS.EndpointLowPrime
+public import PseudoPrime.LLS.PaperStatements.EndpointLowPrime
 
 /-! # Positive endpoint gap certificates for thirteen finite principal profiles -/
 

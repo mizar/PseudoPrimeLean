@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.TwoPoleConstantBounds
+public import PseudoPrime.LLS.PaperStatements.TwoPoleConstantBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TwoPoleSignedBounds
 
 /-! # MR prime witnesses from the direct signed two-pole error bound -/

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.TwoPoleRetainedScaleBounds
-public import PseudoPrime.LLS.PairedEulerExcludedBounds
+public import PseudoPrime.LLS.PaperStatements.PairedEulerExcludedBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.TwoPoleSmallPrefixSavings
 
 /-! # Rational small-prime Euler savings and the resulting affine gap -/

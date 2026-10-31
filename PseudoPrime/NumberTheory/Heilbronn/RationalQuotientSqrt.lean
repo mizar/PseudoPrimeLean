@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.Heilbronn.RationalSliceTail
-import PseudoPrime.NumberTheory.Heilbronn.RationalQuotientBase
+public import PseudoPrime.NumberTheory.Heilbronn.RationalQuotientBase
 
 /-! # A square-root-height quotient-set bound -/
 

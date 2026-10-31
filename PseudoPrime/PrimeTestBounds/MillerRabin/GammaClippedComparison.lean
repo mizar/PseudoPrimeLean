@@ -12,7 +12,7 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSeedPairedBounds
 public import PseudoPrime.LLS.ClippedLogShiftPrincipalBounds
 public import PseudoPrime.LLS.ClippedAffineWitnessBounds
 public import PseudoPrime.LLS.GammaCheckpoint1000
-public import PseudoPrime.LLS.MidscaleEndpointRadius
+public import PseudoPrime.LLS.PaperStatements.MidscaleEndpointRadius
 public import PseudoPrime.Analysis.QuadraticGammaSmoothedNumerics
 
 /-! # Clipped-log Gamma comparison radius -/

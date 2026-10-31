@@ -35,7 +35,7 @@ theorem error_seed100_log_check :
 /-- Definition: sum of absolute node coefficients times their rational error envelopes.
 Output: a finite rational bound. Role: certify the actual error budget at cutoff 100. -/
 def errorSeed100Budget : ℚ :=
-  (Analysis.gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦
         let σ := (1 / 2 : ℚ) + ab.1
         let v := (errorSeed100Ratios ab.1).2

@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PairedEulerPrimeCosts
+public import PseudoPrime.LLS.PairedEulerConductorBudget
 public import PseudoPrime.LLS.TwoPoleRetainedPrefixBounds
 
 /-! # Parameterized allocation of conductor savings to Euler and local costs -/

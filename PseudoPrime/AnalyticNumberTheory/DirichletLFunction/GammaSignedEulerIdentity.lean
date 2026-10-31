@@ -77,29 +77,29 @@ character Euler series weighted by the actual common Gamma Mangoldt weight.
 Absolute convergence permits interchanging the finite coefficient list and
 the infinite series. Coefficient signs are retained before estimating prefixes. -/
 theorem gammaResolvent_signed_ordinary_eq_euler {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
-    (Analysis.gammaResolventCoefficients.map
+    (Gamma.gammaResolventCoefficients.map
           (fun ab ↦ (ab.2 : ℝ) * (logDeriv χ.LFunction (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum =
       ∑' n : ℕ, -(χ n).re * Analysis.gammaResolventMangoldtWeight n := by
   let f := fun (ab : ℚ × ℚ) (n : ℕ) ↦
     (ab.2 : ℝ) *
       (-((χ n).re * ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ ((1 / 2 : ℝ) + (ab.1 : ℝ))))
-  have hσ (ab : ℚ × ℚ) (hab : ab ∈ Analysis.gammaResolventCoefficients) :
+  have hσ (ab : ℚ × ℚ) (hab : ab ∈ Gamma.gammaResolventCoefficients) :
     1 < (1 / 2 : ℝ) + (ab.1 : ℝ) := by
-    have ha := List.forall_iff_forall_mem.mp Analysis.gammaResolvent_scales_gt_half ab hab
+    have ha := List.forall_iff_forall_mem.mp Gamma.gammaResolvent_scales_gt_half ab hab
     have h : ((1 / 2 : ℚ) : ℝ) < (ab.1 : ℝ) := Rat.cast_lt.mpr ha
     norm_num only at h
     linarith only [h]
-  have hs (ab : ℚ × ℚ) (hab : ab ∈ Analysis.gammaResolventCoefficients) : Summable (f ab) :=
+  have hs (ab : ℚ × ℚ) (hab : ab ∈ Gamma.gammaResolventCoefficients) : Summable (f ab) :=
     ((summable_real_twistedMangoldt χ (hσ ab hab)).neg).mul_left (ab.2 : ℝ)
   have he (n : ℕ) :
     -(χ n).re * Analysis.gammaResolventMangoldtWeight n =
-      (Analysis.gammaResolventCoefficients.map (fun ab ↦ f ab n)).sum := by
+      (Gamma.gammaResolventCoefficients.map (fun ab ↦ f ab n)).sum := by
     dsimp only [f, Analysis.gammaResolventMangoldtWeight, Analysis.gammaResolventEulerWeight]
-    norm_num only [Analysis.gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
+    norm_num only [Gamma.gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
       List.sum_nil]
     simp only [Real.rpow_neg (Nat.cast_nonneg n), div_eq_mul_inv]
     ring
-  rw [tsum_congr he, Analysis.tsum_list_sum Analysis.gammaResolventCoefficients f hs]
+  rw [tsum_congr he, Analysis.tsum_list_sum Gamma.gammaResolventCoefficients f hs]
   apply congrArg List.sum
   apply List.map_congr_left
   intro ab hab
@@ -117,9 +117,9 @@ theorem gammaResolvent_zeroMass_eq_signed_euler {q : ℕ} [NeZero q] (hq : 2 ≤
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) =
+          Gamma.gammaResolventMajorant ρ.im) =
       (11783423 / 25000000 : ℝ) * Real.log q +
-        (Analysis.gammaResolventCoefficients.map
+        (Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
         ∑' n : ℕ, -(χ n).re * Analysis.gammaResolventMangoldtWeight n := by
@@ -135,9 +135,9 @@ theorem gammaResolvent_zeroMass_le_signed_prefix {q : ℕ} [NeZero q] (hq : 2 �
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (B : Finset ℕ) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) ≤
+          Gamma.gammaResolventMajorant ρ.im) ≤
       (11783423 / 25000000 : ℝ) * Real.log q +
-            (Analysis.gammaResolventCoefficients.map
+            (Gamma.gammaResolventCoefficients.map
                 (fun ab ↦
                   (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
             (∑' n : ℕ, Analysis.gammaResolventMangoldtWeight n) -

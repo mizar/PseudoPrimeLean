@@ -55,13 +55,12 @@ theorem gaussianLow_radius_affine {L : ℝ} (hL : 100 ≤ L) :
   have hz : 0 < z := by
     dsimp only [z, w]
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
-      Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+      gaussian6FifthsIndex, gaussian6FifthsEndpoint]
     linarith only [hL]
   have hpoly : gaussianMRRefinedBeta ^ 2 * w < z ^ 2 := by
     dsimp only [z, w]
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
-      gaussianMRRefinedBeta, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedBeta, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
     nlinarith only [sq_nonneg (L - 152), hL]
   have hbudget :
     gaussianMRRefinedConductor * L + 93 / 10 + gaussianMRRefinedBeta * Real.sqrt w <
@@ -70,8 +69,8 @@ theorem gaussianLow_radius_affine {L : ℝ} (hL : 100 ≤ L) :
     have hp := mul_nonneg gaussianMRRefined_coefficients.2.le (Real.sqrt_nonneg w)
     dsimp only [z] at hz hpoly
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
-      gaussianMRRefinedBeta, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint] at hz hpoly hp ⊢
+      gaussianMRRefinedBeta, gaussianMRRefinedWidth, gaussian6FifthsIndex,
+      gaussian6FifthsEndpoint] at hz hpoly hp ⊢
     nlinarith only [hpoly, hz, hs, hp]
   have hfloor : (91 / 10 : ℝ) < Real.sqrt w := by
     apply (Real.lt_sqrt (by norm_num only)).2
@@ -80,8 +79,7 @@ theorem gaussianLow_radius_affine {L : ℝ} (hL : 100 ≤ L) :
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * Real.sqrt w := by
     have hm := mul_lt_mul_of_pos_left hfloor gaussianMRRefined_coefficients.1
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint] at hm ⊢
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint] at hm ⊢
     linarith only [hm]
   have hC : 0 ≤ gaussianMRRefinedConductor * L + 93 / 10 := by
     norm_num only [gaussianMRRefinedConductor]
@@ -265,13 +263,12 @@ theorem gaussianLowMiddleOld_lt12000 {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 126) :
     linarith only [hL]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * 10 := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have hbudget :
     gaussianMRRefinedConductor * L + 204 / 25 + gaussianMRRefinedBeta * 10 <
       gaussianMRRefinedD * (10 : ℝ) ^ 2 := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
-      gaussianMRRefinedBeta, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedBeta, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
     linarith only [hU]
   have hraw :=
     lowGaussian_root_lt gaussianMRRefined_coefficients.1 gaussianMRRefined_coefficients.2 hC hcoef
@@ -332,13 +329,12 @@ theorem gaussianLowUpper_lt35000 {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 235) :
     linarith only [hL]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * (653 / 50) := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have hbudget :
     gaussianMRRefinedConductor * L + 813 / 100 + gaussianMRRefinedBeta * (653 / 50) <
       gaussianMRRefinedD * (653 / 50 : ℝ) ^ 2 := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
-      gaussianMRRefinedBeta, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedBeta, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
     linarith only [hU]
   have hraw :=
     lowGaussian_root_lt gaussianMRRefined_coefficients.1 gaussianMRRefined_coefficients.2 hC hcoef

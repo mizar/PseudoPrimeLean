@@ -6,9 +6,11 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.GaussianPrefixComparison2
+
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianStarClassification
-public import PseudoPrime.Analysis.GaussianMR35000Numerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR35000Numerics
 
 /-! # Fixed prime strong-MR witness bound 35000 on 63<=log n<=240 -/
 
@@ -21,8 +23,8 @@ the fixed-scale relative comparison is impossible. Normalize at radius sqrt(8750
 and use the certified four-index gap. This helper retains the internal subgroup data. -/
 theorem gaussian35000_index_four {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : Real.log n ≤ 240) :
-    let r := Analysis.gaussian35000Radius
-    let s := Analysis.gaussian35000Root
+    let r := gaussian35000Radius
+    let s := gaussian35000Root
     let h := 1 / (3 * s)
     let x := r ^ 2
     ¬(((H.index : ℝ) * (1 - h) *
@@ -42,25 +44,25 @@ theorem gaussian35000_index_four {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ) 
       (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u
   let E : ℝ := Real.exp (1 / 16 : ℝ)
   have hrpos : 0 < r := by
-    have h := Analysis.gaussian35000_radius_lower
+    have h := gaussian35000_radius_lower
     linarith only [h]
   have hspos : 0 < s := by
-    have h := Analysis.gaussian35000_root_bounds.1
+    have h := gaussian35000_root_bounds.1
     linarith only [h]
-  have hrootSq : s ^ 2 = r := Analysis.gaussian35000_root_sq
+  have hrootSq : s ^ 2 = r := gaussian35000_root_sq
   have hrbound : 170 ≤ r := by
-    have h := Analysis.gaussian35000_radius_lower
+    have h := gaussian35000_radius_lower
     linarith only [h]
-  have hsbound : 13 ≤ s := Analysis.gaussian35000_root_bounds.1
+  have hsbound : 13 ≤ s := gaussian35000_root_bounds.1
   have hsqrtx : Real.sqrt x = r := by
     dsimp only [x]
     exact Real.sqrt_sq hrpos.le
   rw [hsqrtx] at hcmp
-  have hI : Analysis.gaussianMR6FifthsMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMR6FifthsMass]
+  have hI : gaussian6FifthsMass ≤ I := by
+    dsimp only [I, gaussian6FifthsMass]
     exact LLS.PaperStatements.gaussianGamma_cutoff_sixFifths_gt_target.le
-  have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
-    dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
+  have hE : E ≤ gaussian6FifthsEndpoint := by
+    dsimp only [E, gaussian6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
   have hh : h = 1 / (3 * s) := by rfl
   have hh1 : h ≤ 1 / 2 := by
@@ -79,17 +81,15 @@ theorem gaussian35000_index_four {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ) 
     apply (div_le_iff₀ (by norm_num only : (0 : ℝ) < 3)).2
     nlinarith only [hC]
   exact
-    Analysis.gaussianMR_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
+    gaussian_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianPrefixError (47 / 10) n (r ^ 2)) (L := (2 / 3 : ℝ) * Real.log n)
       (I := I) (E := E) (C := LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M :=
-      Analysis.gaussianMR6FifthsMass) (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor :=
-      (161 / 400 : ℝ)) (D :=
-      (4 * Analysis.gaussianMR6FifthsMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
-      (4 / 3 : ℝ) * (Analysis.gaussianMR6FifthsMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
+      gaussian6FifthsMass) (Ecap := gaussian6FifthsEndpoint) (conductor := (161 / 400 : ℝ)) (D :=
+      (4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) (beta :=
+      (4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
       (by norm_num only : (0 : ℝ) ≤ 161 / 400) le_rfl le_rfl hcmp'
-      (fun hbudget ↦
-        Analysis.gaussian35000_four_absurd hL (Analysis.gaussian35000_ambient hL) hbudget)
+      (fun hbudget ↦ gaussian35000_four_absurd hL (gaussian35000_ambient hL) hbudget)
 
 /-- An index-four subgroup containing every strong-MR pass yields a rejecting prime
 at most 35000 under GRH and log n<=240. A hypothetical absence of witnesses excludes
@@ -102,11 +102,11 @@ theorem gaussian35000_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : Real.log n ≤ 240) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (35000 : ℝ) ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
-  let r := Analysis.gaussian35000Radius
+  let r := gaussian35000Radius
   let x := r ^ 2
   have hcut : (6 / 5 : ℝ) * x = (35000 : ℝ) := by
     dsimp only [x, r]
-    rw [Analysis.gaussian35000_radius_sq]
+    rw [gaussian35000_radius_sq]
     norm_num only
   have hX : 35000 ≤ (6 / 5 : ℝ) * x := by rw [hcut]
   have hpass :
@@ -129,17 +129,17 @@ theorem gaussian35000_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
-  have hrootSq : (Analysis.gaussian35000Root) ^ 2 = r := Analysis.gaussian35000_root_sq
+  have hrootSq : (gaussian35000Root) ^ 2 = r := gaussian35000_root_sq
   have hrbound : 170 ≤ r := by
-    have h := Analysis.gaussian35000_radius_lower
+    have h := gaussian35000_radius_lower
     linarith only [h]
-  have hspos : 0 < Analysis.gaussian35000Root := by
-    have hs := Analysis.gaussian35000_root_bounds.1
+  have hspos : 0 < gaussian35000Root := by
+    have hs := gaussian35000_root_bounds.1
     linarith only [hs]
-  have hsbound : 13 ≤ Analysis.gaussian35000Root := Analysis.gaussian35000_root_bounds.1
-  have hwidth : 0 < 1 / (3 * Analysis.gaussian35000Root) :=
+  have hsbound : 13 ≤ gaussian35000Root := gaussian35000_root_bounds.1
+  have hwidth : 0 < 1 / (3 * gaussian35000Root) :=
     one_div_pos.mpr (mul_pos (by norm_num only) hspos)
-  have hwidth1 : 1 / (3 * Analysis.gaussian35000Root) ≤ 1 / 2 := by
+  have hwidth1 : 1 / (3 * gaussian35000Root) ≤ 1 / 2 := by
     apply one_div_le_one_div_of_le (by norm_num only)
     nlinarith only [hsbound]
   have hx : 4 ≤ x := by
@@ -160,15 +160,15 @@ theorem gaussian35000_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge
 a rejecting prime at most 35000 under GRH. Use the 35000-prefix mass and normalize
 the relative comparison before applying the positive large-index gap. -/
 theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge : 20000 ≤ n)
-    (H : Subgroup (ZMod n)ˣ) (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
+    (H : Subgroup (ZMod n)ˣ) (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : Real.log n ≤ 240) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (35000 : ℝ) ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
   let L := Real.log n
-  let r := Analysis.gaussian35000Radius
-  let s := Analysis.gaussian35000Root
+  let r := gaussian35000Radius
+  let s := gaussian35000Root
   let x := r ^ 2
   let h := 1 / (3 * s)
   let m : ℝ := H.index
@@ -180,14 +180,14 @@ theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarg
   let C : ℝ := LLS.PaperStatements.subgroupConductorLogSum H
   let A : ℝ := LLS.PaperStatements.gaussianPrefixError (47 / 10) n x
   have hn1 : 1 < n := lt_of_lt_of_le (by decide : 1 < 20000) hnlarge
-  have hrootSq : s ^ 2 = r := Analysis.gaussian35000_root_sq
+  have hrootSq : s ^ 2 = r := gaussian35000_root_sq
   have hrbound : 170 ≤ r := by
-    have h := Analysis.gaussian35000_radius_lower
+    have h := gaussian35000_radius_lower
     linarith only [h]
   have hspos : 0 < s := by
-    have h := Analysis.gaussian35000_root_bounds.1
+    have h := gaussian35000_root_bounds.1
     linarith only [h]
-  have hs13 : 13 ≤ s := Analysis.gaussian35000_root_bounds.1
+  have hs13 : 13 ≤ s := gaussian35000_root_bounds.1
   have hh : h = 1 / (3 * s) := by rfl
   have hh1 : h ≤ 1 / 2 := by
     rw [hh]
@@ -202,7 +202,7 @@ theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarg
     nlinarith only [hrbound]
   have hcut : (6 / 5 : ℝ) * x = (35000 : ℝ) := by
     dsimp only [x, r]
-    rw [Analysis.gaussian35000_radius_sq]
+    rw [gaussian35000_radius_sq]
     norm_num only
   have hX : 35000 ≤ (6 / 5 : ℝ) * x := by rw [hcut]
   have hpass :
@@ -236,17 +236,16 @@ theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarg
       (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
   have hcastIndex : ((H.index - 1 : ℕ) : ℝ) = (H.index : ℝ) - 1 := by
     have hidxReal : (1 : ℝ) ≤ (H.index : ℝ) := by
-      have hK : (1 : ℝ) ≤ Analysis.gaussianMR6FifthsIndex := by
-        norm_num only [Analysis.gaussianMR6FifthsIndex]
+      have hK : (1 : ℝ) ≤ gaussian6FifthsIndex := by norm_num only [gaussian6FifthsIndex]
       exact hK.trans hi
     have hidxNat : 1 ≤ H.index := by exact_mod_cast hidxReal
     rw [Nat.cast_sub hidxNat, Nat.cast_one]
   rw [hsqrtx, hcastIndex] at hcmp
-  have hI : Analysis.gaussianMR6FifthsMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMR6FifthsMass]
+  have hI : gaussian6FifthsMass ≤ I := by
+    dsimp only [I, gaussian6FifthsMass]
     exact LLS.PaperStatements.gaussianGamma_cutoff_sixFifths_gt_target.le
-  have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
-    dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
+  have hE : E ≤ gaussian6FifthsEndpoint := by
+    dsimp only [E, gaussian6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
   have hC : C / t ≤ L := by
     have ht : t = (H.index : ℝ) - 1 := by rfl
@@ -260,41 +259,36 @@ theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarg
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hcmp' :
     (m * (1 - h) * I - E) * r ≤
-      Analysis.gaussianMR6FifthsConductor * C +
-        m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
+      gaussian6FifthsConductor * C + m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 +
         t * A := by
-    simpa only [m, t, I, E, C, A, Analysis.gaussianMR6FifthsConductor] using hcmp
-  have hcoeff := Analysis.gaussianMR6Fifths_index_coefficients hi
-  have hD :
-    Analysis.gaussianMR6FifthsD ≤
-      (m * Analysis.gaussianMR6FifthsMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+    simpa only [m, t, I, E, C, A, gaussian6FifthsConductor] using hcmp
+  have hcoeff := gaussian6Fifths_index_coefficients hi
+  have hD : gaussian6FifthsD ≤ (m * gaussian6FifthsMass - gaussian6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
-  have hbeta :
-    (m / t) * (Analysis.gaussianMR6FifthsMass / 3 + 3 / 10) ≤ Analysis.gaussianMR6FifthsBeta := by
+  have hbeta : (m / t) * (gaussian6FifthsMass / 3 + 3 / 10) ≤ gaussian6FifthsBeta := by
     simpa only [t] using hcoeff.2.2
   have hfinish :
-    Analysis.gaussianMR6FifthsD * r ≤
-        Analysis.gaussianMR6FifthsConductor * L + Analysis.gaussianMR6FifthsBeta * s +
+    gaussian6FifthsD * r ≤
+        gaussian6FifthsConductor * L + gaussian6FifthsBeta * s +
           (m / t) *
-            (63 * Analysis.gaussianMR6FifthsEndpoint / (10 * s) +
-              1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+            (63 * gaussian6FifthsEndpoint / (10 * s) +
+              1839 * gaussian6FifthsEndpoint / (1000 * r)) +
           13 / t +
           A →
       False := by
     intro hbudget
-    exact Analysis.gaussian35000_large_absurd hL hi (Analysis.gaussian35000_ambient hL) hbudget
+    exact gaussian35000_large_absurd hL hi (gaussian35000_ambient hL) hbudget
   exact
-    Analysis.gaussianMR_relative_comparison_to_scalar (m := m) (t := t) (s := s) (r := r) (A := A)
-      (L := L) (I := I) (E := E) (C := C) (h := h) (M := Analysis.gaussianMR6FifthsMass) (Ecap :=
-      Analysis.gaussianMR6FifthsEndpoint) (conductor := Analysis.gaussianMR6FifthsConductor) (D :=
-      Analysis.gaussianMR6FifthsD) (beta := Analysis.gaussianMR6FifthsBeta)
+    gaussian_relative_comparison_to_scalar (m := m) (t := t) (s := s) (r := r) (A := A) (L := L)
+      (I := I) (E := E) (C := C) (h := h) (M := gaussian6FifthsMass) (Ecap :=
+      gaussian6FifthsEndpoint) (conductor := gaussian6FifthsConductor) (D := gaussian6FifthsD)
+      (beta := gaussian6FifthsBeta)
       (by
-        have hi' : (1000000000 : ℝ) ≤ m := by
-          simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
+        have hi' : (1000000000 : ℝ) ≤ m := by simpa only [m, gaussian6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos hrootSq.symm hh hh1 hI hE hC
-      (by norm_num only [Analysis.gaussianMR6FifthsConductor]) hD hbeta hcmp' hfinish
+      rfl hspos hrootSq.symm hh hh1 hI hE hC (by norm_num only [gaussian6FifthsConductor]) hD hbeta
+      hcmp' hfinish
 
 /-- A uniform three-prime Korselt product with log n<=240 has a prime strong-MR witness
 at most 35000 under GRH. Its conductor subgroup has index four and conductor sum 2 log n.
@@ -358,15 +352,15 @@ theorem gaussian35000_size {n : ℕ} (hn : 0 < n) (hL : 63 ≤ Real.log n) : 10 
   have hl := Real.log_le_log (Nat.cast_pos.mpr hn) hR
   rw [Real.log_pow] at hl
   norm_num only [Nat.cast_ofNat] at hl
-  linarith only [hl, Analysis.log_ten_lt_seven_thirds, hL]
+  linarith only [hl, log_ten_lt_seven_thirds, hL]
 
 /-- If q squared is at most 10^9 n and log n<=240, the local witness envelope is
 at most 35000. Its logarithm is at most 261/2, whose square is below 35000.
 The ambient-rejection transfer remains the responsibility of the local subgroup theorem. -/
 theorem gaussian35000_local {n q : ℕ} (hn : 0 < n) (hq : 0 < q) (hsize : q ^ 2 ≤ 10 ^ 9 * n)
     (hU : Real.log n ≤ 240) : max (3000 : ℝ) (Real.log q ^ 2) ≤ 35000 := by
-  have hlog := Analysis.mr_local_log_le_of_square_le hn hq hsize
-  have hcap : Real.log q ≤ 261 / 2 := by linarith only [hlog, hU, Analysis.log_ten_lt_seven_thirds]
+  have hlog := local_log_le_of_square_le hn hq hsize
+  have hcap : Real.log q ≤ 261 / 2 := by linarith only [hlog, hU, log_ten_lt_seven_thirds]
   have hsq :=
     (sq_le_sq₀ (Real.log_natCast_nonneg q) (by norm_num only : (0 : ℝ) ≤ 261 / 2)).mpr hcap
   exact max_le (by norm_num only) (by nlinarith only [hsq])
@@ -399,8 +393,8 @@ theorem exists_prime_witness_gaussian35000 {n : ℕ} (ho : Odd n) (hc : ¬n.Prim
       exact ⟨p, hp, hb.trans (gaussian35000_local hnpos hqp hqsize hU), hr⟩
     · obtain ⟨hsf, hcard, hK, hUval⟩ := ht
       exact gaussian35000_witness_card_three ho hsf hcard hK hUval hnlarge hGRH hU
-  · have hiR : Analysis.gaussianMR6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
-      norm_num only [Analysis.gaussianMR6FifthsIndex]
+  · have hiR : gaussian6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
+      norm_num only [gaussian6FifthsIndex]
       exact_mod_cast (lt_of_not_ge hi).le
     have hpass :
       ∀ z : ZMod n,

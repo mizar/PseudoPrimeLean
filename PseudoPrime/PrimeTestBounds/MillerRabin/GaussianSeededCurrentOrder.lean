@@ -29,7 +29,7 @@ theorem currentSeeded_raw13 {L : ℝ} (hL : 240 ≤ L) :
   have hlt : s < 13 := lt_of_not_ge hn
   have ha : 0 < 13 * gaussianMRRefinedD - gaussianMRRefinedBeta := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex]
+      gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex]
   have hm :=
     mul_nonneg (sub_nonneg.mpr hlt.le)
       (show 0 ≤ gaussianMRRefinedD * (13 + s) - gaussianMRRefinedBeta
@@ -37,7 +37,7 @@ theorem currentSeeded_raw13 {L : ℝ} (hL : 240 ≤ L) :
         have hd := mul_nonneg gaussianMRRefined_coefficients.1.le hs.le
         linarith only [ha, hd])
   norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-    gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex,
+    gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
     gaussianMRRefinedConductor, gaussianRecoveredSeededConstant, Bool.false_eq_true,
     ite_false] at he hm
   nlinarith only [he, hm, hL]
@@ -55,7 +55,7 @@ theorem currentSeeded_raw_radius {L : ℝ} (hL : 240 ≤ L) :
         gaussianRecoveredSeededConstant false at he
   have hm := mul_nonneg (by linarith only [hs] : (0 : ℝ) ≤ s) (sub_nonneg.mpr hs)
   norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-    gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint, Analysis.gaussianMR6FifthsIndex,
+    gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
     gaussianMRRefinedConductor, gaussianRecoveredSeededConstant, Bool.false_eq_true,
     ite_false] at he
   change s ^ 2 ≤ (18 / 25 : ℝ) * L
@@ -117,8 +117,8 @@ theorem currentSeeded_le_gaussian {L : ℝ} (hL : 240 ≤ L) :
     have ht : s < 131 / 10 := lt_of_not_ge hn
     have hm := mul_nonneg (sub_nonneg.mpr ht.le) (by linarith only [hs] : 0 ≤ s + 131 / 10)
     norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedBeta, gaussianMRRefinedD,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
-      Analysis.gaussianMR6FifthsIndex] at hG
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint,
+      gaussian6FifthsIndex] at hG
     nlinarith only [hG, hs, hm, hL]
   have hraw : gaussianRecoveredSeededRawRoot false L ≤ s := by
     change
@@ -133,8 +133,7 @@ theorem currentSeeded_le_gaussian {L : ℝ} (hL : 240 ≤ L) :
       linarith only [hL]
     · have hm := mul_le_mul_of_nonneg_left h13 gaussianMRRefined_coefficients.1.le
       norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint,
-        Analysis.gaussianMR6FifthsIndex] at hm ⊢
+        gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex] at hm ⊢
       linarith only [hm]
     · norm_num only [gaussianRecoveredSeededConstant, Bool.false_eq_true, ite_false]
       linarith only [hG]

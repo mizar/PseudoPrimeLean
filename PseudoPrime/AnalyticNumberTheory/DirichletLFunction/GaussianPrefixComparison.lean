@@ -6,9 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.RelativeGaussianSubgroupComparison
-public import PseudoPrime.LLS.GammaCheckpoint35000
-public import PseudoPrime.LLS.GaussianPrefixComparison2
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GaussianPrincipalEulerBudget
 
 /-! # Signed Gaussian prefix comparison with arbitrary certified cutoff mass -/
 
@@ -49,43 +47,5 @@ theorem gaussian_zeroMass_prefix_lt
   dsimp only [B] at h
   rw [htrivB, add_zero] at h
   linarith only [h, hprefix]
-
-/-- Under primitive nonprincipal GRH, the kernel zero-term norm is its nonnegative
-completed multiplicity times the Gaussian norm on the critical line. The divisor-zero split
-handles all complex inputs and connects zero-mass bounds to oscillating kernel sums. -/
-private theorem gaussian_kernel_zero_norm {m : ℕ} [NeZero m] {χ : DirichletCharacter ℂ m}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ρ : ℂ) :
-    ‖LLS.PaperStatements.gaussianGammaMellinKernel.kernelZeroTerm χ ρ‖ =
-      (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-        ‖Analysis.gaussianGammaFunction (ρ - 1 / 2)‖ := by
-  let D := MeromorphicOn.divisor χ.completedLFunction Set.univ ρ
-  by_cases hD : D = 0
-  · change
-      ‖(D : ℂ) * Analysis.gaussianGammaFunction (Complex.I * ρ.im)‖ =
-        (D : ℝ) * ‖Analysis.gaussianGammaFunction (ρ - 1 / 2)‖
-    rw [hD]
-    norm_num only [Int.cast_zero, zero_mul, norm_zero]
-  · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
-    have hr := completedLFunction_zero_re_eq_half hGRH hp hne hinv hz
-    have he : Complex.I * (ρ.im : ℂ) + 1 / 2 = ρ := by
-      apply Complex.ext
-      · simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re,
-          Complex.ofReal_im, zero_mul, mul_zero, sub_zero, Complex.div_ofNat_re, Complex.one_re,
-          zero_add]
-        exact hr.symm
-      · simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re,
-          Complex.ofReal_im, one_mul, zero_mul, zero_add, Complex.div_ofNat_im, Complex.one_im,
-          zero_div, add_zero]
-    have hDn : (0 : ℝ) ≤ D := by
-      have ha : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
-        (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
-      exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg ha ρ
-    change ‖(D : ℂ) * Analysis.gaussianGammaFunction (Complex.I * ρ.im)‖ = _
-    have he' : Complex.I * (ρ.im : ℂ) = ρ - 1 / 2 := by
-      calc
-        _ = (Complex.I * (ρ.im : ℂ) + 1 / 2) - 1 / 2 := by ring
-        _ = _ := by rw [he]
-    rw [he', norm_mul, Complex.norm_intCast, abs_of_nonneg hDn]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

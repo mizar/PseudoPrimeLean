@@ -251,24 +251,24 @@ namespace PseudoPrime.PseudoSquare
 the displayed prefix credit and polynomial condition under GRH.
 Claim: both finite witness maxima are at most (99/40)x. Apply the downward
 window dual estimate. Role: connect reused rows to witness bounds. -/
-theorem Q_witness_maxima_le_of_lowered_window_polynomial (c : Analysis.GammaLocalCellData)
-    (rows : ℕ → Analysis.GammaLocalPrimeRow) (hcell : c.check = true) {B : ℕ} {b lo x C E : ℝ}
+theorem Q_witness_maxima_le_of_lowered_window_polynomial (c : LLS.GammaLocalCellData)
+    (rows : ℕ → LLS.GammaLocalPrimeRow) (hcell : c.check = true) {B : ℕ} {b lo x C E : ℝ}
     (hB : 10 ≤ Real.log B) (hlo : 4096 ≤ lo) (hab : lo ≤ (c.lo : ℝ)) (hlox : lo ≤ x)
     (hxhi : x ≤ (c.hi : ℝ)) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcheck :
-      ∀ p ∈ Analysis.gammaAnchoredWindowPrimeSet c.hi,
+      ∀ p ∈ LLS.gammaAnchoredWindowPrimeSet c.hi,
         (rows p).prime = p ∧ (rows p).envelopeCheck c = true)
     (he :
-      ∀ p ∈ Analysis.gammaAnchoredWindowPrimeSet c.hi,
+      ∀ p ∈ LLS.gammaAnchoredWindowPrimeSet c.hi,
         Analysis.gammaPrimeEulerCost p ≤ ((rows p).eulerUpper : ℝ))
     (hrows :
-      (∑ p ∈ Analysis.gammaAnchoredWindowPrimeSet c.hi,
+      (∑ p ∈ LLS.gammaAnchoredWindowPrimeSet c.hi,
           Real.log p *
-            Analysis.gammaRamifiedWindowExcessBound lo c.hi (rows p).eulerUpper
+            LLS.gammaRamifiedWindowExcessBound lo c.hi (rows p).eulerUpper
               (((rows p).rampUpper : ℝ) - 5 / 4 + (9 / 2 : ℝ) * ((c.lo : ℝ) - lo) / lo)) ≤
         E)
     (hcredit :
-      C + (3 / 4 + (Analysis.gammaRamifiedDualParameter lo * Real.log B + E) + 7 / 60) / 2 ≤
+      C + (3 / 4 + (LLS.gammaRamifiedDualParameter lo * Real.log B + E) + 7 / 60) / 2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
@@ -290,26 +290,25 @@ the displayed prefix credit and polynomial condition under GRH.
 Claim: both finite witness maxima are at most (99/40)x. Apply the downward
 window dual estimate with its base-sensitive correction.
 Role: connect reused rows to witness bounds. -/
-theorem Q_witness_maxima_le_of_lowered_window_polynomial_base_ratio
-    (c : Analysis.GammaLocalCellData) (rows : ℕ → Analysis.GammaLocalPrimeRow)
-    (hcell : c.check = true) {B : ℕ} {b lo x C E : ℝ} (hB : 10 ≤ Real.log B) (hlo : 4096 ≤ lo)
-    (hab : lo ≤ (c.lo : ℝ)) (hlox : lo ≤ x) (hxhi : x ≤ (c.hi : ℝ)) (hb : 1 ≤ b)
-    (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem Q_witness_maxima_le_of_lowered_window_polynomial_base_ratio (c : LLS.GammaLocalCellData)
+    (rows : ℕ → LLS.GammaLocalPrimeRow) (hcell : c.check = true) {B : ℕ} {b lo x C E : ℝ}
+    (hB : 10 ≤ Real.log B) (hlo : 4096 ≤ lo) (hab : lo ≤ (c.lo : ℝ)) (hlox : lo ≤ x)
+    (hxhi : x ≤ (c.hi : ℝ)) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcheck :
-      ∀ p ∈ Analysis.gammaAnchoredWindowPrimeSet c.hi,
+      ∀ p ∈ LLS.gammaAnchoredWindowPrimeSet c.hi,
         (rows p).prime = p ∧ (rows p).envelopeCheck c = true)
     (he :
-      ∀ p ∈ Analysis.gammaAnchoredWindowPrimeSet c.hi,
+      ∀ p ∈ LLS.gammaAnchoredWindowPrimeSet c.hi,
         Analysis.gammaPrimeEulerCost p ≤ ((rows p).eulerUpper : ℝ))
     (hrows :
-      (∑ p ∈ Analysis.gammaAnchoredWindowPrimeSet c.hi,
+      (∑ p ∈ LLS.gammaAnchoredWindowPrimeSet c.hi,
           Real.log p *
-            Analysis.gammaRamifiedWindowExcessBound lo c.hi (rows p).eulerUpper
+            LLS.gammaRamifiedWindowExcessBound lo c.hi (rows p).eulerUpper
               (((rows p).rampUpper : ℝ) - 5 / 4 +
                 (((p : ℝ) + 1) / (p - 1)) * ((c.lo : ℝ) - lo) / lo)) ≤
         E)
     (hcredit :
-      C + (3 / 4 + (Analysis.gammaRamifiedDualParameter lo * Real.log B + E) + 7 / 60) / 2 ≤
+      C + (3 / 4 + (LLS.gammaRamifiedDualParameter lo * Real.log B + E) + 7 / 60) / 2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
@@ -334,16 +333,16 @@ theorem Q_witness_maxima_le_of_window_polynomial {B : ℕ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {b lo x hi C E : ℝ}
     (hB : 10 ≤ Real.log B) (hlo : 4096 ≤ lo) (hlox : lo ≤ x) (hxhi : x ≤ hi) (hb : 1 ≤ b)
     (hbx : b ≤ (99 / 40 : ℝ) * x) (e N : ℕ → ℝ)
-    (he : ∀ p ∈ Analysis.gammaAnchoredWindowPrimeSet hi, Analysis.gammaPrimeEulerCost p ≤ e p)
+    (he : ∀ p ∈ LLS.gammaAnchoredWindowPrimeSet hi, Analysis.gammaPrimeEulerCost p ≤ e p)
     (hN :
-      ∀ p ∈ Analysis.gammaAnchoredWindowPrimeSet hi,
-        Analysis.gammaRamifiedWindowNumerator p lo hi (5 / 4) ≤ N p)
+      ∀ p ∈ LLS.gammaAnchoredWindowPrimeSet hi,
+        LLS.gammaRamifiedWindowNumerator p lo hi (5 / 4) ≤ N p)
     (hrows :
-      (∑ p ∈ Analysis.gammaAnchoredWindowPrimeSet hi,
-          Real.log p * Analysis.gammaRamifiedWindowExcessBound lo hi (e p) (N p)) ≤
+      (∑ p ∈ LLS.gammaAnchoredWindowPrimeSet hi,
+          Real.log p * LLS.gammaRamifiedWindowExcessBound lo hi (e p) (N p)) ≤
         E)
     (hcredit :
-      C + (3 / 4 + (Analysis.gammaRamifiedDualParameter lo * Real.log B + E) + 7 / 60) / 2 ≤
+      C + (3 / 4 + (LLS.gammaRamifiedDualParameter lo * Real.log B + E) + 7 / 60) / 2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
@@ -367,14 +366,12 @@ theorem Q_witness_maxima_le_of_anchored_polynomial {B : ℕ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {b x C E : ℝ}
     (hB : 10 ≤ Real.log B) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hrows :
-      (∑ p ∈ Analysis.gammaRamifiedCertificatePrimeSet (max 160 (1 + (52 / 25 : ℝ) * Real.sqrt x)),
+      (∑ p ∈ LLS.gammaRamifiedCertificatePrimeSet (max 160 (1 + (52 / 25 : ℝ) * Real.sqrt x)),
           Real.log p *
-            max
-              (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-              0) ≤
+            max (LLS.gammaRamifiedSignedCombinedCost p x - LLS.gammaRamifiedDualParameter x) 0) ≤
         E)
     (hcredit :
-      C + (3 / 4 + (Analysis.gammaRamifiedDualParameter x * Real.log B + E) + 7 / 60) / 2 ≤
+      C + (3 / 4 + (LLS.gammaRamifiedDualParameter x * Real.log B + E) + 7 / 60) / 2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
@@ -393,24 +390,24 @@ namespace PseudoPrime.PseudoSquare
 the displayed prefix credit and polynomial condition under GRH.
 Claim: both finite witness maxima are at most (99/40)x. Apply the downward
 window dual estimate with correction coefficient 3. Role: connect reused rows to witness bounds. -/
-theorem Q_witness_maxima_le_of_lowered_window_polynomial_three (c : Analysis.GammaLocalCellData)
-    (rows : ℕ → Analysis.GammaLocalPrimeRow) (hcell : c.check = true) {B : ℕ} {b lo x C E : ℝ}
+theorem Q_witness_maxima_le_of_lowered_window_polynomial_three (c : LLS.GammaLocalCellData)
+    (rows : ℕ → LLS.GammaLocalPrimeRow) (hcell : c.check = true) {B : ℕ} {b lo x C E : ℝ}
     (hB : 10 ≤ Real.log B) (hlo : 4096 ≤ lo) (hab : lo ≤ (c.lo : ℝ)) (hlox : lo ≤ x)
     (hxhi : x ≤ (c.hi : ℝ)) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcheck :
-      ∀ p ∈ Analysis.gammaAnchoredWindowPrimeSet c.hi,
+      ∀ p ∈ LLS.gammaAnchoredWindowPrimeSet c.hi,
         (rows p).prime = p ∧ (rows p).envelopeCheck c = true)
     (he :
-      ∀ p ∈ Analysis.gammaAnchoredWindowPrimeSet c.hi,
+      ∀ p ∈ LLS.gammaAnchoredWindowPrimeSet c.hi,
         Analysis.gammaPrimeEulerCost p ≤ ((rows p).eulerUpper : ℝ))
     (hrows :
-      (∑ p ∈ Analysis.gammaAnchoredWindowPrimeSet c.hi,
+      (∑ p ∈ LLS.gammaAnchoredWindowPrimeSet c.hi,
           Real.log p *
-            Analysis.gammaRamifiedWindowExcessBound lo c.hi (rows p).eulerUpper
+            LLS.gammaRamifiedWindowExcessBound lo c.hi (rows p).eulerUpper
               (((rows p).rampUpper : ℝ) - 5 / 4 + (3 : ℝ) * ((c.lo : ℝ) - lo) / lo)) ≤
         E)
     (hcredit :
-      C + (3 / 4 + (Analysis.gammaRamifiedDualParameter lo * Real.log B + E) + 7 / 60) / 2 ≤
+      C + (3 / 4 + (LLS.gammaRamifiedDualParameter lo * Real.log B + E) + 7 / 60) / 2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :

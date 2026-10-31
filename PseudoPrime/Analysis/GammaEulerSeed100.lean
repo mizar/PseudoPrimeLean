@@ -18,7 +18,7 @@ namespace PseudoPrime.Analysis
 endpoints selected by the fixed node order. Output: a rational power interval.
 Role: supply compact data whose twentieth-power checks are verified below. -/
 def smallSeedRatios (rs : List ℕ) (a : ℚ) : ℚ × ℚ :=
-  let r := rs[(gammaResolventCoefficients.map Prod.fst).idxOf a]?.getD 0
+  let r := rs[(AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map Prod.fst).idxOf a]?.getD 0
   ((r : ℚ) / 1000000, ((r + 1 : ℕ) : ℚ) / 1000000)
 
 /-- Input: prime, exponent minus one, logarithm scale and grid endpoints, and power data.

@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaPairedEulerIdentity
 public import PseudoPrime.LLS.GammaResolventCharacterComparison
+public import PseudoPrime.LLS.PaperStatements.GammaResolventCharacterComparison
 
 /-! # Conductor budgets retaining the nonnegative paired Euler tail -/
 
@@ -28,7 +29,7 @@ theorem gamma_jacobi_zeroMass_add_ramp_pairedTail_le_dual {n : ℕ} {hn : Odd n}
     (hlarge : 10 ^ 100 ≤ n) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor bridge.character.completedLFunction Set.univ ρ : ℝ) *
-            Analysis.gammaResolventMajorant ρ.im) +
+            AnalyticNumberTheory.Gamma.gammaResolventMajorant ρ.im) +
         (∑ p ∈ (4 * n).primeFactors,
           Real.log p *
             ((∑' k : ℕ,
@@ -36,7 +37,7 @@ theorem gamma_jacobi_zeroMass_add_ramp_pairedTail_le_dual {n : ℕ} {hn : Odd n}
                   ((p : ℝ) ^ (k + 1) / Analysis.gammaRefinedScale (Real.log n)) (k + 1)) /
               Real.sqrt (Analysis.gammaRefinedScale (Real.log n)))) +
         Analysis.gammaPairedEulerTail bridge.character (Finset.Ioc 0 ⌊b⌋₊) ≤
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
                 (fun ab ↦
                   (ab.2 : ℝ) *
                     (logDeriv bridge.character.gammaFactor

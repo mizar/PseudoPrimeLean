@@ -8,8 +8,8 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianWitnessBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianVariableWitnessBounds
-public import PseudoPrime.Analysis.GaussianTripleNumerics
-public import PseudoPrime.LLS.ThreeConductorSum
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianTripleNumerics
+public import PseudoPrime.LLS.PaperStatements.ThreeConductorSum
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaIndex100GaussianClosure
 
 /-! # Gaussian index-four branch with a two-log conductor cost
@@ -142,16 +142,15 @@ theorem exists_prime_witness_le_gaussian_0283_of_conductor_saving {n : ℕ} [NeZ
   have hsmall : (225000000 : ℝ) ≤ Real.log n :=
     (by norm_num only : (225000000 : ℝ) ≤ 1000000000000).trans hL
   have hx :=
-    (by norm_num only : (4 : ℝ) ≤ 3 ^ 16).trans
-      (Analysis.gaussianTripleScale_ge_three_pow_sixteen hsmall)
-  have hE := Analysis.gaussianTriple_error_budget hL (le_refl (Real.log n))
+    (by norm_num only : (4 : ℝ) ≤ 3 ^ 16).trans (gaussianTripleScale_ge_three_pow_sixteen hsmall)
+  have hE := gaussianTriple_error_budget hL (le_refl (Real.log n))
   apply
     exists_prime_witness_le_gaussian_of_index_four_conductor_saving hnlarge hnOdd H hi hHpass hGRH
       hC
-  · dsimp only [Analysis.gaussianTripleScale] at hx
+  · dsimp only [gaussianTripleScale] at hx
     norm_num only at hx ⊢
     exact hx
-  · dsimp only [Analysis.gaussianTripleScale] at hE
+  · dsimp only [gaussianTripleScale] at hE
     norm_num only at hE ⊢
     exact hE
 
@@ -258,7 +257,7 @@ theorem exists_prime_witness_le_gaussian_star_of_three_annihilator_members {n p 
     (hp : 0 < p) (hq : 0 < q) (hr : 0 < r) (hn : n = p * q * r) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianStarBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   classical
   have hi := LLS.PaperStatements.index_four_of_three_nonprincipal_annihilator H a b c hab hac hbc hs
@@ -337,7 +336,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_three_annihilator_members {n 
     (hp : 0 < p) (hq : 0 < q) (hr : 0 < r) (hn : n = p * q * r) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6FifthsBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   classical
   have hi := LLS.PaperStatements.index_four_of_three_nonprincipal_annihilator H a b c hab hac hbc hs
@@ -360,7 +359,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_three_annihilator_prime_membe
     (hr : r.Prime) (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6FifthsBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hnon : ∀ d : NumberTheory.subgroupAnnihilator H, 1 < d.val.conductor → d ≠ 1 := by
     intro d hd he
@@ -392,7 +391,7 @@ theorem exists_prime_witness_le_gaussian_star_of_three_annihilator_prime_members
     (hr : r.Prime) (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianStarBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hnon : ∀ d : NumberTheory.subgroupAnnihilator H, 1 < d.val.conductor → d ≠ 1 := by
     intro d hd he

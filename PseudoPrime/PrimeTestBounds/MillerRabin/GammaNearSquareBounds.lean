@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSignedPrefixBounds
-public import PseudoPrime.LLS.GammaNearSquareNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaNearSquareNumerics
 public import PseudoPrime.LLS.PaperStatements.GammaNearSquareBounds
 
 /-! # Coefficient 99/100 Miller-Rabin witnesses from logarithmic scale 1000 -/

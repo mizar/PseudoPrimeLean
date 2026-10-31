@@ -24,10 +24,10 @@ theorem gammaResolvent_zeroMass_add_pairedEuler_eq {q : ℕ} [NeZero q] (hq : 2 
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-            Analysis.gammaResolventMajorant ρ.im) +
+            Gamma.gammaResolventMajorant ρ.im) +
         (∑' m : ℕ, Analysis.gammaPairedEulerTerm χ m) =
       (11783423 / 25000000 : ℝ) * Real.log q +
-        (Analysis.gammaResolventCoefficients.map
+        (Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
         ∑' m : ℕ, Analysis.gammaResolventMangoldtWeight m := by
@@ -39,12 +39,12 @@ the nonnegative common paired Euler mass. Combine all signed coefficients
 before using positivity of H; negative coefficients are retained exactly. -/
 theorem gammaResolvent_neg_real_derivative_pair_eq_pairedEuler {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) :
-    -(Analysis.gammaResolventCoefficients.map
+    -(Gamma.gammaResolventCoefficients.map
               (fun ab ↦
                 (ab.2 : ℝ) *
                   (logDeriv (1 : DirichletCharacter ℂ 1).LFunction
                       (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum -
-        (Analysis.gammaResolventCoefficients.map
+        (Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.LFunction (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum =
       ∑' m : ℕ, Analysis.gammaPairedEulerTerm χ m := by
@@ -64,10 +64,10 @@ theorem gammaResolvent_zeroMass_add_pairedTail_eq_prefix {q : ℕ} [NeZero q] (h
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (B : Finset ℕ) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-            Analysis.gammaResolventMajorant ρ.im) +
+            Gamma.gammaResolventMajorant ρ.im) +
         Analysis.gammaPairedEulerTail χ B =
       (11783423 / 25000000 : ℝ) * Real.log q +
-            (Analysis.gammaResolventCoefficients.map
+            (Gamma.gammaResolventCoefficients.map
                 (fun ab ↦
                   (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
             (∑' m : ℕ, Analysis.gammaResolventMangoldtWeight m) -

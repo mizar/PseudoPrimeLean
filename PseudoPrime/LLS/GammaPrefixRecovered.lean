@@ -117,7 +117,7 @@ theorem recovered_boundary1000 (hRH : RiemannHypothesis) :
 /-- The checkpoint-1000 envelope with refined root and logarithm inputs.
 It uses the unchanged ten certified power intervals and bounds the actual budget. -/
 def recoveredError1000 : ℚ :=
-  (Analysis.gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦
         let σ := (1 / 2 : ℚ) + ab.1
         let v := (checkpoint1000Ratios ab.1).2

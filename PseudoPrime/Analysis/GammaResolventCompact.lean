@@ -52,13 +52,17 @@ positive interpolation margin and cancel the strictly positive scaling factor 1+
 theorem norm_Gamma_half_add_I_le_gammaResolvent_on_nonneg_of_grid
     (hnodes : ∀ j : ℕ, j ≤ 8000 → 1 / 25000 ≤ gammaResolventScaledGap ((j : ℝ) / 500)) {t : ℝ}
     (ht : t ∈ Set.Icc (0 : ℝ) 16) :
-    ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤ gammaResolventMajorant t := by
+    ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤
+      AnalyticNumberTheory.Gamma.gammaResolventMajorant t := by
   have h := gammaResolventScaledGap_lower_of_grid hnodes ht
   have hp : 0 < gammaResolventScaledGap t :=
     lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 13 / 1000000) h
-  change 0 < (1 + t ^ 2) * gammaResolventMajorant t - (1 + t ^ 2) * gammaHalfLineNorm t at hp
+  change
+    0 <
+      (1 + t ^ 2) * AnalyticNumberTheory.Gamma.gammaResolventMajorant t -
+        (1 + t ^ 2) * gammaHalfLineNorm t at hp
   have hs : 0 < 1 + t ^ 2 := add_pos_of_pos_of_nonneg (by norm_num only) (sq_nonneg t)
-  have hd : gammaHalfLineNorm t < gammaResolventMajorant t :=
+  have hd : gammaHalfLineNorm t < AnalyticNumberTheory.Gamma.gammaResolventMajorant t :=
     (mul_lt_mul_iff_right₀ hs).mp (sub_pos.mp hp)
   simpa only [gammaHalfLineNorm, norm_Gamma_half_add_I] using hd.le
 
@@ -67,13 +71,15 @@ Evenness covers negative ordinates, interpolation covers [0,16], and the proved
 rational-exponential tail covers |t|≥16. Only finite node arithmetic remains as input. -/
 theorem norm_Gamma_half_add_I_le_gammaResolvent_of_grid
     (hnodes : ∀ j : ℕ, j ≤ 8000 → 1 / 25000 ≤ gammaResolventScaledGap ((j : ℝ) / 500)) (t : ℝ) :
-    ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤ gammaResolventMajorant t := by
+    ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤
+      AnalyticNumberTheory.Gamma.gammaResolventMajorant t := by
   apply norm_Gamma_half_add_I_le_gammaResolvent_of_compact _ t
   intro x hx
   have h :=
     norm_Gamma_half_add_I_le_gammaResolvent_on_nonneg_of_grid hnodes
       (show |x| ∈ Set.Icc (0 : ℝ) 16 from ⟨abs_nonneg x, hx⟩)
   have he : Real.pi * |x| = |Real.pi * x| := by rw [abs_mul, abs_of_pos Real.pi_pos]
-  simpa only [norm_Gamma_half_add_I, he, Real.cosh_abs, gammaResolventMajorant, sq_abs] using h
+  simpa only [norm_Gamma_half_add_I, he, Real.cosh_abs,
+    AnalyticNumberTheory.Gamma.gammaResolventMajorant, sq_abs] using h
 
 end PseudoPrime.Analysis

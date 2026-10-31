@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaResolventCertificate
+public import PseudoPrime.AnalyticNumberTheory.Gamma.RationalResolventApproximation
+public import PseudoPrime.Analysis.SignedFiniteErrorBounds
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
 public import PseudoPrime.Analysis.GammaResolventTail
 public import PseudoPrime.Analysis.GammaResolventGridCertificate
 public import PseudoPrime.Analysis.ListInfiniteSum
@@ -29,7 +32,7 @@ gamma-factor interval; apply their unconditional centered errors with absolute c
 weights. This proves the resolvent allowance before comparison with the Gamma kernel. -/
 theorem gammaResolvent_poissonSum_lt {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
-    (Analysis.gammaResolventCoefficients.map
+    (Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) *
               ∑' ρ : ℂ,
@@ -90,13 +93,13 @@ through the signed finite resolvent sum. Reorder the scalar factors without disc
 This supplies the pointwise identity for finite/infinite sum interchange. -/
 theorem gammaResolvent_weightedTerm_eq {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (ρ : ℂ) :
     (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-        Analysis.gammaResolventMajorant ρ.im =
-      (Analysis.gammaResolventCoefficients.map
+        Gamma.gammaResolventMajorant ρ.im =
+      (Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) *
               ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
                 ((ab.1 : ℝ) / ((ab.1 : ℝ) ^ 2 + ρ.im ^ 2))))).sum := by
-  rw [Analysis.gammaResolventMajorant, ← List.sum_map_mul_left]
+  rw [Gamma.gammaResolventMajorant, ← List.sum_map_mul_left]
   apply congrArg List.sum
   apply List.map_congr_left
   intro ab _
@@ -109,14 +112,14 @@ This is the common input for the finite/infinite sum interchange and total mass 
 theorem summable_gammaResolvent_node_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
-    ∀ ab ∈ Analysis.gammaResolventCoefficients,
+    ∀ ab ∈ Gamma.gammaResolventCoefficients,
       Summable
         (fun ρ : ℂ ↦
           (ab.2 : ℝ) *
             ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
               ((ab.1 : ℝ) / ((ab.1 : ℝ) ^ 2 + ρ.im ^ 2)))) := by
   intro ab hab
-  have hal := List.forall_iff_forall_mem.mp Analysis.gammaResolvent_scales_gt_half ab hab
+  have hal := List.forall_iff_forall_mem.mp Gamma.gammaResolvent_scales_gt_half ab hab
   have halR := (Rat.cast_lt (K := ℝ)).mpr hal
   norm_num only [Rat.cast_div, Rat.cast_one, Rat.cast_ofNat] at halR
   exact
@@ -132,9 +135,9 @@ theorem summable_completed_gammaResolvent_terms {q : ℕ} [NeZero q] (hq : 2 ≤
     Summable
       (fun ρ : ℂ ↦
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) := by
+          Gamma.gammaResolventMajorant ρ.im) := by
   exact
-    (Analysis.summable_list_sum Analysis.gammaResolventCoefficients _
+    (Analysis.summable_list_sum Gamma.gammaResolventCoefficients _
           (summable_gammaResolvent_node_terms hq hRH hp hne hinv)).congr
       (fun ρ ↦ (gammaResolvent_weightedTerm_eq χ ρ).symm)
 
@@ -147,8 +150,8 @@ theorem gammaResolvent_zeroMass_eq_poissonSum {q : ℕ} [NeZero q] (hq : 2 ≤ q
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) =
-      (Analysis.gammaResolventCoefficients.map
+          Gamma.gammaResolventMajorant ρ.im) =
+      (Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) *
               ∑' ρ : ℂ,
@@ -156,7 +159,7 @@ theorem gammaResolvent_zeroMass_eq_poissonSum {q : ℕ} [NeZero q] (hq : 2 ≤ q
                   ((ab.1 : ℝ) / Complex.normSq ((((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ) - ρ)))).sum := by
   have hs := summable_gammaResolvent_node_terms hq hRH hp hne hinv
   rw [tsum_congr (fun ρ ↦ gammaResolvent_weightedTerm_eq χ ρ),
-    Analysis.tsum_list_sum Analysis.gammaResolventCoefficients _ hs]
+    Analysis.tsum_list_sum Gamma.gammaResolventCoefficients _ hs]
   apply congrArg List.sum
   apply List.map_congr_left
   intro ab _
@@ -172,7 +175,7 @@ theorem gammaResolvent_zeroMass_lt {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : Dir
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) <
+          Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + 24 := by
   rw [gammaResolvent_zeroMass_eq_poissonSum hq hRH hp hne hinv]
   exact gammaResolvent_poissonSum_lt hq hRH hp hne hinv
@@ -183,8 +186,7 @@ a primitive nonprincipal character under individual RH has Gamma zero mass stric
 pointwise comparison, and resolvent summability also establishes Gamma mass summability.
 The comparison isolates the domination certificate from the Poisson mass calculation. -/
 theorem gamma_zeroMass_lt_of_resolvent_majorant
-    (hΓ :
-      ∀ t : ℝ, ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤ Analysis.gammaResolventMajorant t)
+    (hΓ : ∀ t : ℝ, ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤ Gamma.gammaResolventMajorant t)
     {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖Complex.Gamma ρ‖) <
@@ -196,7 +198,7 @@ theorem gamma_zeroMass_lt_of_resolvent_majorant
   have hb (ρ : ℂ) :
     (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖Complex.Gamma ρ‖ ≤
       (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-        Analysis.gammaResolventMajorant ρ.im := by
+        Gamma.gammaResolventMajorant ρ.im := by
     by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
     · simp only [hD, Int.cast_zero, zero_mul, le_refl]
     · have hr :=
@@ -221,8 +223,7 @@ and the centered Poisson comparison gives the conductor coefficient and constant
 theorem gamma_zeroMass_lt_of_compact_resolvent_majorant
     (hΓ :
       ∀ t : ℝ,
-        |t| ≤ 16 →
-          ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤ Analysis.gammaResolventMajorant t)
+        |t| ≤ 16 → ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤ Gamma.gammaResolventMajorant t)
     {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖Complex.Gamma ρ‖) <

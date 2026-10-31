@@ -31,7 +31,7 @@ theorem triangularProfile_local (f : TriangularProfile) {n q : ℕ} (hn : 0 < n)
   have ha : 0 < f.a := by linarith only [f.root]
   have hmul := mul_le_mul_of_nonneg_left hL (by linarith only [f.root] : (0 : ℝ) ≤ f.a - 1 / 2)
   have hcap : Real.log q ≤ f.a * Real.log n := by
-    nlinarith only [hl, Analysis.log_ten_lt_seven_thirds, f.localBudget, hmul]
+    nlinarith only [hl, log_ten_lt_seven_thirds, f.localBudget, hmul]
   have hp : 0 ≤ f.a * Real.log n := mul_nonneg ha.le hLp.le
   have hs := (sq_le_sq₀ (Real.log_natCast_nonneg q) hp).mpr hcap
   have hsq := mul_le_mul_of_nonneg_right f.square (sq_nonneg (Real.log n))

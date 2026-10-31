@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.SelectedReciprocalConductorBounds
+public import PseudoPrime.LLS.PaperStatements.SelectedReciprocalConductorBounds
 public import PseudoPrime.PseudoSquare.Bounds.AdaptiveReciprocalJacobiBounds
 public import PseudoPrime.PseudoSquare.Bounds.VariableReciprocalJacobiBounds
 

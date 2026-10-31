@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSignedPrefixBounds
 public import PseudoPrime.LLS.GammaPairedNearSquareNegativeBounds
+public import PseudoPrime.LLS.PaperStatements.GammaPairedNearSquareNegativeBounds
 
 /-! # Prime MR rejecting witnesses from log 700 with paired ramp errors -/
 

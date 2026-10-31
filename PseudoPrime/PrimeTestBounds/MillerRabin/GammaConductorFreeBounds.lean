@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
-public import PseudoPrime.LLS.GammaConductorFreeSubgroupBounds
+public import PseudoPrime.LLS.PaperStatements.GammaConductorFreeSubgroupBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaComparison
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.GammaConductorFreeBounds
 

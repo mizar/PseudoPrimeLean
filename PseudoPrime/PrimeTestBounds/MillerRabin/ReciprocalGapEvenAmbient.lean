@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ReciprocalGapEvenOriginalLevel
+public import PseudoPrime.LLS.PaperStatements.ReciprocalGapEvenOriginalLevel
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapAmbient
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.LLS.Theorem11S1Subgroup

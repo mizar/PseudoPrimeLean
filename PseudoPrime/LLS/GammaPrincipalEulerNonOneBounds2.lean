@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaConductorFreeNonOneBounds
-public import PseudoPrime.LLS.GammaPrincipalEulerCharacterBounds
+public import PseudoPrime.LLS.PaperStatements.GammaPrincipalEulerCharacterBounds
 public import PseudoPrime.LLS.GammaRetainedCommonCostBounds
 public import PseudoPrime.LLS.PaperStatements.GammaPrincipalEulerNonOneBounds
 
@@ -43,7 +43,7 @@ theorem exists_odd_prime_ne_one_of_log_ratio_character_budget {q : ℕ} [NeZero 
   have hx1 : 1 ≤ x := le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx
   have hx0 := zero_lt_one.trans_le hx1
   have hs := Analysis.ramp_scale_sqrt_lower hL0.le
-  have hl := Analysis.nonOne_cutoff_log_of_wide_ratio hL0 hlogL
+  have hl := nonOne_cutoff_log_of_wide_ratio hL0 hlogL
   obtain ⟨hleft, heP, heT, htwo⟩ := PaperStatements.nonOne_error_budgets_of_wide_ratio hL hx1 hs hl
   have hpole :=
     PaperStatements.gamma_tail_pole_budget (show (15000 : ℝ) ≤ L by linarith only [hL]) hs

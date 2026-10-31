@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaAnchoredSupportBudget
-public import PseudoPrime.Analysis.GammaMixedEulerCells
+public import PseudoPrime.LLS.GammaMixedEulerCells
 
 /-! # Certified actual dual costs on the logarithmic profile cell [300,310] -/
 
@@ -33,12 +33,12 @@ theorem gamma_anchored_support_subset_559 {x : ℝ} (hroot : Real.sqrt x ≤ (19
 Proof: use the coupled square-root lower bound before dividing.
 Role: avoid independent endpoint losses in the linear part of a profile cell. -/
 theorem gamma_quadratic_profile_price_le_two {L : ℝ} (hL : 0 < L) :
-    Analysis.gammaRamifiedDualParameter ((2 / 5 : ℝ) * L ^ 2) * L ≤ 2 := by
+    gammaRamifiedDualParameter ((2 / 5 : ℝ) * L ^ 2) * L ≤ 2 := by
   have hx : 0 < (2 / 5 : ℝ) * L ^ 2 := mul_pos (by norm_num only) (sq_pos_of_pos hL)
   have hr : (5 / 8 : ℝ) * L ≤ Real.sqrt ((2 / 5 : ℝ) * L ^ 2) := by
     apply (Real.le_sqrt (mul_nonneg (by norm_num only) hL.le) hx.le).mpr
     nlinarith only [sq_nonneg L]
-  dsimp only [Analysis.gammaRamifiedDualParameter]
+  dsimp only [gammaRamifiedDualParameter]
   rw [div_mul_eq_mul_div]
   apply (div_le_iff₀ (mul_pos (by norm_num only) (Real.sqrt_pos.mpr hx))).mpr
   linarith only [hr]
@@ -48,19 +48,17 @@ Proof: validate all mixed Euler rows, sum their allowances and prove support cov
 Role: discharge a numerical dual-excess obligation throughout a closed scale interval. -/
 theorem gamma_profile_excess_le_300_310 {x : ℝ} (hxlo : 36000 ≤ x) (hxhi : x ≤ 38440) :
     (∑ p ∈ gammaAnchoredSupportPrimeSet x,
-        Real.log p *
-          max (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-            0) ≤
+        Real.log p * max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0) ≤
       (47 / 10 : ℝ) := by
-  let c := Analysis.gammaProfileEnvelopeCell 300 310
+  let c := gammaProfileEnvelopeCell 300 310
   let R := (Finset.Icc 3 559).filter Nat.Prime
-  let row := Analysis.gammaProfileEnvelopeRow c
+  let row := gammaProfileEnvelopeRow c
   have hlox : (c.lo : ℝ) ≤ x := by
-    norm_num only [c, Analysis.gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
+    norm_num only [c, gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
       Rat.cast_ofNat]
     exact hxlo
   have hxhic : x ≤ (c.hi : ℝ) := by
-    norm_num only [c, Analysis.gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
+    norm_num only [c, gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
       Rat.cast_ofNat]
     exact hxhi
   have hE : ∀ p ∈ R, Analysis.gammaPrimeEulerCost p ≤ ((row p).eulerUpper : ℝ) := by
@@ -69,23 +67,20 @@ theorem gamma_profile_excess_le_300_310 {x : ℝ} (hxlo : 36000 ≤ x) (hxhi : x
       Analysis.gamma_mixed_euler_upper_sound (Finset.mem_filter.mp hp).2
         (Finset.mem_Icc.mp (Finset.mem_filter.mp hp).1).1
   have hs :=
-    Analysis.gamma_envelope_prime_sum_upper R row c Analysis.gamma_profile_cell_300_310_check
-      (fun p hp ↦ (Finset.mem_filter.mp hp).2) (fun p hp ↦ rfl)
-      Analysis.gamma_profile_rows_300_310_check hE hlox hxhic
+    gamma_envelope_prime_sum_upper R row c gamma_profile_cell_300_310_check
+      (fun p hp ↦ (Finset.mem_filter.mp hp).2) (fun p hp ↦ rfl) gamma_profile_rows_300_310_check hE
+      hlox hxhic
   have htheta : (c.theta : ℝ) = 5 / 4 := by
-    norm_num only [c, Analysis.gammaProfileEnvelopeCell, Rat.cast_div, Rat.cast_ofNat]
-  have heq :
-    Analysis.gammaRamifiedThetaParameter (5 / 4) x = Analysis.gammaRamifiedDualParameter x := by
-    dsimp only [Analysis.gammaRamifiedThetaParameter, Analysis.gammaRamifiedDualParameter]
+    norm_num only [c, gammaProfileEnvelopeCell, Rat.cast_div, Rat.cast_ofNat]
+  have heq : gammaRamifiedThetaParameter (5 / 4) x = gammaRamifiedDualParameter x := by
+    dsimp only [gammaRamifiedThetaParameter, gammaRamifiedDualParameter]
     rw [div_div]
   rw [htheta, heq] at hs
-  have hcap := (Rat.cast_le (K := ℝ)).mpr Analysis.gamma_profile_sum_300_310_check
+  have hcap := (Rat.cast_le (K := ℝ)).mpr gamma_profile_sum_300_310_check
   norm_num only [Rat.cast_div, Rat.cast_ofNat] at hcap
   have hfull :
     (∑ p ∈ R,
-        Real.log p *
-          max (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-            0) ≤
+        Real.log p * max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0) ≤
       (47 / 10 : ℝ) :=
     hs.trans hcap
   have hroot : Real.sqrt x ≤ (1963 / 10 : ℝ) :=
@@ -94,9 +89,7 @@ theorem gamma_profile_excess_le_300_310 {x : ℝ} (hxlo : 36000 ≤ x) (hxhi : x
   have hsub := gamma_anchored_support_subset_559 hroot
   have hext :=
     Finset.sum_le_sum_of_subset_of_nonneg hsub (f := fun p : ℕ ↦
-      Real.log p *
-        max (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-          0)
+      Real.log p * max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0)
       (fun p hp _ ↦
         mul_nonneg (Real.log_nonneg (by exact_mod_cast (Finset.mem_filter.mp hp).2.one_le))
           (le_max_right _ _))

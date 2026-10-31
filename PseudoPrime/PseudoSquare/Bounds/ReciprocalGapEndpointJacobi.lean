@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ReciprocalGapEndpointSelected
+public import PseudoPrime.LLS.PaperStatements.ReciprocalGapEndpointSelected
 public import PseudoPrime.PseudoSquare.Bounds.ReciprocalGapAmbientJacobi
 
 /-! # Jacobi prime witnesses from selected endpoint zero-mass separation -/

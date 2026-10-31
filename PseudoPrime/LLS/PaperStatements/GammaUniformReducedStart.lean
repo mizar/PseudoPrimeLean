@@ -9,7 +9,7 @@ module
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformWitnessBounds
 public import PseudoPrime.Analysis.QuadraticGammaDecimalRefinement
-public import PseudoPrime.Analysis.GammaUniformReducedStart
+public import PseudoPrime.LLS.GammaUniformReducedStartScalars
 
 /-! # A smaller uniform Gamma starting value
 
@@ -46,9 +46,8 @@ theorem exists_prime_outside_le_gamma_four_fifths_log_45731 {q : ℕ} [NeZero q]
     gamma_ramp_subgroup_comparison_uniform hq H hH hGRH
       ((by norm_num only : (35000 : ℝ) ≤ 45731).trans hL) hsmall
   have hD :=
-    Analysis.gamma_commonFactor_budget_of_log_ge_42875
-      ((by norm_num only : (42875 : ℝ) ≤ 45731).trans hL)
-  have he := Analysis.gamma_uniform_error_budget_of_ge_45731 hL
+    gamma_commonFactor_budget_of_log_ge_42875 ((by norm_num only : (42875 : ℝ) ≤ 45731).trans hL)
+  have he := gamma_uniform_error_budget_of_ge_45731 hL
   have hm := Analysis.nonOne_main_term_gap (show 0 < Real.log q by linarith only [hL])
   linarith only [hc, hD, he, hm]
 
@@ -68,6 +67,6 @@ theorem exists_prime_outside_le_gamma_four_fifths_19861 {q : ℕ} (H : Subgroup 
   let : NeZero q := ⟨hq0⟩
   exact
     exists_prime_outside_le_gamma_four_fifths_log_45731 H hH hGRH
-      (Analysis.log_nat_gt_45731_of_decimal_19861 hq).le
+      (log_nat_gt_45731_of_decimal_19861 hq).le
 
 end PseudoPrime.LLS.PaperStatements

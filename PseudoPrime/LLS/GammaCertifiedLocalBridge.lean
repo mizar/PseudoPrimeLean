@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaLocalBudgetCertificate
+public import PseudoPrime.LLS.GammaLocalBudgetCertificate
 public import PseudoPrime.LLS.GammaScaleJointBudget
 
 /-! # Certified finite-scale local data in the Jacobi witness comparison -/
@@ -22,7 +22,7 @@ Role: transfer arbitrary certified scales to the actual quadratic character. -/
 theorem gamma_jacobi_square_dyadic_of_local_certificate {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) (S : Finset ℕ)
     (hS : S ⊆ n.primeFactors) (hχ : ∀ p ∈ S, bridge.character p = -1) (K : ℕ → Finset ℕ)
-    (K2 : Finset ℕ) {x δ : ℝ} (cert : Analysis.GammaLocalBudgetCertificate x δ) :
+    (K2 : Finset ℕ) {x δ : ℝ} (cert : GammaLocalBudgetCertificate x δ) :
     (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
         (∑ p ∈ S, Analysis.gammaActualPrimeLocalCost bridge.character p (K p) x) +
         Analysis.gammaActualPrimeLocalCost bridge.character 2 K2 x ≤
@@ -38,12 +38,12 @@ theorem gamma_jacobi_square_dyadic_of_local_certificate {n : ℕ} {hn : Odd n} {
       rw [hfd]
       exact hdecomp
     exact
-      Analysis.gamma_actual_odd_square_dyadic_of_local_certificate hnf hn hf
-        bridge.squareFactor_odd.pos S hS bridge.character hχ htwo K K2 cert
+      gamma_odd_square_dyadic_of_local_certificate hnf hn hf bridge.squareFactor_odd.pos S hS
+        bridge.character hχ htwo K K2 cert
   · exact
-      Analysis.gamma_actual_square_dyadic_of_local_certificate hdecomp hn bridge.squarefreePart_pos
+      gamma_actual_square_dyadic_of_local_certificate hdecomp hn bridge.squarefreePart_pos
         bridge.squareFactor_odd.pos hf hd.1 hd.2 S hS bridge.character hχ
-        (Analysis.gamma_even_modulus_character_two_zero bridge.character heven) K K2 cert
+        (gamma_even_modulus_character_two_zero bridge.character heven) K K2 cert
 
 /-- Input: Jacobi data, selected minus-one and zero primes and a local certificate.
 Claim: their joint costs obey the displayed signed ramified dual bound.
@@ -53,22 +53,18 @@ theorem gamma_jacobi_joint_local_of_certificate {n : ℕ} {hn : Odd n} {hns : ¬
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) (S R : Finset ℕ)
     (hS : S ⊆ n.primeFactors) (hR : R ⊆ n.primeFactors) (hSχ : ∀ p ∈ S, bridge.character p = -1)
     (hRχ : ∀ p ∈ R, bridge.character p = 0) (K : ℕ → Finset ℕ) (K2 : Finset ℕ) {x δ : ℝ}
-    (cert : Analysis.GammaLocalBudgetCertificate x δ) :
+    (cert : GammaLocalBudgetCertificate x δ) :
     (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
         (∑ p ∈ S, Analysis.gammaActualPrimeLocalCost bridge.character p (K p) x) +
         Analysis.gammaActualPrimeLocalCost bridge.character 2 K2 x +
         (∑ p ∈ R, Analysis.gammaActualPrimeLocalCost bridge.character p (K p) x) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + δ +
-        Analysis.gammaRamifiedDualParameter x * Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet x,
+        gammaRamifiedDualParameter x * Real.log n +
+        ∑ p ∈ gammaRamifiedDualPrimeSet x,
           Real.log p *
-            max
-              (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-              0 := by
+            max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0 := by
   have hs := gamma_jacobi_square_dyadic_of_local_certificate bridge S hS hSχ K K2 cert
-  have hr :=
-    Analysis.gamma_actual_odd_ramified_signed_cost_le_finite_dual hn R hR bridge.character hRχ K
-      cert.scale_ge_one
+  have hr := gamma_odd_signed_cost_le_finite_dual hn R hR bridge.character hRχ K cert.scale_ge_one
   linarith only [hs, hr]
 
 /-- Input: Jacobi data and a local certificate for all positive-power prefixes.
@@ -77,17 +73,15 @@ Proof: classify local quadratic values and separate the dyadic factor.
 Role: remove factorization and character values from the public numeric interface. -/
 theorem gamma_jacobi_all_local_of_certificate {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) (K : ℕ → Finset ℕ) {x δ : ℝ}
-    (cert : Analysis.GammaLocalBudgetCertificate x δ) :
+    (cert : GammaLocalBudgetCertificate x δ) :
     (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
         (∑ p ∈ (4 * n).primeFactors,
           Analysis.gammaActualPrimeLocalCost bridge.character p (K p) x) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + δ +
-        Analysis.gammaRamifiedDualParameter x * Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet x,
+        gammaRamifiedDualParameter x * Real.log n +
+        ∑ p ∈ gammaRamifiedDualPrimeSet x,
           Real.log p *
-            max
-              (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-              0 := by
+            max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0 := by
   let S := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = -1)
   let R := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = 0)
   have hj :=
@@ -109,7 +103,7 @@ Claim: the actual joint budget is at most the factor-free budget plus delta-3/4.
 Proof: substitute the certificate and enlarge conductor and dual logarithms.
 Role: expose the precise cost of changing the dyadic allowance. -/
 theorem gamma_joint_prefix_le_of_local_certificate {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
-    {L b x δ : ℝ} (hlog : Real.log n ≤ L) (cert : Analysis.GammaLocalBudgetCertificate x δ) :
+    {L b x δ : ℝ} (hlog : Real.log n ≤ L) (cert : GammaLocalBudgetCertificate x δ) :
     gammaJointPrefixLocalBudget (NumberTheory.complexQuadraticCharacter n hn) b x ≤
       gammaFactorFreeJointBudget L b x + δ - 3 / 4 := by
   obtain ⟨bridge⟩ := NumberTheory.exists_jacobiCharacterArithmeticData hn.pos hn hns
@@ -117,7 +111,7 @@ theorem gamma_joint_prefix_le_of_local_certificate {n : ℕ} (hn : Odd n) (hns :
   have hl := gamma_jacobi_all_local_of_certificate bridge K cert
   have he : bridge.character = (NumberTheory.complexQuadraticCharacter n hn).primitiveCharacter :=
     bridge.character_eq
-  have hm := mul_le_mul_of_nonneg_left hlog (Analysis.gamma_ramified_dual_parameter_nonneg x)
+  have hm := mul_le_mul_of_nonneg_left hlog (gamma_ramified_dual_parameter_nonneg x)
   have hlog4 : Real.log (4 * (n : ℝ)) ≤ L + 7 / 5 := by
     rw [Real.log_mul (by norm_num only : (4 : ℝ) ≠ 0) (Nat.cast_pos.mpr hn.pos).ne']
     linarith only [hlog, Analysis.log_four_le_seven_fifths]
@@ -131,7 +125,7 @@ Claim: factor-free separation is at most actual separation plus delta-3/4.
 Proof: compare the local and pole budgets with their signs retained.
 Role: determine the exact scalar gap required for witness extraction. -/
 theorem gamma_factor_free_separation_of_local_certificate {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
-    {L b x δ : ℝ} (hlog : Real.log n ≤ L) (cert : Analysis.GammaLocalBudgetCertificate x δ)
+    {L b x δ : ℝ} (hlog : Real.log n ≤ L) (cert : GammaLocalBudgetCertificate x δ)
     (hlogQ : Real.log Q ≤ L + 7 / 5) :
     gammaFactorFreeSeparation L b x ≤
       gammaJointPrefixSeparation Q (NumberTheory.complexQuadraticCharacter n hn) b x (-3 / 2) + δ -

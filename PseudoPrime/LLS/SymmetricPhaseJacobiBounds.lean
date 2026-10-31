@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.SymmetricPhaseCharacterBounds
+public import PseudoPrime.LLS.PaperStatements.SymmetricPhaseCharacterBounds
 public import PseudoPrime.LLS.LogarithmicPhaseJacobiBounds
 
 /-! # Jacobi witness extraction with symmetric quadratic phase cost -/

@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaUniformSignedShiftBounds
-public import PseudoPrime.Analysis.GammaUniformSmallScaleNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaUniformSignedShiftBounds
+public import PseudoPrime.LLS.GammaUniformSmallScaleScalars
 
 /-! # Uniform Gamma numerical budgets from scale 224 -/
 

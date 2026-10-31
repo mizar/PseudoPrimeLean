@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ReciprocalGapSecantEndpoint
+public import PseudoPrime.LLS.PaperStatements.ReciprocalGapSecantEndpoint
 public import PseudoPrime.PseudoSquare.Bounds.ReciprocalGapAmbientJacobi
 
 /-! # Least Jacobi witnesses from variable-gap secant lower bounds -/

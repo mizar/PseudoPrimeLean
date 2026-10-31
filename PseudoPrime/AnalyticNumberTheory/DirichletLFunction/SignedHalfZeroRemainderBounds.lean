@@ -7,8 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogHalfExplicitFormula
-public import PseudoPrime.LLS.DirectHadamardConductorBounds
-public import PseudoPrime.LLS.SignedHalfPowerWitnessBounds
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogOriginValues
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFunctionalEquation
 
 /-! # Explicit remainder and actual zero-phase witness criterion -/
 
@@ -26,8 +26,8 @@ theorem log_origin_half_even_re_eq {N : ℕ} [NeZero N] (hN : 2 ≤ N) {χ : Dir
             Real.log x) *
           Real.log 2 +
         (Real.log 2) ^ 2 / 2 := by
-  rw [LLS.log_residue_zero_even_eq hp hne he hx,
-    LLS.log_residue_zero_even_eq hp hne he (div_pos hx (by norm_num only : (0 : ℝ) < 2)),
+  rw [log_residue_zero_even_eq hp hne he hx,
+    log_residue_zero_even_eq hp hne he (div_pos hx (by norm_num only : (0 : ℝ) < 2)),
     Real.log_div hx.ne' (by norm_num only : (2 : ℝ) ≠ 0)]
   simp only [Complex.sub_re, Complex.add_re, Complex.neg_re, Complex.mul_re, Complex.ofReal_re,
     Complex.ofReal_im, mul_zero, sub_zero]
@@ -43,8 +43,8 @@ theorem log_origin_half_odd_re_eq {N : ℕ} [NeZero N] (hN : 2 ≤ N) {χ : Diri
       (|primitiveBRe χ| + Real.log N / 2 -
           (Real.log Real.pi / 2 + Real.log 2 + Real.eulerMascheroniConstant / 2)) *
         Real.log 2 := by
-  rw [LLS.log_residue_zero_odd_eq hp hne ho hx,
-    LLS.log_residue_zero_odd_eq hp hne ho (div_pos hx (by norm_num only : (0 : ℝ) < 2)),
+  rw [log_residue_zero_odd_eq hp hne ho hx,
+    log_residue_zero_odd_eq hp hne ho (div_pos hx (by norm_num only : (0 : ℝ) < 2)),
     Real.log_div hx.ne' (by norm_num only : (2 : ℝ) ≠ 0)]
   simp only [Complex.sub_re, Complex.add_re, Complex.neg_re, Complex.mul_re, Complex.ofReal_re,
     Complex.ofReal_im, mul_zero, sub_zero]
@@ -79,32 +79,5 @@ theorem log_origin_half_re_le {N : ℕ} [NeZero N] (hN : 2 ≤ N) {χ : Dirichle
           linarith only [hp0, hg0, h20])
         h20
     nlinarith only [hm, sq_nonneg (Real.log 2)]
-
-/-- Under primitive GRH, N≥3 and x≥4, the real half-scale remainder is at
-most (4/5)log(N)+5. Combine the direct Hadamard mass bound with both trivial corrections. -/
-theorem logarithmicHalfRemainder_re_le {N : ℕ} [NeZero N] (hN : 3 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
-    {x : ℝ} (hx : 4 ≤ x) : (logarithmicHalfRemainder hne x).re ≤ (4 / 5 : ℝ) * Real.log N + 5 := by
-  have hO :=
-    log_origin_half_re_le (le_trans (by decide : 2 ≤ 3) hN) hGRH hp hne hinv
-      (show 1 ≤ x by linarith only [hx])
-  have ht :=
-    Complex.re_le_norm (logarithmicTrivialCorrection χ x - logarithmicTrivialCorrection χ (x / 2))
-  have htn :=
-    norm_sub_le (logarithmicTrivialCorrection χ x) (logarithmicTrivialCorrection χ (x / 2))
-  have h1 := norm_logarithmicTrivialCorrection_le_one χ (show 2 ≤ x by linarith only [hx])
-  have h2 := norm_logarithmicTrivialCorrection_le_one χ (show 2 ≤ x / 2 by linarith only [hx])
-  have hb := LLS.PaperStatements.abs_primitiveBRe_le_direct_reciprocal hN hp hGRH
-  have hl := Real.log_natCast_nonneg N
-  have h20 := Real.log_nonneg (by norm_num only : (1 : ℝ) ≤ 2)
-  have h21 : Real.log (2 : ℝ) ≤ 7 / 10 := by linarith only [Real.log_two_lt_d9]
-  have hm :=
-    mul_le_mul_of_nonneg_left h21
-      (show 0 ≤ |primitiveBRe χ| + Real.log N / 2 by
-        linarith only [abs_nonneg (primitiveBRe χ), hl])
-  have hsq := pow_le_pow_left₀ h20 h21 2
-  dsimp only [logarithmicHalfRemainder]
-  simp only [Complex.sub_re, Complex.add_re] at hO ht ⊢
-  nlinarith only [hO, ht, htn, h1, h2, hb, hm, hsq, hl]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

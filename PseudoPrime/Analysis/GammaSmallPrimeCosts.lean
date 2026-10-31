@@ -141,7 +141,7 @@ Kernel computation on rational numbers supplies the finite certificate. -/
 theorem gamma_small_prime_ratio_checks :
     ([3, 5, 7] : List ℕ).Forall
       (fun p ↦
-        gammaResolventCoefficients.Forall
+        AnalyticNumberTheory.Gamma.gammaResolventCoefficients.Forall
           (fun ab ↦
             let lu := gammaSmallPrimeRatioInterval p ab.1
             0 ≤ lu.1 ∧
@@ -156,7 +156,7 @@ theorem gamma_small_prime_ratio_checks :
 small prime and every resolvent node. Cast the finite checks and compare
 twentieth powers. This connects the exact rational data to the real Euler cost. -/
 theorem gamma_small_prime_ratio_interval_valid {p : ℕ} (hp : p ∈ ([3, 5, 7] : List ℕ)) (ab : ℚ × ℚ)
-    (hab : ab ∈ gammaResolventCoefficients) :
+    (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :
     (gammaSmallPrimeRatioInterval p ab.1).1 ≤ (p : ℝ) ^ (-(1 / 2 + (ab.1 : ℝ))) ∧
       (p : ℝ) ^ (-(1 / 2 + (ab.1 : ℝ))) ≤ (gammaSmallPrimeRatioInterval p ab.1).2 := by
   obtain ⟨hl, hlu, hu, he, hlo, hhi⟩ :=
@@ -200,7 +200,7 @@ def gammaSmallPrimeOddNodeUpper (p : ℕ) (ab : ℚ × ℚ) : ℚ :=
 Ratio monotonicity and the sign of the coefficient select the correct
 endpoint. This preserves the cancellation required at prime three. -/
 theorem gamma_small_prime_odd_node_le {p : ℕ} (hp : p ∈ ([3, 5, 7] : List ℕ)) (ab : ℚ × ℚ)
-    (hab : ab ∈ gammaResolventCoefficients) :
+    (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :
     (ab.2 : ℝ) *
         ((p : ℝ) ^ (-(1 / 2 + (ab.1 : ℝ))) / (1 - ((p : ℝ) ^ (-(1 / 2 + (ab.1 : ℝ)))) ^ 2)) ≤
       (gammaSmallPrimeOddNodeUpper p ab : ℝ) := by
@@ -229,7 +229,9 @@ signed terms and verifies the final numerical margin. -/
 theorem gamma_small_prime_odd_upper_checks :
     ([3, 5, 7] : List ℕ).Forall
       (fun p ↦
-        2 * (gammaResolventCoefficients.map (gammaSmallPrimeOddNodeUpper p)).sum ≤
+        2 *
+            (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
+                (gammaSmallPrimeOddNodeUpper p)).sum ≤
           (19 / 25 : ℚ)) := by
   decide +kernel
 

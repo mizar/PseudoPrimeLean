@@ -6,6 +6,6 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaUniformLocalBudgetParameters
+public import PseudoPrime.LLS.GammaUniformLocalBudgetScalars
 
 /-! Compatibility import for declarations relocated to their namespace directories. -/

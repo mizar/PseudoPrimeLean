@@ -41,7 +41,7 @@ transport with the old row checks and certified Euler caps. -/
 theorem gamma_joint_entrance_dual_cap {L x : ℝ} (hL : 0 ≤ L) (hlo : (gammaJointEntranceLo : ℝ) ≤ x)
     (hhi : x ≤ (gammaTransportedOldCell.hi : ℝ)) :
     gammaScaleSignedDualBudget L x ≤ (5 / (4 * ((1589 / 2500 : ℝ) * 255))) * L + 769 / 200 := by
-  have he (p : ℕ) (hp : p ∈ Analysis.gammaAnchoredWindowPrimeSet gammaTransportedOldCell.hi) :
+  have he (p : ℕ) (hp : p ∈ gammaAnchoredWindowPrimeSet gammaTransportedOldCell.hi) :
     Analysis.gammaPrimeEulerCost p ≤ ((gammaTransportedRow p).eulerUpper : ℝ) :=
     Analysis.gamma_adaptive_euler_upper_sound (Finset.mem_filter.mp hp).2
       (Finset.mem_Icc.mp (Finset.mem_filter.mp hp).1).1

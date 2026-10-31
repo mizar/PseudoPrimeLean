@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.FullEndpointPolynomial
+public import PseudoPrime.LLS.PaperStatements.FullEndpointPolynomial
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapFullEndpoint
 
 /-! # Gap-free MR witnesses from endpoint limits and polynomial positivity -/

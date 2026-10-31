@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.Analysis.ExponentialAbsoluteVariation
 public import PseudoPrime.LLS.GammaExponentialPrincipalBounds
+public import PseudoPrime.LLS.PaperStatements.GammaExponentialPrincipalBounds
 
 /-! # Sharper principal Gamma sums from the exact absolute variation moments -/
 

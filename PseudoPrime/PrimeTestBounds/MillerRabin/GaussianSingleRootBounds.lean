@@ -26,7 +26,7 @@ Proof: apply the actual relative-prefix comparison and the single-root large-ind
 Role: supplies the large-index branch of the all-input single-root witness theorem.
 -/
 theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge : 20000 ≤ n)
-    (H : Subgroup (ZMod n)ˣ) (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
+    (H : Subgroup (ZMod n)ˣ) (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
@@ -101,8 +101,7 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
       (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
   have hcastIndex : ((H.index - 1 : ℕ) : ℝ) = (H.index : ℝ) - 1 := by
     have hidxReal : (1 : ℝ) ≤ (H.index : ℝ) := by
-      have hK : (1 : ℝ) ≤ Analysis.gaussianMR6FifthsIndex := by
-        norm_num only [Analysis.gaussianMR6FifthsIndex]
+      have hK : (1 : ℝ) ≤ gaussian6FifthsIndex := by norm_num only [gaussian6FifthsIndex]
       exact hK.trans hi
     have hidxNat : 1 ≤ H.index := by exact_mod_cast hidxReal
     rw [Nat.cast_sub hidxNat, Nat.cast_one]
@@ -110,8 +109,8 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
   have hI : gaussianMRRefinedMass ≤ I := by
     dsimp only [I, gaussianMRRefinedMass]
     exact gaussianMRRefined_mass.le
-  have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
-    dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
+  have hE : E ≤ gaussian6FifthsEndpoint := by
+    dsimp only [E, gaussian6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
   have hC : C / t ≤ L := by
     have ht : t = (H.index : ℝ) - 1 := by rfl
@@ -136,8 +135,7 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
         t * A := by
     simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
   have hcoeff := gaussianMRRefined_index_coeffs hi
-  have hD :
-    gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+  have hD : gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
     (m / t) * (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)) ≤
@@ -147,8 +145,8 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
     gaussianMRRefinedD * r ≤
         gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
           (m / t) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
-              1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+            (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
+              1839 * gaussian6FifthsEndpoint / (1000 * r)) +
           13 / t +
           A →
       False := by
@@ -158,22 +156,20 @@ theorem gaussianSingle_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
     have herr := gaussianSingle_large_error (q := n) (by linarith only [hL]) hi le_rfl
     change
       (m / (m - 1)) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
-              1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+            (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
+              1839 * gaussian6FifthsEndpoint / (1000 * r)) +
           13 / (m - 1) +
           A <
         (163 / 20) at herr
     rw [ht] at hbudget
     linarith only [hbudget, hroot, herr]
   exact
-    Analysis.gaussianMR_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I)
-      (E := E) (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap :=
-      Analysis.gaussianMR6FifthsEndpoint) (conductor := gaussianMRRefinedConductor) (D :=
-      gaussianMRRefinedD) (beta := gaussianMRRefinedBeta)
+    gaussian_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I) (E := E)
+      (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap := gaussian6FifthsEndpoint) (conductor :=
+      gaussianMRRefinedConductor) (D := gaussianMRRefinedD) (beta := gaussianMRRefinedBeta)
       (by norm_num only [gaussianMRRefinedWidth])
       (by
-        have hi' : (1000000000 : ℝ) ≤ m := by
-          simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
+        have hi' : (1000000000 : ℝ) ≤ m := by simpa only [m, gaussian6FifthsIndex] using hi
         linarith only [hi'])
       rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD hbeta hcmp'
       hfinish
@@ -248,7 +244,7 @@ theorem gaussianSingle_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarg
     gaussianSingle_four_error hs10 hG hchecks.1 hchecks.2.1 hchecks.2.2 (le_refl (Real.log n))
   apply
     gaussianSingle_four_contradiction hs10 (by norm_num only : (407 / 50 : ℝ) ≤ 163 / 20) hG herror
-  norm_num only [gaussianMRRefinedConductor, Analysis.gaussianMR6FifthsEndpoint,
+  norm_num only [gaussianMRRefinedConductor, gaussian6FifthsEndpoint,
     gaussianMRRefinedWidth] at hscalar ⊢
   simpa only [hs2, L, add_assoc] using hscalar
 
@@ -317,9 +313,9 @@ the quadratic lower bound; keep the ambient passing-residue containment upstream
 theorem gaussianSingle_local {n q : ℕ} (hn : 0 < n) (hq : 0 < q) (hsize : q ^ 2 ≤ 10 ^ 9 * n)
     (hL : 63 ≤ Real.log n) :
     max (3000 : ℝ) (Real.log q ^ 2) ≤ gaussianSingleBound (Real.log n) := by
-  have hlog := Analysis.mr_local_log_le_of_square_le hn hq hsize
+  have hlog := local_log_le_of_square_le hn hq hsize
   have hcap : Real.log q ≤ (2 / 3 : ℝ) * Real.log n := by
-    linarith only [hlog, hL, Analysis.log_ten_lt_seven_thirds]
+    linarith only [hlog, hL, log_ten_lt_seven_thirds]
   have hpos : (0 : ℝ) ≤ (2 / 3) * Real.log n := by linarith only [hL]
   have hs := (sq_le_sq₀ (Real.log_natCast_nonneg q) hpos).mpr hcap
   have hwide := gaussianSingle_bound_lower hL
@@ -356,8 +352,8 @@ theorem exists_prime_gaussianSingle {n : ℕ} (ho : Odd n) (hc : ¬n.Prime)
       exact ⟨p, hp, hb.trans (gaussianSingle_local hnpos hqp hqsize hL), hr⟩
     · obtain ⟨hsf, hcard, hK, hUval⟩ := ht
       exact gaussianSingle_witness_card ho hsf hcard hK hUval hnlarge hGRH hL
-  · have hiR : Analysis.gaussianMR6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
-      norm_num only [Analysis.gaussianMR6FifthsIndex]
+  · have hiR : gaussian6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
+      norm_num only [gaussian6FifthsIndex]
       exact_mod_cast (lt_of_not_ge hi).le
     have hpass :
       ∀ z : ZMod n,

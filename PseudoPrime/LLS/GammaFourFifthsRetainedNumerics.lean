@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaNonOneRefinedNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 public import PseudoPrime.Analysis.LogTaylorBounds
 public import PseudoPrime.LLS.GammaVariablePrincipalBounds
 

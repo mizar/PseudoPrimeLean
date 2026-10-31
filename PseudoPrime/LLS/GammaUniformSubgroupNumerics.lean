@@ -6,6 +6,6 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaUniformSubgroupNumerics
+public import PseudoPrime.LLS.GammaUniformSubgroupScalars
 
 /-! Compatibility import for declarations relocated to their namespace directories. -/

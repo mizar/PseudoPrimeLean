@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.CubicGapConductorWitness
+public import PseudoPrime.LLS.PaperStatements.CubicGapConductorWitness
 public import PseudoPrime.PseudoSquare.Bounds.ConductorRadicalWitnessBounds
 
 /-! # Negative Jacobi witnesses from the cubic conductor radius -/

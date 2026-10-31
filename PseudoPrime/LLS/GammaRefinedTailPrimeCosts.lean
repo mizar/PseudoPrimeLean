@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaRefinedTailErrorBounds
+public import PseudoPrime.LLS.PaperStatements.GammaRefinedTailErrorBounds
 public import PseudoPrime.LLS.GammaQuadraticLocalBudget
 
 /-! # Prime-factor ramp costs in the refined logarithmic tail -/

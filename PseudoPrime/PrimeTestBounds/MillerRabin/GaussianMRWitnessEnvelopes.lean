@@ -20,13 +20,13 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 All three witness bounds apply from scale 240, where this minimum equals B6
 by `gaussianMRPrefixEnvelope_eq`. The definition retains the candidate interfaces. -/
 noncomputable def gaussianMRPrefixEnvelope (L : ℝ) : ℝ :=
-  min (analysis13GammaPrefixEnvelope L) (Analysis.gaussianMR6Bound L)
+  min (analysis13GammaPrefixEnvelope L) (gaussian6Bound L)
 
 /-- For L>=240, the three-candidate prefix minimum equals B6.
 Both Gamma bounds are strictly larger on this half-line. The equality simplifies
 the public envelope without changing the existing minimum definition. -/
 theorem gaussianMRPrefixEnvelope_eq {L : ℝ} (hL : 240 ≤ L) :
-    gaussianMRPrefixEnvelope L = Analysis.gaussianMR6Bound L := by
+    gaussianMRPrefixEnvelope L = gaussian6Bound L := by
   exact
     min_eq_right (le_min (gaussianMR6_lt_gammaClipped hL).le (gaussianMR6_lt_gammaIndex100 hL).le)
 
@@ -128,7 +128,7 @@ noncomputable def gaussianMRWitnessEnvelope (n : ℕ) : ℝ :=
 The logarithmic upper bound excludes the huge-input branch, and the half-line
 prefix equality simplifies the remaining minimum. No primality or GRH is needed. -/
 theorem gaussianMRWitnessEnvelope_eq240 {n : ℕ} (hL : 240 ≤ Real.log n) (hU : Real.log n < 300) :
-    gaussianMRWitnessEnvelope n = Analysis.gaussianMR6Bound (Real.log n) := by
+    gaussianMRWitnessEnvelope n = gaussian6Bound (Real.log n) := by
   have hN : ¬10 ^ 9565217391305 ≤ n := by
     intro h
     have hlog := log_ge_triangular_large_index_of_decimal h

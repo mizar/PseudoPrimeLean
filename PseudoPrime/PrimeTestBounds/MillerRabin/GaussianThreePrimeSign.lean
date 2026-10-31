@@ -69,7 +69,7 @@ theorem exists_prime_witness_le_gaussian_star_of_three_prime_sign_subgroup {n p 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 600 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianStarBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   obtain ⟨a, ha⟩ :=
     PrimeTest.exists_paired_sign_annihilator_with_conductor hpOdd hqOdd hpn hqn hkp hkq hEp hEq hpq
@@ -127,7 +127,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_three_prime_sign_subgroup
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6FifthsBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   obtain ⟨a, ha⟩ :=
     PrimeTest.exists_paired_sign_annihilator_with_conductor hpOdd hqOdd hpn hqn hkp hkq hEp hEq hpq

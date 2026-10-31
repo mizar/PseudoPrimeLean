@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.QuadraticExcludedEndpoint
+public import PseudoPrime.LLS.PaperStatements.QuadraticExcludedEndpoint
 public import PseudoPrime.PseudoSquare.Bounds.ExcludedEndpointJacobi
 
 /-! # Jacobi bounds from one structural quadratic exclusion budget -/

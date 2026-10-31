@@ -28,7 +28,7 @@ theorem gaussianLow_raw_le_iff {u D L : ℝ} (hu : 9 ≤ u) (hD : 0 ≤ D) (hL :
   have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
   have hb : gaussianMRRefinedBeta < 9 * gaussianMRRefinedD := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * u := by
     have hm := mul_le_mul_of_nonneg_left hu gaussianMRRefined_coefficients.1.le
     linarith only [hb, hm]
@@ -56,7 +56,7 @@ theorem gaussianLow_raw_ge_iff {u D L : ℝ} (hu : 9 ≤ u) (hD : 0 ≤ D) (hL :
   have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
   have hb : gaussianMRRefinedBeta < 9 * gaussianMRRefinedD := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * u := by
     have hm := mul_le_mul_of_nonneg_left hu gaussianMRRefined_coefficients.1.le
     linarith only [hb, hm]
@@ -180,8 +180,8 @@ theorem gaussianLowFamily_selection {L : ℝ} (hL : 0 ≤ L) :
         else GaussianLowProfile.upper.bound L := by
   have horder : gaussianLowSwitch (19 / 2) (93 / 10) ≤ gaussianLowSwitch (49 / 5) (163 / 20) := by
     norm_num only [gaussianLowSwitch, gaussianMRRefinedD, gaussianMRRefinedBeta,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
+      gaussianMRRefinedConductor]
   by_cases hfirst : L ≤ gaussianLowSwitch (19 / 2) (93 / 10)
   · rw [ite_eq_left hfirst]
     exact

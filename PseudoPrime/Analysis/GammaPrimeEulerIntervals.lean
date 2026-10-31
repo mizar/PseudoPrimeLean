@@ -28,7 +28,7 @@ Apply r/(1-r) to each endpoint and select the lower geometric endpoint
 for nonnegative coefficients, the upper endpoint for negative coefficients.
 All upper node endpoints must be strictly below one. -/
 def gammaPrimeEulerIntervalLower (r : ℚ → ℚ × ℚ) : ℚ :=
-  (gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦
         ab.2 *
           (if 0 ≤ ab.2 then (r ab.1).1 / (1 - (r ab.1).1) else (r ab.1).2 / (1 - (r ab.1).2)))).sum
@@ -37,7 +37,7 @@ def gammaPrimeEulerIntervalLower (r : ℚ → ℚ × ℚ) : ℚ :=
 Reverse the endpoint selection in the signed lower allowance.
 This preserves cancellation among the fixed Gamma resolvent coefficients. -/
 def gammaPrimeEulerIntervalUpper (r : ℚ → ℚ × ℚ) : ℚ :=
-  (gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦
         ab.2 *
           (if 0 ≤ ab.2 then (r ab.1).2 / (1 - (r ab.1).2) else (r ab.1).1 / (1 - (r ab.1).1)))).sum
@@ -62,13 +62,13 @@ monotonicity before the coefficient sign selection, then sum the list.
 This bounds the actual infinite prime-power sum without an absolute-value loss. -/
 theorem gamma_prime_euler_cost_interval {p : ℝ} (r : ℚ → ℚ × ℚ)
     (hr :
-      ∀ ab ∈ gammaResolventCoefficients,
+      ∀ ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients,
         ((r ab.1).1 : ℝ) ≤ p ^ (-(1 / 2 + (ab.1 : ℝ))) ∧
           p ^ (-(1 / 2 + (ab.1 : ℝ))) ≤ ((r ab.1).2 : ℝ))
-    (hu : ∀ ab ∈ gammaResolventCoefficients, (r ab.1).2 < 1) :
+    (hu : ∀ ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients, (r ab.1).2 < 1) :
     (gammaPrimeEulerIntervalLower r : ℝ) ≤ gammaPrimeEulerCost p ∧
       gammaPrimeEulerCost p ≤ (gammaPrimeEulerIntervalUpper r : ℝ) := by
-  have hn (ab : ℚ × ℚ) (hab : ab ∈ gammaResolventCoefficients) :=
+  have hn (ab : ℚ × ℚ) (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :=
     gamma_geometric_ratio_interval (hr ab hab).1 (hr ab hab).2 (hu ab hab)
   have hl :=
     List.sum_le_sum
@@ -85,7 +85,7 @@ twentieth-power node certificate with strict upper endpoint bounds.
 A true result permits sound evaluation of every geometric denominator. -/
 def gammaPrimeEulerIntervalCheck (p : ℚ) (r : ℚ → ℚ × ℚ) : Bool :=
   gammaFiniteEulerRatioCheck p r &&
-    decide (gammaResolventCoefficients.Forall (fun ab ↦ (r ab.1).2 < 1))
+    decide (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.Forall (fun ab ↦ (r ab.1).2 < 1))
 
 /-- A true prime Euler interval check encloses the exact signed cost.
 Use the existing real-power certificate and the strict endpoint checks.

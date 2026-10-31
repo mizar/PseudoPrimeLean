@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaAnchoredReciprocalBounds
+public import PseudoPrime.LLS.GammaAnchoredReciprocalBounds
 public import PseudoPrime.LLS.GammaSignedSupportBudget
 public import PseudoPrime.LLS.GammaEulerBoundary89100
 
@@ -38,17 +38,13 @@ the smaller anchored support. Proof: the removed excess terms vanish exactly.
 Role: reduce numerical certification without replacing the finite summands by coarse costs. -/
 theorem gamma_scale_signed_dual_budget_eq_anchored_support (L : ℝ) {x : ℝ} (hx : 100 ≤ x) :
     gammaScaleSignedDualBudget L x =
-      Analysis.gammaRamifiedDualParameter x * L +
+      gammaRamifiedDualParameter x * L +
         ∑ p ∈ gammaAnchoredSupportPrimeSet x,
           Real.log p *
-            max
-              (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-              0 := by
+            max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0 := by
   have he :=
     Finset.sum_subset (gamma_anchored_support_subset x) (f := fun p : ℕ ↦
-      Real.log p *
-        max (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-          0)
+      Real.log p * max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0)
       (fun p hp hn ↦ by
         obtain ⟨hi, hp⟩ := Finset.mem_filter.mp hp
         have h3 := (Finset.mem_Icc.mp hi).1
@@ -61,9 +57,9 @@ theorem gamma_scale_signed_dual_budget_eq_anchored_support (L : ℝ) {x : ℝ} (
                 (by nlinarith only [Real.sqrt_nonneg x] :
                   (0 : ℝ) ≤ 1 + (71 / 25 : ℝ) * Real.sqrt x)).mp
             hfloor
-        rw [Analysis.gamma_ramified_signed_excess_eq_zero_of_anchor20 hp.one_lt hx hbig, mul_zero])
+        rw [gamma_ramified_signed_excess_eq_zero_of_anchor20 hp.one_lt hx hbig, mul_zero])
   rw [gamma_scale_signed_dual_budget_eq_small_support L (by linarith only [hx])]
-  exact congrArg (fun z : ℝ ↦ Analysis.gammaRamifiedDualParameter x * L + z) he.symm
+  exact congrArg (fun z : ℝ ↦ gammaRamifiedDualParameter x * L + z) he.symm
 
 /-- Input: RH, odd nonsquare n, log n<=L, x>=4096 and b>=89100.
 Claim: the actual joint budget is bounded by the smaller-support expression and proved prefix gain.
@@ -73,13 +69,10 @@ theorem gamma_joint_prefix_le_anchored_support (hRH : RiemannHypothesis) {n : �
     (hns : ¬IsSquare n) {b L x : ℝ} (hb : 89100 ≤ b) (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) :
     gammaJointPrefixLocalBudget (NumberTheory.complexQuadraticCharacter n hn) b x ≤
       (11783423 / 25000000 : ℝ) * (L + 7 / 5) + 3 / 4 +
-            (Analysis.gammaRamifiedDualParameter x * L +
+            (gammaRamifiedDualParameter x * L +
               ∑ p ∈ gammaAnchoredSupportPrimeSet x,
                 Real.log p *
-                  max
-                    (Analysis.gammaRamifiedSignedCombinedCost p x -
-                      Analysis.gammaRamifiedDualParameter x)
-                    0) -
+                  max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0) -
           28923 / 2500 +
         7 / 60 := by
   have h :=

@@ -43,7 +43,7 @@ theorem gaussianLow_budget {u D L : ℝ} (hu : 9 ≤ u) (hD : 0 ≤ D) (hL : 0 �
   have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
   have hb : gaussianMRRefinedBeta < 9 * gaussianMRRefinedD := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * gaussianLowRoot u D L := by
     have hm := mul_le_mul_of_nonneg_left hs gaussianMRRefined_coefficients.1.le
     linarith only [hb, hm]

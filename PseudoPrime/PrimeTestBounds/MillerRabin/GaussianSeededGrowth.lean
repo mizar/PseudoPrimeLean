@@ -37,10 +37,10 @@ theorem gaussianSeeded_raw_linear {L : ℝ} (hL : 240 ≤ L) :
       Analysis.gaussianBudgetRoot_le_of_budget gaussianMRRefined_coefficients.1
         gaussianMRRefined_coefficients.2 hc
     · norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+        gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
       linarith only [hrlo]
     · norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint,
+        gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
         gaussianMRRefinedConductor, gaussianSeededConstant, Bool.false_eq_true, ite_false]
       nlinarith only [hrhi, hr2, hL]
   exact ((sq_le_sq₀ (gaussianSeeded_raw_pos false L).le (Real.sqrt_nonneg _)).mpr hr).trans_eq hr2
@@ -74,12 +74,12 @@ theorem gaussian1000_large_above {L : ℝ} (hL : 240 ≤ L) :
     linarith only [hL]
   have hb : gaussianMRRefinedBeta < gaussianMRRefinedD * (131 / 10) := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint]
+      gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have h :=
     Analysis.gaussianBudget_of_root_le gaussianMRRefined_coefficients.1
       gaussianMRRefined_coefficients.2 h0 hb (le_of_not_gt hn)
   norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-    gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex, Analysis.gaussianMR6FifthsEndpoint,
+    gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
     gaussianMRRefinedConductor] at h
   linarith only [hL, h]
 

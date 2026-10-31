@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointPointwiseRoot
+public import PseudoPrime.LLS.PaperStatements.EndpointPointwiseRoot
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointLowPrime
 
 /-! # Least prime witnesses at the pointwise inverse radius -/

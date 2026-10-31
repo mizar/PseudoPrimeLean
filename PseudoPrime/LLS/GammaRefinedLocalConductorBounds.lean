@@ -6,9 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaActualConductorBudget
-public import PseudoPrime.Analysis.GammaActualRamifiedBudget
-public import PseudoPrime.Analysis.GammaRamifiedFiniteSupport
+public import PseudoPrime.LLS.GammaActualConductorBudget
+public import PseudoPrime.LLS.GammaActualRamifiedBudget
+public import PseudoPrime.LLS.GammaRamifiedFiniteSupport
 public import PseudoPrime.NumberTheory.JacobiCharacterArithmetic
 
 /-! # Refined local conductor accounting for the actual primitive Jacobi character -/
@@ -89,7 +89,7 @@ theorem gamma_jacobi_refined_actual_square_dyadic_cost_le {n : ℕ} {hn : Odd n}
     (gamma_jacobi_modulus_eq_discriminant bridge).symm ▸ bridge.discriminant_pos
   have hd := gamma_jacobi_modulus_squarefree_data bridge
   exact
-    Analysis.gamma_refined_actual_square_dyadic_cost_le
+    gamma_refined_actual_square_dyadic_cost_le
       (by simpa only [Nat.mul_comm] using bridge.squarefreePart_sq_mul.symm) hn
       bridge.squarefreePart_pos bridge.squareFactor_odd.pos hf hd.1 hd.2 bridge.character
       (gamma_jacobi_actual_dyadic_branch bridge) S hS hχ K K2 hL
@@ -137,7 +137,7 @@ theorem gamma_jacobi_refined_actual_joint_local_cost_le {n : ℕ} {hn : Odd n} {
             max (Analysis.gammaRamifiedCombinedCost p (Analysis.gammaRefinedScale L) - μ) 0 := by
   have hs := gamma_jacobi_refined_actual_square_dyadic_cost_le bridge S hS hSχ K K2 hL
   have hr :=
-    Analysis.gamma_actual_ramified_joint_cost_le_input_dual_cap hn.pos R hR bridge.character hRχ K
+    gamma_actual_ramified_cost_le_input_dual hn.pos R hR bridge.character hRχ K
       (by linarith only [Analysis.gamma_refined_scale_ge_twenty_thousand hL]) hμ
   linarith only [hs, hr]
 
@@ -186,16 +186,16 @@ theorem gamma_jacobi_refined_joint_local_cost_le_finite_signed_dual {n : ℕ} {h
           Analysis.gammaActualPrimeLocalCost bridge.character p (K p)
             (Analysis.gammaRefinedScale L)) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (3 / 4 : ℝ) +
-        Analysis.gammaRamifiedDualParameter (Analysis.gammaRefinedScale L) * Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet (Analysis.gammaRefinedScale L),
+        gammaRamifiedDualParameter (Analysis.gammaRefinedScale L) * Real.log n +
+        ∑ p ∈ gammaRamifiedDualPrimeSet (Analysis.gammaRefinedScale L),
           Real.log p *
             max
-              (Analysis.gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale L) -
-                Analysis.gammaRamifiedDualParameter (Analysis.gammaRefinedScale L))
+              (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale L) -
+                gammaRamifiedDualParameter (Analysis.gammaRefinedScale L))
               0 := by
   have hs := gamma_jacobi_refined_actual_square_dyadic_cost_le bridge S hS hSχ K K2 hL
   have hr :=
-    Analysis.gamma_actual_odd_ramified_signed_cost_le_finite_dual hn R hR bridge.character hRχ K
+    gamma_odd_signed_cost_le_finite_dual hn R hR bridge.character hRχ K
       (by linarith only [Analysis.gamma_refined_scale_ge_twenty_thousand hL])
   linarith only [hs, hr]
 
@@ -219,8 +219,7 @@ theorem gamma_actual_quadratic_local_sum_le_classified {n f : ℕ} (_hn : Odd n)
       simp only [ite_false, ite_true, zero_add, le_refl]
     · norm_num only [h1]
       simp only [ite_false, add_zero]
-      exact
-        Analysis.gamma_actual_one_prime_cost_nonpos χ (Nat.prime_of_mem_primeFactors hp) h1 (K p) hx
+      exact gamma_actual_one_prime_cost_nonpos χ (Nat.prime_of_mem_primeFactors hp) h1 (K p) hx
     · norm_num only [hm]
       simp only [ite_true, ite_false, add_zero, le_refl]
   simpa only [Finset.sum_filter, Finset.sum_add_distrib] using Finset.sum_le_sum hpoint
@@ -240,13 +239,12 @@ theorem gamma_jacobi_refined_input_all_local_cost_le_finite_signed_dual {n : ℕ
         Analysis.gammaActualPrimeLocalCost bridge.character 2 K2
           (Analysis.gammaRefinedScale (Real.log n)) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (3 / 4 : ℝ) +
-        Analysis.gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)) * Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet (Analysis.gammaRefinedScale (Real.log n)),
+        gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)) * Real.log n +
+        ∑ p ∈ gammaRamifiedDualPrimeSet (Analysis.gammaRefinedScale (Real.log n)),
           Real.log p *
             max
-              (Analysis.gammaRamifiedSignedCombinedCost p
-                  (Analysis.gammaRefinedScale (Real.log n)) -
-                Analysis.gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)))
+              (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale (Real.log n)) -
+                gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)))
               0 := by
   let S := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = -1)
   let R := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = 0)

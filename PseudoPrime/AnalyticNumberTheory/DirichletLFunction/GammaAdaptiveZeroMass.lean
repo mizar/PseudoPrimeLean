@@ -27,7 +27,7 @@ theorem gammaResolvent_zeroMass_lt_adaptive {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) <
+          Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + 211 / 10 := by
   rw [gammaResolvent_zeroMass_eq_poissonSum hq hRH hp hne hinv]
   apply
@@ -56,7 +56,7 @@ theorem gamma_zeroMass_lt_adaptive {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : Dir
   have hb (ρ : ℂ) :
     (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖Complex.Gamma ρ‖ ≤
       (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-        Analysis.gammaResolventMajorant ρ.im := by
+        Gamma.gammaResolventMajorant ρ.im := by
     by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
     · simp only [hD, Int.cast_zero, zero_mul, le_refl]
     · have hr :=

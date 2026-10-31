@@ -6,10 +6,13 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.RationalTheorem11S1Subgroup
-public import PseudoPrime.LLS.RationalProfileContracts
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
+
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactorParitySplitBounds
-public import PseudoPrime.LLS.ParityRationalWitnessProfiles2
 
 /-! # Parity-improved rational Part 1 profile from 3000 -/
 

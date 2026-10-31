@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
-public import PseudoPrime.LLS.GammaUniformSignedWitnessBounds
+public import PseudoPrime.LLS.PaperStatements.RationalLogShiftWitness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
 
 /-! # Miller–Rabin witnesses with rational signed logarithmic corrections

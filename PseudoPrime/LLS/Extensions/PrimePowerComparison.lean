@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.Extensions.TruncatedValueBounds
-public import PseudoPrime.LLS.PrimePowerDiskComparison
+public import PseudoPrime.LLS.PaperStatements.PrimePowerDiskComparison
 
 /-! Finite prime-power comparisons and logarithmic lower bounds for general L-functions. -/
 

@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.TwoPoleOddNonOneBounds
+public import PseudoPrime.LLS.PaperStatements.TwoPoleOddNonOneBounds
 public import PseudoPrime.PseudoSquare.Bounds.ExcludedEndpointJacobi
 
 /-! # Pointwise and full-maximum non-one witnesses from the two-pole bound -/

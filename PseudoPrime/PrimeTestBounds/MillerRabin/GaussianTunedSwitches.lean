@@ -61,8 +61,8 @@ theorem gaussianTunedSwitch_strictMono : StrictMono gaussianTunedSwitch := by
   fin_cases i <;> fin_cases j <;> norm_num only [Fin.mk_lt_mk] at hij <;>
     dsimp only [gaussianTunedSwitch] <;>
     norm_num only [gaussianLowSwitch, gaussianMRRefinedD, gaussianMRRefinedBeta,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor, ite_true, ite_false]
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
+      gaussianMRRefinedConductor, ite_true, ite_false]
 
 /-- Each tuned profile switches from its floor to its raw root at its own exact boundary. -/
 theorem gaussianTuned_floor_selection (f : GaussianTunedProfile) {L : ℝ} (hL : 0 ≤ L) :
@@ -92,13 +92,13 @@ theorem gaussianTunedFamily_selection {L : ℝ} (hL : 0 ≤ L) :
           else GaussianTunedProfile.upper.bound L := by
   have h13 : gaussianLowSwitch (93 / 10) (929 / 100) ≤ gaussianLowSwitch (237 / 25) (87 / 10) := by
     norm_num only [gaussianLowSwitch, gaussianMRRefinedD, gaussianMRRefinedBeta,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
+      gaussianMRRefinedConductor]
   have h35 :
     gaussianLowSwitch (237 / 25) (87 / 10) ≤ gaussianLowSwitch (979 / 100) (1629 / 200) := by
     norm_num only [gaussianLowSwitch, gaussianMRRefinedD, gaussianMRRefinedBeta,
-      gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsIndex,
-      Analysis.gaussianMR6FifthsEndpoint, gaussianMRRefinedConductor]
+      gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
+      gaussianMRRefinedConductor]
   by_cases h1 : L ≤ gaussianLowSwitch (93 / 10) (929 / 100)
   · rw [ite_eq_left h1]
     have ha : GaussianTunedProfile.low.bound L ≤ GaussianTunedProfile.bridge.bound L :=

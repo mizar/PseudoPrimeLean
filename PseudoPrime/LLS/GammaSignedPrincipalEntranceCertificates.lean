@@ -43,13 +43,11 @@ local formulas. Role: certify continuous scale coverage in this cell. -/
 theorem gamma_signed_principal_entrance_check0 :
     (gammaSignedPrincipalEntranceCertificate 0).signedPrincipalPrefixCheck (28493 / 5000) = true ∧
       (∀ p ∈ (Finset.Icc 3 (gammaSignedPrincipalEntranceCertificate 0).support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 0).cell
-                p).envelopeCheck
+        (gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 0).cell p).envelopeCheck
             (gammaSignedPrincipalEntranceCertificate 0).cell =
           true) ∧
       (∑ p ∈ (Finset.Icc 3 (gammaSignedPrincipalEntranceCertificate 0).support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 0).cell
-              p).allowance) ≤
+          (gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 0).cell p).allowance) ≤
         (gammaSignedPrincipalEntranceCertificate 0).excess := by
   decide +kernel
 
@@ -59,13 +57,11 @@ local formulas. Role: certify continuous scale coverage in this cell. -/
 theorem gamma_signed_principal_entrance_check1 :
     (gammaSignedPrincipalEntranceCertificate 1).signedPrincipalPrefixCheck (28493 / 5000) = true ∧
       (∀ p ∈ (Finset.Icc 3 (gammaSignedPrincipalEntranceCertificate 1).support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 1).cell
-                p).envelopeCheck
+        (gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 1).cell p).envelopeCheck
             (gammaSignedPrincipalEntranceCertificate 1).cell =
           true) ∧
       (∑ p ∈ (Finset.Icc 3 (gammaSignedPrincipalEntranceCertificate 1).support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 1).cell
-              p).allowance) ≤
+          (gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 1).cell p).allowance) ≤
         (gammaSignedPrincipalEntranceCertificate 1).excess := by
   decide +kernel
 
@@ -75,13 +71,11 @@ local formulas. Role: certify continuous scale coverage in this cell. -/
 theorem gamma_signed_principal_entrance_check2 :
     (gammaSignedPrincipalEntranceCertificate 2).signedPrincipalPrefixCheck (28493 / 5000) = true ∧
       (∀ p ∈ (Finset.Icc 3 (gammaSignedPrincipalEntranceCertificate 2).support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 2).cell
-                p).envelopeCheck
+        (gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 2).cell p).envelopeCheck
             (gammaSignedPrincipalEntranceCertificate 2).cell =
           true) ∧
       (∑ p ∈ (Finset.Icc 3 (gammaSignedPrincipalEntranceCertificate 2).support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 2).cell
-              p).allowance) ≤
+          (gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate 2).cell p).allowance) ≤
         (gammaSignedPrincipalEntranceCertificate 2).excess := by
   decide +kernel
 
@@ -90,13 +84,11 @@ Use finite case analysis. Role: supply the generic analytic cell transfer. -/
 theorem gamma_signed_principal_entrance_checks (i : Fin 3) :
     (gammaSignedPrincipalEntranceCertificate i).signedPrincipalPrefixCheck (28493 / 5000) = true ∧
       (∀ p ∈ (Finset.Icc 3 (gammaSignedPrincipalEntranceCertificate i).support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate i).cell
-                p).envelopeCheck
+        (gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate i).cell p).envelopeCheck
             (gammaSignedPrincipalEntranceCertificate i).cell =
           true) ∧
       (∑ p ∈ (Finset.Icc 3 (gammaSignedPrincipalEntranceCertificate i).support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate i).cell
-              p).allowance) ≤
+          (gammaAdaptiveProfileRow (gammaSignedPrincipalEntranceCertificate i).cell p).allowance) ≤
         (gammaSignedPrincipalEntranceCertificate i).excess := by
   fin_cases i
   · exact gamma_signed_principal_entrance_check0

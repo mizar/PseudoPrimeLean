@@ -7,9 +7,9 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
-public import PseudoPrime.Analysis.GaussianMRVariableRelativeNumerics
-public import PseudoPrime.Analysis.GaussianMR6FifthsNumerics
-public import PseudoPrime.LLS.RelativeGaussianSubgroupComparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRVariableRelativeNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR6FifthsNumerics
+public import PseudoPrime.LLS.PaperStatements.RelativeGaussianSubgroupComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianPrincipalWitnessBounds
 
 /-! # Variable-width Gaussian MR witnesses -/
@@ -23,10 +23,10 @@ comparison contradicts the classified radius budget at every logarithmic scale
 beginning at 600. The conductor sum uses its universal `(index - 1) log n`
 bound; the exact index remains in the main and secondary terms. -/
 theorem gaussian_star_relative_inequality_contradiction {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
-    (hi : Analysis.gaussianMRStarIndex ≤ (H.index : ℝ)) (hL : 600 ≤ Real.log n) :
+    (hi : gaussianStarIndex ≤ (H.index : ℝ)) (hL : 600 ≤ Real.log n) :
     let L := Real.log n
-    let r := Analysis.gaussianMRStarRadius L
-    let s := Analysis.gaussianMRStarRoot L
+    let r := gaussianStarRadius L
+    let s := gaussianStarRoot L
     let h := 1 / (3 * s)
     let x := r ^ 2
     ¬(((H.index : ℝ) * (1 - h) *
@@ -40,9 +40,8 @@ theorem gaussian_star_relative_inequality_contradiction {n : ℕ} [NeZero n] (H 
           13 +
           ((H.index - 1 : ℕ) : ℝ) * LLS.PaperStatements.gaussianAmbientError n x) := by
   intro L r s h x hcmp
-  have hK : (1 : ℝ) < (Analysis.gaussianMRStarIndex : ℝ) := by
-    norm_num only [Analysis.gaussianMRStarIndex]
-  have hidxR : Analysis.gaussianMRStarIndex ≤ (H.index : ℝ) := by exact hi
+  have hK : (1 : ℝ) < (gaussianStarIndex : ℝ) := by norm_num only [gaussianStarIndex]
+  have hidxR : gaussianStarIndex ≤ (H.index : ℝ) := by exact hi
   have hidxNat : 1 ≤ H.index := by
     have hidxPos : (1 : ℝ) ≤ (H.index : ℝ) := by linarith only [hi, hK]
     exact_mod_cast hidxPos
@@ -64,13 +63,13 @@ theorem gaussian_star_relative_inequality_contradiction {n : ℕ} [NeZero n] (H 
     exact hL
   have hrpos : 0 < r := by
     dsimp only [r]
-    exact sq_pos_of_pos (Analysis.gaussianMRStarRoot_pos hL')
+    exact sq_pos_of_pos (gaussianStarRoot_pos hL')
   have hspos : 0 < s := by
     dsimp only [s]
-    exact Analysis.gaussianMRStarRoot_pos hL'
-  have hrootSq : s ^ 2 = r := by dsimp only [s, r, Analysis.gaussianMRStarRadius]
+    exact gaussianStarRoot_pos hL'
+  have hrootSq : s ^ 2 = r := by dsimp only [s, r, gaussianStarRadius]
   have hrbound : 294 ≤ r := by
-    have hrad := Analysis.gaussianMRStarRadius_lower hL'
+    have hrad := gaussianStarRadius_lower hL'
     dsimp only [r]
     nlinarith only [hrad, hL']
   have hsbound : 17 ≤ s := by nlinarith only [hrootSq, hrbound, hspos]
@@ -80,25 +79,25 @@ theorem gaussian_star_relative_inequality_contradiction {n : ℕ} [NeZero n] (H 
   rw [hsqrtx] at hcmp
   have hmainMass := LLS.PaperStatements.gaussianGamma_cutoff_gt_target
   have hendpoint := Analysis.gaussian_endpoint_exp_le
-  have hImass : Analysis.gaussianMRStarMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMRStarMass]
+  have hImass : gaussianStarMass ≤ I := by
+    dsimp only [I, gaussianStarMass]
     exact hmainMass.le
-  have hEbound : E ≤ Analysis.gaussianMRStarEndpoint := by
-    dsimp only [E, Analysis.gaussianMRStarEndpoint]
+  have hEbound : E ≤ gaussianStarEndpoint := by
+    dsimp only [E, gaussianStarEndpoint]
     exact hendpoint
   have hh : h = 1 / (3 * s) := by rfl
   have hh1 : h ≤ 1 / 2 := by
     rw [hh]
     exact one_div_le_one_div_of_le (by norm_num only) (by nlinarith only [hsbound])
-  have hmK : Analysis.gaussianMRStarIndex ≤ m := by
+  have hmK : gaussianStarIndex ≤ m := by
     dsimp only [m]
     exact hidxR
   have hm4 : (4 : ℝ) ≤ m := by
     have hKreal : (1000000000 : ℝ) ≤ m := by
-      norm_num only [Analysis.gaussianMRStarIndex] at hmK ⊢
+      norm_num only [gaussianStarIndex] at hmK ⊢
       exact hmK
     linarith only [hKreal]
-  obtain ⟨hD, hgamma, hBeta⟩ := Analysis.gaussianMRStar_index_coefficients hmK
+  obtain ⟨hD, hgamma, hBeta⟩ := gaussianStar_index_coefficients hmK
   have hCbound : LLS.PaperStatements.subgroupConductorLogSum H / t ≤ L := by
     have hC := LLS.PaperStatements.subgroupConductorLogSum_le H
     have hC' : LLS.PaperStatements.subgroupConductorLogSum H ≤ t * L := by
@@ -106,32 +105,31 @@ theorem gaussian_star_relative_inequality_contradiction {n : ℕ} [NeZero n] (H 
       exact hC
     exact (div_le_iff₀ ht).2 (by nlinarith only [hC'])
   have hA : LLS.PaperStatements.gaussianAmbientError n (r ^ 2) ≤ 125191 / 4500 :=
-    Analysis.gaussianMRStar_ambient_error_le hL' (le_refl (Real.log n))
-  have hcoeff := Analysis.gaussianMRStar_index_coefficients hmK
+    gaussianStar_ambient_error_le hL' (le_refl (Real.log n))
+  have hcoeff := gaussianStar_index_coefficients hmK
   rcases hcoeff with ⟨hD, hgamma, hBeta⟩
   have hcmp' :
     (m * (1 - h) * I - E) * r ≤
-      Analysis.gaussianMRStarConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianStarConductor * LLS.PaperStatements.subgroupConductorLogSum H +
         m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 +
         t * LLS.PaperStatements.gaussianAmbientError n (r ^ 2) := by
-    simpa only [m, t, I, E, x, Analysis.gaussianMRStarConductor] using hcmp
+    simpa only [m, t, I, E, x, gaussianStarConductor] using hcmp
   have hfinish :
-    Analysis.gaussianMRStarD * r ≤
-        Analysis.gaussianMRStarConductor * L + Analysis.gaussianMRStarBeta * s +
+    gaussianStarD * r ≤
+        gaussianStarConductor * L + gaussianStarBeta * s +
           (m / t) *
-            (63 * Analysis.gaussianMRStarEndpoint / (10 * s) +
-              1839 * Analysis.gaussianMRStarEndpoint / (1000 * r)) +
+            (63 * gaussianStarEndpoint / (10 * s) + 1839 * gaussianStarEndpoint / (1000 * r)) +
           13 / t +
           LLS.PaperStatements.gaussianAmbientError n (r ^ 2) →
       False := by
     intro hbudget
     exact
-      Analysis.gaussianMRStar_large_index_comparison_impossible hmK hsbound hrbound hgamma hA
-        (Analysis.gaussianMRStarRadius_equation hL') (by simpa only [t] using hbudget)
+      gaussianStar_large_index_comparison_impossible hmK hsbound hrbound hgamma hA
+        (gaussianStarRadius_equation hL') (by simpa only [t] using hbudget)
   exact
-    Analysis.gaussianMR_relative_comparison_to_scalar hm4 (by rfl) hspos hrootSq hh hh1 hImass
-      (by simpa only [E, Analysis.gaussianMRStarEndpoint] using hendpoint) hCbound
+    gaussian_relative_comparison_to_scalar hm4 (by rfl) hspos hrootSq hh hh1 hImass
+      (by simpa only [E, gaussianStarEndpoint] using hendpoint) hCbound
       (by norm_num only : (0 : ℝ) ≤ 161 / 400) hD hBeta hcmp' hfinish
 
 /-- For the index-four common-sign subgroup with conductor cost at most `2L`,
@@ -141,8 +139,8 @@ theorem gaussian_star_index_four_relative_inequality_contradiction {n : ℕ} [Ne
     (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 600 ≤ Real.log n) :
     let L := Real.log n
-    let r := Analysis.gaussianMRStarRadius L
-    let s := Analysis.gaussianMRStarRoot L
+    let r := gaussianStarRadius L
+    let s := gaussianStarRoot L
     let h := 1 / (3 * s)
     let x := r ^ 2
     ¬(((H.index : ℝ) * (1 - h) *
@@ -163,24 +161,24 @@ theorem gaussian_star_index_four_relative_inequality_contradiction {n : ℕ} [Ne
   let E : ℝ := Real.exp (1 / 16 : ℝ)
   have hrpos : 0 < r := by
     dsimp only [r]
-    exact sq_pos_of_pos (Analysis.gaussianMRStarRoot_pos hL)
+    exact sq_pos_of_pos (gaussianStarRoot_pos hL)
   have hspos : 0 < s := by
     dsimp only [s]
-    exact Analysis.gaussianMRStarRoot_pos hL
-  have hrootSq : s ^ 2 = r := by dsimp only [s, r, Analysis.gaussianMRStarRadius]
+    exact gaussianStarRoot_pos hL
+  have hrootSq : s ^ 2 = r := by dsimp only [s, r, gaussianStarRadius]
   have hrbound : 294 ≤ r := by
-    have hr := Analysis.gaussianMRStarRadius_lower hL
+    have hr := gaussianStarRadius_lower hL
     nlinarith only [hr, hL]
   have hsbound : 17 ≤ s := by nlinarith only [hrootSq, hrbound, hspos]
   have hsqrtx : Real.sqrt x = r := by
     dsimp only [x]
     exact Real.sqrt_sq hrpos.le
   rw [hsqrtx] at hcmp
-  have hI : Analysis.gaussianMRStarMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMRStarMass]
+  have hI : gaussianStarMass ≤ I := by
+    dsimp only [I, gaussianStarMass]
     exact LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le
-  have hE : E ≤ Analysis.gaussianMRStarEndpoint := by
-    dsimp only [E, Analysis.gaussianMRStarEndpoint]
+  have hE : E ≤ gaussianStarEndpoint := by
+    dsimp only [E, gaussianStarEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
   have hh : h = 1 / (3 * s) := by rfl
   have hh1 : h ≤ 1 / 2 := by
@@ -196,32 +194,29 @@ theorem gaussian_star_index_four_relative_inequality_contradiction {n : ℕ} [Ne
     dsimp only [x] at hcmp
     simpa only [hindex, hi, Nat.cast_ofNat, Nat.reduceSub] using hcmp
   have hA : LLS.PaperStatements.gaussianAmbientError n (r ^ 2) ≤ 125191 / 4500 :=
-    Analysis.gaussianMRStar_ambient_error_le hL (le_refl (Real.log n))
+    gaussianStar_ambient_error_le hL (le_refl (Real.log n))
   have hCscaled : LLS.PaperStatements.subgroupConductorLogSum H / 3 ≤ (2 / 3 : ℝ) * Real.log n := by
     apply (div_le_iff₀ (by norm_num only : (0 : ℝ) < 3)).2
     nlinarith only [hC]
-  have herror := Analysis.gaussianMRStar_triple_scalar_error_lt hsbound hrbound hA
+  have herror := gaussianStar_triple_scalar_error_lt hsbound hrbound hA
   exact
-    Analysis.gaussianMR_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
+    gaussian_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianAmbientError n (r ^ 2)) (L := (2 / 3 : ℝ) * Real.log n) (I := I)
-      (E := E) (C := LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M :=
-      Analysis.gaussianMRStarMass) (Ecap := Analysis.gaussianMRStarEndpoint) (conductor :=
-      (161 / 400 : ℝ)) (D :=
-      (4 * Analysis.gaussianMRStarMass - Analysis.gaussianMRStarEndpoint) / 3) (beta :=
-      (4 / 3 : ℝ) * (Analysis.gaussianMRStarMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
+      (E := E) (C := LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := gaussianStarMass)
+      (Ecap := gaussianStarEndpoint) (conductor := (161 / 400 : ℝ)) (D :=
+      (4 * gaussianStarMass - gaussianStarEndpoint) / 3) (beta :=
+      (4 / 3 : ℝ) * (gaussianStarMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
       (by norm_num only : (0 : ℝ) ≤ 161 / 400) le_rfl le_rfl hcmp'
       (by
         intro hbudget
         have hnorm' :
-          ((4 * Analysis.gaussianMRStarMass - Analysis.gaussianMRStarEndpoint) / 3) * r ≤
-            (161 / 600 : ℝ) * Real.log n +
-              (4 / 3 : ℝ) * (Analysis.gaussianMRStarMass / 3 + 3 / 10) * s +
+          ((4 * gaussianStarMass - gaussianStarEndpoint) / 3) * r ≤
+            (161 / 600 : ℝ) * Real.log n + (4 / 3 : ℝ) * (gaussianStarMass / 3 + 3 / 10) * s +
               33 := by
-          dsimp only [Analysis.gaussianMRStarMass,
-            Analysis.gaussianMRStarEndpoint] at hbudget herror ⊢
+          dsimp only [gaussianStarMass, gaussianStarEndpoint] at hbudget herror ⊢
           nlinarith only [hbudget, herror]
-        exact Analysis.gaussianMRStar_triple_comparison_impossible hL hnorm')
+        exact gaussianStar_triple_comparison_impossible hL hnorm')
 
 /-- Under GRH, an index-four subgroup containing all strong-MR passes and with
 conductor-log sum at most `2 log n` yields a prime witness below the classified
@@ -234,14 +229,14 @@ theorem exists_prime_witness_le_gaussian_star_of_index_four {n : ℕ} [NeZero n]
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 600 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussianStarBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
   let L := Real.log n
-  let r := Analysis.gaussianMRStarRadius L
+  let r := gaussianStarRadius L
   let x := r ^ 2
-  have hcut : (21 / 10 : ℝ) * x = Analysis.gaussianMRStarBound (Real.log n) := by
-    dsimp only [x, Analysis.gaussianMRStarBound, r, L]
+  have hcut : (21 / 10 : ℝ) * x = gaussianStarBound (Real.log n) := by
+    dsimp only [x, gaussianStarBound, r, L]
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (21 / 10 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -262,18 +257,17 @@ theorem exists_prime_witness_le_gaussian_star_of_index_four {n : ℕ} [NeZero n]
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
-  have hrootSq : (Analysis.gaussianMRStarRoot (Real.log n)) ^ 2 = r := by
-    dsimp only [r, L, Analysis.gaussianMRStarRadius]
+  have hrootSq : (gaussianStarRoot (Real.log n)) ^ 2 = r := by dsimp only [r, L, gaussianStarRadius]
   have hrbound : 294 ≤ r := by
-    have hrad := Analysis.gaussianMRStarRadius_lower hL
+    have hrad := gaussianStarRadius_lower hL
     dsimp only [r, L]
     nlinarith only [hrad, hL]
-  have hsbound : 17 ≤ Analysis.gaussianMRStarRoot (Real.log n) := by
-    have hspos := Analysis.gaussianMRStarRoot_pos hL
+  have hsbound : 17 ≤ gaussianStarRoot (Real.log n) := by
+    have hspos := gaussianStarRoot_pos hL
     nlinarith only [hrootSq, hrbound, hspos]
-  have hspos : 0 < Analysis.gaussianMRStarRoot (Real.log n) := Analysis.gaussianMRStarRoot_pos hL
-  have hwidth : 0 < 1 / (3 * Analysis.gaussianMRStarRoot (Real.log n)) := by positivity
-  have hwidth1 : 1 / (3 * Analysis.gaussianMRStarRoot (Real.log n)) ≤ 1 / 2 := by
+  have hspos : 0 < gaussianStarRoot (Real.log n) := gaussianStarRoot_pos hL
+  have hwidth : 0 < 1 / (3 * gaussianStarRoot (Real.log n)) := by positivity
+  have hwidth1 : 1 / (3 * gaussianStarRoot (Real.log n)) ≤ 1 / 2 := by
     apply one_div_le_one_div_of_le (by norm_num only)
     nlinarith only [hsbound]
   have hx : 4 ≤ x := by
@@ -289,21 +283,20 @@ a prime witness below the classified Gaussian cutoff from logarithmic scale
 600 onward. The index and pass-containment conditions are internal branch data;
 the all-input theorem closes them by the Fermat-index classification. -/
 theorem exists_prime_witness_le_gaussian_star_of_index_ge_billion {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
-    (hi : Analysis.gaussianMRStarIndex ≤ (H.index : ℝ))
+    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : gaussianStarIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 600 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussianStarBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
   let L := Real.log n
-  let r := Analysis.gaussianMRStarRadius L
+  let r := gaussianStarRadius L
   let x := r ^ 2
-  have hcut : (21 / 10 : ℝ) * x = Analysis.gaussianMRStarBound (Real.log n) := by
-    dsimp only [x, Analysis.gaussianMRStarBound, r, L]
+  have hcut : (21 / 10 : ℝ) * x = gaussianStarBound (Real.log n) := by
+    dsimp only [x, gaussianStarBound, r, L]
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (21 / 10 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -325,18 +318,17 @@ theorem exists_prime_witness_le_gaussian_star_of_index_ge_billion {n : ℕ} [NeZ
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
   have hL' : 600 ≤ Real.log n := hL
-  have hrootSq : (Analysis.gaussianMRStarRoot (Real.log n)) ^ 2 = r := by
-    dsimp only [r, L, Analysis.gaussianMRStarRadius]
+  have hrootSq : (gaussianStarRoot (Real.log n)) ^ 2 = r := by dsimp only [r, L, gaussianStarRadius]
   have hrbound : 294 ≤ r := by
-    have hrad := Analysis.gaussianMRStarRadius_lower hL'
+    have hrad := gaussianStarRadius_lower hL'
     dsimp only [r, L]
     nlinarith only [hrad, hL']
-  have hsbound : 17 ≤ Analysis.gaussianMRStarRoot (Real.log n) := by
-    have hspos := Analysis.gaussianMRStarRoot_pos hL'
+  have hsbound : 17 ≤ gaussianStarRoot (Real.log n) := by
+    have hspos := gaussianStarRoot_pos hL'
     nlinarith only [hrootSq, hrbound, hspos]
-  have hspos : 0 < Analysis.gaussianMRStarRoot (Real.log n) := Analysis.gaussianMRStarRoot_pos hL'
-  have hwidth : 0 < 1 / (3 * Analysis.gaussianMRStarRoot (Real.log n)) := by positivity
-  have hwidth1 : 1 / (3 * Analysis.gaussianMRStarRoot (Real.log n)) ≤ 1 / 2 := by
+  have hspos : 0 < gaussianStarRoot (Real.log n) := gaussianStarRoot_pos hL'
+  have hwidth : 0 < 1 / (3 * gaussianStarRoot (Real.log n)) := by positivity
+  have hwidth1 : 1 / (3 * gaussianStarRoot (Real.log n)) ≤ 1 / 2 := by
     apply one_div_le_one_div_of_le (by norm_num only)
     nlinarith only [hsbound]
   have hx : 4 ≤ x := by
@@ -354,7 +346,7 @@ theorem exists_prime_witness_le_gaussian_star_of_large_fermat_index {n : ℕ} (h
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 600 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussianStarBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   have hExp10 : (11 : ℝ) ≤ Real.exp 10 := by
@@ -381,8 +373,8 @@ theorem exists_prime_witness_le_gaussian_star_of_large_fermat_index {n : ℕ} (h
       Real.log_lt_log (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne n))) (Nat.cast_lt.mpr hnlt)
     exact (not_lt_of_ge hL) (hloglt.trans hlog20000)
   let H := PrimeTest.fermatSubgroup n
-  have hiR : Analysis.gaussianMRStarIndex ≤ (H.index : ℝ) := by
-    norm_num only [Analysis.gaussianMRStarIndex]
+  have hiR : gaussianStarIndex ≤ (H.index : ℝ) := by
+    norm_num only [gaussianStarIndex]
     exact_mod_cast hi
   have hHpass :
     ∀ z : ZMod n,
@@ -398,8 +390,8 @@ theorem gaussian6fifths_index_four_relative_inequality_contradiction {n : ℕ} [
     (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 500 ≤ Real.log n) :
     let L := Real.log n
-    let r := Analysis.gaussianMR6FifthsRadius L
-    let s := Analysis.gaussianMR6FifthsRoot L
+    let r := gaussian6FifthsRadius L
+    let s := gaussian6FifthsRoot L
     let h := 1 / (3 * s)
     let x := r ^ 2
     ¬(((H.index : ℝ) * (1 - h) *
@@ -420,24 +412,24 @@ theorem gaussian6fifths_index_four_relative_inequality_contradiction {n : ℕ} [
   let E : ℝ := Real.exp (1 / 16 : ℝ)
   have hrpos : 0 < r := by
     dsimp only [r]
-    exact sq_pos_of_pos (Analysis.gaussianMR6FifthsRoot_pos hL)
+    exact sq_pos_of_pos (gaussian6FifthsRoot_pos hL)
   have hspos : 0 < s := by
     dsimp only [s]
-    exact Analysis.gaussianMR6FifthsRoot_pos hL
-  have hrootSq : s ^ 2 = r := by dsimp only [s, r, Analysis.gaussianMR6FifthsRadius]
+    exact gaussian6FifthsRoot_pos hL
+  have hrootSq : s ^ 2 = r := by dsimp only [s, r, gaussian6FifthsRadius]
   have hrbound : 625 / 2 ≤ r := by
-    have hr := Analysis.gaussianMR6FifthsRadius_lower hL
+    have hr := gaussian6FifthsRadius_lower hL
     nlinarith only [hr, hL]
   have hsbound : 17 ≤ s := by nlinarith only [hrootSq, hrbound, hspos]
   have hsqrtx : Real.sqrt x = r := by
     dsimp only [x]
     exact Real.sqrt_sq hrpos.le
   rw [hsqrtx] at hcmp
-  have hI : Analysis.gaussianMR6FifthsMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMR6FifthsMass]
+  have hI : gaussian6FifthsMass ≤ I := by
+    dsimp only [I, gaussian6FifthsMass]
     exact LLS.PaperStatements.gaussianGamma_cutoff_sixFifths_gt_target.le
-  have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
-    dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
+  have hE : E ≤ gaussian6FifthsEndpoint := by
+    dsimp only [E, gaussian6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
   have hh : h = 1 / (3 * s) := by rfl
   have hh1 : h ≤ 1 / 2 := by
@@ -454,55 +446,50 @@ theorem gaussian6fifths_index_four_relative_inequality_contradiction {n : ℕ} [
     simpa only [hindex, hi, Nat.cast_ofNat, Nat.reduceSub] using hcmp
   have hA : LLS.PaperStatements.gaussianAmbientError n (r ^ 2) ≤ 27 := by
     dsimp only [r, L]
-    exact Analysis.gaussianMR6Fifths_ambient_error_le hL (le_refl (Real.log n))
+    exact gaussian6Fifths_ambient_error_le hL (le_refl (Real.log n))
   have hCscaled : LLS.PaperStatements.subgroupConductorLogSum H / 3 ≤ (2 / 3 : ℝ) * Real.log n := by
     apply (div_le_iff₀ (by norm_num only : (0 : ℝ) < 3)).2
     nlinarith only [hC]
   have herror :
     (4 / 3 : ℝ) *
-          (63 * Analysis.gaussianMR6FifthsEndpoint / (10 * s) +
-            1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+          (63 * gaussian6FifthsEndpoint / (10 * s) + 1839 * gaussian6FifthsEndpoint / (1000 * r)) +
         13 / 3 +
         LLS.PaperStatements.gaussianAmbientError n (r ^ 2) <
       33 := by
     have hterm1 :
-      63 * Analysis.gaussianMR6FifthsEndpoint / (10 * s) ≤
-        63 * Analysis.gaussianMR6FifthsEndpoint / (10 * 17) := by
+      63 * gaussian6FifthsEndpoint / (10 * s) ≤ 63 * gaussian6FifthsEndpoint / (10 * 17) := by
       apply div_le_div_of_nonneg_left
-      · norm_num only [Analysis.gaussianMR6FifthsEndpoint]
+      · norm_num only [gaussian6FifthsEndpoint]
       · norm_num only
       · nlinarith only [hsbound]
     have hterm2 :
-      1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r) ≤
-        1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * (625 / 2)) := by
+      1839 * gaussian6FifthsEndpoint / (1000 * r) ≤
+        1839 * gaussian6FifthsEndpoint / (1000 * (625 / 2)) := by
       apply div_le_div_of_nonneg_left
-      · norm_num only [Analysis.gaussianMR6FifthsEndpoint]
+      · norm_num only [gaussian6FifthsEndpoint]
       · norm_num only
       · nlinarith only [hrbound]
-    rw [Analysis.gaussianMR6FifthsEndpoint] at hterm1 hterm2 ⊢
+    rw [gaussian6FifthsEndpoint] at hterm1 hterm2 ⊢
     norm_num only at hterm1 hterm2
     nlinarith only [hterm1, hterm2, hA]
   exact
-    Analysis.gaussianMR_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
+    gaussian_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianAmbientError n (r ^ 2)) (L := (2 / 3 : ℝ) * Real.log n) (I := I)
       (E := E) (C := LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M :=
-      Analysis.gaussianMR6FifthsMass) (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor :=
-      (161 / 400 : ℝ)) (D :=
-      (4 * Analysis.gaussianMR6FifthsMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
-      (4 / 3 : ℝ) * (Analysis.gaussianMR6FifthsMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
+      gaussian6FifthsMass) (Ecap := gaussian6FifthsEndpoint) (conductor := (161 / 400 : ℝ)) (D :=
+      (4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) (beta :=
+      (4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
       (by norm_num only : (0 : ℝ) ≤ 161 / 400) le_rfl le_rfl hcmp'
       (by
         intro hbudget
         have hnorm' :
-          ((4 * Analysis.gaussianMR6FifthsMass - Analysis.gaussianMR6FifthsEndpoint) / 3) * r ≤
-            (161 / 600 : ℝ) * Real.log n +
-              (4 / 3 : ℝ) * (Analysis.gaussianMR6FifthsMass / 3 + 3 / 10) * s +
+          ((4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) * r ≤
+            (161 / 600 : ℝ) * Real.log n + (4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10) * s +
               33 := by
-          dsimp only [Analysis.gaussianMR6FifthsMass,
-            Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
+          dsimp only [gaussian6FifthsMass, gaussian6FifthsEndpoint] at hbudget herror ⊢
           nlinarith only [hbudget, herror]
-        exact Analysis.gaussianMR6Fifths_triple_comparison_impossible hL hnorm')
+        exact gaussian6Fifths_triple_comparison_impossible hL hnorm')
 
 /-- The signed relative Gaussian comparison is impossible for an index-four
 subgroup at the constant-6 radius from logarithmic scale 300. -/
@@ -510,8 +497,8 @@ theorem gaussianMR6_index_four_relative_inequality_contradiction {n : ℕ} [NeZe
     (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 300 ≤ Real.log n) :
     let L := Real.log n
-    let r := Analysis.gaussianMR6Radius L
-    let s := Analysis.gaussianMR6Root L
+    let r := gaussian6Radius L
+    let s := gaussian6Root L
     let h := 1 / (3 * s)
     let x := r ^ 2
     ¬(((H.index : ℝ) * (1 - h) *
@@ -532,27 +519,27 @@ theorem gaussianMR6_index_four_relative_inequality_contradiction {n : ℕ} [NeZe
   let E : ℝ := Real.exp (1 / 16 : ℝ)
   have hrpos : 0 < r := by
     dsimp only [r]
-    exact sq_pos_of_pos (Analysis.gaussianMR6Root_pos hL)
+    exact sq_pos_of_pos (gaussian6Root_pos hL)
   have hspos : 0 < s := by
     dsimp only [s]
-    exact Analysis.gaussianMR6Root_pos hL
-  have hrootSq : s ^ 2 = r := by dsimp only [s, r, Analysis.gaussianMR6Radius]
+    exact gaussian6Root_pos hL
+  have hrootSq : s ^ 2 = r := by dsimp only [s, r, gaussian6Radius]
   have hrbound : 415 / 2 ≤ r := by
     dsimp only [r]
-    have hr := Analysis.gaussianMR6Radius_lower hL
+    have hr := gaussian6Radius_lower hL
     nlinarith only [hL, hr]
   have hsbound : 14 ≤ s := by
     dsimp only [s]
-    exact Analysis.gaussianMR6Root_lower_14 hL
+    exact gaussian6Root_lower_14 hL
   have hsqrtx : Real.sqrt x = r := by
     dsimp only [x]
     exact Real.sqrt_sq hrpos.le
   rw [hsqrtx] at hcmp
-  have hI : Analysis.gaussianMR6FifthsMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMR6FifthsMass]
+  have hI : gaussian6FifthsMass ≤ I := by
+    dsimp only [I, gaussian6FifthsMass]
     exact LLS.PaperStatements.gaussianGamma_cutoff_sixFifths_gt_target.le
-  have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
-    dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
+  have hE : E ≤ gaussian6FifthsEndpoint := by
+    dsimp only [E, gaussian6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
   have hh : h = 1 / (3 * s) := by rfl
   have hh1 : h ≤ 1 / 2 := by
@@ -569,55 +556,51 @@ theorem gaussianMR6_index_four_relative_inequality_contradiction {n : ℕ} [NeZe
     simpa only [hindex, hi, Nat.cast_ofNat, Nat.reduceSub] using hcmp
   have hA : LLS.PaperStatements.gaussianAmbientErrorPrefixSigned n (r ^ 2) ≤ 27 / 5 := by
     dsimp only [r, L]
-    exact Analysis.gaussianMR6_ambient_error_prefix_signed_le hL le_rfl
+    exact gaussian6_ambient_error_prefix_signed_le hL le_rfl
   have hCscaled : LLS.PaperStatements.subgroupConductorLogSum H / 3 ≤ (2 / 3 : ℝ) * Real.log n := by
     apply (div_le_iff₀ (by norm_num only : (0 : ℝ) < 3)).2
     nlinarith only [hC]
   have herror :
     (4 / 3 : ℝ) *
-          (63 * Analysis.gaussianMR6FifthsEndpoint / (10 * s) +
-            1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+          (63 * gaussian6FifthsEndpoint / (10 * s) + 1839 * gaussian6FifthsEndpoint / (1000 * r)) +
         13 / 3 +
         LLS.PaperStatements.gaussianAmbientErrorPrefixSigned n (r ^ 2) <
       11 := by
     have hterm1 :
-      63 * Analysis.gaussianMR6FifthsEndpoint / (10 * s) ≤
-        63 * Analysis.gaussianMR6FifthsEndpoint / (10 * 14) := by
+      63 * gaussian6FifthsEndpoint / (10 * s) ≤ 63 * gaussian6FifthsEndpoint / (10 * 14) := by
       apply div_le_div_of_nonneg_left
-      · norm_num only [Analysis.gaussianMR6FifthsEndpoint]
+      · norm_num only [gaussian6FifthsEndpoint]
       · norm_num only
       · nlinarith only [hsbound]
     have hterm2 :
-      1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r) ≤
-        1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * (415 / 2)) := by
+      1839 * gaussian6FifthsEndpoint / (1000 * r) ≤
+        1839 * gaussian6FifthsEndpoint / (1000 * (415 / 2)) := by
       apply div_le_div_of_nonneg_left
-      · norm_num only [Analysis.gaussianMR6FifthsEndpoint]
+      · norm_num only [gaussian6FifthsEndpoint]
       · norm_num only
       · nlinarith only [hrbound]
-    rw [Analysis.gaussianMR6FifthsEndpoint] at hterm1 hterm2 ⊢
+    rw [gaussian6FifthsEndpoint] at hterm1 hterm2 ⊢
     norm_num only at hterm1 hterm2
     nlinarith only [hterm1, hterm2, hA]
   exact
-    Analysis.gaussianMR_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
+    gaussian_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianAmbientErrorPrefixSigned n (r ^ 2)) (L :=
       (2 / 3 : ℝ) * Real.log n) (I := I) (E := E) (C :=
-      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := Analysis.gaussianMR6FifthsMass)
-      (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor := (161 / 400 : ℝ)) (D :=
-      (4 * Analysis.gaussianMR6FifthsMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
-      (4 / 3 : ℝ) * (Analysis.gaussianMR6FifthsMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
+      LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := gaussian6FifthsMass) (Ecap :=
+      gaussian6FifthsEndpoint) (conductor := (161 / 400 : ℝ)) (D :=
+      (4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) (beta :=
+      (4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
       (by norm_num only : (0 : ℝ) ≤ 161 / 400) le_rfl le_rfl hcmp'
       (by
         intro hbudget
         have hnorm :
-          ((4 * Analysis.gaussianMR6FifthsMass - Analysis.gaussianMR6FifthsEndpoint) / 3) * r ≤
-            (161 / 600 : ℝ) * Real.log n +
-              (4 / 3 : ℝ) * (Analysis.gaussianMR6FifthsMass / 3 + 3 / 10) * s +
+          ((4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) * r ≤
+            (161 / 600 : ℝ) * Real.log n + (4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10) * s +
               11 := by
-          dsimp only [Analysis.gaussianMR6FifthsMass,
-            Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
+          dsimp only [gaussian6FifthsMass, gaussian6FifthsEndpoint] at hbudget herror ⊢
           nlinarith only [hbudget, herror]
-        exact Analysis.gaussianMR6_triple_comparison_impossible hL hnorm)
+        exact gaussian6_triple_comparison_impossible hL hnorm)
 
 /-- An index-four subgroup with conductor cost `2L` yields a prime witness
 below the constant-6 Gaussian bound from logarithmic scale 300. -/
@@ -629,16 +612,16 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_four {n : ℕ} [NeZero n] (
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMR6Bound (Real.log n) ∧
+        (p : ℝ) ≤ gaussian6Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
-  let r := Analysis.gaussianMR6Radius (Real.log n)
+  let r := gaussian6Radius (Real.log n)
   let x := r ^ 2
-  have hcut : (6 / 5 : ℝ) * x = Analysis.gaussianMR6Bound (Real.log n) := by
-    dsimp only [x, Analysis.gaussianMR6Bound, Analysis.gaussianMR6Radius, r]
+  have hcut : (6 / 5 : ℝ) * x = gaussian6Bound (Real.log n) := by
+    dsimp only [x, gaussian6Bound, gaussian6Radius, r]
   have hX : 50000 ≤ (6 / 5 : ℝ) * x := by
     rw [hcut]
-    exact (Analysis.gaussianMR6Bound_gt_prefix hL).le
+    exact (gaussian6Bound_gt_prefix hL).le
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -659,16 +642,15 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_four {n : ℕ} [NeZero n] (
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
-  have hrootSq : (Analysis.gaussianMR6Root (Real.log n)) ^ 2 = r := by
-    dsimp only [r, Analysis.gaussianMR6Radius]
+  have hrootSq : (gaussian6Root (Real.log n)) ^ 2 = r := by dsimp only [r, gaussian6Radius]
   have hrbound : 415 / 2 ≤ r := by
     dsimp only [r]
-    have hr := Analysis.gaussianMR6Radius_lower hL
+    have hr := gaussian6Radius_lower hL
     nlinarith only [hr, hL]
-  have hspos : 0 < Analysis.gaussianMR6Root (Real.log n) := Analysis.gaussianMR6Root_pos hL
-  have hsbound : 14 ≤ Analysis.gaussianMR6Root (Real.log n) := Analysis.gaussianMR6Root_lower_14 hL
-  have hwidth : 0 < 1 / (3 * Analysis.gaussianMR6Root (Real.log n)) := by positivity
-  have hwidth1 : 1 / (3 * Analysis.gaussianMR6Root (Real.log n)) ≤ 1 / 2 := by
+  have hspos : 0 < gaussian6Root (Real.log n) := gaussian6Root_pos hL
+  have hsbound : 14 ≤ gaussian6Root (Real.log n) := gaussian6Root_lower_14 hL
+  have hwidth : 0 < 1 / (3 * gaussian6Root (Real.log n)) := by positivity
+  have hwidth1 : 1 / (3 * gaussian6Root (Real.log n)) ≤ 1 / 2 := by
     apply one_div_le_one_div_of_le (by norm_num only)
     nlinarith only [hsbound]
   have hx : 4 ≤ x := by
@@ -685,8 +667,8 @@ theorem gaussianMR18_index_four_relative_inequality_contradiction {n : ℕ} [NeZ
     (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 300 ≤ Real.log n) :
     let L := Real.log n
-    let r := Analysis.gaussianMR18Radius L
-    let s := Analysis.gaussianMR18Root L
+    let r := gaussian18Radius L
+    let s := gaussian18Root L
     let h := 1 / (3 * s)
     let x := r ^ 2
     ¬(((H.index : ℝ) * (1 - h) *
@@ -707,26 +689,26 @@ theorem gaussianMR18_index_four_relative_inequality_contradiction {n : ℕ} [NeZ
   let E : ℝ := Real.exp (1 / 16 : ℝ)
   have hrpos : 0 < r := by
     dsimp only [r]
-    exact sq_pos_of_pos (Analysis.gaussianMR18Root_pos hL)
+    exact sq_pos_of_pos (gaussian18Root_pos hL)
   have hspos : 0 < s := by
     dsimp only [s]
-    exact Analysis.gaussianMR18Root_pos hL
-  have hrootSq : s ^ 2 = r := by dsimp only [s, r, Analysis.gaussianMR18Radius]
+    exact gaussian18Root_pos hL
+  have hrootSq : s ^ 2 = r := by dsimp only [s, r, gaussian18Radius]
   have hrbound : 455 / 2 ≤ r := by
     dsimp only [r]
-    exact Analysis.gaussianMR18Radius_lower_455_over_2 hL
+    exact gaussian18Radius_lower_455_over_2 hL
   have hsbound : 15 ≤ s := by
     dsimp only [s]
-    exact Analysis.gaussianMR18Root_lower_15 hL
+    exact gaussian18Root_lower_15 hL
   have hsqrtx : Real.sqrt x = r := by
     dsimp only [x]
     exact Real.sqrt_sq hrpos.le
   rw [hsqrtx] at hcmp
-  have hI : Analysis.gaussianMR6FifthsMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMR6FifthsMass]
+  have hI : gaussian6FifthsMass ≤ I := by
+    dsimp only [I, gaussian6FifthsMass]
     exact LLS.PaperStatements.gaussianGamma_cutoff_sixFifths_gt_target.le
-  have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
-    dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
+  have hE : E ≤ gaussian6FifthsEndpoint := by
+    dsimp only [E, gaussian6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
   have hh : h = 1 / (3 * s) := by rfl
   have hh1 : h ≤ 1 / 2 := by
@@ -743,55 +725,50 @@ theorem gaussianMR18_index_four_relative_inequality_contradiction {n : ℕ} [NeZ
     simpa only [hindex, hi, Nat.cast_ofNat, Nat.reduceSub] using hcmp
   have hA : LLS.PaperStatements.gaussianAmbientErrorPrefix n (r ^ 2) ≤ 27 - 484381 / 50000 := by
     dsimp only [r, L]
-    exact Analysis.gaussianMR18_ambient_error_prefix_le hL (le_rfl)
+    exact gaussian18_ambient_error_prefix_le hL (le_rfl)
   have hCscaled : LLS.PaperStatements.subgroupConductorLogSum H / 3 ≤ (2 / 3 : ℝ) * Real.log n := by
     apply (div_le_iff₀ (by norm_num only : (0 : ℝ) < 3)).2
     nlinarith only [hC]
   have herror :
     (4 / 3 : ℝ) *
-          (63 * Analysis.gaussianMR6FifthsEndpoint / (10 * s) +
-            1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+          (63 * gaussian6FifthsEndpoint / (10 * s) + 1839 * gaussian6FifthsEndpoint / (1000 * r)) +
         13 / 3 +
         LLS.PaperStatements.gaussianAmbientErrorPrefix n (r ^ 2) <
       23 := by
     have hterm1 :
-      63 * Analysis.gaussianMR6FifthsEndpoint / (10 * s) ≤
-        63 * Analysis.gaussianMR6FifthsEndpoint / (10 * 15) := by
+      63 * gaussian6FifthsEndpoint / (10 * s) ≤ 63 * gaussian6FifthsEndpoint / (10 * 15) := by
       apply div_le_div_of_nonneg_left
-      · norm_num only [Analysis.gaussianMR6FifthsEndpoint]
+      · norm_num only [gaussian6FifthsEndpoint]
       · norm_num only
       · nlinarith only [hsbound]
     have hterm2 :
-      1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r) ≤
-        1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * (455 / 2)) := by
+      1839 * gaussian6FifthsEndpoint / (1000 * r) ≤
+        1839 * gaussian6FifthsEndpoint / (1000 * (455 / 2)) := by
       apply div_le_div_of_nonneg_left
-      · norm_num only [Analysis.gaussianMR6FifthsEndpoint]
+      · norm_num only [gaussian6FifthsEndpoint]
       · norm_num only
       · nlinarith only [hrbound]
-    rw [Analysis.gaussianMR6FifthsEndpoint] at hterm1 hterm2 ⊢
+    rw [gaussian6FifthsEndpoint] at hterm1 hterm2 ⊢
     norm_num only at hterm1 hterm2
     nlinarith only [hterm1, hterm2, hA]
   exact
-    Analysis.gaussianMR_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
+    gaussian_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianAmbientErrorPrefix n (r ^ 2)) (L := (2 / 3 : ℝ) * Real.log n)
       (I := I) (E := E) (C := LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M :=
-      Analysis.gaussianMR6FifthsMass) (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor :=
-      (161 / 400 : ℝ)) (D :=
-      (4 * Analysis.gaussianMR6FifthsMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
-      (4 / 3 : ℝ) * (Analysis.gaussianMR6FifthsMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
+      gaussian6FifthsMass) (Ecap := gaussian6FifthsEndpoint) (conductor := (161 / 400 : ℝ)) (D :=
+      (4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) (beta :=
+      (4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10)) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
       (by norm_num only : (0 : ℝ) ≤ 161 / 400) le_rfl le_rfl hcmp'
       (by
         intro hbudget
         have hnorm :
-          ((4 * Analysis.gaussianMR6FifthsMass - Analysis.gaussianMR6FifthsEndpoint) / 3) * r ≤
-            (161 / 600 : ℝ) * Real.log n +
-              (4 / 3 : ℝ) * (Analysis.gaussianMR6FifthsMass / 3 + 3 / 10) * s +
+          ((4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) * r ≤
+            (161 / 600 : ℝ) * Real.log n + (4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10) * s +
               23 := by
-          dsimp only [Analysis.gaussianMR6FifthsMass,
-            Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
+          dsimp only [gaussian6FifthsMass, gaussian6FifthsEndpoint] at hbudget herror ⊢
           nlinarith only [hbudget, herror]
-        exact Analysis.gaussianMR18_triple_comparison_impossible hL hnorm)
+        exact gaussian18_triple_comparison_impossible hL hnorm)
 
 /-- An index-four subgroup with the three-character conductor cost yields a
 prime witness below the 6/5 Gaussian bound from logarithmic scale 500. -/
@@ -803,13 +780,13 @@ theorem exists_prime_witness_le_gaussian6fifths_of_index_four {n : ℕ} [NeZero 
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 500 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMR6FifthsBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
-  let r := Analysis.gaussianMR6FifthsRadius (Real.log n)
+  let r := gaussian6FifthsRadius (Real.log n)
   let x := r ^ 2
-  have hcut : (6 / 5 : ℝ) * x = Analysis.gaussianMR6FifthsBound (Real.log n) := by
-    dsimp only [x, Analysis.gaussianMR6FifthsBound, Analysis.gaussianMR6FifthsRadius, r]
+  have hcut : (6 / 5 : ℝ) * x = gaussian6FifthsBound (Real.log n) := by
+    dsimp only [x, gaussian6FifthsBound, gaussian6FifthsRadius, r]
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -830,18 +807,17 @@ theorem exists_prime_witness_le_gaussian6fifths_of_index_four {n : ℕ} [NeZero 
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
-  have hrootSq : (Analysis.gaussianMR6FifthsRoot (Real.log n)) ^ 2 = r := by
-    dsimp only [r, Analysis.gaussianMR6FifthsRadius]
+  have hrootSq : (gaussian6FifthsRoot (Real.log n)) ^ 2 = r := by
+    dsimp only [r, gaussian6FifthsRadius]
   have hrbound : 625 / 2 ≤ r := by
-    have hrad := Analysis.gaussianMR6FifthsRadius_lower hL
+    have hrad := gaussian6FifthsRadius_lower hL
     dsimp only [r]
     nlinarith only [hrad, hL]
-  have hspos : 0 < Analysis.gaussianMR6FifthsRoot (Real.log n) :=
-    Analysis.gaussianMR6FifthsRoot_pos hL
-  have hsbound : 17 ≤ Analysis.gaussianMR6FifthsRoot (Real.log n) := by
+  have hspos : 0 < gaussian6FifthsRoot (Real.log n) := gaussian6FifthsRoot_pos hL
+  have hsbound : 17 ≤ gaussian6FifthsRoot (Real.log n) := by
     nlinarith only [hrootSq, hrbound, hspos]
-  have hwidth : 0 < 1 / (3 * Analysis.gaussianMR6FifthsRoot (Real.log n)) := by positivity
-  have hwidth1 : 1 / (3 * Analysis.gaussianMR6FifthsRoot (Real.log n)) ≤ 1 / 2 := by
+  have hwidth : 0 < 1 / (3 * gaussian6FifthsRoot (Real.log n)) := by positivity
+  have hwidth1 : 1 / (3 * gaussian6FifthsRoot (Real.log n)) ≤ 1 / 2 := by
     apply one_div_le_one_div_of_le (by norm_num only)
     nlinarith only [hsbound]
   have hx : 4 ≤ x := by
@@ -862,16 +838,16 @@ theorem exists_prime_witness_le_gaussianMR18_of_index_four {n : ℕ} [NeZero n] 
     (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMR18Bound (Real.log n) ∧
+        (p : ℝ) ≤ gaussian18Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
-  let r := Analysis.gaussianMR18Radius (Real.log n)
+  let r := gaussian18Radius (Real.log n)
   let x := r ^ 2
-  have hcut : (6 / 5 : ℝ) * x = Analysis.gaussianMR18Bound (Real.log n) := by
-    dsimp only [x, Analysis.gaussianMR18Bound, Analysis.gaussianMR18Radius, r]
+  have hcut : (6 / 5 : ℝ) * x = gaussian18Bound (Real.log n) := by
+    dsimp only [x, gaussian18Bound, gaussian18Radius, r]
   have hX : 50000 ≤ (6 / 5 : ℝ) * x := by
     rw [hcut]
-    exact (Analysis.gaussianMR18Bound_gt_prefix hL).le
+    exact (gaussian18Bound_gt_prefix hL).le
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -892,16 +868,14 @@ theorem exists_prime_witness_le_gaussianMR18_of_index_four {n : ℕ} [NeZero n] 
     intro p hp hpdvd hpbound
     obtain ⟨u, huH, hu⟩ := hHpass (p : ZMod n) (hpass p hp hpbound)
     exact ⟨u, huH, hu⟩
-  have hrootSq : (Analysis.gaussianMR18Root (Real.log n)) ^ 2 = r := by
-    dsimp only [r, Analysis.gaussianMR18Radius]
+  have hrootSq : (gaussian18Root (Real.log n)) ^ 2 = r := by dsimp only [r, gaussian18Radius]
   have hrbound : 455 / 2 ≤ r := by
     dsimp only [r]
-    exact Analysis.gaussianMR18Radius_lower_455_over_2 hL
-  have hspos : 0 < Analysis.gaussianMR18Root (Real.log n) := Analysis.gaussianMR18Root_pos hL
-  have hsbound : 15 ≤ Analysis.gaussianMR18Root (Real.log n) :=
-    Analysis.gaussianMR18Root_lower_15 hL
-  have hwidth : 0 < 1 / (3 * Analysis.gaussianMR18Root (Real.log n)) := by positivity
-  have hwidth1 : 1 / (3 * Analysis.gaussianMR18Root (Real.log n)) ≤ 1 / 2 := by
+    exact gaussian18Radius_lower_455_over_2 hL
+  have hspos : 0 < gaussian18Root (Real.log n) := gaussian18Root_pos hL
+  have hsbound : 15 ≤ gaussian18Root (Real.log n) := gaussian18Root_lower_15 hL
+  have hwidth : 0 < 1 / (3 * gaussian18Root (Real.log n)) := by positivity
+  have hwidth1 : 1 / (3 * gaussian18Root (Real.log n)) ≤ 1 / 2 := by
     apply one_div_le_one_div_of_le (by norm_num only)
     nlinarith only [hsbound]
   have hx : 4 ≤ x := by
@@ -916,18 +890,18 @@ theorem exists_prime_witness_le_gaussianMR18_of_index_four {n : ℕ} [NeZero n] 
 witness below the 6/5 Gaussian bound when its index is at least 10^9. -/
 theorem exists_prime_witness_le_gaussian6fifths_of_index_ge_billion {n : ℕ} [NeZero n]
     (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
-    (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
+    (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMR6FifthsBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
   let L := Real.log n
-  let r := Analysis.gaussianMR6FifthsRadius L
-  let s := Analysis.gaussianMR6FifthsRoot L
+  let r := gaussian6FifthsRadius L
+  let s := gaussian6FifthsRoot L
   let x := r ^ 2
   let h := 1 / (3 * s)
   let m : ℝ := H.index
@@ -939,14 +913,14 @@ theorem exists_prime_witness_le_gaussian6fifths_of_index_ge_billion {n : ℕ} [N
   let C : ℝ := LLS.PaperStatements.subgroupConductorLogSum H
   let A : ℝ := LLS.PaperStatements.gaussianAmbientError n x
   have hn1 : 1 < n := lt_of_lt_of_le (by decide : 1 < 20000) hnlarge
-  have hrootSq : s ^ 2 = r := by dsimp only [s, r, Analysis.gaussianMR6FifthsRadius]
+  have hrootSq : s ^ 2 = r := by dsimp only [s, r, gaussian6FifthsRadius]
   have hrbound : 625 / 2 ≤ r := by
-    have hrad := Analysis.gaussianMR6FifthsRadius_lower hL
+    have hrad := gaussian6FifthsRadius_lower hL
     dsimp only [r, L]
     nlinarith only [hrad, hL]
   have hspos : 0 < s := by
     dsimp only [s, L]
-    exact Analysis.gaussianMR6FifthsRoot_pos hL
+    exact gaussian6FifthsRoot_pos hL
   have hs17 : 17 ≤ s := by nlinarith only [hrootSq, hrbound, hspos]
   have hh : h = 1 / (3 * s) := by rfl
   have hh1 : h ≤ 1 / 2 := by
@@ -955,15 +929,15 @@ theorem exists_prime_witness_le_gaussian6fifths_of_index_ge_billion {n : ℕ} [N
     nlinarith only [hs17]
   have hrpos : 0 < r := by
     have hscaled := mul_pos (by norm_num only : (0 : ℝ) < 5 / 8) (by linarith only [hL] : 0 < L)
-    exact lt_of_lt_of_le hscaled (Analysis.gaussianMR6FifthsRadius_lower hL)
+    exact lt_of_lt_of_le hscaled (gaussian6FifthsRadius_lower hL)
   have hsqrtx : Real.sqrt x = r := by
     dsimp only [x]
     exact Real.sqrt_sq hrpos.le
   have hx : 4 ≤ x := by
     dsimp only [x]
     nlinarith only [hrbound]
-  have hcut : (6 / 5 : ℝ) * x = Analysis.gaussianMR6FifthsBound (Real.log n) := by
-    dsimp only [Analysis.gaussianMR6FifthsBound, Analysis.gaussianMR6FifthsRadius, r, L, x]
+  have hcut : (6 / 5 : ℝ) * x = gaussian6FifthsBound (Real.log n) := by
+    dsimp only [gaussian6FifthsBound, gaussian6FifthsRadius, r, L, x]
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -991,17 +965,16 @@ theorem exists_prime_witness_le_gaussian6fifths_of_index_ge_billion {n : ℕ} [N
       (by norm_num only : (0 : ℝ) ≤ 6 / 5) hdiv hsmall
   have hcastIndex : ((H.index - 1 : ℕ) : ℝ) = (H.index : ℝ) - 1 := by
     have hidxReal : (1 : ℝ) ≤ (H.index : ℝ) := by
-      have hK : (1 : ℝ) ≤ Analysis.gaussianMR6FifthsIndex := by
-        norm_num only [Analysis.gaussianMR6FifthsIndex]
+      have hK : (1 : ℝ) ≤ gaussian6FifthsIndex := by norm_num only [gaussian6FifthsIndex]
       exact hK.trans hi
     have hidxNat : 1 ≤ H.index := by exact_mod_cast hidxReal
     rw [Nat.cast_sub hidxNat, Nat.cast_one]
   rw [hsqrtx, hcastIndex] at hcmp
-  have hI : Analysis.gaussianMR6FifthsMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMR6FifthsMass]
+  have hI : gaussian6FifthsMass ≤ I := by
+    dsimp only [I, gaussian6FifthsMass]
     exact LLS.PaperStatements.gaussianGamma_cutoff_sixFifths_gt_target.le
-  have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
-    dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
+  have hE : E ≤ gaussian6FifthsEndpoint := by
+    dsimp only [E, gaussian6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
   have hC : C / t ≤ L := by
     have ht : t = (H.index : ℝ) - 1 := by rfl
@@ -1015,40 +988,37 @@ theorem exists_prime_witness_le_gaussian6fifths_of_index_ge_billion {n : ℕ} [N
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hA : A ≤ 27 := by
     dsimp only [A, x, r, L]
-    exact Analysis.gaussianMR6Fifths_ambient_error_le hL (le_refl (Real.log n))
+    exact gaussian6Fifths_ambient_error_le hL (le_refl (Real.log n))
   have hroot :
-    Analysis.gaussianMR6FifthsD * r =
-      Analysis.gaussianMR6FifthsConductor * L + Analysis.gaussianMR6FifthsBeta * s + 29 := by
+    gaussian6FifthsD * r = gaussian6FifthsConductor * L + gaussian6FifthsBeta * s + 29 := by
     dsimp only [r, s, L]
-    exact Analysis.gaussianMR6FifthsRadius_equation hL
+    exact gaussian6FifthsRadius_equation hL
   have hcmp' :
     (m * (1 - h) * I - E) * r ≤
-      Analysis.gaussianMR6FifthsConductor * C +
-        m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
+      gaussian6FifthsConductor * C + m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 +
         t * A := by
-    simpa only [m, t, I, E, C, A, Analysis.gaussianMR6FifthsConductor] using hcmp
+    simpa only [m, t, I, E, C, A, gaussian6FifthsConductor] using hcmp
   exact
-    Analysis.gaussianMR6Fifths_relative_comparison_impossible (m := m) (t := t) (s := s) (r := r)
-      (A := A) (L := L) (I := I) (E := E) (C := C) (h := h) hi rfl hspos hs17 rfl hrbound hh hh1 hI
-      hE hC hA hcmp' hroot
+    gaussian6Fifths_relative_comparison_impossible (m := m) (t := t) (s := s) (r := r) (A := A)
+      (L := L) (I := I) (E := E) (C := C) (h := h) hi rfl hspos hs17 rfl hrbound hh hh1 hI hE hC hA
+      hcmp' hroot
 
 /-- Under GRH, a subgroup containing every strong-MR pass yields a prime
 witness below the signed constant-6 Gaussian bound from logarithmic scale 300. -/
 theorem exists_prime_witness_le_gaussianMR6_of_index_ge_billion {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
-    (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
+    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMR6Bound (Real.log n) ∧
+        (p : ℝ) ≤ gaussian6Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
   let L := Real.log n
-  let r := Analysis.gaussianMR6Radius L
-  let s := Analysis.gaussianMR6Root L
+  let r := gaussian6Radius L
+  let s := gaussian6Root L
   let x := r ^ 2
   let h := 1 / (3 * s)
   let m : ℝ := H.index
@@ -1060,17 +1030,17 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_ge_billion {n : ℕ} [NeZer
   let C : ℝ := LLS.PaperStatements.subgroupConductorLogSum H
   let A : ℝ := LLS.PaperStatements.gaussianAmbientErrorPrefixSigned n x
   have hn1 : 1 < n := lt_of_lt_of_le (by decide : 1 < 20000) hnlarge
-  have hrootSq : s ^ 2 = r := by dsimp only [s, r, Analysis.gaussianMR6Radius]
+  have hrootSq : s ^ 2 = r := by dsimp only [s, r, gaussian6Radius]
   have hrbound : 415 / 2 ≤ r := by
     dsimp only [r, L]
-    have hr := Analysis.gaussianMR6Radius_lower hL
+    have hr := gaussian6Radius_lower hL
     nlinarith only [hL, hr]
   have hspos : 0 < s := by
     dsimp only [s, L]
-    exact Analysis.gaussianMR6Root_pos hL
+    exact gaussian6Root_pos hL
   have hs14 : 14 ≤ s := by
     dsimp only [s, L]
-    exact Analysis.gaussianMR6Root_lower_14 hL
+    exact gaussian6Root_lower_14 hL
   have hh : h = 1 / (3 * s) := by rfl
   have hh1 : h ≤ 1 / 2 := by
     rw [hh]
@@ -1083,11 +1053,11 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_ge_billion {n : ℕ} [NeZer
   have hx : 4 ≤ x := by
     dsimp only [x]
     nlinarith only [hrbound]
-  have hcut : (6 / 5 : ℝ) * x = Analysis.gaussianMR6Bound (Real.log n) := by
-    dsimp only [Analysis.gaussianMR6Bound, Analysis.gaussianMR6Radius, r, L, x]
+  have hcut : (6 / 5 : ℝ) * x = gaussian6Bound (Real.log n) := by
+    dsimp only [gaussian6Bound, gaussian6Radius, r, L, x]
   have hX : 50000 ≤ (6 / 5 : ℝ) * x := by
     rw [hcut]
-    exact (Analysis.gaussianMR6Bound_gt_prefix hL).le
+    exact (gaussian6Bound_gt_prefix hL).le
   have hpass :
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (6 / 5 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -1113,17 +1083,16 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_ge_billion {n : ℕ} [NeZer
       hwidth hh1 hx (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
   have hcastIndex : ((H.index - 1 : ℕ) : ℝ) = (H.index : ℝ) - 1 := by
     have hidxReal : (1 : ℝ) ≤ (H.index : ℝ) := by
-      have hK : (1 : ℝ) ≤ Analysis.gaussianMR6FifthsIndex := by
-        norm_num only [Analysis.gaussianMR6FifthsIndex]
+      have hK : (1 : ℝ) ≤ gaussian6FifthsIndex := by norm_num only [gaussian6FifthsIndex]
       exact hK.trans hi
     have hidxNat : 1 ≤ H.index := by exact_mod_cast hidxReal
     rw [Nat.cast_sub hidxNat, Nat.cast_one]
   rw [hsqrtx, hcastIndex] at hcmp
-  have hI : Analysis.gaussianMR6FifthsMass ≤ I := by
-    dsimp only [I, Analysis.gaussianMR6FifthsMass]
+  have hI : gaussian6FifthsMass ≤ I := by
+    dsimp only [I, gaussian6FifthsMass]
     exact LLS.PaperStatements.gaussianGamma_cutoff_sixFifths_gt_target.le
-  have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
-    dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
+  have hE : E ≤ gaussian6FifthsEndpoint := by
+    dsimp only [E, gaussian6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
   have hC : C / t ≤ L := by
     have ht : t = (H.index : ℝ) - 1 := by rfl
@@ -1137,33 +1106,28 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_ge_billion {n : ℕ} [NeZer
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hA : A ≤ 27 / 5 := by
     dsimp only [A, x, r, L]
-    exact Analysis.gaussianMR6_ambient_error_prefix_signed_le hL le_rfl
+    exact gaussian6_ambient_error_prefix_signed_le hL le_rfl
   have hroot :
-    Analysis.gaussianMR6FifthsD * r =
-      Analysis.gaussianMR6FifthsConductor * L + Analysis.gaussianMR6FifthsBeta * s + 6 := by
+    gaussian6FifthsD * r = gaussian6FifthsConductor * L + gaussian6FifthsBeta * s + 6 := by
     dsimp only [r, s, L]
-    exact Analysis.gaussianMR6Radius_equation hL
+    exact gaussian6Radius_equation hL
   have hcmp' :
     (m * (1 - h) * I - E) * r ≤
-      Analysis.gaussianMR6FifthsConductor * C +
-        m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
+      gaussian6FifthsConductor * C + m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 +
         t * A := by
-    simpa only [m, t, I, E, C, A, Analysis.gaussianMR6FifthsConductor] using hcmp
-  have hcoeff := Analysis.gaussianMR6Fifths_index_coefficients hi
-  have hD :
-    Analysis.gaussianMR6FifthsD ≤
-      (m * Analysis.gaussianMR6FifthsMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+    simpa only [m, t, I, E, C, A, gaussian6FifthsConductor] using hcmp
+  have hcoeff := gaussian6Fifths_index_coefficients hi
+  have hD : gaussian6FifthsD ≤ (m * gaussian6FifthsMass - gaussian6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
-  have hbeta :
-    (m / t) * (Analysis.gaussianMR6FifthsMass / 3 + 3 / 10) ≤ Analysis.gaussianMR6FifthsBeta := by
+  have hbeta : (m / t) * (gaussian6FifthsMass / 3 + 3 / 10) ≤ gaussian6FifthsBeta := by
     simpa only [t] using hcoeff.2.2
   have hfinish :
-    Analysis.gaussianMR6FifthsD * r ≤
-        Analysis.gaussianMR6FifthsConductor * L + Analysis.gaussianMR6FifthsBeta * s +
+    gaussian6FifthsD * r ≤
+        gaussian6FifthsConductor * L + gaussian6FifthsBeta * s +
           (m / t) *
-            (63 * Analysis.gaussianMR6FifthsEndpoint / (10 * s) +
-              1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+            (63 * gaussian6FifthsEndpoint / (10 * s) +
+              1839 * gaussian6FifthsEndpoint / (1000 * r)) +
           13 / t +
           A →
       False := by
@@ -1171,34 +1135,32 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_ge_billion {n : ℕ} [NeZer
     have ht : t = m - 1 := by rfl
     have hgamma := hcoeff.2.1
     exact
-      Analysis.gaussianMR6_large_index_comparison_impossible hi hs14 hrbound hgamma hA hroot
+      gaussian6_large_index_comparison_impossible hi hs14 hrbound hgamma hA hroot
         (by simpa only [ht] using hbudget)
   exact
-    Analysis.gaussianMR_relative_comparison_to_scalar (m := m) (t := t) (s := s) (r := r) (A := A)
-      (L := L) (I := I) (E := E) (C := C) (h := h) (M := Analysis.gaussianMR6FifthsMass) (Ecap :=
-      Analysis.gaussianMR6FifthsEndpoint) (conductor := Analysis.gaussianMR6FifthsConductor) (D :=
-      Analysis.gaussianMR6FifthsD) (beta := Analysis.gaussianMR6FifthsBeta)
+    gaussian_relative_comparison_to_scalar (m := m) (t := t) (s := s) (r := r) (A := A) (L := L)
+      (I := I) (E := E) (C := C) (h := h) (M := gaussian6FifthsMass) (Ecap :=
+      gaussian6FifthsEndpoint) (conductor := gaussian6FifthsConductor) (D := gaussian6FifthsD)
+      (beta := gaussian6FifthsBeta)
       (by
-        have hi' : (1000000000 : ℝ) ≤ m := by
-          simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
+        have hi' : (1000000000 : ℝ) ≤ m := by simpa only [m, gaussian6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [Analysis.gaussianMR6FifthsConductor]) hD
-      hbeta hcmp' hfinish
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussian6FifthsConductor]) hD hbeta hcmp'
+      hfinish
 
 /-- The constant-6 witness theorem also implies the older constant-18 bound. -/
 theorem exists_prime_witness_le_gaussianMR18_of_index_ge_billion {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
-    (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
+    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMR18Bound (Real.log n) ∧
+        (p : ℝ) ≤ gaussian18Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   obtain ⟨p, hp, hpbound, hfail⟩ :=
     exists_prime_witness_le_gaussianMR6_of_index_ge_billion hnOdd hnlarge H hi hHpass hGRH hL
-  exact ⟨p, hp, hpbound.trans (Analysis.gaussianMR6Bound_le_gaussianMR18Bound hL), hfail⟩
+  exact ⟨p, hp, hpbound.trans (gaussian6Bound_le_gaussian18Bound hL), hfail⟩
 
 /-- The Fermat subgroup supplies pass containment in the 6/5 branch. -/
 theorem exists_prime_witness_le_gaussian6fifths_of_large_fermat_index {n : ℕ} (hn1 : 1 < n)
@@ -1206,7 +1168,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_large_fermat_index {n : ℕ} 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMR6FifthsBound (Real.log n) ∧
+        (p : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   have hExp10 : (11 : ℝ) ≤ Real.exp 10 := by
@@ -1232,8 +1194,8 @@ theorem exists_prime_witness_le_gaussian6fifths_of_large_fermat_index {n : ℕ} 
       Real.log_lt_log (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne n))) (Nat.cast_lt.mpr hnlt)
     exact (not_lt_of_ge hL) (hloglt.trans hlog20000)
   let H := PrimeTest.fermatSubgroup n
-  have hiR : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ) := by
-    norm_num only [Analysis.gaussianMR6FifthsIndex]
+  have hiR : gaussian6FifthsIndex ≤ (H.index : ℝ) := by
+    norm_num only [gaussian6FifthsIndex]
     exact_mod_cast hi
   have hHpass :
     ∀ z : ZMod n,
@@ -1250,7 +1212,7 @@ theorem exists_prime_witness_le_gaussianMR6_of_large_fermat_index {n : ℕ} (hn1
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMR6Bound (Real.log n) ∧
+        (p : ℝ) ≤ gaussian6Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   have hExp10 : (11 : ℝ) ≤ Real.exp 10 := by
@@ -1276,8 +1238,8 @@ theorem exists_prime_witness_le_gaussianMR6_of_large_fermat_index {n : ℕ} (hn1
       Real.log_lt_log (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne n))) (Nat.cast_lt.mpr hnlt)
     exact (not_lt_of_ge hL) (hloglt.trans hlog20000)
   let H := PrimeTest.fermatSubgroup n
-  have hiR : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ) := by
-    norm_num only [Analysis.gaussianMR6FifthsIndex]
+  have hiR : gaussian6FifthsIndex ≤ (H.index : ℝ) := by
+    norm_num only [gaussian6FifthsIndex]
     exact_mod_cast hi
   have hHpass :
     ∀ z : ZMod n,
@@ -1293,18 +1255,18 @@ theorem exists_prime_witness_le_gaussianMR18_of_large_fermat_index {n : ℕ} (hn
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ Analysis.gaussianMR18Bound (Real.log n) ∧
+        (p : ℝ) ≤ gaussian18Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   obtain ⟨p, hp, hpbound, hfail⟩ :=
     exists_prime_witness_le_gaussianMR6_of_large_fermat_index hn1 hnOdd hi hGRH hL
-  exact ⟨p, hp, hpbound.trans (Analysis.gaussianMR6Bound_le_gaussianMR18Bound hL), hfail⟩
+  exact ⟨p, hp, hpbound.trans (gaussian6Bound_le_gaussian18Bound hL), hfail⟩
 
 /-- At logarithmic scale at least 4000, the actual relative Gaussian
 subgroup comparison contradicts the variable-radius numerical budget. -/
 theorem gaussian_variable_relative_inequality_contradiction {n : ℕ} [NeZero n]
     (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index) (hL : 4000 ≤ Real.log n) :
     let L := Real.log n
-    let r := Analysis.gaussianMRVariableRadius L
+    let r := gaussianVariableRadius L
     let h := 1 / (3 * Real.sqrt r)
     let x := r ^ 2
     ¬(((H.index : ℝ) * (1 - h) *
@@ -1326,7 +1288,7 @@ theorem gaussian_variable_relative_inequality_contradiction {n : ℕ} [NeZero n]
   rw [hcast] at hcmp
   have hrL : L / 2 ≤ r := by
     dsimp only [r, L]
-    exact Analysis.gaussianMRVariableRadius_half hL
+    exact gaussianVariableRadius_half hL
   have hrpos : 0 < r := by
     have hLpos : 0 < L := by
       dsimp only [L]; linarith only [hL]
@@ -1334,7 +1296,7 @@ theorem gaussian_variable_relative_inequality_contradiction {n : ℕ} [NeZero n]
   have hs : 0 < Real.sqrt r := Real.sqrt_pos.2 hrpos
   have hs20 : 20 ≤ Real.sqrt r := by
     dsimp only [r, L]
-    exact Analysis.gaussianMRVariableRadius_sqrt_lower hL
+    exact gaussianVariableRadius_sqrt_lower hL
   have hh : h = 1 / (3 * Real.sqrt r) := by rfl
   have hhpos : 0 < h := by
     rw [hh]; positivity
@@ -1345,8 +1307,8 @@ theorem gaussian_variable_relative_inequality_contradiction {n : ℕ} [NeZero n]
   have hr2000 : 2000 ≤ r := by
     have hL' : 4000 ≤ L := by
       dsimp only [L]; exact hL
-    have hrad := Analysis.gaussianMRVariableRadius_half (L := L) hL'
-    dsimp only [r, Analysis.gaussianMRVariableRadius] at hrad ⊢
+    have hrad := gaussianVariableRadius_half (L := L) hL'
+    dsimp only [r, gaussianVariableRadius] at hrad ⊢
     have hLhalf : 2000 ≤ L / 2 := by linarith only [hL']
     exact hLhalf.trans hrad
   have hx : 4 ≤ x := by
@@ -1394,7 +1356,7 @@ theorem gaussian_variable_relative_inequality_contradiction {n : ℕ} [NeZero n]
   have hE' : E ≤ 2129 / 2000 := by
     dsimp only [E]; exact hE
   have hmain :=
-    Analysis.gaussianMRVariable_normalized_main_lower huv hv0 hv3
+    gaussianVariable_normalized_main_lower huv hv0 hv3
       (by
         dsimp only [r]; exact hs)
       hh
@@ -1435,7 +1397,7 @@ theorem gaussian_variable_relative_inequality_contradiction {n : ℕ} [NeZero n]
   have hcond := LLS.PaperStatements.subgroupConductorLogSum_le H
   have hcond' := mul_le_mul_of_nonneg_left hcond (by norm_num only : (0 : ℝ) ≤ 161 / 400)
   have hW :=
-    Analysis.gaussianMRVariable_error_bracket_upper hs
+    gaussianVariable_error_bracket_upper hs
       (by
         symm; exact Real.sq_sqrt hrpos.le)
       hh hE'
@@ -1507,7 +1469,7 @@ theorem gaussian_variable_relative_inequality_contradiction {n : ℕ} [NeZero n]
     nlinarith only [htarget, hbeta]
   have hL' : 4000 ≤ L := by
     dsimp only [L]; exact hL
-  exact Analysis.gaussianMRVariable_comparison_impossible_of_ambient hL' (le_refl L) hfinal
+  exact gaussianVariable_impossible_of_ambient hL' (le_refl L) hfinal
 
 /-- Under GRH, a subgroup of index at least four yields a prime strong
 Miller--Rabin witness below the variable Gaussian cutoff. Assume every prime
@@ -1520,15 +1482,14 @@ theorem exists_prime_witness_le_gaussian_variable_of_index_ge_four {n : ℕ} [Ne
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 4000 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ (21 / 10 : ℝ) * (Analysis.gaussianMRVariableRadius (Real.log n)) ^ 2 ∧
+        (p : ℝ) ≤ (21 / 10 : ℝ) * (gaussianVariableRadius (Real.log n)) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_contra hnone
   let L := Real.log n
-  let r := Analysis.gaussianMRVariableRadius L
+  let r := gaussianVariableRadius L
   let x := r ^ 2
   let h := 1 / (3 * Real.sqrt r)
-  have hcut :
-    (21 / 10 : ℝ) * x = (21 / 10 : ℝ) * (Analysis.gaussianMRVariableRadius (Real.log n)) ^ 2 := by
+  have hcut : (21 / 10 : ℝ) * x = (21 / 10 : ℝ) * (gaussianVariableRadius (Real.log n)) ^ 2 := by
     dsimp only [x, r, L]
   have hpass :
     ∀ p : ℕ,
@@ -1552,7 +1513,7 @@ theorem exists_prime_witness_le_gaussian_variable_of_index_ge_four {n : ℕ} [Ne
     exact ⟨u, huH, hu⟩
   have hs20 : 20 ≤ Real.sqrt r := by
     dsimp only [r, L]
-    exact Analysis.gaussianMRVariableRadius_sqrt_lower hL
+    exact gaussianVariableRadius_sqrt_lower hL
   have hwidth : 0 < h := by
     dsimp only [h]; positivity
   have hwidth1 : h ≤ 1 / 2 := by
@@ -1561,9 +1522,9 @@ theorem exists_prime_witness_le_gaussian_variable_of_index_ge_four {n : ℕ} [Ne
     nlinarith only [hs20]
   have hr2000 : 2000 ≤ r := by
     dsimp only [r, L]
-    have hrad := Analysis.gaussianMRVariableRadius_half hL
+    have hrad := gaussianVariableRadius_half hL
     have hLhalf : 2000 ≤ Real.log n / 2 := by linarith only [hL]
-    dsimp only [Analysis.gaussianMRVariableRadius] at hrad ⊢
+    dsimp only [gaussianVariableRadius] at hrad ⊢
     exact hLhalf.trans hrad
   have hx : 4 ≤ x := by
     dsimp only [x]
@@ -1580,7 +1541,7 @@ theorem exists_prime_witness_le_gaussian_variable {n : ℕ} (hnOdd : Odd n) (hnC
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 4000 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
-        (p : ℝ) ≤ (21 / 10 : ℝ) * (Analysis.gaussianMRVariableRadius (Real.log n)) ^ 2 ∧
+        (p : ℝ) ≤ (21 / 10 : ℝ) * (gaussianVariableRadius (Real.log n)) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hn0 : n ≠ 0 := by
     intro hz
@@ -1628,7 +1589,7 @@ theorem exists_least_prime_witness_le_gaussian_variable {n : ℕ} (hnOdd : Odd n
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        (p : ℝ) ≤ (21 / 10 : ℝ) * (Analysis.gaussianMRVariableRadius (Real.log n)) ^ 2 ∧
+        (p : ℝ) ≤ (21 / 10 : ℝ) * (gaussianVariableRadius (Real.log n)) ^ 2 ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   classical
   obtain ⟨p, hp, hpbound, hreject⟩ :=
@@ -1642,9 +1603,9 @@ theorem exists_least_prime_witness_le_gaussian_variable {n : ℕ} (hnOdd : Odd n
 /-- For `L ≥ 4000`, the new Gaussian cutoff is strictly below the index-four
 cutoff. Combine the `7/10 L^2` estimate with the index-four leading term. -/
 theorem gaussian_variable_cutoff_lt_index_four {L : ℝ} (hL : 4000 ≤ L) :
-    (21 / 10 : ℝ) * (Analysis.gaussianMRVariableRadius L) ^ 2 <
+    (21 / 10 : ℝ) * (gaussianVariableRadius L) ^ 2 <
       (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by
-  have hBG := Analysis.gaussianMRVariable_cutoff_lt_seven_tenths hL
+  have hBG := gaussianVariable_cutoff_lt_seven_tenths hL
   have hB4 : (7 / 10 : ℝ) * L ^ 2 ≤ (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by
     nlinarith only [hL]
   exact lt_of_lt_of_le hBG hB4
@@ -1652,8 +1613,8 @@ theorem gaussian_variable_cutoff_lt_index_four {L : ℝ} (hL : 4000 ≤ L) :
 /-- The classified Gaussian bound is strictly below the index-four Gamma
 bound throughout its full range beginning at logarithmic scale 600. -/
 theorem gaussian_star_cutoff_lt_index_four {L : ℝ} (hL : 600 ≤ L) :
-    Analysis.gaussianMRStarBound L < (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by
-  have hstar := Analysis.gaussianMRStarBound_lt_seven_tenths hL
+    gaussianStarBound L < (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by
+  have hstar := gaussianStarBound_lt_seven_tenths hL
   have hB4 : (7 / 10 : ℝ) * L ^ 2 ≤ (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by
     nlinarith only [hL]
   exact lt_of_lt_of_le hstar hB4
@@ -1662,13 +1623,13 @@ theorem gaussian_star_cutoff_lt_index_four {L : ℝ} (hL : 600 ≤ L) :
 Gaussian bound. The radius lower bound `5503 L / 10000` gives a quadratic
 coefficient larger than `282924 / 1000000`. -/
 theorem gaussian_variable_cutoff_gt_triangular_coefficient {L : ℝ} (hL : 0 < L) :
-    (282924 / 1000000 : ℝ) * L ^ 2 < (21 / 10 : ℝ) * (Analysis.gaussianMRVariableRadius L) ^ 2 := by
+    (282924 / 1000000 : ℝ) * L ^ 2 < (21 / 10 : ℝ) * (gaussianVariableRadius L) ^ 2 := by
   have hs : 0 ≤ Real.sqrt L := Real.sqrt_nonneg L
-  have hr : (5503 / 10000 : ℝ) * L ≤ Analysis.gaussianMRVariableRadius L := by
-    dsimp only [Analysis.gaussianMRVariableRadius]
+  have hr : (5503 / 10000 : ℝ) * L ≤ gaussianVariableRadius L := by
+    dsimp only [gaussianVariableRadius]
     nlinarith only [hs]
   have hb : 0 ≤ (5503 / 10000 : ℝ) * L := mul_nonneg (by norm_num only) (le_of_lt hL)
-  have hsq : ((5503 / 10000 : ℝ) * L) ^ 2 ≤ (Analysis.gaussianMRVariableRadius L) ^ 2 := by
+  have hsq : ((5503 / 10000 : ℝ) * L) ^ 2 ≤ (gaussianVariableRadius L) ^ 2 := by
     nlinarith only [hr, hb]
   have hc : (282924 / 1000000 : ℝ) < (21 / 10 : ℝ) * (5503 / 10000 : ℝ) ^ 2 := by norm_num only
   have hp := mul_lt_mul_of_pos_right hc (sq_pos_of_pos hL)
@@ -1676,6 +1637,6 @@ theorem gaussian_variable_cutoff_gt_triangular_coefficient {L : ℝ} (hL : 0 < L
   calc
     (282924 / 1000000 : ℝ) * L ^ 2 < (21 / 10 : ℝ) * ((5503 / 10000 : ℝ) * L) ^ 2 := by
       nlinarith only [hp, hscale]
-    _ ≤ (21 / 10 : ℝ) * (Analysis.gaussianMRVariableRadius L) ^ 2 := by nlinarith only [hsq]
+    _ ≤ (21 / 10 : ℝ) * (gaussianVariableRadius L) ^ 2 := by nlinarith only [hsq]
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

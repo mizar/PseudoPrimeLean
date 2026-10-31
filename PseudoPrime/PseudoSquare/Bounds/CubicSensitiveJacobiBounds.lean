@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.CubicCharacterExclusion
+public import PseudoPrime.LLS.PaperStatements.CubicCharacterExclusion
 public import PseudoPrime.PseudoSquare.Bounds.CubicConductorJacobiBounds
 
 /-! # Negative Jacobi witnesses retaining character-sensitive exclusions -/

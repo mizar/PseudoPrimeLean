@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GaussianPrefixComparison
+public import PseudoPrime.LLS.PaperStatements.GaussianPrefixComparison
 public import PseudoPrime.LLS.GammaCheckpoint35000
 
 /-! # The retained Gaussian prefix at cutoff 35000 -/

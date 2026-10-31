@@ -22,7 +22,7 @@ def gammaBoundary89100Ratios (right : Bool) (a : ℚ) : ℚ × ℚ :=
   let rs : List ℕ :=
     if right then [6303299, 2015063, 364225, 37222, 1216, 12, 0, 0, 0, 0]
     else [6347875, 2030676, 367416, 37599, 1230, 12, 0, 0, 0, 0]
-  let r := rs[(Analysis.gammaResolventCoefficients.map Prod.fst).idxOf a]?.getD 0
+  let r := rs[(AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map Prod.fst).idxOf a]?.getD 0
   ((r : ℚ) / 1000000000000, ((r + 1 : ℕ) : ℚ) / 1000000000000)
 
 /-- Input: a resolvent node. Definition: the right lower and left upper endpoint.

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaSmallProfileCertificates
+public import PseudoPrime.LLS.GammaSmallProfileCertificates
 public import PseudoPrime.LLS.GammaSmallProfileSeparation
 
 /-! # Certified mixed-profile separation on the full bridge from 290 to 300 -/
@@ -27,9 +27,8 @@ Role: remove the final dual numerical assumption. -/
 theorem gamma_profile_dual_le_290_295 {L : ℝ} (hlo : 290 ≤ L) (hhi : L ≤ 295) :
     gammaScaleSignedDualBudget L ((2 / 5 : ℝ) * L ^ 2) ≤ 25 / 4 := by
   have h :=
-    gamma_profile_dual_small_cell 290 295 (17 / 4) 532 (by norm_num only)
-      Analysis.small_cell_290_295_check (by decide +kernel) Analysis.small_rows_290_295_check
-      Analysis.small_sum_290_295_check hlo hhi
+    gamma_profile_dual_small_cell 290 295 (17 / 4) 532 (by norm_num only) small_cell_290_295_check
+      (by decide +kernel) small_rows_290_295_check small_sum_290_295_check hlo hhi
   norm_num only [Rat.cast_div, Rat.cast_ofNat] at h
   linarith only [h]
 
@@ -57,9 +56,8 @@ Role: remove the final dual numerical assumption. -/
 theorem gamma_profile_dual_le_295_300 {L : ℝ} (hlo : 295 ≤ L) (hhi : L ≤ 300) :
     gammaScaleSignedDualBudget L ((2 / 5 : ℝ) * L ^ 2) ≤ 25 / 4 := by
   have h :=
-    gamma_profile_dual_small_cell 295 300 (17 / 4) 541 (by norm_num only)
-      Analysis.small_cell_295_300_check (by decide +kernel) Analysis.small_rows_295_300_check
-      Analysis.small_sum_295_300_check hlo hhi
+    gamma_profile_dual_small_cell 295 300 (17 / 4) 541 (by norm_num only) small_cell_295_300_check
+      (by decide +kernel) small_rows_295_300_check small_sum_295_300_check hlo hhi
   norm_num only [Rat.cast_div, Rat.cast_ofNat] at h
   linarith only [h]
 

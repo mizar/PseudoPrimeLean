@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaResolventCertificate
+public import PseudoPrime.AnalyticNumberTheory.Gamma.RationalResolventApproximation
+public import PseudoPrime.Analysis.SignedFiniteErrorBounds
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Ring
 public import PseudoPrime.Analysis.GammaLocalBudget
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -24,7 +27,9 @@ Claim: the signed resolvent combination is nonnegative.
 Proof: combine adjacent differences with the positive cumulative coefficients.
 Role: supply positivity without replacing the signed coefficients by absolute values. -/
 theorem gammaResolvent_weighted_nonneg (w : ℚ → ℝ) (hw : Antitone w) (hzero : 0 ≤ w 7) :
-    0 ≤ (gammaResolventCoefficients.map (fun ab ↦ (ab.2 : ℝ) * w ab.1)).sum := by
+    0 ≤
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
+          (fun ab ↦ (ab.2 : ℝ) * w ab.1)).sum := by
   have h1 := hw (by norm_num only : (11 / 20 : ℚ) ≤ 16 / 20)
   have h2 := hw (by norm_num only : (16 / 20 : ℚ) ≤ 20 / 20)
   have h3 := hw (by norm_num only : (20 / 20 : ℚ) ≤ 34 / 20)
@@ -32,8 +37,8 @@ theorem gammaResolvent_weighted_nonneg (w : ℚ → ℝ) (hw : Antitone w) (hzer
   have h5 := hw (by norm_num only : (46 / 20 : ℚ) ≤ 64 / 20)
   have h6 := hw (by norm_num only : (64 / 20 : ℚ) ≤ 90 / 20)
   have h7 := hw (by norm_num only : (90 / 20 : ℚ) ≤ 140 / 20)
-  norm_num only [gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
-    List.sum_nil] at ⊢ h1 h2 h3 h4 h5 h6 h7
+  norm_num only [AnalyticNumberTheory.Gamma.gammaResolventCoefficients, List.map_cons, List.map_nil,
+    List.sum_cons, List.sum_nil] at ⊢ h1 h2 h3 h4 h5 h6 h7
   linarith only [h1, h2, h3, h4, h5, h6, h7, hzero]
 
 /-- The finite signed Euler weight at a real input m.
@@ -41,7 +46,8 @@ Definition: sum b times m to the power -(1/2+a) over the certified resolvent nod
 Input: a real m; positivity will be proved for m at least one.
 Output: the combined Euler weight H(m) used in prefix and local corrections. -/
 noncomputable def gammaResolventEulerWeight (m : ℝ) : ℝ :=
-  (gammaResolventCoefficients.map (fun ab ↦ (ab.2 : ℝ) * m ^ (-(1 / 2 + (ab.1 : ℝ))))).sum
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
+      (fun ab ↦ (ab.2 : ℝ) * m ^ (-(1 / 2 + (ab.1 : ℝ))))).sum
 
 /-- Input: a real m at least one.
 Claim: the signed Euler weight is nonnegative for every such m.

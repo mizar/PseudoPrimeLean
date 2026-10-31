@@ -119,7 +119,7 @@ theorem powerList_tail_eq_improper_log_integral (hRH : RiemannHypothesis) (l : L
 Its explicit finite formula is minus the sum of b sigma t to the minus sigma.
 At positive inputs it equals t times the actual derivative of the Euler weight. -/
 noncomputable def gammaEulerLogSlope (t : ℝ) : ℝ :=
-  -(Analysis.gammaResolventCoefficients.map
+  -(AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
         (fun ab ↦ (ab.2 : ℝ) * ((1 / 2 : ℝ) + (ab.1 : ℝ)) * t ^ (-((1 / 2 : ℝ) + (ab.1 : ℝ))))).sum
 
 /-- The signed variation density of the fixed common Euler weight.
@@ -127,17 +127,19 @@ Its finite formula sums b sigma squared t to the minus sigma minus one.
 It is the derivative of the logarithmic slope at every positive input;
 no individual coefficient or density is assumed to be nonnegative. -/
 noncomputable def gammaEulerVariation (t : ℝ) : ℝ :=
-  (Analysis.gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦
         (ab.2 : ℝ) * (((1 / 2 : ℝ) + (ab.1 : ℝ)) ^ 2 * t ^ (-((1 / 2 : ℝ) + (ab.1 : ℝ)) - 1)))).sum
 
 /-- Every fixed resolvent exponent is greater than one. Cast the rational
 scale certificate to the real exponent condition used for Euler-tail convergence. -/
 theorem gammaResolvent_real_exponents_gt_one (ab : ℚ × ℚ)
-    (hab : ab ∈ Analysis.gammaResolventCoefficients) : 1 < (1 / 2 : ℝ) + (ab.1 : ℝ) := by
+    (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :
+    1 < (1 / 2 : ℝ) + (ab.1 : ℝ) := by
   have h :=
     (Rat.cast_lt (K := ℝ)).mpr
-      (List.forall_iff_forall_mem.mp Analysis.gammaResolvent_scales_gt_half ab hab)
+      (List.forall_iff_forall_mem.mp AnalyticNumberTheory.Gamma.gammaResolvent_scales_gt_half ab
+        hab)
   norm_num only [Rat.cast_div, Rat.cast_one, Rat.cast_ofNat] at h
   linarith only [h]
 
@@ -153,7 +155,8 @@ theorem gammaEulerTail_eq_improper_log_integral (hRH : RiemannHypothesis) {a : �
           Analysis.gammaResolventEulerWeight a * Chebyshev.psi a +
         gammaEulerLogSlope a * AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum a := by
   let l :=
-    Analysis.gammaResolventCoefficients.map (fun ab ↦ (((1 / 2 : ℝ) + (ab.1 : ℝ)), (ab.2 : ℝ)))
+    AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
+      (fun ab ↦ (((1 / 2 : ℝ) + (ab.1 : ℝ)), (ab.2 : ℝ)))
   have hl : ∀ ab ∈ l, 1 < ab.1 := by
     intro ac hac
     obtain ⟨ab, hab, rfl⟩ := List.mem_map.mp hac
@@ -201,18 +204,19 @@ theorem gammaEulerLogSlope_eq_mul_deriv {u : ℝ} (hu : 0 < u) :
     gammaEulerLogSlope u = u * deriv Analysis.gammaResolventEulerWeight u := by
   have hd :=
     hasDerivAt_powerList_weight
-      (Analysis.gammaResolventCoefficients.map (fun ab ↦ (((1 / 2 : ℝ) + (ab.1 : ℝ)), (ab.2 : ℝ))))
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
+        (fun ab ↦ (((1 / 2 : ℝ) + (ab.1 : ℝ)), (ab.2 : ℝ))))
       hu
   have he :
     HasDerivAt Analysis.gammaResolventEulerWeight
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) * (-((1 / 2 : ℝ) + (ab.1 : ℝ)) * u ^ (-((1 / 2 : ℝ) + (ab.1 : ℝ)) - 1)))).sum
       u := by
     change
       HasDerivAt
         (fun t ↦
-          (Analysis.gammaResolventCoefficients.map
+          (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
               (fun ab ↦ (ab.2 : ℝ) * t ^ (-((1 / 2 : ℝ) + (ab.1 : ℝ))))).sum)
         _ u
     simpa only [List.map_map, Function.comp_def] using hd
@@ -239,12 +243,13 @@ theorem hasDerivAt_gammaEulerLogSlope {u : ℝ} (hu : 0 < u) :
     HasDerivAt gammaEulerLogSlope (gammaEulerVariation u) u := by
   have hd :=
     hasDerivAt_powerList_logSlope
-      (Analysis.gammaResolventCoefficients.map (fun ab ↦ (((1 / 2 : ℝ) + (ab.1 : ℝ)), (ab.2 : ℝ))))
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
+        (fun ab ↦ (((1 / 2 : ℝ) + (ab.1 : ℝ)), (ab.2 : ℝ))))
       hu
   change
     HasDerivAt
       (fun t ↦
-        -(Analysis.gammaResolventCoefficients.map
+        -(AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
               (fun ab ↦
                 (ab.2 : ℝ) * ((1 / 2 : ℝ) + (ab.1 : ℝ)) * t ^ (-((1 / 2 : ℝ) + (ab.1 : ℝ))))).sum)
       _ u
@@ -332,7 +337,8 @@ theorem powerList_linear_density_integral_eq (l : List (ℝ × ℝ)) (hl : ∀ a
 and signed coefficient pairs. The exponent is one half plus its rational
 scale. This common list supplies all scalar convergence and main-term formulas. -/
 noncomputable def gammaRealPowerList : List (ℝ × ℝ) :=
-  Analysis.gammaResolventCoefficients.map (fun ab ↦ (((1 / 2 : ℝ) + (ab.1 : ℝ)), (ab.2 : ℝ)))
+  AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
+    (fun ab ↦ (((1 / 2 : ℝ) + (ab.1 : ℝ)), (ab.2 : ℝ)))
 
 /-- Every exponent in the actual converted resolvent list exceeds one.
 Use the rational certificate and the exact list-map membership. -/

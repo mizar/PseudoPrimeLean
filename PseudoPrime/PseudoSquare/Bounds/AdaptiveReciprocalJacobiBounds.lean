@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.AdaptiveReciprocalConductorBounds
+public import PseudoPrime.LLS.PaperStatements.AdaptiveReciprocalConductorBounds
 public import PseudoPrime.PseudoSquare.Bounds.DirectHadamardJacobiBounds
 
 /-! # Quadratic witnesses with an explicit adaptive reciprocal cutoff -/

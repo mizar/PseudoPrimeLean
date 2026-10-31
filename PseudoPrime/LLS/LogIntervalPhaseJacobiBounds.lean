@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.LogIntervalPhaseCharacterBounds
+public import PseudoPrime.LLS.PaperStatements.LogIntervalPhaseCharacterBounds
 public import PseudoPrime.LLS.LogarithmicPhaseJacobiBounds
 
 /-! # Jacobi comparisons throughout a certified logarithmic scale interval -/

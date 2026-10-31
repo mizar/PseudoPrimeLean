@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.ElevenFourthsLowerStart
-public import PseudoPrime.LLS.OddEndpointLowerLogShiftSeparation
+public import PseudoPrime.LLS.PaperStatements.OddEndpointLowerLogShiftSeparation
 public import PseudoPrime.PseudoSquare.Bounds.OddEndpointBranchPolynomials
 
 /-! # Eleven-fourths logarithmic-shift witnesses from logarithmic input ninety-six -/

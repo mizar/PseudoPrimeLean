@@ -9,11 +9,11 @@ module
 public import Mathlib.NumberTheory.SelbergSieve
 public import PseudoPrime.AnalyticNumberTheory.AGP.ProgressionCounting
 
-import Mathlib.NumberTheory.ArithmeticFunction.Zeta
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
-import Mathlib.NumberTheory.ArithmeticFunction.Moebius
-import Mathlib.Data.Int.CardIntervalMod
-import Mathlib.Data.Nat.Totient
+public import Mathlib.NumberTheory.ArithmeticFunction.Zeta
+public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
+public import Mathlib.Data.Int.CardIntervalMod
+public import Mathlib.Data.Nat.Totient
 
 /-! # Selberg sieve reduction for progression prime counts
 

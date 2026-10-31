@@ -31,7 +31,7 @@ theorem exists_prime_witness_le_mrFit_nineTenths {n : ℕ} (hnOdd : Odd n) (hnCo
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   obtain ⟨p, hp, hb, hf⟩ := exists_prime_witness_le_gaussian hnOdd hnComposite hGRH hn
   have hL : 1000 ≤ Real.log n :=
-    (by norm_num only : (1000 : ℝ) ≤ 225000000).trans (Analysis.gaussianMR_log_cutoff hn)
+    (by norm_num only : (1000 : ℝ) ≤ 225000000).trans (gaussian_log_cutoff hn)
   exact ⟨p, hp, hb.trans (gaussian_square_le_mrFit_nineTenths hL), hf⟩
 
 /-- Under GRH, an odd composite n ≥ 10^97826087 has a prime strong Miller--Rabin
@@ -46,7 +46,7 @@ theorem exists_prime_witness_le_mrFit_one {n : ℕ} (hnOdd : Odd n) (hnComposite
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   obtain ⟨p, hp, hb, hf⟩ := exists_prime_witness_le_gaussian hnOdd hnComposite hGRH hn
   have hL : 1000 ≤ Real.log n :=
-    (by norm_num only : (1000 : ℝ) ≤ 225000000).trans (Analysis.gaussianMR_log_cutoff hn)
+    (by norm_num only : (1000 : ℝ) ≤ 225000000).trans (gaussian_log_cutoff hn)
   exact ⟨p, hp, hb.trans (gaussian_square_le_mrFit_one hL), hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

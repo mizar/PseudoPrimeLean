@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaQuadraticArithmetic
-public import PseudoPrime.LLS.MellinKernelBounds
+public import PseudoPrime.LLS.PaperStatements.GammaQuadraticArithmetic
+public import PseudoPrime.LLS.PaperStatements.MellinKernelBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ScaledMangoldtMonotonicity
 
 /-! # Endpoint bounds for the actual principal-ramp difference -/

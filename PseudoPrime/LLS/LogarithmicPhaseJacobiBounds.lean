@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.LogarithmicPhaseCharacterBounds
+public import PseudoPrime.LLS.PaperStatements.LogarithmicPhaseCharacterBounds
 public import PseudoPrime.LLS.Phase64JacobiLocalComparison
 
 /-! # Jacobi witness extraction from a transported spectral anchor -/

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaNonOneCommonNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneCommonNumerics
 public import PseudoPrime.LLS.GammaVariablePrefixWitnessBounds
 
 /-! # Common logarithmic witness profiles for variable Gamma prefixes
@@ -34,7 +34,7 @@ theorem exists_odd_prime_ne_one_of_gamma_prefix_profile {q : ℕ} [NeZero q] (hq
         L / 795) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ χ p ≠ 1 := by
   let x := (32 / 99 : ℝ) * L ^ 2
-  have hxlarge : (17 / 5 : ℝ) ^ 16 ≤ x := Analysis.common_nonOne_ramp_scale_large hL
+  have hxlarge : (17 / 5 : ℝ) ^ 16 ≤ x := common_nonOne_ramp_scale_large hL
   have hx : 1 ≤ x := (by norm_num only : (1 : ℝ) ≤ (17 / 5) ^ 16).trans hxlarge
   have hx0 := zero_lt_one.trans_le hx
   have hs0 := Real.sqrt_pos.mpr hx0
@@ -52,10 +52,10 @@ theorem exists_odd_prime_ne_one_of_gamma_prefix_profile {q : ℕ} [NeZero q] (hq
   have hleft := PaperStatements.common_nonOne_left_budget hL hxlarge hs hf0 hlogf2
   have hlead := mul_le_mul_of_nonneg_left hlogf (by norm_num only : (0 : ℝ) ≤ 11783423 / 25000000)
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann hx
-  have heP := (div_le_iff₀ hs0).mpr (Analysis.common_nonOne_exponential_error hL)
+  have heP := (div_le_iff₀ hs0).mpr (common_nonOne_exponential_error hL)
   have hT := gamma_ramp_sum_lower_variable hGRH.riemann hx
-  have heT := (div_le_iff₀ hs0).mpr (Analysis.common_nonOne_ramp_error_numerator hL)
-  have htwo := Analysis.common_nonOne_prime_two_budget hL
+  have heT := (div_le_iff₀ hs0).mpr (common_nonOne_ramp_error_numerator hL)
+  have htwo := common_nonOne_prime_two_budget hL
   have hmain := Analysis.nonOne_main_term_gap (show (0 : ℝ) < L by linarith only [hL])
   have hgap :
     (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re +

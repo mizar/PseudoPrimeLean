@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaSignedSupportBudget
-public import PseudoPrime.Analysis.GammaSignedRampCellBounds
+public import PseudoPrime.LLS.GammaSignedRampCellBounds
 
 /-! # Uniform signed dual budgets on closed scale cells -/
 
@@ -31,10 +31,9 @@ theorem gamma_signed_support_mono {x y : ℝ} (hxy : x ≤ y) :
 Definition: price at lo times L plus signed cell excess on the support at hi.
 Output: a scalar upper budget. Role: enclose the dual sum on a whole closed scale cell. -/
 noncomputable def gammaSignedCellDualBudget (L lo hi : ℝ) : ℝ :=
-  Analysis.gammaRamifiedDualParameter lo * L +
+  gammaRamifiedDualParameter lo * L +
     ∑ p ∈ gammaSignedSupportPrimeSet hi,
-      Real.log p *
-        max (Analysis.gammaRamifiedSignedCellAllowance p lo hi - (5 / 4 : ℝ) / Real.sqrt hi) 0
+      Real.log p * max (gammaRamifiedSignedCellAllowance p lo hi - (5 / 4 : ℝ) / Real.sqrt hi) 0
 
 /-- Input: L>=0 and 1<=lo<=x<=hi. Claim: the signed dual budget at x is bounded
 by the fixed cell expression. Proof: retain the subtracted price at hi, enlarge the prime
@@ -46,22 +45,20 @@ theorem gamma_scale_signed_dual_budget_le_cell {L x lo hi : ℝ} (hL : 0 ≤ L) 
   have hx1 := hlo.trans hlox
   rw [gamma_scale_signed_dual_budget_eq_small_support L hx1]
   have hs :=
-    Analysis.gamma_ramified_theta_excess_sum_le_signed_cell (gammaSignedSupportPrimeSet x)
+    gamma_ramified_theta_excess_sum_le_signed_cell (gammaSignedSupportPrimeSet x)
       (fun p hp ↦ (Finset.mem_filter.mp hp).2) (show (0 : ℝ) ≤ 5 / 4 by norm_num only) hlo0 hlox
       hxhi
-  have he (z : ℝ) :
-    Analysis.gammaRamifiedThetaParameter (5 / 4) z = Analysis.gammaRamifiedDualParameter z := by
-    dsimp only [Analysis.gammaRamifiedThetaParameter, Analysis.gammaRamifiedDualParameter]
+  have he (z : ℝ) : gammaRamifiedThetaParameter (5 / 4) z = gammaRamifiedDualParameter z := by
+    dsimp only [gammaRamifiedThetaParameter, gammaRamifiedDualParameter]
     rw [div_div]
   simp only [he] at hs
   have ht :=
     Finset.sum_le_sum_of_subset_of_nonneg (gamma_signed_support_mono hxhi) (f := fun p : ℕ ↦
-      Real.log p *
-        max (Analysis.gammaRamifiedSignedCellAllowance p lo hi - (5 / 4 : ℝ) / Real.sqrt hi) 0)
+      Real.log p * max (gammaRamifiedSignedCellAllowance p lo hi - (5 / 4 : ℝ) / Real.sqrt hi) 0)
       (fun p hp _ ↦
         mul_nonneg (Real.log_nonneg (by exact_mod_cast (Finset.mem_filter.mp hp).2.one_le))
           (le_max_right _ _))
-  have hp : Analysis.gammaRamifiedDualParameter x ≤ Analysis.gammaRamifiedDualParameter lo := by
+  have hp : gammaRamifiedDualParameter x ≤ gammaRamifiedDualParameter lo := by
     exact
       div_le_div₀ (by norm_num only : (0 : ℝ) ≤ 5) le_rfl
         (mul_pos (by norm_num only) (Real.sqrt_pos.mpr hlo0))

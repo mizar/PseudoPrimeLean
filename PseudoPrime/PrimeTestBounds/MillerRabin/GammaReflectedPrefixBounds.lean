@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
-public import PseudoPrime.LLS.GammaReflectedResolventComparison
+public import PseudoPrime.LLS.PaperStatements.GammaReflectedResolventComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSignedPrefixBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSeedPairedBounds
 

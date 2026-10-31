@@ -72,13 +72,12 @@ theorem gamma_jacobi_integer_prefix_local_budget {n : ℕ} {hn : Odd n} {hns : �
                     ((p : ℝ) ^ (k + 1) / Analysis.gammaRefinedScale (Real.log n)) (k + 1)) /
                 Real.sqrt (Analysis.gammaRefinedScale (Real.log n)))) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (3 / 4 : ℝ) +
-        Analysis.gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)) * Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet (Analysis.gammaRefinedScale (Real.log n)),
+        gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)) * Real.log n +
+        ∑ p ∈ gammaRamifiedDualPrimeSet (Analysis.gammaRefinedScale (Real.log n)),
           Real.log p *
             max
-              (Analysis.gammaRamifiedSignedCombinedCost p
-                  (Analysis.gammaRefinedScale (Real.log n)) -
-                Analysis.gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)))
+              (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale (Real.log n)) -
+                gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)))
               0 := by
   let K := AnalyticNumberTheory.DirichletLFunction.gammaPrefixPowerIndices b
   have he :=
@@ -107,13 +106,12 @@ theorem gamma_jacobi_no_negative_integer_prefix_local_budget {n : ℕ} {hn : Odd
                     ((p : ℝ) ^ (k + 1) / Analysis.gammaRefinedScale (Real.log n)) (k + 1)) /
                 Real.sqrt (Analysis.gammaRefinedScale (Real.log n)))) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (3 / 4 : ℝ) +
-        Analysis.gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)) * Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet (Analysis.gammaRefinedScale (Real.log n)),
+        gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)) * Real.log n +
+        ∑ p ∈ gammaRamifiedDualPrimeSet (Analysis.gammaRefinedScale (Real.log n)),
           Real.log p *
             max
-              (Analysis.gammaRamifiedSignedCombinedCost p
-                  (Analysis.gammaRefinedScale (Real.log n)) -
-                Analysis.gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)))
+              (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale (Real.log n)) -
+                gammaRamifiedDualParameter (Analysis.gammaRefinedScale (Real.log n)))
               0 := by
   exact
     gamma_jacobi_integer_prefix_local_budget bridge hb
@@ -124,12 +122,12 @@ It equals mu(x)*L plus the weighted positive ramified excess over the
 finite scale-dependent odd-prime set. This definition is the numerical
 quantity remaining after exact conductor and integer-prefix accounting. -/
 noncomputable def gammaRefinedSignedDualBudget (L : ℝ) : ℝ :=
-  Analysis.gammaRamifiedDualParameter (Analysis.gammaRefinedScale L) * L +
-    ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet (Analysis.gammaRefinedScale L),
+  gammaRamifiedDualParameter (Analysis.gammaRefinedScale L) * L +
+    ∑ p ∈ gammaRamifiedDualPrimeSet (Analysis.gammaRefinedScale L),
       Real.log p *
         max
-          (Analysis.gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale L) -
-            Analysis.gammaRamifiedDualParameter (Analysis.gammaRefinedScale L))
+          (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale L) -
+            gammaRamifiedDualParameter (Analysis.gammaRefinedScale L))
           0
 
 /-- Under individual RH for the actual primitive Jacobi character, the
@@ -145,14 +143,14 @@ theorem gamma_jacobi_zeroMass_add_ambient_ramp_le_integer_prefix_dual {n : ℕ} 
     (hlarge : 10 ^ 100 ≤ n) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor bridge.character.completedLFunction Set.univ ρ : ℝ) *
-            Analysis.gammaResolventMajorant ρ.im) +
+            AnalyticNumberTheory.Gamma.gammaResolventMajorant ρ.im) +
         (∑ p ∈ (4 * n).primeFactors,
           Real.log p *
             ((∑' k : ℕ,
                 Analysis.exponentialRampLocalCorrection (bridge.character p)
                   ((p : ℝ) ^ (k + 1) / Analysis.gammaRefinedScale (Real.log n)) (k + 1)) /
               Real.sqrt (Analysis.gammaRefinedScale (Real.log n)))) ≤
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
                 (fun ab ↦
                   (ab.2 : ℝ) *
                     (logDeriv bridge.character.gammaFactor
@@ -190,14 +188,14 @@ theorem gamma_jacobi_no_negative_zeroMass_add_ramp_le_prefix_dual {n : ℕ} {hn 
     (hlarge : 10 ^ 100 ≤ n) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor bridge.character.completedLFunction Set.univ ρ : ℝ) *
-            Analysis.gammaResolventMajorant ρ.im) +
+            AnalyticNumberTheory.Gamma.gammaResolventMajorant ρ.im) +
         (∑ p ∈ (4 * n).primeFactors,
           Real.log p *
             ((∑' k : ℕ,
                 Analysis.exponentialRampLocalCorrection (bridge.character p)
                   ((p : ℝ) ^ (k + 1) / Analysis.gammaRefinedScale (Real.log n)) (k + 1)) /
               Real.sqrt (Analysis.gammaRefinedScale (Real.log n)))) ≤
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
                 (fun ab ↦
                   (ab.2 : ℝ) *
                     (logDeriv bridge.character.gammaFactor

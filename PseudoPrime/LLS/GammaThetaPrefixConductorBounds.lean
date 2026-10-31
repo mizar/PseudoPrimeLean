@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaRamifiedDualParameterBounds
+public import PseudoPrime.LLS.GammaRamifiedDualParameterBounds
 public import PseudoPrime.LLS.GammaIntegerPrefixConductorBounds
 
 /-! # Adjustable signed dual budgets for actual Jacobi arithmetic -/
@@ -20,12 +20,12 @@ Its input is the logarithmic scale L and a parameter theta greater than one.
 The cutoff is independent of the input factors; the signed ramp remains
 in each finite term. This is the numerical quantity for scale certificates. -/
 noncomputable def gammaRefinedThetaDualBudget (θ L : ℝ) : ℝ :=
-  Analysis.gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale L) * L +
-    ∑ p ∈ Analysis.gammaRamifiedThetaPrimeSet θ (Analysis.gammaRefinedScale L),
+  gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale L) * L +
+    ∑ p ∈ gammaRamifiedThetaPrimeSet θ (Analysis.gammaRefinedScale L),
       Real.log p *
         max
-          (Analysis.gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale L) -
-            Analysis.gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale L))
+          (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale L) -
+            gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale L))
           0
 
 /-- At the refined scale with L at least 100 log 10 and theta greater than one,
@@ -46,16 +46,16 @@ theorem gamma_jacobi_refined_joint_local_cost_le_finite_signed_dual_theta {n : �
           Analysis.gammaActualPrimeLocalCost bridge.character p (K p)
             (Analysis.gammaRefinedScale L)) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (3 / 4 : ℝ) +
-        Analysis.gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale L) * Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedThetaPrimeSet θ (Analysis.gammaRefinedScale L),
+        gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale L) * Real.log n +
+        ∑ p ∈ gammaRamifiedThetaPrimeSet θ (Analysis.gammaRefinedScale L),
           Real.log p *
             max
-              (Analysis.gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale L) -
-                Analysis.gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale L))
+              (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale L) -
+                gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale L))
               0 := by
   have hs := gamma_jacobi_refined_actual_square_dyadic_cost_le bridge S hS hSχ K K2 hL
   have hr :=
-    Analysis.gamma_actual_odd_ramified_signed_cost_le_theta_dual hn R hR bridge.character hRχ K hθ
+    gamma_odd_signed_cost_le_theta_dual hn R hR bridge.character hRχ K hθ
       (by linarith only [Analysis.gamma_refined_scale_ge_twenty_thousand hL])
   linarith only [hs, hr]
 
@@ -73,14 +73,12 @@ theorem gamma_jacobi_refined_input_all_local_cost_le_finite_signed_dual_theta {n
         Analysis.gammaActualPrimeLocalCost bridge.character 2 K2
           (Analysis.gammaRefinedScale (Real.log n)) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (3 / 4 : ℝ) +
-        Analysis.gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)) *
-          Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedThetaPrimeSet θ (Analysis.gammaRefinedScale (Real.log n)),
+        gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)) * Real.log n +
+        ∑ p ∈ gammaRamifiedThetaPrimeSet θ (Analysis.gammaRefinedScale (Real.log n)),
           Real.log p *
             max
-              (Analysis.gammaRamifiedSignedCombinedCost p
-                  (Analysis.gammaRefinedScale (Real.log n)) -
-                Analysis.gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)))
+              (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale (Real.log n)) -
+                gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)))
               0 := by
   let S := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = -1)
   let R := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = 0)
@@ -122,14 +120,12 @@ theorem gamma_jacobi_integer_prefix_local_budget_theta {n : ℕ} {hn : Odd n} {h
                     ((p : ℝ) ^ (k + 1) / Analysis.gammaRefinedScale (Real.log n)) (k + 1)) /
                 Real.sqrt (Analysis.gammaRefinedScale (Real.log n)))) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (3 / 4 : ℝ) +
-        Analysis.gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)) *
-          Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedThetaPrimeSet θ (Analysis.gammaRefinedScale (Real.log n)),
+        gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)) * Real.log n +
+        ∑ p ∈ gammaRamifiedThetaPrimeSet θ (Analysis.gammaRefinedScale (Real.log n)),
           Real.log p *
             max
-              (Analysis.gammaRamifiedSignedCombinedCost p
-                  (Analysis.gammaRefinedScale (Real.log n)) -
-                Analysis.gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)))
+              (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale (Real.log n)) -
+                gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)))
               0 := by
   let K := AnalyticNumberTheory.DirichletLFunction.gammaPrefixPowerIndices b
   have he :=
@@ -158,14 +154,12 @@ theorem gamma_jacobi_no_negative_integer_prefix_local_budget_theta {n : ℕ} {hn
                     ((p : ℝ) ^ (k + 1) / Analysis.gammaRefinedScale (Real.log n)) (k + 1)) /
                 Real.sqrt (Analysis.gammaRefinedScale (Real.log n)))) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (3 / 4 : ℝ) +
-        Analysis.gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)) *
-          Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedThetaPrimeSet θ (Analysis.gammaRefinedScale (Real.log n)),
+        gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)) * Real.log n +
+        ∑ p ∈ gammaRamifiedThetaPrimeSet θ (Analysis.gammaRefinedScale (Real.log n)),
           Real.log p *
             max
-              (Analysis.gammaRamifiedSignedCombinedCost p
-                  (Analysis.gammaRefinedScale (Real.log n)) -
-                Analysis.gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)))
+              (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale (Real.log n)) -
+                gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale (Real.log n)))
               0 := by
   exact
     gamma_jacobi_integer_prefix_local_budget_theta bridge hb
@@ -183,14 +177,14 @@ theorem gamma_jacobi_zeroMass_add_ambient_ramp_le_integer_prefix_dual_theta {n :
     (hlarge : 10 ^ 100 ≤ n) {θ : ℝ} (hθ : 1 < θ) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor bridge.character.completedLFunction Set.univ ρ : ℝ) *
-            Analysis.gammaResolventMajorant ρ.im) +
+            AnalyticNumberTheory.Gamma.gammaResolventMajorant ρ.im) +
         (∑ p ∈ (4 * n).primeFactors,
           Real.log p *
             ((∑' k : ℕ,
                 Analysis.exponentialRampLocalCorrection (bridge.character p)
                   ((p : ℝ) ^ (k + 1) / Analysis.gammaRefinedScale (Real.log n)) (k + 1)) /
               Real.sqrt (Analysis.gammaRefinedScale (Real.log n)))) ≤
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
                 (fun ab ↦
                   (ab.2 : ℝ) *
                     (logDeriv bridge.character.gammaFactor
@@ -227,14 +221,14 @@ theorem gamma_jacobi_no_negative_zeroMass_add_ramp_le_prefix_dual_theta {n : ℕ
     (hlarge : 10 ^ 100 ≤ n) {θ : ℝ} (hθ : 1 < θ) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor bridge.character.completedLFunction Set.univ ρ : ℝ) *
-            Analysis.gammaResolventMajorant ρ.im) +
+            AnalyticNumberTheory.Gamma.gammaResolventMajorant ρ.im) +
         (∑ p ∈ (4 * n).primeFactors,
           Real.log p *
             ((∑' k : ℕ,
                 Analysis.exponentialRampLocalCorrection (bridge.character p)
                   ((p : ℝ) ^ (k + 1) / Analysis.gammaRefinedScale (Real.log n)) (k + 1)) /
               Real.sqrt (Analysis.gammaRefinedScale (Real.log n)))) ≤
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
                 (fun ab ↦
                   (ab.2 : ℝ) *
                     (logDeriv bridge.character.gammaFactor
@@ -254,7 +248,6 @@ prime-set identities. This preserves all existing numerical interfaces. -/
 theorem gamma_refined_theta_dual_budget_five_fourths (L : ℝ) :
     gammaRefinedThetaDualBudget (5 / 4) L = gammaRefinedSignedDualBudget L := by
   dsimp only [gammaRefinedThetaDualBudget, gammaRefinedSignedDualBudget]
-  rw [Analysis.gamma_ramified_theta_prime_set_five_fourths,
-    Analysis.gamma_ramified_theta_parameter_five_fourths]
+  rw [gamma_ramified_theta_prime_set_five_fourths, gamma_ramified_theta_parameter_five_fourths]
 
 end PseudoPrime.LLS

@@ -11,7 +11,7 @@ public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FiniteZeroSums
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ContourKernelConjugation
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.WeightedSumIntegral
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogResidueAtZeroClosedForm
-public import PseudoPrime.LLS.PaperStatements
+public import PseudoPrime.LLS.PaperStatements.PaperStatements
 
 /-! Exact zeta explicit formulas with bounded real errors for LLS Lemmas 2.1 and 2.4. -/
 

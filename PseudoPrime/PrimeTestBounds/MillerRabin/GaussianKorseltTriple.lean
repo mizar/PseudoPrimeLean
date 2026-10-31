@@ -231,7 +231,7 @@ theorem exists_prime_witness_le_gaussian_star_of_three_prime_korselt {n p q r : 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 600 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMRStarBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussianStarBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hnOdd : Odd n := hn ▸ (hpOdd.mul hqOdd).mul hrOdd
   have hn1 : 1 < n :=
@@ -279,7 +279,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_three_prime_korselt {n p q r 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6FifthsBound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hnOdd : Odd n := hn ▸ (hpOdd.mul hqOdd).mul hrOdd
   have hn1 : 1 < n :=
@@ -302,7 +302,7 @@ theorem exists_prime_witness_le_gaussianMR6_of_three_prime_korselt {n p q r : �
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR6Bound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian6Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hnOdd : Odd n := hn ▸ (hpOdd.mul hqOdd).mul hrOdd
   have hn1 : 1 < n :=
@@ -325,7 +325,7 @@ theorem exists_prime_witness_le_gaussianMR18_of_three_prime_korselt {n p q r : �
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
-        (s : ℝ) ≤ Analysis.gaussianMR18Bound (Real.log n) ∧
+        (s : ℝ) ≤ gaussian18Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hnOdd : Odd n := hn ▸ (hpOdd.mul hqOdd).mul hrOdd
   have hn1 : 1 < n :=

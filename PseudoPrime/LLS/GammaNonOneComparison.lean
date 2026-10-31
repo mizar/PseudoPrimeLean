@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaQuadraticNoWitness
-public import PseudoPrime.LLS.GammaVariableScaleBounds
+public import PseudoPrime.LLS.PaperStatements.GammaVariableScaleBounds
 
 /-! # Odd non-one witnesses and the prime-two Gamma correction
 

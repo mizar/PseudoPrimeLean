@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaNearSquareNonOneBounds
+public import PseudoPrime.LLS.PaperStatements.GammaNearSquareNonOneBounds
 public import PseudoPrime.PseudoSquare.Bounds.GammaNonOneAdaptiveBounds
 
 /-! # Coefficient-99/100 Jacobi non-one bounds from logarithmic scale 1000 -/

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointPointwiseSteps
+public import PseudoPrime.LLS.PaperStatements.EndpointPointwiseSteps
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointLowPrime
 
 /-! # Four further pointwise prime witness steps -/

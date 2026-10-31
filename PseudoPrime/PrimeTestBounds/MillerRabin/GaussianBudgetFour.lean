@@ -22,8 +22,8 @@ theorem gaussianBudget_four_index (P s0 : ℝ) {n : ℕ} [NeZero n] (H : Subgrou
     (hs13 : 13 ≤ s0)
     (herr :
       (4 / 3 : ℝ) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s0) +
-              1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * s0 ^ 2)) +
+            (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s0) +
+              1839 * gaussian6FifthsEndpoint / (1000 * s0 ^ 2)) +
           13 / 3 +
           LLS.PaperStatements.gaussianPrefixError P n ((s0 ^ 2) ^ 2) <
         11)
@@ -67,8 +67,8 @@ theorem gaussianBudget_four_index (P s0 : ℝ) {n : ℕ} [NeZero n] (H : Subgrou
   have hI : gaussianMRRefinedMass ≤ I := by
     dsimp only [I, gaussianMRRefinedMass]
     exact gaussianMRRefined_mass.le
-  have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
-    dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
+  have hE : E ≤ gaussian6FifthsEndpoint := by
+    dsimp only [E, gaussian6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
   have hh : h = gaussianMRRefinedWidth / s := by rfl
   have hh1 : h ≤ 1 / 2 := by
@@ -88,19 +88,19 @@ theorem gaussianBudget_four_index (P s0 : ℝ) {n : ℕ} [NeZero n] (H : Subgrou
     nlinarith only [hC]
   have herror :
     (4 / 3 : ℝ) *
-          (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
-            1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+          (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
+            1839 * gaussian6FifthsEndpoint / (1000 * r)) +
         13 / 3 +
         LLS.PaperStatements.gaussianPrefixError (P) n (r ^ 2) <
       11 := by
     exact herr
   exact
-    Analysis.gaussianMR_compare_width (m := 4) (t := 3) (s := s) (r := r) (A :=
+    gaussian_compare_width (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianPrefixError (P) n (r ^ 2)) (L := (2 / 3 : ℝ) * Real.log n) (I :=
       I) (E := E) (C := LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M :=
-      gaussianMRRefinedMass) (Ecap := Analysis.gaussianMR6FifthsEndpoint) (conductor :=
-      gaussianMRRefinedConductor) (D :=
-      (4 * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) (beta :=
+      gaussianMRRefinedMass) (Ecap := gaussian6FifthsEndpoint) (conductor :=
+      gaussianMRRefinedConductor) (D := (4 * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / 3)
+      (beta :=
       (4 / 3 : ℝ) *
         (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)))
       (by norm_num only [gaussianMRRefinedWidth]) (by norm_num only : (4 : ℝ) ≤ 4)
@@ -110,14 +110,14 @@ theorem gaussianBudget_four_index (P s0 : ℝ) {n : ℕ} [NeZero n] (H : Subgrou
       (by
         intro hbudget
         have hnorm :
-          ((4 * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / 3) * r ≤
+          ((4 * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / 3) * r ≤
             (2 / 3 : ℝ) * gaussianMRRefinedConductor * Real.log n +
               (4 / 3 : ℝ) *
                 (gaussianMRRefinedMass * gaussianMRRefinedWidth +
                   1 / (10 * gaussianMRRefinedWidth)) *
                 s +
               11 := by
-          dsimp only [gaussianMRRefinedMass, Analysis.gaussianMR6FifthsEndpoint] at hbudget herror ⊢
+          dsimp only [gaussianMRRefinedMass, gaussian6FifthsEndpoint] at hbudget herror ⊢
           nlinarith only [hbudget, herror]
         exact hnot hnorm)
 
@@ -129,8 +129,8 @@ theorem gaussianBudget_four_witness (N : ℕ) (P s0 : ℝ) (hs13 : 13 ≤ s0) {n
     (hN : (N : ℝ) ≤ (6 / 5 : ℝ) * (s0 ^ 2) ^ 2)
     (herr :
       (4 / 3 : ℝ) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s0) +
-              1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * s0 ^ 2)) +
+            (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s0) +
+              1839 * gaussian6FifthsEndpoint / (1000 * s0 ^ 2)) +
           13 / 3 +
           LLS.PaperStatements.gaussianPrefixError P n ((s0 ^ 2) ^ 2) <
         11)

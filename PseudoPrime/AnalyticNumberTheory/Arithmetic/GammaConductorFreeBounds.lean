@@ -6,8 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaConductorFreeSubgroupBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaComparison
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ExponentialMangoldtBounds
 
 /-! # Conductor-free Gamma upper bounds for Miller-Rabin prime witnesses -/
 

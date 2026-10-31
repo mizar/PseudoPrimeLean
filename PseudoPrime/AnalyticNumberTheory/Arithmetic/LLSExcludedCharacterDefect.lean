@@ -6,7 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.OddEndpointTwoCostWitness
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CharacterAmbientTriviality
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
+public import Mathlib.Tactic.Ring
 
 /-! # Exact excluded-support defects for endpoint witness budgets -/
 

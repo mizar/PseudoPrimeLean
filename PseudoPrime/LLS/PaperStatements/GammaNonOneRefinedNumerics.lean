@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaNonOneNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneNumerics
 
 /-! # Sharper non-one Gamma error budgets
 

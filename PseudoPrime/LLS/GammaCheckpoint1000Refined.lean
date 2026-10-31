@@ -29,7 +29,7 @@ theorem gamma_boundary1000_refined (hRH : RiemannHypothesis) :
 /-- Rational absolute error envelope at cutoff 1000, using the same ten node intervals.
 The root cap is 32 and log cap is 7. This certifies the transport error without enumeration. -/
 def checkpoint1000Error : ℚ :=
-  (Analysis.gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦
         let σ := (1 / 2 : ℚ) + ab.1
         let v := (checkpoint1000Ratios ab.1).2

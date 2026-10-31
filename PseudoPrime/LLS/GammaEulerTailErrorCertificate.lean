@@ -59,7 +59,7 @@ def gammaTailNodeRationalBudget (a : ℚ) : ℚ :=
 identities and valid integer twentieth-power upper checks. Kernel finite
 arithmetic certifies the data for the later real-power bounds. -/
 theorem gamma_tail_ratio_upper_checks :
-    Analysis.gammaResolventCoefficients.Forall
+    AnalyticNumberTheory.Gamma.gammaResolventCoefficients.Forall
       (fun ab ↦
         let uv := gammaTailRatioUpper ab.1
         0 ≤ uv.1 ∧
@@ -73,7 +73,7 @@ theorem gamma_tail_ratio_upper_checks :
 /-- The fixed rational coefficient-weighted allowances sum to at most
 one over 2500. Exact kernel arithmetic checks this finite numerical input. -/
 theorem gamma_tail_rational_budget_check :
-    (Analysis.gammaResolventCoefficients.map
+    (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
           (fun ab ↦ |ab.2| * gammaTailNodeRationalBudget ab.1)).sum ≤
       (1 / 2500 : ℚ) := by
   decide +kernel
@@ -90,7 +90,8 @@ theorem gamma_tail_log_cutoff_le : Real.log (50000 : ℝ) ≤ 12 := by
 /-- For every fixed Gamma node, the actual two real cutoff powers
 lie below the rational endpoints. Cast the finite integer checks and apply
 the proved twentieth-root interval theorem. -/
-theorem gamma_tail_ratio_upper_valid (ab : ℚ × ℚ) (hab : ab ∈ Analysis.gammaResolventCoefficients) :
+theorem gamma_tail_ratio_upper_valid (ab : ℚ × ℚ)
+    (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :
     (50000 : ℝ) ^ (-(ab.1 : ℝ)) ≤ (gammaTailRatioUpper ab.1).1 ∧
       (50000 : ℝ) ^ (-(1 / 2 + (ab.1 : ℝ))) ≤ (gammaTailRatioUpper ab.1).2 := by
   obtain ⟨hu, hv, he, hf, hhi, hfi⟩ :=
@@ -119,7 +120,8 @@ theorem gamma_tail_ratio_upper_valid (ab : ℚ × ℚ) (hab : ab ∈ Analysis.ga
 /-- For each fixed Gamma node, the actual scalar error budget at
 50000 is at most its rational allowance. Compare the two certified real
 powers and the logarithm factor term by term; all multipliers are nonnegative. -/
-theorem gamma_tail_node_budget_le (ab : ℚ × ℚ) (hab : ab ∈ Analysis.gammaResolventCoefficients) :
+theorem gamma_tail_node_budget_le (ab : ℚ × ℚ)
+    (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :
     powerRiemannErrorBudget (1 / 2 + (ab.1 : ℝ)) 50000 ≤
       (gammaTailNodeRationalBudget ab.1 : ℝ) := by
   obtain ⟨hu, hv⟩ := gamma_tail_ratio_upper_valid ab hab

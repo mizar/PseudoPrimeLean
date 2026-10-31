@@ -19,15 +19,15 @@ namespace PseudoPrime.LLS
 -15709/10000. Identify the real Gamma derivatives with the already certified
 signed digamma expression. Role: retain precision previously rounded to -3/2. -/
 theorem gamma_even_signed_cost_le_precise {q : ℕ} {χ : DirichletCharacter ℂ q} (he : χ.Even) :
-    (Analysis.gammaResolventCoefficients.map
+    (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum ≤
       -(15709 / 10000 : ℝ) := by
   have ht := AnalyticNumberTheory.Gamma.signed_digamma_0_le_precise
   have hm :
-    (Analysis.gammaResolventCoefficients.map
+    (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
         (fun ab ↦ (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)) =
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
         (fun ab ↦
           (ab.2 : ℝ) *
             (((Complex.digamma ((((1 / 2 : ℝ) + (ab.1 : ℝ) + 0) / 2) : ℂ)).re - Real.log Real.pi) /
@@ -36,7 +36,8 @@ theorem gamma_even_signed_cost_le_precise {q : ℕ} {χ : DirichletCharacter ℂ
     intro ab hab
     have ha :=
       Rat.cast_lt (K := ℝ) |>.mpr
-        (List.forall_iff_forall_mem.mp Analysis.gammaResolvent_scales_gt_half ab hab)
+        (List.forall_iff_forall_mem.mp AnalyticNumberTheory.Gamma.gammaResolvent_scales_gt_half ab
+          hab)
     norm_num only [Rat.cast_div, Rat.cast_one, Rat.cast_ofNat] at ha
     have hh :=
       AnalyticNumberTheory.DirichletLFunction.re_gammaFactor_even he
@@ -49,11 +50,11 @@ theorem gamma_even_signed_cost_le_precise {q : ℕ} {χ : DirichletCharacter ℂ
 /-- Claim: the signed pole sum is less than 13961/1000. Evaluate the ten rational
 nodes exactly. Role: avoid rounding the pole allowance to fourteen. -/
 theorem gamma_resolvent_pole_sum_lt_precise :
-    (Analysis.gammaResolventCoefficients.map
+    (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
           (fun ab ↦ (ab.2 : ℝ) * (1 / ((1 / 2 : ℝ) + (ab.1 : ℝ)) + 1 / ((ab.1 : ℝ) - 1 / 2)))).sum <
       (13961 / 1000 : ℝ) := by
-  norm_num only [Analysis.gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
-    List.sum_nil, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg]
+  norm_num only [AnalyticNumberTheory.Gamma.gammaResolventCoefficients, List.map_cons, List.map_nil,
+    List.sum_cons, List.sum_nil, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg]
 
 /-- Input: RH. Claim: the full nonnegative resolvent Euler mass is less than
 123901/10000. Combine xi zero-mass positivity with the precise poles and even

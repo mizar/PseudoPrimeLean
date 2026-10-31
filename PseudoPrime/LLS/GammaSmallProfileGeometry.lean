@@ -19,9 +19,9 @@ namespace PseudoPrime.LLS
 and the checked root enclosures hold. Proof: compare squares and apply cell soundness.
 Role: remove the artificial entrance 300 from the geometric transfer. -/
 theorem gamma_profile_geometry_small_cell (a b : ℚ) (ha : (16 : ℝ) ≤ a)
-    (hc : (Analysis.gammaProfileEnvelopeCell a b).check = true) {L : ℝ} (hlo : (a : ℝ) ≤ L)
+    (hc : (gammaProfileEnvelopeCell a b).check = true) {L : ℝ} (hlo : (a : ℝ) ≤ L)
     (hhi : L ≤ (b : ℝ)) :
-    let c := Analysis.gammaProfileEnvelopeCell a b;
+    let c := gammaProfileEnvelopeCell a b;
     let x := (2 / 5 : ℝ) * L ^ 2;
     100 ≤ x ∧
       (c.lo : ℝ) ≤ x ∧
@@ -29,7 +29,7 @@ theorem gamma_profile_geometry_small_cell (a b : ℚ) (ha : (16 : ℝ) ≤ a)
       (c.rootLo : ℝ) ≤ Real.sqrt x ∧
       Real.sqrt x ≤ (c.rootHi : ℝ) ∧ (79 / 125 : ℝ) * L ≤ Real.sqrt x := by
   dsimp only
-  let c := Analysis.gammaProfileEnvelopeCell a b
+  let c := gammaProfileEnvelopeCell a b
   let x := (2 / 5 : ℝ) * L ^ 2
   have hL : (16 : ℝ) ≤ L := ha.trans hlo
   have ha0 : 0 ≤ (a : ℝ) := by linarith only [ha]
@@ -38,12 +38,12 @@ theorem gamma_profile_geometry_small_cell (a b : ℚ) (ha : (16 : ℝ) ≤ a)
   have hlprod := mul_nonneg (sub_nonneg.mpr hlo) (add_nonneg hL0.le ha0)
   have hhprod := mul_nonneg (sub_nonneg.mpr hhi) (add_nonneg hL0.le hb0)
   have hlox : (c.lo : ℝ) ≤ x := by
-    norm_num only [c, Analysis.gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
+    norm_num only [c, gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
       Rat.cast_ofNat]
     dsimp only [x]
     nlinarith only [hlprod]
   have hxhic : x ≤ (c.hi : ℝ) := by
-    norm_num only [c, Analysis.gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
+    norm_num only [c, gammaProfileEnvelopeCell, Rat.cast_mul, Rat.cast_div, Rat.cast_pow,
       Rat.cast_ofNat]
     dsimp only [x]
     nlinarith only [hhprod]
@@ -65,17 +65,17 @@ Claim: ramp and principal errors obey their caps, with the coupled root lower bo
 Proof: logarithm monotonicity and the generic error envelopes. Role: separate geometric
 and elementary errors from prefix, pole and left-line choices. -/
 theorem gamma_profile_elementary_errors_small_cell (a b ellX ellE R P : ℚ) (ha : (16 : ℝ) ≤ a)
-    (hc : (Analysis.gammaProfileEnvelopeCell a b).check = true)
-    (hX : Real.log ((Analysis.gammaProfileEnvelopeCell a b).hi : ℝ) ≤ ellX)
-    (hE : Real.log ((101 / 40 : ℝ) * ((Analysis.gammaProfileEnvelopeCell a b).hi : ℝ)) ≤ ellE)
+    (hc : (gammaProfileEnvelopeCell a b).check = true)
+    (hX : Real.log ((gammaProfileEnvelopeCell a b).hi : ℝ) ≤ ellX)
+    (hE : Real.log ((101 / 40 : ℝ) * ((gammaProfileEnvelopeCell a b).hi : ℝ)) ≤ ellE)
     (hellX : 0 ≤ ellX) (hellE : 0 ≤ ellE)
     (hR :
-      gammaRampCellRationalUpper (Analysis.gammaProfileEnvelopeCell a b).rootLo
-          (Analysis.gammaProfileEnvelopeCell a b).rootHi ellE ≤
+      gammaRampCellRationalUpper (gammaProfileEnvelopeCell a b).rootLo
+          (gammaProfileEnvelopeCell a b).rootHi ellE ≤
         R)
     (hP :
-      gammaPrincipalCellRationalUpper (Analysis.gammaProfileEnvelopeCell a b).rootLo
-          (Analysis.gammaProfileEnvelopeCell a b).rootHi ellX ≤
+      gammaPrincipalCellRationalUpper (gammaProfileEnvelopeCell a b).rootLo
+          (gammaProfileEnvelopeCell a b).rootHi ellX ≤
         P)
     {L : ℝ} (hlo : (a : ℝ) ≤ L) (hhi : L ≤ (b : ℝ)) :
     let x := (2 / 5 : ℝ) * L ^ 2;
@@ -83,7 +83,7 @@ theorem gamma_profile_elementary_errors_small_cell (a b ellX ellE R P : ℚ) (ha
       (Real.sqrt x / 8 + (1839 / 1000 : ℝ) * (2 * Real.log x + 3) + 21 / 10) / Real.sqrt x ≤ P ∧
       (79 / 125 : ℝ) * L ≤ Real.sqrt x := by
   dsimp only
-  let c := Analysis.gammaProfileEnvelopeCell a b
+  let c := gammaProfileEnvelopeCell a b
   let x := (2 / 5 : ℝ) * L ^ 2
   obtain ⟨hxlo, hlox, hxhi, hrlo, hrhi, hrL⟩ := gamma_profile_geometry_small_cell a b ha hc hlo hhi
   change (100 : ℝ) ≤ x at hxlo
@@ -117,23 +117,23 @@ theorem gamma_profile_elementary_errors_small_cell (a b ellX ellE R P : ℚ) (ha
 Claim: the actual signed dual budget is at most 2+C. Proof: retain the coupled price
 and transfer the checked excess. Role: reuse the same certificate below scale 300. -/
 theorem gamma_profile_dual_small_cell (a b C : ℚ) (K : ℕ) (ha : (16 : ℝ) ≤ a)
-    (hc : (Analysis.gammaProfileEnvelopeCell a b).check = true)
-    (hcap : 1 + (71 / 25 : ℚ) * (Analysis.gammaProfileEnvelopeCell a b).rootHi ≤ K)
+    (hc : (gammaProfileEnvelopeCell a b).check = true)
+    (hcap : 1 + (71 / 25 : ℚ) * (gammaProfileEnvelopeCell a b).rootHi ≤ K)
     (hrows :
       ∀ p ∈ (Finset.Icc 3 K).filter Nat.Prime,
-        (Analysis.gammaProfileEnvelopeRow (Analysis.gammaProfileEnvelopeCell a b) p).envelopeCheck
-            (Analysis.gammaProfileEnvelopeCell a b) =
+        (gammaProfileEnvelopeRow (gammaProfileEnvelopeCell a b) p).envelopeCheck
+            (gammaProfileEnvelopeCell a b) =
           true)
     (hsum :
       (∑ p ∈ (Finset.Icc 3 K).filter Nat.Prime,
-          (Analysis.gammaProfileEnvelopeRow (Analysis.gammaProfileEnvelopeCell a b) p).allowance) ≤
+          (gammaProfileEnvelopeRow (gammaProfileEnvelopeCell a b) p).allowance) ≤
         C)
     {L : ℝ} (hlo : (a : ℝ) ≤ L) (hhi : L ≤ (b : ℝ)) :
     gammaScaleSignedDualBudget L ((2 / 5 : ℝ) * L ^ 2) ≤ 2 + (C : ℝ) := by
   obtain ⟨hx, hlox, hxhi, _, _, _⟩ := gamma_profile_geometry_small_cell a b ha hc hlo hhi
   have he :=
-    gamma_signed_excess_le_of_profile_certificate (Analysis.gammaProfileEnvelopeCell a b) K C hc rfl
-      hcap hrows hsum hlox hxhi
+    gamma_signed_excess_le_of_profile_certificate (gammaProfileEnvelopeCell a b) K C hc rfl hcap
+      hrows hsum hlox hxhi
   have hp := gamma_quadratic_profile_price_le_two (show 0 < L by linarith only [ha, hlo])
   rw [gamma_scale_signed_dual_budget_eq_anchored_support L hx]
   linarith only [hp, he]

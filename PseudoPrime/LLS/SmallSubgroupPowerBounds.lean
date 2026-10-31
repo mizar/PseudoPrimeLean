@@ -10,7 +10,7 @@ public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.NumberTheory.ExcludedPrimeCountLower
 public import PseudoPrime.NumberTheory.PrimeProductSubgroupCounting
 public import PseudoPrime.Analysis.SmallSubgroupLogarithmicBudget
-public import PseudoPrime.LLS.PaperDefinitions
+public import PseudoPrime.LLS.PaperStatements.PaperDefinitions
 
 /-! # Unconditional log-power bounds for primes outside small subgroups -/
 

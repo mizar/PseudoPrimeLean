@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.RationalPoleFiniteEntrance
+public import PseudoPrime.LLS.PaperStatements.RationalPoleFiniteEntrance
 public import PseudoPrime.PrimeTestBounds.Selfridge.WitnessTransfer
 public import PseudoPrime.PseudoSquare.Bounds.FourPoleFiniteBounds
 public import PseudoPrime.PrimeTestBounds.Selfridge.CommonEndpointBounds

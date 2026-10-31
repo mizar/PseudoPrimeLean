@@ -145,8 +145,8 @@ theorem exists_prime_neg_one_witness_of_variable_scale_polynomial {n : ℕ} (hn 
     (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcredit :
       C +
-          ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
-              Analysis.gammaVariableDyadicAllowance x +
+          ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
+              LLS.gammaVariableDyadicAllowance x +
               D) /
             2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
@@ -169,8 +169,8 @@ theorem exists_prime_ne_one_witness_of_variable_scale_polynomial {n : ℕ} (hn :
     (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcredit :
       C +
-          ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
-              Analysis.gammaVariableDyadicAllowance x +
+          ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
+              LLS.gammaVariableDyadicAllowance x +
               D) /
             2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
@@ -193,8 +193,8 @@ theorem primeNegOneWitness_cast_le_of_variable_scale_polynomial {n : ℕ} (hn : 
     (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcredit :
       C +
-          ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
-              Analysis.gammaVariableDyadicAllowance x +
+          ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
+              LLS.gammaVariableDyadicAllowance x +
               D) /
             2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
@@ -216,8 +216,8 @@ theorem primeNeOneWitness_cast_le_of_variable_scale_polynomial {n : ℕ} (hn : O
     (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcredit :
       C +
-          ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
-              Analysis.gammaVariableDyadicAllowance x +
+          ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
+              LLS.gammaVariableDyadicAllowance x +
               D) /
             2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
@@ -239,8 +239,8 @@ theorem QNegOne_le_of_variable_scale_polynomial {B : ℕ}
     (hB : 10 ≤ Real.log B) (hx : 2 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcredit :
       C +
-          ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
-              Analysis.gammaVariableDyadicAllowance x +
+          ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
+              LLS.gammaVariableDyadicAllowance x +
               D) /
             2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
@@ -266,8 +266,8 @@ theorem QNeOne_le_of_variable_scale_polynomial {B : ℕ}
     (hB : 10 ≤ Real.log B) (hx : 2 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcredit :
       C +
-          ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
-              Analysis.gammaVariableDyadicAllowance x +
+          ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
+              LLS.gammaVariableDyadicAllowance x +
               D) /
             2 ≤
         ∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k)
@@ -290,8 +290,8 @@ theorem Q_witness_maxima_le_of_variable_scale_asymmetric_block_polynomial {B a b
     (hP : P ≤ ∑ j ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight j)
     (hcredit :
       C +
-          ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
-              Analysis.gammaVariableDyadicAllowance x +
+          ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
+              LLS.gammaVariableDyadicAllowance x +
               D) /
             2 ≤
         P + (1 / 2 : ℝ) * (b : ℝ) ^ (-21 / 20 : ℝ) * LLS.psiAsymmetricBlockLower a b s t)
@@ -302,8 +302,8 @@ theorem Q_witness_maxima_le_of_variable_scale_asymmetric_block_polynomial {B a b
     LLS.gamma_euler_prefix_lower_growth_of_asymmetric_rh_errors hGRH.riemann hab hs hsb ha hat hP
   have hp :
     C +
-        ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
-            Analysis.gammaVariableDyadicAllowance x +
+        ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
+            LLS.gammaVariableDyadicAllowance x +
             D) /
           2 ≤
       ∑ j ∈ Finset.Ioc 0 ⌊(b : ℝ)⌋₊, Analysis.gammaResolventMangoldtWeight j := by
@@ -326,8 +326,8 @@ theorem Q_witness_maxima_le_of_leading_variable_scale_asymmetric_block {B a b : 
     (hP : P ≤ ∑ j ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight j)
     (hcredit :
       C +
-          ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
-              Analysis.gammaVariableDyadicAllowance x +
+          ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
+              LLS.gammaVariableDyadicAllowance x +
               D) /
             2 ≤
         P +
@@ -340,8 +340,8 @@ theorem Q_witness_maxima_le_of_leading_variable_scale_asymmetric_block {B a b : 
     LLS.gamma_euler_prefix_lower_growth_leading_asymmetric hGRH.riemann ha hab hs hsb hat hP
   have hp :
     C +
-        ((Analysis.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
-            Analysis.gammaVariableDyadicAllowance x +
+        ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
+            LLS.gammaVariableDyadicAllowance x +
             D) /
           2 ≤
       ∑ j ∈ Finset.Ioc 0 ⌊(b : ℝ)⌋₊, Analysis.gammaResolventMangoldtWeight j := by

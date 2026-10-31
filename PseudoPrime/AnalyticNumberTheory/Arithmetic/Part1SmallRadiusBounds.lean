@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.Statement
+public import Mathlib.Tactic.Linarith
 public import PseudoPrime.Analysis.LogTaylorBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeFactors
 

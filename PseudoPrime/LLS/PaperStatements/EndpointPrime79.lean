@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.Analysis.EndpointPrime79
 public import PseudoPrime.LLS.PaperStatements.EndpointFiniteProfiles
-public import PseudoPrime.LLS.EndpointPointwiseGrowth
+public import PseudoPrime.LLS.PaperStatements.EndpointPointwiseGrowth
 
 /-! # Positive fixed-79 gap and the continuous comparison above prime 83 -/
 

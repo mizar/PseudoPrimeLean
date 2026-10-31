@@ -7,9 +7,9 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaConductorFreeNonOneBounds
-public import PseudoPrime.LLS.GammaPrincipalEulerCharacterBounds
+public import PseudoPrime.LLS.PaperStatements.GammaPrincipalEulerCharacterBounds
 public import PseudoPrime.LLS.GammaRetainedCommonCostBounds
-public import PseudoPrime.Analysis.GammaPrincipalEulerNonOneBounds
+public import PseudoPrime.LLS.GammaLogScaleBounds
 
 /-! # Non-one witnesses from retained real-axis Euler budgets -/
 

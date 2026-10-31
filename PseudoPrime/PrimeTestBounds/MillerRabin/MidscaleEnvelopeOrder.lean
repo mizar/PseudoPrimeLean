@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointCorrectionIntervals
+public import PseudoPrime.LLS.PaperStatements.EndpointCorrectionIntervals
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointMidscaleEnvelope
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaRefinedEnvelope
 

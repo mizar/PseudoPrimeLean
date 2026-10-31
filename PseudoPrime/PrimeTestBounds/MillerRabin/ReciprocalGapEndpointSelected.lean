@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ReciprocalGapEndpointOriginalLevel
+public import PseudoPrime.LLS.PaperStatements.ReciprocalGapEndpointOriginalLevel
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapAmbient
 
 /-! # Miller-Rabin witnesses from selected endpoint zero-mass separation -/

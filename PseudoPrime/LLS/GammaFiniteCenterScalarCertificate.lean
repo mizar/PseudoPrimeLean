@@ -19,14 +19,14 @@ namespace PseudoPrime.LLS
 the fixed Gamma node powers. Choose each endpoint by the coefficient sign.
 The real interval theorem requires a successful ratio certificate. -/
 def gammaFiniteWeightedLower (w : ℚ × ℚ → ℚ) (r : ℚ → ℚ × ℚ) : ℚ :=
-  (Analysis.gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦ w ab * (if 0 ≤ w ab then (r ab.1).1 else (r ab.1).2))).sum
 
 /-- Rational upper endpoint for arbitrary rational coefficients on
 the fixed Gamma node powers. Preserve signed cancellation by choosing
 upper power endpoints only for nonnegative coefficients. -/
 def gammaFiniteWeightedUpper (w : ℚ × ℚ → ℚ) (r : ℚ → ℚ × ℚ) : ℚ :=
-  (Analysis.gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦ w ab * (if 0 ≤ w ab then (r ab.1).2 else (r ab.1).1))).sum
 
 /-- A successful ratio check encloses the real weighted fixed-node
@@ -35,9 +35,9 @@ function. Sum the node interval bounds and commute rational casts. -/
 theorem gamma_finite_weighted_bounds {m : ℚ} {r : ℚ → ℚ × ℚ}
     (hc : Analysis.gammaFiniteEulerRatioCheck m r = true) (w : ℚ × ℚ → ℚ) :
     (gammaFiniteWeightedLower w r : ℝ) ≤
-        (Analysis.gammaResolventCoefficients.map
+        (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
             (fun ab ↦ (w ab : ℝ) * (m : ℝ) ^ (-(1 / 2 + (ab.1 : ℝ))))).sum ∧
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
             (fun ab ↦ (w ab : ℝ) * (m : ℝ) ^ (-(1 / 2 + (ab.1 : ℝ))))).sum ≤
         (gammaFiniteWeightedUpper w r : ℝ) := by
   have hl :=
@@ -72,7 +72,7 @@ sum with rational slope coefficients. Move negation through the finite
 sum and normalize rational casts. Use this identity in scalar certificates. -/
 theorem gamma_slope_eq_weighted (m : ℝ) :
     gammaEulerLogSlope m =
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
           (fun ab ↦ (gammaSlopeRationalCoefficient ab : ℝ) * m ^ (-(1 / 2 + (ab.1 : ℝ))))).sum := by
   rw [gammaEulerLogSlope, List.sum_neg, List.map_map]
   congr 1
@@ -87,7 +87,7 @@ equals the power sum with rational tail coefficients. Factor one cutoff
 power using the real-power addition identity and normalize the node products. -/
 theorem gamma_tail_main_eq_weighted {a : ℚ} (ha : 0 < a) :
     gammaEulerTailMain a =
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (gammaTailRationalCoefficient a ab : ℝ) * (a : ℝ) ^ (-(1 / 2 + (ab.1 : ℝ))))).sum := by
   dsimp only [gammaEulerTailMain, gammaRealPowerList]

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ConductorPrimeExclusionBounds
+public import PseudoPrime.LLS.PaperStatements.ConductorPrimeExclusionBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.BoundedPrimeExclusion
 public import PseudoPrime.NumberTheory.DirichletCharacterSmallLevels
 public import PseudoPrime.PseudoSquare.Bounds.ConductorSquareFactorJacobi

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
-public import PseudoPrime.Analysis.MRLocalCutoffNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.MRLocalCutoffNumerics
 public import PseudoPrime.PrimeTest.MillerRabin.LocalFermatKernel
 public import PseudoPrime.PrimeTest.MillerRabin.LocalFermatIndexSize
 
@@ -78,9 +78,7 @@ theorem exists_prime_witness_le_0283_of_local_subgroup {n q : ℕ} [NeZero q] (h
   have hn1 : 1 < n := lt_of_lt_of_le (by decide : 1 < 10 ^ 142) hn
   obtain ⟨p, hp, hb, hfail⟩ :=
     exists_prime_witness_le_local_subgroup_envelope hn1 hnOdd hq hqn H hH hpass hGRH
-  exact
-    ⟨p, hp, (hb.trans_lt (Analysis.mr_local_envelope_lt_of_square_le hn (NeZero.pos q) hsize)).le,
-      hfail⟩
+  exact ⟨p, hp, (hb.trans_lt (local_envelope_lt_of_square_le hn (NeZero.pos q) hsize)).le, hfail⟩
 
 /-- A non-Korselt prime factor p with p²≤10^9*n gives coefficient 283/1000
 for a failing prime base under GRH when odd n≥10^141. The local (n-1)-power

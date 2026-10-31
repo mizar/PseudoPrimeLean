@@ -53,7 +53,7 @@ namespace PseudoPrime.LLS
 350. Transfer the certified real cutoff through natural floors.
 Role: use the one compact transported aggregate. -/
 theorem gamma_transported_support_subset :
-    Analysis.gammaAnchoredWindowPrimeSet gammaTransportedOldCell.hi ⊆
+    gammaAnchoredWindowPrimeSet gammaTransportedOldCell.hi ⊆
       (Finset.Icc 3 350).filter Nat.Prime := by
   have hgeo := gamma_transported_geometry
   have hf := Nat.floor_mono hgeo.2.2.2.2.2.2
@@ -86,7 +86,7 @@ allowance is bounded by the rational transported allowance. Compare signed
 root quotients and logarithm bounds. Role: transfer the aggregate to real costs. -/
 theorem gamma_transported_row_cap (p : ℕ) (hp : p ∈ (Finset.Icc 3 350).filter Nat.Prime) :
     Real.log p *
-        Analysis.gammaRamifiedWindowExcessBound gammaTransportedNewLo gammaTransportedOldCell.hi
+        gammaRamifiedWindowExcessBound gammaTransportedNewLo gammaTransportedOldCell.hi
           (gammaTransportedRow p).eulerUpper
           (((gammaTransportedRow p).rampUpper : ℝ) - 5 / 4 +
             (((p : ℝ) + 1) / (p - 1)) * ((gammaTransportedOldCell.lo : ℝ) - gammaTransportedNewLo) /
@@ -97,9 +97,9 @@ theorem gamma_transported_row_cap (p : ℕ) (hp : p ∈ (Finset.Icc 3 350).filte
   have hlohi : (gammaTransportedNewLo : ℝ) ≤ (gammaTransportedOldCell.hi : ℝ) :=
     hg.2.2.1.trans (gammaTransportedOldCell.check_sound hg.1).2.1
   have hw :=
-    Analysis.gamma_window_excess_le_root_bounds (e := ((gammaTransportedRow p).eulerUpper : ℝ))
-      (N := (((gammaTransportedRow p).rampUpper - 5 / 4 + gammaTransportedDelta p : ℚ) : ℝ))
-      hg.2.2.2.1 hlohi hg.2.2.2.2.1 hg.2.2.2.2.2.1
+    gamma_window_excess_le_root_bounds (e := ((gammaTransportedRow p).eulerUpper : ℝ)) (N :=
+      (((gammaTransportedRow p).rampUpper - 5 / 4 + gammaTransportedDelta p : ℚ) : ℝ)) hg.2.2.2.1
+      hlohi hg.2.2.2.2.1 hg.2.2.2.2.2.1
   have hl := (Analysis.rationalLogIntervalCheck_sound (Bool.and_eq_true_iff.mp hcheck.2).1).2
   change Real.log p ≤ ((gammaTransportedRow p).logUpper : ℝ) at hl
   have hn := Real.log_nonneg (show (1 : ℝ) ≤ p by exact_mod_cast (Finset.mem_filter.mp hp).2.one_le)
@@ -117,9 +117,9 @@ namespace PseudoPrime.LLS
 most 377/100. Use pointwise rational caps, nonnegative extension and the
 kernel aggregate bound. Role: supply the actual uniform dual estimate. -/
 theorem gamma_transported_rows_upper :
-    (∑ p ∈ Analysis.gammaAnchoredWindowPrimeSet gammaTransportedOldCell.hi,
+    (∑ p ∈ gammaAnchoredWindowPrimeSet gammaTransportedOldCell.hi,
         Real.log p *
-          Analysis.gammaRamifiedWindowExcessBound gammaTransportedNewLo gammaTransportedOldCell.hi
+          gammaRamifiedWindowExcessBound gammaTransportedNewLo gammaTransportedOldCell.hi
             (gammaTransportedRow p).eulerUpper
             (((gammaTransportedRow p).rampUpper : ℝ) - 5 / 4 +
               (((p : ℝ) + 1) / (p - 1)) *
@@ -144,11 +144,11 @@ Apply the downward row transfer. Role: certify continuous scales below 260. -/
 theorem gamma_transported_actual_dual_cap {L x : ℝ} (hL : 0 ≤ L)
     (hlox : (gammaTransportedNewLo : ℝ) ≤ x) (hxhi : x ≤ (gammaTransportedOldCell.hi : ℝ)) :
     gammaScaleSignedDualBudget L x ≤
-      Analysis.gammaRamifiedDualParameter gammaTransportedNewLo * L + 377 / 100 := by
+      gammaRamifiedDualParameter gammaTransportedNewLo * L + 377 / 100 := by
   have hg := gamma_transported_geometry
   have hsub := gamma_transported_support_subset
   have hc := fun p hp ↦ gamma_transported_row_check p (hsub hp)
-  have he (p : ℕ) (hp : p ∈ Analysis.gammaAnchoredWindowPrimeSet gammaTransportedOldCell.hi) :
+  have he (p : ℕ) (hp : p ∈ gammaAnchoredWindowPrimeSet gammaTransportedOldCell.hi) :
     Analysis.gammaPrimeEulerCost p ≤ ((gammaTransportedRow p).eulerUpper : ℝ) := by
     exact
       Analysis.gamma_adaptive_euler_upper_sound (Finset.mem_filter.mp hp).2
@@ -173,9 +173,9 @@ theorem gamma_transported_dual_cap {L x : ℝ} (hL : 0 ≤ L) (hlox : (gammaTran
   have hp := hg.2.2.2.1
   have hr := hg.2.2.2.2.1
   have hd :
-    Analysis.gammaRamifiedDualParameter gammaTransportedNewLo ≤
+    gammaRamifiedDualParameter gammaTransportedNewLo ≤
       5 / (4 * ((1589 / 2500 : ℝ) * (2591 / 10))) := by
-    dsimp only [Analysis.gammaRamifiedDualParameter]
+    dsimp only [gammaRamifiedDualParameter]
     simp only [gammaTransportedNewRootLo, Rat.cast_mul, Rat.cast_div, Rat.cast_ofNat] at hp hr
     exact
       div_le_div₀ (by norm_num only : (0 : ℝ) ≤ 5) le_rfl (mul_pos (by norm_num only) hp)

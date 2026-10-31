@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ReciprocalGapFullEndpoint
-public import PseudoPrime.LLS.ReciprocalGapFullEndpointMonotone
+public import PseudoPrime.LLS.PaperStatements.ReciprocalGapFullEndpoint
+public import PseudoPrime.LLS.PaperStatements.ReciprocalGapFullEndpointMonotone
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapAmbient
 
 /-! # Miller-Rabin witnesses from loss-free full-prime endpoint separation -/

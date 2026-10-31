@@ -95,9 +95,9 @@ theorem gammaResolvent_zeroMass_le_prime_power_prefix {q : ℕ} [NeZero q] (hq :
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {b : ℝ} (hb : 0 ≤ b) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) ≤
+          Gamma.gammaResolventMajorant ρ.im) ≤
       (11783423 / 25000000 : ℝ) * Real.log q +
-            (Analysis.gammaResolventCoefficients.map
+            (Gamma.gammaResolventCoefficients.map
                 (fun ab ↦
                   (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
             (∑' n : ℕ, Analysis.gammaResolventMangoldtWeight n) -

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaDyadicEulerCertificate
+public import PseudoPrime.Analysis.ExponentialTaylorCertificates
 
 /-! # Rational Taylor upper bounds for the dyadic exponential prefix -/
 

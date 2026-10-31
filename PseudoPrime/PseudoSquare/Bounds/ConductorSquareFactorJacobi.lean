@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ConductorSquareFactorCost
+public import PseudoPrime.LLS.PaperStatements.ConductorSquareFactorCost
 public import PseudoPrime.PseudoSquare.Bounds.FiniteExcludedTaperJacobi
 
 /-! # Negative Jacobi witnesses with coupled conductor and square-factor costs -/

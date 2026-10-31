@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.TruncatedExclusionSupport
+public import PseudoPrime.LLS.PaperStatements.TruncatedExclusionSupport
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.RamifiedExclusion
 public import PseudoPrime.PseudoSquare.Bounds.TruncatedCubicJacobiBounds
 

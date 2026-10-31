@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.Phase64FiniteJacobiBudget
-public import PseudoPrime.Analysis.Phase64RamifiedExcessBounds
+public import PseudoPrime.LLS.Phase64RamifiedExcessBounds
 
 /-! # First-phase Jacobi witness criterion with all local costs certified -/
 
@@ -38,7 +38,7 @@ by the scalar budget. Substitute the proved real excess cap 13/5; no local
 numerical or factorization hypothesis is required. -/
 theorem phase64_finite_budget_le_scalar (n q : ℕ) {x : ℝ} (hlo : 1600 ≤ x) (hhi : x ≤ 1660)
     (b : ℝ) : phase64FiniteJacobiBudget n q x b ≤ phase64ScalarJacobiBudget n q x b := by
-  have he := Analysis.phase64_ramified_excess_le_thirteen_fifths hlo hhi
+  have he := phase64_ramified_excess_le_thirteen_fifths hlo hhi
   dsimp only [phase64FiniteJacobiBudget, phase64ScalarJacobiBudget]
   linarith only [he]
 

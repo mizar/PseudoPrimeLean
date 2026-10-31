@@ -242,7 +242,7 @@ theorem gaussian1000_radius_affine_lower {L : ℝ} (hL : 0 ≤ L) :
   have hb := gaussian1000_four_budget hL
   have ht := gaussian1000_root_ten L
   norm_num only [gaussian1000FourD, gaussian1000FourBeta, gaussianMRRefinedConductor,
-    gaussianMRRefinedMass, gaussianMRRefinedWidth, Analysis.gaussianMR6FifthsEndpoint] at hb
+    gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint] at hb
   linarith only [hb, ht]
 
 /-- On the real interval [108,126], the recovered Gamma cutoff is strictly

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointPointwise
+public import PseudoPrime.LLS.PaperStatements.EndpointPointwise
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.PointwiseReciprocalLowerBound
 
 /-! # Principal endpoint comparison with certified finite gains -/

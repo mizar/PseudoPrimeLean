@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
-public import PseudoPrime.LLS.GammaUniformSignedProfiles
+public import PseudoPrime.LLS.PaperStatements.GammaUniformSignedProfiles
 public import PseudoPrime.LLS.GammaUniformTightStart
 public import PseudoPrime.Analysis.LogarithmicShiftBounds
 public import PseudoPrime.Analysis.GammaUniformSignedWitnessBounds

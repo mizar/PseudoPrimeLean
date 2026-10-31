@@ -6,12 +6,11 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSPairedEulerExcludedBounds
+public import Mathlib.Tactic.Linarith
+
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogBoundarySummation
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ExponentialLogWeightedSummation
-public import PseudoPrime.LLS.PairedEulerExcludedBounds
-public import PseudoPrime.LLS.RiemannWeightedErrorBounds
-public import PseudoPrime.LLS.ReflectedSplitWitnessBounds
-public import PseudoPrime.LLS.VariableRampPrincipalBounds
 
 /-! # Anchored analytic lower bounds for finite Euler prefixes -/
 

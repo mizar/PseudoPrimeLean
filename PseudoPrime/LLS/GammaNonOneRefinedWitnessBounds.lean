@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaNonOneRefinedNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 
 /-! # Non-one Gamma witnesses at logarithm 39400
 

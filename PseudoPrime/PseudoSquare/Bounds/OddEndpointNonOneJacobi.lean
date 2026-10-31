@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.OddEndpointElementaryCosts
+public import PseudoPrime.LLS.PaperStatements.OddEndpointElementaryCosts
 public import PseudoPrime.NumberTheory.JacobiCharacterArithmetic
 public import PseudoPrime.NumberTheory.JacobiWitness.Existence
 

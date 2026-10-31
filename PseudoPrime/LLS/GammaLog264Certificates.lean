@@ -41,11 +41,11 @@ Role: keep each finite certificate within default resource limits. -/
 private theorem gamma_log264_check_0 :
     (gammaLog264Certificate 0).prefixScalarCheck (28493 / 5000) = true ∧
       (∀ p ∈ (Finset.Icc 3 (gammaLog264Certificate 0).support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow (gammaLog264Certificate 0).cell p).envelopeCheck
+        (gammaAdaptiveProfileRow (gammaLog264Certificate 0).cell p).envelopeCheck
             (gammaLog264Certificate 0).cell =
           true) ∧
       (∑ p ∈ (Finset.Icc 3 (gammaLog264Certificate 0).support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow (gammaLog264Certificate 0).cell p).allowance) ≤
+          (gammaAdaptiveProfileRow (gammaLog264Certificate 0).cell p).allowance) ≤
         (gammaLog264Certificate 0).excess := by
   decide +kernel
 
@@ -55,11 +55,11 @@ Role: keep each finite certificate within default resource limits. -/
 private theorem gamma_log264_check_1 :
     (gammaLog264Certificate 1).prefixScalarCheck (28493 / 5000) = true ∧
       (∀ p ∈ (Finset.Icc 3 (gammaLog264Certificate 1).support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow (gammaLog264Certificate 1).cell p).envelopeCheck
+        (gammaAdaptiveProfileRow (gammaLog264Certificate 1).cell p).envelopeCheck
             (gammaLog264Certificate 1).cell =
           true) ∧
       (∑ p ∈ (Finset.Icc 3 (gammaLog264Certificate 1).support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow (gammaLog264Certificate 1).cell p).allowance) ≤
+          (gammaAdaptiveProfileRow (gammaLog264Certificate 1).cell p).allowance) ≤
         (gammaLog264Certificate 1).excess := by
   decide +kernel
 
@@ -69,11 +69,11 @@ Role: keep each finite certificate within default resource limits. -/
 private theorem gamma_log264_check_2 :
     (gammaLog264Certificate 2).prefixScalarCheck (28493 / 5000) = true ∧
       (∀ p ∈ (Finset.Icc 3 (gammaLog264Certificate 2).support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow (gammaLog264Certificate 2).cell p).envelopeCheck
+        (gammaAdaptiveProfileRow (gammaLog264Certificate 2).cell p).envelopeCheck
             (gammaLog264Certificate 2).cell =
           true) ∧
       (∑ p ∈ (Finset.Icc 3 (gammaLog264Certificate 2).support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow (gammaLog264Certificate 2).cell p).allowance) ≤
+          (gammaAdaptiveProfileRow (gammaLog264Certificate 2).cell p).allowance) ≤
         (gammaLog264Certificate 2).excess := by
   decide +kernel
 
@@ -83,11 +83,11 @@ Role: supply numerical data to the prefix-parametric analytic transfer. -/
 theorem gamma_log264_certificates_check (i : Fin 3) :
     (gammaLog264Certificate i).prefixScalarCheck (28493 / 5000) = true ∧
       (∀ p ∈ (Finset.Icc 3 (gammaLog264Certificate i).support).filter Nat.Prime,
-        (Analysis.gammaAdaptiveProfileRow (gammaLog264Certificate i).cell p).envelopeCheck
+        (gammaAdaptiveProfileRow (gammaLog264Certificate i).cell p).envelopeCheck
             (gammaLog264Certificate i).cell =
           true) ∧
       (∑ p ∈ (Finset.Icc 3 (gammaLog264Certificate i).support).filter Nat.Prime,
-          (Analysis.gammaAdaptiveProfileRow (gammaLog264Certificate i).cell p).allowance) ≤
+          (gammaAdaptiveProfileRow (gammaLog264Certificate i).cell p).allowance) ≤
         (gammaLog264Certificate i).excess := by
   fin_cases i
   · exact gamma_log264_check_0

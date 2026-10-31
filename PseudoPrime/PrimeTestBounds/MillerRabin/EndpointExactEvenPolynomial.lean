@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.FullEndpointExactEvenRanges
+public import PseudoPrime.LLS.PaperStatements.FullEndpointExactEvenRanges
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointEvenPolynomial
 
 /-! # Miller-Rabin bounds from the exact even endpoint -/

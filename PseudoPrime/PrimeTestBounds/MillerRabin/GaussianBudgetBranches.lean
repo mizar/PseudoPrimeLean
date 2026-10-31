@@ -28,15 +28,15 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
     (hN : (N : ℝ) ≤ (6 / 5 : ℝ) * (s0 ^ 2) ^ 2)
     (herror :
       ∀ m : ℝ,
-        Analysis.gaussianMR6FifthsIndex ≤ m →
+        gaussian6FifthsIndex ≤ m →
           (m / (m - 1)) *
-                (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s0) +
-                  1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * s0 ^ 2)) +
+                (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s0) +
+                  1839 * gaussian6FifthsEndpoint / (1000 * s0 ^ 2)) +
               13 / (m - 1) +
               LLS.PaperStatements.gaussianPrefixError P n ((s0 ^ 2) ^ 2) <
             D)
     (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
-    (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
+    (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
@@ -104,8 +104,7 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
       (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
   have hcastIndex : ((H.index - 1 : ℕ) : ℝ) = (H.index : ℝ) - 1 := by
     have hidxReal : (1 : ℝ) ≤ (H.index : ℝ) := by
-      have hK : (1 : ℝ) ≤ Analysis.gaussianMR6FifthsIndex := by
-        norm_num only [Analysis.gaussianMR6FifthsIndex]
+      have hK : (1 : ℝ) ≤ gaussian6FifthsIndex := by norm_num only [gaussian6FifthsIndex]
       exact hK.trans hi
     have hidxNat : 1 ≤ H.index := by exact_mod_cast hidxReal
     rw [Nat.cast_sub hidxNat, Nat.cast_one]
@@ -113,8 +112,8 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
   have hI : gaussianMRRefinedMass ≤ I := by
     dsimp only [I, gaussianMRRefinedMass]
     exact gaussianMRRefined_mass.le
-  have hE : E ≤ Analysis.gaussianMR6FifthsEndpoint := by
-    dsimp only [E, Analysis.gaussianMR6FifthsEndpoint]
+  have hE : E ≤ gaussian6FifthsEndpoint := by
+    dsimp only [E, gaussian6FifthsEndpoint]
     exact Analysis.gaussian_endpoint_exp_le
   have hC : C / t ≤ L := by
     have ht : t = (H.index : ℝ) - 1 := by rfl
@@ -138,8 +137,7 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
         t * A := by
     simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
   have hcoeff := gaussianMRRefined_index_coeffs hi
-  have hD :
-    gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - Analysis.gaussianMR6FifthsEndpoint) / t := by
+  have hD : gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
   have hbeta :
     (m / t) * (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)) ≤
@@ -149,8 +147,8 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
     gaussianMRRefinedD * r ≤
         gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
           (m / t) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
-              1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+            (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
+              1839 * gaussian6FifthsEndpoint / (1000 * r)) +
           13 / t +
           A →
       False := by
@@ -160,22 +158,20 @@ theorem gaussianBudget_large_witness (N : ℕ) (P D s0 : ℝ) (hs91 : (91 / 10 :
     have herr := herror m hi
     change
       (m / (m - 1)) *
-            (21 * Analysis.gaussianMR6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
-              1839 * Analysis.gaussianMR6FifthsEndpoint / (1000 * r)) +
+            (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
+              1839 * gaussian6FifthsEndpoint / (1000 * r)) +
           13 / (m - 1) +
           A <
         (D) at herr
     rw [ht] at hbudget
     linarith only [hbudget, hroot, herr]
   exact
-    Analysis.gaussianMR_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I)
-      (E := E) (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap :=
-      Analysis.gaussianMR6FifthsEndpoint) (conductor := gaussianMRRefinedConductor) (D :=
-      gaussianMRRefinedD) (beta := gaussianMRRefinedBeta)
+    gaussian_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I) (E := E)
+      (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap := gaussian6FifthsEndpoint) (conductor :=
+      gaussianMRRefinedConductor) (D := gaussianMRRefinedD) (beta := gaussianMRRefinedBeta)
       (by norm_num only [gaussianMRRefinedWidth])
       (by
-        have hi' : (1000000000 : ℝ) ≤ m := by
-          simpa only [m, Analysis.gaussianMR6FifthsIndex] using hi
+        have hi' : (1000000000 : ℝ) ≤ m := by simpa only [m, gaussian6FifthsIndex] using hi
         linarith only [hi'])
       rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD hbeta hcmp'
       hfinish
@@ -227,7 +223,7 @@ theorem exists_prime_gaussianBudget {n : ℕ} [NeZero n] {B : ℝ} (ho : Odd n) 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n)
     (hlarge :
       ∀ H : Subgroup (ZMod n)ˣ,
-        Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ) →
+        gaussian6FifthsIndex ≤ (H.index : ℝ) →
           (∀ z : ZMod n,
             PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z) →
           ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ B ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n))
@@ -259,8 +255,8 @@ theorem exists_prime_gaussianBudget {n : ℕ} [NeZero n] {B : ℝ} (ho : Odd n) 
       exact ⟨p, hp, hb.trans (hlocal q hqp hqsize), hr⟩
     · obtain ⟨hsf, hcard, hK, hUval⟩ := ht
       exact gaussianBudget_witness_card ho hsf hcard hK hUval hfour
-  · have hiR : Analysis.gaussianMR6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
-      norm_num only [Analysis.gaussianMR6FifthsIndex]
+  · have hiR : gaussian6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
+      norm_num only [gaussian6FifthsIndex]
       exact_mod_cast (lt_of_not_ge hi).le
     have hpass :
       ∀ z : ZMod n,

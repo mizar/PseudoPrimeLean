@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.Phase64RamifiedTailBounds
+public import PseudoPrime.LLS.Phase64RamifiedTailBounds
 public import PseudoPrime.LLS.Phase64JacobiConductorBudget
 
 /-! # First-phase Jacobi comparison with a fixed finite ramified budget -/
@@ -30,7 +30,7 @@ noncomputable def phase64FiniteJacobiBudget (n q : ℕ) (x b : ℝ) : ℝ :=
     (90992831 / 200000000 : ℝ) * Real.log (4 * (n : ℝ)) +
     (427 / 500 : ℝ) +
     (3 / 100 : ℝ) * Real.log n +
-    Analysis.phase64RamifiedExcess x +
+    phase64RamifiedExcess x +
     ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +
     43 * x ^ (-9 / 16 : ℝ)
 
@@ -42,7 +42,7 @@ theorem phase64_ramified_budget_le_finite {n : ℕ} {hn : Odd n} {hns : ¬IsSqua
     (hhi : x ≤ 1700) (b : ℝ) :
     phase64RamifiedJacobiBudget bridge q x b ≤ phase64FiniteJacobiBudget n q x b := by
   have hr :=
-    Analysis.phase64_actual_ramified_cost_le_finite_dual hn
+    phase64_actual_ramified_cost_le_finite_dual hn
       (n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = 0)) (Finset.filter_subset _ _)
       bridge.character (fun p hp ↦ (Finset.mem_filter.mp hp).2)
       (AnalyticNumberTheory.DirichletLFunction.gammaPrefixPowerIndices b) hlo hhi

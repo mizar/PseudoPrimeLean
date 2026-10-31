@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaUniformReducedStart
-public import PseudoPrime.Analysis.GammaUniformLocalBudgetParameters
+public import PseudoPrime.LLS.GammaUniformLocalBudgetScalars
 public import PseudoPrime.LLS.PaperStatements.GammaUniformTightStart
 
 /-! # Tighter uniform coefficient-four-fifths starting value

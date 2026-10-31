@@ -10,7 +10,7 @@ public import PseudoPrime.Analysis.AffineLogarithmicTailBounds
 public import PseudoPrime.PseudoSquare.Bounds.GammaWitnessBounds
 public import PseudoPrime.PseudoSquare.Bounds.GammaMaximumBounds
 public import PseudoPrime.PseudoSquare.Bounds.GammaNonOneProfileBounds
-public import PseudoPrime.Analysis.AffineLogarithmicWitnessBounds
+public import PseudoPrime.PseudoSquare.AffineLogarithmicFitScalars
 
 /-! # Analytic tails of squared affine-logarithmic quadratic witness fits -/
 
@@ -37,7 +37,7 @@ theorem exists_prime_neg_one_witness_le_qFit_negNineTenths
   have hL : 10000 ≤ Real.log n :=
     (by norm_num only : (10000 : ℝ) ≤ 46000).trans
       (Analysis.log_nat_gt_46000_of_decimal_19978 hN).le
-  exact ⟨p, hp, ho, hb.trans (Analysis.gamma_square_le_qFit_negNineTenths hL), hv⟩
+  exact ⟨p, hp, ho, hb.trans (gamma_square_le_qFit_negNineTenths hL), hv⟩
 
 /-- Under GRH, an odd nonsquare n ≥ 10^19978 has an odd prime
 negative Jacobi witness bounded by this squared affine-logarithmic fit.
@@ -56,7 +56,7 @@ theorem exists_prime_neg_one_witness_le_qFit_negOne
   have hL : 10000 ≤ Real.log n :=
     (by norm_num only : (10000 : ℝ) ≤ 46000).trans
       (Analysis.log_nat_gt_46000_of_decimal_19978 hN).le
-  exact ⟨p, hp, ho, hb.trans (Analysis.gamma_square_le_qFit_negOne hL), hv⟩
+  exact ⟨p, hp, ho, hb.trans (gamma_square_le_qFit_negOne hL), hv⟩
 
 /-- Under GRH, an odd nonsquare n ≥ 10^15639 has an odd prime
 non-one Jacobi witness bounded by this squared affine-logarithmic fit.
@@ -76,7 +76,7 @@ theorem exists_prime_ne_one_witness_le_qFit_nonOneNineTenths
   obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_ne_one_witness_le_gamma_15639 hGRH hn hns hN
   have hL : 10000 ≤ Real.log n :=
     (by norm_num only : (10000 : ℝ) ≤ 36010).trans (log_nat_gt_36010_of_decimal_15639 hN).le
-  exact ⟨p, hp, ho, hb.trans (Analysis.gamma_square_le_qFit_nonOneNineTenths hL), hv⟩
+  exact ⟨p, hp, ho, hb.trans (gamma_square_le_qFit_nonOneNineTenths hL), hv⟩
 
 /-- Under GRH, an odd nonsquare n ≥ 10^15639 has an odd prime
 non-one Jacobi witness bounded by this squared affine-logarithmic fit.
@@ -94,7 +94,7 @@ theorem exists_prime_ne_one_witness_le_qFit_nonOneOne
   obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_ne_one_witness_le_gamma_15639 hGRH hn hns hN
   have hL : 10000 ≤ Real.log n :=
     (by norm_num only : (10000 : ℝ) ≤ 36010).trans (log_nat_gt_36010_of_decimal_15639 hN).le
-  exact ⟨p, hp, ho, hb.trans (Analysis.gamma_square_le_qFit_nonOneOne hL), hv⟩
+  exact ⟨p, hp, ho, hb.trans (gamma_square_le_qFit_nonOneOne hL), hv⟩
 
 /-- Under the same GRH, odd nonsquare and decimal-start assumptions,
 the least odd-prime negative witness satisfies the fitted square bound.
@@ -122,7 +122,7 @@ theorem QNegOne_le_qFit_negNineTenths {B : ℕ} (hB : 10 ^ 19978 ≤ B)
   have hL : 10000 ≤ Real.log B :=
     (by norm_num only : (10000 : ℝ) ≤ 46000).trans
       (Analysis.log_nat_gt_46000_of_decimal_19978 hB).le
-  exact hb.trans (Analysis.gamma_square_le_qFit_negNineTenths hL)
+  exact hb.trans (gamma_square_le_qFit_negNineTenths hL)
 
 /-- Under the same GRH, odd nonsquare and decimal-start assumptions,
 the least odd-prime negative witness satisfies the fitted square bound.
@@ -148,7 +148,7 @@ theorem QNegOne_le_qFit_negOne {B : ℕ} (hB : 10 ^ 19978 ≤ B)
   have hL : 10000 ≤ Real.log B :=
     (by norm_num only : (10000 : ℝ) ≤ 46000).trans
       (Analysis.log_nat_gt_46000_of_decimal_19978 hB).le
-  exact hb.trans (Analysis.gamma_square_le_qFit_negOne hL)
+  exact hb.trans (gamma_square_le_qFit_negOne hL)
 
 /-- Under the same GRH, odd nonsquare and decimal-start assumptions,
 the least odd-prime non-one witness satisfies the fitted square bound.
@@ -175,7 +175,7 @@ theorem QNeOne_le_qFit_nonOneNineTenths {B : ℕ} (hB : 10 ^ 15639 ≤ B)
   have hb := QNeOne_le_gamma_15639 hB hGRH
   have hL : 10000 ≤ Real.log B :=
     (by norm_num only : (10000 : ℝ) ≤ 36010).trans (log_nat_gt_36010_of_decimal_15639 hB).le
-  exact hb.trans (Analysis.gamma_square_le_qFit_nonOneNineTenths hL)
+  exact hb.trans (gamma_square_le_qFit_nonOneNineTenths hL)
 
 /-- Under the same GRH, odd nonsquare and decimal-start assumptions,
 the least odd-prime non-one witness satisfies the fitted square bound.
@@ -200,6 +200,6 @@ theorem QNeOne_le_qFit_nonOneOne {B : ℕ} (hB : 10 ^ 15639 ≤ B)
   have hb := QNeOne_le_gamma_15639 hB hGRH
   have hL : 10000 ≤ Real.log B :=
     (by norm_num only : (10000 : ℝ) ≤ 36010).trans (log_nat_gt_36010_of_decimal_15639 hB).le
-  exact hb.trans (Analysis.gamma_square_le_qFit_nonOneOne hL)
+  exact hb.trans (gamma_square_le_qFit_nonOneOne hL)
 
 end PseudoPrime.PseudoSquare

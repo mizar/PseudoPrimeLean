@@ -6,10 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaConductorFreeAdaptiveBounds
+public import PseudoPrime.LLS.PaperStatements.GammaConductorFreeAdaptiveBounds
 public import PseudoPrime.LLS.GammaNonOneAdaptiveWitnessBounds
 public import PseudoPrime.LLS.GammaNonOneProfileWitnessBounds
-public import PseudoPrime.LLS.GammaRefinedTailErrorBounds
+public import PseudoPrime.LLS.PaperStatements.GammaRefinedTailErrorBounds
 public import PseudoPrime.LLS.PaperStatements.GammaConductorFreeNonOneBounds
 
 /-! # Non-one quadratic Gamma witnesses from logarithmic scale 30000 -/
@@ -38,7 +38,7 @@ theorem exists_odd_prime_ne_one_of_conductor_free_prefix_profile {q : ℕ} [NeZe
   have hx1 : 1 ≤ x := le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx
   have hx0 := zero_lt_one.trans_le hx1
   have hs := Analysis.ramp_scale_sqrt_lower hL0.le
-  have hl := Analysis.conductor_free_nonOne_cutoff_log (show (30000 : ℝ) ≤ L by linarith only [hL])
+  have hl := conductor_free_nonOne_cutoff_log (show (30000 : ℝ) ≤ L by linarith only [hL])
   obtain ⟨hleft, heP, heT, htwo⟩ :=
     PaperStatements.conductor_free_nonOne_error_budgets (show (30000 : ℝ) ≤ L by linarith only [hL])
       hx1 hs hl

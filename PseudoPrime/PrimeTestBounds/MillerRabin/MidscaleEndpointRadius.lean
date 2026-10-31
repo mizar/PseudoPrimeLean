@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.MidscaleEndpointRadius
+public import PseudoPrime.LLS.PaperStatements.MidscaleEndpointRadius
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FullEndpointEightyOneRange
 
 /-! # Prime MR witnesses through the continuous midscale endpoint radius -/

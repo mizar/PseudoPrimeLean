@@ -9,7 +9,7 @@ module
 public import PseudoPrime.LLS.GammaJointCommonComparison
 public import PseudoPrime.LLS.GammaQuadraticPolynomialSeparation
 public import PseudoPrime.LLS.GammaLowerWindowBounds
-public import PseudoPrime.Analysis.GammaWindowRationalCaps
+public import PseudoPrime.LLS.GammaWindowRationalCaps
 
 /-! # Reusable window transport retaining the joint arithmetic saving -/
 
@@ -69,8 +69,8 @@ theorem gamma_joint_margin_gt_of_credited_polynomial {L x b C D g : ℝ} (hx : 1
 /-- Rational allowance for one old prime row on a lowered window. Inputs are the
 old cell, row factory, new left endpoint and its positive rational root bound.
 Keep the base-sensitive scale correction and signed endpoint quotients. -/
-def loweredPrimeAllowance (c : Analysis.GammaLocalCellData) (rows : ℕ → Analysis.GammaLocalPrimeRow)
-    (lo root : ℚ) (p : ℕ) : ℚ :=
+def loweredPrimeAllowance (c : GammaLocalCellData) (rows : ℕ → GammaLocalPrimeRow) (lo root : ℚ)
+    (p : ℕ) : ℚ :=
   let r := rows p
   let N := r.rampUpper - 5 / 4 + (((p : ℚ) + 1) / (p - 1)) * (c.lo - lo) / lo
   r.logUpper * max (r.eulerUpper + max (N / root) (N / c.rootHi)) 0
@@ -78,12 +78,12 @@ def loweredPrimeAllowance (c : Analysis.GammaLocalCellData) (rows : ℕ → Anal
 /-- For a checked cell and prime row with matching base, ordered rational window
 and valid lower root, the real local excess is at most its rational allowance.
 Use signed quotient bounds and the row logarithm interval; no new row is checked. -/
-theorem loweredPrimeAllowance_cap (c : Analysis.GammaLocalCellData)
-    (rows : ℕ → Analysis.GammaLocalPrimeRow) (hc : c.check = true) {lo root : ℚ} (hr : 0 < root)
-    (hrlo : root ^ 2 ≤ lo) (hlhi : lo ≤ c.hi) {p : ℕ} (hp : p.Prime) (hprime : (rows p).prime = p)
+theorem loweredPrimeAllowance_cap (c : GammaLocalCellData) (rows : ℕ → GammaLocalPrimeRow)
+    (hc : c.check = true) {lo root : ℚ} (hr : 0 < root) (hrlo : root ^ 2 ≤ lo) (hlhi : lo ≤ c.hi)
+    {p : ℕ} (hp : p.Prime) (hprime : (rows p).prime = p)
     (hcheck : (rows p).envelopeCheck c = true) :
     Real.log p *
-        Analysis.gammaRamifiedWindowExcessBound lo c.hi (rows p).eulerUpper
+        gammaRamifiedWindowExcessBound lo c.hi (rows p).eulerUpper
           (((rows p).rampUpper : ℝ) - 5 / 4 + (((p : ℝ) + 1) / (p - 1)) * ((c.lo : ℝ) - lo) / lo) ≤
       (loweredPrimeAllowance c rows lo root p : ℝ) := by
   have hroot : (0 : ℝ) < root := Rat.cast_pos.mpr hr
@@ -91,7 +91,7 @@ theorem loweredPrimeAllowance_cap (c : Analysis.GammaLocalCellData)
   have hlo0 : (0 : ℝ) ≤ lo := (sq_nonneg (root : ℝ)).trans hsq
   have hrloR := (Real.le_sqrt hroot.le hlo0).mpr hsq
   have hw :=
-    Analysis.gamma_window_excess_le_root_bounds (e := ((rows p).eulerUpper : ℝ)) (N :=
+    gamma_window_excess_le_root_bounds (e := ((rows p).eulerUpper : ℝ)) (N :=
       (((rows p).rampUpper - 5 / 4 + (((p : ℚ) + 1) / (p - 1)) * (c.lo - lo) / lo : ℚ) : ℝ)) hroot
       (Rat.cast_le.mpr hlhi) hrloR (c.check_sound hc).2.2.2.2.2.1
   have hl := (Analysis.rationalLogIntervalCheck_sound (Bool.and_eq_true_iff.mp hcheck).1).2
@@ -106,15 +106,14 @@ theorem loweredPrimeAllowance_cap (c : Analysis.GammaLocalCellData)
 /-- If a prime set covers the old anchored support and its rational allowance sum
 is capped by E, the real window excess sum is at most E. Apply row caps and
 extend over nonnegative allowances. This keeps certificates compact and reusable. -/
-theorem loweredPrimeAllowance_sum_cap (c : Analysis.GammaLocalCellData)
-    (rows : ℕ → Analysis.GammaLocalPrimeRow) (hc : c.check = true) {lo root E : ℚ} (hr : 0 < root)
-    (hrlo : root ^ 2 ≤ lo) (hlhi : lo ≤ c.hi) (S : Finset ℕ)
-    (hsub : Analysis.gammaAnchoredWindowPrimeSet c.hi ⊆ S) (hp : ∀ p ∈ S, p.Prime)
+theorem loweredPrimeAllowance_sum_cap (c : GammaLocalCellData) (rows : ℕ → GammaLocalPrimeRow)
+    (hc : c.check = true) {lo root E : ℚ} (hr : 0 < root) (hrlo : root ^ 2 ≤ lo) (hlhi : lo ≤ c.hi)
+    (S : Finset ℕ) (hsub : gammaAnchoredWindowPrimeSet c.hi ⊆ S) (hp : ∀ p ∈ S, p.Prime)
     (hcheck : ∀ p ∈ S, (rows p).prime = p ∧ (rows p).envelopeCheck c = true)
     (hE : (∑ p ∈ S, loweredPrimeAllowance c rows lo root p) ≤ E) :
-    (∑ p ∈ Analysis.gammaAnchoredWindowPrimeSet c.hi,
+    (∑ p ∈ gammaAnchoredWindowPrimeSet c.hi,
         Real.log p *
-          Analysis.gammaRamifiedWindowExcessBound lo c.hi (rows p).eulerUpper
+          gammaRamifiedWindowExcessBound lo c.hi (rows p).eulerUpper
             (((rows p).rampUpper : ℝ) - 5 / 4 +
               (((p : ℝ) + 1) / (p - 1)) * ((c.lo : ℝ) - lo) / lo)) ≤
       (E : ℝ) := by
@@ -131,13 +130,13 @@ theorem loweredPrimeAllowance_sum_cap (c : Analysis.GammaLocalCellData)
 /-- For a lowered checked window and nonnegative input log L, a rational sum cap
 gives the actual dual budget at most 5L/(4root)+E throughout the window.
 Combine the aggregate transfer with the lower square-root bound. -/
-theorem loweredPrimeAllowance_dual_cap (c : Analysis.GammaLocalCellData)
-    (rows : ℕ → Analysis.GammaLocalPrimeRow) (hc : c.check = true) {lo root E : ℚ} (hr : 0 < root)
-    (hrlo : root ^ 2 ≤ lo) (hlo : 1 ≤ lo) (hlc : lo ≤ c.lo) (hlhi : lo ≤ c.hi) (S : Finset ℕ)
-    (hsub : Analysis.gammaAnchoredWindowPrimeSet c.hi ⊆ S) (hp : ∀ p ∈ S, p.Prime)
+theorem loweredPrimeAllowance_dual_cap (c : GammaLocalCellData) (rows : ℕ → GammaLocalPrimeRow)
+    (hc : c.check = true) {lo root E : ℚ} (hr : 0 < root) (hrlo : root ^ 2 ≤ lo) (hlo : 1 ≤ lo)
+    (hlc : lo ≤ c.lo) (hlhi : lo ≤ c.hi) (S : Finset ℕ)
+    (hsub : gammaAnchoredWindowPrimeSet c.hi ⊆ S) (hp : ∀ p ∈ S, p.Prime)
     (hcheck : ∀ p ∈ S, (rows p).prime = p ∧ (rows p).envelopeCheck c = true)
     (he :
-      ∀ p ∈ Analysis.gammaAnchoredWindowPrimeSet c.hi,
+      ∀ p ∈ gammaAnchoredWindowPrimeSet c.hi,
         Analysis.gammaPrimeEulerCost p ≤ ((rows p).eulerUpper : ℝ))
     (hE : (∑ p ∈ S, loweredPrimeAllowance c rows lo root p) ≤ E) {L x : ℝ} (hL : 0 ≤ L)
     (hlox : (lo : ℝ) ≤ x) (hxhi : x ≤ (c.hi : ℝ)) :
@@ -151,8 +150,8 @@ theorem loweredPrimeAllowance_dual_cap (c : Analysis.GammaLocalCellData)
   have hrR : (0 : ℝ) < root := Rat.cast_pos.mpr hr
   have hsq : (root : ℝ) ^ 2 ≤ lo := by exact_mod_cast hrlo
   have hroot := (Real.le_sqrt hrR.le (zero_le_one.trans hloR)).mpr hsq
-  have hd : Analysis.gammaRamifiedDualParameter lo ≤ 5 / (4 * (root : ℝ)) := by
-    dsimp only [Analysis.gammaRamifiedDualParameter]
+  have hd : gammaRamifiedDualParameter lo ≤ 5 / (4 * (root : ℝ)) := by
+    dsimp only [gammaRamifiedDualParameter]
     exact
       div_le_div₀ (by norm_num only : (0 : ℝ) ≤ 5) le_rfl (mul_pos (by norm_num only) hrR)
         (mul_le_mul_of_nonneg_left hroot (by norm_num only))

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ExplicitUntaperedPrimeRates
+public import PseudoPrime.LLS.PaperStatements.ExplicitUntaperedPrimeRates
 public import PseudoPrime.PseudoSquare.Bounds.ConductorSquareFactorJacobi
 
 /-! # Negative Jacobi witnesses from fully specified prime-rate budgets -/

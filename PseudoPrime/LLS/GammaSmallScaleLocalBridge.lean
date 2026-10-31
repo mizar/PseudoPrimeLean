@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaSmallScaleLocalBounds
+public import PseudoPrime.LLS.GammaSmallScaleLocalBounds
 public import PseudoPrime.LLS.GammaVariableJacobiComparison
+public import PseudoPrime.LLS.PaperStatements.GammaVariableJacobiComparison
 
 /-! # Factorization-independent Jacobi local budgets from scale 4096 -/
 
@@ -39,31 +40,31 @@ theorem gamma_jacobi_square_dyadic_small_scale {n : ℕ} {hn : Odd n} {hns : ¬I
       rw [hfd]
       exact hdecomp
     have hs :=
-      Analysis.gamma_actual_odd_square_absorbed_small_scale hnf hn hf bridge.squareFactor_odd.pos S
-        hS bridge.character hχ K hx
+      gamma_actual_odd_square_absorbed_small_scale hnf hn hf bridge.squareFactor_odd.pos S hS
+        bridge.character hχ K hx
     have ht :
       Analysis.gammaActualPrimeLocalCost bridge.character 2 K2 x -
           (11783423 / 25000000 : ℝ) * Real.log 4 ≤
         (13 / 15 : ℝ) := by
       rcases htwo with h2 | h2
       · have hc :=
-          Analysis.gamma_actual_one_prime_cost_nonpos bridge.character Nat.prime_two
+          gamma_actual_one_prime_cost_nonpos bridge.character Nat.prime_two
             (by simpa only [Nat.cast_ofNat] using h2) K2 (by linarith only [hx])
         have hl : 0 ≤ (11783423 / 25000000 : ℝ) * Real.log 4 :=
           mul_nonneg (by norm_num only) (Real.log_nonneg (by norm_num only))
         linarith only [hc, hl]
       · exact
-          (Analysis.gamma_actual_dyadic_minus_one_cost_small_scale bridge.character h2 K2 hx).trans
+          (gamma_actual_dyadic_minus_one_cost_small_scale bridge.character h2 K2 hx).trans
             (by norm_num only)
     have hn0 : (n : ℝ) ≠ 0 := (Nat.cast_pos.mpr hn.pos).ne'
     rw [Real.log_mul (by norm_num only : (4 : ℝ) ≠ 0) hn0]
     linarith only [hs, ht]
   · have hs :=
-      Analysis.gamma_actual_square_absorbed_small_scale hdecomp hn bridge.squarefreePart_pos
+      gamma_actual_square_absorbed_small_scale hdecomp hn bridge.squarefreePart_pos
         bridge.squareFactor_odd.pos hf hd.1 hd.2 S hS bridge.character hχ K hx
     have ht :=
-      Analysis.gamma_actual_dyadic_zero_cost_small_scale bridge.character
-        (Analysis.gamma_even_modulus_character_two_zero bridge.character heven) K2 hx
+      gamma_actual_dyadic_zero_cost_small_scale bridge.character
+        (gamma_even_modulus_character_two_zero bridge.character heven) K2 hx
     linarith only [hs, ht]
 
 /-- At any x ≥ 4096, selected minus-one and zero input-prime losses of
@@ -80,16 +81,13 @@ theorem gamma_jacobi_joint_local_small_scale {n : ℕ} {hn : Odd n} {hns : ¬IsS
         Analysis.gammaActualPrimeLocalCost bridge.character 2 K2 x +
         (∑ p ∈ R, Analysis.gammaActualPrimeLocalCost bridge.character p (K p) x) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (13 / 15 : ℝ) +
-        Analysis.gammaRamifiedDualParameter x * Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet x,
+        gammaRamifiedDualParameter x * Real.log n +
+        ∑ p ∈ gammaRamifiedDualPrimeSet x,
           Real.log p *
-            max
-              (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-              0 := by
+            max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0 := by
   have hs := gamma_jacobi_square_dyadic_small_scale bridge S hS hSχ K K2 hx
   have hr :=
-    Analysis.gamma_actual_odd_ramified_signed_cost_le_finite_dual hn R hR bridge.character hRχ K
-      (by linarith only [hx])
+    gamma_odd_signed_cost_le_finite_dual hn R hR bridge.character hRχ K (by linarith only [hx])
   linarith only [hs, hr]
 
 /-- All ambient actual local costs at x ≥ 4096, together with M log m,
@@ -104,12 +102,10 @@ theorem gamma_jacobi_all_local_small_scale {n : ℕ} {hn : Odd n} {hns : ¬IsSqu
         (∑ p ∈ (4 * n).primeFactors,
           Analysis.gammaActualPrimeLocalCost bridge.character p (K p) x) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (13 / 15 : ℝ) +
-        Analysis.gammaRamifiedDualParameter x * Real.log n +
-        ∑ p ∈ Analysis.gammaRamifiedDualPrimeSet x,
+        gammaRamifiedDualParameter x * Real.log n +
+        ∑ p ∈ gammaRamifiedDualPrimeSet x,
           Real.log p *
-            max
-              (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-              0 := by
+            max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0 := by
   let S := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = -1)
   let R := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = 0)
   have hj :=
@@ -133,13 +129,10 @@ the pole modulus and no-negative premises are supplied by the comparison theorem
 Use this budget to certify a strict witness gap on a continuous scale interval. -/
 noncomputable def gammaSmallScaleArithmeticBudget (n q : ℕ) (x b : ℝ) : ℝ :=
   (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (13 / 15 : ℝ) +
-        Analysis.gammaRamifiedDualParameter x * Real.log n +
-        (∑ p ∈ Analysis.gammaRamifiedDualPrimeSet x,
-          Real.log p *
-            max
-              (Analysis.gammaRamifiedSignedCombinedCost p x - Analysis.gammaRamifiedDualParameter x)
-              0) +
-        (Analysis.gammaResolventCoefficients.map
+        gammaRamifiedDualParameter x * Real.log n +
+        (∑ p ∈ gammaRamifiedDualPrimeSet x,
+          Real.log p * max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0) +
+        (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv Complex.Gammaℝ (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
         (∑' k : ℕ, Analysis.gammaResolventMangoldtWeight k) -

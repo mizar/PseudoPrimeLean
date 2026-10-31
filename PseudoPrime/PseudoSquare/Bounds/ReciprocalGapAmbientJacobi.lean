@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ReciprocalGapAmbientWitness
+public import PseudoPrime.LLS.PaperStatements.ReciprocalGapAmbientWitness
 public import PseudoPrime.NumberTheory.JacobiCharacterArithmetic
 public import PseudoPrime.NumberTheory.JacobiWitness.Existence
 

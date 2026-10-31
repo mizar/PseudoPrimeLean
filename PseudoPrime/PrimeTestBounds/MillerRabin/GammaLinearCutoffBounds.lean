@@ -8,16 +8,16 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSeedPairedBounds
 public import PseudoPrime.LLS.ClippedAffineWitnessBounds
-public import PseudoPrime.LLS.GammaNonOneRefinedNumerics
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 public import PseudoPrime.LLS.GammaCheckpoint1000
-public import PseudoPrime.LLS.MidscaleEndpointComparison
+public import PseudoPrime.LLS.PaperStatements.MidscaleEndpointComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaClippedComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexClassification
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaIndex100GaussianClosure
 public import PseudoPrime.PrimeTest.MillerRabin.SignSubgroupIndex
 public import PseudoPrime.Analysis.GaussianGammaKernel
-public import PseudoPrime.LLS.RelativeGaussianSubgroupComparison
-public import PseudoPrime.LLS.GammaNonOneRefinedNumerics
+public import PseudoPrime.LLS.PaperStatements.RelativeGaussianSubgroupComparison
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 
 /-! # An MR-specific affine cutoff from the retained signed Euler prefix -/
 

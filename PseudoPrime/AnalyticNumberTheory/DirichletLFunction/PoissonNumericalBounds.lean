@@ -111,14 +111,14 @@ then replace the dyadic power by its certified rational lower bound. This suppli
 the signed zero-mass certificate's individual analytic inputs. -/
 theorem completed_poissonSum_centered_le_resolvent_euler {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ab : ℚ × ℚ) (hab : ab ∈ Analysis.gammaResolventCoefficients) :
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ab : ℚ × ℚ) (hab : ab ∈ Gamma.gammaResolventCoefficients) :
     |(∑' ρ : ℂ,
             (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
               ((ab.1 : ℝ) / Complex.normSq ((((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ) - ρ))) -
           Real.log q / 2| ≤
       Analysis.gammaResolventEulerError ab.1 := by
-  have hal := List.forall_iff_forall_mem.mp Analysis.gammaResolvent_scales_gt_half ab hab
-  have hau := (List.forall_iff_forall_mem.mp Analysis.gammaResolvent_gamma_arguments ab hab).2.2
+  have hal := List.forall_iff_forall_mem.mp Gamma.gammaResolvent_scales_gt_half ab hab
+  have hau := (List.forall_iff_forall_mem.mp Gamma.gammaResolvent_gamma_arguments ab hab).2.2
   have halR := (Rat.cast_lt (K := ℝ)).mpr hal
   norm_num only [Rat.cast_div, Rat.cast_one, Rat.cast_ofNat] at halR
   have hauR := (Rat.cast_le (K := ℝ)).mpr hau

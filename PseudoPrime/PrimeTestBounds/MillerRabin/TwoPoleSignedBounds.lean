@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.TwoPoleSignedBounds
+public import PseudoPrime.LLS.PaperStatements.TwoPoleSignedBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GeneralTwoPoleWitness
 
 /-! # Prime-base MR witnesses from the signed two-pole comparison -/

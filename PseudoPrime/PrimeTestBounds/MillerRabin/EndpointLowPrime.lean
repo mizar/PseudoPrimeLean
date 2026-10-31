@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointLowPrime
+public import PseudoPrime.LLS.PaperStatements.EndpointLowPrime
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointPointwise
 
 /-! # Actual prime witnesses from the nine low pointwise certificates -/

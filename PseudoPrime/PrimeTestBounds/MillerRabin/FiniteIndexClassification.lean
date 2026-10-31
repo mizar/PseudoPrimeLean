@@ -200,7 +200,7 @@ theorem finite_index_witness_or_uniform_korselt_triple_log250 {n : ℕ} [NeZero 
         (∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1) ∧
         (∀ p q : ℕ,
           p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))) := by
-  have hN27 := Analysis.ten_pow_twentyseven_le_of_log_ge_250 hL
+  have hN27 := ten_pow_twentyseven_le_of_log_ge_250 hL
   have hn1 : 1 < n := lt_of_lt_of_le (by decide : 1 < 10 ^ 27) hN27
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   let J : ℕ := 10 ^ 9
@@ -221,8 +221,7 @@ theorem finite_index_witness_or_uniform_korselt_triple_log250 {n : ℕ} [NeZero 
       PrimeTestBounds.MillerRabin.exists_prime_witness_le_local_subgroup_envelope hn1 hnOdd hq hqn K
         hproper hpass hGRH
     have hlocalBound :=
-      Analysis.mr_local_envelope_lt_of_square_le_log250 (Nat.pos_of_ne_zero (NeZero.ne n)) hL hqpos
-        hqsize
+      local_envelope_lt_of_square_le_log250 (Nat.pos_of_ne_zero (NeZero.ne n)) hL hqpos hqsize
     exact Or.inl ⟨p, hp, (hpbound.trans_lt hlocalBound).le, hpFail⟩
   · exact Or.inr htriple
 
@@ -243,7 +242,7 @@ theorem finite_index_witness_or_uniform_korselt_triple_log240 {n : ℕ} [NeZero 
         (∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1) ∧
         (∀ p q : ℕ,
           p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))) := by
-  have hN27 := Analysis.ten_pow_twentyseven_le_of_log_ge_240 hL
+  have hN27 := ten_pow_twentyseven_le_of_log_ge_240 hL
   have hn1 : 1 < n := lt_of_lt_of_le (by decide : 1 < 10 ^ 27) hN27
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   let J : ℕ := 10 ^ 9
@@ -264,8 +263,7 @@ theorem finite_index_witness_or_uniform_korselt_triple_log240 {n : ℕ} [NeZero 
       PrimeTestBounds.MillerRabin.exists_prime_witness_le_local_subgroup_envelope hn1 hnOdd hq hqn K
         hproper hpass hGRH
     have hlocalBound :=
-      Analysis.mr_local_envelope_lt_of_square_le_log240 (Nat.pos_of_ne_zero (NeZero.ne n)) hL hqpos
-        hqsize
+      local_envelope_lt_of_square_le_log240 (Nat.pos_of_ne_zero (NeZero.ne n)) hL hqpos hqsize
     exact Or.inl ⟨p, hp, (hpbound.trans_lt hlocalBound).le, hpFail⟩
   · exact Or.inr htriple
 

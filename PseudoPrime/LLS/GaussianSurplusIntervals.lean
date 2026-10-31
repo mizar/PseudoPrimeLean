@@ -36,8 +36,9 @@ theorem gaussianSurplus_euler_eq (m : ℝ) :
         (17 / 20 : ℝ) * Analysis.gammaResolventEulerWeight m := by
   norm_num only [Analysis.finiteSignedEulerWeight, gaussianSurplusCoefficients,
     Analysis.gaussianResolventEulerWeight, Analysis.gammaResolventEulerWeight,
-    Analysis.gaussianResolventCoefficients, Analysis.gammaResolventCoefficients, List.map_cons,
-    List.map_nil, List.sum_cons, List.sum_nil, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg]
+    Analysis.gaussianResolventCoefficients, AnalyticNumberTheory.Gamma.gammaResolventCoefficients,
+    List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, Rat.cast_div, Rat.cast_ofNat,
+    Rat.cast_neg]
   ring
 
 /-- Two natural-number power inequalities certify the real power interval with denominator ten

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.EndpointFixed67
+public import PseudoPrime.LLS.PaperStatements.EndpointFixed67
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointFourStep
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointFixed61
 

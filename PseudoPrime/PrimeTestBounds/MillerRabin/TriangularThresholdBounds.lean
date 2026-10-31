@@ -25,8 +25,7 @@ theorem decimal_le_of_log_upper {A n : ℕ} (hn : 0 < n) (hA : (A : ℝ) * (7 / 
   have hR : (n : ℝ) ≤ (10 : ℝ) ^ A := by exact_mod_cast (lt_of_not_ge h).le
   have hl := Real.log_le_log (Nat.cast_pos.mpr hn) hR
   rw [Real.log_pow] at hl
-  have hu :=
-    mul_le_mul_of_nonneg_left Analysis.log_ten_lt_seven_thirds.le (Nat.cast_nonneg (α := ℝ) A)
+  have hu := mul_le_mul_of_nonneg_left log_ten_lt_seven_thirds.le (Nat.cast_nonneg (α := ℝ) A)
   linarith only [hA, hl, hu]
 
 /-- A natural decimal lower bound implies A*log 10<=log n.
@@ -49,7 +48,7 @@ theorem triangular_threshold_local {n q : ℕ} (hn : 0 < n) (hq : 0 < q) (hsize 
     Real.log_pow] at hl
   norm_num only [Nat.cast_ofNat] at hl
   have hcap : Real.log q ≤ (5319 / 10000 : ℝ) * Real.log n := by
-    linarith only [hl, hL, Analysis.log_ten_lt_seven_thirds]
+    linarith only [hl, hL, log_ten_lt_seven_thirds]
   have hp : (0 : ℝ) ≤ (5319 / 10000) * Real.log n := by linarith only [hL]
   have hs := (sq_le_sq₀ (Real.log_natCast_nonneg q) hp).mpr hcap
   apply max_le

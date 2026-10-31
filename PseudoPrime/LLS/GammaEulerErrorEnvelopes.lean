@@ -104,9 +104,11 @@ Proof: apply the scalar comparison to each certified node.
 Role: certify cutoff constants without a new analytic proof for each scale. -/
 theorem gammaEulerTailErrorBudget_le_envelope {a r l : ℝ} (ha : 1 ≤ a) (hr : Real.sqrt a ≤ r)
     (hl : Real.log a ≤ l) (v : ℚ → ℝ)
-    (hv : ∀ ab ∈ Analysis.gammaResolventCoefficients, a ^ (-(1 / 2 + (ab.1 : ℝ))) ≤ v ab.1) :
+    (hv :
+      ∀ ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients,
+        a ^ (-(1 / 2 + (ab.1 : ℝ))) ≤ v ab.1) :
     gammaEulerTailErrorBudget a ≤
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             |(ab.2 : ℝ)| * gammaEulerErrorEnvelope r (v ab.1) l (1 / 2 + (ab.1 : ℝ)))).sum := by
   dsimp only [gammaEulerTailErrorBudget, gammaRealPowerList]

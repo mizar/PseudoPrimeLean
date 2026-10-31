@@ -21,7 +21,8 @@ Proof: negative real-power monotonicity. Role: reuse endpoint certificates on wh
 theorem gamma_node_power_bounds_on_cell {lo hi : ℚ} {rlo rhi : ℚ → ℚ × ℚ}
     (hl : Analysis.gammaFiniteEulerRatioCheck lo rlo = true)
     (hh : Analysis.gammaFiniteEulerRatioCheck hi rhi = true) {b : ℝ} (hlo : (lo : ℝ) ≤ b)
-    (hhi : b ≤ (hi : ℝ)) (ab : ℚ × ℚ) (hab : ab ∈ Analysis.gammaResolventCoefficients) :
+    (hhi : b ≤ (hi : ℝ)) (ab : ℚ × ℚ)
+    (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :
     ((rhi ab.1).1 : ℝ) ≤ b ^ (-(1 / 2 + (ab.1 : ℝ))) ∧
       b ^ (-(1 / 2 + (ab.1 : ℝ))) ≤ ((rlo ab.1).2 : ℝ) := by
   have hpositive := (of_decide_eq_true hl).1
@@ -43,9 +44,9 @@ theorem gamma_finite_weighted_bounds_on_cell {lo hi : ℚ} {rlo rhi : ℚ → �
     (hh : Analysis.gammaFiniteEulerRatioCheck hi rhi = true) {b : ℝ} (hlo : (lo : ℝ) ≤ b)
     (hhi : b ≤ (hi : ℝ)) (w : ℚ × ℚ → ℚ) :
     (gammaFiniteWeightedLower w (fun a ↦ ((rhi a).1, (rlo a).2)) : ℝ) ≤
-        (Analysis.gammaResolventCoefficients.map
+        (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
             (fun ab ↦ (w ab : ℝ) * b ^ (-(1 / 2 + (ab.1 : ℝ))))).sum ∧
-      (Analysis.gammaResolventCoefficients.map
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
             (fun ab ↦ (w ab : ℝ) * b ^ (-(1 / 2 + (ab.1 : ℝ))))).sum ≤
         (gammaFiniteWeightedUpper w (fun a ↦ ((rhi a).1, (rlo a).2)) : ℝ) := by
   have hlower :=
@@ -70,7 +71,7 @@ Role: extend rational-cutoff main-tail certificates to every point in a real cel
 theorem gamma_tail_main_eq_real_weighted {b : ℝ} (hb : 0 < b) :
     gammaEulerTailMain b =
       b *
-        (Analysis.gammaResolventCoefficients.map
+        (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (gammaTailRationalCoefficient 1 ab : ℝ) * b ^ (-(1 / 2 + (ab.1 : ℝ))))).sum := by
   dsimp only [gammaEulerTailMain, gammaRealPowerList]

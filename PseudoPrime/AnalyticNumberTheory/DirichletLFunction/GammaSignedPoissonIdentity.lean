@@ -54,8 +54,8 @@ theorem gammaResolvent_zeroMass_eq_signed_derivatives {q : ℕ} [NeZero q] (hq :
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) =
-      (Analysis.gammaResolventCoefficients.map
+          Gamma.gammaResolventMajorant ρ.im) =
+      (Gamma.gammaResolventCoefficients.map
           (fun ab ↦
             (ab.2 : ℝ) *
               (Real.log q / 2 + (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re +
@@ -64,7 +64,7 @@ theorem gammaResolvent_zeroMass_eq_signed_derivatives {q : ℕ} [NeZero q] (hq :
   apply congrArg List.sum
   apply List.map_congr_left
   intro ab hab
-  have ha := List.forall_iff_forall_mem.mp Analysis.gammaResolvent_scales_gt_half ab hab
+  have ha := List.forall_iff_forall_mem.mp Gamma.gammaResolvent_scales_gt_half ab hab
   have har : (1 / 2 : ℝ) < (ab.1 : ℝ) := by
     have h : ((1 / 2 : ℚ) : ℝ) < (ab.1 : ℝ) := Rat.cast_lt.mpr ha
     norm_num only at h
@@ -86,16 +86,16 @@ theorem gammaResolvent_zeroMass_eq_conductor_signed_derivatives {q : ℕ} [NeZer
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-          Analysis.gammaResolventMajorant ρ.im) =
+          Gamma.gammaResolventMajorant ρ.im) =
       (11783423 / 25000000 : ℝ) * Real.log q +
-        (Analysis.gammaResolventCoefficients.map
+        (Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
-        (Analysis.gammaResolventCoefficients.map
+        (Gamma.gammaResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.LFunction (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum := by
   rw [gammaResolvent_zeroMass_eq_signed_derivatives hq hRH hp hne hinv]
-  norm_num only [Analysis.gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
+  norm_num only [Gamma.gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil]
   ring
 

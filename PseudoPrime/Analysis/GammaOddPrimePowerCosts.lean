@@ -55,10 +55,11 @@ absolute convergence. This permits exact odd-power local-cost evaluation. -/
 theorem summable_gammaResolventEulerWeight_odd_powers {p : ℝ} (hp : 1 < p) :
     Summable (fun k : ℕ ↦ gammaResolventEulerWeight (p ^ (2 * k + 1))) := by
   apply
-    summable_list_sum gammaResolventCoefficients
+    summable_list_sum AnalyticNumberTheory.Gamma.gammaResolventCoefficients
       (fun ab k ↦ (ab.2 : ℝ) * (p ^ (2 * k + 1)) ^ (-(1 / 2 + (ab.1 : ℝ))))
   intro ab hab
-  have ha := List.forall_iff_forall_mem.mp gammaResolvent_scales_gt_half ab hab
+  have ha :=
+    List.forall_iff_forall_mem.mp AnalyticNumberTheory.Gamma.gammaResolvent_scales_gt_half ab hab
   have har : ((1 / 2 : ℚ) : ℝ) < (ab.1 : ℝ) := Rat.cast_lt.mpr ha
   norm_num only at har
   have hσ : 0 < (1 / 2 : ℝ) + (ab.1 : ℝ) := by linarith only [har]
@@ -68,7 +69,7 @@ theorem summable_gammaResolventEulerWeight_odd_powers {p : ℝ} (hp : 1 < p) :
 r=p^(-(1/2+a)) and contributes b*r/(1-r^2). The square-part comparison
 uses twice this cost when the local quadratic character value is minus one. -/
 noncomputable def gammaPrimeOddEulerCost (p : ℝ) : ℝ :=
-  (gammaResolventCoefficients.map
+  (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
       (fun ab ↦
         (ab.2 : ℝ) * (p ^ (-(1 / 2 + (ab.1 : ℝ))) / (1 - (p ^ (-(1 / 2 + (ab.1 : ℝ)))) ^ 2)))).sum
 
@@ -77,9 +78,10 @@ closed signed local cost. Absolute convergence permits the finite coefficient
 sum to pass through the infinite sum before evaluating the geometric nodes. -/
 theorem tsum_gammaResolventEulerWeight_odd_powers_eq_cost {p : ℝ} (hp : 1 < p) :
     (∑' k : ℕ, gammaResolventEulerWeight (p ^ (2 * k + 1))) = gammaPrimeOddEulerCost p := by
-  have hs (ab : ℚ × ℚ) (hab : ab ∈ gammaResolventCoefficients) :
+  have hs (ab : ℚ × ℚ) (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :
     Summable (fun k : ℕ ↦ (ab.2 : ℝ) * (p ^ (2 * k + 1)) ^ (-(1 / 2 + (ab.1 : ℝ)))) := by
-    have ha := List.forall_iff_forall_mem.mp gammaResolvent_scales_gt_half ab hab
+    have ha :=
+      List.forall_iff_forall_mem.mp AnalyticNumberTheory.Gamma.gammaResolvent_scales_gt_half ab hab
     have har : ((1 / 2 : ℚ) : ℝ) < (ab.1 : ℝ) := Rat.cast_lt.mpr ha
     norm_num only at har
     exact
@@ -88,14 +90,15 @@ theorem tsum_gammaResolventEulerWeight_odd_powers_eq_cost {p : ℝ} (hp : 1 < p)
         (ab.2 : ℝ)
   change
     (∑' k : ℕ,
-        (gammaResolventCoefficients.map
+        (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
             (fun ab ↦ (ab.2 : ℝ) * (p ^ (2 * k + 1)) ^ (-(1 / 2 + (ab.1 : ℝ))))).sum) =
       _
-  rw [tsum_list_sum gammaResolventCoefficients _ hs]
+  rw [tsum_list_sum AnalyticNumberTheory.Gamma.gammaResolventCoefficients _ hs]
   apply congrArg List.sum
   apply List.map_congr_left
   intro ab hab
-  have ha := List.forall_iff_forall_mem.mp gammaResolvent_scales_gt_half ab hab
+  have ha :=
+    List.forall_iff_forall_mem.mp AnalyticNumberTheory.Gamma.gammaResolvent_scales_gt_half ab hab
   have har : ((1 / 2 : ℚ) : ℝ) < (ab.1 : ℝ) := Rat.cast_lt.mpr ha
   norm_num only at har
   rw [tsum_mul_left,

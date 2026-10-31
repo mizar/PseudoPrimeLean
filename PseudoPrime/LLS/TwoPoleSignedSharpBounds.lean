@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.TwoPoleSignedBounds
+public import PseudoPrime.LLS.PaperStatements.TwoPoleSignedBounds
 
 /-! # Direct signed two-pole error bounds and variable affine margins -/
 

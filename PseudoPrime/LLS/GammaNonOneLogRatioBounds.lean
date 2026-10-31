@@ -7,7 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaConductorFreeNonOneBounds
-public import PseudoPrime.Analysis.LLSGammaNonOneLogRatioBounds
+public import PseudoPrime.LLS.GammaLogScaleBounds
+public import PseudoPrime.LLS.GammaNonOneLogRatioBounds2
 
 /-! # Non-one Gamma witnesses with explicit logarithmic and prefix budgets -/
 
@@ -26,7 +27,7 @@ theorem exists_odd_prime_ne_one_of_gamma_log_29121 {q : ℕ} [NeZero q] (hq : 20
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ χ p ≠ 1 := by
   exact
     exists_odd_prime_ne_one_of_log_ratio_prefix_profile hq χ hquad hne h2 hGRH
-      (by linarith only [hL]) (Analysis.nonOne_log_ratio_of_ge_29121 hL) hlogq 32
+      (by linarith only [hL]) (nonOne_log_ratio_of_ge_29121 hL) hlogq 32
       Analysis.gammaResolvent_thirtyTwo_error_lt (by linarith only [hL])
 
 end PseudoPrime.LLS

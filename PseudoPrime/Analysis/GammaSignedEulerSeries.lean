@@ -68,8 +68,8 @@ Proof: apply the list theorem to the certified resolvent scales.
 Role: permit the signed infinite Euler comparison and finite prefix subtraction. -/
 theorem summable_gammaResolventMangoldtWeight : Summable gammaResolventMangoldtWeight := by
   exact
-    summable_gamma_euler_list gammaResolventCoefficients
-      (List.forall_iff_forall_mem.mp gammaResolvent_scales_gt_half)
+    summable_gamma_euler_list AnalyticNumberTheory.Gamma.gammaResolventCoefficients
+      (List.forall_iff_forall_mem.mp AnalyticNumberTheory.Gamma.gammaResolvent_scales_gt_half)
 
 /-- Claim: every natural input has nonnegative signed Mangoldt weight.
 Proof: zero has zero Mangoldt value; positive inputs use Euler-weight positivity.

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TunedIntervalSelection
-public import PseudoPrime.LLS.EndpointPrime79PlusData
+public import PseudoPrime.LLS.PaperStatements.EndpointPrime79PlusData
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededSurplus
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointPrime79Plus
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededSurplusBounds

@@ -26,7 +26,7 @@ theorem seededSurplus_large (f : Bool)
         ∑ j ∈ Finset.Ioc 0 (gaussianSeededSharpCutoff f),
           Analysis.gaussianResolventMangoldtWeight j)
     {n : ℕ} [NeZero n] (ho : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
-    (hi : Analysis.gaussianMR6FifthsIndex ≤ (H.index : ℝ))
+    (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
     (hp :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 63 ≤ Real.log n) :
@@ -74,9 +74,9 @@ fits each surplus seeded cutoff above logarithmic scale 63. -/
 theorem seededSurplus_local (f : Bool) {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
     (hsize : q ^ 2 ≤ 10 ^ 9 * n) (hL : 63 ≤ Real.log n) :
     max (3000 : ℝ) (Real.log q ^ 2) ≤ gaussianSeededSurplusBound f (Real.log n) := by
-  have hlog := Analysis.mr_local_log_le_of_square_le hn hq hsize
+  have hlog := local_log_le_of_square_le hn hq hsize
   have hcap : Real.log q ≤ (2 / 3 : ℝ) * Real.log n := by
-    linarith only [hlog, hL, Analysis.log_ten_lt_seven_thirds]
+    linarith only [hlog, hL, log_ten_lt_seven_thirds]
   have hpos : (0 : ℝ) ≤ (2 / 3) * Real.log n := by linarith only [hL]
   have hs := (sq_le_sq₀ (Real.log_natCast_nonneg q) hpos).mpr hcap
   have hw := gaussianSeededSurplus_bound_lower (f := f) hL

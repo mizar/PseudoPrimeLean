@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.OddMidscaleEndpointRadius
+public import PseudoPrime.LLS.PaperStatements.OddMidscaleEndpointRadius
 public import PseudoPrime.PseudoSquare.Bounds.SharpOddEndpointDoubleLogBounds
 
 /-! # Odd-prime non-one Jacobi witnesses at intermediate logarithmic scales -/

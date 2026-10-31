@@ -35,10 +35,10 @@ theorem gamma_signed_power_le_positive_reciprocal {u a b : ℝ} (hu : 1 ≤ u) (
 79977719/25000000. Direct rational arithmetic certifies the coefficient used
 in large-prime envelopes without taking absolute values of negative terms. -/
 theorem gamma_positive_coefficient_mass :
-    (gammaResolventCoefficients.map (fun ab ↦ max (ab.2 : ℝ) 0)).sum =
+    (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map (fun ab ↦ max (ab.2 : ℝ) 0)).sum =
       (79977719 / 25000000 : ℝ) := by
-  norm_num only [gammaResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
-    List.sum_nil, max_eq_left, max_eq_right]
+  norm_num only [AnalyticNumberTheory.Gamma.gammaResolventCoefficients, List.map_cons, List.map_nil,
+    List.sum_cons, List.sum_nil, max_eq_left, max_eq_right]
 
 /-- A finite signed family with exponents at least one is bounded by its
 positive coefficient mass times the reciprocal input. Apply the pointwise
@@ -63,14 +63,18 @@ Apply the finite-list inequality using the verified resolvent scales.
 This supplies the reciprocal envelope for large-prime power sums. -/
 theorem gamma_euler_weight_le_positive_reciprocal {u : ℝ} (hu : 1 ≤ u) :
     gammaResolventEulerWeight u ≤ (79977719 / 25000000 : ℝ) * u⁻¹ := by
-  have ha : ∀ ab ∈ gammaResolventCoefficients, (1 : ℝ) ≤ 1 / 2 + (ab.1 : ℝ) := by
+  have ha :
+    ∀ ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients, (1 : ℝ) ≤ 1 / 2 + (ab.1 : ℝ) := by
     intro ab hab
     have h : ((1 / 2 : ℚ) : ℝ) < (ab.1 : ℝ) :=
-      Rat.cast_lt.mpr (List.forall_iff_forall_mem.mp gammaResolvent_scales_gt_half ab hab)
+      Rat.cast_lt.mpr
+        (List.forall_iff_forall_mem.mp AnalyticNumberTheory.Gamma.gammaResolvent_scales_gt_half ab
+          hab)
     norm_num only at h
     linarith only [h]
   simpa only [gammaResolventEulerWeight, gamma_positive_coefficient_mass] using
-    gamma_signed_list_le_positive_reciprocal gammaResolventCoefficients hu ha
+    gamma_signed_list_le_positive_reciprocal AnalyticNumberTheory.Gamma.gammaResolventCoefficients
+      hu ha
 
 /-- For a base greater than one, the exact signed odd-power Euler cost
 is at most the positive coefficient mass times the reciprocal geometric sum.
