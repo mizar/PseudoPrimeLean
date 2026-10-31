@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.ExponentialRampMonotonicity
 public import PseudoPrime.Analysis.GammaDyadicIntervalBounds
 public import PseudoPrime.Analysis.GammaRamifiedDualParameterBounds
 
@@ -14,31 +15,6 @@ public import PseudoPrime.Analysis.GammaRamifiedDualParameterBounds
 @[expose] public section
 
 namespace PseudoPrime.Analysis
-
-/-- The exponential ramp weight is antitone on the whole real line.
-Compare the exponential and linear factors on each branch and use
-continuity of the joined formulas at the endpoints. This supports safe
-cell bounds even when a prime power crosses either ramp join. -/
-theorem exponentialRampWeight_antitone : Antitone exponentialRampWeight := by
-  intro u v huv
-  have he := Real.exp_le_exp.mpr (neg_le_neg huv)
-  by_cases hv : v ≤ 247 / 100
-  · rw [exponentialRampWeight_eq_exp_of_le_left hv,
-      exponentialRampWeight_eq_exp_of_le_left (huv.trans hv)]
-    exact he
-  by_cases hu : u ≤ 247 / 100
-  · rw [exponentialRampWeight_eq_exp_of_le_left hu]
-    exact (exponentialRampWeight_bounds v).2.trans he
-  by_cases hvr : v ≤ 99 / 40
-  · have hur := huv.trans hvr
-    rw [exponentialRampWeight_eq_middle (le_of_not_ge hv) hvr,
-      exponentialRampWeight_eq_middle (le_of_not_ge hu) hur]
-    exact
-      div_le_div_of_nonneg_right
-        (mul_le_mul he (sub_le_sub_left huv (99 / 40)) (sub_nonneg.mpr hvr) (Real.exp_pos (-u)).le)
-        (by norm_num only : (0 : ℝ) ≤ 1 / 200)
-  · rw [exponentialRampWeight_eq_zero (le_of_not_ge hvr)]
-    exact (exponentialRampWeight_bounds u).1
 
 /-- On a positive scale interval lo ≤ x ≤ hi, a ramified local term
 is bounded by twice the ramp at the upper scale minus the exponential
